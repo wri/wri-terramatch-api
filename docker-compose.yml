@@ -1,0 +1,81 @@
+version: "3"
+services:
+    mariadb:
+        build:
+            context: "."
+            dockerfile: "docker/mariadb.Dockerfile"
+        ports:
+            - "3360:3306"
+        networks:
+            - "default"
+        environment:
+            MYSQL_ROOT_PASSWORD: "root"
+            MYSQL_DATABASE: "wri_restoration_marketplace_api"
+            MYSQL_USER: "wri"
+            MYSQL_PASSWORD: "wri"
+    php:
+        depends_on:
+            - "mariadb"
+            - "mailcatcher"
+            - "minio"
+            - "sqslocal"
+            - "motocker"
+        build:
+            context: "."
+            dockerfile: "docker/php.Dockerfile"
+        ports:
+            - "8080:80"
+        networks:
+            - "default"
+        volumes:
+            - ".:/var/www/html"
+    composer:
+        image: "composer:1.8"
+        volumes:
+            - ".:/app"
+            - "~/.composer:/tmp"
+        command: "composer about"
+        networks:
+            - "default"
+    npm:
+        image: "node:8"
+        volumes:
+            - ".:/usr/src/app"
+        command: "npm --version"
+        working_dir: "/usr/src/app"
+        networks:
+            - "default"
+    mailcatcher:
+        image: "jeanberu/mailcatcher"
+        networks:
+            - "default"
+        ports:
+            - "1025:1025"
+            - "1080:1080"
+    minio:
+        image: "3sidedcube/minio"
+        networks:
+            - "default"
+        ports:
+            - "9000:9000"
+        environment:
+            MINIO_ACCESS_KEY: "AKIABUVWH1HUD7YQZQAR"
+            MINIO_SECRET_KEY: "PVMlDMep3/jLSz9GxPV3mTvH4JZynkf2BFeTu+i8"
+    sqslocal:
+        image: "graze/sqs-local"
+        networks:
+            - "default"
+        ports:
+            - "9324:9324"
+    motocker:
+        image: "picadoh/motocker"
+        networks:
+            - "default"
+        ports:
+            - "9911:9911"
+        environment:
+            MOTO_SERVICE: "sns"
+            MOTO_HOST: "0.0.0.0"
+            MOTO_PORT: "9911"
+networks:
+    default:

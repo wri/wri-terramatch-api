@@ -1,0 +1,52 @@
+graph erd {
+
+	graph [fontname="Sans"];
+	node [fontname="Sans"];
+	edge [fontname="Sans"];
+
+	adm [label="Admins"];
+	usr [label="Users"];
+	org [label="Organisations"];
+	ord [label="Organisation Documents"];
+	tmb [label="Team Members"];
+	
+	pit [label="Pitches"];
+	tsp [label="Tree Species"];
+	rmm [label="Restoration Method Metrics"];
+	pid [label="Pitch Documents"];
+	pct [label="Pitch Contacts"];
+	cct [label="Carbon Certifications"];
+	
+	off [label="Offers"];
+	ofd [label="Offer Documents"];
+	oct [label="Offer Contacts"];
+	
+	int [label="Interests"];
+	mtc [label="Matches"];
+
+	not [label="Notifications"];
+	dev [label="Devices"];
+
+	org -- usr;
+	org -- pit;
+	org -- off;
+	org -- tmb;
+	org -- ord;
+	
+	pit -- tsp;
+	pit -- rmm;
+	pit -- pid;
+	pit -- pct;
+	pit -- cct;
+	
+	off -- ofd;
+	off -- oct;
+	
+	off -- int;
+	pit -- int;
+	int -- mtc;
+
+	usr -- dev;
+	usr -- not;
+
+}

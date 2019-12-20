@@ -1,0 +1,4824 @@
+################################################################################
+# This file uses Swagger, which is also called OpenAPI 2.0. This file is not
+# OpenAPI 3.0 (which is not compatible with Swagger). The documentation is here:
+#
+# https://swagger.io/docs/specification/2-0/basic-structure/
+################################################################################
+swagger: "2.0"
+info:
+  title: "WRI Restoration Marketplace API"
+  description: "{{ DESCRIPTION }}"
+  version: 1.0.0
+host: "{{ HOST }}"
+basePath: "/api"
+schemes:
+  - "{{ SCHEME }}"
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+security:
+  - BearerAuth: []
+tags:
+  - name: Users
+  - name: Auth
+  - name: Countries
+  - name: Organisations
+  - name: Organisation Versions
+  - name: Organisation Types
+  - name: Uploads
+  - name: Organisation Categories
+  - name: Team Members
+  - name: Admins
+  - name: Document Types
+  - name: Organisation Documents
+  - name: Organisation Document Versions
+  - name: Offers
+  - name: Offer Contacts
+  - name: Land Types
+  - name: Land Ownerships
+  - name: Restoration Methods
+  - name: Restoration Goals
+  - name: Funding Sources
+  - name: Sustainable Development Goals
+  - name: Reporting Levels
+  - name: Reporting Frequencies
+  - name: Continents
+  - name: Offer Documents
+  - name: Pitch Contacts
+  - name: Revenue Drivers
+  - name: Pitches
+  - name: Pitch Versions
+  - name: Carbon Certification Types
+  - name: Carbon Certifications
+  - name: Pitch Documents
+  - name: Restoration Method Metrics
+  - name: Tree Species
+  - name: Tree Species Owners
+  - name: Tasks
+  - name: Land Sizes
+  - name: Interests
+  - name: Matches
+  - name: Notifications
+  - name: Devices
+################################################################################
+# DEFINITIONS
+################################################################################
+definitions:
+################################################################################
+  DeviceReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/DeviceRead'
+  DeviceRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: integer
+      os:
+        type: string
+      uuid:
+        type: string
+      push_token:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+  DeviceCreate:
+    type: object
+    properties:
+      os:
+        type: string
+      uuid:
+        type: string
+      push_token:
+        type: string
+  DeviceUpdate:
+    type: object
+    properties:
+      uuid:
+        type: string
+      push_token:
+        type: string
+################################################################################
+  MatchReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/MatchRead'
+  MatchRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      offer_id:
+        type: integer
+      offer_interest_id:
+        type: integer
+      offer_contacts:
+        type: array
+        items:
+          $ref: '#/definitions/MatchContactRead'
+      pitch_id:
+        type: integer
+      pitch_interest_id:
+        type: integer
+      pitch_contacts:
+        type: array
+        items:
+          $ref: '#/definitions/MatchContactRead'
+      matched_at:
+        type: string
+        format: date-time
+  MatchContactRead:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      avatar:
+        type: string
+      email_address:
+        type: string
+      phone_number:
+        type: string
+################################################################################
+  CarbonCertificationCreate:
+    type: object
+    properties:
+      pitch_id:
+        type: integer
+      type:
+        type: string
+      other_type:
+        type: string
+      link:
+        type: string
+  CarbonCertificationRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      pitch_id:
+        type: integer
+      type:
+        type: string
+      other_type:
+        type: string
+      link:
+        type: string
+  CarbonCertificationReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/CarbonCertificationRead'
+  CarbonCertificationUpdate:
+    type: object
+    properties:
+      type:
+        type: string
+      other_type:
+        type: string
+      link:
+        type: string
+################################################################################
+  NotificationRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: integer
+      title:
+        type: string
+      body:
+        type: string
+      action:
+        type: string
+        enum: [INTEREST_SHOWN, MATCH, VERSION_CREATED, VERSION_APPROVED, VERSION_REJECTED]
+      referenced_type:
+        type: string
+        enum:
+          - Interest
+          - Match
+          - CarbonCertificationVersion
+          - OrganisationVersion
+          - OrganisationDocumentVersion
+          - PitchVersion
+          - PitchDocumentVersion
+          - RestorationMethodMetricVersion
+          - TreeSpeciesVersion
+      referenced_action_id:
+        type: integer
+      unread:
+        type: boolean
+      created_at:
+        type: string
+        format: date-time
+  NotificationReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/NotificationRead'
+################################################################################
+  CarbonCertificationVersionRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      status:
+        type: string
+      rejected_reason:
+        type: string
+      approved_rejected_by:
+        type: integer
+      approved_rejected_at:
+        type: string
+        format: date-time
+      data:
+        $ref: '#/definitions/CarbonCertificationRead'
+  CarbonCertificationVersionReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/CarbonCertificationVersionRead'
+  CarbonCertificationVersionReject:
+    type: object
+    properties:
+      rejected_reason:
+        type: string
+################################################################################
+  PitchDocumentCreate:
+    type: object
+    properties:
+      pitch_id:
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+      document:
+        type: integer
+  PitchDocumentRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      pitch_id:
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+      document:
+        type: string
+  PitchDocumentReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/PitchDocumentRead'
+  PitchDocumentUpdate:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      document:
+        type: integer
+################################################################################
+  PitchDocumentVersionRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      status:
+        type: string
+      rejected_reason:
+        type: string
+      approved_rejected_by:
+        type: integer
+      approved_rejected_at:
+        type: string
+        format: date-time
+      data:
+        $ref: '#/definitions/PitchDocumentRead'
+  PitchDocumentVersionReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/PitchDocumentVersionRead'
+  PitchDocumentVersionReject:
+    type: object
+    properties:
+      rejected_reason:
+        type: string
+################################################################################
+  RestorationMethodMetricCreate:
+    type: object
+    properties:
+      pitch_id:
+        type: integer
+      restoration_method:
+        type: string
+      experience:
+        type: integer
+      land_size:
+        type: number
+        format: float
+      price_per_hectare:
+        type: number
+        format: float
+      biomass_per_hectare:
+        type: number
+        format: float
+      carbon_impact:
+        type: number
+        format: float
+      species_impacted:
+        type: array
+        items:
+          type: string
+  RestorationMethodMetricRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      pitch_id:
+        type: integer
+      restoration_method:
+        type: string
+      experience:
+        type: integer
+      land_size:
+        type: number
+        format: float
+      price_per_hectare:
+        type: number
+        format: float
+      biomass_per_hectare:
+        type: number
+        format: float
+      carbon_impact:
+        type: number
+        format: float
+      species_impacted:
+        type: array
+        items:
+          type: string
+  RestorationMethodMetricReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/RestorationMethodMetricRead'
+  RestorationMethodMetricUpdate:
+    type: object
+    properties:
+      restoration_method:
+        type: string
+      experience:
+        type: integer
+      land_size:
+        type: number
+        format: float
+      price_per_hectare:
+        type: number
+        format: float
+      biomass_per_hectare:
+        type: number
+        format: float
+      carbon_impact:
+        type: number
+        format: float
+      species_impacted:
+        type: array
+        items:
+          type: string
+################################################################################
+  RestorationMethodMetricVersionRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      status:
+        type: string
+      rejected_reason:
+        type: string
+      approved_rejected_by:
+        type: integer
+      approved_rejected_at:
+        type: string
+        format: date-time
+      data:
+        $ref: '#/definitions/RestorationMethodMetricRead'
+  RestorationMethodMetricVersionReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/RestorationMethodMetricVersionRead'
+  RestorationMethodMetricVersionReject:
+    type: object
+    properties:
+      rejected_reason:
+        type: string
+################################################################################
+  TreeSpeciesCreate:
+    type: object
+    properties:
+      pitch_id:
+        type: integer
+      name:
+        type: string
+      is_native:
+        type: boolean
+      count:
+        type: integer
+      price_to_plant:
+        type: number
+        format: float
+      price_to_maintain:
+        type: number
+        format: float
+      saplings:
+        type: number
+        format: float
+      site_prep:
+        type: number
+        format: floats
+      survival_rate:
+        type: integer
+      produces_food:
+        type: boolean
+      produces_firewood:
+        type: boolean
+      produces_timber:
+        type: boolean
+      owner:
+        type: string
+      season:
+        type: string
+  TreeSpeciesRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      pitch_id:
+        type: integer
+      name:
+        type: string
+      is_native:
+        type: boolean
+      count:
+        type: integer
+      price_to_plant:
+        type: number
+        format: float
+      price_to_maintain:
+        type: number
+        format: float
+      saplings:
+        type: number
+        format: float
+      site_prep:
+        type: number
+        format: float
+      survival_rate:
+        type: integer
+      produces_food:
+        type: boolean
+      produces_firewood:
+        type: boolean
+      produces_timber:
+        type: boolean
+      owner:
+        type: string
+      season:
+        type: string
+  TreeSpeciesReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/TreeSpeciesRead'
+  TreeSpeciesUpdate:
+    type: object
+    properties:
+      name:
+        type: string
+      is_native:
+        type: boolean
+      count:
+        type: integer
+      price_to_plant:
+        type: number
+        format: float
+      price_to_maintain:
+        type: number
+        format: float
+      saplings:
+        type: number
+        format: float
+      site_prep:
+        type: number
+        format: float
+      survival_rate:
+        type: integer
+      produces_food:
+        type: boolean
+      produces_firewood:
+        type: boolean
+      produces_timber:
+        type: boolean
+      owner:
+        type: string
+      season:
+        type: string
+################################################################################
+  TreeSpeciesVersionRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      status:
+        type: string
+      rejected_reason:
+        type: string
+      approved_rejected_by:
+        type: integer
+      approved_rejected_at:
+        type: string
+        format: date-time
+      data:
+        $ref: '#/definitions/TreeSpeciesRead'
+  TreeSpeciesVersionReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/TreeSpeciesVersionRead'
+  TreeSpeciesVersionReject:
+    type: object
+    properties:
+      rejected_reason:
+        type: string
+################################################################################
+  FilterSearch:
+    type: object
+    properties:
+      page:
+        type: integer
+      sortAttribute:
+        type: string
+        enum: [created_at, funding_amount, compatibility_score]
+      sortDirection:
+        type: string
+        enum: [asc, desc]
+      filters:
+        type: array
+        items:
+          $ref: '#/definitions/FilterCondition'
+  FilterCondition:
+    type: object
+    properties:
+      attribute:
+        type: string
+        enum: [land_types, land_ownerships, land_size, land_continent, land_country, restoration_methods, restoration_goals, funding_sources, funding_amount, long_term_engagement, reporting_frequency, reporting_level, sustainable_development_goals, price_per_tree]
+      operator:
+        type: string
+        enum: [contains, in, between, boolean]
+      value:
+        type: array
+        items:
+          type: string
+################################################################################
+  PitchCreate:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      land_types:
+        type: array
+        items:
+          type: string
+      land_ownerships:
+        type: array
+        items:
+          type: string
+      land_size:
+        type: string
+      land_continent:
+        type: string
+      land_country:
+        type: string
+      land_geojson:
+        type: string
+      restoration_methods:
+        type: array
+        items:
+          type: string
+      restoration_goals:
+        type: array
+        items:
+          type: string
+      funding_sources:
+        type: array
+        items:
+          type: string
+      funding_amount:
+        type: integer
+      revenue_drivers:
+        type: array
+        items:
+          type: string
+      estimated_timespan:
+        type: integer
+      long_term_engagement:
+        type: boolean
+      reporting_frequency:
+        type: string
+      reporting_level:
+        type: string
+      sustainable_development_goals:
+        type: array
+        items:
+          type: string
+      avatar:
+        type: integer
+      cover_photo:
+        type: integer
+      video:
+        type: integer
+      problem:
+        type: string
+      anticipated_outcome:
+        type: string
+      who_is_involved:
+        type: string
+      local_community_involvement:
+        type: boolean
+      training_involved:
+        type: boolean
+      training_type:
+        type: string
+      training_amount_people:
+        type: integer
+      people_working_in:
+        type: string
+      people_amount_nearby:
+        type: integer
+      people_amount_abroad:
+        type: integer
+      people_amount_employees:
+        type: integer
+      people_amount_volunteers:
+        type: integer
+      benefited_people:
+        type: integer
+      future_maintenance:
+        type: string
+      use_of_resources:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+  PitchRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      organisation_id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      land_types:
+        type: array
+        items:
+          type: string
+      land_ownerships:
+        type: array
+        items:
+          type: string
+      land_size:
+        type: string
+      land_continent:
+        type: string
+      land_country:
+        type: string
+      land_geojson:
+        type: string
+      restoration_methods:
+        type: array
+        items:
+          type: string
+      restoration_goals:
+        type: array
+        items:
+          type: string
+      funding_sources:
+        type: array
+        items:
+          type: string
+      funding_amount:
+        type: integer
+      revenue_drivers:
+        type: array
+        items:
+          type: string
+      estimated_timespan:
+        type: integer
+      long_term_engagement:
+        type: boolean
+      reporting_frequency:
+        type: string
+      reporting_level:
+        type: string
+      sustainable_development_goals:
+        type: array
+        items:
+          type: string
+      avatar:
+        type: string
+      cover_photo:
+        type: string
+      video:
+        type: string
+      problem:
+        type: string
+      anticipated_outcome:
+        type: string
+      who_is_involved:
+        type: string
+      local_community_involvement:
+        type: boolean
+      training_involved:
+        type: boolean
+      training_type:
+        type: string
+      training_amount_people:
+        type: integer
+      people_working_in:
+        type: string
+      people_amount_nearby:
+        type: integer
+      people_amount_abroad:
+        type: integer
+      people_amount_employees:
+        type: integer
+      people_amount_volunteers:
+        type: integer
+      benefited_people:
+        type: integer
+      future_maintenance:
+        type: string
+      use_of_resources:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      completed:
+        type: boolean
+      completed_at:
+        type: string
+        format: date-time
+      completed_by:
+        type: integer
+      successful:
+        type: boolean
+      compatibility_score:
+        type: integer
+  PitchReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/PitchRead'
+  PitchUpdate:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      land_types:
+        type: array
+        items:
+          type: string
+      land_ownerships:
+        type: array
+        items:
+          type: string
+      land_size:
+        type: string
+      land_continent:
+        type: string
+      land_country:
+        type: string
+      land_geojson:
+        type: string
+      restoration_methods:
+        type: array
+        items:
+          type: string
+      restoration_goals:
+        type: array
+        items:
+          type: string
+      funding_sources:
+        type: array
+        items:
+          type: string
+      funding_amount:
+        type: integer
+      revenue_drivers:
+        type: array
+        items:
+          type: string
+      estimated_timespan:
+        type: integer
+      long_term_engagement:
+        type: boolean
+      reporting_frequency:
+        type: string
+      reporting_level:
+        type: string
+      sustainable_development_goals:
+        type: array
+        items:
+          type: string
+      avatar:
+        type: integer
+      cover_photo:
+        type: integer
+      video:
+        type: integer
+      problem:
+        type: string
+      anticipated_outcome:
+        type: string
+      who_is_involved:
+        type: string
+      local_community_involvement:
+        type: boolean
+      training_involved:
+        type: boolean
+      training_type:
+        type: string
+      training_amount_people:
+        type: integer
+      people_working_in:
+        type: string
+      people_amount_nearby:
+        type: integer
+      people_amount_abroad:
+        type: integer
+      people_amount_employees:
+        type: integer
+      people_amount_volunteers:
+        type: integer
+      benefited_people:
+        type: integer
+      future_maintenance:
+        type: string
+      use_of_resources:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+################################################################################
+  PitchVersionRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      status:
+        type: string
+      rejected_reason:
+        type: string
+      approved_rejected_by:
+        type: integer
+      approved_rejected_at:
+        type: string
+        format: date-time
+      data:
+        $ref: '#/definitions/PitchRead'
+  PitchVersionReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/PitchVersionRead'
+  PitchVersionReject:
+    type: object
+    properties:
+      rejected_reason:
+        type: string
+  PitchComplete:
+    type: object
+    properties:
+      successful:
+        type: boolean
+################################################################################
+  Empty:
+    type: object
+################################################################################
+  ReportingLevelReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        level:
+          type: string
+################################################################################
+  TreeSpeciesOwnerReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        owner:
+          type: string
+################################################################################
+  CarbonCertificationTypeReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+################################################################################
+  RevenueDriverReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        driver:
+          type: string
+################################################################################
+  ReportingFrequencyReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        frequency:
+          type: string
+################################################################################
+  ContinentReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        continent:
+          type: string
+################################################################################
+  LandTypeReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+################################################################################
+  LandOwnershipReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        ownership:
+          type: string
+################################################################################
+  RestorationMethodReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        method:
+          type: string
+################################################################################
+  RestorationGoalReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        goal:
+          type: string
+################################################################################
+  FundingSourceReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        source:
+          type: string
+################################################################################
+  SustainableDevelopmentGoalReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        goal:
+          type: string
+################################################################################
+  OfferCreate:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      land_types:
+        type: array
+        items:
+          type: string
+      land_ownerships:
+        type: array
+        items:
+          type: string
+      land_size:
+        type: string
+      land_continent:
+        type: string
+      land_country:
+        type: string
+      restoration_methods:
+        type: array
+        items:
+          type: string
+      restoration_goals:
+        type: array
+        items:
+          type: string
+      funding_sources:
+        type: array
+        items:
+          type: string
+      funding_amount:
+        type: integer
+      price_per_tree:
+        type: number
+        format: float
+      long_term_engagement:
+        type: boolean
+      reporting_frequency:
+        type: string
+      reporting_level:
+        type: string
+      sustainable_development_goals:
+        type: array
+        items:
+          type: string
+      cover_photo:
+        type: integer
+      avatar:
+        type: integer
+      video:
+        type: integer
+  OfferUpdate:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      land_types:
+        type: array
+        items:
+          type: string
+      land_ownerships:
+        type: array
+        items:
+          type: string
+      land_size:
+        type: string
+      land_continent:
+        type: string
+      land_country:
+        type: string
+      restoration_methods:
+        type: array
+        items:
+          type: string
+      restoration_goals:
+        type: array
+        items:
+          type: string
+      funding_sources:
+        type: array
+        items:
+          type: string
+      funding_amount:
+        type: integer
+      price_per_tree:
+        type: number
+        format: float
+      long_term_engagement:
+        type: boolean
+      reporting_frequency:
+        type: string
+      reporting_level:
+        type: string
+      sustainable_development_goals:
+        type: array
+        items:
+          type: string
+      cover_photo:
+        type: integer
+      avatar:
+        type: integer
+      video:
+        type: integer
+  OfferRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      organisation_id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      land_types:
+        type: array
+        items:
+          type: string
+      land_ownerships:
+        type: array
+        items:
+          type: string
+      land_size:
+        type: string
+      land_continent:
+        type: string
+      land_country:
+        type: string
+      restoration_methods:
+        type: array
+        items:
+          type: string
+      restoration_goals:
+        type: array
+        items:
+          type: string
+      funding_sources:
+        type: array
+        items:
+          type: string
+      funding_amount:
+        type: integer
+      price_per_tree:
+        type: number
+        format: float
+      long_term_engagement:
+        type: boolean
+      reporting_frequency:
+        type: string
+      reporting_level:
+        type: string
+      sustainable_development_goals:
+        type: array
+        items:
+          type: string
+      cover_photo:
+        type: string
+      avatar:
+        type: string
+      video:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      completed:
+        type: boolean
+      completed_at:
+        type: string
+        format: date-time
+      completed_by:
+        type: integer
+      successful:
+        type: boolean
+      compatibility_score:
+        type: integer
+  OfferReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/OfferRead'
+  OfferComplete:
+    type: object
+    properties:
+      successful:
+        type: boolean
+################################################################################
+  PitchContactCreate:
+    type: object
+    properties:
+      pitch_id:
+        type: integer
+      user_id:
+        type: integer
+      team_member_id:
+        type: integer
+  PitchContactRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      pitch_id:
+        type: integer
+      user_id:
+        type: integer
+      team_member_id:
+        type: integer
+  PitchContactReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/PitchContactRead'
+################################################################################
+  InterestCreate:
+    type: object
+    properties:
+      initiator:
+        type: string
+      offer_id:
+        type: integer
+      pitch_id:
+        type: integer
+  InterestRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      organisation_id:
+        type: integer
+      initiator:
+        type: string
+      offer_id:
+        type: integer
+      pitch_id:
+        type: integer
+      created_at:
+        type: string
+        format: date-time
+  InterestReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/InterestRead'
+################################################################################
+  OfferContactCreate:
+    type: object
+    properties:
+      offer_id:
+        type: integer
+      user_id:
+        type: integer
+      team_member_id:
+        type: integer
+  OfferContactRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      offer_id:
+        type: integer
+      user_id:
+        type: integer
+      team_member_id:
+        type: integer
+  OfferContactReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/OfferContactRead'
+################################################################################
+  OfferDocumentCreate:
+    type: object
+    properties:
+      offer_id:
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+      document:
+        type: integer
+  OfferDocumentUpdate:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      document:
+        type: integer
+  OfferDocumentRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      offer_id:
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+      document:
+        type: string
+  OfferDocumentReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/OfferDocumentRead'
+################################################################################
+  TeamMemberCreate:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: integer
+      email_address:
+        type: string
+      phone_number:
+        type: string
+  TeamMemberUpdate:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: integer
+      email_address:
+        type: string
+      phone_number:
+        type: string
+  TeamMemberRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: string
+      email_address:
+        type: string
+      phone_number:
+        type: string
+  TeamMemberReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/TeamMemberRead'
+################################################################################
+  TokenRead:
+    type: object
+    properties:
+      token:
+        type: string
+################################################################################
+  UploadCreate:
+    type: object
+    properties:
+      id:
+        type: integer
+      uploaded_at:
+        type: string
+        format: date-time
+################################################################################
+  CountryReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+################################################################################
+  OrganisationTypeReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+################################################################################
+  OrganisationCategoryReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+################################################################################
+  AuthReset:
+    type: object
+    properties:
+      email_address:
+        type: string
+  AuthVerify:
+    type: object
+    properties:
+      token:
+        type: string
+  AuthChange:
+    type: object
+    properties:
+      token:
+        type: string
+      password:
+        type: string
+  AuthLogIn:
+    type: object
+    properties:
+      email_address:
+        type: string
+        format: email
+      password:
+        type: string
+################################################################################
+  UserCreate:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      phone_number:
+        type: string
+  UserAccept:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      phone_number:
+        type: string
+  UserInvite:
+    type: object
+    properties:
+      email_address:
+        type: string
+  UserRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      organisation_id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      email_address_verified_at:
+        type: string
+        format: date-time
+      role:
+        type: string
+      last_logged_in_at:
+        type: string
+        format: date-time
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: string
+      phone_number:
+        type: string
+  UserReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/UserRead'
+  UserUpdate:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: integer
+      phone_number:
+        type: string
+################################################################################################################################################################
+  AdminAccept:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+  AdminInvite:
+    type: object
+    properties:
+      email_address:
+        type: string
+  AdminRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      email_address_verified_at:
+        type: string
+        format: date-time
+      role:
+        type: string
+      last_logged_in_at:
+        type: string
+        format: date-time
+      job_role:
+        type: string
+      avatar:
+        type: string
+  AdminReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/AdminRead'
+  AdminUpdate:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+      avatar:
+        type: integer
+################################################################################
+  OrganisationCreate:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      address_1:
+        type: string
+      address_2:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      zip_code:
+        type: string
+      country:
+        type: string
+      phone_number:
+        type: string
+      website:
+        type: string
+      type:
+        type: string
+      category:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: integer
+      cover_photo:
+        type: integer
+      video:
+        type: integer
+      founded_at:
+        type: string
+        format: date
+  OrganisationRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      address_1:
+        type: string
+      address_2:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      zip_code:
+        type: string
+      country:
+        type: string
+      phone_number:
+        type: string
+      website:
+        type: string
+      type:
+        type: string
+      category:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: string
+      cover_photo:
+        type: string
+      video:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      founded_at:
+        type: string
+        format: date
+  OrganisationReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/OrganisationRead'
+  OrganisationUpdate:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      address_1:
+        type: string
+      address_2:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      zip_code:
+        type: string
+      country:
+        type: string
+      phone_number:
+        type: string
+      website:
+        type: string
+      type:
+        type: string
+      category:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: integer
+      cover_photo:
+        type: integer
+      video:
+        type: integer
+      founded_at:
+        type: string
+        format: date
+################################################################################
+  OrganisationVersionRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      status:
+        type: string
+      rejected_reason:
+        type: string
+      approved_rejected_by:
+        type: integer
+      approved_rejected_at:
+        type: string
+        format: date-time
+      data:
+        $ref: '#/definitions/OrganisationRead'
+  OrganisationVersionReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/OrganisationVersionRead'
+  OrganisationVersionReject:
+    type: object
+    properties:
+      rejected_reason:
+        type: string
+################################################################################
+  DocumentTypeReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+################################################################################
+  OrganisationDocumentCreate:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      document:
+        type: integer
+  OrganisationDocumentRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      organisation_id:
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+      document:
+        type: string
+  OrganisationDocumentReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/OrganisationDocumentRead'
+  OrganisationDocumentUpdate:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      document:
+        type: integer
+################################################################################
+  OrganisationDocumentVersionRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      status:
+        type: string
+      rejected_reason:
+        type: string
+      approved_rejected_by:
+        type: integer
+      approved_rejected_at:
+        type: string
+        format: date-time
+      data:
+        $ref: '#/definitions/OrganisationDocumentRead'
+  OrganisationDocumentVersionReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/OrganisationDocumentVersionRead'
+  OrganisationDocumentVersionReject:
+    type: object
+    properties:
+      rejected_reason:
+        type: string
+################################################################################
+  LandSizeReadAll:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        size:
+          type: string
+################################################################################
+# PATHS
+################################################################################
+paths:
+################################################################################
+  /organisations/{ID}/users:
+    get:
+      summary: Read an organisation's users
+      tags:
+        - Users
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UserReadAll'
+  /users:
+    post:
+      summary: Create a user
+      tags:
+        - Users
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/UserRead'
+  /users/{ID}:
+    patch:
+      summary: Update a user
+      tags:
+        - Users
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UserRead'
+    get:
+      summary: Read a user
+      tags:
+        - Users
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UserRead'
+  /users/invite:
+    post:
+      summary: Invite a user
+      tags:
+        - Users
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserInvite'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/UserRead'
+  /users/accept:
+    post:
+      summary: Create a user from an invite
+      tags:
+        - Users
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAccept'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/UserRead'
+################################################################################
+  /admins:
+    get:
+      summary: Read all admins
+      tags:
+        - Admins
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AdminReadAll'
+  /admins/{ID}:
+    patch:
+      summary: Update an admin
+      tags:
+        - Admins
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AdminUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AdminRead'
+    get:
+      summary: Read an admin
+      tags:
+        - Admins
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AdminRead'
+  /admins/invite:
+    post:
+      summary: Invite an admin
+      tags:
+        - Admins
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AdminInvite'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/AdminRead'
+  /admins/accept:
+    post:
+      summary: Create an admin from an invite
+      tags:
+        - Admins
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AdminAccept'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/AdminRead'
+################################################################################
+  /auth/login:
+    post:
+      summary: Log a user or admin in
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+          - name: Body
+            in: body
+            required: true
+            schema:
+              $ref: '#/definitions/AuthLogIn'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/TokenRead'
+  /auth/logout:
+    get:
+      summary: Log the logged in user or admin out
+      tags:
+        - Auth
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /auth/refresh:
+    get:
+      summary: Refresh the logged in user's or admin's JWT token
+      tags:
+        - Auth
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TokenRead'
+  /auth/verify:
+    patch:
+      summary: Verify the logged in user's or admin's email address
+      tags:
+        - Auth
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthVerify'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /auth/resend:
+    get:
+      summary: Send a verification email to the logged in user or admin
+      tags:
+        - Auth
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /auth/reset:
+    post:
+      summary: Send a password reset email to a user or admin
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthReset'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /auth/change:
+    patch:
+      summary: Reset a user's or admin's password
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthChange'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /auth/me:
+    get:
+      summary: Read the logged in user or admin
+      tags:
+        - Auth
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              USER:
+                type: object
+                $ref: '#/definitions/UserRead'
+              ADMIN:
+                type: object
+                $ref: '#/definitions/AdminRead'
+################################################################################
+  /countries:
+    get:
+      summary: Read all countries
+      tags:
+        - Countries
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CountryReadAll'
+################################################################################
+  /organisation_types:
+    get:
+      summary: Read all organisation types
+      tags:
+        - Organisation Types
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationTypeReadAll'
+################################################################################
+  /organisation_categories:
+    get:
+      summary: Read all organisation categories
+      tags:
+        - Organisation Categories
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationCategoryReadAll'
+################################################################################
+  /organisations:
+    post:
+      summary: Create an organisation
+      tags:
+        - Organisations
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrganisationCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/OrganisationVersionRead'
+    get:
+      summary: Read all organisations
+      tags:
+        - Organisations
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationReadAll'
+  /organisations/{ID}:
+    get:
+      summary: Read an organisation
+      tags:
+        - Organisations
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationRead'
+    patch:
+      summary: Update an organisation
+      tags:
+        - Organisations
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrganisationUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationVersionRead'
+################################################################################
+  /organisation_versions/{ID}:
+    get:
+      summary: Read an organisation version
+      tags:
+        - Organisation Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationVersionRead'
+    delete:
+      summary: Delete an organisation version
+      tags:
+        - Organisation Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /organisation_versions/{ID}/approve:
+    patch:
+      summary: Approve an organisation version
+      tags:
+        - Organisation Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationVersionRead'
+  /organisation_versions/{ID}/reject:
+    patch:
+      summary: Reject an organisation version
+      tags:
+        - Organisation Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrganisationVersionReject'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationVersionRead'
+  /organisations/{ID}/organisation_versions:
+    get:
+      summary: Read an organisation's organisation versions
+      tags:
+        - Organisation Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationVersionReadAll'
+################################################################################
+  /uploads:
+    post:
+      summary: Create an upload
+      tags:
+        - Uploads
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: upload
+          in: formData
+          required: true
+          type: file
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/UploadCreate'
+################################################################################
+  /team_members:
+    post:
+      summary: Create a team member
+      tags:
+        - Team Members
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TeamMemberCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/TeamMemberRead'
+  /team_members/{ID}:
+    get:
+      summary: Read a team member
+      tags:
+        - Team Members
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TeamMemberRead'
+    patch:
+      summary: Update a team member
+      tags:
+        - Team Members
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TeamMemberUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TeamMemberRead'
+    delete:
+      summary: Delete a team member
+      tags:
+        - Team Members
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /organisations/{ID}/team_members:
+    get:
+      summary: Read an organisation's team members
+      tags:
+        - Team Members
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TeamMemberReadAll'
+################################################################################
+  /offer_documents:
+    post:
+      summary: Create an offer document
+      tags:
+        - Offer Documents
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OfferDocumentCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/OfferDocumentRead'
+  /offer_documents/{ID}:
+    get:
+      summary: Read an offer document
+      tags:
+        - Offer Documents
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OfferDocumentRead'
+    patch:
+      summary: Update an offer document
+      tags:
+        - Offer Documents
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OfferDocumentUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OfferDocumentRead'
+    delete:
+      summary: Delete an offer document
+      tags:
+        - Offer Documents
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /offers/{ID}/offer_documents:
+    get:
+      summary: Read an offer's offer documents
+      tags:
+        - Offer Documents
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OfferDocumentReadAll'
+################################################################################
+  /document_types:
+    get:
+      summary: Read all document types
+      tags:
+        - Document Types
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DocumentTypeReadAll'
+################################################################################
+  /organisation_documents:
+    post:
+      summary: Create an organisation document
+      tags:
+        - Organisation Documents
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrganisationDocumentCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/OrganisationDocumentVersionRead'
+  /organisation_documents/{ID}:
+    get:
+      summary: Read an organisation document
+      tags:
+        - Organisation Documents
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationDocumentRead'
+    patch:
+      summary: Update an organisation document
+      tags:
+        - Organisation Documents
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrganisationDocumentUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationDocumentVersionRead'
+    delete:
+      summary: Delete an organisation document
+      tags:
+        - Organisation Documents
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /organisations/{ID}/organisation_documents:
+    get:
+      summary: Read an organisation's organisation documents
+      tags:
+        - Organisation Documents
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationDocumentReadAll'
+  /organisations/{ID}/organisation_documents/inspect:
+    get:
+      summary: Inspect an organisation's organisation documents
+      tags:
+        - Organisation Documents
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationDocumentVersionReadAll'
+################################################################################
+  /organisation_document_versions/{ID}:
+    get:
+      summary: Read an organisation document version
+      tags:
+        - Organisation Document Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationDocumentVersionRead'
+    delete:
+      summary: Delete an organisation document version
+      tags:
+        - Organisation Document Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /organisation_document_versions/{ID}/approve:
+    patch:
+      summary: Approve an organisation document version
+      tags:
+        - Organisation Document Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationDocumentVersionRead'
+  /organisation_document_versions/{ID}/reject:
+    patch:
+      summary: Reject an organisation document version
+      tags:
+        - Organisation Document Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrganisationDocumentVersionReject'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationDocumentVersionRead'
+  /organisation_documents/{ID}/organisation_document_versions:
+    get:
+      summary: Read an organisation document's organisation document versions
+      tags:
+        - Organisation Document Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationDocumentVersionReadAll'
+################################################################################
+  /offers:
+    post:
+      summary: Create an offer
+      tags:
+        - Offers
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OfferCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/OfferRead'
+  /offers/search:
+    post:
+      summary: Search offers respecting the supplied filtering, sorting, and pagination
+      tags:
+        - Offers
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/FilterSearch'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OfferReadAll'
+  /offers/{ID}:
+    get:
+      summary: Read an offer
+      tags:
+        - Offers
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OfferRead'
+    patch:
+      summary: Update an offer
+      tags:
+        - Offers
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OfferUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OfferRead'
+  /organisations/{ID}/offers:
+    get:
+      summary: Read an organisation's offers
+      tags:
+        - Offers
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OfferReadAll'
+  /offers/{ID}/complete:
+    patch:
+      summary: Mark an offer as complete
+      tags:
+        - Offers
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OfferComplete'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OfferRead'
+################################################################################
+  /offer_contacts:
+    post:
+      summary: Create an offer contact
+      tags:
+        - Offer Contacts
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OfferContactCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/OfferContactRead'
+  /offer_contacts/{ID}:
+    delete:
+      summary: Delete an offer contact
+      tags:
+        - Offer Contacts
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /offers/{ID}/offer_contacts:
+    get:
+      summary: Read an offer's offer contacts
+      tags:
+        - Offer Contacts
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OfferContactReadAll'
+################################################################################
+  /pitch_contacts:
+    post:
+      summary: Create a pitch contact
+      tags:
+        - Pitch Contacts
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PitchContactCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/PitchContactRead'
+  /pitch_contacts/{ID}:
+    delete:
+      summary: Delete a pitch contact
+      tags:
+        - Pitch Contacts
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /pitches/{ID}/pitch_contacts:
+    get:
+      summary: Read a pitch's pitch contacts
+      tags:
+        - Pitch Contacts
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchContactReadAll'
+################################################################################
+  /land_types:
+    get:
+      summary: Read all land types
+      tags:
+        - Land Types
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/LandTypeReadAll'
+################################################################################
+  /land_ownerships:
+    get:
+      summary: Read all land ownerships
+      tags:
+        - Land Ownerships
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/LandOwnershipReadAll'
+################################################################################
+  /restoration_methods:
+    get:
+      summary: Read all restoration methods
+      tags:
+        - Restoration Methods
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationMethodReadAll'
+################################################################################
+  /restoration_goals:
+    get:
+      summary: Read all restoration goals
+      tags:
+        - Restoration Goals
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationGoalReadAll'
+################################################################################
+  /funding_sources:
+    get:
+      summary: Read all funding sources
+      tags:
+        - Funding Sources
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/FundingSourceReadAll'
+################################################################################
+  /sustainable_development_goals:
+    get:
+      summary: Read all sustainable development goals
+      tags:
+        - Sustainable Development Goals
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/SustainableDevelopmentGoalReadAll'
+################################################################################
+  /reporting_frequencies:
+    get:
+      summary: Read all reporting frequencies
+      tags:
+        - Reporting Frequencies
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ReportingFrequencyReadAll'
+################################################################################
+  /reporting_levels:
+    get:
+      summary: Read all reporting levels
+      tags:
+        - Reporting Levels
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ReportingLevelReadAll'
+################################################################################
+  /continents:
+    get:
+      summary: Read all continents
+      tags:
+        - Continents
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ContinentReadAll'
+################################################################################
+  /revenue_drivers:
+    get:
+      summary: Read all revenue drivers
+      tags:
+        - Revenue Drivers
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RevenueDriverReadAll'
+################################################################################
+  /pitches:
+    post:
+      summary: Create a pitch
+      tags:
+        - Pitches
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PitchCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/PitchVersionRead'
+  /pitches/search:
+    post:
+      summary: Search pitches respecting the supplied filtering, sorting, and pagination
+      tags:
+        - Pitches
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/FilterSearch'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchReadAll'
+  /pitches/{ID}:
+    get:
+      summary: Read a pitch
+      tags:
+        - Pitches
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchRead'
+    patch:
+      summary: Update a pitch
+      tags:
+        - Pitches
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PitchUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchVersionRead'
+  /organisations/{ID}/pitches:
+    get:
+      summary: Read an organisation's pitches
+      tags:
+        - Pitches
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchReadAll'
+  /organisations/{ID}/pitches/inspect:
+    get:
+      summary: Inspect an organisation's pitches
+      tags:
+        - Pitches
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchVersionReadAll'
+  /pitches/{ID}/complete:
+    patch:
+      summary: Mark a pitch as complete
+      tags:
+        - Pitches
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PitchComplete'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchRead'
+################################################################################
+  /pitch_versions/{ID}:
+    get:
+      summary: Read a pitch version
+      tags:
+        - Pitch Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchVersionRead'
+    delete:
+      summary: Delete a pitch version
+      tags:
+        - Pitch Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /pitch_versions/{ID}/approve:
+    patch:
+      summary: Approve a pitch version
+      tags:
+        - Pitch Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchVersionRead'
+  /pitch_versions/{ID}/reject:
+    patch:
+      summary: Reject a pitch version
+      tags:
+        - Pitch Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PitchVersionReject'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchVersionRead'
+  /pitches/{ID}/pitch_versions:
+    get:
+      summary: Read a pitch's pitch versions
+      tags:
+        - Pitch Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchVersionReadAll'
+################################################################################
+  /carbon_certification_types:
+    get:
+      summary: Read all carbon certification types
+      tags:
+        - Carbon Certification Types
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CarbonCertificationTypeReadAll'
+################################################################################
+  /tree_species_owners:
+    get:
+      summary: Read all tree species owners
+      tags:
+        - Tree Species Owners
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TreeSpeciesOwnerReadAll'
+################################################################################
+  /carbon_certifications:
+    post:
+      summary: Create a carbon certification
+      tags:
+        - Carbon Certifications
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CarbonCertificationCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/CarbonCertificationVersionRead'
+  /carbon_certifications/{ID}:
+    get:
+      summary: Read a carbon certification
+      tags:
+        - Carbon Certifications
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CarbonCertificationRead'
+    patch:
+      summary: Update a carbon certification
+      tags:
+        - Carbon Certifications
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CarbonCertificationUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CarbonCertificationVersionRead'
+    delete:
+      summary: Delete a carbon certification
+      tags:
+        - Carbon Certifications
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /pitches/{ID}/carbon_certifications:
+    get:
+      summary: Read a pitch's carbon certifications
+      tags:
+        - Carbon Certifications
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CarbonCertificationReadAll'
+  /pitches/{ID}/carbon_certifications/inspect:
+    get:
+      summary: Inspect a pitch's carbon certifications
+      tags:
+        - Carbon Certifications
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CarbonCertificationVersionReadAll'
+################################################################################
+  /carbon_certification_versions/{ID}:
+    get:
+      summary: Read a carbon certification version
+      tags:
+        - Carbon Certification Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CarbonCertificationVersionRead'
+    delete:
+      summary: Delete a carbon certification version
+      tags:
+        - Carbon Certification Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /carbon_certification_versions/{ID}/approve:
+    patch:
+      summary: Approve a carbon certification version
+      tags:
+        - Carbon Certification Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CarbonCertificationVersionRead'
+  /carbon_certification_versions/{ID}/reject:
+    patch:
+      summary: Reject a carbon certification version
+      tags:
+        - Carbon Certification Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CarbonCertificationVersionReject'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CarbonCertificationVersionRead'
+  /carbon_certifications/{ID}/carbon_certification_versions:
+    get:
+      summary: Read a carbon certification's carbon certification versions
+      tags:
+        - Carbon Certification Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CarbonCertificationVersionReadAll'
+################################################################################
+  /pitch_documents:
+    post:
+      summary: Create a pitch document
+      tags:
+        - Pitch Documents
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PitchDocumentCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/PitchDocumentVersionRead'
+  /pitch_documents/{ID}:
+    get:
+      summary: Read a pitch document
+      tags:
+        - Pitch Documents
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchDocumentRead'
+    patch:
+      summary: Update a pitch document
+      tags:
+        - Pitch Documents
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PitchDocumentUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchDocumentVersionRead'
+    delete:
+      summary: Delete a pitch document
+      tags:
+        - Pitch Documents
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /pitches/{ID}/pitch_documents:
+    get:
+      summary: Read a pitch's pitch documents
+      tags:
+        - Pitch Documents
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchDocumentReadAll'
+  /pitches/{ID}/pitch_documents/inspect:
+    get:
+      summary: Inspect a pitch's pitch documents
+      tags:
+        - Pitch Documents
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchDocumentVersionReadAll'
+################################################################################
+  /pitch_document_versions/{ID}:
+    get:
+      summary: Read a pitch document version
+      tags:
+        - Pitch Document Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchDocumentVersionRead'
+    delete:
+      summary: Delete a pitch document version
+      tags:
+        - Pitch Document Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /pitch_document_versions/{ID}/approve:
+    patch:
+      summary: Approve a pitch document version
+      tags:
+        - Pitch Document Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchDocumentVersionRead'
+  /pitch_document_versions/{ID}/reject:
+    patch:
+      summary: Reject a pitch document version
+      tags:
+        - Pitch Document Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PitchDocumentVersionReject'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchDocumentVersionRead'
+  /pitch_documents/{ID}/pitch_document_versions:
+    get:
+      summary: Read a pitch document's pitch document versions
+      tags:
+        - Pitch Document Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchDocumentVersionReadAll'
+################################################################################
+  /restoration_method_metrics:
+    post:
+      summary: Create a restoration method metric
+      tags:
+        - Restoration Method Metrics
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricVersionRead'
+  /restoration_method_metrics/{ID}:
+    get:
+      summary: Read a restoration method metric
+      tags:
+        - Restoration Method Metrics
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricRead'
+    patch:
+      summary: Update a restoration method metric
+      tags:
+        - Restoration Method Metrics
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricVersionRead'
+    delete:
+      summary: Delete a restoration method metric
+      tags:
+        - Restoration Method Metrics
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /pitches/{ID}/restoration_method_metrics:
+    get:
+      summary: Read a pitch's restoration method metrics
+      tags:
+        - Restoration Method Metrics
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricReadAll'
+  /pitches/{ID}/restoration_method_metrics/inspect:
+    get:
+      summary: Inspect a pitch's restoration method metrics
+      tags:
+        - Restoration Method Metrics
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricVersionReadAll'
+################################################################################
+  /restoration_method_metric_versions/{ID}:
+    get:
+      summary: Read a restoration method metric version
+      tags:
+        - Restoration Method Metric Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricVersionRead'
+    delete:
+      summary: Delete a restoration method metric version
+      tags:
+        - Restoration Method Metric Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /restoration_method_metric_versions/{ID}/approve:
+    patch:
+      summary: Approve a restoration method metric version
+      tags:
+        - Restoration Method Metric Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricVersionRead'
+  /restoration_method_metric_versions/{ID}/reject:
+    patch:
+      summary: Reject a restoration method metric version
+      tags:
+        - Restoration Method Metric Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricVersionReject'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricVersionRead'
+  /restoration_method_metrics/{ID}/restoration_method_metric_versions:
+    get:
+      summary: Read a restoration method metric's restoration method metric versions
+      tags:
+        - Restoration Method Metric Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricVersionReadAll'
+################################################################################
+  /tree_species:
+    post:
+      summary: Create a tree species
+      tags:
+        - Tree Species
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TreeSpeciesCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/TreeSpeciesVersionRead'
+  /tree_species/{ID}:
+    get:
+      summary: Read a tree species
+      tags:
+        - Tree Species
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TreeSpeciesRead'
+    patch:
+      summary: Update a tree species
+      tags:
+        - Tree Species
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TreeSpeciesUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TreeSpeciesVersionRead'
+    delete:
+      summary: Delete a tree species
+      tags:
+        - Tree Species
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /pitches/{ID}/tree_species:
+    get:
+      summary: Read a pitch's tree species
+      tags:
+        - Tree Species
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TreeSpeciesReadAll'
+  /pitches/{ID}/tree_species/inspect:
+    get:
+      summary: Inspect a pitch's tree species
+      tags:
+        - Tree Species
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TreeSpeciesVersionReadAll'
+################################################################################
+  /tree_species_versions/{ID}:
+    get:
+      summary: Read a tree species version
+      tags:
+        - Tree Species Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TreeSpeciesVersionRead'
+    delete:
+      summary: Delete a tree species version
+      tags:
+        - Tree Species Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+  /tree_species_versions/{ID}/approve:
+    patch:
+      summary: Approve a tree species version
+      tags:
+        - Tree Species Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TreeSpeciesVersionRead'
+  /tree_species_versions/{ID}/reject:
+    patch:
+      summary: Reject a tree species version
+      tags:
+        - Tree Species Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TreeSpeciesVersionReject'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TreeSpeciesVersionRead'
+  /tree_species/{ID}/tree_species_versions:
+    get:
+      summary: Read a tree species's tree species versions
+      tags:
+        - Tree Species Versions
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TreeSpeciesVersionReadAll'
+################################################################################
+  /tasks/carbon_certification_versions:
+    get:
+      summary: Read all pending carbon certification versions
+      tags:
+        - Tasks
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CarbonCertificationVersionReadAll'
+  /tasks/organisation_document_versions:
+    get:
+      summary: Read all pending organisation document versions
+      tags:
+        - Tasks
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationDocumentVersionReadAll'
+  /tasks/organisation_versions:
+    get:
+      summary: Read all pending organisation versions
+      tags:
+        - Tasks
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrganisationVersionReadAll'
+  /tasks/pitch_document_versions:
+    get:
+      summary: Read all pending pitch document versions
+      tags:
+        - Tasks
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchDocumentVersionReadAll'
+  /tasks/pitch_versions:
+    get:
+      summary: Read all pending pitch versions
+      tags:
+        - Tasks
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PitchVersionReadAll'
+  /tasks/restoration_method_metric_versions:
+    get:
+      summary: Read all pending restoration method metric versions
+      tags:
+        - Tasks
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RestorationMethodMetricVersionReadAll'
+  /tasks/tree_species_versions:
+    get:
+      summary: Read all pending tree species versions
+      tags:
+        - Tasks
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TreeSpeciesVersionReadAll'
+  /tasks/matches:
+    get:
+      summary: Read all matches
+      tags:
+        - Tasks
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/MatchReadAll'
+################################################################################
+  /land_sizes:
+    get:
+      summary: Read all land sizes
+      tags:
+        - Land Sizes
+      security: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/LandSizeReadAll'
+################################################################################
+  /interests:
+    post:
+      summary: Create an interest
+      tags:
+        - Interests
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InterestCreate'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/InterestRead'
+  /interests/initiated:
+    get:
+      summary: Read all interests initiated
+      tags:
+        - Interests
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/InterestReadAll'
+  /interests/received:
+    get:
+      summary: Read all interests received
+      tags:
+        - Interests
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/InterestReadAll'
+  /interests/{ID}:
+    delete:
+      summary: Delete an interest
+      tags:
+        - Interests
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+################################################################################
+  /matches:
+    get:
+      summary: Read all matches
+      tags:
+        - Matches
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/MatchReadAll'
+  /matches/{ID}:
+    get:
+      summary: Read a match
+      tags:
+        - Matches
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/MatchRead'
+################################################################################
+  /notifications:
+    get:
+      summary: Read all notifications
+      tags:
+        - Notifications
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NotificationReadAll'
+  /notifications/{ID}/mark:
+    patch:
+      summary: Mark a notification as read
+      tags:
+        - Notifications
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NotificationRead'
+################################################################################
+  /devices/{ID}:
+    get:
+      summary: Read a device
+      tags:
+        - Devices
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DeviceRead'
+    delete:
+      summary: Delete a device
+      tags:
+        - Devices
+      produces:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Empty'
+    patch:
+      summary: Update a device
+      tags:
+        - Devices
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          type: integer
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceUpdate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DeviceRead'
+  /devices:
+    post:
+      summary: Create a device
+      tags:
+        - Devices
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceCreate'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DeviceRead'
+    get:
+      summary: Read all devices
+      tags:
+        - Devices
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DeviceReadAll'
+################################################################################
+  /reports/organisations:
+    get:
+      summary: Export CSV with the report of the organisation on their last version
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/organisation_versions:
+    get:
+      summary: Export CSV with the report of the organisation versions
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/approved_organisations:
+    get:
+      summary: Export CSV with the report of the approved organisation
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/users:
+    get:
+      summary: Export CSV with the report of the users with organisation details on their last version
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/offers:
+    get:
+      summary: Export CSV with the report of the offers
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/approved_pitches:
+    get:
+      summary: Export CSV with the report of the approved pitches
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/rejected_pitches:
+    get:
+      summary: Export CSV with the report of the rejected pitches
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/interests:
+    get:
+      summary: Export CSV with the report of all interests
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/funding_amount:
+    get:
+      summary: Export CSV with the funding's report
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/matches:
+    get:
+      summary: Export CSV with the matches report
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/pitches_benefited_people:
+    get:
+      summary: Export CSV with the pitches benefited people
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/restored_hectares:
+    get:
+      summary: Export CSV with the restored hectares report
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  /reports/filter_records:
+    get:
+      summary: Export CSV with the filter records
+      tags:
+        - Reports
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+################################################################################
