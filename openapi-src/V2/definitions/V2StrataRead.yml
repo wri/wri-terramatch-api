@@ -1,0 +1,9 @@
+title: V2StrataRead
+type: object
+properties:
+  uuid:
+    type: string
+  description:
+    type: string
+  extent:
+    type: integer

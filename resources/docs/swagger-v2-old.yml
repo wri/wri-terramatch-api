@@ -1,0 +1,5173 @@
+swagger: '2.0'
+info:
+  title: WRI Restoration Marketplace API
+  description: |
+    API General info: \n \n### About \n \nThis API serves the web and mobile apps for WRIs Restoration Marketplace (AKA TerraMatch). \n \n### Authorisation & Authentication \n \nJWTs are used for authentication. Upon successful log in a JWT will be provided for you. These expire after 12 hours. \n \n### Requests & Responses \n \nThe response bodies documented here will be wrapped in an object adhering to the JSON:API specification. \n \n### Error Codes \n \nAny errors returned in the body of a response will have a unique code to help identify the type of error. They are: \n \n \nACCEPTED, ACTIVE_URL, AFTER, AFTER_OR_EQUAL, ALPHA, ALPHA_DASH, ALPHA_NUM, ARRAY, ARRAY_ARRAY, ARRAY_OBJECT, BEFORE, BEFORE_OR_EQUAL, BETWEEN, BOOLEAN, CARBON_CERTIFICATION_TYPE, COMPLETE_PERCENTAGE, CONFIRMED, CONTAIN_LOWER, CONTAIN_NUMBER, CONTAIN_UPPER, CONTINENT, COUNTRY_CODE, CUSTOM, DATE, DATE_EQUALS, DATE_FORMAT, DIFFERENT, DIGITS, DIGITS_BETWEEN, DIMENSIONS, DISTINCT, DOCUMENT_TYPE, EMAIL, ENDS_WITH, EXISTS, FILE, FILE_EXTENSION_IS_CSV, FILE_IS_CSV_OR_UPLOADABLE, FILLED, FUNDING_BRACKET, FUNDING_SOURCE, GEO_JSON, GT, GTE, IMAGE, IN, IN_ARRAY, INTEGER, IP, IPV4, IPV6, JSON, LAND_OWNERSHIP, LAND_SIZE, LAND_TYPE, LT, LTE, MAX, MIMES, MIMETYPES, MIN, NOT_IN, NOT_PRESENT, NOT_REGEX, NUMERIC, OTHER_VALUE_PRESENT, OTHER_VALUE_NULL, OTHER_VALUE_STRING, ORGANISATION_CATEGORY, ORGANISATION_FILE_TYPE, ORGANISATION_TYPE, PRESENT, REGEX, REJECTED_REASON, REPORTING_FREQUENCY, REPORTING_LEVEL, REQUIRED, REQUIRED_IF, REQUIRED_UNLESS, REQUIRED_WITH, REQUIRED_WITH_ALL, REQUIRED_WITHOUT, REQUIRED_WITHOUT_ALL, RESTORATION_GOAL, RESTORATION_METHOD, REVENUE_DRIVER, SAME, SIZE, SOFT_URL, STARTS_WITH, STARTS_WITH_FACEBOOK, STARTS_WITH_TWITTER, STARTS_WITH_INSTAGRAM, STARTS_WITH_LINKEDIN, STRICT_FLOAT, STRING, SUSTAINABLE_DEVELOPMENT_GOAL, TERRAFUND_DISTURBANCE, TERRAFUND_LAND_TENURE, TERRAFUND_PROGRAMME_STATUS, TERRAFUND_NURSERY_TYPE, TERRAFUND_RESTORATION_METHOD, TIMEZONE, TREE_SPECIES_OWNER, UNIQUE, UPLOADED, URL, UUID, VISIBILITY \n``` \n \n### Uploads \n \nUploads should first be uploaded to the `/uploads` endpoint. Upon success an ID will be returned, this ID is valid for 1 day. Use this ID in your request body to bind the upload to a property. \n \n### Elevator Videos \n \nElevator videos can be created by using the `/elevator_videos` endpoint. After creating an elevator video you will be returned an elevator video ID. Use this to check its status. Elevator videos will start off as `processing` and change to `finished` when it has been build. Once the elevator video is built the `upload_id` property will be present, you can use this just like a regular upload and attach it to a pitch&#96;s `video` property. Be sure to use the elevator video&#96;s `upload_id` property and not its `id` property. An elevator video&#96;s status may end up as `errored` or `timed_out` in which case something has gone wrong. \n \n### Units \n \n* All prices are measured in USD \n* All land is measured in hectares \n* All time is measured in months \n* \n### Drafts \n \nWhen creating a draft the `data` property will be automatically populated with a skeleton object representing either an offer or a pitch. You can then manipulate the `data` property using [JSON Patch](http://jsonpatch.com/) requests. Operations are relative to the `data` property, which means you don&#96;t need to preface paths with `/data`.
+  version: 1.0.0
+host: '{{ HOST }}'
+basePath: /api
+schemes:
+  - '{{ SCHEME }}'
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+security:
+  - BearerAuth: []
+tags:
+  - name: Export
+  - name: Forms
+  - name: Files
+  - name: Funding Programmes
+  - name: Stages
+  - name: V2 Admin
+  - name: V2 Application
+  - name: V2 Organisations
+  - name: V2 Project Developer
+  - name: V2 Projects
+  - name: V2 Sites
+  - name: V2 Nurseries
+  - name: V2 Project Reports
+  - name: V2 Site Reports
+  - name: V2 Nursery Reports
+  - name: V2 Users
+definitions:
+  UserRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      organisation_id:
+        type: integer
+      organisation_name:
+        type: string
+      my_organisation:
+        $ref: '#/definitions/V2AdminOrganisationRead'
+      my_monitoring_organisations:
+        type: array
+        items:
+          $ref: '#/definitions/V2MonitoringOrganisationRead'
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      email_address_verified_at:
+        type: string
+        format: date-time
+      role:
+        type: string
+      last_logged_in_at:
+        type: string
+        format: date-time
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      has_ppc_projects:
+        type: boolean
+      has_terrafund_projects:
+        type: boolean
+  UserReadAll:
+    type: array
+    items:
+      $ref: '#/definitions/UserRead'
+  FundingProgramme:
+    title: FundingProgrammeRead
+    x-stoplight:
+      id: uh5oce75en4za
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      location:
+        type: string
+      read_more_url:
+        type: string
+      status:
+        type: string
+      organisation_types:
+          type: array
+          items:
+            type: string
+      stages:
+        type: array
+        items:
+          $ref: '#/definitions/StageRead'
+      organisations:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+            name:
+              type: string
+      cover:
+        $ref: '#/definitions/V2FileRead'
+      deleted_at:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+  LimitedFundingProgrammeRead:
+    title: LimitedFundingProgrammeRead
+    x-stoplight:
+      id: uh5oce75en4za
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      read_more_url:
+        type: string
+      organisation_types:
+        type: array
+        items:
+          type: string
+      location:
+        type: string
+      status:
+        type: string
+  FundingProgrammeStatus:
+    title: FundingProgrammeStatus
+    type: object
+    properties:
+      status:
+        type: string
+  FundingProgrammeCreate:
+    title: FundingProgrammeCreate
+    x-stoplight:
+      id: uoxj0qcvij0sr
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      read_more_url:
+        type: string
+      location:
+        type: string
+      organisation_types:
+        type: array
+        items:
+          type: string
+      cover:
+        $ref: '#/definitions/V2FileRead'
+      status:
+        type: string
+  Form:
+    title: FormSubmit
+    x-stoplight:
+      id: ge9ckliniez5m
+    type: object
+    properties:
+      title:
+        type: string
+      subtitle:
+        type: string
+      description:
+        type: string
+      documentation:
+        type: string
+      documentation_label:
+        type: string
+      submission_message:
+        type: string
+      duration:
+        type: string
+      deadline_at:
+        type: string
+      stage_id:
+        type: integer
+      tags:
+        type: array
+        description: 'this is a list of key value pairs eg. slug: name'
+        items:
+          type: string
+  FormCreate:
+    title: FormCreate
+    type: object
+    properties:
+      type:
+        type: string
+      title:
+        type: string
+      subtitle:
+        type: string
+      description:
+        type: string
+      deadline_at:
+        type: string
+      documentation:
+        type: string
+      documentation_label:
+        type: string
+      submission_message:
+        type: string
+      duration:
+        type: string
+      stage_id:
+        type: integer
+      options_other:
+        type: boolean
+      tags:
+        type: array
+        description: 'this is a list of key value pairs eg. slug: name'
+        items:
+          type: string
+      form_sections:
+        type: array
+        items:
+            $ref: '#/definitions/FormSectionCreate'
+  FormRead:
+    title: FormRead
+    x-stoplight:
+      id: e0u0etkn01z17
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      type:
+        type: string
+      version:
+        type: integer
+      title:
+        type: string
+      subtitle:
+        type: string
+      description:
+        type: string
+      duration:
+        type: string
+      deadline_at:
+        type: string
+      documentation:
+        type: string
+      documentation_label:
+        type: string
+      submission_message:
+        type: string
+      published:
+        type: boolean
+      stage_id:
+        type: string
+      options_other:
+        type: boolean
+      form_sections:
+        type: array
+        items:
+          $ref: '#/definitions/FormSectionRead'
+      tags:
+        type: array
+        description: 'this is a list of key value pairs eg. slug: name'
+        items:
+          type: string
+      updated_by:
+        type: integer
+      deleted_at:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+  FormSectionCreate:
+    title: FormSectionCreate
+    x-stoplight:
+      id: 97clxg83l8q3f
+    type: object
+    properties:
+      order:
+        type: integer
+      title:
+        type: string
+      subtitle:
+        type: string
+      description:
+        type: string
+      form_questions:
+        type: array
+        items:
+            $ref: '#/definitions/FormQuestionCreate'
+  FormSectionRead:
+    title: FormSectionRead
+    x-stoplight:
+      id: scpnof2zuz3q3
+    type: object
+    properties:
+      order:
+        type: integer
+      form_id:
+        type: integer
+      form_questions:
+        type: array
+        items:
+          $ref: '#/definitions/FormQuestionRead'
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      deleted_at:
+        type: string
+  FormQuestionRead:
+    title: FormQuestionRead
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      form_section_id:
+        type: integer
+      label:
+        type: string
+      validation:
+        type: array
+        items:
+          type: string
+      parent_id:
+        type: string
+      linked_field_key:
+        type: string
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/FormQuestionRead'
+      multichoice:
+        type: boolean
+      order:
+        type: integer
+      options:
+        type: array
+        items:
+          $ref: '#/definitions/FormQuestionOptionRead'
+      table_headers:
+        type: array
+        items:
+          $ref: '#/definitions/FormTableHeaderRead'
+      additional_text:
+        type: string
+      additional_url:
+        type: string
+      input_type:
+        type: string
+        enum:
+          - date
+          - text
+          - long-text
+          - select
+          - checkboxes
+          - radio
+          - number
+          - image
+          - file
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      deleted_at:
+        type: string
+  FormQuestionCreate:
+    title: FormQuestionCreate
+    type: object
+    properties:
+      additional_props:
+        type: array
+        items:
+          type: object
+      child_form_questions:
+        type: array
+        items:
+          $ref: '#/definitions/FormQuestionRead'
+      table_headers:
+        type: array
+        items:
+          $ref: '#/definitions/FormTableHeaderRead'
+      linked_field_key:
+        type: string
+      input_type:
+        type: string
+        enum:
+          - date
+          - text
+          - long-text
+          - select
+          - checkboxes
+          - radio
+          - number
+          - image
+          - file
+      label:
+        type: string
+      placeholder:
+        type: string
+      description:
+        type: string
+      validation:
+        type: object
+      multichoice:
+        type: boolean
+      order:
+        type: integer
+      options_list:
+        type: string
+      options:
+        type: array
+        items:
+          $ref: '#/definitions/FormQuestionOptionRead'
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      deleted_at:
+        type: string
+  FormSectionUpdate:
+    title: FormSectionUpdate
+    x-stoplight:
+      id: tlqkri2rdwi5w
+    type: object
+    properties:
+      order:
+        type: integer
+  FormUpdate:
+    title: FormUpdate
+    x-stoplight:
+      id: m4lcpf2li93rf
+    type: object
+    properties:
+      type:
+        type: string
+      title:
+        type: string
+      subtitle:
+        type: string
+      description:
+        type: string
+      documentation:
+        type: string
+      documentation_label:
+        type: string
+      submission_message:
+        type: string
+      duration:
+        type: string
+      options_other:
+        type: boolean
+  V2PaginationLinks:
+    title: V2PaginationLinks
+    properties:
+      first:
+        type: string
+      last:
+        type: string
+      prev:
+        type: string
+      next:
+        type: string
+  V2PaginationCurrentLinks:
+    title: V2PaginationCurrentLinks
+    properties:
+      url:
+        type: string
+      label:
+        type: string
+      active:
+        type: boolean
+  V2PaginationMeta:
+    title: V2PaginationMeta
+    properties:
+      from:
+        type: integer
+      to:
+        type: integer
+      current_page:
+        type: integer
+      last_page:
+        type: integer
+      per_page:
+        type: integer
+      total:
+        type: integer
+      path:
+        type: string
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/V2PaginationCurrentLinks'
+  V2SearchFilterSort:
+    title: V2SearchFilterSort
+    type: object
+    properties:
+      search:
+        type: string
+        description: 'search term to use on the collection'
+      filter:
+        type: string
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      sort:
+        type: string
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name'
+      per_page:
+        type: integer
+        description: 'number of results (per page) to return'
+      page:
+        type: integer
+        description: 'page number you want results from'
+  V2AdminOrganisationRead:
+    title: AdminOrganisationRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      status:
+        type: string
+      readable_status:
+        type: string
+      type:
+        type: string
+      private:
+        type: boolean
+      name:
+        type: string
+      phone:
+        type: string
+      founding_date:
+        type: string
+      description:
+        type: string
+      countries:
+        type: array
+        items:
+          type: string
+      languages:
+        type: array
+        items:
+          type: string
+      tree_species:
+        type: array
+        items:
+          $ref: '#/definitions/V2TreeSpeciesRead'
+      project_pitches:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectPitchRead'
+      web_url:
+        type: string
+      facebook_url:
+        type: string
+      instagram_url:
+        type: string
+      linkedin_url:
+        type: string
+      twitter_url:
+        type: string
+      hq_street_1:
+        type: string
+      hq_street_2:
+        type: string
+      hq_city:
+        type: string
+      hq_state:
+        type: string
+      hq_zipcode:
+        type: string
+      hq_country:
+        type: string
+      fin_start_month:
+        type: integer
+      fin_budget_3year:
+        type: number
+        format: float
+      fin_budget_2year:
+        type: number
+        format: float
+      fin_budget_1year:
+        type: number
+        format: float
+      fin_budget_current_year:
+        type: number
+        format: float
+      ha_restored_total:
+        type: number
+        format: float
+      ha_restored_3year:
+        type: number
+        format: float
+      relevant_experience_years:
+        type: integer
+      trees_grown_total:
+        type: integer
+      trees_grown_3year:
+        type: integer
+      tree_care_approach:
+        type: string
+      ft_permanent_employees:
+        type: integer
+      pt_permanent_employees:
+        type: integer
+      temp_employees:
+        type: integer
+      female_employees:
+        type: integer
+      male_employees:
+        type: integer
+      young_employees:
+        type: integer
+      additional_funding_details:
+        type: string
+      community_experience:
+        type: string
+      total_engaged_community_members_3yr:
+        type: integer
+      percent_engaged_women_3yr:
+        type: integer
+      percent_engaged_men_3yr:
+        type: integer
+      percent_engaged_under_35_3yr:
+        type: integer
+      percent_engaged_over_35_3yr:
+        type: integer
+      percent_engaged_smallholder_3yr:
+        type: integer
+      total_trees_grown:
+        type: integer
+      avg_tree_survival_rate:
+        type: integer
+      tree_maintenance_aftercare_approach:
+        type: string
+      restored_areas_description:
+        type: string
+      monitoring_evaluation_experience:
+        type: string
+      funding_history:
+        type: string
+      shapefiles:
+        type: array
+        items:
+          $ref: '#/definitions/ShapefileRead'
+      bank_statements:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      previous_annual_reports:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      logo:
+        $ref: '#/definitions/V2FileRead'
+      cover:
+        $ref: '#/definitions/V2FileRead'
+      reference:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      additional:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_2year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_last_year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_this_year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_next_year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      legal_registration:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      tags:
+        type: array
+        description: 'this is a list of key value pairs eg. slug: name'
+        items:
+          type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+  V2MonitoringOrganisationRead:
+    title: V2MonitoringOrganisationRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      status:
+        type: string
+      users_status:
+        type: string
+      readable_status:
+        type: string
+      type:
+        type: string
+      private:
+        type: boolean
+      name:
+        type: string
+      phone:
+        type: string
+      founding_date:
+        type: string
+      description:
+        type: string
+      countries:
+        type: array
+        items:
+          type: string
+      languages:
+        type: array
+        items:
+          type: string
+      tree_species:
+        type: array
+        items:
+          $ref: '#/definitions/V2TreeSpeciesRead'
+      web_url:
+        type: string
+      facebook_url:
+        type: string
+      instagram_url:
+        type: string
+      linkedin_url:
+        type: string
+      twitter_url:
+        type: string
+      hq_street_1:
+        type: string
+      hq_street_2:
+        type: string
+      hq_city:
+        type: string
+      hq_state:
+        type: string
+      hq_zipcode:
+        type: string
+      hq_country:
+        type: string
+      fin_start_month:
+        type: integer
+      fin_budget_3year:
+        type: number
+        format: float
+      fin_budget_2year:
+        type: number
+        format: float
+      fin_budget_1year:
+        type: number
+        format: float
+      fin_budget_current_year:
+        type: number
+        format: float
+      ha_restored_total:
+        type: number
+        format: float
+      ha_restored_3year:
+        type: number
+        format: float
+      relevant_experience_years:
+        type: integer
+      trees_grown_total:
+        type: integer
+      trees_grown_3year:
+        type: integer
+      tree_care_approach:
+        type: string
+      logo:
+        $ref: '#/definitions/V2FileRead'
+      cover:
+        $ref: '#/definitions/V2FileRead'
+      reference:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      additional:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_2year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_last_year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_this_year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_next_year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      legal_registration:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      tags:
+        type: array
+        description: 'this is a list of key value pairs eg. slug: name'
+        items:
+          type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+  V2AdminOrganisationUpdate:
+    title: AdminOrganisationUpdate
+    type: object
+    properties:
+      type:
+        type: string
+      private:
+        type: boolean
+      name:
+        type: string
+      phone:
+        type: string
+      founding_date:
+        type: string
+      description:
+        type: string
+      countries:
+        type: array
+        items:
+          type: string
+      languages:
+        type: array
+        items:
+          type: string
+      tree_species:
+        type: array
+        items:
+          $ref: '#/definitions/V2TreeSpeciesRead'
+      web_url:
+        type: string
+      facebook_url:
+        type: string
+      instagram_url:
+        type: string
+      linkedin_url:
+        type: string
+      twitter_url:
+        type: string
+      hq_street_1:
+        type: string
+      hq_street_2:
+        type: string
+      hq_city:
+        type: string
+      hq_state:
+        type: string
+      hq_zipcode:
+        type: string
+      hq_country:
+        type: string
+      fin_start_month:
+        type: integer
+      fin_budget_3year:
+        type: number
+        format: float
+      fin_budget_2year:
+        type: number
+        format: float
+      fin_budget_1year:
+        type: number
+        format: float
+      fin_budget_current_year:
+        type: number
+        format: float
+      ha_restored_total:
+        type: number
+        format: float
+      ha_restored_3year:
+        type: number
+        format: float
+      relevant_experience_years:
+        type: integer
+      trees_grown_total:
+        type: integer
+      trees_grown_3year:
+        type: integer
+      tree_care_approach:
+        type: string
+      ft_permanent_employees:
+        type: integer
+      pt_permanent_employees:
+        type: integer
+      temp_employees:
+        type: integer
+      female_employees:
+        type: integer
+      male_employees:
+        type: integer
+      young_employees:
+        type: integer
+      additional_funding_details:
+        type: string
+      community_experience:
+        type: string
+      total_engaged_community_members_3yr:
+        type: integer
+      percent_engaged_women_3yr:
+        type: integer
+      percent_engaged_men_3yr:
+        type: integer
+      percent_engaged_under_35_3yr:
+        type: integer
+      percent_engaged_over_35_3yr:
+        type: integer
+      percent_engaged_smallholder_3yr:
+        type: integer
+      total_trees_grown:
+        type: integer
+      avg_tree_survival_rate:
+        type: integer
+      tree_maintenance_aftercare_approach:
+        type: string
+      restored_areas_description:
+        type: string
+      monitoring_evaluation_experience:
+        type: string
+      funding_history:
+        type: string
+      engagement_farmers:
+        type: array
+        items:
+          type: string
+      engagement_women:
+        type: array
+        items:
+          type: string
+      engagement_youth:
+        type: array
+        items:
+          type: string
+      engagement_non_youth:
+        type: array
+        items:
+          type: string
+      tree_restoration_practices:
+        type: array
+        items:
+          type: string
+      business_model:
+        type: string
+      subtype:
+        type: string
+      organisation_revenue_this_year:
+        type: number
+      shapefiles:
+        type: array
+        items:
+          $ref: '#/definitions/ShapefileRead'
+      tags:
+        type: array
+        items:
+          type: string
+  V2GenericList:
+    title: V2GenericList
+    type: object
+    properties:
+      uuid:
+        type: string
+      name:
+        type: string
+      input_type:
+        type: string
+      model_key:
+        type: string
+      option_list_key:
+        type: string
+      options:
+        type: array
+        items:
+          type: string
+  V2CommonOptions:
+    title: V2CommonOptions
+    type: object
+    properties:
+      uuid:
+        type: string
+      slug:
+        type: string
+      alt_value:
+        type: string
+      label:
+        type: string
+  V2OrganisationApproveRejectUser:
+    title: OrganisationApproveRejectUser
+    type: object
+    properties:
+      organisation_uuid:
+        type: string
+      user_uuid:
+        type: string
+    required:
+      - organisation_uuid
+      - user_uuid
+  V2OrganisationUpdate:
+    title: OrganisationUpdate
+    type: object
+    properties:
+      type:
+        type: string
+        description: Available type are for-profit-organization, non-profit-organization, government-agency
+      private:
+        type: boolean
+      name:
+        type: string
+      phone:
+        type: string
+      currency:
+        type: string
+      states:
+        type: array
+        items:
+          type: string
+      loan_status_types:
+        type: array
+        items:
+          type: string
+      land_systems:
+        type: array
+        items:
+          type: string
+      fund_utilisation:
+        type: array
+        items:
+          type: string
+      detailed_intervention_types:
+        type: array
+        items:
+          type: string
+      community_members_engaged_3yr:
+        type: number
+      community_members_engaged_3yr_women:
+        type: number
+      community_members_engaged_3yr_men:
+        type: number
+      community_members_engaged_3yr_youth:
+        type: number
+      community_members_engaged_3yr_non_youth:
+        type: number
+      community_members_engaged_3yr_smallholder:
+        type: number
+      community_members_engaged_3yr_backward_class:
+        type: number
+      total_board_members:
+        type: number
+      pct_board_women:
+        type: number
+      pct_board_men:
+        type: number
+      pct_board_youth:
+        type: number
+      pct_board_non_youth:
+        type: number
+      account_number_1:
+        type: string
+      account_number_2:
+        type: string
+      approach_of_marginalized_communities:
+        type: string
+      community_engagement_numbers_marginalized:
+        type: string
+      founding_date:
+        type: string
+      description:
+        type: string
+      leadership_team:
+        type: string
+      countries:
+        type: array
+        items:
+          type: string
+      engagement_farmers:
+        type: array
+        items:
+          type: string
+      engagement_women:
+        type: array
+        items:
+          type: string
+      engagement_youth:
+        type: array
+        items:
+          type: string
+      engagement_non_youth:
+        type: array
+        items:
+          type: string
+      tree_restoration_practices:
+        type: array
+        items:
+          type: string
+      business_model:
+        type: string
+      subtype:
+        type: string
+      organisation_revenue_this_year:
+        type: number
+      languages:
+        type: array
+        items:
+          type: string
+      web_url:
+        type: string
+      facebook_url:
+        type: string
+      instagram_url:
+        type: string
+      linkedin_url:
+        type: string
+      twitter_url:
+        type: string
+      hq_street_1:
+        type: string
+      hq_street_2:
+        type: string
+      hq_city:
+        type: string
+      hq_state:
+        type: string
+      hq_zipcode:
+        type: string
+      hq_country:
+        type: string
+      fin_start_month:
+        type: integer
+      fin_budget_3year:
+        type: number
+        format: float
+      fin_budget_2year:
+        type: number
+        format: float
+      fin_budget_1year:
+        type: number
+        format: float
+      fin_budget_current_year:
+        type: number
+        format: float
+      ha_restored_total:
+        type: number
+        format: float
+      ha_restored_3year:
+        type: number
+        format: float
+      relevant_experience_years:
+        type: integer
+      trees_grown_total:
+        type: integer
+      trees_grown_3year:
+        type: integer
+      tree_care_approach:
+        type: string
+      ft_permanent_employees:
+        type: integer
+      pt_permanent_employees:
+        type: integer
+      temp_employees:
+        type: integer
+      female_employees:
+        type: integer
+      male_employees:
+        type: integer
+      young_employees:
+        type: integer
+      additional_funding_details:
+        type: string
+      community_experience:
+        type: string
+      total_engaged_community_members_3yr:
+        type: integer
+      percent_engaged_women_3yr:
+        type: integer
+      percent_engaged_men_3yr:
+        type: integer
+      percent_engaged_under_35_3yr:
+        type: integer
+      percent_engaged_over_35_3yr:
+        type: integer
+      percent_engaged_smallholder_3yr:
+        type: integer
+      total_trees_grown:
+        type: integer
+      avg_tree_survival_rate:
+        type: integer
+      tree_maintenance_aftercare_approach:
+        type: string
+      restored_areas_description:
+        type: string
+      monitoring_evaluation_experience:
+        type: string
+      funding_history:
+        type: string
+      shapefiles:
+        type: array
+        items:
+          $ref: '#/definitions/ShapefileRead'
+      tags:
+        type: array
+        items:
+          type: string
+  V2OrganisationRead:
+    title: OrganisationRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      type:
+        type: string
+      private:
+        type: boolean
+      name:
+        type: string
+      phone:
+        type: string
+      currency:
+        type: string
+      states:
+        type: array
+        items:
+          type: string
+      loan_status_types:
+        type: array
+        items:
+          type: string
+      land_systems:
+        type: array
+        items:
+          type: string
+      fund_utilisation:
+        type: array
+        items:
+          type: string
+      detailed_intervention_types:
+        type: array
+        items:
+          type: string
+      account_number_1:
+        type: string
+      account_number_2:
+        type: string
+      approach_of_marginalized_communities:
+        type: string
+      community_engagement_numbers_marginalized:
+        type: string
+      founding_date:
+        type: string
+      description:
+        type: string
+      leadership_team:
+        type: string
+      countries:
+        type: array
+        items:
+          type: string
+      languages:
+        type: array
+        items:
+          type: string
+      project_pitches:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectPitchRead'
+      tree_species:
+        type: array
+        items:
+          $ref: '#/definitions/V2TreeSpeciesRead'
+      web_url:
+        type: string
+      facebook_url:
+        type: string
+      instagram_url:
+        type: string
+      linkedin_url:
+        type: string
+      twitter_url:
+        type: string
+      hq_street_1:
+        type: string
+      hq_street_2:
+        type: string
+      hq_city:
+        type: string
+      hq_state:
+        type: string
+      hq_zipcode:
+        type: string
+      hq_country:
+        type: string
+      fin_start_month:
+        type: integer
+      fin_budget_3year:
+        type: number
+        format: float
+      fin_budget_2year:
+        type: number
+        format: float
+      fin_budget_1year:
+        type: number
+        format: float
+      fin_budget_current_year:
+        type: number
+        format: float
+      ha_restored_total:
+        type: number
+        format: float
+      ha_restored_3year:
+        type: number
+        format: float
+      relevant_experience_years:
+        type: integer
+      trees_grown_total:
+        type: integer
+      trees_grown_3year:
+        type: integer
+      tree_care_approach:
+        type: string
+      ft_permanent_employees:
+        type: integer
+      pt_permanent_employees:
+        type: integer
+      temp_employees:
+        type: integer
+      female_employees:
+        type: integer
+      male_employees:
+        type: integer
+      young_employees:
+        type: integer
+      additional_funding_details:
+        type: string
+      community_experience:
+        type: string
+      total_engaged_community_members_3yr:
+        type: integer
+      percent_engaged_women_3yr:
+        type: integer
+      percent_engaged_men_3yr:
+        type: integer
+      percent_engaged_under_35_3yr:
+        type: integer
+      percent_engaged_over_35_3yr:
+        type: integer
+      percent_engaged_smallholder_3yr:
+        type: integer
+      total_trees_grown:
+        type: integer
+      avg_tree_survival_rate:
+        type: integer
+      tree_maintenance_aftercare_approach:
+        type: string
+      restored_areas_description:
+        type: string
+      monitoring_evaluation_experience:
+        type: string
+      funding_history:
+        type: string
+      engagement_farmers:
+        type: array
+        items:
+          type: string
+      engagement_women:
+        type: array
+        items:
+          type: string
+      engagement_youth:
+        type: array
+        items:
+          type: string
+      engagement_non_youth:
+        type: array
+        items:
+          type: string
+      tree_restoration_practices:
+        type: array
+        items:
+          type: string
+      business_model:
+        type: string
+      subtype:
+        type: string
+      organisation_revenue_this_year:
+        type: number
+      shapefiles:
+        type: array
+        items:
+          $ref: '#/definitions/ShapefileRead'
+      bank_statements:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      previous_annual_reports:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      logo:
+        $ref: '#/definitions/V2FileRead'
+      cover:
+        $ref: '#/definitions/V2FileRead'
+      reference:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      additional:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_2year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_last_year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_this_year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      op_budget_next_year:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      legal_registration:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      tags:
+        type: array
+        description: 'this is a list of key value pairs eg slug: name '
+        items:
+          type: string
+  ShapefileRead:
+    title: ShapefileRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      shapefileable_type:
+        type: string
+      shapefileable_id:
+        type: integer
+      geojson:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      deleted_at:
+        type: string
+  V2AdminUserRead:
+    title: AdminUserRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      status:
+        type: string
+      readable_status:
+        type: string
+      type:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      job_role:
+        type: string
+      facebook:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      twitter:
+        type: string
+      whatsapp_phone:
+        type: string
+      date_added:
+        type: string
+  V2AdminUserUpdate:
+    title: AdminUserUpdate
+    type: object
+    properties:
+      type:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+      facebook:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      twitter:
+        type: string
+      whatsapp_phone:
+        type: string
+      organisation:
+        type: string
+      monitoring_organisations:
+        type: array
+        items:
+          $ref: '#/definitions/V2MonitoringOrganisationRead'
+  V2FileRead:
+    title: V2FileRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      url:
+        type: string
+      thumb_url:
+        type: string
+      collection_name:
+        type: string
+      title:
+        type: string
+      file_name:
+        type: string
+      mime_type:
+        type: string
+      size:
+        type: integer
+      lat:
+        type: integer
+      lng:
+        type: integer
+      is_public:
+        type: boolean
+      created_at:
+        type: string
+  V2FileGallery:
+    title: V2FileGallery
+    type: object
+    properties:
+      file_url:
+        type: string
+      thumb_url:
+        type: string
+      file_name:
+        type: string
+      create_date:
+        type: string
+      parent_name:
+        type: string
+      is_public:
+        type: boolean
+      location:
+        type: object
+        properties:
+          lat:
+            type: number
+          lng:
+            type: number
+      mime_type:
+        type: string
+      file_size:
+        type: integer
+  V2TreeSpeciesCreate:
+    title: V2TreeSpeciesCreate
+    x-stoplight:
+      id: 5wwltusko93cr
+    type: object
+    properties:
+      model_type:
+        type: string
+      model_uuid:
+        type: integer
+      name:
+        type: string
+      amount:
+        type: integer
+  V2TreeSpeciesRead:
+    title: V2TreeSpeciesRead
+    x-stoplight:
+      id: 04vvsvyndvy8n
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      name:
+        type: string
+      amount:
+        type: integer
+  V2TreeSpeciesUpdate:
+    title: V2TreeSpeciesUpdate
+    x-stoplight:
+      id: cp2imcqm79i8w
+    type: object
+    properties:
+      name:
+        type: string
+      amount:
+        type: integer
+  V2CoreTeamLeaderCreate:
+    title: V2CoreTeamLeaderCreate
+    type: object
+    properties:
+      organisation_id:
+        type: string
+      position:
+        type: string
+      gender:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      role:
+        type: string
+      age:
+        type: integer
+  V2CoreTeamLeaderRead:
+    title: V2CoreTeamLeaderRead
+    x-stoplight:
+      id: 04vvsvyndvy8n
+    type: object
+    properties:
+      uuid:
+        type: string
+      organisation_id:
+        type: string
+      position:
+        type: string
+      gender:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      role:
+        type: string
+      age:
+        type: integer
+  V2CoreTeamLeaderUpdate:
+    title: V2CoreTeamLeaderUpdate
+    type: object
+    properties:
+      position:
+        type: string
+      gender:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      role:
+        type: string
+      age:
+        type: integer
+  V2LeadershipTeamCreate:
+    title: V2LeadershipTeamCreate
+    type: object
+    properties:
+      organisation_id:
+        type: string
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+  V2LeadershipTeamRead:
+    title: V2LeadershipTeamRead
+    x-stoplight:
+      id: 04vvsvyndvy8n
+    type: object
+    properties:
+      uuid:
+        type: string
+      organisation_id:
+        type: string
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+  V2LeadershipTeamUpdate:
+    title: V2LeadershipTeamUpdate
+    type: object
+    properties:
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+  V2FundingTypeCreate:
+    title: V2FundingTypeCreate
+    type: object
+    properties:
+      organisation_id:
+        type: string
+      amount:
+        type: integer
+      year:
+        type: integer
+      type:
+        type: string
+  V2FundingTypeRead:
+    title: V2FundingTypeRead
+    x-stoplight:
+      id: 04vvsvyndvy8n
+    type: object
+    properties:
+      uuid:
+        type: string
+      organisation_id:
+        type: string
+      amount:
+        type: integer
+      year:
+        type: integer
+      type:
+        type: string
+  V2FundingTypeUpdate:
+    title: V2FundingTypeUpdate
+    type: object
+    properties:
+      amount:
+        type: integer
+      year:
+        type: integer
+      type:
+        type: string
+  ProjectPitchCreate:
+    title: ProjectPitchCreate
+    x-stoplight:
+      id: xo976uxy5fkzu
+    type: object
+    properties:
+      organisation_id:
+        type: string
+      project_name:
+        type: string
+      project_objectives:
+        type: string
+      how_discovered:
+        type: string
+      project_country:
+        type: array
+        items:
+          type: string
+      project_county_district:
+        type: string
+      land_systems:
+        type: array
+        items:
+          type: string
+      tree_restoration_practices:
+        type: array
+        items:
+          type: string
+      restoration_intervention_types:
+        type: array
+        items:
+          type: string
+      capacity_building_needs:
+        type: array
+        items:
+          type: string
+      total_trees:
+        type: integer
+      total_hectares:
+        type: integer
+      project_budget:
+        type: integer
+      expected_active_restoration_start_date:
+        type: string
+      expected_active_restoration_end_date:
+        type: string
+      description_of_project_timeline:
+        type: string
+      proj_partner_info:
+        type: string
+      land_tenure_proj_area:
+        type: array
+        items:
+          type: string
+      landholder_comm_engage:
+        type: string
+      proj_success_risks:
+        type: string
+      monitor_eval_plan:
+        type: string
+      proj_boundary:
+        type: string
+      sustainable_dev_goals:
+        type: array
+        items:
+          type: string
+      proj_area_description:
+        type: string
+      proposed_num_sites:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+      environmental_goals:
+        type: string
+      main_degradation_causes:
+        type: string
+      seedlings_source:
+        type: string
+      proposed_num_nurseries:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+      curr_land_degradation:
+        type: string
+      proj_impact_socieconom:
+        type: string
+      proj_impact_foodsec:
+        type: string
+      proj_impact_watersec:
+        type: string
+      proj_impact_jobtypes:
+        type: string
+      num_jobs_created:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+      pct_employees_men:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_employees_women:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_employees_18to35:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_employees_older35:
+        type: integer
+        minimum: 0
+        maximum: 100
+      proj_beneficiaries:
+          type: integer
+      pct_beneficiaries_women:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_small:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_large:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_youth:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_scheduled_classes:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_scheduled_tribes:
+        type: integer
+        minimum: 0
+        maximum: 100
+      monitoring_evaluation_plan:
+        type: string
+      main_causes_of_degradation:
+        type: string
+  ProjectPitchUpdate:
+    title: ProjectPitchUpdate
+    x-stoplight:
+      id: w5u1xed0to2g6
+    type: object
+    properties:
+      funding_programme_id:
+        type: integer
+      project_name:
+        type: string
+      project_objectives:
+        type: string
+      project_county_district:
+        type: string
+      how_discovered:
+        type: string
+      land_systems:
+        type: array
+        items:
+          type: string
+      tree_restoration_practices:
+        type: array
+        items:
+          type: string
+      project_budget:
+        type: integer
+      project_country:
+        type: array
+        items:
+          type: string
+      restoration_intervention_types:
+        type: array
+        items:
+          type: string
+      capacity_building_needs:
+        type: array
+        items:
+          type: string
+      total_hectares:
+        type: integer
+      total_trees:
+        type: integer
+      expected_active_restoration_start_date:
+        type: string
+      expected_active_restoration_end_date:
+        type: string
+      description_of_project_timeline:
+        type: string
+      proj_partner_info:
+        type: string
+      land_tenure_proj_area:
+        type: array
+        items:
+          type: string
+      landholder_comm_engage:
+        type: string
+      proj_success_risks:
+        type: string
+      monitor_eval_plan:
+        type: string
+      proj_boundary:
+        type: string
+      sustainable_dev_goals:
+        type: array
+        items:
+          type: string
+      proj_area_description:
+        type: string
+      proposed_num_sites:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+      environmental_goals:
+        type: string
+      main_degradation_causes:
+        type: string
+      seedlings_source:
+        type: string
+      proposed_num_nurseries:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+      curr_land_degradation:
+        type: string
+      proj_impact_socieconom:
+        type: string
+      proj_impact_foodsec:
+        type: string
+      proj_impact_watersec:
+        type: string
+      proj_impact_jobtypes:
+        type: string
+      num_jobs_created:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+      pct_employees_men:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_employees_women:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_employees_18to35:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_employees_older35:
+        type: integer
+        minimum: 0
+        maximum: 100
+      proj_beneficiaries:
+          type: integer
+      pct_beneficiaries_women:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_small:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_large:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_youth:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_scheduled_classes:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_scheduled_tribes:
+        type: integer
+        minimum: 0
+        maximum: 100
+      monitoring_evaluation_plan:
+        type: string
+      main_causes_of_degradation:
+        type: string
+  V2SiteRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      site_id:
+        type: integer
+      terrafund_site_id:
+        type: integer
+      programme_id:
+        type: integer
+      terrafund_programme_id:
+        type: integer
+      control_site:
+        type: boolean
+      name:
+        type: string
+      country:
+        type: string
+      project_country:
+        type: string
+      continent:
+        type: string
+      description:
+        type: string
+      planting_pattern:
+        type: string
+      stratification_for_heterogeneity:
+        type: string
+      history:
+        type: string
+      workdays_paid:
+        type: integer
+      workdays_volunteer:
+        type: integer
+      total_workdays:
+        type: integer
+      establishment_date:
+        type: string
+        format: date
+      start_date:
+        type: string
+        format: date
+      end_date:
+        type: string
+        format: date
+      technical_narrative:
+        type: string
+      public_narrative:
+        type: string
+      aim_survival_rate:
+        type: number
+      aim_year_five_crown_cover:
+        type: number
+      aim_direct_seeding_survival_rate:
+        type: number
+      aim_natural_regeneration_trees_per_hectare:
+        type: number
+      aim_natural_regeneration_hectares:
+        type: number
+      aim_soil_condition:
+        type: string
+      aim_number_of_mature_trees:
+        type: integer
+      hectares_to_restore:
+        type: number
+      landscape_community_contribution:
+        type: string
+      disturbances:
+        type: string
+      boundary_geojson:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+  ProjectLiteRead:
+    title: ProjectLiteRead
+    type: object
+    properties:
+      id:
+        type: string
+      uuid:
+        type: string
+      status:
+        type: string
+      organisation:
+        $ref: '#/definitions/V2OrganisationRead'
+      planting_start_date:
+        type: string
+      framework_key:
+        type: string
+      has_monitoring_data:
+        type: boolean
+  ProjectFullRead:
+    title: ProjectLiteRead
+    type: object
+    properties:
+      id:
+        type: string
+      uuid:
+        type: string
+      status:
+        type: string
+      organisation:
+        $ref: '#/definitions/V2OrganisationRead'
+      planting_start_date:
+        type: string
+      framework_key:
+        type: string
+      has_monitoring_data:
+        type: boolean
+  ProjectWithSchemaRead:
+    title: ProjectWithSchemaRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+      form:
+        $ref: '#/definitions/FormRead'
+      answers:
+        type: array
+        items:
+          type: object
+          properties:
+            question_id:
+              type: integer
+            value:
+              type: string
+            options:
+              type: array
+              items:
+                type: string
+  SiteFullRead:
+    title: SiteLiteRead
+    type: object
+    properties:
+      id:
+        type: string
+      uuid:
+        type: string
+      status:
+        type: string
+      framework_key:
+        type: string
+      has_monitoring_data:
+        type: boolean
+  SiteWithSchemaRead:
+    title: SiteWithSchemaRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+      form:
+        $ref: '#/definitions/FormRead'
+      answers:
+        type: array
+        items:
+          type: object
+          properties:
+            question_id:
+              type: integer
+            value:
+              type: string
+            options:
+              type: array
+              items:
+                type: string
+  ProjectPitchRead:
+    title: ProjectPitchRead
+    x-stoplight:
+      id: rsuskf5on1pya
+    type: object
+    properties:
+      id:
+        type: string
+      uuid:
+        type: string
+      status:
+        type: string
+      readable_status:
+        type: string
+      organisation_id:
+        type: string
+      funding_programmes:
+        $ref: '#/definitions/LimitedFundingProgrammeRead'
+      tree_species:
+        type: array
+        items:
+          $ref: '#/definitions/V2TreeSpeciesRead'
+      project_name:
+        type: string
+      how_discovered:
+        type: string
+      project_objectives:
+        type: string
+      project_country:
+        type: array
+        items:
+          type: string
+      project_county_district:
+        type: string
+      restoration_intervention_types:
+        type: array
+        items:
+          type: string
+      land_systems:
+        type: array
+        items:
+          type: string
+      tree_restoration_practices:
+        type: array
+        items:
+          type: string
+      total_hectares:
+        type: integer
+      project_budget:
+        type: integer
+      total_trees:
+        type: integer
+      capacity_building_needs:
+        type: array
+        items:
+          type: string
+      additional:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      restoration_photos:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      cover:
+          $ref: '#/definitions/V2FileRead'
+      proof_of_land_tenure_mou:
+        type: array
+        items:
+          $ref: '#/definitions/V2FileRead'
+      detailed_project_budget:
+          $ref: '#/definitions/V2FileRead'
+      expected_active_restoration_start_date:
+        type: string
+      expected_active_restoration_end_date:
+        type: string
+      description_of_project_timeline:
+        type: string
+      proj_partner_info:
+        type: string
+      land_tenure_proj_area:
+        type: array
+        items:
+          type: string
+      landholder_comm_engage:
+        type: string
+      proj_success_risks:
+        type: string
+      monitor_eval_plan:
+        type: string
+      proj_boundary:
+        type: string
+      sustainable_dev_goals:
+        type: array
+        items:
+          type: string
+      proj_area_description:
+        type: string
+      proposed_num_sites:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+      environmental_goals:
+        type: string
+      main_degradation_causes:
+        type: string
+      seedlings_source:
+        type: string
+      proposed_num_nurseries:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+      curr_land_degradation:
+        type: string
+      proj_impact_socieconom:
+        type: string
+      proj_impact_foodsec:
+        type: string
+      proj_impact_watersec:
+        type: string
+      proj_impact_jobtypes:
+        type: string
+      num_jobs_created:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+      pct_employees_men:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_employees_women:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_employees_18to35:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_employees_older35:
+        type: integer
+        minimum: 0
+        maximum: 100
+      proj_beneficiaries:
+          type: integer
+      pct_beneficiaries_women:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_small:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_large:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_youth:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_scheduled_classes:
+        type: integer
+        minimum: 0
+        maximum: 100
+      pct_beneficiaries_scheduled_tribes:
+        type: integer
+        minimum: 0
+        maximum: 100
+      monitoring_evaluation_plan:
+        type: string
+      main_causes_of_degradation:
+        type: string
+      deleted_at:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+  AuditRead:
+    title: AuditRead
+    type: object
+    properties:
+      event:
+        type: string
+      user_id:
+        type: integer
+      old_values:
+        type: object
+      new_values:
+        type: object
+      created_at:
+        type: string
+      updated_at:
+        type: string
+  FormSubmissionRead:
+    title: FormSubmissionRead
+    x-stoplight:
+      id: u7ul6m0rkvj6m
+    type: object
+    properties:
+      id:
+        type: string
+      uuid:
+        type: string
+      name:
+        type: string
+      form:
+        $ref: '#/definitions/FormRead'
+      stage:
+        $ref: '#/definitions/StageLiteRead'
+      answers:
+        type: string
+      status:
+        type: string
+      readable_status:
+        type: string
+      audits:
+        type: array
+        items:
+          $ref: '#/definitions/AuditRead'
+      tags:
+        type: array
+        description: 'this is a list of key value pairs eg slug: name '
+        items:
+          type: string
+      updated_by:
+        type: string
+      deleted_at:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+  FormPaginated:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/FormRead'
+      links:
+        type: object
+        properties:
+          first:
+            type: string
+          last:
+            type: string
+          prev:
+            type: string
+          next:
+            type: string
+      meta:
+        type: object
+        properties:
+          current_page:
+            type: integer
+          from:
+            type: integer
+          last_page:
+            type: integer
+          next:
+            type: integer
+  StagePaginated:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/StageRead'
+      links:
+        type: object
+        properties:
+          first:
+            type: string
+          last:
+            type: string
+          prev:
+            type: string
+          next:
+            type: string
+      meta:
+        type: object
+        properties:
+          current_page:
+            type: integer
+          from:
+            type: integer
+          last_page:
+            type: integer
+          next:
+            type: integer
+  StageLiteRead:
+      title: StageLiteRead
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+        readable_status:
+          type: string
+  StageRead:
+      title: StageRead
+      x-stoplight:
+        id: qtkhrj889wvwc
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+        status:
+          type: string
+        deadline_at:
+          type: string
+        readable_status:
+          type: string
+        funding_programme_id:
+          type: integer
+        name:
+          type: string
+        order:
+          type: integer
+        forms:
+          $ref: '#/definitions/FormRead'
+        deleted_at:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+  StageCreate:
+    title: StageCreate
+    x-stoplight:
+      id: q1bwtmu9aj98a
+    type: object
+    properties:
+      name:
+        type: string
+      funding_programme_id:
+        type: integer
+      form_id:
+        type: string
+      deadline_at:
+        type: string
+      order:
+        type: integer
+  FormQuestionOptionRead:
+      title: FormQuestionOptionRead
+      x-stoplight:
+        id: ihpffrpq780e4
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+        form_question_id:
+          type: integer
+        label:
+          type: string
+        order:
+          type: integer
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        deleted_at:
+          type: string
+  FormTableHeaderRead:
+    title: FormTableHeaderRead
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      form_question_id:
+        type: integer
+      label:
+        type: string
+      order:
+        type: integer
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      deleted_at:
+        type: string
+  FormSubmissionCreate:
+    title: FormSubmissionCreate
+    x-stoplight:
+      id: yuvkg8bgvnerq
+    type: object
+    properties:
+      form_uuid:
+        type: string
+      project_pitch_uuid:
+        type: string
+  FormSubmissionUpdate:
+    title: FormSubmissionUpdate
+    type: object
+    properties:
+      status:
+        type: string
+      answers:
+        type: array
+        items:
+          type: object
+          properties:
+            question_id:
+              type: integer
+            value:
+              type: string
+            options:
+              type: array
+              items:
+                type: string
+  ApplicationLiteRead:
+    title: ApplicationLiteRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      form_submissions:
+        type: array
+        items:
+          $ref: '#/definitions/FormSubmissionLiteRead'
+      current_submission:
+        type: object
+        $ref: '#/definitions/FormSubmissionLiteRead'
+      funding_programme_name:
+        type: integer
+      funding_programme_uuid:
+        type: string
+      funding_programme_status:
+        type: string
+      organisation_name:
+        type: string
+      organisation_uuid:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+  ApplicationRead:
+    title: ApplicationLiteRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      form_submissions:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/FormSubmissionRead'
+      current_submission:
+        type: object
+        $ref: '#/definitions/FormSubmissionRead'
+      funding_programme:
+        type: object
+        $ref: '#/definitions/FundingProgramme'
+      organisation:
+        type: object
+        $ref: '#/definitions/V2AdminOrganisationRead'
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+paths:
+  /v2/admin/forms:
+    post:
+      summary: Create a form
+      operationId: post-v2-admin-forms
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/FormRead'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FormCreate'
+      tags:
+        - Forms
+    get:
+      summary: View all forms as an admin
+      tags:
+        - Forms
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2SearchFilterSort'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormPaginated'
+      operationId: get-v2-admin-forms
+  /v2/forms:
+    get:
+      summary: View all forms as a user
+      tags:
+        - Forms
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2SearchFilterSort'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormPaginated'
+      operationId: get-v2-user-forms
+  '/v2/admin/forms/{UUID}/publish':
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    patch:
+      summary: Publish a form
+      operationId: patch-v2-admin-forms-UUID-publish
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormRead'
+      tags:
+        - Forms
+  /v2/admin/forms/section:
+    parameters: []
+    post:
+      summary: Create a form section
+      operationId: post-v2-admin-forms-section
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/FormSectionRead'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FormSectionCreate'
+      tags:
+        - Forms
+  '/v2/admin/forms/question/{UUID}':
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    delete:
+      summary: Delete a form question
+      operationId: delete-v2-admin-form-question-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormQuestionRead'
+      tags:
+        - Forms
+  '/v2/admin/forms/section/{UUID}':
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    delete:
+      summary: Delete a form section
+      operationId: delete-v2-admin-form-section-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormSectionRead'
+      tags:
+        - Forms
+    patch:
+      summary: Update a form section
+      operationId: patch-v2-admin-form-section-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormSectionRead'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FormSectionUpdate'
+      tags:
+        - Forms
+  '/v2/admin/forms/{UUID}':
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    delete:
+      summary: Delete an unpublished form
+      operationId: v2-admin-delete-form-by-uuid
+      tags:
+        - Forms
+      responses:
+        '200':
+          description: Accepted
+    patch:
+      summary: Update a form
+      operationId: patch-v2-admin-form-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormRead'
+      tags:
+        - Forms
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FormUpdate'
+  '/v2/forms/linked-field-listing':
+    get:
+      summary: Get a list of available linked fields
+      operationId: get-v2-form-linked-field-listing
+      parameters:
+        - name: form_types
+          type: array
+          items:
+            type: string
+          in: query
+          description: 'array of form types'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2GenericList'
+      tags:
+        - Forms
+  '/v2/admin/forms/common-options/{BUCKET}':
+    get:
+      summary: Search for common options on a bucket
+      operationId: get-v2-admin-form-common-options-bucket
+      parameters:
+        - type: string
+          name: BUCKET
+          in: path
+          required: true
+          description: 'name of the bucket/collection of common options'
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2CommonOptions'
+      tags:
+        - Forms
+  /v2/admin/organisations:
+    get:
+      summary: Get a collection of organisations
+      operationId: v2-admin-get-organisations
+      description: 'Currently available sort is status, type, trees_grown_total, name, fin_budget_1year, created_at'
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/V2AdminOrganisationRead'
+              links:
+                type: object
+                $ref: '#/definitions/V2PaginationLinks'
+              meta:
+                type: object
+                $ref: '#/definitions/V2PaginationMeta'
+      tags:
+        - V2 Admin
+        - V2 Organisations
+  '/v2/admin/organisations/multi':
+    get:
+      summary: Get a collection of organisation by uuids
+      operationId: v2-admin-get-organisation-multi-by-uuid
+      tags:
+        - V2 Admin
+        - V2 Organisations
+      parameters:
+        - type: string
+          in: query
+          name: ids
+          description: comma separated list of values. eg ?ids=uuid1,uuid2
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2AdminOrganisationRead'
+  '/v2/admin/organisations/{UUID}':
+    get:
+      summary: Get a organisation by uuid
+      operationId: v2-admin-get-organisation-by-uuid
+      tags:
+        - V2 Admin
+        - V2 Organisations
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2AdminOrganisationRead'
+    put:
+      summary: Updates a specific organisation
+      operationId: v2-admin-put-organisation-by-uuid
+      tags:
+        - V2 Admin
+        - V2 Organisations
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2AdminOrganisationUpdate'
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2AdminOrganisationRead'
+    delete:
+      summary: Delete a specific organisation
+      operationId: v2-admin-delete-organisation-by-uuid
+      tags:
+        - V2 Admin
+        - V2 Organisations
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '202':
+          description: Accepted
+  /v2/admin/organisations/approve:
+    put:
+      summary: Approve a specific organisation
+      operationId: v2-admin-organisation-approve
+      tags:
+        - V2 Admin
+        - V2 Organisations
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              uuid:
+                type: string
+            required:
+              - uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2AdminOrganisationUpdate'
+  /v2/admin/organisations/reject:
+    put:
+      summary: Reject a specific organisation
+      operationId: v2-admin-organisation-reject
+      tags:
+        - V2 Admin
+        - V2 Organisations
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              uuid:
+                type: string
+            required:
+              - uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2AdminOrganisationUpdate'
+  /v2/admin/organisations/export:
+    get:
+      summary: Export CSV document of all time organaisations
+      tags:
+        - V2 Admin
+        - Export
+      produces:
+        - text/plain
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: file
+  /v2/organisations:
+    post:
+      summary: Create an organisation
+      operationId: v2-post-organisations
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2OrganisationUpdate'
+      responses:
+        '200':
+          description: OK
+  '/v2/organisations/{UUID}':
+    get:
+      summary: Get a specific organisation
+      operationId: v2-get-organisations-uuid
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2OrganisationRead'
+    put:
+      summary: Update an organisation
+      operationId: v2-put-organisations-uuid
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2OrganisationUpdate'
+      responses:
+        '200':
+          description: OK
+  /v2/organisations/listing:
+    get:
+      summary: Get a list of organisations names and uuid
+      operationId: v2-get-organisations-listing
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/V2GenericList'
+      parameters:
+        - type: string
+          in: query
+          name: search
+          description: search term to use on the collection
+  /v2/organisations/join-existing:
+    post:
+      summary: Post a request to join an existing organisation
+      operationId: v2-post-organisations-join-existing
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              organisation_uuid:
+                type: string
+            required:
+              - organisation_uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2OrganisationRead'
+  /v2/organisations/user-requests/{UUID}:
+    get:
+      summary: Get a collection of users that have requested to join a specific organisation
+      operationId: v2-get-organisations-user-requests-uuid
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserReadAll'
+  /v2/organisations/approved-users/{UUID}:
+    get:
+      summary: Get a collection of users that have been approved for a specific organisation
+      operationId: v2-get-organisations-approved-users-uuid
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserReadAll'
+  /v2/organisations/approve-user:
+    put:
+      summary: Approve a users request to join an existing organisation
+      operationId: v2-post-organisations-approve-user
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2OrganisationApproveRejectUser'
+      responses:
+        '200':
+          description: OK
+  /v2/organisations/reject-user:
+    put:
+      summary: Reject a users request to join an existing organisation
+      operationId: v2-post-organisations-reject-user
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2OrganisationApproveRejectUser'
+      responses:
+        '200':
+          description: OK
+  /v2/organisations/submit/{UUID}:
+    put:
+      summary: Submit an organisation for approval
+      operationId: v2-put-organisations-submit
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  /v2/organisations/retract-my-draft:
+    delete:
+      summary: Retracts (delets) a users draft organisation
+      operationId: v2-delete-organisations-retract-my-draft
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      responses:
+        '200':
+          description: OK
+  /v2/admin/users:
+    get:
+      summary: Get a collection of users
+      operationId: v2-admin-get-users
+      description: 'Currently available sort is last_logged_in_at, created_at, first_name, last_name, email_address, organisation_name'
+      tags:
+        - V2 Admin
+        - V2 Users
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[verified]=true'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/V2AdminUserRead'
+              links:
+                type: object
+                $ref: '#/definitions/V2PaginationLinks'
+              meta:
+                type: object
+                $ref: '#/definitions/V2PaginationMeta'
+  /v2/admin/users/{UUID}:
+    get:
+      summary: Get a user by uuid
+      operationId: v2-admin-get-user-by-uuid
+      tags:
+        - V2 Admin
+        - V2 Users
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2AdminUserRead'
+    put:
+      summary: Updates a specific user
+      operationId: v2-admin-put-user-by-uuid
+      tags:
+        - V2 Admin
+        - V2 Users
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2AdminUserUpdate'
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2AdminUserRead'
+    delete:
+      summary: Delete a specific user
+      operationId: v2-admin-delete-user-by-uuid
+      tags:
+        - V2 Admin
+        - V2 Users
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '202':
+          description: Accepted
+  /v2/admin/users/multi:
+    get:
+      summary: Get a a collection of users by uuid
+      operationId: v2-admin-get-multi-user-by-uuid
+      tags:
+        - V2 Admin
+        - V2 Users
+      parameters:
+        - name: ids
+          in: query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2AdminUserRead'
+  /v2/admin/users/export:
+    get:
+      summary: Export CSV document of all users
+      operationId: v2-admin-users-export
+      tags:
+        - V2 Admin
+        - V2 Users
+        - Export
+      produces:
+        - text/plain
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: file
+  /v2/admin/users/reset-password/{UUID}:
+    put:
+      summary: Update a specific users password
+      operationId: v2-admin-users-reset-password-uuid
+      tags:
+        - V2 Admin
+        - V2 Users
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - type: string
+          name: password
+          in: formData
+          required: true
+        - type: string
+          name: password_confirmation
+          in: formData
+          required: true
+      responses:
+        '200':
+          description: OK
+  /v2/admin/users/verify/{UUID}:
+    patch:
+      summary: Force verify a user
+      operationId: v2-admin-users-verify-uuid
+      tags:
+        - V2 Admin
+        - V2 Users
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  /v2/{MODEL}/{UUID}/files:
+    get:
+      summary: Retrieve files for a specific entity
+      operationId: v2-get-model-uuid-files
+      description: "Available Filters : file_type"
+      tags:
+        - Files
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          name: MODEL
+          in: path
+          required: true
+          description: 'Currently only projectReport, nurseryReport and siteReport are set up'
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/V2FileGallery'
+              links:
+                $ref: '#/definitions/V2PaginationLinks'
+              meta:
+                $ref: '#/definitions/V2PaginationMeta'
+  /v2/file/upload/{MODEL}/{COLLECTION}/{UUID}:
+    post:
+      summary: Upload a file to a specific entities collection
+      operationId: v2-post-upload-file-model-collection-uuid
+      tags:
+        - Files
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          name: MODEL
+          in: path
+          required: true
+          description: 'Currently only organisation, funding-programme, project-pitch, project, site, nursery, project-report, site-report and nursery-report are set up'
+        - type: string
+          name: COLLECTION
+          in: path
+          required: true
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - type: string
+          name: title
+          in: formData
+        - type: file
+          name: upload_file
+          in: formData
+        - type: integer
+          name: lat
+          in: formData
+        - type: integer
+          name: lng
+          in: formData
+        - type: boolean
+          name: is_public
+          default: false
+          in: formData
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2FileRead'
+  /v2/files/{UUID}:
+    put:
+      summary: Update properties of a specific file
+      operationId: v2-put-file-uuid
+      tags:
+        - Files
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+            required:
+              - title
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2FileRead'
+    delete:
+      summary: Delete a specific file
+      operationId: v2-delete-file-uuid
+      tags:
+        - Files
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  /v2/tree-species:
+    post:
+      summary: Create a tree species
+      operationId: post-v2-tree-species
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/V2TreeSpeciesRead'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2TreeSpeciesCreate'
+      tags:
+        - V2 Tree Species
+  '/v2/tree-species/{UUID}':
+    patch:
+      summary: Update a tree species
+      operationId: patch-v2-tree-species-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2TreeSpeciesCreate'
+      tags:
+        - V2 Tree Species
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2TreeSpeciesUpdate'
+    delete:
+      summary: Delete a tree species
+      operationId: delete-v2-tree-species-UUID
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2TreeSpeciesRead'
+      tags:
+        - V2 Tree Species
+  /v2/funding-type:
+    post:
+      summary: Create a funding type entry
+      operationId: post-v2-funding-type
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/V2FundingTypeRead'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2FundingTypeCreate'
+      tags:
+        - V2 Funding Type
+  '/v2/funding-type/{UUID}':
+    patch:
+      summary: Update a funding type
+      operationId: patch-v2-funding-type-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2FundingTypeRead'
+      tags:
+        - V2 Funding Type
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2FundingTypeUpdate'
+    delete:
+      summary: Delete a funding type entry
+      operationId: delete-v2-funding-type-UUID
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2FundingTypeRead'
+      tags:
+        - V2 Funding Type
+  /v2/core-team-leader:
+    post:
+      summary: Create a core team leader
+      operationId: post-v2-core-team-leader
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/V2CoreTeamLeaderRead'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2CoreTeamLeaderCreate'
+      tags:
+        - V2 Core Team Leader
+  '/v2/core-team-leader/{UUID}':
+    patch:
+      summary: Update a core team leader
+      operationId: patch-v2-core-team-leader-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2CoreTeamLeaderRead'
+      tags:
+        - V2 Core Team Leader
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2CoreTeamLeaderUpdate'
+    delete:
+      summary: Delete a core team leader
+      operationId: delete-v2-core-team-leader-UUID
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2CoreTeamLeaderRead'
+      tags:
+        - V2 Core Team Leader
+  /v2/leadership-team:
+    post:
+      summary: Create a leadership team
+      operationId: post-v2-leadership-team
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/V2LeadershipTeamRead'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2LeadershipTeamCreate'
+      tags:
+        - V2 Leadership Team
+  '/v2/leadership-team/{UUID}':
+    patch:
+      summary: Update a leadership team
+      operationId: patch-v2-leadership-team-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2LeadershipTeamRead'
+      tags:
+        - V2 Leadership Team
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/V2LeadershipTeamUpdate'
+    delete:
+      summary: Delete a leadership team
+      operationId: delete-v2-leadership-team-UUID
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2LeadershipTeamRead'
+      tags:
+        - V2 Leadership Team
+  /v2/admin/sites:
+    get:
+      summary: View all sites as an admin
+      tags:
+        - V2 Sites
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/V2SiteRead'
+              links:
+                type: object
+                properties:
+                  first:
+                    type: string
+                  last:
+                    type: string
+                  prev:
+                    type: string
+                  next:
+                    type: string
+              meta:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  from:
+                    type: integer
+                  last_page:
+                    type: integer
+                  next:
+                    type: integer
+      operationId: get-v2-admin-sites
+  /v2/admin/sites/ppc:
+    get:
+      summary: View all PPC sites as an admin
+      tags:
+        - V2 Sites
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/V2SiteRead'
+              links:
+                type: object
+                properties:
+                  first:
+                    type: string
+                  last:
+                    type: string
+                  prev:
+                    type: string
+                  next:
+                    type: string
+              meta:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  from:
+                    type: integer
+                  last_page:
+                    type: integer
+                  next:
+                    type: integer
+      operationId: get-v2-admin-ppc-sites
+  /v2/admin/sites/terrafund:
+    get:
+      summary: View all terrafund sites as an admin
+      tags:
+        - V2 Sites
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/V2SiteRead'
+              links:
+                type: object
+                properties:
+                  first:
+                    type: string
+                  last:
+                    type: string
+                  prev:
+                    type: string
+                  next:
+                    type: string
+              meta:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  from:
+                    type: integer
+                  last_page:
+                    type: integer
+                  next:
+                    type: integer
+      operationId: get-v2-admin-terrafund-sites
+  /v2/admin/project-pitches:
+    get:
+      summary: View project pitches as an admin
+      tags:
+        - Project Pitches
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/ProjectPitchRead'
+              links:
+                type: object
+                properties:
+                  first:
+                    type: string
+                  last:
+                    type: string
+                  prev:
+                    type: string
+                  next:
+                    type: string
+              meta:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  from:
+                    type: integer
+                  last_page:
+                    type: integer
+                  next:
+                    type: integer
+      operationId: get-v2-admin-project-pitches
+      description: ''
+  /v2/admin/projects:
+    get:
+      summary: View projects as an admin
+      tags:
+        - V2 Projects
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/ProjectLiteRead'
+              links:
+                type: object
+                properties:
+                  first:
+                    type: string
+                  last:
+                    type: string
+                  prev:
+                    type: string
+                  next:
+                    type: string
+              meta:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  from:
+                    type: integer
+                  last_page:
+                    type: integer
+                  next:
+                    type: integer
+      operationId: get-v2-admin-projects
+      description: ''
+  /v2/projects/{UUID}:
+    get:
+      summary: View a specific project
+      tags:
+        - V2 Projects
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/ProjectFullRead'
+  /v2/forms/{ENTITY}/{UUID}:
+    get:
+      summary: View a specific entity as answers with form schema
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 Nurseries
+        - V2 Project Reports
+        - V2 Site Reports
+        - V2 Nursery Reports
+        - Forms
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+    put:
+      summary: Update a specific entity using a form schema
+      description: there is no need to provide which schema as it will use the current published one for this entity and framework
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 Nurseries
+        - V2 Project Reports
+        - V2 Site Reports
+        - V2 Nursery Reports
+        - Forms
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+  /v2/{ENTITY}/{UUID}:
+    get:
+      summary: View a specific entity as raw data
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 Nurseries
+        - V2 Project Reports
+        - V2 Site Reports
+        - V2 Nursery Reports
+        - Forms
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+  /v2/sites/{UUID}:
+    get:
+      summary: View a specific site
+      tags:
+        - V2 Sites
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/SiteFullRead'
+  /v2/forms/sites/{UUID}:
+    get:
+      summary: View a specific site as answers with form schema
+      tags:
+        - V2 Sites
+        - Forms
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/SiteWithSchemaRead'
+  /v2/admin/project-pitches/export:
+    get:
+      summary: Export project pitches as an admin
+      tags:
+        - Project Pitches
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+      operationId: get-v2-project-pitches-export
+  /v2/project-pitches:
+    get:
+      summary: Get project pitches
+      tags:
+        - Project Pitches
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/ProjectPitchRead'
+              links:
+                type: object
+                properties:
+                  first:
+                    type: string
+                  last:
+                    type: string
+                  prev:
+                    type: string
+                  next:
+                    type: string
+              meta:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  from:
+                    type: integer
+                  last_page:
+                    type: integer
+                  next:
+                    type: integer
+      operationId: get-v2-project-pitches
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+    post:
+      summary: Store a project pitch
+      operationId: post-v2-project-pitches
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/ProjectPitchRead'
+      tags:
+        - Project Pitches
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/ProjectPitchCreate'
+  '/v2/project-pitches/{UUID}':
+    get:
+      summary: Get a project pitch
+      tags:
+        - Project Pitches
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ProjectPitchRead'
+      operationId: get-v2-project-pitches-UUID
+    patch:
+      summary: Update a project pitch
+      operationId: patch-v2-project-pitches-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ProjectPitchRead'
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/ProjectPitchUpdate'
+      tags:
+        - Project Pitches
+    delete:
+      summary: Delete a project pitch
+      operationId: delete-v2-project-pitches-UUID
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Project Pitches
+  '/v2/project-pitches/submit/{UUID}':
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    put:
+      summary: Submits a project pitch making it active
+      operationId: put-v2-submit-project-pitches-UUID
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Project Pitches
+  '/v2/project-pitches/{UUID}/submissions':
+    get:
+      summary: Get form submissions belonging to a project pitch
+      tags:
+        - Project Pitches
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/FormSubmissionRead'
+      operationId: get-v2-project-pitches-UUID-submissions
+  '/v2/admin/forms/submissions/{UUID}':
+      get:
+        summary: Get a form submission
+        tags:
+          - Form Submissions
+        parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        responses:
+          '200':
+            description: OK
+            schema:
+              $ref: '#/definitions/FormSubmissionRead'
+        operationId: get-v2-admin-forms-submissions-UUID
+      delete:
+        summary: Delete a form submission
+        operationId: delete-v2-admin-forms-submissions-UUID
+        parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        responses:
+          '200':
+            description: OK
+        tags:
+          - Form Submissions
+        description: ''
+  '/v2/admin/forms/submissions/{UUID}/export':
+    get:
+      summary: Export form submissions
+      tags:
+        - Form Submissions
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+      operationId: get-v2-admin-forms-submissions-export
+  /v2/admin/forms/submissions:
+    get:
+      summary: Get form submissions
+      tags:
+        - Form Submissions
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/FormSubmissionRead'
+              links:
+                $ref: '#/definitions/V2PaginationLinks'
+              meta:
+                $ref: '#/definitions/V2PaginationMeta'
+      operationId: get-v2-admin-forms-submissions
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+  /v2/forms/my/submissions:
+    get:
+      summary: Get the authenticated users form submissions
+      tags:
+        - Form Submissions
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/FormSubmissionRead'
+              links:
+                $ref: '#/definitions/V2PaginationLinks'
+              meta:
+                $ref: '#/definitions/V2PaginationMeta'
+      operationId: get-v2-my-forms-submissions
+      parameters:
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+  '/v2/forms/{UUID}':
+    get:
+      summary: Get a form
+      tags:
+        - Forms
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormRead'
+      operationId: get-v2-forms
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+  /v2/admin/funding-programme/stage:
+      post:
+        summary: Create a stage
+        operationId: post-v2-admin-funding-programme-stage
+        responses:
+          '201':
+            description: Created
+            schema:
+              $ref: '#/definitions/StageRead'
+        parameters:
+          - in: body
+            name: body
+            schema:
+              $ref: '#/definitions/StageCreate'
+        tags:
+          - Stages
+  '/v2/admin/funding-programme/stage/{UUID}':
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    delete:
+      summary: Delete a stage
+      operationId: delete-v2-admin-funding-programme-stage-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StageRead'
+      tags:
+        - Stages
+    patch:
+      summary: Update a stage
+      operationId: patch-v2-admin-funding-programme-stage-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StageRead'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/StageCreate'
+      tags:
+        - Stages
+  /v2/funding-programme:
+    get:
+      summary: Get all funding programmes
+      tags:
+        - Funding Programmes
+      parameters:
+        - type: integer
+          in: query
+          name: page
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/FundingProgramme'
+              links:
+                type: object
+                $ref: '#/definitions/V2PaginationLinks'
+              meta:
+                type: object
+                $ref: '#/definitions/V2PaginationMeta'
+      operationId: get-v2-funding-programme
+  /v2/admin/funding-programme:
+    get:
+      summary: Get all funding programmes
+      tags:
+        - Funding Programmes
+      parameters:
+        - type: integer
+          in: query
+          name: page
+          description: 'page number you want results from'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/FundingProgramme'
+              links:
+                type: object
+                $ref: '#/definitions/V2PaginationLinks'
+              meta:
+                type: object
+                $ref: '#/definitions/V2PaginationMeta'
+      operationId: get-v2-admin-funding-programme
+    post:
+      summary: Create a funding programme
+      operationId: post-v2-funding-programme
+      tags:
+        - Funding Programmes
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/FundingProgramme'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FundingProgrammeCreate'
+    parameters: []
+  '/v2/funding-programme/{UUID}':
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    get:
+      summary: Get a funding programme
+      tags:
+        - Funding Programmes
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FundingProgramme'
+      operationId: get-v2-funding-programme-ID
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FundingProgramme'
+  '/v2/admin/funding-programme/{UUID}':
+    get:
+      summary: Get a funding programme
+      tags:
+        - Funding Programmes
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FundingProgramme'
+      operationId: get-v2-admin-funding-programme-ID
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FundingProgramme'
+    put:
+      summary: Update a funding programme
+      operationId: put-v2-funding-programme-ID
+      tags:
+        - Funding Programmes
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FundingProgramme'
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FundingProgrammeCreate'
+    delete:
+      summary: Delete a funding programme
+      operationId: delete-v2-funding-programme-ID
+      tags:
+        - Funding Programmes
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '202':
+          description: Accepted
+  '/v2/admin/funding-programme/{UUID}/status':
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    patch:
+      summary: Update a funding programme status
+      operationId: patch-v2-funding-programme-ID-status
+      tags:
+        - Funding Programmes
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FundingProgrammeStatus'
+  /v2/funding-programme/stage:
+    get:
+      summary: Get all stages
+      tags:
+        - Stages
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StagePaginated'
+      operationId: get-v2-funding-programme-stage
+  '/v2/admin/funding-programme/stage/{UUID}/status':
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    patch:
+      summary: Update a funding programme stage status
+      operationId: patch-v2-funding-programme-stage-ID-status
+      tags:
+        - Stages
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StageRead'
+  '/v2/funding-programme/stage/{UUID}':
+    get:
+      summary: Get a stage
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      tags:
+        - Stages
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StageRead'
+      operationId: get-v2-funding-programme-stage-UUID
+  '/v2/admin/forms/submissions/{UUID}/status':
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      patch:
+        summary: Update the status of a form submission
+        operationId: patch-v2-admin-forms-submissions-UUID-status
+        tags:
+          - Forms
+        responses:
+          '200':
+            description: OK
+            schema:
+              $ref: '#/definitions/FormSubmissionRead'
+        parameters:
+          - in: body
+            name: body
+            schema:
+              type: object
+              properties:
+                feedback:
+                  type: string
+                status:
+                  type: string
+                  enum:
+                    - started
+                    - awaiting-approval
+                    - approved
+                    - requires-more-information
+                    - rejected
+
+  /v2/forms/submissions:
+    post:
+      summary: Create a form submission
+      operationId: post-v2-forms-submissions
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/FormSubmissionRead'
+      tags:
+        - Forms
+      description: ''
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FormSubmissionCreate'
+  '/v2/forms/submissions/{UUID}':
+    get:
+        summary: Get a form submission
+        tags:
+          - Form Submissions
+        parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        responses:
+          '200':
+            description: OK
+            schema:
+              $ref: '#/definitions/FormSubmissionRead'
+        operationId: get-v2-forms-submissions-UUID
+    patch:
+      summary: Update a form submission
+      operationId: patch-v2-forms-submissions-UUID
+      tags:
+        - Forms
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormSubmissionRead'
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FormSubmissionUpdate'
+    delete:
+      summary: "Deletes a specific form submission"
+      operationId: delete-v2-form-submission-UUID
+      tags:
+        - Forms
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  '/v2/forms/submissions/{UUID}/next-stage':
+    post:
+      operationId: post-v2-forms-submissions-UUID-next-stage
+      summary: Create the next stage form submission
+      tags:
+        - Form Submissions
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormSubmissionRead'
+  '/v2/forms/submissions/submit/{UUID}':
+    put:
+      summary: Submit a form submission for approval
+      tags:
+        - Form Submissions
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FormSubmissionRead'
+      operationId: get-v2-submit-forms-submissions-UUID
+  /v2/my/banners:
+    patch:
+      summary: Update the authenticated user's banners
+      operationId: patch-v2-my-banners
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserRead'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              banners:
+                type: array
+                items:
+                  type: object
+      tags:
+        - V2 Users
+  '/v2/admin/forms/applications':
+    get:
+      summary: Get all applications
+      operationId: get-v2-admin-applications
+      description: "Available Filters : funding_programme_uuid,current_stage, current_submission_status (Current stage is the stage uuid) Available Sorts : created_at, updated_at, organisation_name, funding_programme_name, organisation_name (Prefix with a '-' for descending"
+      tags:
+        - V2 Application
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: 'search term to use on the collection'
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+        - name: sort
+          type: string
+          in: query
+          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+        - name: per_page
+          type: integer
+          in: query
+          description: 'number of results (per page) to return'
+        - name: page
+          type: integer
+          in: query
+          description: 'page number you want results from'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/ApplicationLiteRead'
+              links:
+                $ref: '#/definitions/V2PaginationLinks'
+              meta:
+                $ref: '#/definitions/V2PaginationMeta'
+  '/v2/admin/forms/applications/{UUID}':
+    get:
+      summary: Get a specific application
+      operationId: get-v2-admin-applications-UUID
+      tags:
+        - V2 Application
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ApplicationRead'
+    delete:
+      summary: "Deletes a specific and it's dependant form submissions"
+      operationId: delete-v2-admin-applications-UUID
+      tags:
+        - Application
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  '/v2/admin/forms/applications/{UUID}/export':
+    get:
+      summary: Export CSV document of applications belonging to a funding programme
+      description: The UUID provided is the Funding Programme ID that the applications are for
+      operationId: get-v2-admin-forms-applications-UUID-export
+      tags:
+        - Export
+        - V2 Application
+      produces:
+        - text/plain
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: file
+  '/v2/my/applications':
+    get:
+      summary: Get the current users applications
+      operationId: get-v2-my-applications
+      tags:
+        - V2 Application
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/ApplicationLiteRead'
+              links:
+                type: object
+                $ref: '#/definitions/V2PaginationLinks'
+              meta:
+                type: object
+                $ref: '#/definitions/V2PaginationMeta'
+  '/v2/applications/{UUID}':
+    get:
+      summary: Get a specific application
+      operationId: get-v2-applications-UUID
+      tags:
+        - V2 Application
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ApplicationRead'
+  '/v2/applications/{UUID}/export':
+    get:
+      summary: Export CSV document of an application
+      operationId: get-v2-applications-UUID-export
+      tags:
+        - Export
+        - V2 Application
+      produces:
+        - text/plain
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: file
+  '/v2/admin/nurseries/{UUID}':
+    delete:
+      summary: Delete a nursery
+      operationId: delete-v2-admin-nurseries-UUID
+      tags:
+        - V2 Nurseries
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  '/v2/admin/nursery-reports/{UUID}':
+    delete:
+      summary: Delete a nursery report
+      operationId: delete-v2-admin-nursery-reports-UUID
+      tags:
+        - V2 Nursery Reports
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  '/api/v2/admin/sites/{UUID}':
+    delete:
+      summary: Delete a site
+      operationId: delete-v2-admin-site-UUID
+      tags:
+        - V2 Sites
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  '/api/v2/admin/site-reports/{UUID}':
+    delete:
+      summary: Delete a site
+      operationId: delete-v2-admin-site-reports-UUID
+      tags:
+        - V2 Site Reports
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  '/api/v2/admin/projects/{UUID}':
+    delete:
+      summary: Delete a project
+      operationId: delete-v2-admin-projects-UUID
+      tags:
+        - V2 Projects
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  '/api/v2/admin/project-reports/{UUID}':
+    delete:
+      summary: Delete a project report
+      operationId: delete-v2-admin-project-reports-UUID
+      tags:
+        - V2 Project Reports
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK

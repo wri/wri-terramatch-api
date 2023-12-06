@@ -1,0 +1,7 @@
+type: object
+properties:
+  email_address:
+    type: string
+    format: email
+  password:
+    type: string

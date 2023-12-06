@@ -1,0 +1,19 @@
+summary: Create a project monitoring as an admin
+operationId: post-v2-admin-project-monitorings
+tags:
+  - V2 Project Monitorings
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - name: Body
+    in: body
+    required: true
+    schema:
+      $ref: '../../../definitions/_index.yml#/V2ProjectMonitoringCreate'
+responses:
+  '201':
+    description: OK
+    schema:
+      $ref: '../../../definitions/_index.yml#/V2ProjectMonitoringRead'

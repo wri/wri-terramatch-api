@@ -1,0 +1,14 @@
+summary: View a specific reporting framework using an access code
+operationId: get-v2-reporting-frameworks-access-code
+tags:
+  - Funding Programmes
+parameters:
+  - type: string
+    name: ACCESS_CODE
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/ReportingFrameworkRead'

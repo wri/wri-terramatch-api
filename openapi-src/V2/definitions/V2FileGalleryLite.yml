@@ -1,0 +1,14 @@
+title: V2FileGallery
+type: object
+properties:
+  uuid:
+    type: string
+  thumb_url:
+    type: string
+  location:
+    type: object
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number

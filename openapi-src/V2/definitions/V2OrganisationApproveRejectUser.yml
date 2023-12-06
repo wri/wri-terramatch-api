@@ -1,0 +1,10 @@
+title: OrganisationApproveRejectUser
+type: object
+properties:
+  organisation_uuid:
+    type: string
+  user_uuid:
+    type: string
+required:
+  - organisation_uuid
+  - user_uuid

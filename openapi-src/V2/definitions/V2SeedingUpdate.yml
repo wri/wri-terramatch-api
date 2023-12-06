@@ -1,0 +1,11 @@
+title: V2SeedingUpdate
+type: object
+properties:
+  name:
+    type: string
+  weight_of_sample:
+    type: integer
+  seeds_in_sample:
+    type: integer
+  amount:
+    type: integer

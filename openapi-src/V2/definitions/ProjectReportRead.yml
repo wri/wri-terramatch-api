@@ -1,0 +1,281 @@
+title: ProjectReportRead
+type: object
+properties:
+  uuid:
+    type: string
+  title:
+    type: string
+  framework_key:
+    type: string
+  status:
+    type: string
+  readable_status:
+    type: string
+  workdays_paid:
+    type: integer
+  workdays_volunteer:
+    type: integer
+  technical_narrative:
+    type: string
+  public_narrative:
+    type: string
+  landscape_community_contribution:
+    type: string
+  top_three_successes:
+    type: string
+  challenges_faced:
+    type: string
+  lessons_learned:
+    type: string
+  maintenance_and_monitoring_activities:
+    type: string
+  significant_change:
+    type: string
+  pct_survival_to_date:
+    type: number
+  survival_calculation:
+    type: string
+  survival_comparison:
+    type: string
+  ft_women:
+    type: integer
+  ft_men:
+    type: integer
+  ft_youth:
+    type: integer
+  ft_smallholder_farmers:
+    type: integer
+  ft_total:
+    type: integer
+  pt_women:
+    type: integer
+  pt_men:
+    type: integer
+  pt_youth:
+    type: integer
+  pt_smallholder_farmers:
+    type: integer
+  pt_total:
+    type: integer
+  seasonal_women:
+    type: integer
+  seasonal_men:
+    type: integer
+  seasonal_youth:
+    type: integer
+  seasonal_smallholder_farmers:
+    type: integer
+  seasonal_total:
+    type: integer
+  volunteer_women:
+    type: integer
+  volunteer_men:
+    type: integer
+  volunteer_youth:
+    type: integer
+  volunteer_smallholder_farmers:
+    type: integer
+  volunteer_total:
+    type: integer
+  shared_drive_link:
+    type: string
+  planted_trees:
+    type: integer
+  new_jobs_created:
+    type: integer
+  new_jobs_description:
+    type: string
+  new_volunteers:
+    type: integer
+  volunteers_work_description:
+    type: string
+  ft_jobs_non_youth:
+    type: integer
+  ft_jobs_youth:
+    type: integer
+  volunteer_non_youth:
+    type: integer
+  beneficiaries:
+    type: integer
+  beneficiaries_description:
+    type: string
+  beneficiaries_women:
+    type: integer
+  beneficiaries_men:
+    type: integer
+  beneficiaries_non_youth:
+    type: integer
+  beneficiaries_youth:
+    type: integer
+  beneficiaries_smallholder:
+    type: integer
+  beneficiaries_large_scale:
+    type: integer
+  beneficiaries_income_increase:
+    type: integer
+  beneficiaries_income_increase_description:
+    type: string
+  beneficiaries_skills_knowledge_increase:
+    type: integer
+  beneficiaries_skills_knowledge_increase_description:
+    type: string
+  ethnic_indigenous_1:
+    type: integer
+  ethnic_indigenous_2:
+    type: integer
+  ethnic_indigenous_3:
+    type: integer
+  ethnic_indigenous_4:
+    type: integer
+  ethnic_indigenous_5:
+    type: integer
+  ethnic_other_1:
+    type: integer
+  ethnic_other_2:
+    type: integer
+  ethnic_other_3:
+    type: integer
+  ethnic_other_4:
+    type: integer
+  ethnic_other_5:
+    type: integer
+  pe_gender_female:
+    type: number
+  pe_gender_male:
+    type: number
+  pe_gender_undefined:
+    type: number
+  pe_age_youth:
+    type: number
+  pe_age_adult:
+    type: number
+  pe_age_elder:
+    type: number
+  pe_age_undefined:
+    type: number
+  pe_ethnicity_indigenous_1:
+    type: number
+  pe_ethnicity_indigenous_2:
+    type: number
+  pe_ethnicity_other_1:
+    type: number
+  pe_ethnicity_other_2:
+    type: number
+  pe_ethnicity_other_3:
+    type: number
+  pe_ethnicity_undefined:
+    type: number
+  no_gender_female:
+    type: number
+  no_gender_male:
+    type: number
+  no_gender_undefined:
+    type: number
+  no_age_youth:
+    type: number
+  no_age_adult:
+    type: number
+  no_age_elder:
+    type: number
+  no_age_undefined:
+    type: number
+  no_ethnicity_indigenous_1:
+    type: number
+  no_ethnicity_indigenous_2:
+    type: number
+  no_ethnicity_other_1:
+    type: number
+  no_ethnicity_other_2:
+    type: number
+  no_ethnicity_other_3:
+    type: number
+  no_ethnicity_undefined:
+    type: number
+  pm_gender_female:
+    type: number
+  pm_gender_male:
+    type: number
+  pm_gender_undefined:
+    type: number
+  pm_age_youth:
+    type: number
+  pm_age_adult:
+    type: number
+  pm_age_elder:
+    type: number
+  pm_age_undefined:
+    type: number
+  pm_ethnicity_indigenous_1:
+    type: number
+  pm_ethnicity_indigenous_2:
+    type: number
+  pm_ethnicity_other_1:
+    type: number
+  pm_ethnicity_other_2:
+    type: number
+  pm_ethnicity_other_3:
+    type: number
+  pm_ethnicity_undefined:
+    type: number
+  sc_gender_female:
+    type: number
+  sc_gender_male:
+    type: number
+  sc_gender_undefined:
+    type: number
+  sc_age_youth:
+    type: number
+  sc_age_adult:
+    type: number
+  sc_age_elder:
+    type: number
+  sc_age_undefined:
+    type: number
+  sc_ethnicity_indigenous_1:
+    type: number
+  sc_ethnicity_indigenous_2:
+    type: number
+  sc_ethnicity_other_1:
+    type: number
+  sc_ethnicity_other_2:
+    type: number
+  sc_ethnicity_other_3:
+    type: number
+  sc_ethnicity_undefined:
+    type: number
+  o_gender_female:
+    type: number
+  o_gender_male:
+    type: number
+  o_gender_undefined:
+    type: number
+  o_age_youth:
+    type: number
+  o_age_adult:
+    type: number
+  o_age_elder:
+    type: number
+  o_age_undefined:
+    type: number
+  o_ethnicity_indigenous_1:
+    type: number
+  o_ethnicity_indigenous_2:
+    type: number
+  o_ethnicity_other_1:
+    type: number
+  o_ethnicity_other_2:
+    type: number
+  o_ethnicity_other_3:
+    type: number
+  o_ethnicity_undefined:
+    type: number
+  organisation:
+    $ref: './_index.yml#/V2OrganisationRead'
+  task_uuid:
+    type: string
+  submitted_at:
+    type: string
+  created_by:
+    $ref: './_index.yml#/UserRead'
+  seedlings_grown:
+    type: integer

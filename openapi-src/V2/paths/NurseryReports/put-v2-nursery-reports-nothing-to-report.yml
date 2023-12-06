@@ -1,0 +1,14 @@
+summary: Submit that you have nothing to report for a nursery
+tags:
+  - V2 Nursery Reports
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/NurseryReportRead'
+operationId: put-v2-nursery-reports-nothing-to-report

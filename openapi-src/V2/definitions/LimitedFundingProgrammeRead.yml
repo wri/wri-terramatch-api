@@ -1,0 +1,23 @@
+title: LimitedFundingProgrammeRead
+x-stoplight:
+  id: uh5oce75en4za
+type: object
+properties:
+  id:
+    type: integer
+  uuid:
+    type: string
+  name:
+    type: string
+  description:
+    type: string
+  read_more_url:
+    type: string
+  organisation_types:
+    type: array
+    items:
+      type: string
+  location:
+    type: string
+  status:
+    type: string

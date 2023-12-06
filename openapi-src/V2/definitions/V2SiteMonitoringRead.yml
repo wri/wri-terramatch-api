@@ -1,0 +1,25 @@
+title: V2SiteMonitoringRead
+type: object
+properties:
+  uuid:
+    type: string
+  status:
+    type: string
+  tree_count:
+    type: integer
+  tree_cover:
+    type: integer
+  field_tree_count:
+    type: integer
+  measurement_date:
+    type: string
+    format: date
+  last_updated:
+    type: string
+    format: date-time
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time

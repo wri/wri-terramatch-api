@@ -1,0 +1,15 @@
+title: V2CoreTeamLeaderUpdate
+type: object
+properties:
+  position:
+    type: string
+  gender:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  role:
+    type: string
+  age:
+    type: integer

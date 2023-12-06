@@ -1,0 +1,26 @@
+summary: Retrieve all images for a specific entity
+operationId: get-v2-model-uuid-image-locations
+tags:
+  - Files
+produces:
+  - application/json
+parameters:
+  - type: string
+    name: MODEL
+    in: path
+    required: true
+    description: 'Currently only projects, sites, nurseries, project-reports, nursery-reports and site-reports are set up'
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/V2FileGalleryLite'

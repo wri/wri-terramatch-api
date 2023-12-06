@@ -1,0 +1,14 @@
+operationId: patch-v2-invasives-uuid
+summary: Update a Invasive
+tags:
+  - V2 Invasive
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/V2InvasivePaginated'

@@ -1,0 +1,141 @@
+title: ProjectPitchCreate
+x-stoplight:
+  id: xo976uxy5fkzu
+type: object
+properties:
+  organisation_id:
+    type: string
+  project_name:
+    type: string
+  project_objectives:
+    type: string
+  how_discovered:
+    type: string
+  project_country:
+    type: array
+    items:
+      type: string
+  project_county_district:
+    type: string
+  land_systems:
+    type: array
+    items:
+      type: string
+  tree_restoration_practices:
+    type: array
+    items:
+      type: string
+  restoration_intervention_types:
+    type: array
+    items:
+      type: string
+  capacity_building_needs:
+    type: array
+    items:
+      type: string
+  total_trees:
+    type: integer
+  total_hectares:
+    type: integer
+  project_budget:
+    type: integer
+  expected_active_restoration_start_date:
+    type: string
+  expected_active_restoration_end_date:
+    type: string
+  description_of_project_timeline:
+    type: string
+  proj_partner_info:
+    type: string
+  land_tenure_proj_area:
+    type: array
+    items:
+      type: string
+  landholder_comm_engage:
+    type: string
+  proj_success_risks:
+    type: string
+  monitor_eval_plan:
+    type: string
+  proj_boundary:
+    type: string
+  sustainable_dev_goals:
+    type: array
+    items:
+      type: string
+  proj_area_description:
+    type: string
+  proposed_num_sites:
+    type: integer
+    minimum: 0
+    maximum: 4294967295
+  environmental_goals:
+    type: string
+  main_degradation_causes:
+    type: string
+  seedlings_source:
+    type: string
+  proposed_num_nurseries:
+    type: integer
+    minimum: 0
+    maximum: 4294967295
+  curr_land_degradation:
+    type: string
+  proj_impact_socieconom:
+    type: string
+  proj_impact_foodsec:
+    type: string
+  proj_impact_watersec:
+    type: string
+  proj_impact_jobtypes:
+    type: string
+  num_jobs_created:
+    type: integer
+    minimum: 0
+    maximum: 4294967295
+  pct_employees_men:
+    type: integer
+    minimum: 0
+    maximum: 100
+  pct_employees_women:
+    type: integer
+    minimum: 0
+    maximum: 100
+  pct_employees_18to35:
+    type: integer
+    minimum: 0
+    maximum: 100
+  pct_employees_older35:
+    type: integer
+    minimum: 0
+    maximum: 100
+  proj_beneficiaries:
+    type: integer
+  pct_beneficiaries_women:
+    type: integer
+    minimum: 0
+    maximum: 100
+  pct_beneficiaries_small:
+    type: integer
+    minimum: 0
+    maximum: 100
+  pct_beneficiaries_large:
+    type: integer
+    minimum: 0
+    maximum: 100
+  pct_beneficiaries_youth:
+    type: integer
+    minimum: 0
+    maximum: 100
+  pct_beneficiaries_scheduled_classes:
+    type: integer
+    minimum: 0
+    maximum: 100
+  pct_beneficiaries_scheduled_tribes:
+    type: integer
+    minimum: 0
+    maximum: 100
+  monitoring_evaluation_plan:
+    type: string
+  main_causes_of_degradation:
+    type: string

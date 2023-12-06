@@ -1,0 +1,9 @@
+title: V2InvasiveRead
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  type:
+    type: integer

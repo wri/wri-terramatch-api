@@ -1,0 +1,25 @@
+title: NurseryRead
+type: object
+properties:
+  uuid:
+    type: string
+  framework_key:
+    type: string
+  framework_uuid:
+    type: string
+  status:
+    type: integer
+  readable_status:
+    type: string
+  type:
+    type: string
+  establishment_date:
+    type: string
+  start_date:
+    type: string
+  seedling_grown:
+    type: integer
+  planting_contribution:
+    type: string
+  organisation:
+    $ref: './_index.yml#/V2OrganisationRead'

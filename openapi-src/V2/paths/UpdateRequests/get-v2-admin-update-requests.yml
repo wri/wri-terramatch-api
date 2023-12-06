@@ -1,0 +1,14 @@
+summary: View a list of UpdateRequests
+operationId: get-v2-admin-update-requests
+tags:
+  - V2 Update requests
+parameters:
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/V2SearchFilterSort'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/UpdateRequestsPaginated'

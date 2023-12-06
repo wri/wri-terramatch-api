@@ -1,0 +1,27 @@
+title: V2FileRead
+type: object
+properties:
+  uuid:
+    type: string
+  url:
+    type: string
+  thumb_url:
+    type: string
+  collection_name:
+    type: string
+  title:
+    type: string
+  file_name:
+    type: string
+  mime_type:
+    type: string
+  size:
+    type: integer
+  lat:
+    type: integer
+  lng:
+    type: integer
+  is_public:
+    type: boolean
+  created_at:
+    type: string

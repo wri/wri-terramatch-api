@@ -1,0 +1,19 @@
+title: SiteLiteRead
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  project:
+    $ref: './_index.yml#/ProjectLiteRead'
+  framework_key:
+    type: string
+  framework_uuid:
+    type: string
+  status:
+    type: string
+  readable_status:
+    type: string
+  has_monitoring_data:
+    type: boolean

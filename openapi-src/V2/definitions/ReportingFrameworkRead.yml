@@ -1,0 +1,23 @@
+title: ReportingFrameworkRead
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  slug:
+    type: string
+  access_code:
+    type: string
+  project_form_uuid:
+    type: string
+  project_report_form_uuid:
+    type: string
+  site_form_uuid:
+    type: string
+  site_report_form_uuid:
+    type: string
+  nursery_form_uuid:
+    type: string
+  nursery_report_form_uuid:
+    type: string

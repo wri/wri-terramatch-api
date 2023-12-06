@@ -1,0 +1,30 @@
+title: V2FileGallery
+type: object
+properties:
+  uuid:
+    type: string
+  file_url:
+    type: string
+  thumb_url:
+    type: string
+  file_name:
+    type: string
+  created_date:
+    type: string
+  model_name:
+    type: string
+  is_public:
+    type: boolean
+  location:
+    type: object
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number
+  mime_type:
+    type: string
+  file_size:
+    type: integer
+  collection_name:
+    type: string

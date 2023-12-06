@@ -1,0 +1,20 @@
+title: V2PaginationMeta
+properties:
+  from:
+    type: integer
+  to:
+    type: integer
+  current_page:
+    type: integer
+  last_page:
+    type: integer
+  per_page:
+    type: integer
+  total:
+    type: integer
+  path:
+    type: string
+  links:
+    type: array
+    items:
+      $ref: './_index.yml#/V2PaginationCurrentLinks'

@@ -1,0 +1,15 @@
+title: V2DisturbanceCreate
+type: object
+properties:
+  model_type:
+    type: string
+  model_uuid:
+    type: integer
+  description:
+    type: string
+  intensity:
+    type: string
+  extent:
+    type: string
+  collection:
+    type: string

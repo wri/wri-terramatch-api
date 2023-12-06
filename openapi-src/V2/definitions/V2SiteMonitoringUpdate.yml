@@ -1,0 +1,14 @@
+title: V2SiteMonitoringUpdate
+type: object
+properties:
+  status:
+    type: string
+  tree_count:
+    type: integer
+  tree_cover:
+    type: integer
+  field_tree_count:
+    type: integer
+  measurement_date:
+    type: string
+    format: date

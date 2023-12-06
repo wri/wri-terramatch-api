@@ -1,0 +1,19 @@
+summary: Create a site monitoring as an admin
+operationId: post-v2-admin-site-monitorings
+tags:
+  - V2 Site Monitorings
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - name: Body
+    in: body
+    required: true
+    schema:
+      $ref: '../../../definitions/_index.yml#/V2SiteMonitoringCreate'
+responses:
+  '201':
+    description: OK
+    schema:
+      $ref: '../../../definitions/_index.yml#/V2SiteMonitoringRead'

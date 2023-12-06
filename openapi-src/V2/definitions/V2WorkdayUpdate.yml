@@ -1,0 +1,13 @@
+title: V2WorkdayUpdate
+type: object
+properties:
+  amount:
+    type: integer
+  collection:
+    type: string
+  gender:
+    type: string
+  age:
+    type: string
+  ethnicity:
+    type: string

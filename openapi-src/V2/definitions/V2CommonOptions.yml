@@ -1,0 +1,11 @@
+title: V2CommonOptions
+type: object
+properties:
+  uuid:
+    type: string
+  slug:
+    type: string
+  alt_value:
+    type: string
+  label:
+    type: string

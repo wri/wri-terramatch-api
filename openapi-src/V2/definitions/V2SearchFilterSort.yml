@@ -1,0 +1,18 @@
+title: V2SearchFilterSort
+type: object
+properties:
+  search:
+    type: string
+    description: 'search term to use on the collection'
+  filter:
+    type: string
+    description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+  sort:
+    type: string
+    description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name'
+  per_page:
+    type: integer
+    description: 'number of results (per page) to return'
+  page:
+    type: integer
+    description: 'page number you want results from'

@@ -1,0 +1,15 @@
+title: V2LeadershipTeamRead
+x-stoplight:
+  id: 04vvsvyndvy8n
+type: object
+properties:
+  uuid:
+    type: string
+  organisation_id:
+    type: string
+  position:
+    type: string
+  gender:
+    type: string
+  age:
+    type: integer

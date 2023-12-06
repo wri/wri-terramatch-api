@@ -1,0 +1,17 @@
+summary: Get multiple projects as an admin
+tags:
+  - V2 Projects
+parameters:
+  - type: string
+    in: query
+    name: ids
+    description: 'comma separated list of values. eg ?ids=uuid1,uuid2'
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: '../../definitions/_index.yml#/ProjectLiteRead'
+operationId: get-v2-admin-projects-multi

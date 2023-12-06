@@ -1,0 +1,14 @@
+operationId: patch-v2-stratas-uuid
+summary: Updata a strata
+tags:
+  - V2 Strata
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/V2StrataPaginated'

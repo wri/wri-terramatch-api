@@ -1,0 +1,23 @@
+title: FormUpdate
+x-stoplight:
+  id: m4lcpf2li93rf
+type: object
+properties:
+  type:
+    type: string
+  title:
+    type: string
+  subtitle:
+    type: string
+  description:
+    type: string
+  documentation:
+    type: string
+  documentation_label:
+    type: string
+  submission_message:
+    type: string
+  duration:
+    type: string
+  options_other:
+    type: boolean

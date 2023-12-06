@@ -1,0 +1,9 @@
+title: FormSubmissionCreate
+x-stoplight:
+  id: yuvkg8bgvnerq
+type: object
+properties:
+  form_uuid:
+    type: string
+  project_pitch_uuid:
+    type: string

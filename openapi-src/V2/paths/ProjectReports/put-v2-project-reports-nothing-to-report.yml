@@ -1,0 +1,14 @@
+summary: Submit that you have nothing to report for a project
+tags:
+  - V2 Project Reports
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/ProjectReportRead'
+operationId: put-v2-project-reports-nothing-to-report

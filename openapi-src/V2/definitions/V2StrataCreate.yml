@@ -1,0 +1,11 @@
+title: V2StrataCreate
+type: object
+properties:
+  model_type:
+    type: string
+  model_uuid:
+    type: string
+  description:
+    type: string
+  extent:
+    type: integer

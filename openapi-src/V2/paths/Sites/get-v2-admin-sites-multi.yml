@@ -1,0 +1,17 @@
+summary: Get multiple sites as an admin
+tags:
+  - V2 Sites
+parameters:
+  - type: string
+    in: query
+    name: ids
+    description: 'comma separated list of values. eg ?ids=uuid1,uuid2'
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: '../../definitions/_index.yml#/SiteLiteRead'
+operationId: get-v2-admin-sites-multi

@@ -1,0 +1,14 @@
+summary: View all nursery reports as an admin
+tags:
+  - V2 Nursery Reports
+parameters:
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/V2SearchFilterSort'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/NurseryReportPaginated'
+operationId: get-v2-admin-nursery-reports

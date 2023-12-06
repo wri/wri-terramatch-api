@@ -1,0 +1,20 @@
+summary: Create a user
+tags:
+  - Users
+security: []
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - name: Body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/UserCreate'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/UserRead'
+operationId: post-users

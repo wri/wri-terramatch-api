@@ -1,0 +1,23 @@
+summary: Update status of a UpdateRequests
+operationId: put-v2-admin-update-requests-uuid-status
+tags:
+  - V2 Update requests
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - type: string
+    name: STATUS
+    in: path
+    required: true
+    description: "allowed values are approve, reject, moreinfo"
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/StatusUpdate'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/UpdateRequestRead'

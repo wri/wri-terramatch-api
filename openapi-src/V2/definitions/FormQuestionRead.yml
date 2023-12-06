@@ -1,0 +1,60 @@
+title: FormQuestionRead
+type: object
+properties:
+  id:
+    type: integer
+  uuid:
+    type: string
+  form_section_id:
+    type: integer
+  label:
+    type: string
+  validation:
+    type: array
+    items:
+      type: string
+  parent_id:
+    type: string
+  linked_field_key:
+    type: string
+  children:
+    type: array
+    items:
+      type: object
+  multichoice:
+    type: boolean
+  order:
+    type: integer
+  options:
+    type: array
+    items:
+      $ref: './_index.yml#/FormQuestionOptionRead'
+  table_headers:
+    type: array
+    items:
+      $ref: './_index.yml#/FormTableHeaderRead'
+  additional_text:
+    type: string
+  additional_url:
+    type: string
+  show_on_parent_condition:
+    type: boolean
+  input_type:
+    type: string
+    enum:
+      - date
+      - text
+      - long-text
+      - select
+      - checkboxes
+      - radio
+      - number
+      - image
+      - file
+      - conditional
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  deleted_at:
+    type: string

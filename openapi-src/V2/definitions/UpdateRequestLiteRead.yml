@@ -1,0 +1,11 @@
+title: UpdateRequestLiteRead
+type: object
+properties:
+  uuid:
+    type: string
+  framework_key:
+    type: string
+  status:
+    type: string
+  readable_status:
+    type: string

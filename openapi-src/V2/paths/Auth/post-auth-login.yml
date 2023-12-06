@@ -1,0 +1,20 @@
+operationId: post-auth-login
+summary: Log a user or admin in
+tags:
+  - Auth
+security: []
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - name: Body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/AuthLogIn'
+responses:
+  '201':
+    description: Created
+    schema:
+      $ref: '../../definitions/_index.yml#/TokenRead'

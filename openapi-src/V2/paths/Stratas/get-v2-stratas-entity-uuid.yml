@@ -1,0 +1,19 @@
+operationId: get-v2-stratas-entity-uuid
+summary: View all stratas for a given entity
+tags:
+  - V2 Strata
+parameters:
+  - type: string
+    name: ENTITY
+    in: path
+    required: true
+    description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/V2StrataPaginated'

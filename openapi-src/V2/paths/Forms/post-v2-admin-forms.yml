@@ -1,0 +1,9 @@
+summary: Create a form
+operationId: post-v2-admin-forms
+responses:
+  '201':
+    description: Created
+    schema:
+      $ref: '../../definitions/_index.yml#/FormCreate'
+tags:
+  - Forms

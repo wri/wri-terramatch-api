@@ -1,0 +1,167 @@
+title: SiteReportRead
+type: object
+properties:
+  uuid:
+    type: string
+  framework_key:
+    type: string
+  framework_uuid:
+    type: string
+  title:
+    type: string
+  site:
+    $ref: './_index.yml#/SiteLiteRead'
+  status:
+    type: string
+  readable_status:
+    type: string
+  approved_at:
+    type: string
+  created_by:
+    $ref: './_index.yml#/UserRead'
+  approved_by:
+    $ref: './_index.yml#/UserRead'
+  workdays_volunteer:
+    type: integer
+  technical_narrative:
+    type: string
+  public_narrative:
+    type: string
+  shared_drive_link:
+    type: string
+  due_at:
+    type: string
+  se_gender_female:
+    type: number
+  se_gender_male:
+    type: number
+  se_gender_undefined:
+    type: number
+  se_age_youth:
+    type: number
+  se_age_adult:
+    type: number
+  se_age_elder:
+    type: number
+  se_age_undefined:
+    type: number
+  se_ethnicity_indigenous_1:
+    type: number
+  se_ethnicity_indigenous_2:
+    type: number
+  se_ethnicity_other_1:
+    type: number
+  se_ethnicity_other_2:
+    type: number
+  se_ethnicity_other_3:
+    type: number
+  se_ethnicity_undefined:
+    type: number
+  p_gender_female:
+    type: number
+  p_gender_male:
+    type: number
+  p_gender_undefined:
+    type: number
+  p_age_youth:
+    type: number
+  p_age_adult:
+    type: number
+  p_age_elder:
+    type: number
+  p_age_undefined:
+    type: number
+  p_ethnicity_indigenous_1:
+    type: number
+  p_ethnicity_indigenous_2:
+    type: number
+  p_ethnicity_other_1:
+    type: number
+  p_ethnicity_other_2:
+    type: number
+  p_ethnicity_other_3:
+    type: number
+  p_ethnicity_undefined:
+    type: number
+  sma_gender_female:
+    type: number
+  sma_gender_male:
+    type: number
+  sma_gender_undefined:
+    type: number
+  sma_age_youth:
+    type: number
+  sma_age_adult:
+    type: number
+  sma_age_elder:
+    type: number
+  sma_age_undefined:
+    type: number
+  sma_ethnicity_indigenous_1:
+    type: number
+  sma_ethnicity_indigenous_2:
+    type: number
+  sma_ethnicity_other_1:
+    type: number
+  sma_ethnicity_other_2:
+    type: number
+  sma_ethnicity_other_3:
+    type: number
+  sma_ethnicity_undefined:
+    type: number
+  smo_gender_female:
+    type: number
+  smo_gender_male:
+    type: number
+  smo_gender_undefined:
+    type: number
+  smo_age_youth:
+    type: number
+  smo_age_adult:
+    type: number
+  smo_age_elder:
+    type: number
+  smo_age_undefined:
+    type: number
+  smo_ethnicity_indigenous_1:
+    type: number
+  smo_ethnicity_indigenous_2:
+    type: number
+  smo_ethnicity_other_1:
+    type: number
+  smo_ethnicity_other_2:
+    type: number
+  smo_ethnicity_other_3:
+    type: number
+  smo_ethnicity_undefined:
+    type: number
+  o_gender_female:
+    type: number
+  o_gender_male:
+    type: number
+  o_gender_undefined:
+    type: number
+  o_age_youth:
+    type: number
+  o_age_adult:
+    type: number
+  o_age_elder:
+    type: number
+  o_age_undefined:
+    type: number
+  o_ethnicity_indigenous_1:
+    type: number
+  o_ethnicity_indigenous_2:
+    type: number
+  o_ethnicity_other_1:
+    type: number
+  o_ethnicity_other_2:
+    type: number
+  o_ethnicity_other_3:
+    type: number
+  o_ethnicity_undefined:
+    type: number
+  organisation:
+    $ref: './_index.yml#/V2OrganisationRead'
+  task_uuid:
+    type: string

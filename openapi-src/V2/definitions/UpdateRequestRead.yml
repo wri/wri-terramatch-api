@@ -1,0 +1,21 @@
+title: UpdateRequestRead
+type: object
+properties:
+  uuid:
+    type: string
+  framework_key:
+    type: string
+  status:
+    type: string
+  readable_status:
+    type: string
+  content:
+    type: string
+  comments:
+    type: string
+  project:
+    type: object
+  organisation:
+    type: object
+  created_by:
+    type: object

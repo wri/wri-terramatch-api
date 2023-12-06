@@ -1,0 +1,14 @@
+summary: Submit that you have nothing to report for a site
+tags:
+  - V2 Site Reports
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/SiteReportRead'
+operationId: put-v2-site-reports-nothing-to-report

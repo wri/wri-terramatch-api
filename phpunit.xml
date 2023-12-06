@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="vendor/autoload.php" colors="true" processIsolation="false" stopOnFailure="false" cacheResult="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+  <coverage>
+    <include>
+      <directory suffix=".php">./app</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="Feature">
+      <directory suffix="Test.php">./tests/Feature</directory>
+    </testsuite>
+    <testsuite name="Unit">
+      <directory suffix="Test.php">./tests/Unit</directory>
+    </testsuite>
+    <testsuite name="Other">
+      <directory suffix="Test.php">./tests/Other</directory>
+    </testsuite>
+    <testsuite name="LegacyFeature">
+      <directory suffix="Test.php">./tests/Legacy/Feature</directory>
+    </testsuite>
+    <testsuite name="LegacyUnit">
+      <directory suffix="Test.php">./tests/Legacy/Unit</directory>
+    </testsuite>
+    <testsuite name="LegacyOther">
+      <directory suffix="Test.php">./tests/Legacy/Other</directory>
+    </testsuite>
+    <testsuite name="V2">
+      <directory suffix="Test.php">./tests/V2</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <env name="APP_ENV" value="testing"/>
+    <env name="BCRYPT_ROUNDS" value="4"/>
+    <env name="CACHE_DRIVER" value="array"/>
+    <env name="MAIL_MAILER" value="smtp"/>
+    <env name="QUEUE_CONNECTION" value="sync"/>
+    <env name="SESSION_DRIVER" value="array"/>
+    <ini name="memory_limit" value="1G"/>
+  </php>
+</phpunit>

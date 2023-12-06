@@ -1,0 +1,14 @@
+summary: Get the current user's actions
+operationId: get-v2-my-actions
+tags:
+  - Users
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/ActionRead'

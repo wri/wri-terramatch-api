@@ -1,0 +1,2571 @@
+/v2/tree-species/{entity}/{UUID}:
+  get:
+    $ref: './TreeSpecies/get-v2-tree-species-entity-uuid.yml'
+/v2/admin/projects/multi:
+  get:
+    $ref: './Projects/get-v2-admin-projects-multi.yml'
+/v2/admin/nurseries/multi:
+  get:
+    $ref: './Nurseries/get-v2-admin-nurseries-multi.yml'
+/v2/admin/sites/multi:
+  get:
+    $ref: './Sites/get-v2-admin-sites-multi.yml'
+/users:
+  post:
+    $ref: './Users/post-users.yml'
+/v2/projects/{UUID}/partners:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-partners.yml'
+/v2/my/projects:
+  get:
+    $ref: './Projects/get-v2-my-projects.yml'
+/v2/my/actions:
+  get:
+    $ref: './Users/get-v2-my-actions.yml'
+/v2/my/actions/{UUID}/complete:
+  put:
+    $ref: './Users/put-v2-my-action-uuid-complete.yml'
+/v2/{ENTITY}/{UUID}/nothing-to-report:
+  put:
+    $ref: './Entity/put-v2-entity-nothing-to-report.yml'
+/v2/{ENTITY}/{UUID}/reports:
+  get:
+    $ref: './Entity/get-v2-entity-uuid-reports.yml'
+/v2/admin/nursery-reports:
+  get:
+    $ref: './NurseryReports/get-v2-admin-nursery-reports.yml'
+/v2/admin/site-reports:
+  get:
+    $ref: './SiteReports/get-v2-admin-site-reports.yml'
+/v2/admin/project-reports:
+  get:
+    $ref: './ProjectReports/get-v2-admin-project-reports.yml'
+/v2/admin/nurseries:
+  get:
+    $ref: './Nurseries/get-v2-admin-nurseries.yml'
+/v2/admin/forms:
+  post:
+    $ref: './Forms/post-v2-admin-forms.yml'
+  get:
+    $ref: './Forms/get-v2-admin-forms.yml'
+/v2/admin/reporting-frameworks:
+  get:
+    $ref: './Forms/get-v2-admin-reporting-frameworks.yml'
+/v2/admin/reporting-frameworks/{UUID}:
+  put:
+    $ref: './ReportingFrameworks/put-v2-admin-reporting-frameworks-uuid.yml'
+/v2/reporting-frameworks/access-code/{ACCESS_CODE}:
+  get:
+    $ref: './ReportingFrameworks/get-v2-reporting-frameworks-access-code.yml'
+/v2/reporting-frameworks/{UUID}:
+  get:
+    $ref: './ReportingFrameworks/get-v2-reporting-frameworks-uuid.yml'
+/v2/forms/{ENTITY}/{UUID}:
+  get:
+    $ref: './Forms/get-v2-forms-entity-form-uuid.yml'
+  put:
+    $ref: './Forms/put-v2-forms-entity-form-uuid.yml'
+/v2/forms/{ENTITY}/{UUID}/submit:
+  put:
+    $ref: './Forms/put-v2-forms-entity-form-uuid-submit.yml'
+/v2/forms/{ENTITY}:
+  post:
+    $ref: './Forms/post-v2-forms-entity-form-uuid.yml'
+/v2/forms/projects/{UUID}:
+  post:
+    $ref: './Forms/post-v2-forms-projects-form-uuid.yml'
+/v2/projects/{UUID}/site-polygons:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-site-polygons.yml'
+/v2/admin/update-requests/:
+  get:
+    $ref: './UpdateRequests/get-v2-admin-update-requests.yml'
+/v2/admin/update-requests/{UUID}:
+  delete:
+    $ref: './UpdateRequests/delete-v2-admin-update-requests-uuid.yml'
+/v2/admin/update-requests/{UUID}/{STATUS}:
+  put:
+    $ref: './UpdateRequests/put-v2-admin-update-requests-uuid-status.yml'
+/v2/admin/{ENTITY}/{UUID}/{STATUS}:
+  put:
+    $ref: './Entity/put-v2-admin-entity-uuid-status.yml'
+/v2/update-requests/{UUID}:
+  get:
+    $ref: './UpdateRequests/get-v2-update-requests-uuid.yml'
+  delete:
+    $ref: './UpdateRequests/delete-v2-update-requests-uuid.yml'
+/v2/update-requests/{ENTITY}/{UUID}:
+  get:
+    $ref: './UpdateRequests/get-v2-update-requests-entity-uuid.yml'
+/v2/workdays:
+  post:
+    $ref: './Workdays/post-v2-workday.yml'
+/v2/workdays/{UUID}:
+  patch:
+    $ref: './Workdays/patch-v2-workday-uuid.yml'
+  delete:
+    $ref: './Workdays/delete-v2-workday-uuid.yml'
+/v2/workdays/{ENTITY}/{UUID}:
+  get:
+    $ref: './Workdays/get-v2-workdays-entity-uuid.yml'
+/v2/stratas:
+  post:
+    $ref: './Stratas/post-v2-stratas.yml'
+/v2/stratas/{UUID}:
+  patch:
+    $ref: './Stratas/patch-v2-stratas-uuid.yml'
+  delete:
+    $ref: './Stratas/delete-v2-stratas-uuid.yml'
+/v2/stratas/{ENTITY}/{UUID}:
+  get:
+    $ref: './Stratas/get-v2-stratas-entity-uuid.yml'
+/v2/seedings:
+  post:
+    $ref: './Seedings/post-v2-seedings.yml'
+/v2/seedings/{UUID}:
+  patch:
+    $ref: './Seedings/patch-v2-seedings-uuid.yml'
+  delete:
+    $ref: './Seedings/delete-v2-seedings-uuid.yml'
+/v2/seedings/{ENTITY}/{UUID}:
+  get:
+    $ref: './Seedings/get-v2-seedings-entity-uuid.yml'
+/v2/disturbances:
+  post:
+    $ref: './Disturbances/post-v2-disturbances.yml'
+/v2/disturbances/{UUID}:
+  patch:
+    $ref: './Disturbances/patch-v2-disturbances-uuid.yml'
+  delete:
+    $ref: './Disturbances/delete-v2-disturbances-uuid.yml'
+/v2/disturbances/{ENTITY}/{UUID}:
+  get:
+    $ref: './Disturbances/get-v2-disturbances-entity-uuid.yml'
+/v2/invasives:
+  post:
+    $ref: './Invasives/post-v2-invasives.yml'
+/v2/invasives/{UUID}:
+  patch:
+    $ref: './Invasives/patch-v2-invasives-uuid.yml'
+  delete:
+    $ref: './Invasives/delete-v2-invasives-uuid.yml'
+/v2/invasives/{ENTITY}/{UUID}:
+  get:
+    $ref: './Invasives/get-v2-invasives-entity-uuid.yml'
+/v2/forms:
+  get:
+    summary: View all forms as a user
+    tags:
+      - Forms
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2SearchFilterSort'
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormPaginated'
+    operationId: get-v2-user-forms
+'/v2/admin/forms/{UUID}/publish':
+  parameters:
+    - type: string
+      name: UUID
+      in: path
+      required: true
+  patch:
+    summary: Publish a form
+    operationId: patch-v2-admin-forms-UUID-publish
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormRead'
+    tags:
+      - Forms
+/v2/admin/forms/section:
+  parameters: []
+  post:
+    summary: Create a form section
+    operationId: post-v2-admin-forms-section
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/FormSectionRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/FormSectionCreate'
+    tags:
+      - Forms
+'/v2/admin/forms/question/{UUID}':
+  parameters:
+    - type: string
+      name: UUID
+      in: path
+      required: true
+  delete:
+    summary: Delete a form question
+    operationId: delete-v2-admin-form-question-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormQuestionRead'
+    tags:
+      - Forms
+'/v2/admin/forms/section/{UUID}':
+  parameters:
+    - type: string
+      name: UUID
+      in: path
+      required: true
+  delete:
+    summary: Delete a form section
+    operationId: delete-v2-admin-form-section-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormSectionRead'
+    tags:
+      - Forms
+  patch:
+    summary: Update a form section
+    operationId: patch-v2-admin-form-section-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormSectionRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/FormSectionUpdate'
+    tags:
+      - Forms
+'/v2/admin/forms/{UUID}':
+  parameters:
+    - type: string
+      name: UUID
+      in: path
+      required: true
+  delete:
+    summary: Delete an unpublished form
+    operationId: v2-admin-delete-form-by-uuid
+    tags:
+      - Forms
+    responses:
+      '200':
+        description: Accepted
+  patch:
+    summary: Update a form
+    operationId: patch-v2-admin-form-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormRead'
+    tags:
+      - Forms
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/FormUpdate'
+'/v2/forms/linked-field-listing':
+  get:
+    summary: Get a list of available linked fields
+    operationId: get-v2-form-linked-field-listing
+    parameters:
+      - name: form_types
+        type: array
+        items:
+          type: string
+        in: query
+        description: 'array of form types'
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2GenericList'
+    tags:
+      - Forms
+'/v2/admin/forms/common-options/{BUCKET}':
+  get:
+    summary: Search for common options on a bucket
+    operationId: get-v2-admin-form-common-options-bucket
+    parameters:
+      - type: string
+        name: BUCKET
+        in: path
+        required: true
+        description: 'name of the bucket/collection of common options'
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2CommonOptions'
+    tags:
+      - Forms
+/v2/admin/organisations:
+  get:
+    summary: Get a collection of organisations
+    operationId: v2-admin-get-organisations
+    description: 'Currently available sort is status, type, trees_grown_total, name, fin_budget_1year, created_at'
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/V2AdminOrganisationRead'
+            links:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationLinks'
+            meta:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationMeta'
+    tags:
+      - V2 Admin
+      - V2 Organisations
+'/v2/admin/organisations/multi':
+  get:
+    summary: Get a collection of organisation by uuids
+    operationId: v2-admin-get-organisation-multi-by-uuid
+    tags:
+      - V2 Admin
+      - V2 Organisations
+    parameters:
+      - type: string
+        in: query
+        name: ids
+        description: comma separated list of values. eg ?ids=uuid1,uuid2
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminOrganisationRead'
+'/v2/admin/organisations/{UUID}':
+  get:
+    summary: Get a organisation by uuid
+    operationId: v2-admin-get-organisation-by-uuid
+    tags:
+      - V2 Admin
+      - V2 Organisations
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminOrganisationRead'
+  put:
+    summary: Updates a specific organisation
+    operationId: v2-admin-put-organisation-by-uuid
+    tags:
+      - V2 Admin
+      - V2 Organisations
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminOrganisationUpdate'
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminOrganisationRead'
+  delete:
+    summary: Delete a specific organisation
+    operationId: v2-admin-delete-organisation-by-uuid
+    tags:
+      - V2 Admin
+      - V2 Organisations
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '202':
+        description: Accepted
+/v2/admin/organisations/approve:
+  put:
+    summary: Approve a specific organisation
+    operationId: v2-admin-organisation-approve
+    tags:
+      - V2 Admin
+      - V2 Organisations
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            uuid:
+              type: string
+          required:
+            - uuid
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminOrganisationUpdate'
+/v2/admin/organisations/reject:
+  put:
+    summary: Reject a specific organisation
+    operationId: v2-admin-organisation-reject
+    tags:
+      - V2 Admin
+      - V2 Organisations
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            uuid:
+              type: string
+          required:
+            - uuid
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminOrganisationUpdate'
+/v2/admin/organisations/export:
+  get:
+    summary: Export CSV document of all time organaisations
+    tags:
+      - V2 Admin
+      - Export
+    produces:
+      - text/plain
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: file
+/v2/organisations:
+  post:
+    summary: Create an organisation
+    operationId: v2-post-organisations
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2OrganisationUpdate'
+    responses:
+      '200':
+        description: OK
+'/v2/organisations/{UUID}':
+  get:
+    summary: Get a specific organisation
+    operationId: v2-get-organisations-uuid
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2OrganisationRead'
+  put:
+    summary: Update an organisation
+    operationId: v2-put-organisations-uuid
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2OrganisationUpdate'
+    responses:
+      '200':
+        description: OK
+/v2/organisations/listing:
+  get:
+    summary: Get a list of organisations names and uuid
+    operationId: v2-get-organisations-listing
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/V2GenericList'
+    parameters:
+      - type: string
+        in: query
+        name: search
+        description: search term to use on the collection
+/v2/organisations/join-existing:
+  post:
+    summary: Post a request to join an existing organisation
+    operationId: v2-post-organisations-join-existing
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            organisation_uuid:
+              type: string
+          required:
+            - organisation_uuid
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2OrganisationRead'
+/v2/organisations/user-requests/{UUID}:
+  get:
+    summary: Get a collection of users that have requested to join a specific organisation
+    operationId: v2-get-organisations-user-requests-uuid
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/UserReadAll'
+/v2/organisations/approved-users/{UUID}:
+  get:
+    summary: Get a collection of users that have been approved for a specific organisation
+    operationId: v2-get-organisations-approved-users-uuid
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/UserReadAll'
+/v2/organisations/approve-user:
+  put:
+    summary: Approve a users request to join an existing organisation
+    operationId: v2-post-organisations-approve-user
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2OrganisationApproveRejectUser'
+    responses:
+      '200':
+        description: OK
+/v2/organisations/reject-user:
+  put:
+    summary: Reject a users request to join an existing organisation
+    operationId: v2-post-organisations-reject-user
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2OrganisationApproveRejectUser'
+    responses:
+      '200':
+        description: OK
+/v2/organisations/submit/{UUID}:
+  put:
+    summary: Submit an organisation for approval
+    operationId: v2-put-organisations-submit
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+/v2/organisations/retract-my-draft:
+  delete:
+    summary: Retracts (delets) a users draft organisation
+    operationId: v2-delete-organisations-retract-my-draft
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    responses:
+      '200':
+        description: OK
+/v2/admin/users:
+  get:
+    summary: Get a collection of users
+    operationId: v2-admin-get-users
+    description: 'Currently available sort is last_logged_in_at, created_at, first_name, last_name, email_address, organisation_name'
+    tags:
+      - V2 Admin
+      - V2 Users
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[verified]=true'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/V2AdminUserRead'
+            links:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationLinks'
+            meta:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationMeta'
+/v2/admin/users/{UUID}:
+  get:
+    summary: Get a user by uuid
+    operationId: v2-admin-get-user-by-uuid
+    tags:
+      - V2 Admin
+      - V2 Users
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminUserRead'
+  put:
+    summary: Updates a specific user
+    operationId: v2-admin-put-user-by-uuid
+    tags:
+      - V2 Admin
+      - V2 Users
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminUserUpdate'
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminUserRead'
+  delete:
+    summary: Delete a specific user
+    operationId: v2-admin-delete-user-by-uuid
+    tags:
+      - V2 Admin
+      - V2 Users
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '202':
+        description: Accepted
+/v2/admin/users/multi:
+  get:
+    summary: Get a a collection of users by uuid
+    operationId: v2-admin-get-multi-user-by-uuid
+    tags:
+      - V2 Admin
+      - V2 Users
+    parameters:
+      - name: ids
+        in: query
+        required: false
+        type: string
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminUserRead'
+/v2/admin/users/export:
+  get:
+    summary: Export CSV document of all users
+    operationId: v2-admin-users-export
+    tags:
+      - V2 Admin
+      - V2 Users
+      - Export
+    produces:
+      - text/plain
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: file
+/v2/admin/users/reset-password/{UUID}:
+  put:
+    summary: Update a specific users password
+    operationId: v2-admin-users-reset-password-uuid
+    tags:
+      - V2 Admin
+      - V2 Users
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - type: string
+        name: password
+        in: formData
+        required: true
+      - type: string
+        name: password_confirmation
+        in: formData
+        required: true
+    responses:
+      '200':
+        description: OK
+/v2/admin/users/verify/{UUID}:
+  patch:
+    summary: Force verify a user
+    operationId: v2-admin-users-verify-uuid
+    tags:
+      - V2 Admin
+      - V2 Users
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+/v2/{MODEL}/{UUID}/files:
+  get:
+    $ref: './Files/get-v2-model-uuid-files.yml'
+/v2/{MODEL}/{UUID}/image/locations:
+  get:
+    $ref: './Files/get-v2-model-uuid-image-locations.yml'
+/v2/file/upload/{MODEL}/{COLLECTION}/{UUID}:
+  post:
+    summary: Upload a file to a specific entities collection
+    operationId: v2-post-upload-file-model-collection-uuid
+    tags:
+      - Files
+    consumes:
+      - multipart/form-data
+    produces:
+      - application/json
+    parameters:
+      - type: string
+        name: MODEL
+        in: path
+        required: true
+        description: 'Currently only organisation, funding-programme, project-pitch, project, site, nursery, project-report, site-report, nursery-report, project-monitoring and site-monitoring are set up'
+      - type: string
+        name: COLLECTION
+        in: path
+        required: true
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - type: string
+        name: title
+        in: formData
+      - type: file
+        name: upload_file
+        in: formData
+      - type: integer
+        name: lat
+        in: formData
+      - type: integer
+        name: lng
+        in: formData
+      - type: boolean
+        name: is_public
+        default: false
+        in: formData
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FileRead'
+/v2/files/{UUID}:
+  put:
+    summary: Update properties of a specific file
+    operationId: v2-put-file-uuid
+    tags:
+      - Files
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            title:
+              type: string
+            is_public:
+              type: boolean
+          required:
+            - title
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FileRead'
+  delete:
+    summary: Delete a specific file
+    operationId: v2-delete-file-uuid
+    tags:
+      - Files
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+/v2/tree-species:
+  post:
+    summary: Create a tree species
+    operationId: post-v2-tree-species
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/V2TreeSpeciesRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2TreeSpeciesCreate'
+    tags:
+      - V2 Tree Species
+'/v2/tree-species/{UUID}':
+  patch:
+    summary: Update a tree species
+    operationId: patch-v2-tree-species-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2TreeSpeciesCreate'
+    tags:
+      - V2 Tree Species
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2TreeSpeciesUpdate'
+  delete:
+    summary: Delete a tree species
+    operationId: delete-v2-tree-species-UUID
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2TreeSpeciesRead'
+    tags:
+      - V2 Tree Species
+/v2/funding-type:
+  post:
+    summary: Create a funding type entry
+    operationId: post-v2-funding-type
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/V2FundingTypeRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2FundingTypeCreate'
+    tags:
+      - V2 Funding Type
+'/v2/funding-type/{UUID}':
+  patch:
+    summary: Update a funding type
+    operationId: patch-v2-funding-type-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FundingTypeRead'
+    tags:
+      - V2 Funding Type
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2FundingTypeUpdate'
+  delete:
+    summary: Delete a funding type entry
+    operationId: delete-v2-funding-type-UUID
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FundingTypeRead'
+    tags:
+      - V2 Funding Type
+/v2/core-team-leader:
+  post:
+    summary: Create a core team leader
+    operationId: post-v2-core-team-leader
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/V2CoreTeamLeaderRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2CoreTeamLeaderCreate'
+    tags:
+      - V2 Core Team Leader
+'/v2/core-team-leader/{UUID}':
+  patch:
+    summary: Update a core team leader
+    operationId: patch-v2-core-team-leader-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2CoreTeamLeaderRead'
+    tags:
+      - V2 Core Team Leader
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2CoreTeamLeaderUpdate'
+  delete:
+    summary: Delete a core team leader
+    operationId: delete-v2-core-team-leader-UUID
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2CoreTeamLeaderRead'
+    tags:
+      - V2 Core Team Leader
+/v2/leadership-team:
+  post:
+    summary: Create a leadership team
+    operationId: post-v2-leadership-team
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/V2LeadershipTeamRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2LeadershipTeamCreate'
+    tags:
+      - V2 Leadership Team
+'/v2/leadership-team/{UUID}':
+  patch:
+    summary: Update a leadership team
+    operationId: patch-v2-leadership-team-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2LeadershipTeamRead'
+    tags:
+      - V2 Leadership Team
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2LeadershipTeamUpdate'
+  delete:
+    summary: Delete a leadership team
+    operationId: delete-v2-leadership-team-UUID
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2LeadershipTeamRead'
+    tags:
+      - V2 Leadership Team
+/v2/admin/sites:
+  get:
+    summary: View all sites as an admin
+    tags:
+      - V2 Sites
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/V2SiteRead'
+            links:
+              type: object
+              properties:
+                first:
+                  type: string
+                last:
+                  type: string
+                prev:
+                  type: string
+                next:
+                  type: string
+            meta:
+              type: object
+              properties:
+                current_page:
+                  type: integer
+                from:
+                  type: integer
+                last_page:
+                  type: integer
+                next:
+                  type: integer
+    operationId: get-v2-admin-sites
+/v2/admin/sites/ppc:
+  get:
+    summary: View all PPC sites as an admin
+    tags:
+      - V2 Sites
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/V2SiteRead'
+            links:
+              type: object
+              properties:
+                first:
+                  type: string
+                last:
+                  type: string
+                prev:
+                  type: string
+                next:
+                  type: string
+            meta:
+              type: object
+              properties:
+                current_page:
+                  type: integer
+                from:
+                  type: integer
+                last_page:
+                  type: integer
+                next:
+                  type: integer
+    operationId: get-v2-admin-ppc-sites
+/v2/admin/sites/terrafund:
+  get:
+    summary: View all terrafund sites as an admin
+    tags:
+      - V2 Sites
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/V2SiteRead'
+            links:
+              type: object
+              properties:
+                first:
+                  type: string
+                last:
+                  type: string
+                prev:
+                  type: string
+                next:
+                  type: string
+            meta:
+              type: object
+              properties:
+                current_page:
+                  type: integer
+                from:
+                  type: integer
+                last_page:
+                  type: integer
+                next:
+                  type: integer
+    operationId: get-v2-admin-terrafund-sites
+/v2/admin/project-pitches:
+  get:
+    summary: View project pitches as an admin
+    tags:
+      - Project Pitches
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/ProjectPitchRead'
+            links:
+              type: object
+              properties:
+                first:
+                  type: string
+                last:
+                  type: string
+                prev:
+                  type: string
+                next:
+                  type: string
+            meta:
+              type: object
+              properties:
+                current_page:
+                  type: integer
+                from:
+                  type: integer
+                last_page:
+                  type: integer
+                next:
+                  type: integer
+    operationId: get-v2-admin-project-pitches
+    description: ''
+/v2/admin/projects:
+  get:
+    summary: View projects as an admin
+    tags:
+      - V2 Projects
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/ProjectLiteRead'
+            links:
+              type: object
+              properties:
+                first:
+                  type: string
+                last:
+                  type: string
+                prev:
+                  type: string
+                next:
+                  type: string
+            meta:
+              type: object
+              properties:
+                current_page:
+                  type: integer
+                from:
+                  type: integer
+                last_page:
+                  type: integer
+                next:
+                  type: integer
+    operationId: get-v2-admin-projects
+    description: ''
+/v2/projects/{UUID}:
+  get:
+    summary: View a specific project
+    tags:
+      - V2 Projects
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/ProjectFullRead'
+  delete:
+    summary: Delete a specific project (draft / started only)
+    tags:
+      - V2 Projects
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+/v2/projects/{UUID}/sites:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-sites.yml'
+/v2/projects/{UUID}/nurseries:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-nurseries.yml'
+/v2/projects/{UUID}/tasks:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-tasks.yml'
+/v2/organisations/{UUID}/tasks:
+  get:
+    $ref: './Organisations/get-v2-organisations-uuid-tasks.yml'
+/v2/tasks/{UUID}:
+  get:
+    $ref: './Tasks/get-v2-tasks-uuid.yml'
+/v2/tasks/{UUID}/reports:
+  get:
+    $ref: './Tasks/get-v2-tasks-uuid-reports.yml'
+/v2/tasks/{UUID}/submit:
+  put:
+    $ref: './Tasks/put-v2-tasks-uuid-submit.yml'
+/v2/{ENTITY}/{UUID}:
+  get:
+    summary: View a specific entity as raw data
+    tags:
+      - V2 Projects
+      - V2 Sites
+      - V2 Nurseries
+      - V2 Project Reports
+      - V2 Site Reports
+      - V2 Nursery Reports
+      - Forms
+    parameters:
+      - type: string
+        name: ENTITY
+        in: path
+        required: true
+        description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: object
+/v2/forms/sites/{UUID}:
+  get:
+    summary: View a specific site as answers with form schema
+    tags:
+      - V2 Sites
+      - Forms
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/SiteWithSchemaRead'
+/v2/admin/project-pitches/export:
+  get:
+    summary: Export project pitches as an admin
+    tags:
+      - Project Pitches
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+    operationId: get-v2-project-pitches-export
+/v2/project-pitches:
+  get:
+    summary: Get project pitches
+    tags:
+      - Project Pitches
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/ProjectPitchRead'
+            links:
+              type: object
+              properties:
+                first:
+                  type: string
+                last:
+                  type: string
+                prev:
+                  type: string
+                next:
+                  type: string
+            meta:
+              type: object
+              properties:
+                current_page:
+                  type: integer
+                from:
+                  type: integer
+                last_page:
+                  type: integer
+                next:
+                  type: integer
+    operationId: get-v2-project-pitches
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+  post:
+    summary: Store a project pitch
+    operationId: post-v2-project-pitches
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/ProjectPitchRead'
+    tags:
+      - Project Pitches
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/ProjectPitchCreate'
+'/v2/project-pitches/{UUID}':
+  get:
+    summary: Get a project pitch
+    tags:
+      - Project Pitches
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/ProjectPitchRead'
+    operationId: get-v2-project-pitches-UUID
+  patch:
+    summary: Update a project pitch
+    operationId: patch-v2-project-pitches-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/ProjectPitchRead'
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/ProjectPitchUpdate'
+    tags:
+      - Project Pitches
+  delete:
+    summary: Delete a project pitch
+    operationId: delete-v2-project-pitches-UUID
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+    tags:
+      - Project Pitches
+'/v2/project-pitches/submit/{UUID}':
+  parameters:
+    - type: string
+      name: UUID
+      in: path
+      required: true
+  put:
+    summary: Submits a project pitch making it active
+    operationId: put-v2-submit-project-pitches-UUID
+    responses:
+      '200':
+        description: OK
+    tags:
+      - Project Pitches
+'/v2/project-pitches/{UUID}/submissions':
+  get:
+    summary: Get form submissions belonging to a project pitch
+    tags:
+      - Project Pitches
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/FormSubmissionRead'
+    operationId: get-v2-project-pitches-UUID-submissions
+'/v2/admin/forms/submissions/{UUID}':
+  get:
+    summary: Get a form submission
+    tags:
+      - Form Submissions
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormSubmissionRead'
+    operationId: get-v2-admin-forms-submissions-UUID
+  delete:
+    summary: Delete a form submission
+    operationId: delete-v2-admin-forms-submissions-UUID
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+    tags:
+      - Form Submissions
+    description: ''
+'/v2/admin/forms/submissions/{UUID}/export':
+  get:
+    summary: Export form submissions
+    tags:
+      - Form Submissions
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+    operationId: get-v2-admin-forms-submissions-uuid-export
+/v2/admin/forms/submissions:
+  get:
+    summary: Get form submissions
+    tags:
+      - Form Submissions
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/FormSubmissionRead'
+            links:
+              $ref: '../definitions/_index.yml#/V2PaginationLinks'
+            meta:
+              $ref: '../definitions/_index.yml#/V2PaginationMeta'
+    operationId: get-v2-admin-forms-submissions
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+/v2/forms/my/submissions:
+  get:
+    summary: Get the authenticated users form submissions
+    tags:
+      - Form Submissions
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/FormSubmissionRead'
+            links:
+              $ref: '../definitions/_index.yml#/V2PaginationLinks'
+            meta:
+              $ref: '../definitions/_index.yml#/V2PaginationMeta'
+    operationId: get-v2-my-forms-submissions
+    parameters:
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+'/v2/forms/{UUID}':
+  get:
+    summary: Get a form
+    tags:
+      - Forms
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormRead'
+    operationId: get-v2-forms
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+/v2/admin/funding-programme/stage:
+  post:
+    summary: Create a stage
+    operationId: post-v2-admin-funding-programme-stage
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/StageRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/StageCreate'
+    tags:
+      - Stages
+'/v2/admin/funding-programme/stage/{UUID}':
+  parameters:
+    - type: string
+      name: UUID
+      in: path
+      required: true
+  delete:
+    summary: Delete a stage
+    operationId: delete-v2-admin-funding-programme-stage-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/StageRead'
+    tags:
+      - Stages
+  patch:
+    summary: Update a stage
+    operationId: patch-v2-admin-funding-programme-stage-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/StageRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/StageCreate'
+    tags:
+      - Stages
+/v2/funding-programme:
+  get:
+    summary: Get all funding programmes
+    tags:
+      - Funding Programmes
+    parameters:
+      - type: integer
+        in: query
+        name: page
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/FundingProgramme'
+            links:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationLinks'
+            meta:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationMeta'
+    operationId: get-v2-funding-programme
+/v2/admin/funding-programme:
+  get:
+    summary: Get all funding programmes
+    tags:
+      - Funding Programmes
+    parameters:
+      - type: integer
+        in: query
+        name: page
+        description: 'page number you want results from'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/FundingProgramme'
+            links:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationLinks'
+            meta:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationMeta'
+    operationId: get-v2-admin-funding-programme
+  post:
+    summary: Create a funding programme
+    operationId: post-v2-funding-programme
+    tags:
+      - Funding Programmes
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/FundingProgramme'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/FundingProgrammeCreate'
+  parameters: []
+'/v2/funding-programme/{UUID}':
+  parameters:
+    - type: string
+      name: UUID
+      in: path
+      required: true
+  get:
+    summary: Get a funding programme
+    tags:
+      - Funding Programmes
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FundingProgramme'
+    operationId: get-v2-funding-programme-ID
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/FundingProgramme'
+'/v2/admin/funding-programme/{UUID}':
+  get:
+    summary: Get a funding programme
+    tags:
+      - Funding Programmes
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FundingProgramme'
+    operationId: get-v2-admin-funding-programme-ID
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/FundingProgramme'
+  put:
+    summary: Update a funding programme
+    operationId: put-v2-funding-programme-ID
+    tags:
+      - Funding Programmes
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FundingProgramme'
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/FundingProgrammeCreate'
+  delete:
+    summary: Delete a funding programme
+    operationId: delete-v2-funding-programme-ID
+    tags:
+      - Funding Programmes
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '202':
+        description: Accepted
+'/v2/admin/funding-programme/{UUID}/status':
+  parameters:
+    - type: string
+      name: UUID
+      in: path
+      required: true
+  patch:
+    summary: Update a funding programme status
+    operationId: patch-v2-funding-programme-ID-status
+    tags:
+      - Funding Programmes
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FundingProgrammeStatus'
+/v2/funding-programme/stage:
+  get:
+    summary: Get all stages
+    tags:
+      - Stages
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/StagePaginated'
+    operationId: get-v2-funding-programme-stage
+'/v2/admin/funding-programme/stage/{UUID}/status':
+  parameters:
+    - type: string
+      name: UUID
+      in: path
+      required: true
+  patch:
+    summary: Update a funding programme stage status
+    operationId: patch-v2-funding-programme-stage-ID-status
+    tags:
+      - Stages
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/StageRead'
+'/v2/funding-programme/stage/{UUID}':
+  get:
+    summary: Get a stage
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    tags:
+      - Stages
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/StageRead'
+    operationId: get-v2-funding-programme-stage-UUID
+'/v2/admin/forms/submissions/{UUID}/status':
+  parameters:
+    - type: string
+      name: UUID
+      in: path
+      required: true
+  patch:
+    summary: Update the status of a form submission
+    operationId: patch-v2-admin-forms-submissions-UUID-status
+    tags:
+      - Forms
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormSubmissionRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            feedback:
+              type: string
+            status:
+              type: string
+              enum:
+                - started
+                - awaiting-approval
+                - approved
+                - requires-more-information
+                - rejected
+
+/v2/forms/submissions:
+  post:
+    summary: Create a form submission
+    operationId: post-v2-forms-submissions
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/FormSubmissionRead'
+    tags:
+      - Forms
+    description: ''
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/FormSubmissionCreate'
+'/v2/forms/submissions/{UUID}':
+  get:
+    summary: Get a form submission
+    tags:
+      - Form Submissions
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormSubmissionRead'
+    operationId: get-v2-forms-submissions-UUID
+  patch:
+    summary: Update a form submission
+    operationId: patch-v2-forms-submissions-UUID
+    tags:
+      - Forms
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormSubmissionRead'
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/FormSubmissionUpdate'
+  delete:
+    summary: "Deletes a specific form submission"
+    operationId: delete-v2-form-submission-UUID
+    tags:
+      - Forms
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+'/v2/forms/submissions/{UUID}/next-stage':
+  post:
+    operationId: post-v2-forms-submissions-UUID-next-stage
+    summary: Create the next stage form submission
+    tags:
+      - Form Submissions
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormSubmissionRead'
+'/v2/forms/submissions/submit/{UUID}':
+  put:
+    summary: Submit a form submission for approval
+    tags:
+      - Form Submissions
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/FormSubmissionRead'
+    operationId: get-v2-submit-forms-submissions-UUID
+/v2/my/banners:
+  patch:
+    summary: Update the authenticated user's banners
+    operationId: patch-v2-my-banners
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/UserRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            banners:
+              type: array
+              items:
+                type: object
+    tags:
+      - V2 Users
+'/v2/admin/forms/applications':
+  get:
+    summary: Get all applications
+    operationId: get-v2-admin-applications
+    description: "Available Filters : funding_programme_uuid,current_stage, current_submission_status (Current stage is the stage uuid) Available Sorts : created_at, updated_at, organisation_name, funding_programme_name, organisation_name (Prefix with a '-' for descending"
+    tags:
+      - V2 Application
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/ApplicationLiteRead'
+            links:
+              $ref: '../definitions/_index.yml#/V2PaginationLinks'
+            meta:
+              $ref: '../definitions/_index.yml#/V2PaginationMeta'
+'/v2/admin/forms/applications/{UUID}':
+  get:
+    summary: Get a specific application
+    operationId: get-v2-admin-applications-UUID
+    tags:
+      - V2 Application
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/ApplicationRead'
+  delete:
+    summary: "Deletes a specific and it's dependant form submissions"
+    operationId: delete-v2-admin-applications-UUID
+    tags:
+      - Application
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+'/v2/admin/forms/applications/{UUID}/export':
+  get:
+    summary: Export CSV document of applications belonging to a funding programme
+    description: The UUID provided is the Funding Programme ID that the applications are for
+    operationId: get-v2-admin-forms-applications-UUID-export
+    tags:
+      - Export
+      - V2 Application
+    produces:
+      - text/plain
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: file
+'/v2/my/applications':
+  get:
+    summary: Get the current users applications
+    operationId: get-v2-my-applications
+    tags:
+      - V2 Application
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/ApplicationLiteRead'
+            links:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationLinks'
+            meta:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationMeta'
+'/v2/applications/{UUID}':
+  get:
+    summary: Get a specific application
+    operationId: get-v2-applications-UUID
+    tags:
+      - V2 Application
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/ApplicationRead'
+'/v2/applications/{UUID}/export':
+  get:
+    summary: Export CSV document of an application
+    operationId: get-v2-applications-UUID-export
+    tags:
+      - Export
+      - V2 Application
+    produces:
+      - text/plain
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: file
+'/v2/admin/nurseries/{UUID}':
+  delete:
+    summary: Delete a nursery
+    operationId: delete-v2-admin-nurseries-UUID
+    tags:
+      - V2 Nurseries
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+'/v2/admin/nursery-reports/{UUID}':
+  delete:
+    summary: Delete a nursery report
+    operationId: delete-v2-admin-nursery-reports-UUID
+    tags:
+      - V2 Nursery Reports
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+'/v2/admin/sites/{UUID}':
+  delete:
+    summary: Delete a site
+    operationId: delete-v2-admin-site-UUID
+    tags:
+      - V2 Sites
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+'/v2/admin/site-reports/{UUID}':
+  delete:
+    summary: Delete a site
+    operationId: delete-v2-admin-site-reports-UUID
+    tags:
+      - V2 Site Reports
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+'/v2/admin/site-monitorings':
+  post:
+    $ref: './Sites/Monitoring/post-v2-admin-site-monitorings.yml'
+'/v2/admin/site-monitorings/{UUID}':
+  put:
+    $ref: './Sites/Monitoring/put-v2-admin-site-monitorings-uuid.yml'
+  delete:
+    $ref: './Sites/Monitoring/delete-v2-admin-site-monitorings-uuid.yml'
+'/v2/admin/projects/{UUID}':
+  delete:
+    summary: Delete a project
+    operationId: delete-v2-admin-projects-UUID
+    tags:
+      - V2 Projects
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+'/v2/admin/project-reports/{UUID}':
+  delete:
+    summary: Delete a project report
+    operationId: delete-v2-admin-project-reports-UUID
+    tags:
+      - V2 Project Reports
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+'/v2/admin/project-monitorings':
+  post:
+    $ref: './Projects/Monitoring/post-v2-admin-project-monitorings.yml'
+'/v2/admin/project-monitorings/{UUID}':
+  put:
+    $ref: './Projects/Monitoring/put-v2-admin-project-monitorings-uuid.yml'
+  delete:
+    $ref: './Projects/Monitoring/delete-v2-admin-project-monitorings-uuid.yml'
+/auth/logout:
+  get:
+    $ref: './Auth/get-user-logout.yml'
+/auth/me:
+  get:
+    $ref: './Auth/get-logged-user-details.yml'
+/auth/login:
+  post:
+    $ref: './Auth/post-auth-login.yml'
+/v2/admin/forms/submissions/export:
+  get:
+    $ref: './FormSubmissions/get-v2-admin-forms-submissions-export.yml'
+/v2/forms/option-labels:
+  get:
+    $ref: './Forms/get-v2-form-option-labels-listing.yml'
+/auth/change:
+  patch:
+    $ref: './Auth/patch-auth-change.yml'
+/auth/reset:
+  post:
+    $ref: './Auth/post-auth-reset.yml'
+/v2/auth/verify:
+  patch:
+    $ref: './Auth/patch-v2-auth-verify.yml'
+/auth/verify:
+  patch:
+    $ref: './Auth/patch-auth-verify.yml'
+/v2/users/resend:
+  post:
+    $ref: './Auth/post-v2-users-resend.yml'
+/v2/sites/{UUID}:
+  delete:
+    $ref: './Sites/delete-v2-sites-uuid.yml'
+  get:
+    $ref: './Sites/get-v2-sites-uuid.yml'
+/v2/site-monitorings/{UUID}:
+  get:
+    $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
+/v2/sites/{UUID}/monitorings:
+  get:
+    $ref: './Sites/get-v2-sites-uuid-monitorings.yml'
+/v2/projects/{UUID}/monitorings:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-monitorings.yml'
+/v2/projects/{UUID}/invite:
+  post:
+    $ref: './Projects/post-v2-projects-uuid-invite.yml'
+/v2/projects/invite/accept:
+  post:
+    $ref: './Projects/post-v2-projects-invite-accept.yml'
+/v2/nurseries/{UUID}:
+  delete:
+    $ref: './Nurseries/delete-v2-nurseries-uuid.yml'
+/v2/admin/audits/{ENTITY}/{UUID}:
+  get:
+    $ref: './Audits/get-v2-admin-audits-entity-uuid.yml'
+/v2/admin/{ENTITY}/export/{FRAMEWORK}:
+  get:
+    $ref: './Exports/get-v2-admin-entity-export-framework.yml'
+/v2/projects/{UUID}/{ENTITY}/export:
+  get:
+    $ref: './Exports/get-v2-projects-uuid-entity-export.yml'
+/v2/{ENTITY}/{UUID}/export:
+  get:
+    $ref: './Exports/get-v2-entity-export-uuid.yml'

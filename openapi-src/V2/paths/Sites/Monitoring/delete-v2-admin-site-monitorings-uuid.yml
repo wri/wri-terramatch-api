@@ -1,0 +1,14 @@
+summary: Delete a site monitoring as an admin
+operationId: delete-v2-admin-site-monitorings-uuid
+tags:
+  - V2 Site Monitorings
+produces:
+  - application/json
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK

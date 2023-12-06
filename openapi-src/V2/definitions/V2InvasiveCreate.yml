@@ -1,0 +1,13 @@
+title: V2InvasiveCreate
+type: object
+properties:
+  model_type:
+    type: string
+  model_uuid:
+    type: integer
+  name:
+    type: string
+  type:
+    type: string
+  collection:
+    type: string

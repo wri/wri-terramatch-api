@@ -1,0 +1,5 @@
+title: V2ProjectInviteCreate
+type: object
+properties:
+  email_address:
+      type: string

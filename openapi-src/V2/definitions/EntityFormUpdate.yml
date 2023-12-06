@@ -1,0 +1,9 @@
+title: EntityFormCreate
+type: object
+properties:
+  name:
+    type: string
+  status:
+    type: string
+  answers:
+    type: object

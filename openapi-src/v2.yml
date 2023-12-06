@@ -1,0 +1,42 @@
+swagger: '2.0'
+info:
+  title: WRI Restoration Marketplace API
+  description: 'WRI Restoration Marketplace API'
+  version: 1.0.0
+host: '{{ HOST }}'
+basePath: /api
+schemes:
+  - '{{ SCHEME }}'
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+security:
+  - BearerAuth: []
+tags:
+  - name: Export
+  - name: Forms
+  - name: Files
+  - name: Funding Programmes
+  - name: Stages
+  - name: V2 Admin
+  - name: V2 Application
+  - name: V2 Disturbance
+  - name: V2 Invasive
+  - name: V2 Project Developer
+  - name: V2 Projects
+  - name: V2 Nurseries
+  - name: V2 Nursery Reports
+  - name: V2 Organisations
+  - name: V2 Project Reports
+  - name: V2 Sites
+  - name: V2 Site Reports
+  - name: V2 Strata
+  - name: V2 Tasks
+  - name: V2 Users
+  - name: V2 Workdays
+definitions:
+  $ref: './V2/definitions/_index.yml'
+paths:
+  $ref: './V2/paths/_index.yml'

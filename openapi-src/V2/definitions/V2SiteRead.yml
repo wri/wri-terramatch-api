@@ -1,0 +1,77 @@
+type: object
+properties:
+  id:
+    type: integer
+  site_id:
+    type: integer
+  terrafund_site_id:
+    type: integer
+  programme_id:
+    type: integer
+  terrafund_programme_id:
+    type: integer
+  control_site:
+    type: boolean
+  name:
+    type: string
+  country:
+    type: string
+  project_country:
+    type: string
+  continent:
+    type: string
+  description:
+    type: string
+  planting_pattern:
+    type: string
+  stratification_for_heterogeneity:
+    type: string
+  history:
+    type: string
+  workdays_paid:
+    type: integer
+  workdays_volunteer:
+    type: integer
+  total_workdays:
+    type: integer
+  establishment_date:
+    type: string
+    format: date
+  start_date:
+    type: string
+    format: date
+  end_date:
+    type: string
+    format: date
+  technical_narrative:
+    type: string
+  public_narrative:
+    type: string
+  aim_survival_rate:
+    type: number
+  aim_year_five_crown_cover:
+    type: number
+  aim_direct_seeding_survival_rate:
+    type: number
+  aim_natural_regeneration_trees_per_hectare:
+    type: number
+  aim_natural_regeneration_hectares:
+    type: number
+  aim_soil_condition:
+    type: string
+  aim_number_of_mature_trees:
+    type: integer
+  hectares_to_restore:
+    type: number
+  landscape_community_contribution:
+    type: string
+  disturbances:
+    type: string
+  boundary_geojson:
+    type: string
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time

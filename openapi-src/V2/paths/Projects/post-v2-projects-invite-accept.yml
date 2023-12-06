@@ -1,0 +1,21 @@
+summary: Accept a user invitation to a project
+operationId: get-v2-projects-invite-accept
+tags:
+  - V2 Project Invite
+produces:
+  - application/json
+parameters:
+  - in: body
+    name: body
+    schema:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+responses:
+  '201':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/V2ProjectInviteRead'

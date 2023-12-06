@@ -1,0 +1,26 @@
+type: object
+properties:
+  data:
+    $ref: './_index.yml#/StageRead'
+  links:
+    type: object
+    properties:
+      first:
+        type: string
+      last:
+        type: string
+      prev:
+        type: string
+      next:
+        type: string
+  meta:
+    type: object
+    properties:
+      current_page:
+        type: integer
+      from:
+        type: integer
+      last_page:
+        type: integer
+      next:
+        type: integer

@@ -1,0 +1,19 @@
+operationId: patch-auth-verify
+summary: Verify the logged in user's or admin's email address
+tags:
+  - Auth
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - name: Body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/AuthVerify'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/Empty'

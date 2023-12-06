@@ -1,0 +1,56 @@
+title: FormQuestionCreate
+type: object
+properties:
+  additional_props:
+    type: array
+    items:
+      type: object
+  child_form_questions:
+    type: array
+    items:
+      $ref: './_index.yml#/FormQuestionRead'
+  table_headers:
+    type: array
+    items:
+      $ref: './_index.yml#/FormTableHeaderRead'
+  linked_field_key:
+    type: string
+  show_on_parent_condition:
+    type: boolean
+  input_type:
+    type: string
+    enum:
+      - date
+      - text
+      - long-text
+      - select
+      - checkboxes
+      - radio
+      - number
+      - image
+      - file
+      - conditional
+  label:
+    type: string
+  placeholder:
+    type: string
+  description:
+    type: string
+  validation:
+    type: object
+  multichoice:
+    type: boolean
+  order:
+    type: integer
+  options_list:
+    type: string
+  options:
+    type: array
+    items:
+      $ref: './_index.yml#/FormQuestionOptionRead'
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  deleted_at:
+    type: string

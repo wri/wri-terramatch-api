@@ -1,0 +1,23 @@
+summary: Update a project monitoring as an admin
+operationId: put-v2-admin-project-monitorings-uuid
+tags:
+  - V2 Project Monitorings
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - name: Body
+    in: body
+    required: true
+    schema:
+      $ref: '../../../definitions/_index.yml#/V2ProjectMonitoringUpdate'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../../definitions/_index.yml#/V2ProjectMonitoringRead'
