@@ -18,3 +18,4 @@ swagger.json
 /storage/framework/laravel-excel
 .php-cs-fixer.cache
 .phpunit.result.cache
+.DS_Store
