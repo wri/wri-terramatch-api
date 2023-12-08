@@ -1,0 +1,14 @@
+summary: View a specific Update Request
+operationId: get-v2-update-requests-uuid
+tags:
+  - V2 Update Request
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/UpdateRequestRead'

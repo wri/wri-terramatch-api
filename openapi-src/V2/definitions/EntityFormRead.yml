@@ -1,0 +1,13 @@
+title: EntityFormRead
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  status:
+    type: string
+  form:
+    type: object
+  answers:
+    type: object

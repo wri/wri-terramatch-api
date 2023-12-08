@@ -1,0 +1,24 @@
+title: ProjectWithSchemaRead
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  status:
+    type: string
+  form:
+    $ref: './_index.yml#/FormRead'
+  answers:
+    type: array
+    items:
+      type: object
+      properties:
+        question_id:
+          type: integer
+        value:
+          type: string
+        options:
+          type: array
+          items:
+            type: string

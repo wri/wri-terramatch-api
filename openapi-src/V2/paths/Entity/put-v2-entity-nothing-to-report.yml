@@ -1,0 +1,19 @@
+summary: Submit that you have nothing to report for a nursery
+operationId: put-v2-entity-nothing-to-report
+tags:
+  - V2 Project Reports
+  - V2 Site Reports
+  - V2 Nursery Reports
+parameters:
+  - type: string
+    name: ENTITY
+    in: path
+    required: true
+    description: "allowed values are project-reports, site-reports, nursery-reports"
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK

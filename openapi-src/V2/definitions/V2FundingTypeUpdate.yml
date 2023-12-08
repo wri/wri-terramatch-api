@@ -1,0 +1,9 @@
+title: V2FundingTypeUpdate
+type: object
+properties:
+  amount:
+    type: integer
+  year:
+    type: integer
+  type:
+    type: string

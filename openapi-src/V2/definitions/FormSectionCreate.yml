@@ -1,0 +1,17 @@
+title: FormSectionCreate
+x-stoplight:
+  id: 97clxg83l8q3f
+type: object
+properties:
+  order:
+    type: integer
+  title:
+    type: string
+  subtitle:
+    type: string
+  description:
+    type: string
+  form_questions:
+    type: array
+    items:
+      $ref: './_index.yml#/FormQuestionCreate'

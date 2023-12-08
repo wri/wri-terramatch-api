@@ -1,0 +1,21 @@
+operationId: get-v2-projects-uuid-entity-export.yml
+summary: Export entities data as Project Developer
+tags:
+  - V2 Sites
+  - V2 Nurseries
+  - Exports
+parameters:
+  - type: string
+    name: ENTITY
+    in: path
+    required: true
+    description: allowed values sites|nurseries|project-reports
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      type: file

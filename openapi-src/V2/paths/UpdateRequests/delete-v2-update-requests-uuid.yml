@@ -1,0 +1,12 @@
+summary: Soft delete an Update Request
+operationId: delete-v2-update-requests-uuid
+tags:
+  - V2 Update Requests
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK

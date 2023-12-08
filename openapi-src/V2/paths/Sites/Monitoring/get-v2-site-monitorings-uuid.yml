@@ -1,0 +1,16 @@
+summary: View a specific site monitoring
+operationId: get-v2-site-monitorings-uuid
+tags:
+  - V2 Site Monitorings
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+produces:
+  - application/json
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../../definitions/_index.yml#/V2SiteMonitoringRead'

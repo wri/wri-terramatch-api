@@ -1,0 +1,11 @@
+summary: Get the current user's projects
+tags:
+  - Users
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: '../../definitions/_index.yml#/ProjectLiteRead'
+operationId: get-v2-my-projects

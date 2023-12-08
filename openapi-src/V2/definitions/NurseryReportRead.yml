@@ -1,0 +1,35 @@
+title: NurseryReportRead
+type: object
+properties:
+  uuid:
+    type: string
+  framework_key:
+    type: string
+  framework_uuid:
+    type: string
+  nursery:
+    $ref: './_index.yml#/NurseryLiteRead'
+  due_at:
+    type: string
+  status:
+    type: string
+  readable_status:
+    type: string
+  title:
+    type: string
+  seedlings_young_trees:
+    type: integer
+  interesting_facts:
+    type: string
+  site_prep:
+    type: string
+  shared_drive_link:
+    type: string
+  created_by:
+    $ref: './_index.yml#/UserRead'
+  approved_by:
+    $ref: './_index.yml#/UserRead'
+  organisation:
+    $ref: './_index.yml#/V2OrganisationRead'
+  task_uuid:
+    type: string

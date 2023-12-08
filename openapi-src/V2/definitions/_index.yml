@@ -1,0 +1,272 @@
+TreeSpeciesPaginated:
+  $ref: './TreeSpeciesPaginated.yml'
+TreeSpeciesRead:
+  $ref: './TreeSpeciesRead.yml'
+TreeSpeciesReadAll:
+  $ref: './TreeSpeciesReadAll.yml'
+MonitoringUserRead:
+  $ref: './MonitoringUserRead.yml'
+EntityFormCreate:
+  $ref: './EntityFormCreate.yml'
+EntityFormUpdate:
+  $ref: './EntityFormUpdate.yml'
+EntityFormRead:
+    $ref: './EntityFormRead.yml'
+UserRead:
+  $ref: './UserRead.yml'
+UserReadAll:
+  $ref: './UserReadAll.yml'
+FundingProgramme:
+  $ref: './FundingProgramme.yml'
+LimitedFundingProgrammeRead:
+  $ref: './LimitedFundingProgrammeRead.yml'
+FundingProgrammeStatus:
+  $ref: './FundingProgrammeStatus.yml'
+FundingProgrammeCreate:
+  $ref: './FundingProgrammeCreate.yml'
+Form:
+  $ref: './Form.yml'
+FormCreate:
+  $ref: './FormCreate.yml'
+FormRead:
+  $ref: './FormRead.yml'
+FormSectionCreate:
+  $ref: './FormSectionCreate.yml'
+FormSectionRead:
+  $ref: './FormSectionRead.yml'
+FormQuestionRead:
+  $ref: './FormQuestionRead.yml'
+FormQuestionCreate:
+  $ref: './FormQuestionCreate.yml'
+FormSectionUpdate:
+  $ref: './FormSectionUpdate.yml'
+FormUpdate:
+  $ref: './FormUpdate.yml'
+GeojsonRead:
+  $ref: './GeojsonRead.yml'
+ReportingFrameworkRead:
+  $ref: './ReportingFrameworkRead.yml'
+ReportingFrameworkUpdate:
+  $ref: './ReportingFrameworkUpdate.yml'
+V2PaginationLinks:
+  $ref: './V2PaginationLinks.yml'
+V2PaginationCurrentLinks:
+  $ref: './V2PaginationCurrentLinks.yml'
+V2PaginationMeta:
+  $ref: './V2PaginationMeta.yml'
+V2SearchFilterSort:
+  $ref: './V2SearchFilterSort.yml'
+V2AdminOrganisationRead:
+  $ref: './V2AdminOrganisationRead.yml'
+V2MonitoringOrganisationRead:
+  $ref: './V2MonitoringOrganisationRead.yml'
+V2AdminOrganisationUpdate:
+  $ref: './V2AdminOrganisationUpdate.yml'
+V2GenericList:
+  $ref: './V2GenericList.yml'
+V2CommonOptions:
+  $ref: './V2CommonOptions.yml'
+V2OrganisationApproveRejectUser:
+  $ref: './V2OrganisationApproveRejectUser.yml'
+V2OrganisationUpdate:
+  $ref: './V2OrganisationUpdate.yml'
+V2OrganisationRead:
+  $ref: './V2OrganisationRead.yml'
+ShapefileRead:
+  $ref: './ShapefileRead.yml'
+V2AdminUserRead:
+  $ref: './V2AdminUserRead.yml'
+V2AdminUserUpdate:
+  $ref: './V2AdminUserUpdate.yml'
+V2FileRead:
+  $ref: './V2FileRead.yml'
+V2FileGallery:
+  $ref: './V2FileGallery.yml'
+V2FileGalleryLite:
+  $ref: './V2FileGalleryLite.yml'
+V2TreeSpeciesCreate:
+  $ref: './V2TreeSpeciesCreate.yml'
+V2TreeSpeciesRead:
+  $ref: './V2TreeSpeciesRead.yml'
+V2TreeSpeciesUpdate:
+  $ref: './V2TreeSpeciesUpdate.yml'
+V2CoreTeamLeaderCreate:
+  $ref: './V2CoreTeamLeaderCreate.yml'
+V2CoreTeamLeaderRead:
+  $ref: './V2CoreTeamLeaderRead.yml'
+V2CoreTeamLeaderUpdate:
+  $ref: './V2CoreTeamLeaderUpdate.yml'
+V2LeadershipTeamCreate:
+  $ref: './V2LeadershipTeamCreate.yml'
+V2LeadershipTeamRead:
+  $ref: './V2LeadershipTeamRead.yml'
+V2LeadershipTeamUpdate:
+  $ref: './V2LeadershipTeamUpdate.yml'
+V2FundingTypeCreate:
+  $ref: './V2FundingTypeCreate.yml'
+V2FundingTypeRead:
+  $ref: './V2FundingTypeRead.yml'
+V2FundingTypeUpdate:
+  $ref: './V2FundingTypeUpdate.yml'
+ProjectPitchCreate:
+  $ref: './ProjectPitchCreate.yml'
+ProjectPitchUpdate:
+  $ref: './ProjectPitchUpdate.yml'
+V2SiteRead:
+  $ref: './V2SiteRead.yml'
+V2SiteLiteRead:
+  $ref: './V2SiteLiteRead.yml'
+V2SiteMonitoringCreate:
+  $ref: './V2SiteMonitoringCreate.yml'
+V2SiteMonitoringUpdate:
+  $ref: './V2SiteMonitoringUpdate.yml'
+V2SiteMonitoringRead:
+  $ref: './V2SiteMonitoringRead.yml'
+V2ProjectMonitoringCreate:
+  $ref: './V2ProjectMonitoringCreate.yml'
+V2ProjectMonitoringUpdate:
+  $ref: './V2ProjectMonitoringUpdate.yml'
+V2ProjectMonitoringRead:
+  $ref: './V2ProjectMonitoringRead.yml'
+V2NurseryLiteRead:
+  $ref: './V2NurseryLiteRead.yml'
+V2StrataRead:
+  $ref: './V2StrataRead.yml'
+V2StrataCreate:
+  $ref: './V2StrataCreate.yml'
+V2StrataUpdate:
+  $ref: './V2StrataUpdate.yml'
+V2StrataPaginated:
+  $ref: './V2StrataPaginated.yml'
+V2SeedingRead:
+  $ref: './V2SeedingRead.yml'
+V2SeedingCreate:
+  $ref: './V2SeedingCreate.yml'
+V2SeedingUpdate:
+  $ref: './V2SeedingUpdate.yml'
+V2SeedingPaginated:
+  $ref: './V2SeedingPaginated.yml'
+V2WorkdayRead:
+  $ref: './V2WorkdayRead.yml'
+V2WorkdayCreate:
+  $ref: './V2WorkdayCreate.yml'
+V2WorkdayUpdate:
+  $ref: './V2WorkdayUpdate.yml'
+V2WorkdaysPaginated:
+  $ref: './V2WorkdaysPaginated.yml'
+V2DisturbanceRead:
+  $ref: './V2DisturbanceRead.yml'
+V2DisturbanceCreate:
+  $ref: './V2DisturbanceCreate.yml'
+V2DisturbanceUpdate:
+  $ref: './V2DisturbanceUpdate.yml'
+V2DisturbancePaginated:
+  $ref: './V2DisturbancePaginated.yml'
+V2InvasiveRead:
+  $ref: './V2InvasiveRead.yml'
+V2InvasiveCreate:
+  $ref: './V2InvasiveCreate.yml'
+V2InvasiveUpdate:
+  $ref: './V2InvasiveUpdate.yml'
+V2InvasivePaginated:
+  $ref: './V2InvasivePaginated.yml'
+ProjectLiteRead:
+  $ref: './ProjectLiteRead.yml'
+ProjectFullRead:
+  $ref: './ProjectFullRead.yml'
+ProjectWithSchemaRead:
+  $ref: './ProjectWithSchemaRead.yml'
+SiteFullRead:
+  $ref: './SiteFullRead.yml'
+SiteWithSchemaRead:
+  $ref: './SiteWithSchemaRead.yml'
+ProjectPitchRead:
+  $ref: './ProjectPitchRead.yml'
+AuditRead:
+  $ref: './AuditRead.yml'
+AuditReadAll:
+  $ref: './AuditReadAll.yml'
+AuditsPaginated:
+  $ref: './AuditsPaginated.yml'
+FormSubmissionRead:
+  $ref: './FormSubmissionRead.yml'
+FormPaginated:
+  $ref: './FormPaginated.yml'
+StagePaginated:
+  $ref: './StagePaginated.yml'
+StageLiteRead:
+  $ref: './StageLiteRead.yml'
+StageRead:
+  $ref: './StageRead.yml'
+StageCreate:
+  $ref: './StageCreate.yml'
+FormQuestionOptionRead:
+  $ref: './FormQuestionOptionRead.yml'
+FormTableHeaderRead:
+  $ref: './FormTableHeaderRead.yml'
+FormSubmissionCreate:
+  $ref: './FormSubmissionCreate.yml'
+FormSubmissionUpdate:
+  $ref: './FormSubmissionUpdate.yml'
+ApplicationLiteRead:
+  $ref: './ApplicationLiteRead.yml'
+ApplicationRead:
+  $ref: './ApplicationRead.yml'
+ProjectReportLiteRead:
+  $ref: './ProjectReportLiteRead.yml'
+ProjectReportPaginated:
+  $ref: './ProjectReportPaginated.yml'
+SiteReportLiteRead:
+  $ref: './SiteReportLiteRead.yml'
+SiteReportPaginated:
+  $ref: './SiteReportPaginated.yml'
+NurseryReportLiteRead:
+  $ref: './NurseryReportLiteRead.yml'
+NurseryReportPaginated:
+  $ref: './NurseryReportPaginated.yml'
+NurseryPaginated:
+  $ref: './NurseryPaginated.yml'
+NurseryRead:
+  $ref: './NurseryRead.yml'
+Empty:
+  type: object
+AuthLogIn:
+  $ref: './AuthLogIn.yml'
+TokenRead:
+  $ref: './TokenRead.yml'
+AuthChange:
+  $ref: './AuthChange.yml'
+AuthReset:
+  $ref: './AuthReset.yml'
+AuthVerify:
+  $ref: './AuthVerify.yml'
+NurseryLiteRead:
+  $ref: './NurseryLiteRead.yml'
+SiteLiteRead:
+  $ref: './SiteLiteRead.yml'
+NurseryReportRead:
+  $ref: './NurseryReportRead.yml'
+SiteReportRead:
+  $ref: './SiteReportRead.yml'
+ProjectReportRead:
+  $ref: './ProjectReportRead.yml'
+UserCreate:
+  $ref: './UserCreate.yml'
+UpdateRequestsPaginated:
+  $ref: './UpdateRequestsPaginated.yml'
+UpdateRequestRead:
+  $ref: './UpdateRequestRead.yml'
+UpdateRequestLiteRead:
+  $ref: './UpdateRequestLiteRead.yml'
+ActionRead:
+  $ref: './ActionRead.yml'
+V2TaskRead:
+  $ref: './V2TaskRead.yml'
+V2TaskActionRead:
+  $ref: './V2TaskActionRead.yml'
+StatusUpdate:
+  $ref: './StatusUpdate.yml'
+V2ProjectInviteRead:
+  $ref: './V2ProjectInviteRead.yml'
+V2ProjectInviteCreate:
+  $ref: './V2ProjectInviteCreate.yml'

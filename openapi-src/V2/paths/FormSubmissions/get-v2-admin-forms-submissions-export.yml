@@ -1,0 +1,9 @@
+summary: Export form submissions
+tags:
+  - Form Submissions
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+operationId: get-v2-admin-forms-submissions-export

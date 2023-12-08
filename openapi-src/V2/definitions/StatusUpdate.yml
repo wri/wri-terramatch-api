@@ -1,0 +1,9 @@
+title: StatusUpdate
+type: object
+properties:
+  feedback:
+    type: string
+  feedback_fields:
+    type: array
+    items:
+      type: string

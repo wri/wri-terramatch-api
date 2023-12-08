@@ -1,0 +1,21 @@
+title: FundingProgrammeCreate
+x-stoplight:
+  id: uoxj0qcvij0sr
+type: object
+properties:
+  name:
+    type: string
+  description:
+    type: string
+  read_more_url:
+    type: string
+  location:
+    type: string
+  organisation_types:
+    type: array
+    items:
+      type: string
+  cover:
+    $ref: './_index.yml#/V2FileRead'
+  status:
+    type: string

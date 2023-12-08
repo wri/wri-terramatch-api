@@ -1,0 +1,11 @@
+title: V2FundingTypeCreate
+type: object
+properties:
+  organisation_id:
+    type: string
+  amount:
+    type: integer
+  year:
+    type: integer
+  type:
+    type: string

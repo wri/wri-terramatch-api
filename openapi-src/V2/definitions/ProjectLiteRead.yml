@@ -1,0 +1,21 @@
+title: ProjectLiteRead
+type: object
+properties:
+  id:
+    type: string
+  uuid:
+    type: string
+  status:
+    type: string
+  name:
+    type: string
+  organisation:
+    $ref: './_index.yml#/V2OrganisationRead'
+  planting_start_date:
+    type: string
+  framework_key:
+    type: string
+  framework_uuid:
+    type: string
+  has_monitoring_data:
+    type: boolean

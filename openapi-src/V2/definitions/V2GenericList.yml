@@ -1,0 +1,17 @@
+title: V2GenericList
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  input_type:
+    type: string
+  model_key:
+    type: string
+  option_list_key:
+    type: string
+  options:
+    type: array
+    items:
+      type: string

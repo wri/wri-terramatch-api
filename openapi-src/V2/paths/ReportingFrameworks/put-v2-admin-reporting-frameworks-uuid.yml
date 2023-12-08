@@ -1,0 +1,18 @@
+summary: Update a specific reporting frameworks
+operationId: put-v2-admin-reporting-frameworks-uuid
+tags:
+  - Funding Programmes
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/ReportingFrameworkUpdate'
+responses:
+  '201':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/ReportingFrameworkRead'

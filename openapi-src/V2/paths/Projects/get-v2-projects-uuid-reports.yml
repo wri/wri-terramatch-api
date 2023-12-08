@@ -1,0 +1,46 @@
+summary: Get the reports of a specific project
+operationId: get-v2-projects-uuid-reports
+tags:
+  - V2 Projects
+description: "Available Filters : status  |  Available Searches: name  |  Available Sort Options: name, status, created_at, updated_at"
+produces:
+  - application/json
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - name: filter
+    type: string
+    in: query
+    description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+  - name: sort
+    type: string
+    in: query
+    description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name'
+  - name: search
+    type: string
+    in: query
+    description: 'search term to use on the collection'
+  - name: per_page
+    type: integer
+    in: query
+    description: 'number of results (per page) to return'
+  - name: page
+    type: integer
+    in: query
+    description: 'page number you want results from'
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/ProjectReportLiteRead'
+        links:
+          $ref: '../../definitions/_index.yml#/V2PaginationLinks'
+        meta:
+          $ref: '../../definitions/_index.yml#/V2PaginationMeta'

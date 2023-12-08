@@ -1,0 +1,19 @@
+title: FormSectionRead
+x-stoplight:
+  id: scpnof2zuz3q3
+type: object
+properties:
+  order:
+    type: integer
+  form_id:
+    type: integer
+  form_questions:
+    type: array
+    items:
+      $ref: './_index.yml#/FormQuestionRead'
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  deleted_at:
+    type: string

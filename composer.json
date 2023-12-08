@@ -1,0 +1,99 @@
+{
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The Laravel Framework.",
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.1",
+        "aws/aws-sdk-php": "^3.131",
+        "doctrine/dbal": "^3.5",
+        "guzzlehttp/guzzle": "^7.2",
+        "intervention/image": "^2.5",
+        "laravel/framework": "^10.34",
+        "laravel/horizon": "^5.15",
+        "laravel/scout": "^9.8",
+        "laravel/tinker": "^2.8",
+        "league/csv": "^9.6",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "maatwebsite/excel": "^3.1",
+        "owen-it/laravel-auditing": "^13.5",
+        "sentry/sentry-laravel": "^3.2",
+        "spatie/laravel-medialibrary": "^10.7",
+        "spatie/laravel-permission": "^5.11",
+        "spatie/laravel-query-builder": "^5.1",
+        "spatie/laravel-tags": "^4.3",
+        "spatie/temporary-directory": "^2.0",
+        "swaggest/json-diff": "^3.7",
+        "symfony/intl": "^6.2",
+        "symfony/yaml": "^6.2",
+        "tymon/jwt-auth": "^2.0"
+    },
+    "require-dev": {
+        "barryvdh/laravel-ide-helper": "^2.13",
+        "beyondcode/laravel-dump-server": "^1.9",
+        "filp/whoops": "^2.8",
+        "friendsofphp/php-cs-fixer": "^3.17",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^7.0",
+        "php-parallel-lint/php-parallel-lint": "^1.2",
+        "phpunit/phpunit": "^10.0",
+        "spatie/laravel-ray": "^1.32",
+        "fakerphp/faker": "^1.9.1",
+        "spatie/laravel-ignition": "^2.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "platform": {
+            "php": "8.1.14",
+            "ext-gd": "2.1.0"
+        },
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        },
+        "files": [
+            "app/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "scripts": {
+        "lint": "php-cs-fixer fix -v",
+        "test:lint": "php-cs-fixer fix -v --dry-run",
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ]
+    }
+}

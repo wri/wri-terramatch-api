@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::table('terrafund_programme_submissions', function (Blueprint $table) {
+            $table->unsignedInteger('people_annual_income_increased')->nullable();
+            $table->unsignedInteger('people_knowledge_skills_increased')->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::table('programme_submissions', function (Blueprint $table) {
+            $table->dropColumn([
+                'people_annual_income_increased',
+                'people_knowledge_skills_increased',
+            ]);
+        });
+    }
+};

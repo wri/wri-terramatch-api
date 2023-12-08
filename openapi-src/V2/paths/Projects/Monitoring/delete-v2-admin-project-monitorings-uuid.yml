@@ -1,0 +1,14 @@
+summary: Delete a project monitoring as an admin
+operationId: delete-v2-admin-project-monitorings-uuid
+tags:
+  - V2 Project Monitorings
+produces:
+  - application/json
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK

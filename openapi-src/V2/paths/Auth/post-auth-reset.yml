@@ -1,0 +1,20 @@
+operationId: post-auth-reset
+summary: Send a password reset email to a user or admin
+tags:
+  - Auth
+security: []
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - name: Body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/AuthReset'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/Empty'

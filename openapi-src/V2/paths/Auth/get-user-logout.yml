@@ -1,0 +1,11 @@
+operationId: get-user-logout
+summary: Log the logged in user or admin out
+tags:
+  - Auth
+produces:
+  - application/json
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/Empty'

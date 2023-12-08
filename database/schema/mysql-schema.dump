@@ -1,0 +1,1783 @@
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+DROP TABLE IF EXISTS `aims`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `aims` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `programme_id` bigint(20) unsigned NOT NULL,
+  `year_five_trees` int(11) NOT NULL,
+  `restoration_hectares` int(11) NOT NULL,
+  `survival_rate` smallint(6) DEFAULT NULL,
+  `year_five_crown_cover` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `programme_targets_programme_id_foreign` (`programme_id`),
+  CONSTRAINT `programme_targets_programme_id_foreign` FOREIGN KEY (`programme_id`) REFERENCES `programmes` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `carbon_certification_versions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `carbon_certification_versions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `carbon_certification_id` bigint(20) unsigned NOT NULL,
+  `status` enum('pending','approved','rejected','archived') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `rejected_reason` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `approved_rejected_by` bigint(20) unsigned DEFAULT NULL,
+  `approved_rejected_at` timestamp NULL DEFAULT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `link` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `rejected_reason_body` longtext COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `other_value` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `carbon_certification_versions_carbon_certification_id_foreign` (`carbon_certification_id`),
+  KEY `carbon_certification_versions_approved_rejected_by_foreign` (`approved_rejected_by`),
+  CONSTRAINT `carbon_certification_versions_approved_rejected_by_foreign` FOREIGN KEY (`approved_rejected_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `carbon_certification_versions_carbon_certification_id_foreign` FOREIGN KEY (`carbon_certification_id`) REFERENCES `carbon_certifications` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `carbon_certifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `carbon_certifications` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `pitch_id` bigint(20) unsigned NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `carbon_certifications_pitch_id_foreign` (`pitch_id`),
+  CONSTRAINT `carbon_certifications_pitch_id_foreign` FOREIGN KEY (`pitch_id`) REFERENCES `pitches` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `csv_imports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `csv_imports` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `status` enum('pending','completed','failed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `programme_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `total_rows` int(11) DEFAULT NULL,
+  `programme_submission_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `csv_imports_programme_id_foreign` (`programme_id`),
+  KEY `csv_imports_programme_submission_id_foreign` (`programme_submission_id`),
+  CONSTRAINT `csv_imports_programme_id_foreign` FOREIGN KEY (`programme_id`) REFERENCES `programmes` (`id`),
+  CONSTRAINT `csv_imports_programme_submission_id_foreign` FOREIGN KEY (`programme_submission_id`) REFERENCES `submissions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `devices`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `devices` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `os` enum('ios','android') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `push_token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `arn` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `devices_user_id_foreign` (`user_id`),
+  CONSTRAINT `devices_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `direct_seedings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `direct_seedings` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `weight` int(10) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `site_submission_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `direct_seedings_site_submission_id_foreign` (`site_submission_id`),
+  CONSTRAINT `direct_seedings_site_submission_id_foreign` FOREIGN KEY (`site_submission_id`) REFERENCES `site_submissions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `drafts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `drafts` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `organisation_id` bigint(20) unsigned DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` enum('offer','pitch','programme','site','site_submission','programme_submission','terrafund_programme','terrafund_nursery','terrafund_site','organisation','terrafund_nursery_submission') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `created_by` bigint(20) unsigned NOT NULL,
+  `updated_by` bigint(20) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `due_submission_id` bigint(20) unsigned DEFAULT NULL,
+  `is_from_mobile` tinyint(1) DEFAULT NULL,
+  `is_merged` tinyint(1) NOT NULL DEFAULT 0,
+  `terrafund_due_submission_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `drafts_organisation_id_foreign` (`organisation_id`),
+  KEY `drafts_created_by_foreign` (`created_by`),
+  KEY `drafts_updated_by_foreign` (`updated_by`),
+  KEY `drafts_due_submission_id_foreign` (`due_submission_id`),
+  CONSTRAINT `drafts_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `drafts_due_submission_id_foreign` FOREIGN KEY (`due_submission_id`) REFERENCES `due_submissions` (`id`),
+  CONSTRAINT `drafts_organisation_id_foreign` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`),
+  CONSTRAINT `drafts_updated_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `due_submissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `due_submissions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `due_submissionable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `due_submissionable_id` bigint(20) unsigned NOT NULL,
+  `due_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `is_submitted` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `due_submission_morph_index` (`due_submissionable_type`,`due_submissionable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `elevator_videos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `elevator_videos` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `status` enum('processing','finished','errored','timed_out') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'processing',
+  `introduction` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `aims` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `importance` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `job_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `upload_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `elevator_videos_user_id_foreign` (`user_id`),
+  KEY `elevator_videos_upload_id_foreign` (`upload_id`),
+  CONSTRAINT `elevator_videos_upload_id_foreign` FOREIGN KEY (`upload_id`) REFERENCES `uploads` (`id`),
+  CONSTRAINT `elevator_videos_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `failed_jobs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `failed_jobs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `filter_records`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `filter_records` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `organisation_id` bigint(20) unsigned NOT NULL,
+  `type` enum('offers','pitches') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `land_types` tinyint(1) NOT NULL DEFAULT 0,
+  `land_ownerships` tinyint(1) NOT NULL DEFAULT 0,
+  `land_size` tinyint(1) NOT NULL DEFAULT 0,
+  `land_continent` tinyint(1) NOT NULL DEFAULT 0,
+  `land_country` tinyint(1) NOT NULL DEFAULT 0,
+  `restoration_methods` tinyint(1) NOT NULL DEFAULT 0,
+  `restoration_goals` tinyint(1) NOT NULL DEFAULT 0,
+  `funding_sources` tinyint(1) NOT NULL DEFAULT 0,
+  `funding_bracket` tinyint(1) NOT NULL DEFAULT 0,
+  `long_term_engagement` tinyint(1) NOT NULL DEFAULT 0,
+  `reporting_frequency` tinyint(1) NOT NULL DEFAULT 0,
+  `reporting_level` tinyint(1) NOT NULL DEFAULT 0,
+  `sustainable_development_goals` tinyint(1) NOT NULL DEFAULT 0,
+  `price_per_tree` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `filter_records_user_id_foreign` (`user_id`),
+  KEY `filter_records_organisation_id_foreign` (`organisation_id`),
+  CONSTRAINT `filter_records_organisation_id_foreign` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`),
+  CONSTRAINT `filter_records_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `framework_invite_codes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `framework_invite_codes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `framework_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `framework_invite_codes_framework_id_foreign` (`framework_id`),
+  CONSTRAINT `framework_invite_codes_framework_id_foreign` FOREIGN KEY (`framework_id`) REFERENCES `frameworks` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `framework_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `framework_user` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `framework_id` bigint(20) unsigned NOT NULL,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `framework_user_framework_id_foreign` (`framework_id`),
+  KEY `framework_user_user_id_foreign` (`user_id`),
+  CONSTRAINT `framework_user_framework_id_foreign` FOREIGN KEY (`framework_id`) REFERENCES `frameworks` (`id`),
+  CONSTRAINT `framework_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `frameworks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `frameworks` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `interests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `interests` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `organisation_id` bigint(20) unsigned NOT NULL,
+  `initiator` enum('offer','pitch') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `offer_id` bigint(20) unsigned NOT NULL,
+  `pitch_id` bigint(20) unsigned NOT NULL,
+  `matched` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `interests_organisation_id_foreign` (`organisation_id`),
+  KEY `interests_offer_id_foreign` (`offer_id`),
+  KEY `interests_pitch_id_foreign` (`pitch_id`),
+  CONSTRAINT `interests_offer_id_foreign` FOREIGN KEY (`offer_id`) REFERENCES `offers` (`id`),
+  CONSTRAINT `interests_organisation_id_foreign` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`),
+  CONSTRAINT `interests_pitch_id_foreign` FOREIGN KEY (`pitch_id`) REFERENCES `pitches` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `invasives`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `invasives` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` enum('dominant_species','common','uncommon') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `site_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `invasives_site_id_foreign` (`site_id`),
+  CONSTRAINT `invasives_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `land_tenure_site`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `land_tenure_site` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `land_tenure_id` bigint(20) unsigned DEFAULT NULL,
+  `site_id` bigint(20) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `land_tenure_site_land_tenure_id_foreign` (`land_tenure_id`),
+  KEY `land_tenure_site_site_id_foreign` (`site_id`),
+  CONSTRAINT `land_tenure_site_land_tenure_id_foreign` FOREIGN KEY (`land_tenure_id`) REFERENCES `land_tenures` (`id`),
+  CONSTRAINT `land_tenure_site_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `land_tenures`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `land_tenures` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `matches`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `matches` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `primary_interest_id` bigint(20) unsigned NOT NULL,
+  `secondary_interest_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `matches_primary_interest_id_foreign` (`primary_interest_id`),
+  KEY `matches_secondary_interest_id_foreign` (`secondary_interest_id`),
+  CONSTRAINT `matches_primary_interest_id_foreign` FOREIGN KEY (`primary_interest_id`) REFERENCES `interests` (`id`),
+  CONSTRAINT `matches_secondary_interest_id_foreign` FOREIGN KEY (`secondary_interest_id`) REFERENCES `interests` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `media_uploads`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `media_uploads` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `media_title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `is_public` tinyint(1) NOT NULL,
+  `programme_id` bigint(20) unsigned DEFAULT NULL,
+  `site_id` bigint(20) unsigned DEFAULT NULL,
+  `upload` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `location_long` decimal(8,2) DEFAULT NULL,
+  `location_lat` decimal(8,2) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `media_uploads_programme_id_foreign` (`programme_id`),
+  KEY `media_uploads_site_id_foreign` (`site_id`),
+  CONSTRAINT `media_uploads_programme_id_foreign` FOREIGN KEY (`programme_id`) REFERENCES `programmes` (`id`),
+  CONSTRAINT `media_uploads_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `migrations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `monitorings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `monitorings` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `match_id` bigint(20) unsigned NOT NULL,
+  `initiator` enum('offer','pitch') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `stage` enum('awaiting_visibilities','negotiating_targets','accepted_targets') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `negotiating` enum('offer','pitch') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_by` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `monitorings_match_id_unique` (`match_id`),
+  KEY `monitorings_created_by_foreign` (`created_by`),
+  CONSTRAINT `monitorings_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `monitorings_match_id_foreign` FOREIGN KEY (`match_id`) REFERENCES `matches` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `notifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notifications` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `body` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `action` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `referenced_model` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `referenced_model_id` bigint(20) unsigned DEFAULT NULL,
+  `unread` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `hidden_from_app` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `notifications_user_id_foreign` (`user_id`),
+  KEY `notifications_hidden_from_app_index` (`hidden_from_app`),
+  CONSTRAINT `notifications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `notifications_buffer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notifications_buffer` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `offer_contacts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `offer_contacts` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `offer_id` bigint(20) unsigned NOT NULL,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `team_member_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `offer_contacts_offer_id_foreign` (`offer_id`),
+  KEY `offer_contacts_user_id_foreign` (`user_id`),
+  KEY `offer_contacts_team_member_id_foreign` (`team_member_id`),
+  CONSTRAINT `offer_contacts_offer_id_foreign` FOREIGN KEY (`offer_id`) REFERENCES `offers` (`id`),
+  CONSTRAINT `offer_contacts_team_member_id_foreign` FOREIGN KEY (`team_member_id`) REFERENCES `team_members` (`id`),
+  CONSTRAINT `offer_contacts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `offer_documents`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `offer_documents` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `offer_id` bigint(20) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `document` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `offer_documents_offer_id_foreign` (`offer_id`),
+  CONSTRAINT `offer_documents_offer_id_foreign` FOREIGN KEY (`offer_id`) REFERENCES `offers` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `offers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `offers` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `organisation_id` bigint(20) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `land_types` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `land_ownerships` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `land_size` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `land_continent` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `land_country` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `restoration_methods` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `restoration_goals` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `funding_sources` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `funding_amount` int(11) DEFAULT NULL,
+  `price_per_tree` double(8,2) DEFAULT NULL,
+  `long_term_engagement` tinyint(1) DEFAULT NULL,
+  `reporting_frequency` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reporting_level` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sustainable_development_goals` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `cover_photo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `video` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `funding_bracket` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'lt_50k',
+  `visibility` enum('archived','looking','talking','entering_contracts','partially_invested_funded','fully_invested_funded','finished') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'looking',
+  `visibility_updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `offers_organisation_id_foreign` (`organisation_id`),
+  KEY `offers_land_types_index` (`land_types`(256)),
+  KEY `offers_land_ownerships_index` (`land_ownerships`(256)),
+  KEY `offers_land_size_index` (`land_size`),
+  KEY `offers_land_continent_index` (`land_continent`),
+  KEY `offers_land_country_index` (`land_country`),
+  KEY `offers_restoration_methods_index` (`restoration_methods`(256)),
+  KEY `offers_restoration_goals_index` (`restoration_goals`(256)),
+  KEY `offers_funding_sources_index` (`funding_sources`(256)),
+  KEY `offers_funding_amount_index` (`funding_amount`),
+  KEY `offers_long_term_engagement_index` (`long_term_engagement`),
+  KEY `offers_reporting_frequency_index` (`reporting_frequency`),
+  KEY `offers_reporting_level_index` (`reporting_level`),
+  KEY `offers_sustainable_development_goals_index` (`sustainable_development_goals`(256)),
+  CONSTRAINT `offers_organisation_id_foreign` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `organisation_document_versions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `organisation_document_versions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `organisation_document_id` bigint(20) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `document` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('pending','archived','approved','rejected') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `approved_rejected_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `approved_rejected_at` timestamp NULL DEFAULT NULL,
+  `rejected_reason` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `rejected_reason_body` longtext COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `organisation_document_versions_organisation_document_id_foreign` (`organisation_document_id`),
+  CONSTRAINT `organisation_document_versions_organisation_document_id_foreign` FOREIGN KEY (`organisation_document_id`) REFERENCES `organisation_documents` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `organisation_documents`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `organisation_documents` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `organisation_id` bigint(20) unsigned NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `organisation_documents_organisation_id_foreign` (`organisation_id`),
+  CONSTRAINT `organisation_documents_organisation_id_foreign` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `organisation_files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `organisation_files` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `upload` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `organisation_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `organisation_photos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `organisation_photos` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `upload` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_public` tinyint(1) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `organisation_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `organisation_versions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `organisation_versions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `organisation_id` bigint(20) unsigned NOT NULL,
+  `status` enum('pending','approved','rejected','archived') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `account_type` enum('terramatch','ppc','terrafund') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address_1` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address_2` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `state` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `zip_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `country` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `website` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rejected_reason` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `approved_rejected_by` bigint(20) unsigned DEFAULT NULL,
+  `type` text COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'other',
+  `category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'both',
+  `facebook` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `twitter` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `linkedin` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `instagram` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cover_photo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `video` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `approved_rejected_at` timestamp NULL DEFAULT NULL,
+  `founded_at` date DEFAULT NULL,
+  `rejected_reason_body` longtext COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `full_time_permanent_employees` int(11) DEFAULT NULL,
+  `seasonal_employees` int(11) DEFAULT NULL,
+  `part_time_permanent_employees` int(11) DEFAULT NULL,
+  `percentage_female` int(11) DEFAULT NULL,
+  `percentage_youth` int(11) DEFAULT NULL,
+  `revenues_19` decimal(8,2) DEFAULT NULL,
+  `revenues_20` decimal(8,2) DEFAULT NULL,
+  `revenues_21` decimal(8,2) DEFAULT NULL,
+  `budget_21` decimal(8,2) DEFAULT NULL,
+  `letter_of_reference` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `community_engagement_strategy` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `three_year_community_engagement` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `women_farmer_engagement` tinyint(4) DEFAULT NULL,
+  `young_people_engagement` tinyint(4) DEFAULT NULL,
+  `monitoring_and_evaluation_experience` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `community_follow_up` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `total_hectares_restored` int(11) DEFAULT NULL,
+  `hectares_restored_three_years` int(11) DEFAULT NULL,
+  `total_trees_grown` int(11) DEFAULT NULL,
+  `tree_survival_rate` tinyint(4) DEFAULT NULL,
+  `tree_maintenance_and_aftercare` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `key_contact` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `organisation_versions_organisation_id_foreign` (`organisation_id`),
+  KEY `organisation_versions_approved_rejected_by_foreign` (`approved_rejected_by`),
+  CONSTRAINT `organisation_versions_approved_rejected_by_foreign` FOREIGN KEY (`approved_rejected_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `organisation_versions_organisation_id_foreign` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `organisations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `organisations` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `password_resets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `password_resets` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `password_resets_user_id_foreign` (`user_id`),
+  CONSTRAINT `password_resets_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `pitch_contacts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pitch_contacts` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `pitch_id` bigint(20) unsigned NOT NULL,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `team_member_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pitch_contacts_pitch_id_foreign` (`pitch_id`),
+  KEY `pitch_contacts_user_id_foreign` (`user_id`),
+  KEY `pitch_contacts_team_member_id_foreign` (`team_member_id`),
+  CONSTRAINT `pitch_contacts_pitch_id_foreign` FOREIGN KEY (`pitch_id`) REFERENCES `pitches` (`id`),
+  CONSTRAINT `pitch_contacts_team_member_id_foreign` FOREIGN KEY (`team_member_id`) REFERENCES `team_members` (`id`),
+  CONSTRAINT `pitch_contacts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `pitch_document_versions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pitch_document_versions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `pitch_document_id` bigint(20) unsigned NOT NULL,
+  `status` enum('pending','approved','rejected','archived') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `rejected_reason` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `approved_rejected_by` bigint(20) unsigned DEFAULT NULL,
+  `approved_rejected_at` timestamp NULL DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `document` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `rejected_reason_body` longtext COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pitch_document_versions_pitch_document_id_foreign` (`pitch_document_id`),
+  KEY `pitch_document_versions_approved_rejected_by_foreign` (`approved_rejected_by`),
+  CONSTRAINT `pitch_document_versions_approved_rejected_by_foreign` FOREIGN KEY (`approved_rejected_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `pitch_document_versions_pitch_document_id_foreign` FOREIGN KEY (`pitch_document_id`) REFERENCES `pitch_documents` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `pitch_documents`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pitch_documents` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `pitch_id` bigint(20) unsigned NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pitch_documents_pitch_id_foreign` (`pitch_id`),
+  CONSTRAINT `pitch_documents_pitch_id_foreign` FOREIGN KEY (`pitch_id`) REFERENCES `pitches` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `pitch_versions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pitch_versions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `pitch_id` bigint(20) unsigned NOT NULL,
+  `status` enum('pending','approved','rejected','archived') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `rejected_reason` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `approved_rejected_by` bigint(20) unsigned DEFAULT NULL,
+  `approved_rejected_at` timestamp NULL DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `land_types` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `land_ownerships` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `land_size` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `land_continent` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `land_country` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `land_geojson` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `restoration_methods` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `restoration_goals` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `funding_sources` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `funding_amount` int(11) DEFAULT NULL,
+  `revenue_drivers` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `estimated_timespan` int(11) NOT NULL,
+  `long_term_engagement` tinyint(1) DEFAULT NULL,
+  `reporting_frequency` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reporting_level` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sustainable_development_goals` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `cover_photo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `video` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `problem` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `anticipated_outcome` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `who_is_involved` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `local_community_involvement` tinyint(1) DEFAULT NULL,
+  `training_involved` tinyint(1) NOT NULL DEFAULT 0,
+  `training_type` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `training_amount_people` int(11) DEFAULT NULL,
+  `people_working_in` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `people_amount_nearby` int(11) NOT NULL,
+  `people_amount_abroad` int(11) NOT NULL,
+  `people_amount_employees` int(11) NOT NULL,
+  `people_amount_volunteers` int(11) NOT NULL,
+  `benefited_people` int(11) NOT NULL,
+  `future_maintenance` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `use_of_resources` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `price_per_tree` double(8,2) DEFAULT NULL,
+  `rejected_reason_body` longtext COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `funding_bracket` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'lt_50k',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pitch_versions_pitch_id_foreign` (`pitch_id`),
+  KEY `pitch_versions_approved_rejected_by_foreign` (`approved_rejected_by`),
+  KEY `pitch_versions_land_types_index` (`land_types`(256)),
+  KEY `pitch_versions_land_ownerships_index` (`land_ownerships`(256)),
+  KEY `pitch_versions_land_size_index` (`land_size`),
+  KEY `pitch_versions_land_continent_index` (`land_continent`),
+  KEY `pitch_versions_land_country_index` (`land_country`),
+  KEY `pitch_versions_restoration_methods_index` (`restoration_methods`(256)),
+  KEY `pitch_versions_restoration_goals_index` (`restoration_goals`(256)),
+  KEY `pitch_versions_funding_sources_index` (`funding_sources`(256)),
+  KEY `pitch_versions_funding_amount_index` (`funding_amount`),
+  KEY `pitch_versions_long_term_engagement_index` (`long_term_engagement`),
+  KEY `pitch_versions_reporting_frequency_index` (`reporting_frequency`),
+  KEY `pitch_versions_reporting_level_index` (`reporting_level`),
+  KEY `pitch_versions_sustainable_development_goals_index` (`sustainable_development_goals`(256)),
+  CONSTRAINT `pitch_versions_approved_rejected_by_foreign` FOREIGN KEY (`approved_rejected_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `pitch_versions_pitch_id_foreign` FOREIGN KEY (`pitch_id`) REFERENCES `pitches` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `pitches`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pitches` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `organisation_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `visibility` enum('archived','looking','talking','entering_contracts','partially_invested_funded','fully_invested_funded','finished') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'looking',
+  `visibility_updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pitches_organisation_id_foreign` (`organisation_id`),
+  CONSTRAINT `pitches_organisation_id_foreign` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `programme_invites`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `programme_invites` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `email_address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `accepted_at` timestamp NULL DEFAULT NULL,
+  `programme_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `programme_invites_programme_id_foreign` (`programme_id`),
+  CONSTRAINT `programme_invites_programme_id_foreign` FOREIGN KEY (`programme_id`) REFERENCES `programmes` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `programme_tree_species`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `programme_tree_species` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `programme_id` bigint(20) unsigned NOT NULL,
+  `csv_import_id` bigint(20) unsigned DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `amount` int(10) unsigned DEFAULT NULL,
+  `programme_submission_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `programme_tree_species_programme_id_foreign` (`programme_id`),
+  KEY `programme_tree_species_csv_import_id_foreign` (`csv_import_id`),
+  KEY `programme_tree_species_programme_submission_id_foreign` (`programme_submission_id`),
+  CONSTRAINT `programme_tree_species_csv_import_id_foreign` FOREIGN KEY (`csv_import_id`) REFERENCES `csv_imports` (`id`),
+  CONSTRAINT `programme_tree_species_programme_id_foreign` FOREIGN KEY (`programme_id`) REFERENCES `programmes` (`id`),
+  CONSTRAINT `programme_tree_species_programme_submission_id_foreign` FOREIGN KEY (`programme_submission_id`) REFERENCES `submissions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `programme_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `programme_user` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `programme_id` bigint(20) unsigned NOT NULL,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `is_monitoring` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `programme_user_programme_id_foreign` (`programme_id`),
+  KEY `programme_user_user_id_foreign` (`user_id`),
+  CONSTRAINT `programme_user_programme_id_foreign` FOREIGN KEY (`programme_id`) REFERENCES `programmes` (`id`),
+  CONSTRAINT `programme_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `programmes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `programmes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `framework_id` bigint(20) unsigned NOT NULL,
+  `organisation_id` bigint(20) unsigned NOT NULL,
+  `boundary_geojson` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `country` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `continent` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `thumbnail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `programmes_framework_id_foreign` (`framework_id`),
+  KEY `programmes_organisation_id_foreign` (`organisation_id`),
+  CONSTRAINT `programmes_framework_id_foreign` FOREIGN KEY (`framework_id`) REFERENCES `frameworks` (`id`),
+  CONSTRAINT `programmes_organisation_id_foreign` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `progress_updates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `progress_updates` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `monitoring_id` bigint(20) unsigned NOT NULL,
+  `grouping` enum('general','planting','monitoring') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `breakdown` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `summary` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `images` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `created_by` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `progress_updates_monitoring_id_foreign` (`monitoring_id`),
+  KEY `progress_updates_created_by_foreign` (`created_by`),
+  CONSTRAINT `progress_updates_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `progress_updates_monitoring_id_foreign` FOREIGN KEY (`monitoring_id`) REFERENCES `monitorings` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `restoration_method_metric_versions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `restoration_method_metric_versions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `restoration_method_metric_id` bigint(20) unsigned NOT NULL,
+  `status` enum('pending','approved','rejected','archived') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `rejected_reason` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `approved_rejected_by` bigint(20) unsigned DEFAULT NULL,
+  `approved_rejected_at` timestamp NULL DEFAULT NULL,
+  `experience` int(11) NOT NULL,
+  `land_size` double(8,2) NOT NULL,
+  `price_per_hectare` double(8,2) NOT NULL,
+  `biomass_per_hectare` double(8,2) DEFAULT NULL,
+  `carbon_impact` double(8,2) DEFAULT NULL,
+  `species_impacted` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `restoration_method` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `rejected_reason_body` longtext COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `rmmv_rmm_foreign` (`restoration_method_metric_id`),
+  KEY `restoration_method_metric_versions_approved_rejected_by_foreign` (`approved_rejected_by`),
+  CONSTRAINT `restoration_method_metric_versions_approved_rejected_by_foreign` FOREIGN KEY (`approved_rejected_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `rmmv_rmm_foreign` FOREIGN KEY (`restoration_method_metric_id`) REFERENCES `restoration_method_metrics` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `restoration_method_metrics`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `restoration_method_metrics` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `pitch_id` bigint(20) unsigned NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `restoration_method_metrics_pitch_id_foreign` (`pitch_id`),
+  CONSTRAINT `restoration_method_metrics_pitch_id_foreign` FOREIGN KEY (`pitch_id`) REFERENCES `pitches` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `satellite_maps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `satellite_maps` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `monitoring_id` bigint(20) unsigned NOT NULL,
+  `map` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `alt_text` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `created_by` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `satellite_maps_created_by_foreign` (`created_by`),
+  KEY `satellite_maps_monitoring_id_foreign` (`monitoring_id`),
+  CONSTRAINT `satellite_maps_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `satellite_maps_monitoring_id_foreign` FOREIGN KEY (`monitoring_id`) REFERENCES `monitorings` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `satellite_monitors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `satellite_monitors` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `satellite_monitorable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `satellite_monitorable_id` bigint(20) unsigned NOT NULL,
+  `map` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `alt_text` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `satellite_monitor_morph_index` (`satellite_monitorable_type`,`satellite_monitorable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `seed_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `seed_details` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_kg` decimal(8,2) NOT NULL,
+  `amount` int(11) NOT NULL,
+  `weight_of_sample` decimal(8,2) NOT NULL,
+  `site_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `seed_details_site_id_foreign` (`site_id`),
+  CONSTRAINT `seed_details_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `site_csv_imports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `site_csv_imports` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `site_id` bigint(20) unsigned NOT NULL,
+  `site_submission_id` bigint(20) unsigned DEFAULT NULL,
+  `has_failed` tinyint(1) NOT NULL DEFAULT 0,
+  `total_rows` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `site_csv_imports_site_id_foreign` (`site_id`),
+  KEY `site_csv_imports_site_submission_id_foreign` (`site_submission_id`),
+  CONSTRAINT `site_csv_imports_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`),
+  CONSTRAINT `site_csv_imports_site_submission_id_foreign` FOREIGN KEY (`site_submission_id`) REFERENCES `site_submissions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `site_restoration_method_site`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `site_restoration_method_site` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `site_id` bigint(20) unsigned NOT NULL,
+  `site_restoration_method_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `site_restoration_method_site_site_id_foreign` (`site_id`),
+  KEY `site_restoration_method_site_site_restoration_method_id_foreign` (`site_restoration_method_id`),
+  CONSTRAINT `site_restoration_method_site_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`),
+  CONSTRAINT `site_restoration_method_site_site_restoration_method_id_foreign` FOREIGN KEY (`site_restoration_method_id`) REFERENCES `site_restoration_methods` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `site_restoration_methods`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `site_restoration_methods` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `site_submission_disturbances`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `site_submission_disturbances` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `site_submission_id` bigint(20) unsigned DEFAULT NULL,
+  `disturbance_type` enum('ecological','climatic','manmade') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intensity` enum('low','medium','high') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `extent` enum('0-20','21-40','41-60','61-80','81-100') COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `site_submission_disturbances_site_submission_id_foreign` (`site_submission_id`),
+  CONSTRAINT `site_submission_disturbances_site_submission_id_foreign` FOREIGN KEY (`site_submission_id`) REFERENCES `site_submissions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `site_submissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `site_submissions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `site_id` bigint(20) unsigned NOT NULL,
+  `disturbance_information` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `site_submission_title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_by` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `direct_seeding_kg` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `site_submissions_site_id_foreign` (`site_id`),
+  CONSTRAINT `site_submissions_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `site_tree_species`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `site_tree_species` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `site_id` bigint(20) unsigned NOT NULL,
+  `site_csv_import_id` bigint(20) unsigned DEFAULT NULL,
+  `site_submission_id` bigint(20) unsigned DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amount` int(10) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `site_tree_species_site_id_foreign` (`site_id`),
+  KEY `site_tree_species_site_csv_import_id_foreign` (`site_csv_import_id`),
+  KEY `site_tree_species_site_submission_id_foreign` (`site_submission_id`),
+  CONSTRAINT `site_tree_species_site_csv_import_id_foreign` FOREIGN KEY (`site_csv_import_id`) REFERENCES `site_csv_imports` (`id`),
+  CONSTRAINT `site_tree_species_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`),
+  CONSTRAINT `site_tree_species_site_submission_id_foreign` FOREIGN KEY (`site_submission_id`) REFERENCES `site_submissions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `sites`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sites` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `programme_id` bigint(20) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `establishment_date` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `technical_narrative` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `public_narrative` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `aim_survival_rate` tinyint(4) DEFAULT NULL,
+  `aim_year_five_crown_cover` tinyint(4) DEFAULT NULL,
+  `boundary_geojson` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `history` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `aim_direct_seeding_survival_rate` tinyint(4) DEFAULT NULL,
+  `aim_natural_regeneration_trees_per_hectare` int(11) DEFAULT NULL,
+  `aim_soil_condition` enum('severely_degraded','poor','fair','good','no_degradation') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `aim_number_of_mature_trees` int(11) DEFAULT NULL,
+  `planting_pattern` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stratification_for_heterogeneity` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `aim_natural_regeneration_hectares` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sites_programme_id_foreign` (`programme_id`),
+  CONSTRAINT `sites_programme_id_foreign` FOREIGN KEY (`programme_id`) REFERENCES `programmes` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `socioeconomic_benefits`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `socioeconomic_benefits` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `site_id` bigint(20) unsigned DEFAULT NULL,
+  `site_submission_id` bigint(20) unsigned DEFAULT NULL,
+  `programme_id` bigint(20) unsigned DEFAULT NULL,
+  `programme_submission_id` bigint(20) unsigned DEFAULT NULL,
+  `upload` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `socioeconomic_benefits_site_id_foreign` (`site_id`),
+  KEY `socioeconomic_benefits_programme_id_foreign` (`programme_id`),
+  KEY `socioeconomic_benefits_site_submission_id_foreign` (`site_submission_id`),
+  KEY `socioeconomic_benefits_programme_submission_id_foreign` (`programme_submission_id`),
+  CONSTRAINT `socioeconomic_benefits_programme_id_foreign` FOREIGN KEY (`programme_id`) REFERENCES `programmes` (`id`),
+  CONSTRAINT `socioeconomic_benefits_programme_submission_id_foreign` FOREIGN KEY (`programme_submission_id`) REFERENCES `submissions` (`id`),
+  CONSTRAINT `socioeconomic_benefits_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`),
+  CONSTRAINT `socioeconomic_benefits_site_submission_id_foreign` FOREIGN KEY (`site_submission_id`) REFERENCES `site_submissions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `submission_media_uploads`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `submission_media_uploads` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `media_title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `is_public` tinyint(1) NOT NULL,
+  `submission_id` bigint(20) unsigned DEFAULT NULL,
+  `upload` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `location_long` decimal(8,2) DEFAULT NULL,
+  `location_lat` decimal(8,2) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `site_submission_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `submission_media_uploads_submission_id_foreign` (`submission_id`),
+  KEY `submission_media_uploads_site_submission_id_foreign` (`site_submission_id`),
+  CONSTRAINT `submission_media_uploads_site_submission_id_foreign` FOREIGN KEY (`site_submission_id`) REFERENCES `site_submissions` (`id`),
+  CONSTRAINT `submission_media_uploads_submission_id_foreign` FOREIGN KEY (`submission_id`) REFERENCES `submissions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `submissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `submissions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `programme_id` bigint(20) unsigned NOT NULL,
+  `site_id` bigint(20) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `technical_narrative` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `public_narrative` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `programme_reports_programme_id_foreign` (`programme_id`),
+  KEY `submissions_site_id_foreign` (`site_id`),
+  CONSTRAINT `programme_reports_programme_id_foreign` FOREIGN KEY (`programme_id`) REFERENCES `programmes` (`id`),
+  CONSTRAINT `submissions_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `targets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `targets` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `monitoring_id` bigint(20) unsigned NOT NULL,
+  `negotiator` enum('offer','pitch') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `start_date` date NOT NULL,
+  `finish_date` date NOT NULL,
+  `funding_amount` int(11) NOT NULL,
+  `land_geojson` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `accepted_at` timestamp NULL DEFAULT NULL,
+  `created_by` bigint(20) unsigned NOT NULL,
+  `accepted_by` bigint(20) unsigned DEFAULT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `targets_created_by_foreign` (`created_by`),
+  KEY `targets_accepted_by_foreign` (`accepted_by`),
+  KEY `targets_monitoring_id_foreign` (`monitoring_id`),
+  CONSTRAINT `targets_accepted_by_foreign` FOREIGN KEY (`accepted_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `targets_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `targets_monitoring_id_foreign` FOREIGN KEY (`monitoring_id`) REFERENCES `monitorings` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `team_members`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `team_members` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `organisation_id` bigint(20) unsigned NOT NULL,
+  `first_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `job_role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `facebook` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `twitter` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `linkedin` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `instagram` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email_address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `team_members_organisation_id_foreign` (`organisation_id`),
+  CONSTRAINT `team_members_organisation_id_foreign` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `terrafund_csv_imports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `terrafund_csv_imports` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `importable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `importable_id` bigint(20) unsigned NOT NULL,
+  `has_failed` tinyint(1) NOT NULL DEFAULT 0,
+  `total_rows` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `import_morph_index` (`importable_type`,`importable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `terrafund_due_submissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `terrafund_due_submissions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `terrafund_due_submissionable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `terrafund_due_submissionable_id` bigint(20) unsigned NOT NULL,
+  `due_at` datetime NOT NULL,
+  `is_submitted` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `unable_report_reason` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `due_submission_morph_index` (`terrafund_due_submissionable_type`,`terrafund_due_submissionable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `terrafund_files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `terrafund_files` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `fileable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fileable_id` bigint(20) unsigned NOT NULL,
+  `upload` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_public` tinyint(1) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `terrafund_file_morph_index` (`fileable_type`,`fileable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `terrafund_nurseries`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `terrafund_nurseries` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `terrafund_programme_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `seedling_grown` int(11) NOT NULL,
+  `planting_contribution` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nursery_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `terrafund_nursery_submissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `terrafund_nursery_submissions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `seedlings_young_trees` int(11) NOT NULL,
+  `interesting_facts` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `site_prep` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `terrafund_nursery_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `terrafund_programme_invites`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `terrafund_programme_invites` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `email_address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `terrafund_programme_id` bigint(20) unsigned NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `terrafund_programme_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `terrafund_programme_user` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `terrafund_programme_id` bigint(20) unsigned NOT NULL,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `terrafund_programme_user_terrafund_programme_id_foreign` (`terrafund_programme_id`),
+  KEY `terrafund_programme_user_user_id_foreign` (`user_id`),
+  CONSTRAINT `terrafund_programme_user_terrafund_programme_id_foreign` FOREIGN KEY (`terrafund_programme_id`) REFERENCES `terrafund_programmes` (`id`),
+  CONSTRAINT `terrafund_programme_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `terrafund_programmes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `terrafund_programmes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `framework_id` bigint(20) unsigned NOT NULL,
+  `project_country` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `home_country` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `boundary_geojson` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `planting_start_date` date NOT NULL,
+  `planting_end_date` date NOT NULL,
+  `budget` int(11) NOT NULL,
+  `programme_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `history` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `objectives` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `environmental_goals` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `socioeconomic_goals` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sdgs_impacted` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `long_term_growth` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `community_incentives` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_hectares_restored` int(11) NOT NULL,
+  `organisation_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `terrafund_programmes_framework_id_foreign` (`framework_id`),
+  CONSTRAINT `terrafund_programmes_framework_id_foreign` FOREIGN KEY (`framework_id`) REFERENCES `frameworks` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `terrafund_sites`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `terrafund_sites` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `terrafund_programme_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `restoration_methods` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `boundary_geojson` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `hectares_to_restore` int(11) DEFAULT NULL,
+  `landscape_community_contribution` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `disturbances` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `land_tenures` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `terrafund_sites_terrafund_programme_id_foreign` (`terrafund_programme_id`),
+  CONSTRAINT `terrafund_sites_terrafund_programme_id_foreign` FOREIGN KEY (`terrafund_programme_id`) REFERENCES `terrafund_programmes` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `terrafund_tree_species`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `terrafund_tree_species` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amount` int(10) unsigned DEFAULT NULL,
+  `treeable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `treeable_id` bigint(20) unsigned NOT NULL,
+  `terrafund_csv_import_id` bigint(20) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tree_species_morph_index` (`treeable_type`,`treeable_id`),
+  KEY `terrafund_tree_species_terrafund_csv_import_id_foreign` (`terrafund_csv_import_id`),
+  CONSTRAINT `terrafund_tree_species_terrafund_csv_import_id_foreign` FOREIGN KEY (`terrafund_csv_import_id`) REFERENCES `terrafund_csv_imports` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `tree_species`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tree_species` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `pitch_id` bigint(20) unsigned NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tree_species_pitch_id_foreign` (`pitch_id`),
+  CONSTRAINT `tree_species_pitch_id_foreign` FOREIGN KEY (`pitch_id`) REFERENCES `pitches` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `tree_species_versions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tree_species_versions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `tree_species_id` bigint(20) unsigned NOT NULL,
+  `status` enum('pending','approved','rejected','archived') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `rejected_reason` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `approved_rejected_by` bigint(20) unsigned DEFAULT NULL,
+  `approved_rejected_at` timestamp NULL DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_native` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `count` bigint(20) NOT NULL,
+  `price_to_plant` double(8,2) NOT NULL,
+  `price_to_maintain` double(8,2) NOT NULL,
+  `saplings` double(8,2) NOT NULL,
+  `site_prep` double(8,2) NOT NULL,
+  `survival_rate` int(11) DEFAULT NULL,
+  `produces_food` tinyint(1) DEFAULT NULL,
+  `produces_firewood` tinyint(1) DEFAULT NULL,
+  `produces_timber` tinyint(1) DEFAULT NULL,
+  `owner` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `season` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `rejected_reason_body` longtext COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tree_species_versions_tree_species_id_foreign` (`tree_species_id`),
+  KEY `tree_species_versions_approved_rejected_by_foreign` (`approved_rejected_by`),
+  CONSTRAINT `tree_species_versions_approved_rejected_by_foreign` FOREIGN KEY (`approved_rejected_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `tree_species_versions_tree_species_id_foreign` FOREIGN KEY (`tree_species_id`) REFERENCES `tree_species` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `uploads`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `uploads` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `location` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `uploads_user_id_foreign` (`user_id`),
+  CONSTRAINT `uploads_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `organisation_id` bigint(20) unsigned DEFAULT NULL,
+  `first_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email_address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email_address_verified_at` datetime DEFAULT NULL,
+  `role` enum('user','admin','terrafund_admin') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_logged_in_at` datetime DEFAULT NULL,
+  `job_role` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `facebook` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `twitter` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `linkedin` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `instagram` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `is_subscribed` tinyint(1) NOT NULL DEFAULT 1,
+  `has_consented` tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email_address`),
+  KEY `users_organisation_id_foreign` (`organisation_id`),
+  CONSTRAINT `users_organisation_id_foreign` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `verifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `verifications` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `verifications_user_id_foreign` (`user_id`),
+  CONSTRAINT `verifications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+INSERT INTO `migrations` VALUES (1,'2014_10_12_000000_create_users_table',1);
+INSERT INTO `migrations` VALUES (2,'2014_10_12_100000_create_password_resets_table',1);
+INSERT INTO `migrations` VALUES (3,'2019_08_05_072755_create_organisations_table',1);
+INSERT INTO `migrations` VALUES (4,'2019_08_05_100000_delete_users_table',1);
+INSERT INTO `migrations` VALUES (5,'2019_08_05_203044_create_users_table_again',1);
+INSERT INTO `migrations` VALUES (6,'2019_08_07_102237_update_users_table',1);
+INSERT INTO `migrations` VALUES (7,'2019_08_07_154722_remove_token_column',1);
+INSERT INTO `migrations` VALUES (8,'2019_08_08_071803_create_notifications_table',1);
+INSERT INTO `migrations` VALUES (9,'2019_08_14_133121_change_users_table',1);
+INSERT INTO `migrations` VALUES (10,'2019_08_20_120257_create_verifications_table',1);
+INSERT INTO `migrations` VALUES (11,'2019_08_20_150535_recreate_password_resets_table',1);
+INSERT INTO `migrations` VALUES (12,'2019_08_27_073126_create_organisations',1);
+INSERT INTO `migrations` VALUES (13,'2019_08_27_155813_create_organisation_versions',1);
+INSERT INTO `migrations` VALUES (14,'2019_09_02_154346_amend_organisation_versions_table',1);
+INSERT INTO `migrations` VALUES (15,'2019_09_05_100423_amend_users_table',1);
+INSERT INTO `migrations` VALUES (16,'2019_09_06_122456_amend_organisation_versions_table_again',1);
+INSERT INTO `migrations` VALUES (17,'2019_09_16_163229_create_uploads_table',1);
+INSERT INTO `migrations` VALUES (18,'2019_09_16_230916_change_organisation_versions_table',1);
+INSERT INTO `migrations` VALUES (19,'2019_09_17_120832_add_timestamps_to_organisation_versions_table',1);
+INSERT INTO `migrations` VALUES (20,'2019_09_25_130355_create_team_members_table',1);
+INSERT INTO `migrations` VALUES (21,'2019_09_30_110044_create_organisation_documents_tables',1);
+INSERT INTO `migrations` VALUES (22,'2019_09_30_164516_remove_timestamps',1);
+INSERT INTO `migrations` VALUES (23,'2019_09_30_175459_remove_notifications',1);
+INSERT INTO `migrations` VALUES (24,'2019_10_02_175951_standardise_columns',1);
+INSERT INTO `migrations` VALUES (25,'2019_10_04_140601_add_more_data_to_team_members',1);
+INSERT INTO `migrations` VALUES (26,'2019_10_07_093531_create_cache_table',1);
+INSERT INTO `migrations` VALUES (27,'2019_10_08_092600_create_offers_table',1);
+INSERT INTO `migrations` VALUES (28,'2019_10_08_095300_remove_enums',1);
+INSERT INTO `migrations` VALUES (29,'2019_10_08_182400_create_offer_documents_table',1);
+INSERT INTO `migrations` VALUES (30,'2019_10_09_101500_add_extra_columns_to_offers',1);
+INSERT INTO `migrations` VALUES (31,'2019_10_09_122500_remove_currencies',1);
+INSERT INTO `migrations` VALUES (32,'2019_10_09_135000_change_land_to_float',1);
+INSERT INTO `migrations` VALUES (33,'2019_10_09_142200_create_pitches_tables',1);
+INSERT INTO `migrations` VALUES (34,'2019_10_09_145800_tidy_up_tables',1);
+INSERT INTO `migrations` VALUES (35,'2019_10_11_123600_add_extras_to_organisations',1);
+INSERT INTO `migrations` VALUES (36,'2019_10_14_171200_add_extras_to_restoration_method_metric_versions',1);
+INSERT INTO `migrations` VALUES (37,'2019_10_17_104600_index_columns_for_speed',1);
+INSERT INTO `migrations` VALUES (38,'2019_10_21_104800_change_land_size_column',1);
+INSERT INTO `migrations` VALUES (39,'2019_10_21_114100_change_time_columns',1);
+INSERT INTO `migrations` VALUES (40,'2019_10_24_100900_create_interests_table',1);
+INSERT INTO `migrations` VALUES (41,'2019_10_24_122600_create_matches_table',1);
+INSERT INTO `migrations` VALUES (42,'2019_10_29_160900_add_complete_status',1);
+INSERT INTO `migrations` VALUES (43,'2019_10_31_112200_create_devices_and_notifications',1);
+INSERT INTO `migrations` VALUES (44,'2019_11_04_171000_add_timestamps_to_users_table',1);
+INSERT INTO `migrations` VALUES (45,'2019_11_22_153334_add_actions_fields_to_notifications_table',1);
+INSERT INTO `migrations` VALUES (46,'2019_11_27_123157_add_archived_fields_to_pitches_table',1);
+INSERT INTO `migrations` VALUES (47,'2019_11_28_163858_add_season_field_to_tree_species_versions_table',1);
+INSERT INTO `migrations` VALUES (48,'2019_11_29_134905_add_missing_fields_to_pitch_versions_table',1);
+INSERT INTO `migrations` VALUES (49,'2019_12_09_090454_add_properties_to_tree_species_versions_table',1);
+INSERT INTO `migrations` VALUES (50,'2019_12_09_163202_add_deteled_at_to_tree_species_table',1);
+INSERT INTO `migrations` VALUES (51,'2019_12_11_085159_add_deleted_at_to_carbon_certifications_table',1);
+INSERT INTO `migrations` VALUES (52,'2019_12_11_100157_add_delete_at_to_carbon_certification_versions_table',1);
+INSERT INTO `migrations` VALUES (53,'2019_12_11_123255_add_delete_at_to_restoration_method_metrics_table',1);
+INSERT INTO `migrations` VALUES (54,'2019_12_11_123308_add_delete_at_to_restoration_method_metric_versions_table',1);
+INSERT INTO `migrations` VALUES (55,'2019_12_12_101020_add_other_type_field_to_carbon_certification_versions_table',1);
+INSERT INTO `migrations` VALUES (56,'2019_12_12_144547_remove_archived',1);
+INSERT INTO `migrations` VALUES (57,'2019_12_12_165500_add_soft_deletes',1);
+INSERT INTO `migrations` VALUES (58,'2019_12_16_151615_remove_old_reporting_times',1);
+INSERT INTO `migrations` VALUES (59,'2019_12_16_165901_create_price_per_tree_column',1);
+INSERT INTO `migrations` VALUES (60,'2019_12_18_104638_add_soft_deletes_to_tree_species',1);
+INSERT INTO `migrations` VALUES (61,'2019_12_18_115312_set_price_per_tree_on_pitch_versions',1);
+INSERT INTO `migrations` VALUES (62,'2019_12_18_155141_remove_price_to_obtain_column',1);
+INSERT INTO `migrations` VALUES (63,'2019_12_19_144649_create_filter_records_table',1);
+INSERT INTO `migrations` VALUES (64,'2019_12_19_145224_change_notifications_table',1);
+INSERT INTO `migrations` VALUES (65,'2019_12_23_133335_remove_other_type',1);
+INSERT INTO `migrations` VALUES (66,'2020_01_02_142145_add_rejected_reason_body',1);
+INSERT INTO `migrations` VALUES (67,'2020_01_03_215133_change_notifications_table_again',1);
+INSERT INTO `migrations` VALUES (68,'2020_01_08_172311_add_back_in_other_value',1);
+INSERT INTO `migrations` VALUES (69,'2020_01_09_211143_create_funding_bracket_columns',1);
+INSERT INTO `migrations` VALUES (70,'2020_01_10_125519_update_funding_amount_column',1);
+INSERT INTO `migrations` VALUES (71,'2020_01_13_165000_standardise_social',1);
+INSERT INTO `migrations` VALUES (72,'2020_01_13_232552_add_timestamps_to_versions',1);
+INSERT INTO `migrations` VALUES (73,'2020_01_21_165000_remove_social_from_pitches',1);
+INSERT INTO `migrations` VALUES (74,'2020_01_21_165500_modify_nullable_state_of_columns',1);
+INSERT INTO `migrations` VALUES (75,'2020_01_27_135900_make_offer_docs_soft_delete',1);
+INSERT INTO `migrations` VALUES (76,'2020_01_27_181200_create_notifications_dupes_table',1);
+INSERT INTO `migrations` VALUES (77,'2020_02_10_142501_remove_avatars_from_pitches_and_offers',1);
+INSERT INTO `migrations` VALUES (78,'2020_02_14_115419_create_elevator_videos_table',1);
+INSERT INTO `migrations` VALUES (79,'2020_02_21_052500_amend_elevator_videos_table',1);
+INSERT INTO `migrations` VALUES (80,'2020_02_24_170400_create_drafts_table',1);
+INSERT INTO `migrations` VALUES (81,'2020_02_25_101800_give_users_unsubscribes',1);
+INSERT INTO `migrations` VALUES (82,'2020_02_28_165840_create_failed_jobs_table',1);
+INSERT INTO `migrations` VALUES (83,'2020_02_28_171528_create_sessions_table',1);
+INSERT INTO `migrations` VALUES (84,'2020_03_04_105400_create_visibility_mode',1);
+INSERT INTO `migrations` VALUES (85,'2020_03_10_135000_make_columns_longer',1);
+INSERT INTO `migrations` VALUES (86,'2020_03_11_115600_update_enum_visibilities',1);
+INSERT INTO `migrations` VALUES (87,'2020_03_19_085900_add_timestamp_to_visibilities',1);
+INSERT INTO `migrations` VALUES (88,'2020_06_15_130642_delete_sessions_and_cache_tables',1);
+INSERT INTO `migrations` VALUES (89,'2020_12_08_145400_create_monitorings_table',1);
+INSERT INTO `migrations` VALUES (90,'2020_12_14_133500_update_monitorings_table',1);
+INSERT INTO `migrations` VALUES (91,'2020_12_18_143400_create_targets_table',1);
+INSERT INTO `migrations` VALUES (92,'2020_12_22_174600_remove_stage_from_monitorings_table',1);
+INSERT INTO `migrations` VALUES (93,'2021_01_11_153500_create_progress_updates_table',1);
+INSERT INTO `migrations` VALUES (94,'2021_01_26_170400_update_targets_table_land_geojson',1);
+INSERT INTO `migrations` VALUES (95,'2021_01_28_090400_make_targets_data_column',1);
+INSERT INTO `migrations` VALUES (96,'2021_01_28_114400_migrate_targets_data',1);
+INSERT INTO `migrations` VALUES (97,'2021_02_04_163400_create_satellite_maps_table',1);
+INSERT INTO `migrations` VALUES (98,'2021_02_12_165300_hide_notifications_from_app',1);
+INSERT INTO `migrations` VALUES (99,'2021_09_10_084416_create_frameworks_table',1);
+INSERT INTO `migrations` VALUES (100,'2021_09_10_084501_create_programmes_table',1);
+INSERT INTO `migrations` VALUES (101,'2021_09_10_084737_create_aims_table',1);
+INSERT INTO `migrations` VALUES (102,'2021_09_10_084943_create_submissions_table',1);
+INSERT INTO `migrations` VALUES (103,'2021_09_10_085049_add_ppc_framework_to_frameworks_table',1);
+INSERT INTO `migrations` VALUES (104,'2021_09_10_132353_create_programme_invite_codes_table',1);
+INSERT INTO `migrations` VALUES (105,'2021_09_13_095850_create_csv_imports_table',1);
+INSERT INTO `migrations` VALUES (106,'2021_09_13_095852_create_programme_tree_species_table',1);
+INSERT INTO `migrations` VALUES (107,'2021_09_14_094624_create_programme_user_table',1);
+INSERT INTO `migrations` VALUES (108,'2021_09_16_110239_update_drafts_table',1);
+INSERT INTO `migrations` VALUES (109,'2021_09_23_135425_create_sites_table',1);
+INSERT INTO `migrations` VALUES (110,'2021_09_24_095152_create_programme_targets_table',1);
+INSERT INTO `migrations` VALUES (111,'2021_09_29_123630_create_programme_reports_table',1);
+INSERT INTO `migrations` VALUES (112,'2021_10_04_091418_create_programme_invites_table',1);
+INSERT INTO `migrations` VALUES (113,'2021_10_04_130736_rename_programme_targets_table_to_aims_table',1);
+INSERT INTO `migrations` VALUES (114,'2021_10_04_134805_rename_programme_reports_table_to_submissions_table',1);
+INSERT INTO `migrations` VALUES (115,'2021_10_05_091441_add_total_rows_column_to_csv_imports_table',1);
+INSERT INTO `migrations` VALUES (116,'2021_10_06_101955_add_monitoring_column_to_programme_user_table',1);
+INSERT INTO `migrations` VALUES (117,'2021_10_06_192631_add_geojson_to_programmes_table',1);
+INSERT INTO `migrations` VALUES (118,'2021_10_07_101503_create_site_restoration_methods_table',1);
+INSERT INTO `migrations` VALUES (119,'2021_10_07_101644_create_site_restoration_method_site_table',1);
+INSERT INTO `migrations` VALUES (120,'2021_10_07_103136_populate_site_restoration_methods_table',1);
+INSERT INTO `migrations` VALUES (121,'2021_10_08_121334_add_establishment_date_to_sites_table',1);
+INSERT INTO `migrations` VALUES (122,'2021_10_08_130429_add_narratives_to_sites_table',1);
+INSERT INTO `migrations` VALUES (123,'2021_10_11_091803_create_land_tenures_table',1);
+INSERT INTO `migrations` VALUES (124,'2021_10_11_093006_populate_land_tenures_table',1);
+INSERT INTO `migrations` VALUES (125,'2021_10_11_100632_create_land_tenure_site_table',1);
+INSERT INTO `migrations` VALUES (126,'2021_10_11_122618_add_aim_columns_to_sites_table',1);
+INSERT INTO `migrations` VALUES (127,'2021_10_12_092719_create_site_csv_imports_table',1);
+INSERT INTO `migrations` VALUES (128,'2021_10_12_095558_create_site_tree_species_table',1);
+INSERT INTO `migrations` VALUES (129,'2021_10_12_101248_add_key_to_site_restoration_methods_table',1);
+INSERT INTO `migrations` VALUES (130,'2021_10_12_102338_add_key_to_land_tenures_table',1);
+INSERT INTO `migrations` VALUES (131,'2021_10_12_133705_add_geojson_to_sites_table',1);
+INSERT INTO `migrations` VALUES (132,'2021_10_13_102121_add_creation_id_to_sites_table',1);
+INSERT INTO `migrations` VALUES (133,'2021_10_18_053801_create_socioeconomic_benefits_table',1);
+INSERT INTO `migrations` VALUES (134,'2021_10_19_065747_create_media_uploads_table',1);
+INSERT INTO `migrations` VALUES (135,'2021_10_19_132053_add_title_narrative_to_submissions_table',1);
+INSERT INTO `migrations` VALUES (136,'2021_10_19_182834_create_submission_csv_imports_table',1);
+INSERT INTO `migrations` VALUES (137,'2021_10_19_221909_create_submission_tree_species_table',1);
+INSERT INTO `migrations` VALUES (138,'2021_10_21_123252_create_site_submissions_table',1);
+INSERT INTO `migrations` VALUES (139,'2021_10_21_131816_add_site_submission_id_to_site_tree_species_table',1);
+INSERT INTO `migrations` VALUES (140,'2021_10_22_154021_add_site_id_to_submissions_table',1);
+INSERT INTO `migrations` VALUES (141,'2021_10_25_002426_create_submission_media_uploads_table',1);
+INSERT INTO `migrations` VALUES (142,'2021_10_25_092100_add_site_submission_id_to_socioeconomic_benefits_table',1);
+INSERT INTO `migrations` VALUES (143,'2021_10_25_092934_add_site_submission_id_to_media_uploads_table',1);
+INSERT INTO `migrations` VALUES (144,'2021_10_25_130358_create_site_submission_disturbances_table',1);
+INSERT INTO `migrations` VALUES (145,'2021_10_26_094427_add_site_submission_id_to_site_csv_imports_table',1);
+INSERT INTO `migrations` VALUES (146,'2021_10_27_090801_update_drafts_table_for_site_submissions',1);
+INSERT INTO `migrations` VALUES (147,'2021_10_27_192834_drop_fk_on_uploads_id_on_media_uploads_table',1);
+INSERT INTO `migrations` VALUES (148,'2021_10_27_193544_change_type_and_rename_uploads_id_to_uploads_on_media_uploads_table',1);
+INSERT INTO `migrations` VALUES (149,'2021_10_28_152257_add_site_submission_id_to_submission_media_uploads_table',1);
+INSERT INTO `migrations` VALUES (150,'2021_10_28_152706_drop_site_submission_id_from_media_uploads_table',1);
+INSERT INTO `migrations` VALUES (151,'2021_11_02_014014_change_type_of_uploads_to_string_on_media_uploads_table',1);
+INSERT INTO `migrations` VALUES (152,'2021_11_02_161547_drop_fk_on_uploads_id_on_socioeconomic_benefits_table',1);
+INSERT INTO `migrations` VALUES (153,'2021_11_02_161639_rename_uploads_id_to_uploads_on_socioeconomic_benefits_table',1);
+INSERT INTO `migrations` VALUES (154,'2021_11_02_161720_change_type_uploads_to_string_on_socioeconomic_benefits_table',1);
+INSERT INTO `migrations` VALUES (155,'2021_11_02_171206_add_title_to_site_submissions_table',1);
+INSERT INTO `migrations` VALUES (156,'2021_11_03_095258_add_created_by_to_site_submissions',1);
+INSERT INTO `migrations` VALUES (157,'2021_11_04_104112_create_due_submissions_table',1);
+INSERT INTO `migrations` VALUES (158,'2021_11_04_105230_drop_due_at_column_from_programmes_table',1);
+INSERT INTO `migrations` VALUES (159,'2021_11_05_103852_make_amount_nullable_in_site_tree_species_table',1);
+INSERT INTO `migrations` VALUES (160,'2021_11_09_142020_add_country_and_continent_to_sites_table',1);
+INSERT INTO `migrations` VALUES (161,'2021_11_09_142027_add_country_and_continent_to_programmes_table',1);
+INSERT INTO `migrations` VALUES (162,'2021_11_11_111401_update_drafts_table_for_programme_submissions',1);
+INSERT INTO `migrations` VALUES (163,'2021_11_11_142123_create_direct_seedings_table',1);
+INSERT INTO `migrations` VALUES (164,'2021_11_11_144208_add_direct_seeding_kg_to_submissions_table',1);
+INSERT INTO `migrations` VALUES (165,'2021_11_12_102956_change_narrative_field_data_types_on_submissions_table',1);
+INSERT INTO `migrations` VALUES (166,'2021_11_12_105701_add_end_date_column_to_programmes_table',1);
+INSERT INTO `migrations` VALUES (167,'2021_11_12_141532_add_end_date_column_to_sites_table',1);
+INSERT INTO `migrations` VALUES (168,'2021_11_15_113007_rename_amount_column_in_direct_seedings_table',1);
+INSERT INTO `migrations` VALUES (169,'2021_11_16_101135_drop_country_and_continent_columns_from_sites_table',1);
+INSERT INTO `migrations` VALUES (170,'2021_11_16_142200_create_satellite_monitors_table',1);
+INSERT INTO `migrations` VALUES (171,'2021_11_17_114832_add_created_by_id_to_submissions_table',1);
+INSERT INTO `migrations` VALUES (172,'2021_11_17_140000_add_thumbnail_image_column_to_programmes_table',1);
+INSERT INTO `migrations` VALUES (173,'2021_11_24_001942_add_amount_and_programme_submission_id_to_programme_tree_species',1);
+INSERT INTO `migrations` VALUES (174,'2021_11_24_002120_add_programme_submission_id_to_csv_imports',1);
+INSERT INTO `migrations` VALUES (175,'2021_11_24_121830_drop_submissione_tree_species_table',1);
+INSERT INTO `migrations` VALUES (176,'2021_11_24_125421_drop_submission_csv_imports_table',1);
+INSERT INTO `migrations` VALUES (177,'2021_11_25_015845_make_media_title_nullable',1);
+INSERT INTO `migrations` VALUES (178,'2021_11_25_095203_rename_submission_id_to_site_submission_id_on_direct_seedings_table',1);
+INSERT INTO `migrations` VALUES (179,'2021_11_25_113323_drop_direct_seeding_kg_column_from_submissions_table',1);
+INSERT INTO `migrations` VALUES (180,'2021_11_25_113404_add_direct_seeding_kg_column_to_site_submissions_table',1);
+INSERT INTO `migrations` VALUES (181,'2021_11_25_125330_add_extent_field_to_site_submission_disturbances_table',1);
+INSERT INTO `migrations` VALUES (182,'2021_11_25_151238_change_amount_field_to_integer_on_programme_tree_species_table',1);
+INSERT INTO `migrations` VALUES (183,'2021_12_06_111658_make_survival_rate_nullable_on_aims_table',1);
+INSERT INTO `migrations` VALUES (184,'2021_12_13_095503_drop_programme_id_from_programme_invite_codes_table',1);
+INSERT INTO `migrations` VALUES (185,'2021_12_13_095913_add_ppc_user_column_to_users_table',1);
+INSERT INTO `migrations` VALUES (186,'2021_12_14_144745_make_due_at_nullable_on_due_submissions_table',1);
+INSERT INTO `migrations` VALUES (187,'2021_12_22_151232_add_due_submission_id_to_drafts_table',1);
+INSERT INTO `migrations` VALUES (188,'2021_12_22_152024_drop_draft_id_from_due_submissions_table',1);
+INSERT INTO `migrations` VALUES (189,'2021_12_24_112538_add_is_from_mobile_to_drafts_table',1);
+INSERT INTO `migrations` VALUES (190,'2022_01_04_105325_add_is_submitted_column_to_due_submissions_table',1);
+INSERT INTO `migrations` VALUES (191,'2022_01_06_134729_add_history_column_to_sites_table',1);
+INSERT INTO `migrations` VALUES (192,'2022_01_06_143215_add_aim_direct_seeding_survival_rate_column_to_sites_table',1);
+INSERT INTO `migrations` VALUES (193,'2022_01_11_134642_add_aim_natural_regeneration_trees_per_hectare_to_sites_table',1);
+INSERT INTO `migrations` VALUES (194,'2022_01_12_040757_add_account_type_to_users_table',1);
+INSERT INTO `migrations` VALUES (195,'2022_01_12_050846_add_location_to_media_uploadse',1);
+INSERT INTO `migrations` VALUES (196,'2022_01_12_050904_add_location_to_submission_media_uploadse',1);
+INSERT INTO `migrations` VALUES (197,'2022_01_12_101235_add_aim_natural_regeneration_hectares_to_sites_table',1);
+INSERT INTO `migrations` VALUES (198,'2022_01_12_102705_add_aim_soil_condition_to_sites_table',1);
+INSERT INTO `migrations` VALUES (199,'2022_01_17_133711_add_aim_number_of_mature_trees_to_sites_table',1);
+INSERT INTO `migrations` VALUES (200,'2022_01_18_132456_drop_created_by_id_column_from_submissions_table',1);
+INSERT INTO `migrations` VALUES (201,'2022_01_18_132614_add_created_by_column_to_submissions_table',1);
+INSERT INTO `migrations` VALUES (202,'2022_01_20_144057_add_is_merged_column_to_drafts_table',1);
+INSERT INTO `migrations` VALUES (203,'2022_01_24_101612_drop_creation_id_column_from_sites_table',1);
+INSERT INTO `migrations` VALUES (204,'2022_01_24_102619_add_planting_pattern_to_sites_table',1);
+INSERT INTO `migrations` VALUES (205,'2022_01_25_101216_create_seed_details_table',1);
+INSERT INTO `migrations` VALUES (206,'2022_01_26_133749_create_invasives_table',1);
+INSERT INTO `migrations` VALUES (207,'2022_01_27_100931_add_stratification_for_heterogeneity_column_to_sites_table',1);
+INSERT INTO `migrations` VALUES (208,'2022_01_28_092720_add_submission_id_to_socioeconomic_benefits_table',1);
+INSERT INTO `migrations` VALUES (209,'2022_02_24_104818_drop_aim_natural_regeneration_hectares_from_sites_table',1);
+INSERT INTO `migrations` VALUES (210,'2022_02_24_104856_add_integer_aim_natural_regeneration_hectares_to_sites_table',1);
+INSERT INTO `migrations` VALUES (211,'2022_03_28_151551_add_uuid_to_failed_jobs_table',1);
+INSERT INTO `migrations` VALUES (212,'2022_04_01_084949_add_terrafund_framework_to_frameworks_table',1);
+INSERT INTO `migrations` VALUES (213,'2022_04_01_085316_rename_programme_invite_codes_table',1);
+INSERT INTO `migrations` VALUES (214,'2022_04_01_090220_add_framework_id_to_framework_invite_codes_table',1);
+INSERT INTO `migrations` VALUES (215,'2022_04_01_090630_create_framework_user_table',1);
+INSERT INTO `migrations` VALUES (216,'2022_04_01_091010_move_ppc_users_to_framework_user_table',1);
+INSERT INTO `migrations` VALUES (217,'2022_04_01_091504_drop_is_ppc_user_from_users_table',1);
+INSERT INTO `migrations` VALUES (218,'2022_04_01_110421_create_terrafund_programmes_table',1);
+INSERT INTO `migrations` VALUES (219,'2022_04_04_105616_add_framework_id_to_terrafund_programmes_table',1);
+INSERT INTO `migrations` VALUES (220,'2022_04_04_105717_add_home_and_project_country_to_terrafund_programmes_table',1);
+INSERT INTO `migrations` VALUES (221,'2022_04_04_105929_create_terrafund_programme_user_table',1);
+INSERT INTO `migrations` VALUES (222,'2022_04_04_134415_add_boundary_geojson_to_terrafund_programmes_table',1);
+INSERT INTO `migrations` VALUES (223,'2022_04_04_142642_add_programme_details_to_terrafund_programmes_table',1);
+INSERT INTO `migrations` VALUES (224,'2022_04_05_091613_add_programme_goals_to_terrafund_programmes_table',1);
+INSERT INTO `migrations` VALUES (225,'2022_04_05_103745_create_terrafund_csv_imports_table',1);
+INSERT INTO `migrations` VALUES (226,'2022_04_05_103856_create_terrafund_tree_species_table',1);
+INSERT INTO `migrations` VALUES (227,'2022_04_06_082209_create_terrafund_files_table',1);
+INSERT INTO `migrations` VALUES (228,'2022_04_07_075906_add_terrafund_programme_to_types_on_drafts_table',1);
+INSERT INTO `migrations` VALUES (229,'2022_04_07_093014_create_terrafund_nurseries_table',1);
+INSERT INTO `migrations` VALUES (230,'2022_04_07_101945_add_account_type_to_organisation_table',1);
+INSERT INTO `migrations` VALUES (231,'2022_04_07_104147_add_employee_details_to_organisation_version_table',1);
+INSERT INTO `migrations` VALUES (232,'2022_04_08_090211_add_details_to_terrafund_nurseries_table',1);
+INSERT INTO `migrations` VALUES (233,'2022_04_11_083359_add_percent_to_terrafund_tree_species_table',1);
+INSERT INTO `migrations` VALUES (234,'2022_04_11_104329_add_terrafund_nursery_to_types_on_drafts_table',1);
+INSERT INTO `migrations` VALUES (235,'2022_04_11_144847_add_financial_into_to_organisation_versions',1);
+INSERT INTO `migrations` VALUES (236,'2022_04_12_084251_add_letter_of_reference_to_organisation_versions_table',1);
+INSERT INTO `migrations` VALUES (237,'2022_04_12_095657_rename_type_column_on_terrafund_programmes_table',1);
+INSERT INTO `migrations` VALUES (238,'2022_04_12_095914_rename_type_column_on_terrafund_nurseries_table',1);
+INSERT INTO `migrations` VALUES (239,'2022_04_12_121103_add_community_engagement_to_organisation_versions_table',1);
+INSERT INTO `migrations` VALUES (240,'2022_04_13_100538_add_history_of_restoration_columns_to_organisation_versions_table',1);
+INSERT INTO `migrations` VALUES (241,'2022_04_13_110743_create_organisation_photos_table',1);
+INSERT INTO `migrations` VALUES (242,'2022_04_14_075720_create_organisation_files_table',1);
+INSERT INTO `migrations` VALUES (243,'2022_04_14_093152_create_terrafund_sites_table',1);
+INSERT INTO `migrations` VALUES (244,'2022_04_14_105622_drop_percentage_male_column_from_organisation_versions_table',1);
+INSERT INTO `migrations` VALUES (245,'2022_04_14_110613_add_terrafund_organisation_type_to_organisation_versions_table',1);
+INSERT INTO `migrations` VALUES (246,'2022_04_19_081422_change_organisation_foreign_key_on_organisation_photos_table',1);
+INSERT INTO `migrations` VALUES (247,'2022_04_19_081544_change_organisation_foreign_key_on_organisation_files_table',1);
+INSERT INTO `migrations` VALUES (248,'2022_04_19_091859_add_organisation_id_to_terrafund_programmes_table',1);
+INSERT INTO `migrations` VALUES (249,'2022_04_19_101904_add_organisation_to_types_on_drafts_table',1);
+INSERT INTO `migrations` VALUES (250,'2022_04_19_110050_change_organisation_id_to_nullable_on_drafts_table',1);
+INSERT INTO `migrations` VALUES (251,'2022_04_21_084004_add_key_contact_to_organisation_versions_table',1);
+INSERT INTO `migrations` VALUES (252,'2022_04_21_103716_add_restoration_methods_to_terrafund_sites_table',1);
+INSERT INTO `migrations` VALUES (253,'2022_04_21_135856_add_boundary_geojson_to_terrafund_sites_table',1);
+INSERT INTO `migrations` VALUES (254,'2022_04_22_082504_drop_percentage_from_terrafund_tree_species_table',1);
+INSERT INTO `migrations` VALUES (255,'2022_04_22_122532_drop_young_trees_grown_from_terrafund_nurseries_table',1);
+INSERT INTO `migrations` VALUES (256,'2022_04_22_123306_add_hectare_goals_to_terrafund_sites_table',1);
+INSERT INTO `migrations` VALUES (257,'2022_04_22_140946_add_land_tenure_to_terrafund_sites_table',1);
+INSERT INTO `migrations` VALUES (258,'2022_04_26_091003_add_terrafund_sites_to_types_on_drafts_table',1);
+INSERT INTO `migrations` VALUES (259,'2022_04_27_081940_create_terrafund_due_submissions_table',1);
+INSERT INTO `migrations` VALUES (260,'2022_04_27_105038_add_terrafund_due_submission_to_drafts',1);
+INSERT INTO `migrations` VALUES (261,'2022_04_28_105942_create_terrafund_programme_invites_table',1);
+INSERT INTO `migrations` VALUES (262,'2022_04_28_143005_add_unable_report_reason_to_terrafund_due_submissions',1);
+INSERT INTO `migrations` VALUES (263,'2022_04_29_085816_add_otp_admin_to_roles_on_users_table',1);
+INSERT INTO `migrations` VALUES (264,'2022_04_29_120539_create_terrafund_nursery_submissions_table',1);
+INSERT INTO `migrations` VALUES (265,'2022_05_11_123439_add_terrafund_nursery_submissions_to_types_on_drafts_table',1);

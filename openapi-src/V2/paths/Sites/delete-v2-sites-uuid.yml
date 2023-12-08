@@ -1,0 +1,13 @@
+summary: Delete a site
+operationId: delete-v2-sites-uuid
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+tags:
+  - V2 Sites
+description: ''

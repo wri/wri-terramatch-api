@@ -1,0 +1,151 @@
+title: AdminOrganisationUpdate
+type: object
+properties:
+  type:
+    type: string
+  private:
+    type: boolean
+  name:
+    type: string
+  phone:
+    type: string
+  founding_date:
+    type: string
+  description:
+    type: string
+  countries:
+    type: array
+    items:
+      type: string
+  languages:
+    type: array
+    items:
+      type: string
+  tree_species:
+    type: array
+    items:
+      $ref: './_index.yml#/V2TreeSpeciesRead'
+  web_url:
+    type: string
+  facebook_url:
+    type: string
+  instagram_url:
+    type: string
+  linkedin_url:
+    type: string
+  twitter_url:
+    type: string
+  hq_street_1:
+    type: string
+  hq_street_2:
+    type: string
+  hq_city:
+    type: string
+  hq_state:
+    type: string
+  hq_zipcode:
+    type: string
+  hq_country:
+    type: string
+  fin_start_month:
+    type: integer
+  fin_budget_3year:
+    type: number
+    format: float
+  fin_budget_2year:
+    type: number
+    format: float
+  fin_budget_1year:
+    type: number
+    format: float
+  fin_budget_current_year:
+    type: number
+    format: float
+  ha_restored_total:
+    type: number
+    format: float
+  ha_restored_3year:
+    type: number
+    format: float
+  relevant_experience_years:
+    type: integer
+  trees_grown_total:
+    type: integer
+  trees_grown_3year:
+    type: integer
+  tree_care_approach:
+    type: string
+  ft_permanent_employees:
+    type: integer
+  pt_permanent_employees:
+    type: integer
+  temp_employees:
+    type: integer
+  female_employees:
+    type: integer
+  male_employees:
+    type: integer
+  young_employees:
+    type: integer
+  additional_funding_details:
+    type: string
+  community_experience:
+    type: string
+  total_engaged_community_members_3yr:
+    type: integer
+  percent_engaged_women_3yr:
+    type: integer
+  percent_engaged_men_3yr:
+    type: integer
+  percent_engaged_under_35_3yr:
+    type: integer
+  percent_engaged_over_35_3yr:
+    type: integer
+  percent_engaged_smallholder_3yr:
+    type: integer
+  total_trees_grown:
+    type: integer
+  avg_tree_survival_rate:
+    type: integer
+  tree_maintenance_aftercare_approach:
+    type: string
+  restored_areas_description:
+    type: string
+  monitoring_evaluation_experience:
+    type: string
+  funding_history:
+    type: string
+  engagement_farmers:
+    type: array
+    items:
+      type: string
+  engagement_women:
+    type: array
+    items:
+      type: string
+  engagement_youth:
+    type: array
+    items:
+      type: string
+  engagement_non_youth:
+    type: array
+    items:
+      type: string
+  tree_restoration_practices:
+    type: array
+    items:
+      type: string
+  business_model:
+    type: string
+  subtype:
+    type: string
+  organisation_revenue_this_year:
+    type: number
+  shapefiles:
+    type: array
+    items:
+      $ref: './_index.yml#/ShapefileRead'
+  tags:
+    type: array
+    items:
+      type: string

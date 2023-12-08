@@ -1,0 +1,14 @@
+summary: View all nurseries as an admin
+tags:
+  - V2 Nurseries
+parameters:
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/V2SearchFilterSort'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/NurseryPaginated'
+operationId: get-v2-admin-nurseries

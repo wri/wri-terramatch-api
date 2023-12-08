@@ -1,0 +1,35 @@
+title: ActionRead
+type: object
+properties:
+  uuid:
+    type: string
+  status:
+    type: string
+  type:
+    type: string
+  subtype:
+    type: string
+  title:
+    type: string
+  sub_title:
+    type: string
+  text:
+    type: string
+  key:
+    type: string
+  targetable_type:
+    type: string
+    description: one of Project|ProjectReport|Site|SiteReport|Nursery|NurseryReport|UpdateRequest
+  targetable_id:
+    type: integer
+  target:
+    type: object
+    description: contains the “Lite” objects for the model involved with the Action
+  organisation_id:
+    type: integer
+  deleted_at:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string

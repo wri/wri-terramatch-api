@@ -1,0 +1,26 @@
+title: ApplicationLiteRead
+type: object
+properties:
+  uuid:
+    type: string
+  form_submissions:
+    items:
+      $ref: './_index.yml#/FormSubmissionRead'
+  current_submission:
+    $ref: './_index.yml#/FormSubmissionRead'
+  funding_programme_name:
+    type: integer
+  funding_programme_uuid:
+    type: string
+  funding_programme_status:
+    type: string
+  organisation_name:
+    type: string
+  organisation_uuid:
+    type: string
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time

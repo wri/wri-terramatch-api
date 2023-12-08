@@ -1,0 +1,15 @@
+title: StageCreate
+x-stoplight:
+  id: q1bwtmu9aj98a
+type: object
+properties:
+  name:
+    type: string
+  funding_programme_id:
+    type: integer
+  form_id:
+    type: string
+  deadline_at:
+    type: string
+  order:
+    type: integer

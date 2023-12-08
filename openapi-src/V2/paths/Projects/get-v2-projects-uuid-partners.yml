@@ -1,0 +1,16 @@
+summary: Get a project's monitoring partners
+tags:
+  - V2 Projects
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: '../../definitions/_index.yml#/MonitoringUserRead'
+operationId: get-v2-projects-uuid-partners

@@ -1,0 +1,14 @@
+title: V2SiteMonitoringCreate
+type: object
+properties:
+  site_uuid:
+    type: string
+  tree_count:
+    type: integer
+  tree_cover:
+    type: integer
+  field_tree_count:
+    type: integer
+  measurement_date:
+    type: string
+    format: date

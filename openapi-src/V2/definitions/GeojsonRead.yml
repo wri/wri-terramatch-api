@@ -1,0 +1,12 @@
+title: GeojsonRead
+type: object
+properties:
+  uuid:
+    type: integer
+  name:
+    type: object
+  geojson:
+    type: string
+  created_at:
+    type: string
+    format: date-time

@@ -1,0 +1,126 @@
+title: V2MonitoringOrganisationRead
+type: object
+properties:
+  uuid:
+    type: string
+  status:
+    type: string
+  users_status:
+    type: string
+  readable_status:
+    type: string
+  type:
+    type: string
+  private:
+    type: boolean
+  name:
+    type: string
+  phone:
+    type: string
+  founding_date:
+    type: string
+  description:
+    type: string
+  countries:
+    type: array
+    items:
+      type: string
+  languages:
+    type: array
+    items:
+      type: string
+  tree_species:
+    type: array
+    items:
+      $ref: './_index.yml#/V2TreeSpeciesRead'
+  web_url:
+    type: string
+  facebook_url:
+    type: string
+  instagram_url:
+    type: string
+  linkedin_url:
+    type: string
+  twitter_url:
+    type: string
+  hq_street_1:
+    type: string
+  hq_street_2:
+    type: string
+  hq_city:
+    type: string
+  hq_state:
+    type: string
+  hq_zipcode:
+    type: string
+  hq_country:
+    type: string
+  fin_start_month:
+    type: integer
+  fin_budget_3year:
+    type: number
+    format: float
+  fin_budget_2year:
+    type: number
+    format: float
+  fin_budget_1year:
+    type: number
+    format: float
+  fin_budget_current_year:
+    type: number
+    format: float
+  ha_restored_total:
+    type: number
+    format: float
+  ha_restored_3year:
+    type: number
+    format: float
+  relevant_experience_years:
+    type: integer
+  trees_grown_total:
+    type: integer
+  trees_grown_3year:
+    type: integer
+  tree_care_approach:
+    type: string
+  logo:
+    $ref: './_index.yml#/V2FileRead'
+  cover:
+    $ref: './_index.yml#/V2FileRead'
+  reference:
+    type: array
+    items:
+      $ref: './_index.yml#/V2FileRead'
+  additional:
+    type: array
+    items:
+      $ref: './_index.yml#/V2FileRead'
+  op_budget_2year:
+    type: array
+    items:
+      $ref: './_index.yml#/V2FileRead'
+  op_budget_last_year:
+    type: array
+    items:
+      $ref: './_index.yml#/V2FileRead'
+  op_budget_this_year:
+    type: array
+    items:
+      $ref: './_index.yml#/V2FileRead'
+  op_budget_next_year:
+    type: array
+    items:
+      $ref: './_index.yml#/V2FileRead'
+  legal_registration:
+    type: array
+    items:
+      $ref: './_index.yml#/V2FileRead'
+  tags:
+    type: array
+    description: 'this is a list of key value pairs eg. slug: name'
+    items:
+      type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string

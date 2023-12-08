@@ -1,0 +1,32 @@
+operationId: get-v2-admin-audits-entity-uuid
+summary: List all audits for an specific entity
+tags:
+  - V2 Projects
+  - V2 Sites
+  - V2 Nurseries
+  - V2 Project Reports
+  - V2 Site Reports
+  - V2 Nursery Reports
+parameters:
+  - type: string
+    name: ENTITY
+    in: path
+    required: true
+    description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - name: per_page
+    type: integer
+    in: query
+    description: 'number of results (per page) to return'
+  - name: page
+    type: integer
+    in: query
+    description: 'page number you want results from'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/V2InvasivePaginated'

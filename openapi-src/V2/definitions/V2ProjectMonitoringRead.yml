@@ -1,0 +1,60 @@
+title: V2ProjectMonitoringRead
+type: object
+properties:
+  uuid:
+    type: string
+  status:
+    type: string
+  total_hectares:
+    type: integer
+  ha_mangrove:
+    type: integer
+  ha_assisted:
+    type: integer
+  ha_agroforestry:
+    type: integer
+  ha_reforestation:
+    type: integer
+  ha_peatland:
+    type: integer
+  ha_riparian:
+    type: integer
+  ha_enrichment:
+    type: integer
+  ha_nucleation:
+    type: integer
+  ha_silvopasture:
+    type: integer
+  ha_direct:
+    type: integer
+  tree_count:
+    type: integer
+  tree_cover:
+    type: integer
+  field_tree_count:
+    type: integer
+  tree_cover_loss:
+    type: integer
+  carbon_benefits:
+    type: integer
+  number_of_esrp:
+    type: integer
+  field_tree_regenerated:
+    type: integer
+  field_tree_survival_percent:
+    type: integer
+  start_date:
+    type: string
+    format: date
+  end_date:
+    type: string
+    format: date
+  last_updated:
+    type: string
+    format: date-time
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time

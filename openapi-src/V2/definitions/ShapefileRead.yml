@@ -1,0 +1,17 @@
+title: ShapefileRead
+type: object
+properties:
+  uuid:
+    type: string
+  shapefileable_type:
+    type: string
+  shapefileable_id:
+    type: integer
+  geojson:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  deleted_at:
+    type: string

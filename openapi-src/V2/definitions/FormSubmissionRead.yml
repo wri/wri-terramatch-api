@@ -1,0 +1,38 @@
+title: FormSubmissionRead
+x-stoplight:
+  id: u7ul6m0rkvj6m
+type: object
+properties:
+  id:
+    type: string
+  uuid:
+    type: string
+  name:
+    type: string
+  form:
+    $ref: './_index.yml#/FormRead'
+  stage:
+    $ref: './_index.yml#/StageLiteRead'
+  answers:
+    type: string
+  status:
+    type: string
+  readable_status:
+    type: string
+  audits:
+    type: array
+    items:
+      $ref: './_index.yml#/AuditRead'
+  tags:
+    type: array
+    description: 'this is a list of key value pairs eg slug: name '
+    items:
+      type: string
+  updated_by:
+    type: string
+  deleted_at:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string

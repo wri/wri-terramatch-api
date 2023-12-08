@@ -1,0 +1,52 @@
+title: FormRead
+x-stoplight:
+  id: e0u0etkn01z17
+type: object
+properties:
+  id:
+    type: integer
+  uuid:
+    type: string
+  type:
+    type: string
+  version:
+    type: integer
+  title:
+    type: string
+  subtitle:
+    type: string
+  description:
+    type: string
+  duration:
+    type: string
+  deadline_at:
+    type: string
+  documentation:
+    type: string
+  documentation_label:
+    type: string
+  submission_message:
+    type: string
+  published:
+    type: boolean
+  stage_id:
+    type: string
+  options_other:
+    type: boolean
+  form_sections:
+    type: array
+    items:
+      $ref: './_index.yml#/FormSectionRead'
+  tags:
+    type: array
+    description: 'this is a list of key value pairs eg. slug: name'
+    items:
+      type: string
+  updated_by:
+    type: integer
+  deleted_at:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string

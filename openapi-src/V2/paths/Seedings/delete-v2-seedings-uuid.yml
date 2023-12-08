@@ -1,0 +1,12 @@
+operationId: delete-v2-seedings-uuid
+summary: Delete a seeding
+tags:
+  - V2 Seedings
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK

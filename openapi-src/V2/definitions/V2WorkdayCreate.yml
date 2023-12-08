@@ -1,0 +1,17 @@
+title: V2WorkdayCreate
+type: object
+properties:
+  model_type:
+    type: string
+  model_uuid:
+    type: string
+  amount:
+    type: integer
+  collection:
+    type: string
+  gender:
+    type: string
+  age:
+    type: string
+  ethnicity:
+    type: string

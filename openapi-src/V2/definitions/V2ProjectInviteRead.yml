@@ -1,0 +1,17 @@
+title: V2ProjectInviteRead
+type: object
+properties:
+  id:
+    type: integer
+  uuid:
+    type: string
+  project_id:
+    type: integer
+  email_address:
+    type: string
+  accepted_at:
+    type: string
+    format: datetime
+  created_at:
+    type: string
+    format: datetime

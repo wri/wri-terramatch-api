@@ -1,0 +1,30 @@
+operationId: put-v2-forms-entity-form-uuid
+summary: Update a specific entity using a form schema
+description: there is no need to provide which schema as it will use the current published one for this entity and framework
+tags:
+  - V2 Projects
+  - V2 Sites
+  - V2 Nurseries
+  - V2 Project Reports
+  - V2 Site Reports
+  - V2 Nursery Reports
+  - Forms
+parameters:
+  - type: string
+    name: ENTITY
+    in: path
+    required: true
+    description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/EntityFormUpdate'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/EntityFormRead'

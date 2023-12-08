@@ -1,0 +1,34 @@
+summary: View all of a sites monitorings
+operationId: get-v2-sites-uuid-monitorings
+tags:
+  - V2 Sites
+  - V2 Site Monitorings
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - name: per_page
+    type: integer
+    in: query
+    description: 'number of results (per page) to return'
+  - name: page
+    type: integer
+    in: query
+    description: 'page number you want results from'
+produces:
+  - application/json
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/V2SiteMonitoringRead'
+        links:
+          $ref: '../../definitions/_index.yml#/V2PaginationLinks'
+        meta:
+          $ref: '../../definitions/_index.yml#/V2PaginationMeta'

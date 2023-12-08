@@ -1,0 +1,34 @@
+summary: View all of a projects monitorings
+operationId: get-v2-projects-uuid-monitorings
+tags:
+  - V2 Projects
+  - V2 Project Monitorings
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - name: per_page
+    type: integer
+    in: query
+    description: 'number of results (per page) to return'
+  - name: page
+    type: integer
+    in: query
+    description: 'page number you want results from'
+produces:
+  - application/json
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/V2ProjectMonitoringRead'
+        links:
+          $ref: '../../definitions/_index.yml#/V2PaginationLinks'
+        meta:
+          $ref: '../../definitions/_index.yml#/V2PaginationMeta'

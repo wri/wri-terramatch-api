@@ -1,0 +1,14 @@
+summary: View all forms as an admin
+tags:
+  - Forms
+parameters:
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/V2SearchFilterSort'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/FormPaginated'
+operationId: get-v2-admin-forms

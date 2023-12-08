@@ -1,0 +1,14 @@
+summary: Complete an action
+tags:
+  - Users
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/ActionRead'
+operationId: put-v2-my-action-uuid-complete

@@ -1,0 +1,22 @@
+operationId: post-v2-users-resend
+summary: Send a verification email to an email, if it exists
+tags:
+  - Auth
+produces:
+  - application/json
+parameters:
+  - name: Body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        callback_url:
+          type: string
+        email_address:
+          type: string
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/Empty'

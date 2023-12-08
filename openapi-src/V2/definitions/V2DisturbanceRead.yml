@@ -1,0 +1,11 @@
+title: V2DisturbanceRead
+type: object
+properties:
+  uuid:
+    type: string
+  description:
+    type: string
+  intensity:
+    type: string
+  extent:
+    type: string

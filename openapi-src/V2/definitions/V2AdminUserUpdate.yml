@@ -1,0 +1,31 @@
+title: AdminUserUpdate
+type: object
+properties:
+  type:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  email_address:
+    type: string
+  password:
+    type: string
+  job_role:
+    type: string
+  facebook:
+    type: string
+  instagram:
+    type: string
+  linkedin:
+    type: string
+  twitter:
+    type: string
+  whatsapp_phone:
+    type: string
+  organisation:
+    type: string
+  monitoring_organisations:
+    type: array
+    items:
+      $ref: './_index.yml#/V2MonitoringOrganisationRead'

@@ -1,0 +1,11 @@
+summary: Read the logged in user or admin
+tags:
+  - Auth
+produces:
+  - application/json
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/UserRead'
+operationId: get-logged-user-details

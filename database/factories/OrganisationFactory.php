@@ -1,0 +1,16 @@
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class OrganisationFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     */
+    public function definition()
+    {
+        return ['status' => 'approved'];
+    }
+}

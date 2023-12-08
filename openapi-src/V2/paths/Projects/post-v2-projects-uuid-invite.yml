@@ -1,0 +1,22 @@
+summary: Invite a user to a project
+operationId: post-v2-projects-uuid-invite
+tags:
+  - V2 Project Invite
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/V2ProjectInviteCreate'
+responses:
+  '201':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/V2ProjectInviteRead'

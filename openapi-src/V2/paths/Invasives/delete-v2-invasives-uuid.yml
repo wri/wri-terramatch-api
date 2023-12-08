@@ -1,0 +1,12 @@
+operationId: delete-v2-invasives-uuid
+summary: Delete a Invasive
+tags:
+  - V2 Invasive
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK

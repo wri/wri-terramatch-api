@@ -1,0 +1,15 @@
+title: V2TreeSpeciesRead
+x-stoplight:
+  id: 04vvsvyndvy8n
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  amount:
+    type: integer
+  type:
+    type: string
+  collection:
+    type: string

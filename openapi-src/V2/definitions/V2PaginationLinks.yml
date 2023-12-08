@@ -1,0 +1,10 @@
+title: V2PaginationLinks
+properties:
+  first:
+    type: string
+  last:
+    type: string
+  prev:
+    type: string
+  next:
+    type: string

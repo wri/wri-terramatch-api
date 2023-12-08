@@ -1,0 +1,21 @@
+title: FormQuestionOptionRead
+x-stoplight:
+  id: ihpffrpq780e4
+type: object
+properties:
+  id:
+    type: integer
+  uuid:
+    type: string
+  form_question_id:
+    type: integer
+  label:
+    type: string
+  order:
+    type: integer
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  deleted_at:
+    type: string

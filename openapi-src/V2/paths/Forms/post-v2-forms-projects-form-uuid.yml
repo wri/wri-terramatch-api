@@ -1,0 +1,20 @@
+summary: Create a project with a custom form
+operationId: post-v2-forms-projects-form-uuid
+tags:
+  - V2 Projects
+  - Forms
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+    description: this is the uuid of the form
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/EntityFormCreate'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/EntityFormRead'

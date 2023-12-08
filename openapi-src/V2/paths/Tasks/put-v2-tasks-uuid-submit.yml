@@ -1,0 +1,14 @@
+summary: Submit all task reports via a task
+operationId: put-v2-tasks-uuid-reports
+tags:
+  - V2 Tasks
+produces:
+  - application/json
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK

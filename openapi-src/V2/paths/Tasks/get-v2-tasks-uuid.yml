@@ -1,0 +1,21 @@
+summary: Get a specific task
+operationId: get-v2-tasks-uuid
+tags:
+  - V2 Tasks
+produces:
+  - application/json
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+              $ref: '../../definitions/_index.yml#/V2TaskRead'

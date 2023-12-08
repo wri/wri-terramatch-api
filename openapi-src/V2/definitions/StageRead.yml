@@ -1,0 +1,29 @@
+title: StageRead
+x-stoplight:
+  id: qtkhrj889wvwc
+type: object
+properties:
+  id:
+    type: integer
+  uuid:
+    type: string
+  status:
+    type: string
+  deadline_at:
+    type: string
+  readable_status:
+    type: string
+  funding_programme_id:
+    type: integer
+  name:
+    type: string
+  order:
+    type: integer
+  forms:
+    $ref: './_index.yml#/FormRead'
+  deleted_at:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string

@@ -1,0 +1,7 @@
+  title: FormSectionUpdate
+  x-stoplight:
+    id: tlqkri2rdwi5w
+  type: object
+  properties:
+    order:
+      type: integer

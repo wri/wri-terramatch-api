@@ -1,0 +1,28 @@
+title: FormSubmit
+x-stoplight:
+  id: ge9ckliniez5m
+type: object
+properties:
+  title:
+    type: string
+  subtitle:
+    type: string
+  description:
+    type: string
+  documentation:
+    type: string
+  documentation_label:
+    type: string
+  submission_message:
+    type: string
+  duration:
+    type: string
+  deadline_at:
+    type: string
+  stage_id:
+    type: integer
+  tags:
+    type: array
+    description: 'this is a list of key value pairs eg. slug: name'
+    items:
+      type: string

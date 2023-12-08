@@ -1,0 +1,17 @@
+title: V2CoreTeamLeaderCreate
+type: object
+properties:
+  organisation_id:
+    type: string
+  position:
+    type: string
+  gender:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  role:
+    type: string
+  age:
+    type: integer

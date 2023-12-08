@@ -1,0 +1,20 @@
+operationId: patch-auth-change
+summary: Reset a user's or admin's password
+tags:
+  - Auth
+security: []
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - name: Body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/AuthChange'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/Empty'

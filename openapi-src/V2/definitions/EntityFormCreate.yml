@@ -1,0 +1,10 @@
+title: EntityFormCreate
+type: object
+properties:
+  parent_entity:
+    type: string
+    description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+  parent_uuid:
+    type: string
+  form_uuid:
+    type: string
