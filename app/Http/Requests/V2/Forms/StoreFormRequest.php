@@ -32,7 +32,7 @@ class StoreFormRequest extends FormRequest
             'form_sections.*.description' => ['sometimes', 'nullable', 'max:65000'],
 
             'form_sections.*.form_questions' => ['sometimes', 'array'],
-            //            'form_sections.*.form_questions.*.linked_field_key' => ['required', 'string'], TODO -> add it again
+            'form_sections.*.form_questions.*.linked_field_key' => ['required', 'nullable', 'string'],
             'form_sections.*.form_questions.*.label' => ['required', 'string'],
             'form_sections.*.form_questions.*.input_type' => ['sometimes', 'nullable'],
             'form_sections.*.form_questions.*.name' => ['sometimes', 'nullable'],

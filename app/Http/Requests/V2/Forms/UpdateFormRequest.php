@@ -32,7 +32,7 @@ class UpdateFormRequest extends FormRequest
             'form_sections.*.description' => ['sometimes', 'nullable', 'max:65000'],
 
             'form_sections.*.form_questions' => ['sometimes', 'nullable', 'array'],
-            //            'form_sections.*.form_questions.*.linked_field_key' => ['sometimes', 'string'], TODO -> add it again
+            'form_sections.*.form_questions.*.linked_field_key' => ['sometimes', 'nullable', 'string'],
             'form_sections.*.form_questions.*.label' => ['sometimes', 'nullable', 'string'],
             'form_sections.*.form_questions.*.uuid' => ['sometimes', 'nullable', 'string'],
             'form_sections.*.form_questions.*.name' => ['sometimes', 'nullable'],
