@@ -25,8 +25,8 @@ class DeleteAction
      */
     public function handle(EntityDeleteEvent $event)
     {
-        Action::where('targetable_type', get_class($event::$entity))
-            ->where('targetable_id', $event::$entity->id)
+        Action::where('targetable_type', get_class($event->entity))
+            ->where('targetable_id', $event->entity->id)
             ->delete();
     }
 }
