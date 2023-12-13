@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Events\V2\Application\ApplicationSubmittedEvent;
 use App\Events\V2\Form\FormSubmissionApprovedEvent;
+use App\Events\V2\General\EntityDeleteEvent;
 use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Events\V2\Organisation\OrganisationApprovedEvent;
 use App\Events\V2\Organisation\OrganisationRejectedEvent;
@@ -16,6 +17,7 @@ use App\Listeners\v2\Files\CatchMediaConversionCompletionListener;
 use App\Listeners\v2\Files\CatchMediaConversionStartListener;
 use App\Listeners\v2\Form\FormSubmissionNextStage;
 use App\Listeners\v2\Form\SetProjectPitchActive;
+use App\Listeners\v2\General\DeleteAction;
 use App\Listeners\v2\General\StatusChangeAction;
 use App\Listeners\v2\Organisation\OrganisationApprovedSendEmail;
 use App\Listeners\v2\Organisation\OrganisationRejectedSendEmail;
@@ -58,6 +60,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         EntityStatusChangeEvent::class => [StatusChangeAction::class],
+        EntityDeleteEvent::class => [DeleteAction::class],
 
         FormSubmissionApprovedEvent::class => [FormSubmissionNextStage::class],
 

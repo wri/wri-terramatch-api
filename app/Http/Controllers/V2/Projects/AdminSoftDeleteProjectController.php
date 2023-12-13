@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Projects;
 
+use App\Events\V2\General\EntityDeleteEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Projects\ProjectResource;
 use App\Models\V2\Projects\Project;
@@ -14,6 +15,8 @@ class AdminSoftDeleteProjectController extends Controller
         $this->authorize('delete', $project);
 
         $project->delete();
+
+        EntityDeleteEvent::dispatch($request->user(), $project);
 
         return new ProjectResource($project);
     }
