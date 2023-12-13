@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\NurseryReports;
 
+use App\Events\V2\General\EntityDeleteEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\NurseryReports\NurseryReportResource;
 use App\Models\V2\Nurseries\NurseryReport;
@@ -14,6 +15,8 @@ class AdminSoftDeleteNurseryReportController extends Controller
         $this->authorize('delete', $nurseryReport);
 
         $nurseryReport->delete();
+
+        EntityDeleteEvent::dispatch($request->user(), $nurseryReport);
 
         return new NurseryReportResource($nurseryReport);
     }
