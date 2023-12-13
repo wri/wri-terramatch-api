@@ -17,7 +17,6 @@ class AdminSoftDeleteSiteController extends Controller
         $site->delete();
 
         EntityDeleteEvent::dispatch($request->user(), $site);
-        //EntityDeleteEvent::dispatch($request->user(), $site); to other entitys
 
         return new SiteResource($site);
     }

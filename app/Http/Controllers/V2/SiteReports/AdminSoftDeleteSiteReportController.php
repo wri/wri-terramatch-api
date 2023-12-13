@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\SiteReports;
 
+use App\Events\V2\General\EntityDeleteEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\SiteReports\SiteReportResource;
 use App\Models\V2\Sites\SiteReport;
@@ -14,6 +15,8 @@ class AdminSoftDeleteSiteReportController extends Controller
         $this->authorize('delete', $siteReport);
 
         $siteReport->delete();
+
+        EntityDeleteEvent::dispatch($request->user(), $siteReport);
 
         return new SiteReportResource($siteReport);
     }
