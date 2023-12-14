@@ -67,7 +67,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         $organisation = $entity->organisation;
 
         $mapped = [
-            $entity->id,
+            $entity->old_id ?? ($entity->id ?? null),
             $entity->uuid,
             $organisation->readable_type ?? null,
             $organisation->name ?? null,
