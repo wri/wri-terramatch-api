@@ -52,7 +52,7 @@ class GenerateAdminAllEntityRecordsExportJob implements ShouldQueue
         }
 
 
-        $export = (new EntityExport($modelClass::query(), $form));
+        $export = (new EntityExport($modelClass::where('framework_key', $this->framework), $form));
 
         Excel::store($export, $name, 's3');
 
