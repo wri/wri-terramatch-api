@@ -127,6 +127,7 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         'people_knowledge_skills_increased',
         'feedback',
         'feedback_fields',
+        'community_progress',
         'answers',
         'submitted_at',
     ];
