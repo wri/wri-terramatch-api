@@ -158,6 +158,7 @@ use App\Http\Controllers\V2\Projects\ViewProjectSitesController;
 use App\Http\Controllers\V2\Projects\ViewProjectTasksController;
 use App\Http\Controllers\V2\Projects\ViewProjectTasksReportsController;
 use App\Http\Controllers\V2\Projects\ViewProjectWithFormController;
+use App\Http\Controllers\V2\ReportingFrameworks\AdminCreateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminIndexReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
@@ -272,6 +273,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('reporting-frameworks')->group(function () {
         Route::get('', AdminIndexReportingFrameworkController::class);
+        Route::post('', AdminCreateReportingFrameworkController::class);
         Route::put('{framework}', AdminUpdateReportingFrameworkController::class);
     });
 
