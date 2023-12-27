@@ -24,7 +24,7 @@ class UpdateFormRequest extends FormRequest
             'duration' => ['sometimes', 'max:65000'],
             'options_other' => ['sometimes', 'boolean'],
 
-            'form_sections' => ['sometimes', 'array'],            
+            'form_sections' => ['sometimes', 'array'],
             'form_sections.*.uuid' => ['sometimes', 'nullable', 'string'],
             'form_sections.*.order' => ['sometimes', 'integer'],
             'form_sections.*.title' => ['sometimes', 'nullable', 'string', 'max:65000'],
