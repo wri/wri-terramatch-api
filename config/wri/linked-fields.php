@@ -564,6 +564,7 @@ return [
                 'site-rep-workdays-paid' => ['property' => 'workdays_paid', 'label' => 'Workdays paid', 'input_type' => 'number'],
                 'site-rep-seeds-planted' => ['property' => 'seeds_planted', 'label' => 'Seeds planted', 'input_type' => 'number'],
                 'site-rep-workdays-volunteer' => ['property' => 'workdays_volunteer', 'label' => 'Workdays volunteer', 'input_type' => 'number'],
+                'site-rep-polygon-status' => ['property' => 'polygon_status', 'label' => 'Polygon status', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'site-rep-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
