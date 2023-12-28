@@ -41,6 +41,7 @@ class ViewProjectTasksReportsController extends Controller
             ->selectRaw('false as nothing_to_report')
             ->selectRaw('IF(framework_key = "ppc", title, "Project Report ' . $terrafundSuffix . '") AS report_title')
             ->where('project_id', $project->id)
+            ->whereNull('deleted_at')
             ->whereMonth('due_at', $month)
             ->whereYear('due_at', $year);
 
@@ -51,6 +52,7 @@ class ViewProjectTasksReportsController extends Controller
             ->selectRaw('nothing_to_report')
             ->selectRaw('IF(framework_key = "ppc", "Site Report ' . $ppcSuffix . '", "Site Report ' . $terrafundSuffix . '") AS report_title')
             ->whereIn('site_id', $siteIds)
+            ->whereNull('deleted_at')
             ->whereMonth('due_at', $month)
             ->whereYear('due_at', $year);
 
@@ -61,6 +63,7 @@ class ViewProjectTasksReportsController extends Controller
             ->selectRaw('nothing_to_report')
             ->selectRaw('"Nursery Report ' . $terrafundSuffix . '" AS report_title')
             ->whereIn('nursery_id', $nurseryIds)
+            ->whereNull('deleted_at')
             ->whereMonth('due_at', $month)
             ->whereYear('due_at', $year)
             ->union($siteReports)
