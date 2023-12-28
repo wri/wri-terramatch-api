@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\V2\GenerateAdminAllEntityRecordsExportJob;
 use Illuminate\Console\Command;
+use App\Models\Framework;
 
 class GenerateAdminAllEntityRecordsExportCommand extends Command
 {
@@ -24,7 +25,12 @@ class GenerateAdminAllEntityRecordsExportCommand extends Command
     public function handle(): int
     {
         $entities = ['projects', 'sites', 'nurseries', 'project-reports', 'site-reports', 'nursery-reports'];
-        $frameworks = ['ppc', 'terrafund'];
+
+        $allFrameworks = Framework::all();
+
+        $frameworks = $allFrameworks->map(function ($framework) {
+            return $framework->slug;
+        })->toArray();
 
         foreach ($entities as $entity) {
             foreach ($frameworks as $framework) {
