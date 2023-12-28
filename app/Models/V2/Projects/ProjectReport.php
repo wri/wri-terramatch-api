@@ -129,6 +129,7 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         'feedback_fields',
         'answers',
         'submitted_at',
+        'equitable_opportunities',
     ];
 
     public $casts = [
