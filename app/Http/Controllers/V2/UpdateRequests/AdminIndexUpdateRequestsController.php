@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+use App\Models\Framework;
 
 class AdminIndexUpdateRequestsController extends Controller
 {
@@ -44,12 +45,25 @@ class AdminIndexUpdateRequestsController extends Controller
             $query->allowedSorts($sortableColumns);
         }
 
-        if (! $user->hasAllPermissions(['framework-ppc', 'framework-terrafund'])) {
-            if ($user->hasPermissionTo('framework-terrafund')) {
-                $query->terrafund();
-            } elseif ($user->hasPermissionTo('framework-ppc')) {
-                $query->ppc();
-            }
+        $frameworks = Framework::all();
+
+        $frameworkNamesWithPref = $frameworks->map(function ($framework) {
+            return 'framework-' . $framework->slug;
+        })->toArray();
+
+        $frameworkNames = $frameworks->map(function ($framework) {
+            return $framework->slug;
+        })->toArray();
+
+        if (! $user->hasAllPermissions($frameworkNamesWithPref)) {
+            $query->where(function ($query) use ($frameworkNames, $user) {
+                foreach ($frameworkNames as $framework) {
+                    $frameworkPermission = 'framework-' . $framework;
+                    if ($user->hasPermissionTo($frameworkPermission)) {
+                        $query->orWhere('framework_key', $framework);
+                    }
+                }
+            });
         }
 
         $collection = $query->paginate($perPage)
