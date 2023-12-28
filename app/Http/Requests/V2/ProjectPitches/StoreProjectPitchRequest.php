@@ -64,6 +64,8 @@ class StoreProjectPitchRequest extends FormRequest
             'hectares_first_yr' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:9999999'],
             'total_trees_first_yr' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:9999999'],
             'main_degradation_causes' => ['sometimes', 'nullable', 'string'],
+            'siting_strategy_description' => ['sometimes', 'string', 'min:1', 'max:65335'],
+            'siting_strategy' => ['sometimes', 'nullable', 'string'],
         ];
     }
 }

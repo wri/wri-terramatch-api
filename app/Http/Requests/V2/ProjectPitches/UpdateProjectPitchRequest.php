@@ -62,6 +62,8 @@ class UpdateProjectPitchRequest extends FormRequest
             'states' => ['sometimes', 'nullable', 'array'],
             'hectares_first_yr' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:9999999'],
             'total_trees_first_yr' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:9999999'],
+            'siting_strategy_description' => ['sometimes', 'nullable','string', 'min:0', 'max:65335'],
+            'siting_strategy' => ['sometimes', 'nullable',  'string'],
         ];
     }
 }
