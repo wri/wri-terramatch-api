@@ -74,8 +74,6 @@ class ProjectPitchResource extends JsonResource
             'tree_species' => TreeSpeciesResource::collection($this->treeSpecies),
             'form_submissions' => FormSubmissionLiteResource::collection($this->formSubmissions),
             'tags' => $this->buildTagList(),
-            'siting_strategy_description' => $this->siting_strategy_description,
-            'siting_strategy' => $this->siting_strategy,
 
             'theory_of_change' => $this->theory_of_change,
             'proposed_gov_partners' => $this->proposed_gov_partners,
