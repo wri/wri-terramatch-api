@@ -377,6 +377,7 @@ return [
                 'pro-rep-beneficiaries-skill-inc-desc' => ['property' => 'beneficiaries_skills_knowledge_increase_description', 'label' => 'Beneficiaries Skills Knowledge Description', 'input_type' => 'long-text'],
                 'pro-rep-people_knowledge-skills-increased' => ['property' => 'people_knowledge_skills_increased', 'label' => 'People Knowledge Skills Increased', 'input_type' => 'number'],
                 'pro-rep-community-progress' => ['property' => 'community_progress', 'label' => 'Community Progress', 'input_type' => 'long-text'],
+                'pro-rep-equitable-opportunities' => ['property' => 'equitable_opportunities', 'label' => 'Equitable Opportunities for Women + Youth', 'input_type' => 'long-text'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [
