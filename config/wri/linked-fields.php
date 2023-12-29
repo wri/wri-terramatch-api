@@ -727,6 +727,7 @@ return [
                 'nur-rep-col-file' => ['property' =>  'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
                 'nur-rep-col-other-additional-documents' => ['property' =>  'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
                 'nur-rep-col-photos' => ['property' =>  'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
+                'nur-rep-col-tree-seedling-contributions' => ['property' =>  'tree_seedling_contributions', 'label' => 'Tree seedling contributions', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'nur-rep-rel-tree-species' => [

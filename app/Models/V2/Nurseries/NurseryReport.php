@@ -92,6 +92,10 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'tree_seedling_contributions' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
         'photos' => [
             'validation' => 'photos',
             'multiple' => true,
