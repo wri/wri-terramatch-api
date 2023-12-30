@@ -378,6 +378,7 @@ return [
                 'pro-rep-people_knowledge-skills-increased' => ['property' => 'people_knowledge_skills_increased', 'label' => 'People Knowledge Skills Increased', 'input_type' => 'number'],
                 'pro-rep-community-progress' => ['property' => 'community_progress', 'label' => 'Community Progress', 'input_type' => 'long-text'],
                 'pro-rep-equitable-opportunities' => ['property' => 'equitable_opportunities', 'label' => 'Equitable Opportunities for Women + Youth', 'input_type' => 'long-text'],
+                'pro-rep-local-engagement' => ['property' => 'local_engagement', 'label' => 'Local Engagement', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'local-engagement'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [
