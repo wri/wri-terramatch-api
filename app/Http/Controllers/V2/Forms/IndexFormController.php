@@ -31,9 +31,12 @@ class IndexFormController extends Controller
                 'document', 'duration', 'published',
                 'created_at', 'updated_at', 'deleted_at',
             ]);
+            
+        $filter = $request->query('filter');
+        if ($filter){
+            $query->whereNull('framework_key');
+        }
 
-        $query->whereNull('framework_key');
-        
         if ($request->query('search')) {
             $ids = Form::search(trim($request->get('search')) ?? '')
                     ->get()
