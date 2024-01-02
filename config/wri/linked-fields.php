@@ -379,6 +379,7 @@ return [
                 'pro-rep-community-progress' => ['property' => 'community_progress', 'label' => 'Community Progress', 'input_type' => 'long-text'],
                 'pro-rep-equitable-opportunities' => ['property' => 'equitable_opportunities', 'label' => 'Equitable Opportunities for Women + Youth', 'input_type' => 'long-text'],
                 'pro-rep-local-engagement' => ['property' => 'local_engagement', 'label' => 'Local Engagement', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'local-engagement'],
+                'pro-rep-site-addition' => ['property' => 'site_addition', 'label' => 'Site Addition', 'input_type' => 'boolean'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [
