@@ -20,6 +20,7 @@ class IndexFormController extends Controller
                 'description', 'submission_message',
                 'document', 'duration', 'published',
                 AllowedFilter::exact('type'),
+                AllowedFilter::exact('framework_key'),
                 AllowedFilter::exact('stage_id'),
                 AllowedFilter::exact('stage.funding_programme_id'),
                 AllowedFilter::trashed(),
@@ -31,6 +32,8 @@ class IndexFormController extends Controller
                 'created_at', 'updated_at', 'deleted_at',
             ]);
 
+        $query->whereNull('framework_key');
+        
         if ($request->query('search')) {
             $ids = Form::search(trim($request->get('search')) ?? '')
                     ->get()

@@ -28,6 +28,7 @@ class FormResource extends JsonResource
             'title' => $this->translated_title,
             'subtitle' => $this->translated_subtitle,
             'description' => $this->translated_description,
+            'framework_key' => $this->framework_key,
             'type' => $this->type,
             'duration' => $this->duration,
             'documentation' => $this->documentation,
