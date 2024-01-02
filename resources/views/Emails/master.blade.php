@@ -121,16 +121,28 @@
                                     <tr>
                                         <td width="32"></td>
                                         <td width="436" style="font-family: serif; font-size: 14px; color: #6E6E6E; text-align: center;">
-                                            @if ($transactional)
+                                            @if ($monitoring)
                                                 You are receiving this email because you have an account with TerraMatch.
                                                 This is a required email and is not a marketing or promotional email.
                                                 You are therefore unable to unsubscribe.
                                                 <br><br>
-                                            @else
-                                                You are receiving this email because you have an account with TerraMatch.
-                                                This is not a required email.
-                                                <a href="{!! $backend_url !!}{!! $unsubscribe !!}" style="color: #6E6E6E;">Click here</a> to unsubscribe.
+                                            @elseif ($invite)
+                                                You are receiving this email because a TerraMatch user has
+                                                invited you to join the platform. This is a required email
+                                                and is not a marketing or promotional email. You are therefore unable to unsubscribe.
                                                 <br><br>
+                                            @else
+                                                @if ($transactional)
+                                                    You are receiving this email because you have an account with TerraMatch.
+                                                    This is a required email and is not a marketing or promotional email.
+                                                    You are therefore unable to unsubscribe.
+                                                    <br><br>
+                                                @else
+                                                    You are receiving this email because you have an account with TerraMatch.
+                                                    This is not a required email.
+                                                    <a href="{!! $backend_url !!}{!! $unsubscribe !!}" style="color: #6E6E6E;">Click here</a> to unsubscribe.
+                                                    <br><br>
+                                                @endif
                                             @endif
                                             If you have any questions, feel free to message us at <a href="mailto:TerraMatch@wri.org" style="color: #6E6E6E;">TerraMatch@wri.org</a>.
                                             <br><br>
