@@ -25,6 +25,10 @@ abstract class Mail extends Mailable implements ShouldQueue
 
     public $cta = '';
 
+    public $monitoring = false;
+    
+    public $invite = false;
+
     public $transactional = false;
 
     public function build()
@@ -51,6 +55,8 @@ abstract class Mail extends Mailable implements ShouldQueue
             'link' => $this->link,
             'cta' => $this->cta,
             'transactional' => $this->transactional,
+            'monitoring' => $this->monitoring,
+            'invite' => $this->invite,
             'unsubscribe' => $unsubscribe,
             'year' => date('Y'),
         ]);
