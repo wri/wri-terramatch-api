@@ -76,6 +76,7 @@ class StoreFormController extends Controller
             'type' => data_get($data, 'type'),
             'title' => data_get($data, 'title'),
             'subtitle' => data_get($data, 'subtitle'),
+            'framework_key' => data_get($data, 'framework_key'),
             'description' => data_get($data, 'description'),
             'duration' => data_get($data, 'duration'),
             'documentation' => data_get($data, 'documentation'),
