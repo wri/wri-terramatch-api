@@ -74,15 +74,15 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         ];
 
         if (in_array($this->form->type, ['nursery', 'nursery-report','site', 'site-report', 'project-report'])) {
-            $mapped[] = $entity->project->id ?? null;
+            $mapped[] = $entity->project->old_id ?? ($entity->project->id ?? null);
         }
 
         if ($this->form->type === 'nursery-report') {
-            $mapped[] = $entity->nursery->id ?? null;
+            $mapped[] = $entity->nursery->old_id ?? ($entity->nursery->id ?? null);
         }
 
         if ($this->form->type === 'site-report') {
-            $mapped[] = $entity->site->id ?? null;
+            $mapped[] = $entity->site->old_id ?? ($entity->site->id ?? null);
         }
 
         return $mapped;
