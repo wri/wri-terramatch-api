@@ -56432,6 +56432,19 @@ paths:
                 type: string
               nursery_report_form_uuid:
                 type: string
+    delete:
+      summary: Delete a specific reporting frameworks
+      operationId: delete-v2-admin-reporting-frameworks-uuid
+      tags:
+        - Funding Programmes
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '201':
+          description: OK
   '/v2/reporting-frameworks/access-code/{ACCESS_CODE}':
     get:
       summary: View a specific reporting framework using an access code
