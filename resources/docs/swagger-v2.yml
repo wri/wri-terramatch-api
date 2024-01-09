@@ -56404,10 +56404,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
         - in: body
           name: body
           schema:
