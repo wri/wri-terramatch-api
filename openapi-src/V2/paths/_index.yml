@@ -54,6 +54,8 @@
 /v2/admin/reporting-frameworks/{UUID}:
   put:
     $ref: './ReportingFrameworks/put-v2-admin-reporting-frameworks-uuid.yml'
+  delete:
+    $ref: './ReportingFrameworks/delete-v2-admin-reporting-frameworks-uuid.yml'
 /v2/reporting-frameworks/access-code/{ACCESS_CODE}:
   get:
     $ref: './ReportingFrameworks/get-v2-reporting-frameworks-access-code.yml'
