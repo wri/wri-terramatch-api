@@ -127,14 +127,20 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         'people_knowledge_skills_increased',
         'feedback',
         'feedback_fields',
+        'community_progress',
         'answers',
         'submitted_at',
+        'equitable_opportunities',
+        'local_engagement',
+        'site_addition',
+        'paid_other_activity_description'
     ];
 
     public $casts = [
         'submitted_at' => 'datetime',
         'due_at' => 'datetime',
         'answers' => 'array',
+        'site_addition' => 'boolean',
     ];
 
     public $fileConfiguration = [

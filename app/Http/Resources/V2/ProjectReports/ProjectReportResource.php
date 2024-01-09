@@ -93,6 +93,11 @@ class ProjectReportResource extends JsonResource
             'created_by' => $this->handleCreatedBy(),
             'seedlings_grown' => $this->seedlings_grown,
             'trees_planted_count' => $this->trees_planted_count,
+            'community_progress' => $this->community_progress,
+            'equitable_opportunities' => $this->equitable_opportunities,
+            'local_engagement' => $this->local_engagement,
+            'site_addition' => $this->site_addition,
+            'paid_other_activity_description' => $this->paid_other_activity_description
         ];
 
         return $this->appendFilesToResource($data);
