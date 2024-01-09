@@ -21,6 +21,7 @@ class UpdateFundingProgrammeRequest extends FormRequest
             'read_more_url' => ['nullable', 'string', 'url', 'min:1', 'max:65000'],
             'organisation_types' => ['array'],
             'organisation_types.*' => ['string', 'in:' . implode(',', array_keys(Organisation::$types))],
+            'framework_key' => ['sometimes', 'string', 'min:1', 'max:250'],
         ];
     }
 }

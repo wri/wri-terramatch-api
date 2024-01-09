@@ -22,6 +22,7 @@ class StoreFundingProgrammeRequest extends FormRequest
             'status' => ['required', 'string', 'in:' . implode(',', array_keys(FundingProgramme::$statuses))],
             'organisation_types' => ['required', 'array'],
             'organisation_types.*' => ['required', 'string', 'in:' . implode(',', array_keys(Organisation::$types))],
+            'framework_key' => ['sometimes', 'string', 'min:1', 'max:250'],
         ];
     }
 }

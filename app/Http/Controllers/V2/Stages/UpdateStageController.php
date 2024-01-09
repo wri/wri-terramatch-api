@@ -15,6 +15,8 @@ class UpdateStageController extends Controller
     {
         $data = array_filter($updateStageRequest->validated(), fn ($i) => ! is_null($i));
 
+        $frameworkKey = $stage->fundingProgramme->framework_key;
+
         if (data_get($data, 'deadline_at')) {
             data_set($data, 'deadline_at', Carbon::createFromFormat('Y-m-d H:i:s', data_get($data, 'deadline_at'), 'EST'));
         }
@@ -23,12 +25,13 @@ class UpdateStageController extends Controller
 
         if ($updateStageRequest->get('form_id')) {
             //clear old form link
-            Form::where('stage_id', $stage->uuid)->update(['stage_id' => null]);
+            Form::where('stage_id', $stage->uuid)->update(['stage_id' => null, 'framework_key' => $frameworkKey]);
 
             //create new link
             $form = Form::isUuid($updateStageRequest->get('form_id'))->first();
             $form->update([
                 'stage_id' => $stage->uuid,
+                'framework_key' => $frameworkKey
             ]);
         }
 

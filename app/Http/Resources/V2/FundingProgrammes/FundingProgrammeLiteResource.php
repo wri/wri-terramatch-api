@@ -24,6 +24,7 @@ class FundingProgrammeLiteResource extends JsonResource
             'description' => $this->translated_description,
             'location' => $this->location,
             'read_more_url' => $this->read_more_url,
+            'framework_key' => $this->framework_key,
             'status' => $this->status,
             'organisation_types' => $this->organisation_types,
             'first_form_uuid' => $formUuid,
