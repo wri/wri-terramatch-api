@@ -96,6 +96,26 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
         'old_id',
         'feedback',
         'feedback_fields',
+        'organization_name',
+        'project_county_district',
+        'description_of_project_timeline',
+        'siting_strategy_description',
+        'siting_strategy',
+        'landholder_comm_engage',
+        'proj_partner_info',
+        'proj_success_risks',
+        'monitor_eval_plan',
+        'seedlings_source',
+        'pct_employees_men',
+        'pct_employees_women',
+        'pct_employees_18to35',
+        'pct_employees_older35',
+        'proj_beneficiaries',
+        'pct_beneficiaries_women',
+        'pct_beneficiaries_small',
+        'pct_beneficiaries_large',
+        'pct_beneficiaries_youth',
+        'land_tenure_project_area',
         'answers',
     ];
 
@@ -128,10 +148,19 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'detailed_project_budget' => [
+            'validation' => 'spreadsheet',
+            'multiple' => false,
+        ],
+        'proof_of_land_tenure_mou' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
     ];
 
     public $casts = [
         'land_tenures' => 'array',
+        'land_tenure_project_area' => 'array',
         'land_use_types' => 'array',
         'restoration_strategy' => 'array',
         'sdgs_impacted' => 'array',
