@@ -2698,6 +2698,8 @@ definitions:
         type: string
       read_more_url:
         type: string
+      framework_key:
+        type: string
       status:
         type: string
       organisation_types:
@@ -2747,6 +2749,8 @@ definitions:
                 subtitle:
                   type: string
                 description:
+                  type: string
+                framework_key:
                   type: string
                 duration:
                   type: string
@@ -3312,6 +3316,8 @@ definitions:
       subtitle:
         type: string
       description:
+        type: string
+      framework_key:
         type: string
       duration:
         type: string
@@ -4148,6 +4154,26 @@ definitions:
         type: string
   ReportingFrameworkUpdate:
     title: ReportingFrameworkUpdate
+    type: object
+    properties:
+      name:
+        type: string
+      access_code:
+        type: string
+      project_form_uuid:
+        type: string
+      project_report_form_uuid:
+        type: string
+      site_form_uuid:
+        type: string
+      site_report_form_uuid:
+        type: string
+      nursery_form_uuid:
+        type: string
+      nursery_report_form_uuid:
+        type: string
+  ReportingFrameworkCreate:
+    title: ReportingFrameworkCreate
     type: object
     properties:
       name:
@@ -11271,6 +11297,8 @@ definitions:
                       type: string
                     description:
                       type: string
+                    framework_key:
+                      type: string
                     duration:
                       type: string
                     deadline_at:
@@ -11503,6 +11531,8 @@ definitions:
                   subtitle:
                     type: string
                   description:
+                    type: string
+                  framework_key:
                     type: string
                   duration:
                     type: string
@@ -11772,6 +11802,8 @@ definitions:
                         subtitle:
                           type: string
                         description:
+                          type: string
+                        framework_key:
                           type: string
                         duration:
                           type: string
@@ -12852,6 +12884,8 @@ definitions:
           subtitle:
             type: string
           description:
+            type: string
+          framework_key:
             type: string
           duration:
             type: string
@@ -13949,6 +13983,8 @@ definitions:
             type: string
           description:
             type: string
+          framework_key:
+            type: string
           duration:
             type: string
           deadline_at:
@@ -14580,6 +14616,8 @@ definitions:
             type: string
           description:
             type: string
+          framework_key:
+            type: string
           duration:
             type: string
           deadline_at:
@@ -14806,6 +14844,8 @@ definitions:
               type: string
             description:
               type: string
+            framework_key:
+              type: string
             duration:
               type: string
             deadline_at:
@@ -15020,6 +15060,8 @@ definitions:
               subtitle:
                 type: string
               description:
+                type: string
+              framework_key:
                 type: string
               duration:
                 type: string
@@ -15250,6 +15292,8 @@ definitions:
           subtitle:
             type: string
           description:
+            type: string
+          framework_key:
             type: string
           duration:
             type: string
@@ -15531,6 +15575,8 @@ definitions:
                   type: string
                 description:
                   type: string
+                framework_key:
+                  type: string
                 duration:
                   type: string
                 deadline_at:
@@ -15763,6 +15809,8 @@ definitions:
               subtitle:
                 type: string
               description:
+                type: string
+              framework_key:
                 type: string
               duration:
                 type: string
@@ -16021,6 +16069,8 @@ definitions:
                   type: string
                 description:
                   type: string
+                framework_key:
+                  type: string
                 duration:
                   type: string
                 deadline_at:
@@ -16253,6 +16303,8 @@ definitions:
               subtitle:
                 type: string
               description:
+                type: string
+              framework_key:
                 type: string
               duration:
                 type: string
@@ -16522,6 +16574,8 @@ definitions:
                     subtitle:
                       type: string
                     description:
+                      type: string
+                    framework_key:
                       type: string
                     duration:
                       type: string
@@ -56163,6 +56217,8 @@ paths:
                       type: string
                     description:
                       type: string
+                    framework_key:
+                      type: string
                     duration:
                       type: string
                     deadline_at:
@@ -56372,6 +56428,65 @@ paths:
                       type: string
                     nursery_report_form_uuid:
                       type: string
+    post:
+      summary: Create a a specific reporting frameworks
+      operationId: post-v2-admin-reporting-frameworks-uuid
+      tags:
+        - Funding Programmes
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            title: ReportingFrameworkCreate
+            type: object
+            properties:
+              name:
+                type: string
+              access_code:
+                type: string
+              project_form_uuid:
+                type: string
+              project_report_form_uuid:
+                type: string
+              site_form_uuid:
+                type: string
+              site_report_form_uuid:
+                type: string
+              nursery_form_uuid:
+                type: string
+              nursery_report_form_uuid:
+                type: string
+      responses:
+        '201':
+          description: OK
+          schema:
+            title: ReportingFrameworkRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              name:
+                type: string
+              slug:
+                type: string
+              access_code:
+                type: string
+              project_form_uuid:
+                type: string
+              project_report_form_uuid:
+                type: string
+              site_form_uuid:
+                type: string
+              site_report_form_uuid:
+                type: string
+              nursery_form_uuid:
+                type: string
+              nursery_report_form_uuid:
+                type: string
   '/v2/admin/reporting-frameworks/{UUID}':
     put:
       summary: Update a specific reporting frameworks
@@ -56432,6 +56547,19 @@ paths:
                 type: string
               nursery_report_form_uuid:
                 type: string
+    delete:
+      summary: Delete a specific reporting frameworks
+      operationId: delete-v2-admin-reporting-frameworks-uuid
+      tags:
+        - Funding Programmes
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '201':
+          description: OK
   '/v2/reporting-frameworks/access-code/{ACCESS_CODE}':
     get:
       summary: View a specific reporting framework using an access code
@@ -57989,6 +58117,8 @@ paths:
                       type: string
                     description:
                       type: string
+                    framework_key:
+                      type: string
                     duration:
                       type: string
                     deadline_at:
@@ -58191,6 +58321,8 @@ paths:
               subtitle:
                 type: string
               description:
+                type: string
+              framework_key:
                 type: string
               duration:
                 type: string
@@ -59099,6 +59231,8 @@ paths:
               subtitle:
                 type: string
               description:
+                type: string
+              framework_key:
                 type: string
               duration:
                 type: string
@@ -72615,6 +72749,8 @@ paths:
                                     type: string
                                   description:
                                     type: string
+                                  framework_key:
+                                    type: string
                                   duration:
                                     type: string
                                   deadline_at:
@@ -72847,6 +72983,8 @@ paths:
                                 subtitle:
                                   type: string
                                 description:
+                                  type: string
+                                framework_key:
                                   type: string
                                 duration:
                                   type: string
@@ -73116,6 +73254,8 @@ paths:
                                       subtitle:
                                         type: string
                                       description:
+                                        type: string
+                                      framework_key:
                                         type: string
                                       duration:
                                         type: string
@@ -75639,6 +75779,8 @@ paths:
                           type: string
                         description:
                           type: string
+                        framework_key:
+                          type: string
                         duration:
                           type: string
                         deadline_at:
@@ -77645,6 +77787,8 @@ paths:
                           type: string
                         description:
                           type: string
+                        framework_key:
+                          type: string
                         duration:
                           type: string
                         deadline_at:
@@ -77891,6 +78035,8 @@ paths:
                   subtitle:
                     type: string
                   description:
+                    type: string
+                  framework_key:
                     type: string
                   duration:
                     type: string
@@ -78168,6 +78314,8 @@ paths:
                         subtitle:
                           type: string
                         description:
+                          type: string
+                        framework_key:
                           type: string
                         duration:
                           type: string
@@ -78476,6 +78624,8 @@ paths:
                           type: string
                         description:
                           type: string
+                        framework_key:
+                          type: string
                         duration:
                           type: string
                         deadline_at:
@@ -78754,6 +78904,8 @@ paths:
                 type: string
               description:
                 type: string
+              framework_key:
+                type: string
               duration:
                 type: string
               deadline_at:
@@ -78956,6 +79108,8 @@ paths:
                   subtitle:
                     type: string
                   description:
+                    type: string
+                  framework_key:
                     type: string
                   duration:
                     type: string
@@ -79186,6 +79340,8 @@ paths:
                     type: string
                   description:
                     type: string
+                  framework_key:
+                    type: string
                   duration:
                     type: string
                   deadline_at:
@@ -79389,6 +79545,8 @@ paths:
                   subtitle:
                     type: string
                   description:
+                    type: string
+                  framework_key:
                     type: string
                   duration:
                     type: string
@@ -79650,6 +79808,8 @@ paths:
                               subtitle:
                                 type: string
                               description:
+                                type: string
+                              framework_key:
                                 type: string
                               duration:
                                 type: string
@@ -79980,6 +80140,8 @@ paths:
                                 type: string
                               description:
                                 type: string
+                              framework_key:
+                                type: string
                               duration:
                                 type: string
                               deadline_at:
@@ -80294,6 +80456,8 @@ paths:
                         subtitle:
                           type: string
                         description:
+                          type: string
+                        framework_key:
                           type: string
                         duration:
                           type: string
@@ -80625,6 +80789,8 @@ paths:
                           type: string
                         description:
                           type: string
+                        framework_key:
+                          type: string
                         duration:
                           type: string
                         deadline_at:
@@ -80893,6 +81059,8 @@ paths:
                         subtitle:
                           type: string
                         description:
+                          type: string
+                        framework_key:
                           type: string
                         duration:
                           type: string
@@ -81167,6 +81335,8 @@ paths:
                           type: string
                         description:
                           type: string
+                        framework_key:
+                          type: string
                         duration:
                           type: string
                         deadline_at:
@@ -81440,6 +81610,8 @@ paths:
                           type: string
                         description:
                           type: string
+                        framework_key:
+                          type: string
                         duration:
                           type: string
                         deadline_at:
@@ -81712,6 +81884,8 @@ paths:
                         subtitle:
                           type: string
                         description:
+                          type: string
+                        framework_key:
                           type: string
                         duration:
                           type: string
@@ -82072,6 +82246,8 @@ paths:
                         type: string
                       description:
                         type: string
+                      framework_key:
+                        type: string
                       duration:
                         type: string
                       deadline_at:
@@ -82305,6 +82481,8 @@ paths:
                     type: string
                   description:
                     type: string
+                  framework_key:
+                    type: string
                   duration:
                     type: string
                   deadline_at:
@@ -82514,6 +82692,8 @@ paths:
                     type: string
                   description:
                     type: string
+                  framework_key:
+                    type: string
                   duration:
                     type: string
                   deadline_at:
@@ -82714,6 +82894,8 @@ paths:
                   subtitle:
                     type: string
                   description:
+                    type: string
+                  framework_key:
                     type: string
                   duration:
                     type: string
@@ -82970,6 +83152,8 @@ paths:
                   subtitle:
                     type: string
                   description:
+                    type: string
+                  framework_key:
                     type: string
                   duration:
                     type: string
@@ -83233,6 +83417,8 @@ paths:
                     type: string
                   description:
                     type: string
+                  framework_key:
+                    type: string
                   duration:
                     type: string
                   deadline_at:
@@ -83474,6 +83660,8 @@ paths:
                   subtitle:
                     type: string
                   description:
+                    type: string
+                  framework_key:
                     type: string
                   duration:
                     type: string
@@ -83761,6 +83949,8 @@ paths:
                     type: string
                   description:
                     type: string
+                  framework_key:
+                    type: string
                   duration:
                     type: string
                   deadline_at:
@@ -84006,6 +84196,8 @@ paths:
                   subtitle:
                     type: string
                   description:
+                    type: string
+                  framework_key:
                     type: string
                   duration:
                     type: string
@@ -85562,6 +85754,8 @@ paths:
                                 type: string
                               description:
                                 type: string
+                              framework_key:
+                                type: string
                               duration:
                                 type: string
                               deadline_at:
@@ -85794,6 +85988,8 @@ paths:
                             subtitle:
                               type: string
                             description:
+                              type: string
+                            framework_key:
                               type: string
                             duration:
                               type: string
@@ -86105,6 +86301,8 @@ paths:
                           type: string
                         description:
                           type: string
+                        framework_key:
+                          type: string
                         duration:
                           type: string
                         deadline_at:
@@ -86337,6 +86535,8 @@ paths:
                       subtitle:
                         type: string
                       description:
+                        type: string
+                      framework_key:
                         type: string
                       duration:
                         type: string
@@ -86606,6 +86806,8 @@ paths:
                             subtitle:
                               type: string
                             description:
+                              type: string
+                            framework_key:
                               type: string
                             duration:
                               type: string
@@ -87735,6 +87937,8 @@ paths:
                                 type: string
                               description:
                                 type: string
+                              framework_key:
+                                type: string
                               duration:
                                 type: string
                               deadline_at:
@@ -87967,6 +88171,8 @@ paths:
                             subtitle:
                               type: string
                             description:
+                              type: string
+                            framework_key:
                               type: string
                             duration:
                               type: string
@@ -88280,6 +88486,8 @@ paths:
                           type: string
                         description:
                           type: string
+                        framework_key:
+                          type: string
                         duration:
                           type: string
                         deadline_at:
@@ -88512,6 +88720,8 @@ paths:
                       subtitle:
                         type: string
                       description:
+                        type: string
+                      framework_key:
                         type: string
                       duration:
                         type: string
@@ -88781,6 +88991,8 @@ paths:
                             subtitle:
                               type: string
                             description:
+                              type: string
+                            framework_key:
                               type: string
                             duration:
                               type: string

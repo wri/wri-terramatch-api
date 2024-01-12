@@ -15,6 +15,7 @@ class StoreFormRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'min:1', 'max:65000'],
             'subtitle' => ['sometimes', 'string', 'min:1', 'max:65000'],
+            'framework_key' => ['sometimes', 'string', 'min:1', 'max:250'],
             'type' => ['sometimes', 'string', 'in:' . implode(',', array_keys(Form::$types))],
             'description' => ['sometimes', 'nullable', 'string', 'min:1', 'max:65000'],
             'documentation' => ['sometimes', 'string', 'min:1', 'max:65000'],

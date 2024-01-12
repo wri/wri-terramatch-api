@@ -22,10 +22,13 @@ class StoreStageController extends Controller
             'order' => data_get($data, 'order'),
         ]);
 
+        $frameworkKey = $stage->fundingProgramme->framework_key;
+
         if ($storeStageRequest->get('form_id')) {
             $form = Form::isUuid($storeStageRequest->get('form_id'))->first();
             $form->update([
                 'stage_id' => $stage->uuid,
+                'framework_key' => $frameworkKey
             ]);
         }
 

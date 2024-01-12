@@ -1,0 +1,14 @@
+summary: Delete a specific reporting frameworks
+operationId: delete-v2-admin-reporting-frameworks-uuid
+tags:
+  - Funding Programmes
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '201':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/ReportingFrameworkRead'

@@ -17,9 +17,10 @@ class CreateProjectWithFormController extends Controller
         $data = $request->validate([
             'parent_entity' => 'required|in:application',
             'parent_uuid' => 'required|exists:applications,uuid',
+            'form_uuid' => 'required|exists:forms,uuid',
         ]);
 
-        $form = $this->getForm();
+        $form = $this->getForm($data['form_uuid']);
 
         $application = Application::where('uuid', $data['parent_uuid'])->firstOrFail();
 
@@ -28,7 +29,7 @@ class CreateProjectWithFormController extends Controller
         $projectPitch = $formSubmission->projectPitch;
 
         $project = Project::create([
-            'framework_key' => 'terrafund',
+            'framework_key' => $form ? $form->framework_key : 'terrafund',
             'organisation_id' => $application->organisation->id,
             'application_id' => $application->id,
             'status' => Project::STATUS_STARTED,
@@ -83,9 +84,9 @@ class CreateProjectWithFormController extends Controller
         return new ProjectWithSchemaResource($project, ['schema' => $form]);
     }
 
-    private function getForm(): Form
+    private function getForm(string $form_uuid): Form
     {
-        return Form::where('framework_key', 'terrafund')
+        return Form::where('uuid', $form_uuid)
             ->where('model', Project::class)
             ->first();
     }

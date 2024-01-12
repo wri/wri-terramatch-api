@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+use App\Models\Framework;
 
 class AdminIndexSiteReportsController extends Controller
 {
@@ -57,12 +58,25 @@ class AdminIndexSiteReportsController extends Controller
             $qry->whereIn('v2_site_reports.id', $ids);
         }
 
-        if (! $user->hasAllPermissions(['framework-ppc', 'framework-terrafund'])) {
-            if ($user->hasPermissionTo('framework-terrafund')) {
-                $qry->where('v2_site_reports.framework_key', 'terrafund');
-            } elseif ($user->hasPermissionTo('framework-ppc')) {
-                $qry->where('v2_site_reports.framework_key', 'ppc');
-            }
+        $frameworks = Framework::all();
+
+        $frameworkNamesWithPref = $frameworks->map(function ($framework) {
+            return 'framework-' . $framework->slug;
+        })->toArray();
+
+        $frameworkNames = $frameworks->map(function ($framework) {
+            return $framework->slug;
+        })->toArray();
+
+        if (! $user->hasAllPermissions($frameworkNamesWithPref)) {
+            $qry->where(function ($query) use ($frameworkNames, $user) {
+                foreach ($frameworkNames as $framework) {
+                    $frameworkPermission = 'framework-' . $framework;
+                    if ($user->hasPermissionTo($frameworkPermission)) {
+                        $query->orWhere('v2_site_reports.framework_key', $framework);
+                    }
+                }
+            });
         }
 
         $collection = $qry->paginate($perPage)

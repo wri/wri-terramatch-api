@@ -3792,6 +3792,8 @@ definitions:
         type: string
       read_more_url:
         type: string
+      framework_key:
+        type: string
       status:
         type: string
       organisation_types:
