@@ -67,6 +67,7 @@ class OrganisationResource extends JsonResource
             'ft_permanent_employees' => $this->ft_permanent_employees,
             'pt_permanent_employees' => $this->pt_permanent_employees,
             'temp_employees' => $this->temp_employees,
+            'total_employees' => $this->total_employees,
             'female_employees' => $this->female_employees,
             'male_employees' => $this->male_employees,
             'young_employees' => $this->young_employees,
@@ -135,7 +136,9 @@ class OrganisationResource extends JsonResource
             'global_planning_frameworks' => $this->global_planning_frameworks,
             'past_gov_collaboration' => $this->past_gov_collaboration,
             'engagement_landless' => $this->past_gov_collaboration,
-
+            'environmental_impact' => $this->environmental_impact,
+            'socioeconomic_impact' => $this->socioeconomic_impact,
+            'growith_stage' => $this->growith_stage,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at,
             'tags' => $this->buildTagList(),
