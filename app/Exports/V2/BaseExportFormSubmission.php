@@ -45,7 +45,15 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
         }
 
         if (is_array($answer)) {
-            return implode('|', $answer);
+            $list = [];
+            foreach ($answer as $item) {
+                if (is_array($item)) {
+                    $list[] = $item['amount'].':'.$item['gender'].':'.$item['age'].':'.$item['ethnicity'];
+                } else {
+                    $list[] = $item;
+                }
+            }
+            return implode('|', $list);
         }
 
         if (is_object($answer)) {
