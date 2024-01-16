@@ -113,6 +113,9 @@ return [
                 'org-global-planning-frameworks' => ['property' => 'global_planning_frameworks', 'label' => 'Global planning frameworks', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'planning-frameworks'],
                 'org-past-gov-collaboration' => ['property' => 'past_gov_collaboration', 'label' => 'Past Government Collaboration', 'input_type' => 'long-text'],
                 'org-engagement-landless' => ['property' => 'engagement_landless', 'label' => 'Engagement: Landless', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'engagement-landless'],
+                'org-environmental-impact' => ['property' => 'environmental_impact', 'label' => 'Environmental Impact', 'input_type' => 'long-text'],
+                'org-socioeconomic-impact' => ['property' => 'socioeconomic_impact', 'label' => 'Socioeconomic Impact', 'input_type' => 'long-text'],
+                'org-growith-stage' => ['property' => 'growith_stage', 'label' => 'Stage of Growth', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'growith-stage'],
             ],
             'file-collections' => [
                 'org-fcol-cover' => ['property' => 'cover', 'label' => 'Cover image', 'input_type' => 'file', 'multichoice' => false],

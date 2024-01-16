@@ -190,6 +190,9 @@ class Organisation extends Model implements HasMedia
         'tree_restoration_practices' => 'array',
         'biodiversity_focus' => 'array',
         'global_planning_frameworks' => 'array',
+        'environmental_impact' => 'string',
+        'socioeconomic_impact' => 'string',
+        'growith_stage' => 'string',
     ];
 
     public function registerMediaConversions(Media $media = null): void

@@ -135,7 +135,9 @@ class OrganisationResource extends JsonResource
             'global_planning_frameworks' => $this->global_planning_frameworks,
             'past_gov_collaboration' => $this->past_gov_collaboration,
             'engagement_landless' => $this->past_gov_collaboration,
-
+            'environmental_impact' => $this->environmental_impact,
+            'socioeconomic_impact' => $this->socioeconomic_impact,
+            'growith_stage' => $this->growith_stage,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at,
             'tags' => $this->buildTagList(),
