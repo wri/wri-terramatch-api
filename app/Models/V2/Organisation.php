@@ -172,6 +172,7 @@ class Organisation extends Model implements HasMedia
         'ha_restored_total' => 'float',
         'ha_restored_3year' => 'float',
         'trees_grown_total' => 'integer',
+        'total_employees' => 'integer',
         'relevant_experience_years' => 'integer',
         'countries' => 'array',
         'languages' => 'array',
