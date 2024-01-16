@@ -67,7 +67,6 @@ class OrganisationResource extends JsonResource
             'ft_permanent_employees' => $this->ft_permanent_employees,
             'pt_permanent_employees' => $this->pt_permanent_employees,
             'temp_employees' => $this->temp_employees,
-            'total_employees' => $this->total_employees,
             'female_employees' => $this->female_employees,
             'male_employees' => $this->male_employees,
             'young_employees' => $this->young_employees,
