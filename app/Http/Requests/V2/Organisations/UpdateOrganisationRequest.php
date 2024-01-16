@@ -58,7 +58,6 @@ class UpdateOrganisationRequest extends FormRequest
             'ft_permanent_employees' => 'sometimes|nullable|numeric|min:0',
             'pt_permanent_employees' => 'sometimes|nullable|numeric|min:0',
             'temp_employees' => 'sometimes|nullable|numeric|min:0',
-            'total_employees' => 'sometimes|nullable|numeric|min:0',
             'female_employees' => 'sometimes|nullable|numeric|min:0',
             'male_employees' => 'sometimes|nullable|numeric|min:0',
             'young_employees' => 'sometimes|nullable|numeric|min:0',
@@ -98,9 +97,6 @@ class UpdateOrganisationRequest extends FormRequest
             'community_members_engaged_3yr_non_youth' => 'sometimes|nullable|numeric',
             'community_members_engaged_3yr_smallholder' => 'sometimes|nullable|numeric',
             'community_members_engaged_3yr_backward_class' => 'sometimes|nullable|numeric',
-            'environmental_impact' => 'sometimes|nullable|string',
-            'socioeconomic_impact' => 'sometimes|nullable|string',
-            'growith_stage' => 'sometimes|nullable|string',
 
             'restoration_types_implemented' => 'sometimes|nullable|array',
             'historic_monitoring_geojson' => 'sometimes|nullable|string',
