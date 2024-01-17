@@ -244,6 +244,11 @@ class Organisation extends Model implements HasMedia
         return $this->hasMany(LeadershipTeam::class, 'organisation_id', 'uuid');
     }
 
+    public function ownershiptStake(): HasMany
+    {
+        return $this->hasMany(OwnershipStake::class, 'organisation_id', 'uuid');
+    }
+
     public function coreTeamLeaders(): HasMany
     {
         return $this->hasMany(CoreTeamLeader::class, 'organisation_id', 'uuid');

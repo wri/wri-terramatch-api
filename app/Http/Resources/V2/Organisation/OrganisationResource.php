@@ -6,6 +6,7 @@ use App\Http\Resources\V2\CoreTeamLeaderResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\General\ShapefileResource;
 use App\Http\Resources\V2\LeadershipTeamResource;
+use App\Http\Resources\V2\OwnershipStakeResource;
 use App\Http\Resources\V2\ProjectPitches\ProjectPitchResource;
 use App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -43,6 +44,7 @@ class OrganisationResource extends JsonResource
             'leadership_team' => LeadershipTeamResource::collection($this->leadershipTeam),
             'core_team_leaders' => CoreTeamLeaderResource::collection($this->coreTeamLeaders),
             'funding_types' => FundingTypeResource::collection($this->fundingTypes),
+            'ownership_stake' => OwnershipStakeResource::collection($this->ownershipStake),
 
             'leadership_team_txt' => $this->leadership_team_txt,
             'web_url' => $this->web_url,
