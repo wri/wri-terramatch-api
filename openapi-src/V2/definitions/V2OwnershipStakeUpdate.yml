@@ -1,0 +1,11 @@
+title: V2OwnershipStakeUpdate
+type: object
+properties:
+  position:
+    type: string
+  gender:
+    type: string
+  age:
+    type: integer
+  percent_ownership:
+    type: integer
