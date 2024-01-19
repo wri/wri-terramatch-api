@@ -1133,6 +1133,57 @@
           $ref: '../definitions/_index.yml#/V2LeadershipTeamRead'
     tags:
       - V2 Leadership Team
+  /v2/ownership-stake:
+  post:
+    summary: Create a ownership stake
+    operationId: post-v2-ownership-stake
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/V2OwnershipStakeRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2OwnershipStakeCreate'
+    tags:
+      - V2 Ownership Stake
+'/v2/ownership-stake/{UUID}':
+  patch:
+    summary: Update a ownership stake
+    operationId: patch-v2-ownership-stake-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2OwnershipStakeRead'
+    tags:
+      - V2 Ownership Stake
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2OwnershipStakeUpdate'
+  delete:
+    summary: Delete a ownership stake
+    operationId: delete-v2-ownership-stake-UUID
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2OwnershipStakeRead'
+    tags:
+      - V2 Ownership Stake
 /v2/admin/sites:
   get:
     summary: View all sites as an admin

@@ -104,6 +104,12 @@ V2LeadershipTeamRead:
   $ref: './V2LeadershipTeamRead.yml'
 V2LeadershipTeamUpdate:
   $ref: './V2LeadershipTeamUpdate.yml'
+V2OwnershipStakeCreate:
+  $ref: './V2OwnershipStakeCreate.yml'
+V2OwnershipStakeRead:
+  $ref: './V2OwnershipStakeRead.yml'
+V2OwnershipStakeUpdate:
+  $ref: './V2OwnershipStakeUpdate.yml'
 V2FundingTypeCreate:
   $ref: './V2FundingTypeCreate.yml'
 V2FundingTypeRead:
