@@ -16,25 +16,22 @@ class UpdateTextForActionsBasedOnCount extends Command
      */
     public function handle()
     {
-        Action::where('created_at','>=', '2023-12-10 00:00:00')->chunk(100, function ($actions) {
+        Action::where('created_at','>=', '2023-12-01 00:00:00')->chunk(100, function ($actions) {
             foreach ($actions as $action) {
                 $this->info('Updating action: ' . $action->id);
                 $action->text = $this->getText($action);
                 $this->info('text: ' . $action->text);
                 $action->save();
             }
-        }); 
+        });
     }
 
     private function getText($action)
     {
         $project = $action->project;
         $message = '';
-        $nurseryCount = $project->sites()->count();
-        $siteCount = $project->nurseries()->count();
-
-        $this->info('nurseryCount: ' . $nurseryCount);
-        $this->info('siteCount: ' . $siteCount);
+        $nurseryCount = $project->nurseries()->count();
+        $siteCount = $project->sites()->count();
 
         if ($nurseryCount != 0 && $siteCount != 0) {
             $message = 'Project, site and nursery reports available';

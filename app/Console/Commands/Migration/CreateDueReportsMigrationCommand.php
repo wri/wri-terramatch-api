@@ -160,8 +160,8 @@ class CreateDueReportsMigrationCommand extends Command
 
     private function handleActions($project, $report)
     {
-        $nurseryCount = $project->sites()->count();
-        $siteCount = $project->nurseries()->count();
+        $nurseryCount = $project->nurseries()->count();
+        $siteCount = $project->sites()->count();
 
         if ($nurseryCount != 0 && $siteCount != 0) {
             $message = 'Project, site and nursery reports available';

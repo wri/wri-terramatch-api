@@ -56,8 +56,8 @@ class CreateProjectReportDueJob implements ShouldQueue
                         'due_at' => $this->dueDate,
                     ]);
 
-                    $nurseryCount = $project->sites()->count();
-                    $siteCount = $project->nurseries()->count();
+                    $nurseryCount = $project->nurseries()->count();
+                    $siteCount = $project->sites()->count();
                     if ($nurseryCount != 0 && $siteCount != 0) {
                         $message = 'Project, site and nursery reports available';
                     } elseif ($nurseryCount > 0) {
