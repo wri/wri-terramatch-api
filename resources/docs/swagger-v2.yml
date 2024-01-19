@@ -70018,6 +70018,123 @@ paths:
                 type: integer
       tags:
         - V2 Leadership Team
+  /v2/ownership-stake:
+    post:
+      summary: Create a ownership stake
+      operationId: post-v2-ownership-stake
+      responses:
+        '201':
+          description: Created
+          schema:
+            title: V2OwnershipStakeCreate
+            type: object
+            properties:
+              uuid:
+                type: string
+              organisation_id:
+                type: string
+              title:
+                type: string
+              gender:
+                type: string
+              year_of_birth:
+                type: integer
+              percent_ownership:
+                type: integer
+      parameters:
+        - in: body
+          name: body
+          schema:
+            title: V2OwnershipStakeCreate
+            type: object
+            properties:
+              organisation_id:
+                type: string
+              title:
+                type: string
+              gender:
+                type: string
+              year_of_birth:
+                type: integer
+              percent_ownership:
+                type: integer
+      tags:
+        - V2 Ownership Stake
+  '/v2/ownership-stake/{UUID}':
+    patch:
+      summary: Update a ownership stake
+      operationId: patch-v2-ownership-stake-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: V2OwnershipStakeRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              organisation_id:
+                type: string
+              title:
+                type: string
+              gender:
+                type: string
+              year_of_birth:
+                type: integer
+              percent_ownership:
+                type: integer
+      tags:
+        - V2 Ownership Stake
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            title: V2OwnershipStakeUpdate
+            type: object
+            properties:
+              title:
+                type: string
+              gender:
+                type: string
+              year_of_birth:
+                type: integer
+              percent_ownership:
+                type: integer
+    delete:
+      summary: Delete a ownership stake
+      operationId: delete-v2-ownership-stake-UUID
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: V2OwnershipStakeRead
+            x-stoplight:
+              id: 04vvsvyndvy8n
+            type: object
+            properties:
+              uuid:
+                type: string
+              organisation_id:
+                type: string
+              title:
+                type: string
+              gender:
+                type: string
+              year_of_birth:
+                type: integer
+              percent_ownership:
+                type: integer
+      tags:
+        - V2 Ownership Stake
   /v2/admin/sites:
     get:
       summary: View all sites as an admin
