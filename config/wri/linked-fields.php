@@ -169,6 +169,12 @@ return [
                     'input_type' => 'treeSpecies',
                     'collection' => 'restored'
                 ],
+                'org-ownership-stake' => [
+                    'property' => 'ownershipStake',
+                    'label' => 'Ownership Stake',
+                    'resource' => 'App\Http\Resources\V2\OwnershipStakeResource',
+                    'input_type' => 'ownershipStake',
+                ],
             ],
         ],
         'project-pitch' => [
