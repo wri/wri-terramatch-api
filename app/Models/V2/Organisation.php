@@ -194,6 +194,7 @@ class Organisation extends Model implements HasMedia
         'environmental_impact' => 'string',
         'socioeconomic_impact' => 'string',
         'growith_stage' => 'string',
+        'additional_comments' => 'string',
     ];
 
     public function registerMediaConversions(Media $media = null): void

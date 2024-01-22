@@ -54,6 +54,7 @@ return [
                 'org-ft-perm-employees' => ['property' => 'ft_permanent_employees', 'label' => 'Number of full-time permanent employees', 'input_type' => 'number'],
                 'org-pt-perm-employees' => ['property' => 'pt_permanent_employees', 'label' => 'Number of part-time permanent employees', 'input_type' => 'number'],
                 'org-over-35-employees' => ['property' => 'over_35_employees', 'label' => 'Number of employees older than 35 years of age', 'input_type' => 'number'],
+                'org-additional-comments' => ['property' => 'additional_comments', 'label' => 'Additional Comments', 'input_type' => 'long-text'],
 
                 'org-engagement-farmers' => ['property' => 'engagement_farmers', 'label' => 'Enagement: Farmers', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'engagement-farmers'],
                 'org-engagement-women' => ['property' => 'engagement_women', 'label' => 'Enagement: Women', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'engagement-women'],
