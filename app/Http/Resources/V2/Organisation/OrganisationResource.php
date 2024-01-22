@@ -97,6 +97,7 @@ class OrganisationResource extends JsonResource
             'engagement_farmers' => $this->engagement_farmers,
             'engagement_women' => $this->engagement_women,
             'engagement_youth' => $this->engagement_youth,
+            'additional_comments' => $this->additional_comments,
 
             'restoration_types_implemented' => $this->restoration_types_implemented,
             'seedlings_source' => $this->seedlings_source,

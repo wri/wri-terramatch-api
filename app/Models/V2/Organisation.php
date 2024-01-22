@@ -194,6 +194,7 @@ class Organisation extends Model implements HasMedia
         'environmental_impact' => 'string',
         'socioeconomic_impact' => 'string',
         'growith_stage' => 'string',
+        'additional_comments' => 'string',
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -248,7 +249,7 @@ class Organisation extends Model implements HasMedia
         return $this->hasMany(LeadershipTeam::class, 'organisation_id', 'uuid');
     }
 
-    public function ownershiptStake(): HasMany
+    public function ownershipStake(): HasMany
     {
         return $this->hasMany(OwnershipStake::class, 'organisation_id', 'uuid');
     }
