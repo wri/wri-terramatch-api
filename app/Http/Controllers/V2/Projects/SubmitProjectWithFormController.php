@@ -48,12 +48,10 @@ class SubmitProjectWithFormController extends Controller
             $project->status = Project::STATUS_AWAITING_APPROVAL;
             $project->save();
 
-            Action::where('targetable_type', Project::class)
-                ->where('targetable_id', $project->id)
-                ->delete();
+            // Action::where('targetable_type', Project::class)
+            //     ->where('targetable_id', $project->id)
+            //     ->delete();
         }
-
-
         return new ProjectWithSchemaResource($project, ['schema' => $form]);
     }
 }
