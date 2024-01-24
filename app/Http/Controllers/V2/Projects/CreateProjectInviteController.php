@@ -33,7 +33,6 @@ class CreateProjectInviteController extends Controller
         $token = $this->generateUniqueToken();
         $data['project_id'] = $project->id;
         $data['token'] = $token;
-        $organisation = Organisation::where('id', $project->organisation_id)->first();
         if ($existingUser) {
             $existingUser->projects()->sync([$project->id => ['is_monitoring' => true]], false);
             $data['accepted_at'] = now();
@@ -43,6 +42,7 @@ class CreateProjectInviteController extends Controller
             }
             Mail::to($data['email_address'])->queue(new V2ProjectMonitoringNotification($project->name, $url));
         } else {
+            $organisation = Organisation::where('id', $project->organisation_id)->first();
             $projectInvite = $project->invites()->create($data);
             Mail::to($data['email_address'])->queue(new V2ProjectInviteReceived($project->name, $organisation->name, $url));
         }
