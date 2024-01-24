@@ -172,6 +172,7 @@ class Organisation extends Model implements HasMedia
         'ha_restored_total' => 'float',
         'ha_restored_3year' => 'float',
         'trees_grown_total' => 'integer',
+        'total_employees' => 'integer',
         'relevant_experience_years' => 'integer',
         'countries' => 'array',
         'languages' => 'array',
@@ -190,6 +191,10 @@ class Organisation extends Model implements HasMedia
         'tree_restoration_practices' => 'array',
         'biodiversity_focus' => 'array',
         'global_planning_frameworks' => 'array',
+        'environmental_impact' => 'string',
+        'socioeconomic_impact' => 'string',
+        'growith_stage' => 'string',
+        'additional_comments' => 'string',
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -242,6 +247,11 @@ class Organisation extends Model implements HasMedia
     public function leadershipTeam(): HasMany
     {
         return $this->hasMany(LeadershipTeam::class, 'organisation_id', 'uuid');
+    }
+
+    public function ownershipStake(): HasMany
+    {
+        return $this->hasMany(OwnershipStake::class, 'organisation_id', 'uuid');
     }
 
     public function coreTeamLeaders(): HasMany

@@ -1,0 +1,13 @@
+title: V2OwnershipStakeCreate
+type: object
+properties:
+  organisation_id:
+    type: string
+  position:
+    type: string
+  gender:
+    type: string
+  age:
+    type: integer
+  percent_ownership:
+    type: integer

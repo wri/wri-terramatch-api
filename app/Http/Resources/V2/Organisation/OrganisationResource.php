@@ -6,6 +6,7 @@ use App\Http\Resources\V2\CoreTeamLeaderResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\General\ShapefileResource;
 use App\Http\Resources\V2\LeadershipTeamResource;
+use App\Http\Resources\V2\OwnershipStakeResource;
 use App\Http\Resources\V2\ProjectPitches\ProjectPitchResource;
 use App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -43,6 +44,7 @@ class OrganisationResource extends JsonResource
             'leadership_team' => LeadershipTeamResource::collection($this->leadershipTeam),
             'core_team_leaders' => CoreTeamLeaderResource::collection($this->coreTeamLeaders),
             'funding_types' => FundingTypeResource::collection($this->fundingTypes),
+            'ownership_stake' => OwnershipStakeResource::collection($this->ownershipStake),
 
             'leadership_team_txt' => $this->leadership_team_txt,
             'web_url' => $this->web_url,
@@ -67,6 +69,7 @@ class OrganisationResource extends JsonResource
             'ft_permanent_employees' => $this->ft_permanent_employees,
             'pt_permanent_employees' => $this->pt_permanent_employees,
             'temp_employees' => $this->temp_employees,
+            'total_employees' => $this->total_employees,
             'female_employees' => $this->female_employees,
             'male_employees' => $this->male_employees,
             'young_employees' => $this->young_employees,
@@ -94,6 +97,7 @@ class OrganisationResource extends JsonResource
             'engagement_farmers' => $this->engagement_farmers,
             'engagement_women' => $this->engagement_women,
             'engagement_youth' => $this->engagement_youth,
+            'additional_comments' => $this->additional_comments,
 
             'restoration_types_implemented' => $this->restoration_types_implemented,
             'seedlings_source' => $this->seedlings_source,
@@ -135,7 +139,9 @@ class OrganisationResource extends JsonResource
             'global_planning_frameworks' => $this->global_planning_frameworks,
             'past_gov_collaboration' => $this->past_gov_collaboration,
             'engagement_landless' => $this->past_gov_collaboration,
-
+            'environmental_impact' => $this->environmental_impact,
+            'socioeconomic_impact' => $this->socioeconomic_impact,
+            'growith_stage' => $this->growith_stage,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at,
             'tags' => $this->buildTagList(),

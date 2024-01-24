@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Projects;
 
+use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Projects\ProjectWithSchemaResource;
 use App\Models\V2\Forms\Application;
@@ -80,6 +81,8 @@ class CreateProjectWithFormController extends Controller
             'proof_of_land_tenure_mou' => $projectPitch->proof_of_land_tenure_mou,
 
         ]);
+
+        EntityStatusChangeEvent::dispatch($request->user(), $project, $project->name, '', $project->readable_status);
 
         return new ProjectWithSchemaResource($project, ['schema' => $form]);
     }

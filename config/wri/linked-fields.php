@@ -46,6 +46,7 @@ return [
 
                 'org-community-experience' => ['property' => 'community_experience', 'label' => 'Community engagement experience', 'input_type' => 'long-text'],
                 'org-tot-eng-comty-mbrs-3yr' => ['property' => 'total_engaged_community_members_3yr', 'label' => 'Total # of community members engaged over the last 3 years', 'input_type' => 'number'],
+                'org-total-employees' => ['property' => 'total_employees', 'label' => 'Total number of employees', 'input_type' => 'number'],
                 'org-female-employees' => ['property' => 'female_employees', 'label' => 'Number of female employees', 'input_type' => 'number'],
                 'org-male-employees' => ['property' => 'male_employees', 'label' => 'Number of male employees', 'input_type' => 'number'],
                 'org-young-employees' => ['property' => 'young_employees', 'label' => 'Number of employees between and including ages 18 and 35', 'input_type' => 'number'],
@@ -53,6 +54,7 @@ return [
                 'org-ft-perm-employees' => ['property' => 'ft_permanent_employees', 'label' => 'Number of full-time permanent employees', 'input_type' => 'number'],
                 'org-pt-perm-employees' => ['property' => 'pt_permanent_employees', 'label' => 'Number of part-time permanent employees', 'input_type' => 'number'],
                 'org-over-35-employees' => ['property' => 'over_35_employees', 'label' => 'Number of employees older than 35 years of age', 'input_type' => 'number'],
+                'org-additional-comments' => ['property' => 'additional_comments', 'label' => 'Additional Comments', 'input_type' => 'long-text'],
 
                 'org-engagement-farmers' => ['property' => 'engagement_farmers', 'label' => 'Enagement: Farmers', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'engagement-farmers'],
                 'org-engagement-women' => ['property' => 'engagement_women', 'label' => 'Enagement: Women', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'engagement-women'],
@@ -113,6 +115,9 @@ return [
                 'org-global-planning-frameworks' => ['property' => 'global_planning_frameworks', 'label' => 'Global planning frameworks', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'planning-frameworks'],
                 'org-past-gov-collaboration' => ['property' => 'past_gov_collaboration', 'label' => 'Past Government Collaboration', 'input_type' => 'long-text'],
                 'org-engagement-landless' => ['property' => 'engagement_landless', 'label' => 'Engagement: Landless', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'engagement-landless'],
+                'org-environmental-impact' => ['property' => 'environmental_impact', 'label' => 'Environmental Impact', 'input_type' => 'long-text'],
+                'org-socioeconomic-impact' => ['property' => 'socioeconomic_impact', 'label' => 'Socioeconomic Impact', 'input_type' => 'long-text'],
+                'org-growith-stage' => ['property' => 'growith_stage', 'label' => 'Stage of Growth', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'growith-stage'],
             ],
             'file-collections' => [
                 'org-fcol-cover' => ['property' => 'cover', 'label' => 'Cover image', 'input_type' => 'file', 'multichoice' => false],
@@ -165,6 +170,12 @@ return [
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
                     'collection' => 'restored'
+                ],
+                'org-ownership-stake' => [
+                    'property' => 'ownershipStake',
+                    'label' => 'Ownership Stake',
+                    'resource' => 'App\Http\Resources\V2\OwnershipStakeResource',
+                    'input_type' => 'ownershipStake',
                 ],
             ],
         ],

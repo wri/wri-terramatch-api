@@ -1,0 +1,15 @@
+title: V2OwnershipStakeRead
+type: object
+properties:
+  uuid:
+    type: string
+  organisation_id:
+    type: string
+  position:
+    type: string
+  gender:
+    type: string
+  age:
+    type: integer
+  percent_ownership:
+    type: integer

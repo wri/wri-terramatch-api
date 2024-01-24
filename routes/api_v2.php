@@ -115,6 +115,9 @@ use App\Http\Controllers\V2\Organisations\OrganisationRejectUserController;
 use App\Http\Controllers\V2\Organisations\OrganisationRetractMyDraftController;
 use App\Http\Controllers\V2\Organisations\OrganisationSubmitController;
 use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
+use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
+use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
+use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
@@ -563,6 +566,12 @@ Route::prefix('leadership-team')->group(function () {
     Route::post('/', StoreLeadershipTeamController::class);
     Route::patch('/{leadershipTeam}', UpdateLeadershipTeamController::class);
     Route::delete('/{leadershipTeam}', DeleteLeadershipTeamController::class);
+});
+
+Route::prefix('ownership-stake')->group(function () {
+    Route::post('/', StoreOwnershipStakeController::class);
+    Route::patch('/{ownershipStake}', UpdateOwnershipStakeController::class);
+    Route::delete('/{ownershipStake}', DeleteOwnershipStakeController::class);
 });
 
 Route::prefix('core-team-leader')->group(function () {

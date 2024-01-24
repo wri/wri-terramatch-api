@@ -87,6 +87,7 @@ class FormQuestionResource extends JsonResource
             case 'selectImage':
             case 'coreTeamLeader':
             case 'leadershipTeam':
+            case 'ownershipStake':
             case 'workdays':
                 return [
                     'model' => data_get($linkedInfo, 'model-key'),
