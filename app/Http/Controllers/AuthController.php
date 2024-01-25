@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\FailedLoginException;
-use App\Exceptions\InviteAlreadyAcceptedException;
 use App\Exceptions\SamePasswordException;
 use App\Helpers\JsonResponseHelper;
 use App\Http\Requests\ChangePasswordRequest;
@@ -22,13 +21,10 @@ use App\Models\V2\Projects\ProjectInvite;
 use DateTime;
 use DateTimeZone;
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
-use App\Http\Resources\V2\Projects\ProjectInviteResource;
 
 class AuthController extends Controller
 {
