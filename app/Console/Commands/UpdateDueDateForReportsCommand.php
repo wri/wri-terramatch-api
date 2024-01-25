@@ -40,7 +40,6 @@ class UpdateDueDateForReportsCommand extends Command
             return $framework->slug;
         })->toArray();
 
-
         foreach ($frameworks as $framework) {
             Project::where('framework_key', $framework)
             ->chunkById(100, function ($projects) use ($startCreateDate, $endCreateDate, $framework, $dueDatePPC, $dueDateTerrafund) {
