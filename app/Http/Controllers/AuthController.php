@@ -116,8 +116,7 @@ class AuthController extends Controller
                 ->where('email_address', $user->email_address)
                 ->first();
             if ($is_first) {
-                $organisation_id = $invite->project->organisation_id;
-                $user->organisation_id = $organisation_id;
+                $user->organisation_id = $invite->project->organisation_id;
                 $user->saveOrFail();
                 $is_first = false;
             }
