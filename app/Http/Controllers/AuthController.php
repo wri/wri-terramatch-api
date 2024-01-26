@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\FailedLoginException;
-use App\Exceptions\InviteAlreadyAcceptedException;
 use App\Exceptions\SamePasswordException;
 use App\Helpers\JsonResponseHelper;
 use App\Http\Requests\ChangePasswordRequest;
@@ -22,13 +21,10 @@ use App\Models\V2\Projects\ProjectInvite;
 use DateTime;
 use DateTimeZone;
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
-use App\Http\Resources\V2\Projects\ProjectInviteResource;
 
 class AuthController extends Controller
 {
@@ -94,32 +90,13 @@ class AuthController extends Controller
         $verification = VerificationModel::where('token', '=', $data['token'])
             ->where('user_id', '=', $me->id)
             ->firstOrFail();
-            $verification->delete();
+
         $me->email_address_verified_at = new DateTime('now', new DateTimeZone('UTC'));
+        $me->saveOrFail();
+        $verification->delete();
+
         return JsonResponseHelper::success((object) [], 200);
     }
-
-
-    public function acceptInvite($email): ProjectInviteResource
-    {        
-        $invite = ProjectInvite::where('email_address', $email)
-            ->first();
-
-        if (! $invite) {
-            throw new ModelNotFoundException();
-        } elseif ($invite['accepted_at'] !== null) {
-            throw new InviteAlreadyAcceptedException();
-        }
-
-        Auth::user()->projects()->sync([$invite->project_id => ['is_monitoring' => true]], false);
-
-        $invite->accepted_at = now();
-        $invite->saveOrFail();
-
-        return new ProjectInviteResource($invite);
-    }
-
-
 
     public function verifyUnauthorizedAction(VerifyRequest $request): JsonResponse
     {
@@ -130,12 +107,19 @@ class AuthController extends Controller
         $user = UserModel::where('id', $verification->user_id)->firstOrFail();
         $user->email_address_verified_at = new DateTime('now', new DateTimeZone('UTC'));
         $user->saveOrFail();
+        $verification->delete();
 
-        $invites = ProjectInvite::where('email_address', $user->email_address)->get();
+        $invites = ProjectInvite::where('email_address', $user->email_address)->orderBy('created_at', 'desc')->get();
+        $is_first = true;
         foreach ($invites as $invite) {
             $invite = ProjectInvite::where('token', $invite->token)
                 ->where('email_address', $user->email_address)
                 ->first();
+            if ($is_first) {
+                $user->organisation_id = $invite->project->organisation_id;
+                $user->saveOrFail();
+                $is_first = false;
+            }
             $user->projects()->sync([$invite->project_id => ['is_monitoring' => true]]);
             if ($invite->accepted_at === null) {
                 $invite->accepted_at = now();
