@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Tasks\Task;
 use App\Models\Framework;
@@ -40,7 +42,6 @@ class UpdateDueDateForReportsCommand extends Command
             return $framework->slug;
         })->toArray();
 
-
         foreach ($frameworks as $framework) {
             Project::where('framework_key', $framework)
             ->chunkById(100, function ($projects) use ($startCreateDate, $endCreateDate, $framework, $dueDatePPC, $dueDateTerrafund) {
@@ -48,6 +49,19 @@ class UpdateDueDateForReportsCommand extends Command
                     $finalDueDate = $framework === 'ppc' ? $dueDatePPC : $dueDateTerrafund;
                     ProjectReport::whereBetween('created_at', [$startCreateDate, $endCreateDate])
                     ->where('project_id', $project->id)
+                    ->where('framework_key', $framework)
+                    ->update(['due_at' => $finalDueDate]);
+
+                    $siteIds = $project->sites()->pluck('id')->toArray();
+                    $nurseryIds = $project->nurseries()->pluck('id')->toArray();
+                    
+                    SiteReport::whereBetween('created_at', [$startCreateDate, $endCreateDate])
+                    ->whereIn('site_id', $siteIds)
+                    ->where('framework_key', $framework)
+                    ->update(['due_at' => $finalDueDate]);
+
+                    NurseryReport::whereBetween('created_at', [$startCreateDate, $endCreateDate])
+                    ->whereIn('nursery_id', $nurseryIds)
                     ->where('framework_key', $framework)
                     ->update(['due_at' => $finalDueDate]);
 
