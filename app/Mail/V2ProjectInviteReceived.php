@@ -14,7 +14,7 @@ class V2ProjectInviteReceived extends Mail
             progress and access their latest reports.<br><br>
             Create an Account <a href="'.$callbackUrl.'" style="color: #6E6E6E;">Here.</a><br><br>';
         $this->link = $callbackUrl ?
-        $callbackUrl . '':
+        $callbackUrl . '' :
         '';
         $this->transactional = true;
         $this->invite = true;
