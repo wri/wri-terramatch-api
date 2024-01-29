@@ -459,30 +459,27 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
         foreach ($RawDueDates as $RawDueDate) {
             $dueDate = Carbon::parse($RawDueDate);
 
-            $projectReportPending = ProjectReport::where('project_id', $this->id)
-                ->whereMonth('due_at', $dueDate->month)
-                ->whereYear('due_at', $dueDate->year)
-                ->whereNotIn('status', [ProjectReport::STATUS_APPROVED, ProjectReport::STATUS_AWAITING_APPROVAL])
-                ->count();
-
-            $siteRepPending = SiteReport::whereIn('site_id', $siteIds)
-                ->whereMonth('due_at', $dueDate->month)
-                ->whereYear('due_at', $dueDate->year)
-                ->whereNotIn('status', [ProjectReport::STATUS_APPROVED, ProjectReport::STATUS_AWAITING_APPROVAL])
-                ->count();
-
-            $nurRepPending = NurseryReport::whereIn('nursery_id', $nurseryIds)
-                ->whereMonth('due_at', $dueDate->month)
-                ->whereYear('due_at', $dueDate->year)
-                ->whereNotIn('status', [ProjectReport::STATUS_APPROVED, ProjectReport::STATUS_AWAITING_APPROVAL])
-                ->count();
+            $projectReportPending = $this->getReportPendingCount(ProjectReport::class, $dueDate, "project_id", $siteIds, $nurseryIds);
+            $siteRepPending = $this->getReportPendingCount(SiteReport::class, $dueDate, "site_id", $siteIds, $nurseryIds);
+            $nurRepPending = $this->getReportPendingCount(NurseryReport::class, $dueDate, "nursery_id", $siteIds, $nurseryIds);
 
             if ($projectReportPending + $siteRepPending + $nurRepPending > 0) {
-                $pendingReportingTasks = $pendingReportingTasks + 1;
+                $pendingReportingTasks++;
             }
         }
-
+        
         return $pendingReportingTasks;
+    }
+    
+    private function getReportPendingCount(string $reportType, Carbon $dueDate, string $idColumn, array $siteIds, array $nurseryIds): int
+    {
+        $ids = ($reportType === ProjectReport::class) ? [$this->id] : (($reportType === SiteReport::class) ? $siteIds : $nurseryIds);
+    
+        return $reportType::whereIn($idColumn, $ids)
+            ->whereMonth('due_at', $dueDate->month)
+            ->whereYear('due_at', $dueDate->year)
+            ->whereNotIn('status', [ProjectReport::STATUS_APPROVED, ProjectReport::STATUS_AWAITING_APPROVAL])
+            ->count();
     }
 
     public function getFrameworkUuidAttribute(): ?string
