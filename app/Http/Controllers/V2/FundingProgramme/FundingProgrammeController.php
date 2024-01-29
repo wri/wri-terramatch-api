@@ -10,7 +10,6 @@ use App\Http\Resources\V2\FundingProgrammes\FundingProgrammeResource;
 use App\Models\V2\FundingProgramme;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
 class FundingProgrammeController extends Controller
@@ -28,10 +27,6 @@ class FundingProgrammeController extends Controller
                 }
             })
             ->with('stages')->paginate($perPage);
-
-        if ($request->query('lang')) {
-            App::setLocale($request->query('lang'));
-        }
 
         return new FundingProgrammeCollection($collection);
     }

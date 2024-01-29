@@ -379,7 +379,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
             //            Route::get('/export', ExportFormSubmissionController::class);
             Route::get('/{form}/export', ExportFormSubmissionController::class);
             Route::prefix('{formSubmission}')->group(function () {
-                Route::get('/', ViewFormSubmissionController::class);
+                Route::get('/', ViewFormSubmissionController::class)->middleware('i18n');
                 Route::delete('/', AdminDeleteFormSubmissionController::class);
                 Route::patch('/status', UpdateFormSubmissionStatusController::class);
             });
@@ -432,46 +432,46 @@ Route::prefix('my')->group(function () {
 Route::post('/users/resend', [AuthController::class, 'resendByEmail']);
 
 Route::prefix('forms')->group(function () {
-    Route::get('/my/submissions', ViewMyFormSubmissionsController::class);
+    Route::get('/my/submissions', ViewMyFormSubmissionsController::class)->middleware('i18n');
     Route::prefix('submissions')->group(function () {
         Route::post('/', StoreFormSubmissionController::class);
         Route::patch('/{formSubmission}', UpdateFormSubmissionController::class);
-        Route::get('/{formSubmission}', ViewFormSubmissionController::class);
-        Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class);
+        Route::get('/{formSubmission}', ViewFormSubmissionController::class)->middleware('i18n');
+        Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class)->middleware('i18n');
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
     Route::get('/linked-field-listing', LinkedFieldListingsController::class);
-    Route::get('/option-labels', FormOptionsLabelController::class);
+    Route::get('/option-labels', FormOptionsLabelController::class)->middleware('i18n');
 
     Route::get('/', IndexFormController::class);
-    Route::get('/{form}', ViewFormController::class);
+    Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
     Route::prefix('projects')->group(function () {
         Route::post('', CreateProjectWithFormController::class);
         Route::post('/{form}', CreateBlankProjectWithFormController::class);
-        Route::get('/{project}', ViewProjectWithFormController::class);
+        Route::get('/{project}', ViewProjectWithFormController::class)->middleware('i18n');
         Route::put('/{project}', UpdateProjectWithFormController::class);
         Route::put('/{project}/submit', SubmitProjectWithFormController::class);
     });
 
     Route::prefix('project-reports')->group(function () {
         Route::post('', CreateProjectReportWithFormController::class);
-        Route::get('/{projectReport}', ViewProjectReportWithFormController::class);
+        Route::get('/{projectReport}', ViewProjectReportWithFormController::class)->middleware('i18n');
         Route::put('/{projectReport}', UpdateProjectReportWithFormController::class);
         Route::put('/{projectReport}/submit', SubmitProjectReportWithFormController::class);
     });
 
     Route::prefix('sites')->group(function () {
         Route::post('', CreateSiteWithFormController::class);
-        Route::get('/{site}', ViewSiteWithFormController::class);
+        Route::get('/{site}', ViewSiteWithFormController::class)->middleware('i18n');
         Route::put('/{site}', UpdateSiteWithFormController::class);
         Route::put('/{site}/submit', SubmitSiteWithFormController::class);
     });
 
     Route::prefix('nurseries')->group(function () {
         Route::post('', CreateNurseryWithFormController::class);
-        Route::get('/{nursery}', ViewNurseryWithFormController::class);
+        Route::get('/{nursery}', ViewNurseryWithFormController::class)->middleware('i18n');
         Route::put('/{nursery}', UpdateNurseryWithFormController::class);
         Route::put('/{nursery}/submit', SubmitNurseryWithFormController::class);
     });
@@ -479,14 +479,14 @@ Route::prefix('forms')->group(function () {
     Route::prefix('site-reports')->group(function () {
         Route::post('', CreateSiteReportWithFormController::class);
         Route::post('/{siteReport}', ViewSiteReportWithFormController::class);
-        Route::get('/{siteReport}', ViewSiteReportWithFormController::class);
+        Route::get('/{siteReport}', ViewSiteReportWithFormController::class)->middleware('i18n');
         Route::put('/{siteReport}', UpdateSiteReportWithFormController::class);
         Route::put('/{siteReport}/submit', SubmitSiteReportWithFormController::class);
     });
 
     Route::prefix('nursery-reports')->group(function () {
         Route::post('', CreateNurseryReportWithFormController::class);
-        Route::get('/{nurseryReport}', ViewNurseryReportWithFormController::class);
+        Route::get('/{nurseryReport}', ViewNurseryReportWithFormController::class)->middleware('i18n');
         Route::put('/{nurseryReport}', UpdateNurseryReportWithFormController::class);
         Route::put('/{nurseryReport}/submit', SubmitNurseryReportWithFormController::class);
     });
@@ -671,7 +671,7 @@ Route::prefix('update-requests')->group(function () {
     Route::delete('/{updateRequest}', AdminSoftDeleteUpdateRequestController::class);
 });
 
-Route::get('/funding-programme', [FundingProgrammeController::class, 'index']);
+Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
 Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
 
 Route::post('file/upload/{model}/{collection}/{uuid}', UploadController::class);
