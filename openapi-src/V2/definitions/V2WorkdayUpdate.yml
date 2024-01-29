@@ -11,3 +11,5 @@ properties:
     type: string
   ethnicity:
     type: string
+  indigeneity:
+    type: string

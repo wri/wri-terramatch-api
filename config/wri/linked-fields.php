@@ -456,7 +456,7 @@ return [
                 //     'option_list_key' => 'workdays-ethnicity',
                 // ],
                 'pro-rep-rel-paid-other-activities' => [
-                    'property' => 'workdaysPaidOtherActivitiesCollection',
+                    'property' => 'workdaysPaidOtherActivities',
                     'label' => 'Paid Other Activities',
                     'resource' => 'App\Http\Resources\V2\Workdays\WorkdayResource',
                     'input_type' => 'workdays',
