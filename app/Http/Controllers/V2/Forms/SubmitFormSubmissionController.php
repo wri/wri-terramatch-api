@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Forms\FormSubmissionResource;
 use App\Models\V2\Forms\FormSubmission;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
 class SubmitFormSubmissionController extends Controller
@@ -20,10 +19,6 @@ class SubmitFormSubmissionController extends Controller
         $formSubmission->feedback = null;
         $formSubmission->feedback_fields = null;
         $formSubmission->save();
-
-        if ($request->query('lang')) {
-            App::setLocale($request->query('lang'));
-        }
 
         ApplicationSubmittedEvent::dispatch($request->user(), $formSubmission);
 
