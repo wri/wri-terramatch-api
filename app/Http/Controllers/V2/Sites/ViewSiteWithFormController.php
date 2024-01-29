@@ -7,17 +7,12 @@ use App\Http\Resources\V2\Sites\SiteWithSchemaResource;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Sites\Site;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 
 class ViewSiteWithFormController extends Controller
 {
     public function __invoke(Request $request, Site $site): SiteWithSchemaResource
     {
         $this->authorize('read', $site);
-
-        if ($request->query('lang')) {
-            App::setLocale($request->query('lang'));
-        }
 
         $schema = Form::where('framework_key', $site->framework_key)
             ->where('model', Site::class)
