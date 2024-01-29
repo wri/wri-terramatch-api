@@ -52,7 +52,7 @@ class FundingProgramme extends Model implements HasMedia
         'description',
         'description_id',
         'organisation_types',
-        'framework_key'
+        'framework_key',
     ];
 
     protected $casts = [

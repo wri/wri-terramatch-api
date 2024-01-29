@@ -20,7 +20,7 @@ class ProjectPolicy extends Policy
         }
 
         return false;
-        
+
     }
 
     public function readAll(?User $user, ?Project $project = null): bool

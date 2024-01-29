@@ -12,13 +12,14 @@ use App\Http\Requests\ResendByEmailRequest;
 use App\Http\Requests\ResendRequest;
 use App\Http\Requests\ResetRequest;
 use App\Http\Requests\VerifyRequest;
+use App\Http\Resources\V2\Projects\ProjectInviteResource;
 use App\Http\Resources\V2\User\MeResource;
 use App\Jobs\ResetPasswordJob;
 use App\Jobs\UserVerificationJob;
 use App\Models\PasswordReset as PasswordResetModel;
 use App\Models\User as UserModel;
-use App\Models\Verification as VerificationModel;
 use App\Models\V2\Projects\ProjectInvite;
+use App\Models\Verification as VerificationModel;
 use DateTime;
 use DateTimeZone;
 use Exception;
@@ -26,9 +27,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
-use App\Http\Resources\V2\Projects\ProjectInviteResource;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -94,14 +94,14 @@ class AuthController extends Controller
         $verification = VerificationModel::where('token', '=', $data['token'])
             ->where('user_id', '=', $me->id)
             ->firstOrFail();
-            $verification->delete();
+        $verification->delete();
         $me->email_address_verified_at = new DateTime('now', new DateTimeZone('UTC'));
+
         return JsonResponseHelper::success((object) [], 200);
     }
 
-
     public function acceptInvite($email): ProjectInviteResource
-    {        
+    {
         $invite = ProjectInvite::where('email_address', $email)
             ->first();
 
@@ -118,8 +118,6 @@ class AuthController extends Controller
 
         return new ProjectInviteResource($invite);
     }
-
-
 
     public function verifyUnauthorizedAction(VerifyRequest $request): JsonResponse
     {
@@ -142,6 +140,7 @@ class AuthController extends Controller
                 $invite->saveOrFail();
             }
         }
+
         return JsonResponseHelper::success((object) [], 200);
     }
 
