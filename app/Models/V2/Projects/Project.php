@@ -36,6 +36,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
 {
@@ -444,19 +446,40 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
         $siteIds = $this->sites()->pluck('id')->toArray();
         $nurseryIds = $this->nurseries()->pluck('id')->toArray();
 
-        $projRepCount = ProjectReport::where('project_id', $this->id)
-            ->where('status', '!=', ProjectReport::STATUS_APPROVED)
-            ->count();
+        $RawDueDates = ProjectReport::where('project_id', $this->id)
+            ->pluck('due_at')
+            ->filter()
+            ->map(function ($carbonObject) {
+                return $carbonObject->format('Y-m-d H:i:s');
+            })
+            ->toArray();
 
-        $siteRepCount = SiteReport::whereIn('site_id', $siteIds)
-            ->where('status', '!=', ProjectReport::STATUS_APPROVED)
-            ->count();
+        $pendingReportingTasks = 0;
 
-        $nurRepCount = NurseryReport::whereIn('nursery_id', $nurseryIds)
-            ->where('status', '!=', ProjectReport::STATUS_APPROVED)
-            ->count();
+        foreach ($RawDueDates as $RawDueDate) {
+            $dueDate = Carbon::parse($RawDueDate);
 
-        return $projRepCount + $siteRepCount + $nurRepCount;
+            $projectReportPending = $this->getReportPendingCount(ProjectReport::class, $dueDate, "project_id", $siteIds, $nurseryIds);
+            $siteRepPending = $this->getReportPendingCount(SiteReport::class, $dueDate, "site_id", $siteIds, $nurseryIds);
+            $nurRepPending = $this->getReportPendingCount(NurseryReport::class, $dueDate, "nursery_id", $siteIds, $nurseryIds);
+
+            if ($projectReportPending + $siteRepPending + $nurRepPending > 0) {
+                $pendingReportingTasks++;
+            }
+        }
+        
+        return $pendingReportingTasks;
+    }
+    
+    private function getReportPendingCount(string $reportType, Carbon $dueDate, string $idColumn, array $siteIds, array $nurseryIds): int
+    {
+        $ids = ($reportType === ProjectReport::class) ? [$this->id] : (($reportType === SiteReport::class) ? $siteIds : $nurseryIds);
+    
+        return $reportType::whereIn($idColumn, $ids)
+            ->whereMonth('due_at', $dueDate->month)
+            ->whereYear('due_at', $dueDate->year)
+            ->whereNotIn('status', [ProjectReport::STATUS_APPROVED, ProjectReport::STATUS_AWAITING_APPROVAL])
+            ->count();
     }
 
     public function getFrameworkUuidAttribute(): ?string
