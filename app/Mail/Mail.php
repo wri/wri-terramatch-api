@@ -26,7 +26,7 @@ abstract class Mail extends Mailable implements ShouldQueue
     public $cta = '';
 
     public $monitoring = false;
-    
+
     public $invite = false;
 
     public $transactional = false;

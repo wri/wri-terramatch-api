@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Carbon\Carbon;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\Nurseries\NurseryReport;
-use App\Models\V2\Projects\Project;
-use App\Models\V2\Tasks\Task;
 use App\Models\Framework;
 use App\Models\V2\Action;
+use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\Tasks\Task;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class UpdateDueDateForReportsCommand extends Command
 {
@@ -30,12 +30,12 @@ class UpdateDueDateForReportsCommand extends Command
 
     public function handle(): int
     {
-   
+
         $startCreateDate = Carbon::parse($this->argument('startCreateDate'));
         $endCreateDate = Carbon::parse($this->argument('endCreateDate'));
         $dueDatePPC = Carbon::parse($this->argument('dueDatePPC'));
         $dueDateTerrafund = Carbon::parse($this->argument('dueDateTerrafund'));
-        
+
         $allFrameworks = Framework::all();
 
         $frameworks = $allFrameworks->map(function ($framework) {
@@ -54,7 +54,7 @@ class UpdateDueDateForReportsCommand extends Command
 
                     $siteIds = $project->sites()->pluck('id')->toArray();
                     $nurseryIds = $project->nurseries()->pluck('id')->toArray();
-                    
+
                     SiteReport::whereBetween('created_at', [$startCreateDate, $endCreateDate])
                     ->whereIn('site_id', $siteIds)
                     ->where('framework_key', $framework)
@@ -90,6 +90,7 @@ class UpdateDueDateForReportsCommand extends Command
 
         }
         $this->info('Due dates updated successfully.');
+
         return 0;
     }
 }

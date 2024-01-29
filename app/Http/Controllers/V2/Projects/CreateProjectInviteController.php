@@ -8,13 +8,12 @@ use App\Http\Requests\V2\Projects\CreateProjectInviteRequest;
 use App\Http\Resources\V2\Projects\ProjectInviteResource;
 use App\Mail\V2ProjectInviteReceived;
 use App\Mail\V2ProjectMonitoringNotification;
+use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
 use App\Models\V2\User;
-use App\Models\V2\Organisation;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
 
 class CreateProjectInviteController extends Controller
 {
@@ -46,6 +45,7 @@ class CreateProjectInviteController extends Controller
             $projectInvite = $project->invites()->create($data);
             Mail::to($data['email_address'])->queue(new V2ProjectInviteReceived($project->name, $organisation->name, $url));
         }
+
         return new ProjectInviteResource($projectInvite);
     }
 

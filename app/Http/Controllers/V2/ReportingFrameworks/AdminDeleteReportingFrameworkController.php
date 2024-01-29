@@ -1,27 +1,17 @@
 <?php
 
-
 namespace App\Http\Controllers\V2\ReportingFrameworks;
 
-
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V2\ReportingFrameworks\CreateReportingFrameworkRequest;
-use App\Http\Resources\V2\ReportingFrameworks\ReportingFrameworkResource;
 use App\Models\Framework;
-use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
+use App\Models\V2\Forms\Form;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Artisan;
-use App\Models\V2\Forms\Form;
-use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Nurseries\NurseryReport;
-use App\Models\V2\Projects\Project;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\Site;
-use App\Models\V2\Sites\SiteReport;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 
-class AdminDeleteReportingFrameworkController extends Controller {
+class AdminDeleteReportingFrameworkController extends Controller
+{
     public function __invoke(String $uuid)
     {
         // Remove Framework
