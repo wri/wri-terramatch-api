@@ -38,7 +38,7 @@ class UpdateUrlBucketCommand extends Command
         $this->updateTable('pitch_document_versions', 'document', $oldBucketName, $newBucketName);
         $this->updateTable('pitch_versions', 'cover_photo', $oldBucketName, $newBucketName);
         $this->updateTable('pitch_versions', 'video', $oldBucketName, $newBucketName);
-        $this->updateTable('programmes', 'cover_photo', $oldBucketName, $newBucketName);
+        $this->updateTable('programmes', 'thumbnail', $oldBucketName, $newBucketName);
         $this->updateTable('satellite_monitors', 'map', $oldBucketName, $newBucketName);
         $this->updateTable('sites', 'stratification_for_heterogeneity', $oldBucketName, $newBucketName);
         $this->updateTable('socioeconomic_benefits', 'upload', $oldBucketName, $newBucketName);
@@ -72,7 +72,6 @@ class UpdateUrlBucketCommand extends Command
 
                 DB::table($tableName)->where('id', $record->id)->update([$columnName => $newValue]);
 
-                $this->info("Updated $tableName record with id $record->id: $columnName from $originalValue to $newValue");
             }
         } else {
             $this->warn("Table $tableName or column $columnName not found. Skipped.");
