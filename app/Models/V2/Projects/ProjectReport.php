@@ -133,6 +133,7 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         'equitable_opportunities',
         'local_engagement',
         'site_addition',
+        'paid_other_activity_description'
     ];
 
     public $casts = [

@@ -48,7 +48,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
             $list = [];
             foreach ($answer as $item) {
                 if (is_array($item)) {
-                    $list[] = $item['amount'].':'.$item['gender'].':'.$item['age'].':'.$item['ethnicity'];
+                    $list[] = $item['amount'].':'.$item['gender'].':'.$item['age'].':'.$item['ethnicity'].':'.$item['indigeneity'];
                 } else {
                     $list[] = $item;
                 }
@@ -71,7 +71,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     return $this->stringifyModel($answer, ['name', 'amount']);
 
                 case 'workdays':
-                    return $this->stringifyModel($answer, ['amount', 'gender', 'age', 'ethnicity']);
+                    return $this->stringifyModel($answer, ['amount', 'gender', 'age', 'ethnicity', 'indigeneity']);
 
                 case 'leadershipTeam':
                     return $this->stringifyModel($answer, ['first_name', 'last_name', 'position', 'gender', 'age',]);
