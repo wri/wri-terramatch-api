@@ -41,9 +41,6 @@ class SubmitProjectWithFormController extends Controller
                 ->where('targetable_id', $updateRequest->id)
                 ->delete();
 
-            Action::where('targetable_type', $updateRequest->updaterequestable_type)
-                ->where('targetable_id', $updateRequest->updaterequestable_id)
-                ->delete();
         } else {
             $project->status = Project::STATUS_AWAITING_APPROVAL;
             $project->save();
