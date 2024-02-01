@@ -20,6 +20,7 @@ class WorkdayResource extends JsonResource
             'gender' => $this->gender,
             'age' => $this->age,
             'ethnicity' => $this->ethnicity,
+            'indigeneity' => $this->indigeneity,
         ];
     }
 }

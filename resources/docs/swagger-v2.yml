@@ -9220,6 +9220,8 @@ definitions:
         type: string
       ethnicity:
         type: string
+      indigeneity:
+        type: string
   V2WorkdayCreate:
     title: V2WorkdayCreate
     type: object
@@ -9238,6 +9240,8 @@ definitions:
         type: string
       ethnicity:
         type: string
+      indigeneity:
+        type: string
   V2WorkdayUpdate:
     title: V2WorkdayUpdate
     type: object
@@ -9251,6 +9255,8 @@ definitions:
       age:
         type: string
       ethnicity:
+        type: string
+      indigeneity:
         type: string
   V2WorkdaysPaginated:
     type: object
@@ -9272,6 +9278,8 @@ definitions:
             age:
               type: string
             ethnicity:
+              type: string
+            indigeneity:
               type: string
       links:
         type: object
@@ -57243,6 +57251,8 @@ paths:
                 type: string
               ethnicity:
                 type: string
+              indigeneity:
+                type: string
       parameters:
         - in: body
           name: body
@@ -57263,6 +57273,8 @@ paths:
               age:
                 type: string
               ethnicity:
+                type: string
+              indigeneity:
                 type: string
   '/v2/workdays/{UUID}':
     patch:
@@ -57298,6 +57310,8 @@ paths:
                     age:
                       type: string
                     ethnicity:
+                      type: string
+                    indigeneity:
                       type: string
               links:
                 type: object
@@ -57375,6 +57389,8 @@ paths:
                     age:
                       type: string
                     ethnicity:
+                      type: string
+                    indigeneity:
                       type: string
               links:
                 type: object
