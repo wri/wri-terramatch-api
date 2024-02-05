@@ -35,10 +35,14 @@ class CreateSpecificSiteReportCommand extends Command
 
         if ($site) {
 
-            $task = Task::where('project_id', $site->project_id)->latest()->first();
+            $task = Task::withTrashed()->where('project_id', $site->project_id)->latest()->first();
             $dueDate = Carbon::parse($task->due_at);
 
             if ($task) {
+                if ($task->trashed()) {
+                    $task->restore();
+                    $this->info("Task restored for project {$site->project_id}");
+                }
                 if ($task->status !== 'due') {
                     $task->update(['status' => 'due']);
                     $this->info("Task status updated to 'due' for project {$site->project_id}");
