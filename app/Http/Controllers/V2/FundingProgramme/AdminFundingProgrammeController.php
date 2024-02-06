@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\FundingProgramme;
 
+use App\Helpers\I18nHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\StoreFundingProgrammeRequest;
 use App\Http\Requests\V2\UpdateFundingProgrammeRequest;
@@ -39,6 +40,9 @@ class AdminFundingProgrammeController extends Controller
     public function store(StoreFundingProgrammeRequest $storeFundingProgrammeRequest): FundingProgrammeResource
     {
         $fundingProgramme = FundingProgramme::create($storeFundingProgrammeRequest->validated());
+        $fundingProgramme->name_id = I18nHelper::generateI18nItem($fundingProgramme, 'name');
+        $fundingProgramme->description_id = I18nHelper::generateI18nItem($fundingProgramme, 'description');
+        $fundingProgramme->save();
 
         return new FundingProgrammeResource($fundingProgramme);
     }
@@ -51,6 +55,8 @@ class AdminFundingProgrammeController extends Controller
     public function update(UpdateFundingProgrammeRequest $updateFundingProgrammeRequest, FundingProgramme $fundingProgramme): FundingProgrammeResource
     {
         $fundingProgramme->update($updateFundingProgrammeRequest->validated());
+        $fundingProgramme->name_id = I18nHelper::generateI18nItem($fundingProgramme, 'name');
+        $fundingProgramme->description_id = I18nHelper::generateI18nItem($fundingProgramme, 'description');
         $fundingProgramme->save();
 
         return new FundingProgrammeResource($fundingProgramme);
