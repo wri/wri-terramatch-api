@@ -478,7 +478,7 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
         return $reportType::whereIn($idColumn, $ids)
             ->whereMonth('due_at', $dueDate->month)
             ->whereYear('due_at', $dueDate->year)
-            ->whereNotIn('status', [ProjectReport::STATUS_APPROVED, ProjectReport::STATUS_AWAITING_APPROVAL])
+            ->whereIn('status', [ProjectReport::STATUS_DUE, ProjectReport::STATUS_STARTED])
             ->count();
     }
 
