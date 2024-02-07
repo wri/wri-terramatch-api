@@ -31,9 +31,9 @@ class IndexFormController extends Controller
                 'document', 'duration', 'published',
                 'created_at', 'updated_at', 'deleted_at',
             ]);
-            
+
         $filter = $request->query('filter');
-        if ($filter){
+        if ($filter) {
             $query->whereNull('framework_key');
         }
 

@@ -31,7 +31,7 @@ class UpdateStageController extends Controller
             $form = Form::isUuid($updateStageRequest->get('form_id'))->first();
             $form->update([
                 'stage_id' => $stage->uuid,
-                'framework_key' => $frameworkKey
+                'framework_key' => $frameworkKey,
             ]);
         }
 

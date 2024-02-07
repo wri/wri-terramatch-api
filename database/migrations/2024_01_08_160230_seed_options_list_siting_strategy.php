@@ -16,7 +16,7 @@ class SeedOptionsListSitingStrategy extends Migration
      */
     public function up()
     {
-        $collections = [            
+        $collections = [
             'siting-strategy' => ['Concentrated','Distributed'],
         ];
 

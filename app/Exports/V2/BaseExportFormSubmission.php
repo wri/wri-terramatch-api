@@ -53,6 +53,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     $list[] = $item;
                 }
             }
+
             return implode('|', $list);
         }
 

@@ -78,7 +78,7 @@ class ProjectResource extends JsonResource
             'land_tenure_project_area' => $this->land_tenure_project_area,
             'organisation' => new OrganisationLiteResource($this->organisation),
             'application' => new ApplicationLiteResource($this->application),
-            'migrated' => !empty($this->old_model),
+            'migrated' => ! empty($this->old_model),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
