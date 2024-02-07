@@ -19,6 +19,7 @@ class UpdateWorkdayRequest extends FormRequest
             'collection' => 'sometimes|nullable|string|in:' . implode(',', array_keys(array_merge(Workday::$siteCollections, Workday::$projectCollections))),
             'gender' => 'sometimes|nullable|string|between:1,255',
             'ethnicity' => 'sometimes|nullable|string|between:1,255',
+            'indigeneity' => 'sometimes|nullable|string|between:1,255',
             'age' => 'sometimes|nullable|string|between:1,255',
         ];
     }
