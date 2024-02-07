@@ -11,18 +11,22 @@ trait UsesLinkedFields
         $localAnswers = [];
         foreach ($this->form->sections as $section) {
             foreach ($section->questions as $question) {
-                $value = data_get($input, $question->uuid);
-                if ($value) {
-                    if (empty($question->linked_field_key)) {
-                        $localAnswers[$question->uuid] = data_get($input, $question->uuid);
-                    }
-                    $linkedFieldInfo = $question->getLinkedFieldInfo([
-                        'organisation' => $this->organisation,
-                        'project-pitch' => $this->projectPitch,
-                    ]);
+                if ($question->input_type === 'conditional') {
+                    $localAnswers[$question->uuid] = data_get($input, $question->uuid);
+                } else {
+                    $value = data_get($input, $question->uuid);
+                    if ($value) {
+                        if (empty($question->linked_field_key)) {
+                            $localAnswers[$question->uuid] = data_get($input, $question->uuid);
+                        }
+                        $linkedFieldInfo = $question->getLinkedFieldInfo([
+                            'organisation' => $this->organisation,
+                            'project-pitch' => $this->projectPitch,
+                        ]);
 
-                    if (! empty($linkedFieldInfo)) {
-                        $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid));
+                        if (! empty($linkedFieldInfo)) {
+                            $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid));
+                        }
                     }
                 }
             }
@@ -89,14 +93,18 @@ trait UsesLinkedFields
 
         foreach ($this->form->sections as $section) {
             foreach ($section->questions as $question) {
-                if (empty($question->linked_field_key)) {
+                if ($question->input_type === 'conditional') {
                     $answers[$question->uuid] = data_get($this->answers, $question->uuid);
-                }
+                } else {
+                    if (empty($question->linked_field_key)) {
+                        $answers[$question->uuid] = data_get($this->answers, $question->uuid);
+                    }
 
-                $linkedFieldInfo = $question->getLinkedFieldInfo($params);
+                    $linkedFieldInfo = $question->getLinkedFieldInfo($params);
 
-                if (! empty($linkedFieldInfo)) {
-                    $answers[$question->uuid] = $this->getLinkedFieldValue($linkedFieldInfo);
+                    if (! empty($linkedFieldInfo)) {
+                        $answers[$question->uuid] = $this->getLinkedFieldValue($linkedFieldInfo);
+                    }
                 }
             }
         }
