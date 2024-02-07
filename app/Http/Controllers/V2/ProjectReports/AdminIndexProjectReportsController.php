@@ -4,12 +4,12 @@ namespace App\Http\Controllers\V2\ProjectReports;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\ProjectReports\ProjectReportsCollection;
+use App\Models\Framework;
 use App\Models\V2\Projects\ProjectReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-use App\Models\Framework;
 
 class AdminIndexProjectReportsController extends Controller
 {

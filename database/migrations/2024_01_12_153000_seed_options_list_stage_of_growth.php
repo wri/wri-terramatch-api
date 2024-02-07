@@ -16,7 +16,7 @@ class SeedOptionsListStageOfGrowth extends Migration
      */
     public function up()
     {
-        $collections = [            
+        $collections = [
             'growith-stage' => ['Idea','Pilot', 'Early Revenue', 'Growth'],
         ];
 

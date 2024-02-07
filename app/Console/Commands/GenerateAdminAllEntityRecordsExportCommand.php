@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Jobs\V2\GenerateAdminAllEntityRecordsExportJob;
-use Illuminate\Console\Command;
 use App\Models\Framework;
+use Illuminate\Console\Command;
 
 class GenerateAdminAllEntityRecordsExportCommand extends Command
 {

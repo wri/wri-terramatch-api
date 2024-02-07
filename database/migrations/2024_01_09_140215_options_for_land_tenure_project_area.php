@@ -60,7 +60,6 @@ class OptionsForLandTenureProjectArea extends Migration
         I18nItem::where('type', 'long')->where('status', I18nItem::STATUS_DRAFT)->delete();
     }
 
-
     private function generateIfMissingI18nItem(Model $target, string $property): ?int
     {
         $value = trim(data_get($target, $property, false));
