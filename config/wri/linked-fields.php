@@ -414,6 +414,7 @@ return [
                 'pro-rep-equitable-opportunities' => ['property' => 'equitable_opportunities', 'label' => 'Equitable Opportunities for Women + Youth', 'input_type' => 'long-text'],
                 'pro-rep-local-engagement' => ['property' => 'local_engagement', 'label' => 'Community Engagement Approach', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'local-engagement'],
                 'pro-rep-site-addition' => ['property' => 'site_addition', 'label' => 'Site Addition', 'input_type' => 'boolean'],
+                'pro-rep-paid-other-activity-description' => ['property' => 'paid_other_activity_description', 'label' => 'Paid Other Activities Description', 'input_type' => 'long-text'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [
@@ -456,7 +457,7 @@ return [
                 //     'option_list_key' => 'workdays-ethnicity',
                 // ],
                 'pro-rep-rel-paid-other-activities' => [
-                    'property' => 'workdaysPaidOtherActivitiesCollection',
+                    'property' => 'workdaysPaidOtherActivities',
                     'label' => 'Paid Other Activities',
                     'resource' => 'App\Http\Resources\V2\Workdays\WorkdayResource',
                     'input_type' => 'workdays',
@@ -603,6 +604,7 @@ return [
                 'site-rep-seeds-planted' => ['property' => 'seeds_planted', 'label' => 'Seeds planted', 'input_type' => 'number'],
                 'site-rep-workdays-volunteer' => ['property' => 'workdays_volunteer', 'label' => 'Workdays volunteer', 'input_type' => 'number'],
                 'site-rep-polygon-status' => ['property' => 'polygon_status', 'label' => 'Polygon status', 'input_type' => 'long-text'],
+                'site-rep-paid-other-activity-description' => ['property' => 'paid_other_activity_description', 'label' => 'Paid Other Activities Description', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'site-rep-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
