@@ -170,6 +170,11 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
         return  empty($this->nursery) ? $this->nursery : $this->nursery->project();
     }
 
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
+    }
+
     public function organisation(): BelongsTo
     {
         return empty($this->project) ? $this->project : $this->project->organisation();
@@ -215,7 +220,7 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
 
     public function getTaskUuidAttribute(): ?string
     {
-        return is_null($this->due_at) ? null : (Task::forProjectAndDate($this->project, $this->due_at)->first()->uuid ?? null);
+        return $this->task->uuid ?? null;
     }
 
     public function getFrameworkUuidAttribute(): ?string

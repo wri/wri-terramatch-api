@@ -222,6 +222,11 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         return $this->belongsTo(Project::class);
     }
 
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
+    }
+
     public function organisation(): BelongsTo
     {
         return empty($this->project) ? $this->project : $this->project->organisation();
@@ -305,7 +310,7 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
     /** Calculated Values */
     public function getTaskUuidAttribute(): ?string
     {
-        return is_null($this->due_at) ? null : (Task::forProjectAndDate($this->project, $this->due_at)->first()->uuid ?? null);
+        return $this->task->uuid ?? null;
     }
 
     public function getFrameworkUuidAttribute(): ?string
