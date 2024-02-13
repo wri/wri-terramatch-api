@@ -182,6 +182,11 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         return empty($this->site) ? $this->site : $this->site->project();
     }
 
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
+    }
+
     public function organisation(): BelongsTo
     {
         return  empty($this->project) ? $this->project : $this->project->organisation();
@@ -319,7 +324,7 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
 
     public function getTaskUuidAttribute(): ?string
     {
-        return is_null($this->due_at) ? null : (Task::forProjectAndDate($this->project, $this->due_at)->first()->uuid ?? null);
+        return $this->task->uuid ?? null;
     }
 
     public function toSearchableArray()
