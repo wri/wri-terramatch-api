@@ -63,6 +63,7 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         'old_model',
         'old_id',
         'project_id',
+        'task_id',
         'due_at',
         'status',
         'update_request_status',

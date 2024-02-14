@@ -100,6 +100,7 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         'old_id',
         'old_model',
         'site_id',
+        'task_id',
         'feedback',
         'feedback_fields',
         'polygon_status',
