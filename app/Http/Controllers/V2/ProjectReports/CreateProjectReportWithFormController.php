@@ -11,6 +11,7 @@ use App\Models\V2\Projects\ProjectReport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
+// TODO (NJC): Creating reports with a form is not valid, and will be removed from the API in a future ticket.
 class CreateProjectReportWithFormController extends Controller
 {
     public function __invoke(CreateEntityFormRequest $formRequest)
