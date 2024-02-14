@@ -55,6 +55,7 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
     protected $fillable = [
         'framework_key',
         'nursery_id',
+        'task_id',
         'due_at',
         'status',
         'update_request_status',
