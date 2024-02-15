@@ -34,8 +34,8 @@ class SubmitNurseryWithFormController extends Controller
             ->first();
 
         if (! empty($updateRequest)) {
-            $updateRequest->status = UpdateRequest::STATUS_AWAITING_APPROVAL;
-            $nursery->save();
+            $updateRequest->update([ 'status' => UpdateRequest::STATUS_AWAITING_APPROVAL ]);
+            $nursery->update([ 'update_request_status' => UpdateRequest::STATUS_AWAITING_APPROVAL ]);
 
             Action::where('targetable_type', UpdateRequest::class)
                 ->where('targetable_id', $updateRequest->id)
