@@ -91,8 +91,9 @@ trait UsesLinkedFields
                     if (! empty($linkedFieldInfo)) {
                         $answers[$question->uuid] = $this->getLinkedFieldValue($linkedFieldInfo);
                     }
+                } else {
+                    $answers[$question->uuid] = data_get($this->answers, $question->uuid);
                 }
-                $answers[$question->uuid] = data_get($this->answers, $question->uuid);
             }
         }
 
