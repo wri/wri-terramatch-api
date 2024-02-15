@@ -20,6 +20,9 @@ class OrganisationApproveUserController extends Controller
         $this->authorize('approveRejectUser', $organisation);
 
         $organisation->partners()->updateExistingPivot($user, ['status' => 'approved'], false);
+        $user->update([
+            'organisation_id' => $organisation->id,
+        ]);
 
         OrganisationUserRequestApprovedEvent::dispatch($request->user(), $user, $organisation);
 
