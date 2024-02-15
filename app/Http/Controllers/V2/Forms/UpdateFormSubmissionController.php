@@ -24,6 +24,7 @@ class UpdateFormSubmissionController extends Controller
         $formSubmission->update($data);
         if ($formSubmission->application) {
             $formSubmission->application->update(['updated_by' => Auth::user()->id]);
+            $formSubmission->application->touch();
         }
 
         if ($updateFormSubmissionRequest->query('lang')) {

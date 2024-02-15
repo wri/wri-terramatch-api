@@ -24,6 +24,7 @@ class SubmitFormSubmissionController extends Controller
 
         if ($formSubmission->application) {
             $formSubmission->application->update(['updated_by' => Auth::user()->id]);
+            $formSubmission->application->touch();
         }
 
         return new FormSubmissionResource($formSubmission);
