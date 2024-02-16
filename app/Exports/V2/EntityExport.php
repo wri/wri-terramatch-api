@@ -125,14 +125,11 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         }
 
         if ($this->form->type === 'nursery-report') {
-            $initialHeadings[] = 'nursery-id';
-            $initialHeadings[] = 'nursery-name';
+            $initialHeadings = array_merge($initialHeadings, ['nursery-id', 'nursery-name']);
         }
 
         if ($this->form->type === 'site-report') {
-            $initialHeadings[] = 'site-id';
-            $initialHeadings[] = 'site-name';
-            $initialHeadings[] = 'total_trees_planted';
+            $initialHeadings = array_merge($initialHeadings, ['site-id', 'site-name', 'total_trees_planted']);
             if($this->form->framework_key === 'ppc') {
                 $initialHeadings[] = 'total_seeds_planted';
             } 
