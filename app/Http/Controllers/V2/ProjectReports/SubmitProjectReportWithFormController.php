@@ -34,8 +34,8 @@ class SubmitProjectReportWithFormController extends Controller
             ->first();
 
         if (! empty($updateRequest)) {
-            $updateRequest->status = UpdateRequest::STATUS_AWAITING_APPROVAL;
-            $projectReport->save();
+            $updateRequest->update([ 'status' => UpdateRequest::STATUS_AWAITING_APPROVAL ]);
+            $projectReport->update([ 'update_request_status' => UpdateRequest::STATUS_AWAITING_APPROVAL ]);
 
             Action::where('targetable_type', UpdateRequest::class)
                 ->where('targetable_id', $updateRequest->id)
