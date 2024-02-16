@@ -71,18 +71,31 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $entity->uuid,
             $organisation->readable_type ?? null,
             $organisation->name ?? null,
+            $entity->project->name ?? null,
+            $entity->status ?? null,
+            $entity->due_at ?? null
         ];
 
         if (in_array($this->form->type, ['nursery', 'nursery-report','site', 'site-report', 'project-report'])) {
             $mapped[] = $entity->project->old_id ?? ($entity->project->id ?? null);
         }
 
+        if ($this->form->type === 'project-report') {
+            $mapped[] = $entity->project->uuid ?? null;
+            if($this->form->framework_key === 'ppc') {
+                $mapped[] = $entity->seedlings_grown  ?? null;
+            } 
+        }
         if ($this->form->type === 'nursery-report') {
             $mapped[] = $entity->nursery->old_id ?? ($entity->nursery->id ?? null);
+            $mapped[] = $entity->nursery->name ?? null;
         }
 
         if ($this->form->type === 'site-report') {
             $mapped[] = $entity->site->old_id ?? ($entity->site->id ?? null);
+            $mapped[] = $entity->site->name ?? null;
+            $mapped[] = $entity->treeSpecies()->sum('amount') > 0 ? $entity->site->trees_planted_count ?? null : null;
+            $mapped[] = $entity->site->seeds_planted_count ?? null;
         }
 
         return $mapped;
@@ -95,18 +108,34 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             'uuid',
             'organization-readable_type',
             'organization-name',
+            'project_name',
+            'status',
+            'due_date'
         ];
 
         if (in_array($this->form->type, ['nursery', 'nursery-report','site', 'site-report', 'project-report'])) {
             $initialHeadings[] = 'project-id';
         }
 
+        if ($this->form->type === 'project-report') {
+            $initialHeadings[] = 'project_uuid';
+            if($this->form->framework_key === 'ppc') {
+                $initialHeadings[] = 'total_seedlings_grown';
+            } 
+        }
+
         if ($this->form->type === 'nursery-report') {
             $initialHeadings[] = 'nursery-id';
+            $initialHeadings[] = 'nursery-name';
         }
 
         if ($this->form->type === 'site-report') {
             $initialHeadings[] = 'site-id';
+            $initialHeadings[] = 'site-name';
+            $initialHeadings[] = 'total_trees_planted';
+            if($this->form->framework_key === 'ppc') {
+                $initialHeadings[] = 'total_seeds_planted';
+            } 
         }
 
         return $initialHeadings;
