@@ -462,8 +462,9 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
             $projectReportPending = $this->getReportPendingCount(ProjectReport::class, $dueDate, "project_id", $siteIds, $nurseryIds);
             $siteRepPending = $this->getReportPendingCount(SiteReport::class, $dueDate, "site_id", $siteIds, $nurseryIds);
             $nurRepPending = $this->getReportPendingCount(NurseryReport::class, $dueDate, "nursery_id", $siteIds, $nurseryIds);
+            $hasPendingTask = Task::forProjectAndDate($this, $dueDate)->whereNot('status', Task::STATUS_COMPLETE)->exists();
 
-            if ($projectReportPending + $siteRepPending + $nurRepPending > 0) {
+            if ($projectReportPending + $siteRepPending + $nurRepPending > 0 || $hasPendingTask) {
                 $pendingReportingTasks++;
             }
         }

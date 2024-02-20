@@ -20,7 +20,7 @@ trait HandlesUpdateRequests
 
         if (! empty($updateRequest)) {
             $updateRequest->content = array_merge($updateRequest->content, $answers);
-            $updateRequest->status = UpdateRequest::STATUS_AWAITING_APPROVAL;
+            $updateRequest->status = UpdateRequest::STATUS_DRAFT;
             $updateRequest->save();
         } else {
             $updateRequest = UpdateRequest::create([
@@ -30,7 +30,7 @@ trait HandlesUpdateRequests
                 'framework_key' => $entity->framework_key,
                 'updaterequestable_type' => get_class($entity),
                 'updaterequestable_id' => $entity->id,
-                'status' => UpdateRequest::STATUS_AWAITING_APPROVAL,
+                'status' => UpdateRequest::STATUS_DRAFT,
                 'content' => $answers,
             ]);
         }
