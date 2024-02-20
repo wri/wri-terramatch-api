@@ -34,17 +34,10 @@ class UpdateFormController extends Controller
 
             /** Update the form questions in each section */
             foreach (data_get($formSection, 'form_questions', []) as $formQuestion) {
-                $this->handleQuestions($formQuestion, $currentFormSection);
-            }
-        }
-
-        foreach (data_get($updateFormRequest, 'form_sections', []) as $formSection) {
-            $currentFormSection = $this->updateFormSection($formSection, $form);
-
-            foreach (data_get($formSection, 'form_questions', []) as $formQuestion) {
-                $this->handleQuestions($formQuestion, $currentFormSection);
                 if (data_get($formQuestion, "input_type") == "select") {
                     $this->updateFormQuestion($formQuestion, $currentFormSection);
+                } else {
+                    $this->handleQuestions($formQuestion, $currentFormSection);
                 }
             }
         }
