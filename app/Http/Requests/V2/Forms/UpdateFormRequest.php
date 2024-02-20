@@ -30,6 +30,7 @@ class UpdateFormRequest extends FormRequest
             'form_sections.*.title' => ['sometimes', 'nullable', 'string', 'max:65000'],
             'form_sections.*.subtitle' => ['sometimes', 'nullable', 'string', 'max:65000'],
             'form_sections.*.description' => ['sometimes', 'nullable', 'max:65000'],
+            'form_sections.*.options_other' => ['sometimes', 'boolean'],
 
             'form_sections.*.form_questions' => ['sometimes', 'nullable', 'array'],
             'form_sections.*.form_questions.*.linked_field_key' => ['sometimes', 'nullable', 'string'],
@@ -44,6 +45,7 @@ class UpdateFormRequest extends FormRequest
             'form_sections.*.form_questions.*.additional_props' => ['sometimes', 'nullable'],
             'form_sections.*.form_questions.*.order' => ['sometimes', 'nullable', 'integer'],
             'form_sections.*.form_questions.*.options_list' => ['sometimes', 'nullable'],
+            'form_sections.*.form_questions.*.options_other' => ['sometimes', 'boolean'],
 
             'form_sections.*.form_questions.*.form_question_options' => ['sometimes', 'nullable', 'array'],
             'form_sections.*.form_questions.*.form_question_options.*.uuid' => ['sometimes', 'nullable', 'string'],
