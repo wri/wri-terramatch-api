@@ -432,35 +432,12 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
 
     public function getSiteReportsCountAttribute(): int
     {
-        if (empty($this->due_at)) {
-            return 0;
-        }
-
-        $siteIds = $this->project->sites()->pluck('id')->toArray();
-
-        $month = $this->due_at->month;
-        $year = $this->due_at->year;
-
-        return SiteReport::whereIn('site_id', $siteIds)
-            ->whereMonth('due_at', $month)
-            ->whereYear('due_at', $year)
-            ->count();
+        return $this->task->siteReports()->count() ?? 0;
     }
 
     public function getNurseryReportsCountAttribute(): ?int
     {
-        if (empty($this->due_at)) {
-            return 0;
-        }
-
-        $nurseryIds = $this->project->nurseries()->pluck('id')->toArray();
-        $month = $this->due_at->month;
-        $year = $this->due_at->year;
-
-        return NurseryReport::whereIn('nursery_id', $nurseryIds)
-            ->whereMonth('due_at', $month)
-            ->whereYear('due_at', $year)
-            ->count();
+        return $this->task->nurseryReports()->count() ?? 0;
     }
 
     public function scopeProjectUuid(Builder $query, string $projectUuid): Builder
