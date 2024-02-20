@@ -3,8 +3,10 @@
 namespace App\Jobs\V2;
 
 use App\Models\V2\Action;
+use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -13,7 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class CreateProjectReportDueJob implements ShouldQueue
+class CreateTaskDueJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -41,14 +43,7 @@ class CreateProjectReportDueJob implements ShouldQueue
         Project::where('framework_key', $this->frameworkKey)
             ->chunkById(100, function ($projects) {
                 foreach ($projects as $project) {
-                    $report = ProjectReport::create([
-                        'framework_key' => $this->frameworkKey,
-                        'project_id' => $project->id,
-                        'status' => ProjectReport::STATUS_DUE,
-                        'due_at' => $this->dueDate,
-                    ]);
-
-                    Task::create([
+                    $task = Task::create([
                         'organisation_id' => $project->organisation_id,
                         'project_id' => $project->id,
                         'status' => Task::STATUS_DUE,
@@ -56,22 +51,46 @@ class CreateProjectReportDueJob implements ShouldQueue
                         'due_at' => $this->dueDate,
                     ]);
 
-                    $nurseryCount = $project->nurseries()->count();
-                    $siteCount = $project->sites()->count();
-                    if ($nurseryCount != 0 && $siteCount != 0) {
-                        $message = 'Project, site and nursery reports available';
-                    } elseif ($nurseryCount > 0) {
-                        $message = 'Project and nursery reports available';
-                    } elseif ($siteCount > 0) {
-                        $message = 'Project and site reports available';
-                    } else {
-                        $message = 'Project report available';
+                    $projectReport = $task->projectReport()->create([
+                        'framework_key' => $this->frameworkKey,
+                        'project_id' => $project->id,
+                        'status' => ProjectReport::STATUS_DUE,
+                        'due_at' => $this->dueDate,
+                    ]);
+
+                    $hasSite = false;
+                    foreach ($project->sites as $site) {
+                        $hasSite = true;
+                        $task->siteReports()->create([
+                            'framework_key' => $this->frameworkKey,
+                            'site_id' => $site->id,
+                            'status' => SiteReport::STATUS_DUE,
+                            'due_at' => $this->dueDate,
+                        ]);
                     }
+
+                    $hasNursery = false;
+                    foreach ($project->nurseries as $nursery) {
+                        $hasNursery = true;
+                        $task->nurseryReports()->create([
+                            'framework_key' => $this->frameworkKey,
+                            'nursery_id' => $nursery->id,
+                            'status' => NurseryReport::STATUS_DUE,
+                            'due_at' => $this->dueDate,
+                        ]);
+                    }
+
+                    $labels = ['Project'];
+                    if ($hasSite) $labels[] = 'site';
+                    if ($hasNursery) $labels[] = 'nursery';
+                    $message = printf('%s %s available',
+                        implode(', ', $labels),
+                        count($labels) > 1 ? 'reports' : 'report');
 
                     Action::create([
                         'status' => Action::STATUS_PENDING,
                         'targetable_type' => ProjectReport::class,
-                        'targetable_id' => $report->id,
+                        'targetable_id' => $projectReport->id,
                         'type' => Action::TYPE_NOTIFICATION,
                         'title' => 'Project report',
                         'sub_title' => '',

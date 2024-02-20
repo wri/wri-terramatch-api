@@ -11,6 +11,7 @@ use App\Models\V2\Nurseries\NurseryReport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
+// TODO (NJC): Creating reports with a form is not valid, and will be removed from the API in a future ticket.
 class CreateNurseryReportWithFormController extends Controller
 {
     public function __invoke(Form $form, CreateEntityFormRequest $formRequest)
