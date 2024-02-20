@@ -462,7 +462,13 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
             $projectReportPending = $this->getReportPendingCount(ProjectReport::class, $dueDate, "project_id", $siteIds, $nurseryIds);
             $siteRepPending = $this->getReportPendingCount(SiteReport::class, $dueDate, "site_id", $siteIds, $nurseryIds);
             $nurRepPending = $this->getReportPendingCount(NurseryReport::class, $dueDate, "nursery_id", $siteIds, $nurseryIds);
-            $hasPendingTask = Task::forProjectAndDate($this, $dueDate)->whereNot('status', Task::STATUS_COMPLETE)->exists();
+            // TODO (NJC): Temporary: just getting this code working again since the removal of forProjectAndDate. This
+            //  method will be rewritten in TM-560
+            $hasPendingTask = Task::where('project_id', $this->id)
+                ->whereMonth('due_at', $dueDate->month)
+                ->whereYear('due_at', $dueDate->year)
+                ->whereNot('status', Task::STATUS_COMPLETE)
+                ->exists();
 
             if ($projectReportPending + $siteRepPending + $nurRepPending > 0 || $hasPendingTask) {
                 $pendingReportingTasks++;
