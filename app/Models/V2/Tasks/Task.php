@@ -9,11 +9,11 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Task extends Model
@@ -58,17 +58,24 @@ class Task extends Model
         return $this->belongsTo(Project::class);
     }
 
+    public function projectReport(): HasOne
+    {
+        return $this->hasOne(ProjectReport::class);
+    }
+
+    public function siteReports(): HasMany
+    {
+        return $this->hasMany(SiteReport::class);
+    }
+
+    public function nurseryReports(): HasMany
+    {
+        return $this->hasMany(NurseryReport::class);
+    }
+
     public function getRouteKeyName()
     {
         return 'uuid';
-    }
-
-    public function scopeForProjectAndDate(Builder $query, Project $project, Carbon $date): Builder
-    {
-        return $query
-            ->where('project_id', $project->id)
-            ->whereMonth('due_at', $date->month)
-            ->whereYear('due_at', $date->year);
     }
 
     public function getCompletionStatusAttribute(): string
@@ -77,22 +84,9 @@ class Task extends Model
             return '';
         }
 
-        $projectCompletion = ProjectReport::where('project_id', $this->project_id)
-            ->whereMonth('due_at', $this->due_at->month)
-            ->whereYear('due_at', $this->due_at->year)
-            ->sum('completion');
-
-        $siteIds = $this->project->sites()->pluck('id')->toArray();
-        $siteCompletion = SiteReport::whereIn('site_id', $siteIds)
-            ->whereMonth('due_at', $this->due_at->month)
-            ->whereYear('due_at', $this->due_at->year)
-            ->sum('completion');
-
-        $nurseryIds = $this->project->nurseries()->pluck('id')->toArray();
-        $nurseryCompletion = NurseryReport::whereIn('nursery_id', $nurseryIds)
-            ->whereMonth('due_at', $this->due_at->month)
-            ->whereYear('due_at', $this->due_at->year)
-            ->sum('completion');
+        $projectCompletion = $this->projectReport()->sum('completion');
+        $siteCompletion = $this->siteReports()->sum('completion');
+        $nurseryCompletion = $this->nurseryReports()->sum('completion');
 
         if ($projectCompletion + $siteCompletion + $nurseryCompletion == 0) {
             return 'not-started';

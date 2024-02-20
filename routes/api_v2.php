@@ -456,6 +456,7 @@ Route::prefix('forms')->group(function () {
     });
 
     Route::prefix('project-reports')->group(function () {
+        // TODO (NJC): Creating reports with a form is not valid, and will be removed from the API in a future ticket.
         Route::post('', CreateProjectReportWithFormController::class);
         Route::get('/{projectReport}', ViewProjectReportWithFormController::class)->middleware('i18n');
         Route::put('/{projectReport}', UpdateProjectReportWithFormController::class);
@@ -477,6 +478,7 @@ Route::prefix('forms')->group(function () {
     });
 
     Route::prefix('site-reports')->group(function () {
+        // TODO (NJC): Creating reports with a form is not valid, and will be removed from the API in a future ticket.
         Route::post('', CreateSiteReportWithFormController::class);
         Route::post('/{siteReport}', ViewSiteReportWithFormController::class);
         Route::get('/{siteReport}', ViewSiteReportWithFormController::class)->middleware('i18n');
@@ -485,6 +487,7 @@ Route::prefix('forms')->group(function () {
     });
 
     Route::prefix('nursery-reports')->group(function () {
+        // TODO (NJC): Creating reports with a form is not valid, and will be removed from the API in a future ticket.
         Route::post('', CreateNurseryReportWithFormController::class);
         Route::get('/{nurseryReport}', ViewNurseryReportWithFormController::class)->middleware('i18n');
         Route::put('/{nurseryReport}', UpdateNurseryReportWithFormController::class);
