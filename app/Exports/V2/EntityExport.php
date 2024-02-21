@@ -94,8 +94,10 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         if ($this->form->type === 'site-report') {
             $mapped[] = $entity->site->old_id ?? ($entity->site->id ?? null);
             $mapped[] = $entity->site->name ?? null;
-            $mapped[] = $entity->treeSpecies()->sum('amount') > 0 ? $entity->site->trees_planted_count ?? null : null;
-            $mapped[] = $entity->site->seeds_planted_count ?? null;
+            $sumTreeSPecies = $entity->treeSpecies()->sum('amount');
+            $mapped[] = $sumTreeSPecies > 0 ? $sumTreeSPecies : null;
+            $sumSeeding = $entity->seedings()->sum('amount'); 
+            $mapped[] = $sumSeeding > 0 ? $sumSeeding : null;
         }
 
         return $mapped;
