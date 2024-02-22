@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @property \Illuminate\Support\Carbon $submitted_at
- * @property string $completion_status
  * @property string $status
  * @property string $feedback
  * @property string $feedback_fields
@@ -17,7 +16,6 @@ use Illuminate\Database\Eloquent\Builder;
  * @property int $completion
  * @property int $created_by
  * @method status
- * @method getCompletionStatus
  */
 trait HasReportStatus {
     use HasStatus;
@@ -98,8 +96,6 @@ trait HasReportStatus {
     public function awaitingApproval(): void
     {
         $this->completion = 100;
-        // TODO (NJC) this should be going away in a future commit in TM-561
-        $this->completion_status = 'complete';
         $this->submitted_at = now();
         $this->status()->transitionTo(ReportStatusStateMachine::AWAITING_APPROVAL);
     }
@@ -107,7 +103,14 @@ trait HasReportStatus {
     public function setCompletion(): void
     {
         $this->completion = $this->calculateCompletion($this->getForm());
-        // TODO (NJC) this should be going away in a future commit in TM-561
-        $this->completion_status = $this->getCompletionStatus();
+    }
+
+    public function getReadableCompletionStatusAttribute(): ?string
+    {
+        return match ($this->completion) {
+            0 => 'Not Started',
+            100 => 'Complete',
+            default => 'Started'
+        };
     }
 }

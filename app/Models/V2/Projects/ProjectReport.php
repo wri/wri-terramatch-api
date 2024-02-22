@@ -72,7 +72,6 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         'status',
         'update_request_status',
         'completion',
-        'completion_status',
         'planted_trees',
         'title',
         'workdays_paid',
@@ -169,17 +168,6 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
             'validation' => 'photos',
             'multiple' => true,
         ],
-    ];
-
-
-    public const COMPLETION_STATUS_NOT_STARTED = 'not-started';
-    public const COMPLETION_STATUS_STARTED = 'started';
-    public const COMPLETION_STATUS_COMPLETE = 'complete';
-
-    public static $completionStatuses = [
-        self::COMPLETION_STATUS_NOT_STARTED => 'Not started',
-        self::COMPLETION_STATUS_STARTED => 'Started',
-        self::COMPLETION_STATUS_COMPLETE => 'Complete',
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -450,15 +438,6 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         return $query->where('project_id', $id);
     }
 
-    public function getReadableCompletionStatusAttribute(): ?string
-    {
-        if (empty($this->completion_status)) {
-            return null;
-        }
-
-        return data_get(static::$completionStatuses, $this->completion_status, 'Unknown');
-    }
-
     public function createResource(): JsonResource
     {
         return new ProjectReportResource($this);
@@ -472,16 +451,5 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
     public function getLinkedFieldsConfig()
     {
         return config('wri.linked-fields.models.project-report.fields', []);
-    }
-
-    public function getCompletionStatus(): string
-    {
-        if ($this->completion == 0) {
-            return self::COMPLETION_STATUS_NOT_STARTED;
-        } elseif ($this->completion == 100) {
-            return self::COMPLETION_STATUS_COMPLETE;
-        }
-
-        return self::COMPLETION_STATUS_STARTED;
     }
 }
