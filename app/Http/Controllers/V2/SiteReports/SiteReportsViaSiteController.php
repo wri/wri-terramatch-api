@@ -33,7 +33,7 @@ class SiteReportsViaSiteController extends Controller
                 AllowedFilter::exact('framework_key'),
             ])
             ->where('site_id', $site->id)
-            ->whereNotIn('status', [SiteReport::STATUS_DUE,SiteReport::STATUS_STARTED]);
+            ->isComplete();
 
         if (in_array($request->query('sort'), $sortableColumns)) {
             $qry->allowedSorts($sortableColumns);
