@@ -5,7 +5,6 @@ namespace App\Http\Controllers\V2\Reports;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\HandlesUpdateRequests;
 use App\Http\Requests\V2\Forms\UpdateFormSubmissionRequest;
-use App\Models\V2\Forms\Form;
 use App\Models\V2\ReportModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;

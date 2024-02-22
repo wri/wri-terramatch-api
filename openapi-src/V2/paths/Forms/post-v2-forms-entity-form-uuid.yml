@@ -13,7 +13,7 @@ parameters:
     name: ENTITY
     in: path
     required: true
-    description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+    description: allowed values projects/sites/nurseries
   - type: string
     name: UUID
     in: path
