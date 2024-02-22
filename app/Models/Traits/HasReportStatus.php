@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string $status
  * @property string $feedback
  * @property string $feedback_fields
+ * @property bool $nothing_to_report
  * @property int $completion
  * @property int $created_by
  * @method status
@@ -26,26 +27,21 @@ trait HasReportStatus {
         'status' => ReportStatusStateMachine::class,
     ];
 
-    public function isStatusStateSupported (string $state): bool
+    public function supportsNothingToReport(): bool
     {
-        return match ($state) {
-            // Reports must opt in to "nothing to report" functionality.
-            ReportStatusStateMachine::NOTHING_TO_REPORT => false,
-            default => true
-        };
+        // Reports must opt in to "nothing to report" functionality.
+        return false;
     }
 
     public static array $statuses = [
         ReportStatusStateMachine::DUE => 'Due',
         ReportStatusStateMachine::STARTED => 'Started',
-        ReportStatusStateMachine::NOTHING_TO_REPORT => 'Nothing to Report',
         ReportStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
         ReportStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
         ReportStatusStateMachine::APPROVED => 'Approved',
     ];
 
     public const COMPLETE_STATUSES = [
-        ReportStatusStateMachine::NOTHING_TO_REPORT,
         ReportStatusStateMachine::AWAITING_APPROVAL,
         ReportStatusStateMachine::APPROVED,
     ];
@@ -79,11 +75,8 @@ trait HasReportStatus {
 
     public function nothingToReport(): void
     {
-        $this->submitted_at = now();
-        $this->completion = 100;
-        // TODO (NJC) this should be going away in a future commit in TM-561
-        $this->completion_status = 'complete';
-        $this->status()->transitionTo(ReportStatusStateMachine::NOTHING_TO_REPORT);
+        $this->nothing_to_report = true;
+        $this->awaitingApproval();
     }
 
     public function approve($feedback = NULL): void

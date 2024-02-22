@@ -41,9 +41,7 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
     use HasUuid;
     use SoftDeletes;
     use Searchable;
-    use HasReportStatus {
-        isStatusStateSupported as protected traitIsStatusStateSupported;
-    }
+    use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
@@ -277,12 +275,9 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
         return new NurseryReportWithSchemaResource($this, ['schema' => $this->getForm()]);
     }
 
-    public function isStatusStateSupported(string $state): bool
+    public function supportsNothingToReport(): bool
     {
-        return match ($state) {
-            ReportStatusStateMachine::NOTHING_TO_REPORT => true,
-            default => $this->traitIsStatusStateSupported($state)
-        };
+        return true;
     }
 
     public function getLinkedFieldsConfig()
