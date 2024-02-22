@@ -96,8 +96,12 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $mapped[] = $entity->site->name ?? null;
             $sumTreeSPecies = $entity->treeSpecies()->sum('amount');
             $mapped[] = $sumTreeSPecies > 0 ? $sumTreeSPecies : null;
-            $sumSeeding = $entity->seedings()->sum('amount'); 
-            $mapped[] = $sumSeeding > 0 ? $sumSeeding : null;
+            $mapped[] = $entity->site->trees_planted_count ?? null; 
+            if($this->form->framework_key === 'ppc') {
+                $sumSeeding = $entity->seedings()->sum('amount'); 
+                $mapped[] = $sumSeeding > 0 ? $sumSeeding : null;
+                $mapped[] = $entity->site->seeds_planted_count ?? null;
+            }
         }
 
         return $mapped;
@@ -131,8 +135,9 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         }
 
         if ($this->form->type === 'site-report') {
-            $initialHeadings = array_merge($initialHeadings, ['site-id', 'site-name', 'total_trees_planted']);
+            $initialHeadings = array_merge($initialHeadings, ['site-id', 'site-name', 'total_trees_planted_report', 'total_trees_planted']);
             if($this->form->framework_key === 'ppc') {
+                $initialHeadings[] = 'total_seeds_planted_report';
                 $initialHeadings[] = 'total_seeds_planted';
             } 
         }
