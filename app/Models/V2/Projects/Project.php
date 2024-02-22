@@ -22,6 +22,7 @@ use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\UpdateRequests\ApprovalFlow;
 use App\Models\V2\UpdateRequests\UpdateRequest;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,8 +37,6 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
 {
@@ -327,7 +326,7 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
             ->toArray();
 
         $submissionsIds = SiteReport::whereIn('site_id', $siteIds)
-            ->whereNotIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
+            ->isComplete()
             ->pluck('id')
             ->toArray();
 
@@ -360,24 +359,19 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
 
     public function getWorkdayCountAttribute(): int
     {
-        $paid = ProjectReport::where('project_id', $this->id)
-            ->where('status', ProjectReport::STATUS_APPROVED)
-            ->sum('workdays_paid');
-
-        $volunteer = ProjectReport::where('project_id', $this->id)
-            ->where('status', ProjectReport::STATUS_APPROVED)
-            ->sum('workdays_volunteer');
+        $paid = $this->reports()->isApproved()->sum('workdays_paid');
+        $volunteer = $this->reports()->isApproved()->sum('workdays_volunteer');
 
         $siteIds = $this->sites()->pluck('id')->toArray();
 
         $sitePaid = SiteReport::whereIn('id', $siteIds)
             ->where('due_at', '<', now())
-            ->whereNotIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
+            ->isComplete()
             ->sum('workdays_paid');
 
         $siteVolunteer = SiteReport::whereIn('id', $siteIds)
             ->where('due_at', '<', now())
-            ->whereNotIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
+            ->isComplete()
             ->sum('workdays_volunteer');
 
         return $paid + $volunteer + $sitePaid + $siteVolunteer;
@@ -420,17 +414,17 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
 
         $pOverdue = $this->reports()
             ->where('due_at', '<', now())
-            ->whereIn('status', [ProjectReport::STATUS_DUE, ProjectReport::STATUS_STARTED])
+            ->isIncomplete()
             ->count();
 
         $sOverdue = SiteReport::whereIn('id', $siteIds)
             ->where('due_at', '<', now())
-            ->whereIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
+            ->isIncomplete()
             ->count();
 
         $nOverdue = NurseryReport::whereIn('id', $nurseryIds)
             ->where('due_at', '<', now())
-            ->whereIn('status', [NurseryReport::STATUS_DUE, NurseryReport::STATUS_STARTED])
+            ->isIncomplete()
             ->count();
 
         return $pOverdue + $sOverdue + $nOverdue;
@@ -485,7 +479,7 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
         return $reportType::whereIn($idColumn, $ids)
             ->whereMonth('due_at', $dueDate->month)
             ->whereYear('due_at', $dueDate->year)
-            ->whereIn('status', [ProjectReport::STATUS_DUE, ProjectReport::STATUS_STARTED])
+            ->isIncomplete()
             ->count();
     }
 

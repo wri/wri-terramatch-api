@@ -92,12 +92,7 @@ use App\Http\Controllers\V2\Nurseries\ViewNurseryController;
 use App\Http\Controllers\V2\Nurseries\ViewNurseryWithFormController;
 use App\Http\Controllers\V2\NurseryReports\AdminIndexNurseryReportsController;
 use App\Http\Controllers\V2\NurseryReports\AdminSoftDeleteNurseryReportController;
-use App\Http\Controllers\V2\NurseryReports\AdminStatusNurseryReportController;
-use App\Http\Controllers\V2\NurseryReports\CreateNurseryReportWithFormController;
-use App\Http\Controllers\V2\NurseryReports\NothingToReportNurseryReportController;
 use App\Http\Controllers\V2\NurseryReports\NurseryReportsViaNurseryController;
-use App\Http\Controllers\V2\NurseryReports\SubmitNurseryReportWithFormController;
-use App\Http\Controllers\V2\NurseryReports\UpdateNurseryReportWithFormController;
 use App\Http\Controllers\V2\NurseryReports\ViewNurseryReportController;
 use App\Http\Controllers\V2\NurseryReports\ViewNurseryReportWithFormController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
@@ -130,12 +125,7 @@ use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController;
 use App\Http\Controllers\V2\ProjectReports\AdminIndexProjectReportsController;
 use App\Http\Controllers\V2\ProjectReports\AdminSoftDeleteProjectReportController;
-use App\Http\Controllers\V2\ProjectReports\AdminStatusProjectReportController;
-use App\Http\Controllers\V2\ProjectReports\CreateProjectReportWithFormController;
-use App\Http\Controllers\V2\ProjectReports\NothingToReportProjectReportController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
-use App\Http\Controllers\V2\ProjectReports\SubmitProjectReportWithFormController;
-use App\Http\Controllers\V2\ProjectReports\UpdateProjectReportWithFormController;
 use App\Http\Controllers\V2\ProjectReports\ViewProjectReportController;
 use App\Http\Controllers\V2\ProjectReports\ViewProjectReportWithFormController;
 use App\Http\Controllers\V2\Projects\AdminIndexProjectsController;
@@ -167,14 +157,13 @@ use App\Http\Controllers\V2\ReportingFrameworks\AdminIndexReportingFrameworkCont
 use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
+use App\Http\Controllers\V2\Reports\AdminStatusReportController;
+use App\Http\Controllers\V2\Reports\NothingToReportReportController;
+use App\Http\Controllers\V2\Reports\SubmitReportWithFormController;
+use App\Http\Controllers\V2\Reports\UpdateReportWithFormController;
 use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\AdminSoftDeleteSiteReportController;
-use App\Http\Controllers\V2\SiteReports\AdminStatusSiteReportController;
-use App\Http\Controllers\V2\SiteReports\CreateSiteReportWithFormController;
-use App\Http\Controllers\V2\SiteReports\NothingToReportSiteReportController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
-use App\Http\Controllers\V2\SiteReports\SubmitSiteReportWithFormController;
-use App\Http\Controllers\V2\SiteReports\UpdateSiteReportWithFormController;
 use App\Http\Controllers\V2\SiteReports\ViewSiteReportController;
 use App\Http\Controllers\V2\SiteReports\ViewSiteReportWithFormController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
@@ -333,19 +322,19 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('nursery-reports')->group(function () {
         Route::get('/', AdminIndexNurseryReportsController::class);
         Route::delete('/{nurseryReport}', AdminSoftDeleteNurseryReportController::class);
-        Route::put('/{nurseryReport}/{status}', AdminStatusNurseryReportController::class);
+        Route::put('/{report}/{status}', AdminStatusReportController::class);
     });
 
     Route::prefix('site-reports')->group(function () {
         Route::get('/', AdminIndexSiteReportsController::class);
         Route::delete('/{siteReport}', AdminSoftDeleteSiteReportController::class);
-        Route::put('/{siteReport}/{status}', AdminStatusSiteReportController::class);
+        Route::put('/{report}/{status}', AdminStatusReportController::class);
     });
 
     Route::prefix('project-reports')->group(function () {
         Route::get('/', AdminIndexProjectReportsController::class);
         Route::delete('/{projectReport}', AdminSoftDeleteProjectReportController::class);
-        Route::put('/{projectReport}/{status}', AdminStatusProjectReportController::class);
+        Route::put('/{report}/{status}', AdminStatusReportController::class);
     });
 
     Route::resource('organisations', AdminOrganisationController::class)->except('create');
@@ -456,11 +445,9 @@ Route::prefix('forms')->group(function () {
     });
 
     Route::prefix('project-reports')->group(function () {
-        // TODO (NJC): Creating reports with a form is not valid, and will be removed from the API in a future ticket.
-        Route::post('', CreateProjectReportWithFormController::class);
         Route::get('/{projectReport}', ViewProjectReportWithFormController::class)->middleware('i18n');
-        Route::put('/{projectReport}', UpdateProjectReportWithFormController::class);
-        Route::put('/{projectReport}/submit', SubmitProjectReportWithFormController::class);
+        Route::put('/{report}', UpdateReportWithFormController::class);
+        Route::put('/{report}/submit', SubmitReportWithFormController::class);
     });
 
     Route::prefix('sites')->group(function () {
@@ -478,20 +465,16 @@ Route::prefix('forms')->group(function () {
     });
 
     Route::prefix('site-reports')->group(function () {
-        // TODO (NJC): Creating reports with a form is not valid, and will be removed from the API in a future ticket.
-        Route::post('', CreateSiteReportWithFormController::class);
         Route::post('/{siteReport}', ViewSiteReportWithFormController::class);
         Route::get('/{siteReport}', ViewSiteReportWithFormController::class)->middleware('i18n');
-        Route::put('/{siteReport}', UpdateSiteReportWithFormController::class);
-        Route::put('/{siteReport}/submit', SubmitSiteReportWithFormController::class);
+        Route::put('/{report}', UpdateReportWithFormController::class);
+        Route::put('/{report}/submit', SubmitReportWithFormController::class);
     });
 
     Route::prefix('nursery-reports')->group(function () {
-        // TODO (NJC): Creating reports with a form is not valid, and will be removed from the API in a future ticket.
-        Route::post('', CreateNurseryReportWithFormController::class);
         Route::get('/{nurseryReport}', ViewNurseryReportWithFormController::class)->middleware('i18n');
-        Route::put('/{nurseryReport}', UpdateNurseryReportWithFormController::class);
-        Route::put('/{nurseryReport}/submit', SubmitNurseryReportWithFormController::class);
+        Route::put('/{report}', UpdateReportWithFormController::class);
+        Route::put('/{report}/submit', SubmitReportWithFormController::class);
     });
 });
 
@@ -614,7 +597,7 @@ Route::prefix('project-reports')->group(function () {
     Route::get('/{projectReport}', ViewProjectReportController::class);
     Route::get('/{projectReport}/files', ViewProjectReportGalleryController::class);
     Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
-    Route::put('/{projectReport}/nothing-to-report', NothingToReportProjectReportController::class);
+    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
 });
 
 Route::prefix('sites')->group(function () {
@@ -640,7 +623,7 @@ Route::prefix('site-reports')->group(function () {
     Route::get('/{siteReport}', ViewSiteReportController::class);
     Route::get('/{siteReport}/files', ViewSiteReportGalleryController::class);
     Route::get('/{siteReport}/image/locations', SiteReportImageLocationsController::class);
-    Route::put('/{siteReport}/nothing-to-report', NothingToReportSiteReportController::class);
+    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
 });
 
 Route::prefix('nurseries')->group(function () {
@@ -656,7 +639,7 @@ Route::prefix('nursery-reports')->group(function () {
     Route::get('/{nurseryReport}', ViewNurseryReportController::class);
     Route::get('/{nurseryReport}/files', ViewNurseryReportGalleryController::class);
     Route::get('/{nurseryReport}/image/locations', NurseryReportImageLocationsController::class);
-    Route::put('/{nurseryReport}/nothing-to-report', NothingToReportNurseryReportController::class);
+    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
 });
 
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);

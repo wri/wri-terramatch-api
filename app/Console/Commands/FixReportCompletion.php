@@ -30,7 +30,7 @@ class FixReportCompletion extends Command
     {
         ProjectReport::withoutTimestamps(function () {
             $projectReportsUpdated = ProjectReport::withTrashed()
-                ->whereIn('status', [ProjectReport::STATUS_APPROVED, ProjectReport::STATUS_AWAITING_APPROVAL])
+                ->isComplete()
                 ->where('completion', 0)
                 ->update([
                     'completion' => 100,
@@ -41,7 +41,7 @@ class FixReportCompletion extends Command
 
         SiteReport::withoutTimestamps(function () {
             $siteReportsUpdated = SiteReport::withTrashed()
-                ->whereIn('status', [SiteReport::STATUS_APPROVED, SiteReport::STATUS_AWAITING_APPROVAL])
+                ->isComplete()
                 ->where('completion', 0)
                 ->update([
                     'completion' => 100,
@@ -52,7 +52,7 @@ class FixReportCompletion extends Command
 
         NurseryReport::withoutTimestamps(function () {
             $nurseryReportsUpdated = NurseryReport::withTrashed()
-                ->whereIn('status', [NurseryReport::STATUS_APPROVED, NurseryReport::STATUS_AWAITING_APPROVAL])
+                ->isComplete()
                 ->where('completion', 0)
                 ->update([
                     'completion' => 100,

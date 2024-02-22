@@ -3,11 +3,10 @@
 namespace App\Jobs\V2;
 
 use App\Models\V2\Action;
-use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
+use App\StateMachines\ReportStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -54,7 +53,7 @@ class CreateTaskDueJob implements ShouldQueue
                     $projectReport = $task->projectReport()->create([
                         'framework_key' => $this->frameworkKey,
                         'project_id' => $project->id,
-                        'status' => ProjectReport::STATUS_DUE,
+                        'status' => ReportStatusStateMachine::DUE,
                         'due_at' => $this->dueDate,
                     ]);
 
@@ -64,7 +63,7 @@ class CreateTaskDueJob implements ShouldQueue
                         $task->siteReports()->create([
                             'framework_key' => $this->frameworkKey,
                             'site_id' => $site->id,
-                            'status' => SiteReport::STATUS_DUE,
+                            'status' => ReportStatusStateMachine::DUE,
                             'due_at' => $this->dueDate,
                         ]);
                     }
@@ -75,7 +74,7 @@ class CreateTaskDueJob implements ShouldQueue
                         $task->nurseryReports()->create([
                             'framework_key' => $this->frameworkKey,
                             'nursery_id' => $nursery->id,
-                            'status' => NurseryReport::STATUS_DUE,
+                            'status' => ReportStatusStateMachine::DUE,
                             'due_at' => $this->dueDate,
                         ]);
                     }
