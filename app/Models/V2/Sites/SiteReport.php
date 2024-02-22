@@ -22,7 +22,6 @@ use App\Models\V2\UpdateRequests\ApprovalFlow;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
-use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -58,16 +57,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         'feedback_fields',
     ];
 
-    public const COMPLETION_STATUS_NOT_STARTED = 'not-started';
-    public const COMPLETION_STATUS_STARTED = 'started';
-    public const COMPLETION_STATUS_COMPLETE = 'complete';
-
-    public static $completionStatuses = [
-        self::COMPLETION_STATUS_NOT_STARTED => 'Not started',
-        self::COMPLETION_STATUS_STARTED => 'Started',
-        self::COMPLETION_STATUS_COMPLETE => 'Complete',
-    ];
-
     protected $fillable = [
         'status',
         'update_request_status',
@@ -86,7 +75,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         'framework_key',
         'due_at',
         'completion',
-        'completion_status',
         'seeds_planted',
         'old_id',
         'old_model',
@@ -362,15 +350,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         return $query->where('site_id', $id);
     }
 
-    public function getReadableCompletionStatusAttribute(): ?string
-    {
-        if (empty($this->completion_status)) {
-            return null;
-        }
-
-        return data_get(static::$completionStatuses, $this->completion_status, 'Unknown');
-    }
-
     public function createResource(): JsonResource
     {
         return new SiteReportResource($this);
@@ -389,16 +368,5 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
     public function getLinkedFieldsConfig()
     {
         return config('wri.linked-fields.models.site-report.fields', []);
-    }
-
-    public function getCompletionStatus(): string
-    {
-        if ($this->completion == 0) {
-            return self::COMPLETION_STATUS_NOT_STARTED;
-        } elseif ($this->completion == 100) {
-            return self::COMPLETION_STATUS_COMPLETE;
-        }
-
-        return self::COMPLETION_STATUS_STARTED;
     }
 }

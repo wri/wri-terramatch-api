@@ -32,10 +32,7 @@ class FixReportCompletion extends Command
             $projectReportsUpdated = ProjectReport::withTrashed()
                 ->isComplete()
                 ->where('completion', 0)
-                ->update([
-                    'completion' => 100,
-                    'completion_status' => ProjectReport::COMPLETION_STATUS_COMPLETE
-                ]);
+                ->update(['completion' => 100]);
             $this->info("Project Reports Updated: $projectReportsUpdated");
         });
 
@@ -43,10 +40,7 @@ class FixReportCompletion extends Command
             $siteReportsUpdated = SiteReport::withTrashed()
                 ->isComplete()
                 ->where('completion', 0)
-                ->update([
-                    'completion' => 100,
-                    'completion_status' => SiteReport::COMPLETION_STATUS_COMPLETE
-                ]);
+                ->update(['completion' => 100]);
             $this->info("Site Reports Updated: $siteReportsUpdated");
         });
 
@@ -54,10 +48,7 @@ class FixReportCompletion extends Command
             $nurseryReportsUpdated = NurseryReport::withTrashed()
                 ->isComplete()
                 ->where('completion', 0)
-                ->update([
-                    'completion' => 100,
-                    'completion_status' => NurseryReport::COMPLETION_STATUS_COMPLETE
-                ]);
+                ->update(['completion' => 100]);
             $this->info("Nursery Reports Updated: $nurseryReportsUpdated");
         });
     }

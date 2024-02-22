@@ -23,6 +23,4 @@ interface ReportModel
     public function createSchemaResource(): JsonResource;
 
     public function getLinkedFieldsConfig();
-
-    public function getCompletionStatus(): string;
 }

@@ -24,7 +24,6 @@ class ProjectReportResource extends JsonResource
             'feedback_fields' => $this->feedback_fields,
             'due_at' => $this->due_at,
             'completion' => $this->completion,
-            'completion_status' => $this->completion_status,
             'readable_completion_status' => $this->readable_completion_status,
             'workdays_paid' => $this->workdays_paid,
             'workdays_volunteer' => $this->workdays_volunteer,
