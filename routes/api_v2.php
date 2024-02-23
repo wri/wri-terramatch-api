@@ -317,9 +317,12 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
 
-    Route::prefix('{reportEntities}')->group(function() {
-        Route::put('/{report}/{status}', AdminStatusReportController::class);
-    })->whereIn('reportEntities', ['project-reports', 'site-reports', 'nursery-reports']);
+    Route::prefix('{reportEntities}')
+        ->whereIn('reportEntities', ['project-reports', 'site-reports', 'nursery-reports'])
+        ->middleware('reportModel')
+        ->group(function() {
+            Route::put('/{report}/{status}', AdminStatusReportController::class);
+        });
 
     Route::prefix('nursery-reports')->group(function () {
         Route::get('/', AdminIndexNurseryReportsController::class);
@@ -435,11 +438,14 @@ Route::prefix('forms')->group(function () {
     Route::get('/', IndexFormController::class);
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
-    Route::prefix('{reportEntities}')->group(function() {
-        Route::get('/{report}', ViewReportWithFormController::class)->middleware('i18n');
-        Route::put('/{report}', UpdateReportWithFormController::class);
-        Route::put('/{report}/submit', SubmitReportWithFormController::class);
-    })->whereIn('reportEntities', ['project-reports', 'site-reports', 'nursery-reports']);
+    Route::prefix('{reportEntities}')
+        ->whereIn('reportEntities', ['project-reports', 'site-reports', 'nursery-reports'])
+        ->middleware('reportModel')
+        ->group(function() {
+            Route::get('/{report}', ViewReportWithFormController::class)->middleware('i18n');
+            Route::put('/{report}', UpdateReportWithFormController::class);
+            Route::put('/{report}/submit', SubmitReportWithFormController::class);
+        });
 
     Route::prefix('projects')->group(function () {
         Route::post('', CreateProjectWithFormController::class);
@@ -579,11 +585,17 @@ Route::prefix('tasks')->group(function () {
     Route::put('/{task}/submit', SubmitProjectTasksController::class);
 });
 
+Route::prefix('{reportEntities}')
+    ->whereIn('reportEntities', ['project-reports', 'site-reports', 'nursery-reports'])
+    ->middleware('reportModel')
+    ->group(function() {
+        Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
+    });
+
 Route::prefix('project-reports')->group(function () {
     Route::get('/{projectReport}', ViewProjectReportController::class);
     Route::get('/{projectReport}/files', ViewProjectReportGalleryController::class);
     Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
-    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
 });
 
 Route::prefix('sites')->group(function () {
@@ -609,7 +621,6 @@ Route::prefix('site-reports')->group(function () {
     Route::get('/{siteReport}', ViewSiteReportController::class);
     Route::get('/{siteReport}/files', ViewSiteReportGalleryController::class);
     Route::get('/{siteReport}/image/locations', SiteReportImageLocationsController::class);
-    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
 });
 
 Route::prefix('nurseries')->group(function () {
@@ -625,7 +636,6 @@ Route::prefix('nursery-reports')->group(function () {
     Route::get('/{nurseryReport}', ViewNurseryReportController::class);
     Route::get('/{nurseryReport}/files', ViewNurseryReportGalleryController::class);
     Route::get('/{nurseryReport}/image/locations', NurseryReportImageLocationsController::class);
-    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
 });
 
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
