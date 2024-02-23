@@ -33,11 +33,7 @@ class UpdateReportWithFormController extends Controller
 
         if ($report->isEditable()) {
             $report->update($report->mapEntityAnswers($answers, $form, $report->getLinkedFieldsConfig()));
-            $report->setCompletion();
-            if (empty($report->created_by)) {
-                $report->created_by = Auth::user()->id;
-            }
-            $report->save();
+            $report->updateInProgress();
             return $report->createResource();
         }
 

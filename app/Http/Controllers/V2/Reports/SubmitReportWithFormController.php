@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\V2\Action;
 use App\Models\V2\ReportModel;
 use App\Models\V2\UpdateRequests\UpdateRequest;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class SubmitReportWithFormController extends Controller
