@@ -39,13 +39,16 @@ return new class extends Migration
                 $table->string('completion_status')->after('completion')->default('not-started');
             });
 
-            $model::withTrashed()
-                ->where('completion', 100)
-                ->update(['completion_status' => 'complete']);
-            $model::withTrashed()
-                ->whereNot('completion', 0)
-                ->whereNot('completion', 100)
-                ->update(['completion_status' => 'started']);
+            $model::withoutTimestamps(function () use ($model) {
+                $model::withTrashed()
+                    ->where('completion', 100)
+                    ->update(['completion_status' => 'complete']);
+                $model::withTrashed()
+                    ->whereNot('completion', 0)
+                    ->whereNot('completion', 100)
+                    ->update(['completion_status' => 'started']);
+            });
+
         }
     }
 };
