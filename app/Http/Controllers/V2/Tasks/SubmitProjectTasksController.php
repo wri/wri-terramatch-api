@@ -28,7 +28,7 @@ class SubmitProjectTasksController extends Controller
         return new JsonResponse('Reports successfully submitted', 200);
     }
 
-    private function updateReports(array $reports) {
+    private function updateReports(iterable $reports) {
         foreach ($reports as $report) {
             if ($report->completion == 0) {
                 $report->nothingToReport();
