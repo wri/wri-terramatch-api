@@ -7,58 +7,107 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TotalTerrafundHeaderDashboardController extends Controller
 {
-    public function __invoke()
+    public function __invoke(Request $request)
     {
         return response()->json([
-            'total_non_profit_count' => $this->getTotalNonProfitCount(),
-            'total_enterprise_count' => $this->getTotalEnterpriseCount(),
-            'total_entries' => $this->getTotalJobsCreatedSum(),
-            'total_hectares_retored' => $this->getTotalHectaresRestoredGoalSum(),
-            'total_trees_restored' => $this->getTotalTreesRestoredSum(),
-            'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum(),
+            'total_non_profit_count' => $this->getTotalNonProfitCount($request),
+            'total_enterprise_count' => $this->getTotalEnterpriseCount($request),
+            'total_entries' => $this->getTotalJobsCreatedSum($request),
+            'total_hectares_retored' => $this->getTotalHectaresRestoredGoalSum($request),
+            'total_trees_restored' => $this->getTotalTreesRestoredSum($request),
+            'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($request),
         ]);
     }
 
-    public function getTotalNonProfitCount()
+    public function getTotalNonProfitCount(Request $request)
     {
-        return Project::where('framework_key', 'terrafund')
+        $query = Project::where('framework_key', 'terrafund')
             ->whereHas('organisation', function ($query) {
                 $query->where('type', 'non-profit-organization');
-            })
-            ->count();
+            });
+
+        if ($request->has('country')) {
+            $country = $request->input('country');
+            $query->where('country', $country);
+        } elseif ($request->has('uuid')) {
+            $projectId = $request->input('uuid');
+            $query->where('uuid', $projectId);
+        }
+
+        return $query->count();
     }
 
-    public function getTotalEnterpriseCount()
+    public function getTotalEnterpriseCount(Request $request)
     {
-        return Project::where('framework_key', 'terrafund')
+        $query = Project::where('framework_key', 'terrafund')
             ->whereHas('organisation', function ($query) {
                 $query->where('type', 'for-profit-organization');
-            })
-            ->count();
+            });
+        if ($request->has('country')) {
+            $country = $request->input('country');
+            $query->where('country', $country);
+        } elseif ($request->has('uuid')) {
+            $projectId = $request->input('uuid');
+            $query->where('uuid', $projectId);
+        }
+
+        return $query->count();
     }
 
-    public function getTotalJobsCreatedSum()
+    public function getTotalJobsCreatedSum(Request $request)
     {
-        $total = ProjectReport::whereNull('deleted_at')
-        ->sum(DB::raw('pt_total + ft_total'));
+        $projects = Project::where('framework_key', 'terrafund');
+        if ($request->has('country')) {
+            $country = $request->input('country');
+            $projects->where('country', $country);
+        } elseif ($request->has('uuid')) {
+            $projectId = $request->input('uuid');
+            $projects->where('uuid', $projectId);
+        }
+        $projects = $projects->pluck('id')->toArray();
+        $totalSum = 0;
+        foreach ($projects as $projectId) {
+            $reports = ProjectReport::where('project_id', $projectId)
+                ->sum(DB::raw('pt_total + ft_total'));
+            $totalSum += $reports;
+        }
+
+        return intval($totalSum);
+    }
+
+    public function getTotalHectaresRestoredGoalSum(Request $request)
+    {
+        $projects = Project::where('framework_key', 'terrafund');
+        if ($request->has('country')) {
+            $country = $request->input('country');
+            $projects->where('country', $country);
+        } elseif ($request->has('uuid')) {
+            $projectId = $request->input('uuid');
+            $projects->where('uuid', $projectId);
+        }
+
+        $total = $projects->sum('total_hectares_restored_goal');
 
         return intval($total);
     }
 
-    public function getTotalHectaresRestoredGoalSum()
+    public function getTotalTreesRestoredSum(Request $request)
     {
-        $total = Project::sum('total_hectares_restored_goal');
+        $projects = Project::where('framework_key', 'terrafund');
 
-        return intval($total);
-    }
-
-    public function getTotalTreesRestoredSum()
-    {
-        $projects = Project::where('framework_key', 'terrafund')->get();
+        if ($request->has('country')) {
+            $country = $request->input('country');
+            $projects->where('country', $country);
+        } elseif ($request->has('uuid')) {
+            $projectId = $request->input('uuid');
+            $projects->where('uuid', $projectId);
+        }
+        $projects = $projects->get();
 
         $totalSpeciesAmount = 0;
 
@@ -77,9 +126,17 @@ class TotalTerrafundHeaderDashboardController extends Controller
         return $totalSpeciesAmount;
     }
 
-    public function getTotalTreesGrownGoalSum()
+    public function getTotalTreesGrownGoalSum(Request $request)
     {
-        $total = Project::sum('trees_grown_goal');
+        $projects = Project::where('framework_key', 'terrafund');
+        if ($request->has('country')) {
+            $country = $request->input('country');
+            $projects->where('country', $country);
+        } elseif ($request->has('uuid')) {
+            $projectId = $request->input('uuid');
+            $projects->where('uuid', $projectId);
+        }
+        $total = $projects->sum('trees_grown_goal');
 
         return intval($total);
     }
