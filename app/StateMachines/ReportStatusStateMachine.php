@@ -3,6 +3,8 @@
 namespace App\StateMachines;
 
 use Asantibanez\LaravelEloquentStateMachines\StateMachines\StateMachine;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Facades\Validator as ValidatorFacade;
 
 class ReportStatusStateMachine extends StateMachine
 {
@@ -20,7 +22,7 @@ class ReportStatusStateMachine extends StateMachine
     public function transitions(): array
     {
         return [
-            self::DUE => [self::STARTED],
+            self::DUE => [self::STARTED, self::AWAITING_APPROVAL],
             self::STARTED => [self::AWAITING_APPROVAL],
             self::AWAITING_APPROVAL => [self::APPROVED, self::NEEDS_MORE_INFORMATION],
             self::NEEDS_MORE_INFORMATION => [self::APPROVED],
@@ -30,5 +32,18 @@ class ReportStatusStateMachine extends StateMachine
     public function defaultState(): ?string
     {
         return self::DUE;
+    }
+
+    public function validatorForTransition($from, $to, $model): ?Validator
+    {
+        if ($from === self::DUE && $to === self::AWAITING_APPROVAL) {
+            return ValidatorFacade::make([
+                'nothing_to_report' => $model->nothing_to_report,
+            ], [
+                'nothing_to_report' => 'accepted',
+            ]);
+        }
+
+        return parent::validatorForTransition($from, $to, $model);
     }
 }
