@@ -12,6 +12,8 @@ interface ReportModel
 {
     public function nothingToReport();
 
+    public function updateInProgress();
+
     public function approve($feedback = NULL);
 
     public function needsMoreInformation($feedback, $feedbackFields): void;

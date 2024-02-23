@@ -6,6 +6,7 @@ use App\Models\V2\Forms\Form;
 use App\StateMachines\ReportStatusStateMachine;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @property \Illuminate\Support\Carbon $submitted_at
@@ -20,6 +21,8 @@ use Illuminate\Database\Eloquent\Builder;
 trait HasReportStatus {
     use HasStatus;
     use HasStateMachines;
+
+    private ?Form $form = null;
 
     public $stateMachines = [
         'status' => ReportStatusStateMachine::class,
@@ -66,15 +69,32 @@ trait HasReportStatus {
 
     public function getForm(): ?Form
     {
-        return Form::where('model', get_class($this))
-            ->where('framework_key', $this->framework_key)
-            ->first();
+        if (is_null($this->form)) {
+            $this->form = Form::where('model', get_class($this))
+                ->where('framework_key', $this->framework_key)
+                ->first();
+        }
+
+        return $this->form;
     }
 
     public function nothingToReport(): void
     {
         $this->nothing_to_report = true;
         $this->awaitingApproval();
+    }
+
+    public function updateInProgress(): void
+    {
+        $this->setCompletion();
+        if (empty($report->created_by)) {
+            $this->created_by = Auth::user()->id;
+        }
+        if ($this->status == ReportStatusStateMachine::STARTED) {
+            $this->save();
+        } else {
+            $this->status()->transitionTo(ReportStatusStateMachine::STARTED);
+        }
     }
 
     public function approve($feedback = NULL): void
