@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
+use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
@@ -24,47 +25,33 @@ class TotalTerrafundHeaderDashboardController extends Controller
         ]);
     }
 
-    public function buildQueryFromRequest($query, $request)
-    {
-        if ($request->has('country')) {
-            $country = $request->input('country');
-            $query->where('country', $country);
-        } elseif ($request->has('uuid')) {
-            $projectId = $request->input('uuid');
-            $query->where('uuid', $projectId);
-        }
-
-        return $query;
-    }
-
     public function getTotalNonProfitCount(Request $request)
     {
-        $query = Project::where('framework_key', 'terrafund')
-            ->whereHas('organisation', function ($query) {
-                $query->where('type', 'non-profit-organization');
-            });
+        $query = Project::query();
+        $query = $query->whereHas('organisation', function ($query) {
+            $query->where('type', 'non-profit-organization');
+        });
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
 
-        $query = $this->buildQueryFromRequest($query, $request);
-
-        return $query->count();
+        return $projects->count();
     }
 
     public function getTotalEnterpriseCount(Request $request)
     {
-        $query = Project::where('framework_key', 'terrafund')
-            ->whereHas('organisation', function ($query) {
-                $query->where('type', 'for-profit-organization');
-            });
-        $query = $this->buildQueryFromRequest($query, $request);
+        $query = Project::query();
+        $query = $query->whereHas('organisation', function ($query) {
+            $query->where('type', 'for-profit-organization');
+        });
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
 
-        return $query->count();
+        return $projects->count();
     }
 
     public function getTotalJobsCreatedSum(Request $request)
     {
-        $projects = Project::where('framework_key', 'terrafund');
-        $projects = $this->buildQueryFromRequest($projects, $request);
-        $projects = $projects->pluck('id')->toArray();
+        $query = Project::query();
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
+        $projects = $query->pluck('id')->toArray();
         $totalSum = 0;
         foreach ($projects as $projectId) {
             $reports = ProjectReport::where('project_id', $projectId)
@@ -77,20 +64,18 @@ class TotalTerrafundHeaderDashboardController extends Controller
 
     public function getTotalHectaresRestoredGoalSum(Request $request)
     {
-        $projects = Project::where('framework_key', 'terrafund');
-        $projects = $this->buildQueryFromRequest($projects, $request);
-
-        $total = $projects->sum('total_hectares_restored_goal');
+        $query = Project::query();
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
+        $total = $query->sum('total_hectares_restored_goal');
 
         return intval($total);
     }
 
     public function getTotalTreesRestoredSum(Request $request)
     {
-        $projects = Project::where('framework_key', 'terrafund');
-
-        $projects = $this->buildQueryFromRequest($projects, $request);
-        $projects = $projects->get();
+        $query = Project::query();
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
+        $projects = $query->get();
 
         $totalSpeciesAmount = 0;
 
@@ -111,8 +96,8 @@ class TotalTerrafundHeaderDashboardController extends Controller
 
     public function getTotalTreesGrownGoalSum(Request $request)
     {
-        $projects = Project::where('framework_key', 'terrafund');
-        $projects = $this->buildQueryFromRequest($projects, $request);
+        $query = Project::query();
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
         $total = $projects->sum('trees_grown_goal');
 
         return intval($total);
