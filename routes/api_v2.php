@@ -15,8 +15,9 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
-use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
+use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
+use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
 use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
@@ -685,4 +686,5 @@ Route::resource('files', FilePropertiesController::class);
 Route::prefix('dashboard')->group(function () {
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/jobs-created', GetJobsCreatedController::class);
+    Route::get('/active-countries', ActiveCountriesTableController::class);
 });
