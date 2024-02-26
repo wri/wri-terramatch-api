@@ -22,9 +22,8 @@ class VolunteersAndAverageSurvivalRateController extends Controller
         ]);
     }
 
-    public function getTotalVolunteerSum($request)
+    public function buildQueryFromRequest($query, $request)
     {
-        $query = Project::where('framework_key', 'terrafund');
         if ($request->has('country')) {
             $country = $request->input('country');
             $query->where('country', $country);
@@ -32,6 +31,13 @@ class VolunteersAndAverageSurvivalRateController extends Controller
             $projectId = $request->input('uuid');
             $query->where('uuid', $projectId);
         }
+        return $query;
+    }
+
+    public function getTotalVolunteerSum($request)
+    {
+        $query = Project::where('framework_key', 'terrafund');
+        $query = $this->buildQueryFromRequest($query, $request);
         $projectsId = $query->pluck('id')->toArray();
         $totalVolunteers = 0;
         foreach ($projectsId as $id) {
@@ -48,13 +54,7 @@ class VolunteersAndAverageSurvivalRateController extends Controller
     public function getVolunteersSum($request, $volunteerType)
     {
         $query = Project::where('framework_key', 'terrafund');
-        if ($request->has('country')) {
-            $country = $request->input('country');
-            $query->where('country', $country);
-        } elseif ($request->has('uuid')) {
-            $projectId = $request->input('uuid');
-            $query->where('uuid', $projectId);
-        }
+        $query = $this->buildQueryFromRequest($query, $request);
         $projectsId = $query->pluck('id')->toArray();
         $Volunteers = 0;
         foreach ($projectsId as $id) {
@@ -73,13 +73,7 @@ class VolunteersAndAverageSurvivalRateController extends Controller
             ->whereHas('organisation', function ($query) use ($typeOrganisation) {
                 $query->where('type', $typeOrganisation);
             });
-        if ($request->has('country')) {
-            $country = $request->input('country');
-            $query->where('country', $country);
-        } elseif ($request->has('uuid')) {
-            $projectId = $request->input('uuid');
-            $query->where('uuid', $projectId);
-        }
+        $query = $this->buildQueryFromRequest($query, $request);
         $average = $query->avg('survival_rate');
 
         return intval($average);
