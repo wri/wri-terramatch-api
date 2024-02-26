@@ -30,11 +30,11 @@ class VolunteersAndAverageSurvivalRateController extends Controller
         $projectsId = $query->pluck('id')->toArray();
         $totalVolunteers = 0;
         foreach ($projectsId as $id) {
-            $totalVolunteer = ProjectReport::where('project_id', $id)
+            $latestProjectReportVolunteerTotal = ProjectReport::where('project_id', $id)
                 ->orderByDesc('due_at')
                 ->value('volunteer_total');
 
-            $totalVolunteers += $totalVolunteer;
+            $totalVolunteers += $latestProjectReportVolunteerTotal;
         }
 
         return $totalVolunteers;
@@ -45,15 +45,15 @@ class VolunteersAndAverageSurvivalRateController extends Controller
         $query = Project::query();
         $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
         $projectsId = $query->pluck('id')->toArray();
-        $Volunteers = 0;
+        $volunteers = 0;
         foreach ($projectsId as $id) {
-            $valueMenVolunteer = ProjectReport::where('project_id', $id)
+            $totalVolunteerType = ProjectReport::where('project_id', $id)
                 ->sum($volunteerType);
 
-            $Volunteers += $valueMenVolunteer;
+            $volunteers += $totalVolunteerType;
         }
 
-        return $Volunteers;
+        return $volunteers;
     }
 
     public function getAverageSurvivalRate($request, $typeOrganisation)
