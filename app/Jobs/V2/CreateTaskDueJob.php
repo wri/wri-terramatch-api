@@ -7,6 +7,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Tasks\Task;
 use App\StateMachines\ReportStatusStateMachine;
+use App\StateMachines\TaskStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -45,7 +46,7 @@ class CreateTaskDueJob implements ShouldQueue
                     $task = Task::create([
                         'organisation_id' => $project->organisation_id,
                         'project_id' => $project->id,
-                        'status' => Task::STATUS_DUE,
+                        'status' => TaskStatusStateMachine::DUE,
                         'period_key' => $this->dueDate->year . '-' . $this->dueDate->month,
                         'due_at' => $this->dueDate,
                     ]);
