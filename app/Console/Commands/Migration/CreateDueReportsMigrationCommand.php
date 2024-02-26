@@ -19,6 +19,7 @@ use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\ReportStatusStateMachine;
+use App\StateMachines\TaskStatusStateMachine;
 use Illuminate\Console\Command;
 
 class CreateDueReportsMigrationCommand extends Command
@@ -196,7 +197,7 @@ class CreateDueReportsMigrationCommand extends Command
                 'period_key' => $stub->due_at->year . '-' . ($stub->due_at->month < 10 ? '0'. $stub->due_at->month : $stub->due_at->month),
             ],
             [
-                'status' => Task::STATUS_DUE,
+                'status' => TaskStatusStateMachine::DUE,
                 'due_at' => $stub->due_at,
             ]
         );
