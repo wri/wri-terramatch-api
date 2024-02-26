@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
+use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
@@ -22,22 +23,10 @@ class VolunteersAndAverageSurvivalRateController extends Controller
         ]);
     }
 
-    public function buildQueryFromRequest($query, $request)
-    {
-        if ($request->has('country')) {
-            $country = $request->input('country');
-            $query->where('country', $country);
-        } elseif ($request->has('uuid')) {
-            $projectId = $request->input('uuid');
-            $query->where('uuid', $projectId);
-        }
-        return $query;
-    }
-
     public function getTotalVolunteerSum($request)
     {
-        $query = Project::where('framework_key', 'terrafund');
-        $query = $this->buildQueryFromRequest($query, $request);
+        $query = Project::query();
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
         $projectsId = $query->pluck('id')->toArray();
         $totalVolunteers = 0;
         foreach ($projectsId as $id) {
@@ -53,8 +42,8 @@ class VolunteersAndAverageSurvivalRateController extends Controller
 
     public function getVolunteersSum($request, $volunteerType)
     {
-        $query = Project::where('framework_key', 'terrafund');
-        $query = $this->buildQueryFromRequest($query, $request);
+        $query = Project::query();
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
         $projectsId = $query->pluck('id')->toArray();
         $Volunteers = 0;
         foreach ($projectsId as $id) {
@@ -69,11 +58,11 @@ class VolunteersAndAverageSurvivalRateController extends Controller
 
     public function getAverageSurvivalRate($request, $typeOrganisation)
     {
-        $query = Project::where('framework_key', 'terrafund')
-            ->whereHas('organisation', function ($query) use ($typeOrganisation) {
-                $query->where('type', $typeOrganisation);
-            });
-        $query = $this->buildQueryFromRequest($query, $request);
+        $query = Project::query();
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
+        $query = $query->whereHas('organisation', function ($query) use ($typeOrganisation) {
+            $query->where('type', $typeOrganisation);
+        });
         $average = $query->avg('survival_rate');
 
         return intval($average);
