@@ -317,9 +317,9 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
 
-    Route::prefix('{reportEntities}')
-        ->whereIn('reportEntities', ['project-reports', 'site-reports', 'nursery-reports'])
-        ->middleware('reportModel')
+    Route::prefix('{modelSlug}')
+        ->whereIn('modelSlug', ['project-reports', 'site-reports', 'nursery-reports'])
+        ->middleware('modelInterface')
         ->group(function() {
             Route::put('/{report}/{status}', AdminStatusReportController::class);
         });
@@ -438,9 +438,9 @@ Route::prefix('forms')->group(function () {
     Route::get('/', IndexFormController::class);
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
-    Route::prefix('{reportEntities}')
-        ->whereIn('reportEntities', ['project-reports', 'site-reports', 'nursery-reports'])
-        ->middleware('reportModel')
+    Route::prefix('{modelSlug}')
+        ->whereIn('modelSlug', ['project-reports', 'site-reports', 'nursery-reports'])
+        ->middleware('modelInterface')
         ->group(function() {
             Route::get('/{report}', ViewReportWithFormController::class)->middleware('i18n');
             Route::put('/{report}', UpdateReportWithFormController::class);
@@ -585,9 +585,9 @@ Route::prefix('tasks')->group(function () {
     Route::put('/{task}/submit', SubmitProjectTasksController::class);
 });
 
-Route::prefix('{reportEntities}')
-    ->whereIn('reportEntities', ['project-reports', 'site-reports', 'nursery-reports'])
-    ->middleware('reportModel')
+Route::prefix('{modelSlug}')
+    ->whereIn('modelSlug', ['project-reports', 'site-reports', 'nursery-reports'])
+    ->middleware('modelInterface')
     ->group(function() {
         Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
     });
