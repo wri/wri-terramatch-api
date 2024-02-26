@@ -15,6 +15,7 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
+use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
 use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
@@ -679,3 +680,7 @@ Route::post('file/upload/{model}/{collection}/{uuid}', UploadController::class);
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
+
+Route::prefix('dashboard')->group(function () {
+    Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
+});
