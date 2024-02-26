@@ -80,6 +80,12 @@ trait HasReportStatus {
 
     public function nothingToReport(): void
     {
+        if (!$this->supportsNothingToReport()) {
+            throw new \InvalidArgumentException(
+                'This report model does not support the nothing-to-report status'
+            );
+        }
+
         $this->nothing_to_report = true;
         $this->awaitingApproval();
     }

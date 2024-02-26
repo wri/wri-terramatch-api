@@ -586,7 +586,7 @@ Route::prefix('tasks')->group(function () {
 });
 
 Route::prefix('{modelSlug}')
-    ->whereIn('modelSlug', ['project-reports', 'site-reports', 'nursery-reports'])
+    ->whereIn('modelSlug', ['site-reports', 'nursery-reports'])
     ->middleware('modelInterface')
     ->group(function() {
         Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
