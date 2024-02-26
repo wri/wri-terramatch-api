@@ -9,19 +9,18 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ActiveCountriesTableController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke()
     {
         return response()->json([
-            'active_countries' => $this->getAllContries($request),
+            'active_countries' => $this->getAllContries(),
         ]);
     }
 
-    public function getAllContries($request)
+    public function getAllContries()
     {
         $conuntryId = FormOptionList::where('key', 'countries')->value('id');
         $contries = FormOptionListOption::where('form_option_list_id', $conuntryId)
