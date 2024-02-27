@@ -127,7 +127,7 @@ class Task extends Model
             if ($report->completion == 0) {
                 $report->nothingToReport();
             } else {
-                $report->awaitingApproval();
+                $report->submitForApproval();
             }
         }
 

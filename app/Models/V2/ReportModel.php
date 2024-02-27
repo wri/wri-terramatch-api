@@ -20,7 +20,7 @@ interface ReportModel
 
     public function needsMoreInformation($feedback, $feedbackFields): void;
 
-    public function awaitingApproval();
+    public function submitForApproval();
 
     public function createResource(): JsonResource;
 

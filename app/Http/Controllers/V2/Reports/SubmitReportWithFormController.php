@@ -20,19 +20,9 @@ class SubmitReportWithFormController extends Controller
             return new JsonResponse('No report form schema found for this framework.', 404);
         }
 
-        $updateRequest = $report->updateRequests()
-            ->whereIn('status', [
-                UpdateRequest::STATUS_AWAITING_APPROVAL,
-                UpdateRequest::STATUS_REQUESTED,
-                UpdateRequest::STATUS_DRAFT,
-                UpdateRequest::STATUS_NEEDS_MORE_INFORMATION
-            ])
-        ->first();
-
+        $updateRequest = $report->updateRequests()->isUnapproved()->first();
         if (!empty($updateRequest)) {
-            $updateRequest->update(['status' => UpdateRequest::STATUS_AWAITING_APPROVAL]);
-            $report->update(['update_request_status' => UpdateRequest::STATUS_AWAITING_APPROVAL]);
-            $report->task->checkStatus();
+            $updateRequest->submitForApproval();
 
             Action::where('targetable_type', get_class($report))
                 ->where('targetable_id', $updateRequest->id)
@@ -41,7 +31,7 @@ class SubmitReportWithFormController extends Controller
                 ->where('targetable_id', $updateRequest->updaterequestable_id)
                 ->delete();
         } else {
-            $report->awaitingApproval();
+            $report->submitForApproval();
             Action::where('targetable_type', get_class($report))
                 ->where('targetable_id', $report->id)
                 ->delete();

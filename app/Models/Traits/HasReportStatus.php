@@ -105,7 +105,7 @@ trait HasReportStatus {
         }
 
         $this->nothing_to_report = true;
-        $this->awaitingApproval();
+        $this->submitForApproval();
     }
 
     public function updateInProgress(): void
@@ -137,7 +137,7 @@ trait HasReportStatus {
         $this->status()->transitionTo(ReportStatusStateMachine::NEEDS_MORE_INFORMATION);
     }
 
-    public function awaitingApproval(): void
+    public function submitForApproval(): void
     {
         $this->completion = 100;
         $this->submitted_at = now();
