@@ -81,12 +81,15 @@ class MigrateTaskStatuses extends Command
             return true;
         }
 
-        $reportRelations = [$task->projectReport(), $task->siteReports(), $task->nurseryReports()];
-        $reportStatuses = array_unique(array_merge(...array_map(function ($relation) {
+        $reportRelations = collect([$task->projectReport(), $task->siteReports(), $task->nurseryReports()]);
+        $reportStatuses = $reportRelations->map(function ($relation) {
             return $relation->distinct()->pluck('status')->all();
-        }, $reportRelations)));
-        if (in_array(ReportStatusStateMachine::DUE, $reportStatuses) ||
-            in_array(ReportStatusStateMachine::STARTED, $reportStatuses)) {
+        })->flatten()->unique();
+        if (
+            $reportStatuses
+            ->intersect([ReportStatusStateMachine::DUE, ReportStatusStateMachine::STARTED])
+            ->isNotEmpty()
+        ) {
             echo "Task $task->id was due on $task->due_at and has reports in 'due' or 'started'. Moving to 'due'.\n";
             $task->status = TaskStatusStateMachine::DUE;
             $task->save();
