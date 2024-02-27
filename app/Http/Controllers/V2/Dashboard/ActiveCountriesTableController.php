@@ -59,14 +59,12 @@ class ActiveCountriesTableController extends Controller
 
     public function numberOfProjects($country)
     {
-        return $this->projectsCountry($country)
-                ->count();
+        return $this->projectsCountry($country)->count();
     }
 
     public function totalSpeciesAmount($country)
     {
-        $projects = $this->projectsCountry($country)
-            ->get();
+        $projects = $this->projectsCountry($country)->get();
         $totalSpeciesAmount = 0;
         foreach ($projects as $project) {
             $sites = $project->sites()->pluck('id')->toArray();
@@ -85,8 +83,7 @@ class ActiveCountriesTableController extends Controller
 
     public function totalJobsCreated($country)
     {
-        $projects = $this->projectsCountry($country)
-            ->get();
+        $projects = $this->projectsCountry($country)->get();
         $totalJobs = 0;
         foreach ($projects as $project) {
             $latestProjectReport = ProjectReport::where('project_id', $project->id)
