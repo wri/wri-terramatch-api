@@ -145,10 +145,9 @@ class Task extends Model
         }
 
         // shortcuts that are efficient and don't require looking for update requests
-        $reportRelations = [$this->projectReport(), $this->siteReports(), $this->nurseryReports()];
         $reportStatuses = array_unique(array_merge(...array_map(function ($relation) {
             return $relation->distinct()->pluck('status')->all();
-        }, $reportRelations)));
+        }, $this->getReportRelations())));
         if (count($reportStatuses) == 1 && $reportStatuses[0] == ReportStatusStateMachine::APPROVED) {
             $this->status()->transitionTo(TaskStatusStateMachine::APPROVED);
             return;
@@ -168,7 +167,7 @@ class Task extends Model
                     [ReportStatusStateMachine::NEEDS_MORE_INFORMATION, ReportStatusStateMachine::AWAITING_APPROVAL])
                 ->get('id', 'status')
                 ->all();
-        }, $reportRelations));
+        }, $this->getReportRelations()));
 
         if (count($reportStubs) == 0) {
             // from the checks above, we know there are reports that are not in approved, or an incomplete state
@@ -210,14 +209,14 @@ class Task extends Model
             return '';
         }
 
-        $projectCompletion = $this->projectReport()->sum('completion');
-        $siteCompletion = $this->siteReports()->sum('completion');
-        $nurseryCompletion = $this->nurseryReports()->sum('completion');
+        $hasStartedReport = array_reduce($this->getReportRelations(), function ($hasStarted, $relation) {
+            return $hasStarted || $relation->where('completion', '>', '0')->exists();
+        });
+        return $hasStartedReport ? 'started' : 'not-started';
+    }
 
-        if ($projectCompletion + $siteCompletion + $nurseryCompletion == 0) {
-            return 'not-started';
-        } else {
-            return 'started';
-        }
+    private function getReportRelations (): array
+    {
+        return [$this->projectReport(), $this->siteReports(), $this->nurseryReports()];
     }
 }
