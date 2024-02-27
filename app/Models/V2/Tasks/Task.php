@@ -166,7 +166,8 @@ class Task extends Model
                 ->whereIn(
                     'status',
                     [ReportStatusStateMachine::NEEDS_MORE_INFORMATION, ReportStatusStateMachine::AWAITING_APPROVAL])
-                ->get('id', 'status');
+                ->get('id', 'status')
+                ->all();
         }, $reportRelations));
 
         if (count($reportStubs) == 0) {
