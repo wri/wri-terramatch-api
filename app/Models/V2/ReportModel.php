@@ -2,11 +2,13 @@
 
 namespace App\Models\V2;
 
+use App\Models\V2\Tasks\Task;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property string framework_key
  * @property int id
+ * @property Task task
  */
 interface ReportModel
 {
