@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 class Task extends Model
 {
@@ -108,8 +109,8 @@ class Task extends Model
         }
 
         // First, make sure all reports are either complete, or completable
-        $reports = array_merge([$this->projectReport], $this->siteReports, $this->nurseryReports);
-        $hasIncomplete = array_reduce($reports, function($hasIncomplete, $report) {
+        $reports = collect([$this->projectReport])->concat($this->siteReports)->concat($this->nurseryReports);
+        $hasIncomplete = $reports->reduce(function($hasIncomplete, $report) {
             return $hasIncomplete || !$report->isCompletable();
         });
         if ($hasIncomplete) {
@@ -145,21 +146,22 @@ class Task extends Model
         }
 
         // shortcuts that are efficient and don't require looking for update requests
-        $reportStatuses = array_unique(array_merge(...array_map(function ($relation) {
+        $reportStatuses = $this->getReportRelations()->map(function ($relation) {
             return $relation->distinct()->pluck('status')->all();
-        }, $this->getReportRelations())));
-        if (count($reportStatuses) == 1 && $reportStatuses[0] == ReportStatusStateMachine::APPROVED) {
+        })->flatten()->unique();
+        if ($reportStatuses->containsOneItem() && $reportStatuses[0] == ReportStatusStateMachine::APPROVED) {
             $this->status()->transitionTo(TaskStatusStateMachine::APPROVED);
             return;
         } elseif (
-            in_array(ReportStatusStateMachine::DUE, $reportStatuses) ||
-            in_array(ReportStatusStateMachine::STARTED, $reportStatuses)
+            $reportStatuses
+            ->intersect([ReportStatusStateMachine::DUE, ReportStatusStateMachine::STARTED])
+            ->isNotEmpty()
         ) {
             throw new InvalidStatusException('Task has incomplete reports');
         }
 
         // if we fall through to here, the situation is more complicated and expensive to compute.
-        $reportStubs = array_merge(...array_map(function ($relation) {
+        $reportStubs = $this->getReportRelations()->map(function ($relation) {
             // All we need is the status of the report, and the id of the report for getting update requests.
             return $relation
                 ->whereIn(
@@ -167,9 +169,9 @@ class Task extends Model
                     [ReportStatusStateMachine::NEEDS_MORE_INFORMATION, ReportStatusStateMachine::AWAITING_APPROVAL])
                 ->get('id', 'status')
                 ->all();
-        }, $this->getReportRelations()));
+        })->flatten();
 
-        if (count($reportStubs) == 0) {
+        if ($reportStubs->isEmpty()) {
             // from the checks above, we know there are reports that are not in approved, or an incomplete state
             // so something is up.
             throw new InvalidStatusException('Task has reports in an invalid state');
@@ -209,14 +211,14 @@ class Task extends Model
             return '';
         }
 
-        $hasStartedReport = array_reduce($this->getReportRelations(), function ($hasStarted, $relation) {
+        $hasStartedReport = $this->getReportRelations()->reduce(function ($hasStarted, $relation) {
             return $hasStarted || $relation->where('completion', '>', '0')->exists();
         });
         return $hasStartedReport ? 'started' : 'not-started';
     }
 
-    private function getReportRelations (): array
+    private function getReportRelations (): Collection
     {
-        return [$this->projectReport(), $this->siteReports(), $this->nurseryReports()];
+        return collect([$this->projectReport(), $this->siteReports(), $this->nurseryReports()]);
     }
 }
