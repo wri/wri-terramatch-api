@@ -16,18 +16,18 @@ class ActiveCountriesTableController extends Controller
     public function __invoke()
     {
         return response()->json([
-            'active_countries' => $this->getAllContries(),
+            'active_countries' => $this->getAllCountries(),
         ]);
     }
 
-    public function getAllContries()
+    public function getAllCountries()
     {
-        $conuntryId = FormOptionList::where('key', 'countries')->value('id');
-        $contries = FormOptionListOption::where('form_option_list_id', $conuntryId)
+        $countryId = FormOptionList::where('key', 'countries')->value('id');
+        $countries = FormOptionListOption::where('form_option_list_id', $countryId)
             ->orderBy('label')
             ->get();
         $activeCountries = [];
-        foreach ($contries as $country) {
+        foreach ($countries as $country) {
             $totalProjects = $this->numberOfProjects($country->slug);
 
             $totalSpeciesAmount = $this->totalSpeciesAmount($country->slug);
@@ -59,10 +59,8 @@ class ActiveCountriesTableController extends Controller
 
     public function numberOfProjects($country)
     {
-        $totalNumberOfProjects = $this->projectsCountry($country)
+        return $this->projectsCountry($country)
                 ->count();
-
-        return $totalNumberOfProjects;
     }
 
     public function totalSpeciesAmount($country)
@@ -102,25 +100,19 @@ class ActiveCountriesTableController extends Controller
 
     public function numberOfSites($country)
     {
-        $projects = $this->projectsCountry($country)
-            ->get();
-        $totalSites = 0;
-        foreach ($projects as $project) {
-            $totalSites += $project->sites()->count();
-        }
+        $projects = $this->projectsCountry($country)->get();
 
-        return $totalSites;
+        return $projects->sum(function ($project) {
+            return $project->sites()->count();
+        });
     }
 
     public function numberOfNurseries($country)
     {
-        $projects = $this->projectsCountry($country)
-            ->get();
-        $totalNurseries = 0;
-        foreach ($projects as $project) {
-            $totalNurseries += $project->nurseries()->count();
-        }
+        $projects = $this->projectsCountry($country)->get();
 
-        return $totalNurseries;
+        return $projects->sum(function ($project) {
+            return $project->nurseries()->count();
+        });
     }
 }
