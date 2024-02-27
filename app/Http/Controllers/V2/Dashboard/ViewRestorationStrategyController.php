@@ -47,26 +47,26 @@ class ViewRestorationStrategyController extends Controller
 
     private function getRestorationStrategy(array $projectIds)
     {
+        $strategies = ['direct-seeding', 'tree-planting', 'assisted-natural-regeneration'];
+    
+        $conditions = implode(' OR ', array_map(function ($strategy) {
+            return "JSON_UNQUOTE(JSON_EXTRACT(restoration_strategy, CONCAT('\$[', numbers.n, ']'))) = '$strategy'";
+        }, $strategies));
+    
+        $numbers = implode(' UNION ALL ', array_map(function ($n) {
+            return "SELECT $n AS n";
+        }, range(0, 3)));
+    
         return DB::table(DB::raw("(SELECT DISTINCT
             project_id,
             JSON_UNQUOTE(JSON_EXTRACT(restoration_strategy, CONCAT('\$[', numbers.n, ']'))) AS strategy
         FROM
             v2_sites
         CROSS JOIN
-            (
-                SELECT 0 AS n UNION ALL
-                SELECT 1 UNION ALL
-                SELECT 2 UNION ALL
-                SELECT 3
-                -- Add more numbers if needed based on the maximum number of strategies per site
-            ) numbers
+            ($numbers) numbers
         WHERE
             project_id IN (" . implode(',', $projectIds) . ")
-            AND (
-                JSON_UNQUOTE(JSON_EXTRACT(restoration_strategy, CONCAT('\$[', numbers.n, ']'))) = 'direct-seeding'
-                OR JSON_UNQUOTE(JSON_EXTRACT(restoration_strategy, CONCAT('\$[', numbers.n, ']'))) = 'tree-planting'
-                OR JSON_UNQUOTE(JSON_EXTRACT(restoration_strategy, CONCAT('\$[', numbers.n, ']'))) = 'assisted-natural-regeneration'
-            )
+            AND ($conditions)
         ) AS subquery"))
             ->groupBy('strategy')
             ->select('strategy', DB::raw('COUNT(*) as count_per_project'))
@@ -75,30 +75,26 @@ class ViewRestorationStrategyController extends Controller
 
     private function getLandUseType(array $projectIds)
     {
+        $landUseTypes = ['agroforest', 'open-natural-ecosystem', 'mangrove', 'natural-forest', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'urban-forest', 'woodlot-or-plantation'];
+    
+        $conditions = implode(' OR ', array_map(function ($type) {
+            return "JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT('\$[', numbers.n, ']'))) = '$type'";
+        }, $landUseTypes));
+    
+        $numbers = implode(' UNION ALL ', array_map(function ($n) {
+            return "SELECT $n AS n";
+        }, range(0, 4)));
+    
         return Site::select('land_use', DB::raw('COUNT(DISTINCT v2_sites.project_id) as count_per_project'))
-            ->join(DB::raw('(SELECT project_id,
-                                JSON_UNQUOTE(JSON_EXTRACT(land_use_types, CONCAT(\'$[\', numbers.n, \']\'))) AS land_use
+            ->join(DB::raw("(SELECT project_id,
+                                JSON_UNQUOTE(JSON_EXTRACT(land_use_types, CONCAT('\$[', numbers.n, ']'))) AS land_use
                             FROM v2_sites
                             CROSS JOIN
-                                (SELECT 0 AS n UNION ALL
-                                 SELECT 1 UNION ALL
-                                 SELECT 2 UNION ALL
-                                 SELECT 3 UNION ALL
-                                 SELECT 4) numbers
+                                ($numbers) numbers
                             WHERE
-                                v2_sites.project_id IN (' . implode(',', $projectIds) . ')
-                                AND (
-                                    JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT(\'$[\', numbers.n, \']\'))) = \'agroforest\'
-                                    OR JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT(\'$[\', numbers.n, \']\'))) = \'open-natural-ecosystem\'
-                                    OR JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT(\'$[\', numbers.n, \']\'))) = \'mangrove\'
-                                    OR JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT(\'$[\', numbers.n, \']\'))) = \'natural-forest\'
-                                    OR JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT(\'$[\', numbers.n, \']\'))) = \'peatland\'
-                                    OR JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT(\'$[\', numbers.n, \']\'))) = \'riparian-area-or-wetland\'
-                                    OR JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT(\'$[\', numbers.n, \']\'))) = \'silvopasture\'
-                                    OR JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT(\'$[\', numbers.n, \']\'))) = \'urban-forest\'
-                                    OR JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT(\'$[\', numbers.n, \']\'))) = \'woodlot-or-plantation\'
-                                )
-                        ) AS subquery'), function ($join) {
+                                v2_sites.project_id IN (" . implode(',', $projectIds) . ")
+                                AND ($conditions)
+                        ) AS subquery"), function ($join) {
                 $join->on('v2_sites.project_id', '=', 'subquery.project_id');
             })
             ->groupBy('land_use')
