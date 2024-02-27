@@ -117,7 +117,7 @@ class Task extends Model
             throw new InvalidStatusException('Task is not submittable due to incomplete reports');
         }
 
-        // Then, ensure all reports are in a complete state. This is broken into two loops to avoid partially
+        // Then, ensure all reports are in a complete state. This is done after checking all reports to avoid
         // submitting an unsubmitable report.
         foreach ($reports as $report) {
             if ($report->isComplete()) {
