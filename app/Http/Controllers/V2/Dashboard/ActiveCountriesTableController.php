@@ -84,15 +84,12 @@ class ActiveCountriesTableController extends Controller
     public function totalJobsCreated($country)
     {
         $projects = $this->projectsCountry($country)->get();
-        $totalJobs = 0;
-        foreach ($projects as $project) {
+        return $projects->sum(function ($project) {
             $latestProjectReport = ProjectReport::where('project_id', $project->id)
                 ->orderByDesc('due_at')
                 ->value(DB::raw('pt_total + ft_total'));
-            $totalJobs += $latestProjectReport;
-        }
-
-        return $totalJobs;
+            return $latestProjectReport;
+        });
     }
 
     public function numberOfSites($country)
