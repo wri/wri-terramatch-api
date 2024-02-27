@@ -10,6 +10,8 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\TaskStatusStateMachine;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
@@ -128,7 +130,77 @@ class Task extends Model
             }
         }
 
-        $this->status()->awaitingApproval();
+        $this->status()->transitionTo(TaskStatusStateMachine::AWAITING_APPROVAL);
+    }
+
+    /**
+     * If the Task is in any status but DUE or APPROVED, this will update the status of the report based on the status
+     * of the reports within it.
+     * @throws InvalidStatusException
+     */
+    public function checkStatus()
+    {
+        if (in_array($this->status, [TaskStatusStateMachine::DUE, TaskStatusStateMachine::APPROVED])) {
+            return;
+        }
+
+        // shortcuts that are efficient and don't require looking for update requests
+        $reportRelations = [$this->projectReport(), $this->siteReports(), $this->nurseryReports()];
+        $reportStatuses = array_unique(array_merge(...array_map(function ($relation) {
+            return $relation->distinct()->pluck('status')->all();
+        }, $reportRelations)));
+        if (count($reportStatuses) == 1 && $reportStatuses[0] == ReportStatusStateMachine::APPROVED) {
+            $this->status()->transitionTo(TaskStatusStateMachine::APPROVED);
+            return;
+        } elseif (
+            in_array(ReportStatusStateMachine::DUE, $reportStatuses) ||
+            in_array(ReportStatusStateMachine::STARTED, $reportStatuses)
+        ) {
+            throw new InvalidStatusException('Task has incomplete reports');
+        }
+
+        // if we fall through to here, the situation is more complicated and expensive to compute.
+        $reportStubs = array_merge(...array_map(function ($relation) {
+            // All we need is the status of the report, and the id of the report for getting update requests.
+            return $relation
+                ->whereIn(
+                    'status',
+                    [ReportStatusStateMachine::NEEDS_MORE_INFORMATION, ReportStatusStateMachine::AWAITING_APPROVAL])
+                ->get('id', 'status');
+        }, $reportRelations));
+
+        if (count($reportStubs) == 0) {
+            // from the checks above, we know there are reports that are not in approved, or an incomplete state
+            // so something is up.
+            throw new InvalidStatusException('Task has reports in an invalid state');
+        }
+
+        // Separate loops in case there is a report in `awaiting_approval` that has an update request in
+        // needs-more-information. In that case, we want to make sure the task goes to needs-more-information
+        foreach ($reportStubs as $report) {
+            if ($report->status == ReportStatusStateMachine::NEEDS_MORE_INFORMATION) {
+                if ($report->updateRequests()->where('status', UpdateRequest::STATUS_AWAITING_APPROVAL)->exists()) {
+                    // if a report in needs-more-information has an awaiting-approval update request, ignore it here
+                    // because we're specifically looking for a report that's in the needs-more-information state, and
+                    // once the update request is in awaiting-approval, it doesn't qualify for task status updating
+                    // purposes.
+                    continue;
+                }
+
+                // A report in needs-more-information causes the task to go to needs-more-information
+                $this->status()->transitionTo(TaskStatusStateMachine::NEEDS_MORE_INFORMATION);
+                return;
+            } elseif ($report->updateRequests()->where('status', UpdateRequest::STATUS_NEEDS_MORE_INFORMATION)->exists()) {
+                // an awaiting-approval report with a needs-more-information update request causes the task to go to
+                // needs-more-information
+                $this->status()->transitionTo(TaskStatusStateMachine::NEEDS_MORE_INFORMATION);
+                return;
+            }
+        }
+
+        // If there are no reports or update requests in needs-more-information, the only option left is that
+        // something is in awaiting-approval.
+        $this->status()->transitionTo(TaskStatusStateMachine::AWAITING_APPROVAL);
     }
 
     public function getCompletionStatusAttribute(): string
