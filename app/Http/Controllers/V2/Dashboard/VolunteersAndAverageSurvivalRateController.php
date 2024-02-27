@@ -26,34 +26,23 @@ class VolunteersAndAverageSurvivalRateController extends Controller
     public function getTotalVolunteerSum($request)
     {
         $query = Project::query();
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
-        $projectsId = $query->pluck('id')->toArray();
-        $totalVolunteers = 0;
-        foreach ($projectsId as $id) {
-            $latestProjectReportVolunteerTotal = ProjectReport::where('project_id', $id)
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request)->get();
+
+        return $projects->sum(function ($project) {
+            return ProjectReport::where('project_id', $project->id)
                 ->orderByDesc('due_at')
                 ->value('volunteer_total');
-
-            $totalVolunteers += $latestProjectReportVolunteerTotal;
-        }
-
-        return $totalVolunteers;
+        });
     }
 
     public function getVolunteersSum($request, $volunteerType)
     {
         $query = Project::query();
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
-        $projectsId = $query->pluck('id')->toArray();
-        $volunteers = 0;
-        foreach ($projectsId as $id) {
-            $totalVolunteerType = ProjectReport::where('project_id', $id)
-                ->sum($volunteerType);
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request)->get();
 
-            $volunteers += $totalVolunteerType;
-        }
-
-        return $volunteers;
+        return $projects->sum(function ($project) use ($volunteerType) {
+            return ProjectReport::where('project_id', $project->id)->sum($volunteerType);
+        });
     }
 
     public function getAverageSurvivalRate($request, $typeOrganisation)
