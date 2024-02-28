@@ -208,7 +208,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-const ENTITY_TYPES = ['projects', 'project-reports', 'sites', 'site-reports', 'nurseries', 'nursery-reports'];
+const ENTITY_TYPES_PLURAL = ['projects', 'project-reports', 'sites', 'site-reports', 'nurseries', 'nursery-reports'];
+const ENTITY_TYPES_SINGULAR = ['project', 'project-report', 'site', 'site-report', 'nursery', 'nursery-report'];
 
 Route::get('debug/error', function () {
     throw new Exception('Test exception', 500);
@@ -300,7 +301,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
 
     Route::prefix('{modelSlug}')
-        ->whereIn('modelSlug', ENTITY_TYPES)
+        ->whereIn('modelSlug', ENTITY_TYPES_PLURAL)
         ->middleware('modelInterface')
         ->group(function() {
             Route::put('/{entity}/{status}', AdminStatusEntityController::class);
@@ -421,7 +422,7 @@ Route::prefix('forms')->group(function () {
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
     Route::prefix('{modelSlug}')
-        ->whereIn('modelSlug', ENTITY_TYPES)
+        ->whereIn('modelSlug', ENTITY_TYPES_PLURAL)
         ->middleware('modelInterface')
         ->group(function() {
             Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
@@ -565,7 +566,7 @@ Route::prefix('{modelSlug}')
     });
 
 Route::prefix('{modelSlug}')
-    ->whereIn('modelSlug', ENTITY_TYPES)
+    ->whereIn('modelSlug', ENTITY_TYPES_PLURAL)
     ->middleware('modelInterface')
     ->group(function() {
         Route::get('/{entity}', ViewEntityController::class);
@@ -623,8 +624,14 @@ Route::prefix('funding-type')->group(function () {
 
 Route::prefix('update-requests')->group(function () {
     Route::get('/{updateRequest}', AdminViewUpdateRequestController::class);
-    Route::get('/{entity}/{uuid}', EntityUpdateRequestsController::class);
     Route::delete('/{updateRequest}', AdminSoftDeleteUpdateRequestController::class);
+
+    Route::prefix('/{modelSlug}')
+        ->whereIn('modelSlug', ENTITY_TYPES_SINGULAR)
+        ->middleware('modelInterface')
+        ->group(function () {
+            Route::get('/{entity}', EntityUpdateRequestsController::class);
+        });
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
