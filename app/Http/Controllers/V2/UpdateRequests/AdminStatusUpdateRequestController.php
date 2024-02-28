@@ -27,38 +27,14 @@ class AdminStatusUpdateRequestController extends Controller
         switch($status) {
             case 'approve':
                 $this->applyUpdates($updateRequest);
-                $updateRequest->update([
-                    'status' => UpdateRequest::STATUS_APPROVED,
-                    'feedback' => data_get($data, 'feedback'),
-                ]);
-
-                $entity = $updateRequest->updaterequestable;
-                $entity->update_request_status = UpdateRequest::STATUS_APPROVED;
-                $entity->save();
-
-                break;
-            case 'reject':
-                $updateRequest->update([
-                    'status' => UpdateRequest::STATUS_REJECTED,
-                    'feedback' => data_get($data, 'feedback'),
-                    'feedback_fields' => data_get($data, 'feedback_fields'),
-                ]);
-
-                $entity = $updateRequest->updaterequestable;
-                $entity->update_request_status = UpdateRequest::STATUS_REJECTED;
-                $entity->save();
+                $updateRequest->approve(data_get($data, 'feedback'));
 
                 break;
             case 'moreinfo':
-                $updateRequest->update([
-                    'status' => UpdateRequest::STATUS_NEEDS_MORE_INFORMATION,
-                    'feedback' => data_get($data, 'feedback'),
-                    'feedback_fields' => data_get($data, 'feedback_fields'),
-                ]);
-
-                $entity = $updateRequest->updaterequestable;
-                $entity->update_request_status = UpdateRequest::STATUS_NEEDS_MORE_INFORMATION;
-                $entity->save();
+                $updateRequest->needsMoreInformation(
+                    data_get($data, 'feedback'),
+                    data_get($data, 'feedback_fields')
+                );
 
                 break;
             default:

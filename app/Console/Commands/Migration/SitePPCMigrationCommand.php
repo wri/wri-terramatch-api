@@ -6,6 +6,7 @@ use App\Models\Programme;
 use App\Models\Site as PPCSite;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 
@@ -70,7 +71,7 @@ class SitePPCMigrationCommand extends Command
             'start_date' => data_get($site, 'establishment_date'),
             'end_date' => data_get($site, 'end_date'),
             'land_tenures' => $this->handleLandTenure($site),
-            'status' => Site::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
             'survival_rate_planted' => data_get($site, 'aim_survival_rate'),
             'technical_narrative' => data_get($site, 'technical_narrative'),
             'direct_seeding_survival_rate' => data_get($site, 'aim_direct_seeding_survival_rate'),

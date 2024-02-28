@@ -8,6 +8,7 @@ use App\Http\Resources\V2\Nurseries\NurseyWithSchemaResource;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\JsonResponse;
 
 class CreateNurseryWithFormController extends Controller
@@ -28,7 +29,7 @@ class CreateNurseryWithFormController extends Controller
         $nursery = Nursery::create([
             'framework_key' => $project->framework_key,
             'project_id' => $project->id,
-            'status' => Nursery::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         return new NurseyWithSchemaResource($nursery, ['schema' => $form]);

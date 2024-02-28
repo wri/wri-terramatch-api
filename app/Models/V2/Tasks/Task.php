@@ -13,6 +13,7 @@ use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\TaskStatusStateMachine;
+use App\StateMachines\UpdateRequestStatusStateMachine;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -139,7 +140,7 @@ class Task extends Model
      * of the reports within it.
      * @throws InvalidStatusException
      */
-    public function checkStatus()
+    public function checkStatus(): void
     {
         if (in_array($this->status, [TaskStatusStateMachine::DUE, TaskStatusStateMachine::APPROVED])) {
             return;
@@ -181,7 +182,7 @@ class Task extends Model
         // needs-more-information. In that case, we want to make sure the task goes to needs-more-information
         foreach ($reportStubs as $report) {
             if ($report->status == ReportStatusStateMachine::NEEDS_MORE_INFORMATION) {
-                if ($report->updateRequests()->where('status', UpdateRequest::STATUS_AWAITING_APPROVAL)->exists()) {
+                if ($report->updateRequests()->isStatus(UpdateRequestStatusStateMachine::AWAITING_APPROVAL)->exists()) {
                     // if a report in needs-more-information has an awaiting-approval update request, ignore it here
                     // because we're specifically looking for a report that's in the needs-more-information state, and
                     // once the update request is in awaiting-approval, it doesn't qualify for task status updating
@@ -192,7 +193,7 @@ class Task extends Model
                 // A report in needs-more-information causes the task to go to needs-more-information
                 $this->status()->transitionTo(TaskStatusStateMachine::NEEDS_MORE_INFORMATION);
                 return;
-            } elseif ($report->updateRequests()->where('status', UpdateRequest::STATUS_NEEDS_MORE_INFORMATION)->exists()) {
+            } elseif ($report->updateRequests()->isStatus( UpdateRequestStatusStateMachine::NEEDS_MORE_INFORMATION)->exists()) {
                 // an awaiting-approval report with a needs-more-information update request causes the task to go to
                 // needs-more-information
                 $this->status()->transitionTo(TaskStatusStateMachine::NEEDS_MORE_INFORMATION);

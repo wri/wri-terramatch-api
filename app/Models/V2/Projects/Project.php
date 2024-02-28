@@ -2,15 +2,21 @@
 
 namespace App\Models\V2\Projects;
 
+use App\Http\Resources\V2\Projects\ProjectResource;
+use App\Http\Resources\V2\Projects\ProjectWithSchemaResource;
 use App\Models\Framework;
 use App\Models\Organisation;
+use App\Models\Traits\HasEntityStatus;
+use App\Models\Traits\HasForm;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\User;
+use App\Models\V2\EntityModel;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
@@ -20,10 +26,6 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use App\Models\V2\UpdateRequests\ApprovalFlow;
-use App\Models\V2\UpdateRequests\UpdateRequest;
-use App\StateMachines\TaskStatusStateMachine;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -39,7 +42,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
+class Project extends Model implements HasMedia, AuditableContract, EntityModel
 {
     use HasFactory;
     use HasUuid;
@@ -53,6 +56,9 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
     use HasV2MediaCollections;
     use SoftDeletes;
     use Auditable;
+    use HasUpdateRequests;
+    use HasForm;
+    use HasEntityStatus;
 
     protected $auditInclude = [
         'status',
@@ -169,18 +175,6 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
         'answers' => 'array',
     ];
 
-    public const STATUS_STARTED = 'started';
-    public const STATUS_AWAITING_APPROVAL = 'awaiting-approval';
-    public const STATUS_APPROVED = 'approved';
-    public const STATUS_NEEDS_MORE_INFORMATION = 'needs-more-information';
-
-    public static $statuses = [
-        self::STATUS_STARTED => 'Started',
-        self::STATUS_AWAITING_APPROVAL => 'Awaiting approval',
-        self::STATUS_APPROVED => 'Approved',
-        self::STATUS_NEEDS_MORE_INFORMATION => 'Needs more information',
-    ];
-
     public const PROJECT_STATUS_NEW = 'new_project';
     public const PROJECT_STATUS_EXISTING = 'existing_expansion';
 
@@ -221,11 +215,6 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
     public function sites(): HasMany
     {
         return $this->hasMany(Site::class);
-    }
-
-    public function updateRequests()
-    {
-        return $this->morphMany(UpdateRequest::class, 'updaterequestable');
     }
 
     public function controlSites(): HasMany
@@ -322,7 +311,7 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
     public function getTreesPlantedCountAttribute(): int
     {
         $siteIds = Site::where('project_id', $this->id)
-            ->where('status', Site::STATUS_APPROVED)
+            ->isApproved()
             ->pluck('id')
             ->toArray();
 
@@ -391,16 +380,12 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
 
     public function getTotalSitesAttribute(): int
     {
-        return $this->sites()
-            ->where('status', Site::STATUS_APPROVED)
-            ->count();
+        return $this->sites()->isApproved()->count();
     }
 
     public function getTotalNurseriesAttribute(): int
     {
-        return $this->nurseries()
-            ->where('status', Nursery::STATUS_APPROVED)
-            ->count();
+        return $this->nurseries()->isApproved()->count();
     }
 
     public function getTotalProjectReportsAttribute(): int
@@ -466,5 +451,20 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
         return [
             'name' => $this->name,
         ];
+    }
+
+    public function createResource(): JsonResource
+    {
+        return new ProjectResource($this);
+    }
+
+    public function createSchemaResource(): JsonResource
+    {
+        return new ProjectWithSchemaResource($this, ['schema' => $this->getForm()]);
+    }
+
+    public function getLinkedFieldsConfig()
+    {
+        return config('wri.linked-fields.models.project.fields', []);
     }
 }
