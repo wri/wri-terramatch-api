@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Projects\ProjectWithSchemaResource;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\Request;
 
 class CreateBlankProjectWithFormController extends Controller
@@ -19,7 +20,7 @@ class CreateBlankProjectWithFormController extends Controller
         $project = Project::create([
             'framework_key' => $form->framework_key,
             'organisation_id' => $organizationId,
-            'status' => Project::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         return new ProjectWithSchemaResource($project, ['schema' => $form]);

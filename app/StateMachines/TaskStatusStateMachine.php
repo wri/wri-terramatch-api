@@ -22,6 +22,7 @@ class TaskStatusStateMachine extends StateMachine
             self::DUE => [self::AWAITING_APPROVAL],
             self::AWAITING_APPROVAL => [self::NEEDS_MORE_INFORMATION, self::APPROVED],
             self::NEEDS_MORE_INFORMATION => [self::AWAITING_APPROVAL],
+            self::APPROVED => [self::AWAITING_APPROVAL, self::NEEDS_MORE_INFORMATION],
         ];
     }
 

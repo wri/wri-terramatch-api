@@ -2,8 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use Closure;
 use Illuminate\Http\Request;
@@ -15,7 +18,12 @@ use Illuminate\Http\Request;
 class ModelInterfaceBindingMiddleware
 {
     private const CONCRETE_MODELS = [
-        // ReportModel concrete classes
+        // EntityModel concrete classes
+        'projects' => Project::class,
+        'sites' => Site::class,
+        'nurseries' => Nursery::class,
+
+        // ReportModel (which extends EntityModel) concrete classes
         'project-reports' => ProjectReport::class,
         'site-reports' => SiteReport::class,
         'nursery-reports' => NurseryReport::class,

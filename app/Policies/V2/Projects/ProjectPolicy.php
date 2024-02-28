@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Policies\Policy;
+use App\StateMachines\EntityStatusStateMachine;
 
 class ProjectPolicy extends Policy
 {
@@ -82,7 +83,7 @@ class ProjectPolicy extends Policy
         }
 
         if ($user->can('manage-own') && $this->isTheirs($user, $project)) {
-            return $project->status == Project::STATUS_STARTED;
+            return $project->status == EntityStatusStateMachine::STARTED;
         }
 
         return false;

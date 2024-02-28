@@ -8,6 +8,7 @@ use App\Http\Resources\V2\SiteReports\SiteReportWithSchemaResource;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\JsonResponse;
 
 class CreateSiteWithFormController extends Controller
@@ -28,7 +29,7 @@ class CreateSiteWithFormController extends Controller
         $site = Site::create([
             'framework_key' => $project->framework_key,
             'project_id' => $project->id,
-            'status' => Site::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         return new SiteReportWithSchemaResource($site, ['schema' => $form]);

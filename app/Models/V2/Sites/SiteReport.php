@@ -8,6 +8,7 @@ use App\Models\Framework;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
+use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
@@ -18,8 +19,6 @@ use App\Models\V2\ReportModel;
 use App\Models\V2\Seeding;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use App\Models\V2\UpdateRequests\ApprovalFlow;
-use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,7 +36,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalFlow, ReportModel
+class SiteReport extends Model implements HasMedia, AuditableContract, ReportModel
 {
     use HasFactory;
     use HasUuid;
@@ -50,6 +49,7 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
     use HasV2MediaCollections;
     use HasFrameworkKey;
     use Auditable;
+    use HasUpdateRequests;
 
     protected $auditInclude = [
         'status',
@@ -170,11 +170,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
     public function organisation(): BelongsTo
     {
         return  empty($this->project) ? $this->project : $this->project->organisation();
-    }
-
-    public function updateRequests()
-    {
-        return $this->morphMany(UpdateRequest::class, 'updaterequestable');
     }
 
     public function polygons(): MorphMany
@@ -304,7 +299,7 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
 
     public function getTaskUuidAttribute(): ?string
     {
-        return $this->task->uuid ?? null;
+        return $this->task?->uuid ?? null;
     }
 
     public function toSearchableArray()
@@ -363,10 +358,5 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
     public function supportsNothingToReport(): bool
     {
         return true;
-    }
-
-    public function getLinkedFieldsConfig()
-    {
-        return config('wri.linked-fields.models.site-report.fields', []);
     }
 }

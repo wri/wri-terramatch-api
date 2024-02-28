@@ -6,6 +6,7 @@ use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 
@@ -70,7 +71,7 @@ class SiteTerrafundMigrationCommand extends Command
             'land_tenures' => data_get($site, 'land_tenures'),
             'land_use_types' => $this->handleLandUse($site->restoration_methods),
             'restoration_strategy' => $this->handleRestorationStrategy($site->restoration_methods),
-            'status' => Site::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
             'hectares_to_restore_goal' => data_get($site, 'hectares_to_restore'),
             'landscape_community_contribution' => data_get($site, 'landscape_community_contribution'),
         ];
