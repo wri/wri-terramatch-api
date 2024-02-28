@@ -4,11 +4,15 @@ namespace App\Models\V2\UpdateRequests;
 
 use App\Models\Framework;
 use App\Models\Traits\HasFrameworkKey;
+use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
+use App\StateMachines\UpdateRequestStatusStateMachine;
+use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +29,8 @@ class UpdateRequest extends Model implements ApprovalFlow, AuditableContract
     use HasTypes;
     use HasFrameworkKey;
     use Auditable;
+    use HasStatus;
+    use HasStateMachines;
 
     protected $casts = [
         'published' => 'boolean',
@@ -55,24 +61,17 @@ class UpdateRequest extends Model implements ApprovalFlow, AuditableContract
         'old_model',
     ];
 
-    public const STATUS_REQUESTED = 'requested';
-    public const STATUS_NO_UPDATE = 'no-update';
-    public const STATUS_DRAFT = 'draft';
-    public const STATUS_REJECTED = 'rejected';
-    public const STATUS_AWAITING_APPROVAL = 'awaiting-approval';
-    public const STATUS_NEEDS_MORE_INFORMATION = 'needs-more-information';
-    public const STATUS_APPROVED = 'approved';
-    public const STATUS_PUBLISHED = 'published';
+    public const ENTITY_STATUS_NO_UPDATE = 'no-update';
 
     public static $statuses = [
-        self::STATUS_DRAFT => 'Draft',
-        self::STATUS_NO_UPDATE => 'No Update',
-        self::STATUS_REQUESTED => 'Requested',
-        self::STATUS_REJECTED => 'Rejected',
-        self::STATUS_AWAITING_APPROVAL => 'Awaiting approval',
-        self::STATUS_NEEDS_MORE_INFORMATION => 'Needs more information',
-        self::STATUS_APPROVED => 'Approved',
-        self::STATUS_PUBLISHED => 'Published',
+        UpdateRequestStatusStateMachine::DRAFT => 'Draft',
+        UpdateRequestStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
+        UpdateRequestStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
+        UpdateRequestStatusStateMachine::APPROVED => 'Approved',
+    ];
+
+    public $stateMachines = [
+        'status' => UpdateRequestStatusStateMachine::class,
     ];
 
     public function getRouteKeyName()
@@ -104,5 +103,30 @@ class UpdateRequest extends Model implements ApprovalFlow, AuditableContract
     public function updaterequestable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function scopeIsUnapproved(Builder $query): Builder
+    {
+        return $query->whereNot('status', UpdateRequestStatusStateMachine::APPROVED);
+    }
+
+    public function submitForApproval(): void
+    {
+        $this->status()->transitionTo(UpdateRequestStatusStateMachine::AWAITING_APPROVAL);
+    }
+
+    public function approve($feedback = NULL): void
+    {
+        if (!is_null($feedback)) {
+            $this->feedback = $feedback;
+        }
+        $this->status()->transitionTo(UpdateRequestStatusStateMachine::APPROVED);
+    }
+
+    public function needsMoreInformation($feedback, $feedbackFields): void
+    {
+        $this->feedback = $feedback;
+        $this->feedback_fields = $feedbackFields;
+        $this->status()->transitionTo(UpdateRequestStatusStateMachine::NEEDS_MORE_INFORMATION);
     }
 }
