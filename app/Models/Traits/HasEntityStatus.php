@@ -4,8 +4,7 @@ namespace App\Models\Traits;
 
 use App\Events\V2\General\EntityStatusChangeEvent;
 use App\StateMachines\EntityStatusStateMachine;
-use App\StateMachines\ReportStatusStateMachine;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @property string $status
