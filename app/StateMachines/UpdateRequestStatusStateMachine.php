@@ -2,6 +2,7 @@
 
 namespace App\StateMachines;
 
+use App\Models\V2\EntityModel;
 use App\Models\V2\ReportModel;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use Asantibanez\LaravelEloquentStateMachines\StateMachines\StateMachine;
@@ -35,12 +36,17 @@ class UpdateRequestStatusStateMachine extends StateMachine
     public function afterTransitionHooks(): array
     {
         $updateTaskStatus = function (string $fromStatus, UpdateRequest $updateRequest) {
+            /** @var EntityModel $model */
             $model = $updateRequest->updaterequestable;
             if (in_array('update_request_status', $model->getFillable())) {
                 $model->update(['update_request_status' => $updateRequest->status]);
             }
 
-            if ($model instanceof ReportModel) {
+            if ($updateRequest->status == self::APPROVED) {
+                $model->approve();
+            } elseif ($model instanceof ReportModel) {
+                // This is an elseif because report model automatically checks the task after approval, so
+                // task->checkStatus() happens as a result of model->approve() in the block above.
                 $model->task->checkStatus();
             }
         };
