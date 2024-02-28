@@ -123,7 +123,7 @@ class Task extends Model
         // submitting an unsubmitable report.
         /** @var ReportModel $report */
         foreach ($reports as $report) {
-            if ($report->isComplete()) {
+            if ($report->hasCompleteStatus()) {
                 continue;
             }
 
