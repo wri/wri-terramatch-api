@@ -22,6 +22,7 @@ use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\UpdateRequests\ApprovalFlow;
 use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\StateMachines\TaskStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -437,52 +438,9 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
 
     public function getTotalReportingTasksAttribute(): int
     {
-        $siteIds = $this->sites()->pluck('id')->toArray();
-        $nurseryIds = $this->nurseries()->pluck('id')->toArray();
-
-        $RawDueDates = ProjectReport::where('project_id', $this->id)
-            ->pluck('due_at')
-            ->filter()
-            ->map(function ($carbonObject) {
-                return $carbonObject->format('Y-m-d H:i:s');
-            })
-            ->toArray();
-
-        $pendingReportingTasks = 0;
-
-        foreach ($RawDueDates as $RawDueDate) {
-            $dueDate = Carbon::parse($RawDueDate);
-
-            $projectReportPending = $this->getReportPendingCount(ProjectReport::class, $dueDate, "project_id", $siteIds, $nurseryIds);
-            $siteRepPending = $this->getReportPendingCount(SiteReport::class, $dueDate, "site_id", $siteIds, $nurseryIds);
-            $nurRepPending = $this->getReportPendingCount(NurseryReport::class, $dueDate, "nursery_id", $siteIds, $nurseryIds);
-            // TODO (NJC): Temporary: just getting this code working again since the removal of forProjectAndDate. This
-            //  method will be rewritten in TM-560
-            $hasPendingTask = Task::where('project_id', $this->id)
-                ->whereMonth('due_at', $dueDate->month)
-                ->whereYear('due_at', $dueDate->year)
-                ->whereNot('status', Task::STATUS_COMPLETE)
-                ->exists();
-
-            if ($projectReportPending + $siteRepPending + $nurRepPending > 0 || $hasPendingTask) {
-                $pendingReportingTasks++;
-            }
-        }
-        
-        return $pendingReportingTasks;
+        return $this->tasks()->isIncomplete()->count();
     }
     
-    private function getReportPendingCount(string $reportType, Carbon $dueDate, string $idColumn, array $siteIds, array $nurseryIds): int
-    {
-        $ids = ($reportType === ProjectReport::class) ? [$this->id] : (($reportType === SiteReport::class) ? $siteIds : $nurseryIds);
-    
-        return $reportType::whereIn($idColumn, $ids)
-            ->whereMonth('due_at', $dueDate->month)
-            ->whereYear('due_at', $dueDate->year)
-            ->isIncomplete()
-            ->count();
-    }
-
     public function getFrameworkUuidAttribute(): ?string
     {
         return $this->framework ? $this->framework->uuid : null;

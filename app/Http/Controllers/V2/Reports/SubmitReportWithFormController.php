@@ -32,6 +32,7 @@ class SubmitReportWithFormController extends Controller
         if (!empty($updateRequest)) {
             $updateRequest->update(['status' => UpdateRequest::STATUS_AWAITING_APPROVAL]);
             $report->update(['update_request_status' => UpdateRequest::STATUS_AWAITING_APPROVAL]);
+            $report->task->checkStatus();
 
             Action::where('targetable_type', get_class($report))
                 ->where('targetable_id', $updateRequest->id)
