@@ -126,8 +126,10 @@ trait HasReportStatus {
 
     public function submitForApproval(): void
     {
-        $this->completion = 100;
-        $this->submitted_at = now();
+        if (empty($this->submitted_at)) {
+            $this->completion = 100;
+            $this->submitted_at = now();
+        }
         $this->status()->transitionTo(ReportStatusStateMachine::AWAITING_APPROVAL);
     }
 

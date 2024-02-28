@@ -44,9 +44,15 @@ class UpdateRequestStatusStateMachine extends StateMachine
 
             if ($updateRequest->status == self::APPROVED) {
                 $model->approve();
+            } elseif (
+                ($updateRequest->status == self::AWAITING_APPROVAL ||
+                $updateRequest->status == self::NEEDS_MORE_INFORMATION) &&
+                $model->status == EntityStatusStateMachine::APPROVED
+            ) {
+                $model->submitForApproval();
             } elseif ($model instanceof ReportModel) {
-                // This is an elseif because report model automatically checks the task after approval, so
-                // task->checkStatus() happens as a result of model->approve() in the block above.
+                // If the blocks above didn't trigger a check status on the task, we want to make sure it happens
+                // here.
                 $model->task->checkStatus();
             }
         };
