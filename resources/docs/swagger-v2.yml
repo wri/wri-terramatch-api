@@ -7477,6 +7477,48 @@ definitions:
         type: string
       age:
         type: integer
+  V2OwnershipStakeCreate:
+    title: V2OwnershipStakeCreate
+    type: object
+    properties:
+      organisation_id:
+        type: string
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+      percent_ownership:
+        type: integer
+  V2OwnershipStakeRead:
+    title: V2OwnershipStakeRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      organisation_id:
+        type: string
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+      percent_ownership:
+        type: integer
+  V2OwnershipStakeUpdate:
+    title: V2OwnershipStakeUpdate
+    type: object
+    properties:
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+      percent_ownership:
+        type: integer
   V2FundingTypeCreate:
     title: V2FundingTypeCreate
     type: object
@@ -11760,6 +11802,8 @@ definitions:
               location:
                 type: string
               read_more_url:
+                type: string
+              framework_key:
                 type: string
               status:
                 type: string
@@ -16532,6 +16576,8 @@ definitions:
           location:
             type: string
           read_more_url:
+            type: string
+          framework_key:
             type: string
           status:
             type: string
@@ -56436,65 +56482,6 @@ paths:
                       type: string
                     nursery_report_form_uuid:
                       type: string
-    post:
-      summary: Create a a specific reporting frameworks
-      operationId: post-v2-admin-reporting-frameworks-uuid
-      tags:
-        - Funding Programmes
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          schema:
-            title: ReportingFrameworkCreate
-            type: object
-            properties:
-              name:
-                type: string
-              access_code:
-                type: string
-              project_form_uuid:
-                type: string
-              project_report_form_uuid:
-                type: string
-              site_form_uuid:
-                type: string
-              site_report_form_uuid:
-                type: string
-              nursery_form_uuid:
-                type: string
-              nursery_report_form_uuid:
-                type: string
-      responses:
-        '201':
-          description: OK
-          schema:
-            title: ReportingFrameworkRead
-            type: object
-            properties:
-              uuid:
-                type: string
-              name:
-                type: string
-              slug:
-                type: string
-              access_code:
-                type: string
-              project_form_uuid:
-                type: string
-              project_report_form_uuid:
-                type: string
-              site_form_uuid:
-                type: string
-              site_report_form_uuid:
-                type: string
-              nursery_form_uuid:
-                type: string
-              nursery_report_form_uuid:
-                type: string
   '/v2/admin/reporting-frameworks/{UUID}':
     put:
       summary: Update a specific reporting frameworks
@@ -56568,6 +56555,30 @@ paths:
       responses:
         '201':
           description: OK
+          schema:
+            title: ReportingFrameworkRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              name:
+                type: string
+              slug:
+                type: string
+              access_code:
+                type: string
+              project_form_uuid:
+                type: string
+              project_report_form_uuid:
+                type: string
+              site_form_uuid:
+                type: string
+              site_report_form_uuid:
+                type: string
+              nursery_form_uuid:
+                type: string
+              nursery_report_form_uuid:
+                type: string
   '/v2/reporting-frameworks/access-code/{ACCESS_CODE}':
     get:
       summary: View a specific reporting framework using an access code
@@ -56790,7 +56801,7 @@ paths:
           name: ENTITY
           in: path
           required: true
-          description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+          description: allowed values projects/sites/nurseries
         - type: string
           name: UUID
           in: path
@@ -70034,7 +70045,7 @@ paths:
                 type: integer
       tags:
         - V2 Leadership Team
-  /v2/ownership-stake:
+    /v2/ownership-stake: null
     post:
       summary: Create a ownership stake
       operationId: post-v2-ownership-stake
@@ -70042,18 +70053,18 @@ paths:
         '201':
           description: Created
           schema:
-            title: V2OwnershipStakeCreate
+            title: V2OwnershipStakeRead
             type: object
             properties:
               uuid:
                 type: string
               organisation_id:
                 type: string
-              title:
+              position:
                 type: string
               gender:
                 type: string
-              year_of_birth:
+              age:
                 type: integer
               percent_ownership:
                 type: integer
@@ -70066,11 +70077,11 @@ paths:
             properties:
               organisation_id:
                 type: string
-              title:
+              position:
                 type: string
               gender:
                 type: string
-              year_of_birth:
+              age:
                 type: integer
               percent_ownership:
                 type: integer
@@ -70091,11 +70102,11 @@ paths:
                 type: string
               organisation_id:
                 type: string
-              title:
+              position:
                 type: string
               gender:
                 type: string
-              year_of_birth:
+              age:
                 type: integer
               percent_ownership:
                 type: integer
@@ -70112,11 +70123,11 @@ paths:
             title: V2OwnershipStakeUpdate
             type: object
             properties:
-              title:
+              position:
                 type: string
               gender:
                 type: string
-              year_of_birth:
+              age:
                 type: integer
               percent_ownership:
                 type: integer
@@ -70133,19 +70144,17 @@ paths:
           description: OK
           schema:
             title: V2OwnershipStakeRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
             type: object
             properties:
               uuid:
                 type: string
               organisation_id:
                 type: string
-              title:
+              position:
                 type: string
               gender:
                 type: string
-              year_of_birth:
+              age:
                 type: integer
               percent_ownership:
                 type: integer
@@ -73337,6 +73346,8 @@ paths:
                             location:
                               type: string
                             read_more_url:
+                              type: string
+                            framework_key:
                               type: string
                             status:
                               type: string
@@ -79892,6 +79903,8 @@ paths:
                       type: string
                     read_more_url:
                       type: string
+                    framework_key:
+                      type: string
                     status:
                       type: string
                     organisation_types:
@@ -80223,6 +80236,8 @@ paths:
                       type: string
                     read_more_url:
                       type: string
+                    framework_key:
+                      type: string
                     status:
                       type: string
                     organisation_types:
@@ -80539,6 +80554,8 @@ paths:
               location:
                 type: string
               read_more_url:
+                type: string
+              framework_key:
                 type: string
               status:
                 type: string
@@ -80872,6 +80889,8 @@ paths:
                 type: string
               read_more_url:
                 type: string
+              framework_key:
+                type: string
               status:
                 type: string
               organisation_types:
@@ -81142,6 +81161,8 @@ paths:
               location:
                 type: string
               read_more_url:
+                type: string
+              framework_key:
                 type: string
               status:
                 type: string
@@ -81418,6 +81439,8 @@ paths:
                 type: string
               read_more_url:
                 type: string
+              framework_key:
+                type: string
               status:
                 type: string
               organisation_types:
@@ -81693,6 +81716,8 @@ paths:
                 type: string
               read_more_url:
                 type: string
+              framework_key:
+                type: string
               status:
                 type: string
               organisation_types:
@@ -81967,6 +81992,8 @@ paths:
               location:
                 type: string
               read_more_url:
+                type: string
+              framework_key:
                 type: string
               status:
                 type: string
@@ -86890,6 +86917,8 @@ paths:
                     type: string
                   read_more_url:
                     type: string
+                  framework_key:
+                    type: string
                   status:
                     type: string
                   organisation_types:
@@ -89074,6 +89103,8 @@ paths:
                   location:
                     type: string
                   read_more_url:
+                    type: string
+                  framework_key:
                     type: string
                   status:
                     type: string

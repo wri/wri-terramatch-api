@@ -2,14 +2,17 @@
 
 namespace App\Models\V2\Nurseries;
 
+use App\Http\Resources\V2\NurseryReports\NurseryReportResource;
+use App\Http\Resources\V2\NurseryReports\NurseryReportWithSchemaResource;
 use App\Models\Framework;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Polygon;
+use App\Models\V2\ReportModel;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\UpdateRequests\ApprovalFlow;
@@ -21,6 +24,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -28,14 +32,14 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableContract
+class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableContract, ReportModel
 {
     use HasFrameworkKey;
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
     use Searchable;
-    use HasStatus;
+    use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
@@ -62,7 +66,6 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
         'submitted_at',
         'nothing_to_report',
         'completion',
-        'completion_status',
         'title',
         'seedlings_young_trees',
         'interesting_facts',
@@ -101,30 +104,6 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
             'validation' => 'photos',
             'multiple' => true,
         ],
-    ];
-
-    public const STATUS_DUE = 'due';
-    public const STATUS_STARTED = 'started';
-    public const STATUS_AWAITING_APPROVAL = 'awaiting-approval';
-    public const STATUS_NEEDS_MORE_INFORMATION = 'needs-more-information';
-    public const STATUS_APPROVED = 'approved';
-
-    public static $statuses = [
-        self::STATUS_DUE => 'Due',
-        self::STATUS_STARTED => 'Started',
-        self::STATUS_AWAITING_APPROVAL => 'Awaiting approval',
-        self::STATUS_NEEDS_MORE_INFORMATION => 'Needs more information',
-        self::STATUS_APPROVED => 'Approved',
-    ];
-
-    public const COMPLETION_STATUS_NOT_STARTED = 'not-started';
-    public const COMPLETION_STATUS_STARTED = 'started';
-    public const COMPLETION_STATUS_COMPLETE = 'complete';
-
-    public static $completionStatuses = [
-        self::COMPLETION_STATUS_NOT_STARTED => 'Not started',
-        self::COMPLETION_STATUS_STARTED => 'Started',
-        self::COMPLETION_STATUS_COMPLETE => 'Complete',
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -264,12 +243,23 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
         });
     }
 
-    public function getReadableCompletionStatusAttribute(): ?string
+    public function createResource(): JsonResource
     {
-        if (empty($this->completion_status)) {
-            return null;
-        }
+        return new NurseryReportResource($this);
+    }
 
-        return data_get(static::$completionStatuses, $this->completion_status, 'Unknown');
+    public function createSchemaResource(): JsonResource
+    {
+        return new NurseryReportWithSchemaResource($this, ['schema' => $this->getForm()]);
+    }
+
+    public function supportsNothingToReport(): bool
+    {
+        return true;
+    }
+
+    public function getLinkedFieldsConfig()
+    {
+        return config('wri.linked-fields.models.nursery-report.fields', []);
     }
 }

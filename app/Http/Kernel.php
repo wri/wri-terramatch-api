@@ -62,6 +62,7 @@ class Kernel extends HttpKernel
         'auth.jwt' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
         'admin' => \App\Http\Middleware\UserIsAdmin::class,
         'i18n' => \App\Http\Middleware\I18nMiddleware::class,
+        'modelInterface' => \App\Http\Middleware\ModelInterfaceBindingMiddleware::class,
     ];
 
     /**
