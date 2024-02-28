@@ -15,6 +15,7 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
+use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
@@ -684,6 +685,7 @@ Route::resource('files', FilePropertiesController::class);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
 
 Route::prefix('dashboard')->group(function () {
+    Route::get('/volunteers-survival-rate', VolunteersAndAverageSurvivalRateController::class);
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/jobs-created', GetJobsCreatedController::class);
