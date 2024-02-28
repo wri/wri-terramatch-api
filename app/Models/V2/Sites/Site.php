@@ -6,7 +6,6 @@ use App\Http\Resources\V2\Sites\SiteResource;
 use App\Http\Resources\V2\Sites\SiteWithSchemaResource;
 use App\Models\Framework;
 use App\Models\Traits\HasEntityStatus;
-use App\Models\Traits\HasForm;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasStatus;
@@ -53,7 +52,6 @@ class Site extends Model implements HasMedia, AuditableContract, EntityModel
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
-    use HasForm;
     use HasEntityStatus;
 
     protected $auditInclude = [
@@ -350,10 +348,5 @@ class Site extends Model implements HasMedia, AuditableContract, EntityModel
     public function createResource(): JsonResource
     {
         return new SiteResource($this);
-    }
-
-    public function getLinkedFieldsConfig()
-    {
-        return config('wri.linked-fields.models.site.fields', []);
     }
 }

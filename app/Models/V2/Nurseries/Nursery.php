@@ -6,7 +6,6 @@ use App\Http\Resources\V2\Nurseries\NurseryResource;
 use App\Http\Resources\V2\Nurseries\NurseyWithSchemaResource;
 use App\Models\Framework;
 use App\Models\Traits\HasEntityStatus;
-use App\Models\Traits\HasForm;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasStatus;
@@ -47,7 +46,6 @@ class Nursery extends Model implements HasMedia, AuditableContract, EntityModel
     use HasV2MediaCollections;
     use Auditable;
     use HasUpdateRequests;
-    use HasForm;
     use HasEntityStatus;
 
     protected $auditInclude = [
@@ -219,10 +217,5 @@ class Nursery extends Model implements HasMedia, AuditableContract, EntityModel
     public function createResource(): JsonResource
     {
         return new NurseryResource($this);
-    }
-
-    public function getLinkedFieldsConfig()
-    {
-        return config('wri.linked-fields.models.nursery.fields', []);
     }
 }
