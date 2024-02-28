@@ -30,34 +30,25 @@ class FixReportCompletion extends Command
     {
         ProjectReport::withoutTimestamps(function () {
             $projectReportsUpdated = ProjectReport::withTrashed()
-                ->whereIn('status', [ProjectReport::STATUS_APPROVED, ProjectReport::STATUS_AWAITING_APPROVAL])
+                ->isComplete()
                 ->where('completion', 0)
-                ->update([
-                    'completion' => 100,
-                    'completion_status' => ProjectReport::COMPLETION_STATUS_COMPLETE
-                ]);
+                ->update(['completion' => 100]);
             $this->info("Project Reports Updated: $projectReportsUpdated");
         });
 
         SiteReport::withoutTimestamps(function () {
             $siteReportsUpdated = SiteReport::withTrashed()
-                ->whereIn('status', [SiteReport::STATUS_APPROVED, SiteReport::STATUS_AWAITING_APPROVAL])
+                ->isComplete()
                 ->where('completion', 0)
-                ->update([
-                    'completion' => 100,
-                    'completion_status' => SiteReport::COMPLETION_STATUS_COMPLETE
-                ]);
+                ->update(['completion' => 100]);
             $this->info("Site Reports Updated: $siteReportsUpdated");
         });
 
         NurseryReport::withoutTimestamps(function () {
             $nurseryReportsUpdated = NurseryReport::withTrashed()
-                ->whereIn('status', [NurseryReport::STATUS_APPROVED, NurseryReport::STATUS_AWAITING_APPROVAL])
+                ->isComplete()
                 ->where('completion', 0)
-                ->update([
-                    'completion' => 100,
-                    'completion_status' => NurseryReport::COMPLETION_STATUS_COMPLETE
-                ]);
+                ->update(['completion' => 100]);
             $this->info("Nursery Reports Updated: $nurseryReportsUpdated");
         });
     }

@@ -28,7 +28,6 @@ class NurseryReportResource extends JsonResource
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
             'nothing_to_report' => $this->nothing_to_report,
-            'completion_status' => $this->completion_status,
             'readable_completion_status' => $this->readable_completion_status,
             'title' => $this->title,
             'seedlings_young_trees' => $this->seedlings_young_trees,

@@ -2,16 +2,19 @@
 
 namespace App\Models\V2\Sites;
 
+use App\Http\Resources\V2\SiteReports\SiteReportResource;
+use App\Http\Resources\V2\SiteReports\SiteReportWithSchemaResource;
 use App\Models\Framework;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
 use App\Models\V2\Polygon;
+use App\Models\V2\ReportModel;
 use App\Models\V2\Seeding;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
@@ -26,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -33,13 +37,13 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalFlow
+class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalFlow, ReportModel
 {
     use HasFactory;
     use HasUuid;
-    use HasStatus;
     use SoftDeletes;
     use Searchable;
+    use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
@@ -51,30 +55,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         'status',
         'feedback',
         'feedback_fields',
-    ];
-
-    public const STATUS_DUE = 'due';
-    public const STATUS_STARTED = 'started';
-    public const STATUS_AWAITING_APPROVAL = 'awaiting-approval';
-    public const STATUS_NEEDS_MORE_INFORMATION = 'needs-more-information';
-    public const STATUS_APPROVED = 'approved';
-
-    public static $statuses = [
-        self::STATUS_DUE => 'Due',
-        self::STATUS_STARTED => 'Started',
-        self::STATUS_AWAITING_APPROVAL => 'Awaiting approval',
-        self::STATUS_NEEDS_MORE_INFORMATION => 'Needs more information',
-        self::STATUS_APPROVED => 'Approved',
-    ];
-
-    public const COMPLETION_STATUS_NOT_STARTED = 'not-started';
-    public const COMPLETION_STATUS_STARTED = 'started';
-    public const COMPLETION_STATUS_COMPLETE = 'complete';
-
-    public static $completionStatuses = [
-        self::COMPLETION_STATUS_NOT_STARTED => 'Not started',
-        self::COMPLETION_STATUS_STARTED => 'Started',
-        self::COMPLETION_STATUS_COMPLETE => 'Complete',
     ];
 
     protected $fillable = [
@@ -95,7 +75,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         'framework_key',
         'due_at',
         'completion',
-        'completion_status',
         'seeds_planted',
         'old_id',
         'old_model',
@@ -371,12 +350,23 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         return $query->where('site_id', $id);
     }
 
-    public function getReadableCompletionStatusAttribute(): ?string
+    public function createResource(): JsonResource
     {
-        if (empty($this->completion_status)) {
-            return null;
-        }
+        return new SiteReportResource($this);
+    }
 
-        return data_get(static::$completionStatuses, $this->completion_status, 'Unknown');
+    public function createSchemaResource(): JsonResource
+    {
+        return new SiteReportWithSchemaResource($this, ['schema' => $this->getForm()]);
+    }
+
+    public function supportsNothingToReport(): bool
+    {
+        return true;
+    }
+
+    public function getLinkedFieldsConfig()
+    {
+        return config('wri.linked-fields.models.site-report.fields', []);
     }
 }

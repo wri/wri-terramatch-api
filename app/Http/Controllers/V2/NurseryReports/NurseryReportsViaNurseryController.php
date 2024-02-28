@@ -33,7 +33,7 @@ class NurseryReportsViaNurseryController extends Controller
                 AllowedFilter::exact('framework_key'),
             ])
             ->where('nursery_id', $nursery->id)
-            ->whereNotIn('status', [NurseryReport::STATUS_DUE, NurseryReport::STATUS_STARTED]);
+            ->isComplete();
 
         if (in_array($request->query('sort'), $sortableColumns)) {
             $qry->allowedSorts($sortableColumns);

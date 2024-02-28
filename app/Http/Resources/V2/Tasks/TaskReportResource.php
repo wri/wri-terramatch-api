@@ -19,7 +19,6 @@ class TaskReportResource extends JsonResource
             'type' => $this->type,
             'parent_name' => $this->parent_name,
             'completion' => $this->completion,
-            'completion_status' => $this->completion,
         ];
     }
 }

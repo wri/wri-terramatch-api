@@ -32,7 +32,7 @@ class ViewProjectTasksReportsController extends Controller
 
         $siteIds = $project->sites()->pluck('id')->toArray();
         $nurseryIds = $project->nurseries()->pluck('id')->toArray();
-        $columns = ['uuid', 'status', 'due_at', 'title', 'completion', 'completion_status', 'update_request_status', 'updated_at'];
+        $columns = ['uuid', 'status', 'due_at', 'title', 'completion', 'update_request_status', 'updated_at'];
 
         $projectReports = DB::table('v2_project_reports')
             ->select($columns)

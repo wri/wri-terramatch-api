@@ -18,6 +18,7 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Console\Command;
 
 class CreateDueReportsMigrationCommand extends Command
@@ -62,7 +63,7 @@ class CreateDueReportsMigrationCommand extends Command
                             $report = ProjectReport::updateOrCreate([
                                 'framework_key' => 'terrafund',
                                 'project_id' => $project->id,
-                                'status' => ProjectReport::STATUS_DUE,
+                                'status' => ReportStatusStateMachine::DUE,
                                 'due_at' => $stub->due_at,
                             ], []);
 
@@ -80,7 +81,7 @@ class CreateDueReportsMigrationCommand extends Command
                             $report = SiteReport::updateOrCreate([
                                 'framework_key' => 'terrafund',
                                 'site_id' => $site->id,
-                                'status' => SiteReport::STATUS_DUE,
+                                'status' => ReportStatusStateMachine::DUE,
                                 'due_at' => $stub->due_at,
                             ], []);
 
@@ -98,7 +99,7 @@ class CreateDueReportsMigrationCommand extends Command
                             $report = NurseryReport::updateOrCreate([
                                 'framework_key' => 'terrafund',
                                 'nursery_id' => $nursery->id,
-                                'status' => SiteReport::STATUS_DUE,
+                                'status' => ReportStatusStateMachine::DUE,
                                 'due_at' => $stub->due_at,
                             ], []);
 
@@ -126,7 +127,7 @@ class CreateDueReportsMigrationCommand extends Command
                             $report = ProjectReport::updateOrCreate([
                                 'framework_key' => 'ppc',
                                 'project_id' => $project->id,
-                                'status' => ProjectReport::STATUS_DUE,
+                                'status' => ReportStatusStateMachine::DUE,
                                 'due_at' => $stub->due_at,
                             ], []);
 
@@ -144,7 +145,7 @@ class CreateDueReportsMigrationCommand extends Command
                             $report = SiteReport::updateOrCreate([
                                 'framework_key' => 'ppc',
                                 'site_id' => $site->id,
-                                'status' => SiteReport::STATUS_DUE,
+                                'status' => ReportStatusStateMachine::DUE,
                                 'due_at' => $stub->due_at,
                             ], []);
 
@@ -221,7 +222,7 @@ class CreateDueReportsMigrationCommand extends Command
             $report = ProjectReport::create([
                 'framework_key' => $project->faramework_key,
                 'project_id' => $project->id,
-                'status' => ProjectReport::STATUS_DUE,
+                'status' => ReportStatusStateMachine::DUE,
                 'due_at' => $item->due_at,
             ]);
         }

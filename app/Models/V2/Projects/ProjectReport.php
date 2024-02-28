@@ -2,16 +2,19 @@
 
 namespace App\Models\V2\Projects;
 
+use App\Http\Resources\V2\ProjectReports\ProjectReportResource;
+use App\Http\Resources\V2\ProjectReports\ProjectReportWithSchemaResource;
 use App\Models\Framework;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Polygon;
+use App\Models\V2\ReportModel;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
@@ -25,6 +28,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -32,13 +36,13 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class ProjectReport extends Model implements HasMedia, AuditableContract, ApprovalFlow
+class ProjectReport extends Model implements HasMedia, AuditableContract, ApprovalFlow, ReportModel
 {
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
     use Searchable;
-    use HasStatus;
+    use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
@@ -68,7 +72,6 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         'status',
         'update_request_status',
         'completion',
-        'completion_status',
         'planted_trees',
         'title',
         'workdays_paid',
@@ -165,30 +168,6 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
             'validation' => 'photos',
             'multiple' => true,
         ],
-    ];
-
-    public const STATUS_DUE = 'due';
-    public const STATUS_STARTED = 'started';
-    public const STATUS_AWAITING_APPROVAL = 'awaiting-approval';
-    public const STATUS_NEEDS_MORE_INFORMATION = 'needs-more-information';
-    public const STATUS_APPROVED = 'approved';
-
-    public static $statuses = [
-        self::STATUS_DUE => 'Due',
-        self::STATUS_STARTED => 'Started',
-        self::STATUS_AWAITING_APPROVAL => 'Awaiting approval',
-        self::STATUS_NEEDS_MORE_INFORMATION => 'Needs more information',
-        self::STATUS_APPROVED => 'Approved',
-    ];
-
-    public const COMPLETION_STATUS_NOT_STARTED = 'not-started';
-    public const COMPLETION_STATUS_STARTED = 'started';
-    public const COMPLETION_STATUS_COMPLETE = 'complete';
-
-    public static $completionStatuses = [
-        self::COMPLETION_STATUS_NOT_STARTED => 'Not started',
-        self::COMPLETION_STATUS_STARTED => 'Started',
-        self::COMPLETION_STATUS_COMPLETE => 'Complete',
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -414,14 +393,14 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
 
             $sitePaid = SiteReport::whereIn('id', $siteIds)
                 ->where('due_at', '<', now())
-                ->whereNotIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
+                ->isComplete()
                 ->whereMonth('due_at', $month)
                 ->whereYear('due_at', $year)
                 ->sum('workdays_paid');
 
             $siteVolunteer = SiteReport::whereIn('id', $siteIds)
                 ->where('due_at', '<', now())
-                ->whereNotIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
+                ->isComplete()
                 ->whereMonth('due_at', $month)
                 ->whereYear('due_at', $year)
                 ->sum('workdays_volunteer');
@@ -432,35 +411,12 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
 
     public function getSiteReportsCountAttribute(): int
     {
-        if (empty($this->due_at)) {
-            return 0;
-        }
-
-        $siteIds = $this->project->sites()->pluck('id')->toArray();
-
-        $month = $this->due_at->month;
-        $year = $this->due_at->year;
-
-        return SiteReport::whereIn('site_id', $siteIds)
-            ->whereMonth('due_at', $month)
-            ->whereYear('due_at', $year)
-            ->count();
+        return $this->task->siteReports()->count() ?? 0;
     }
 
     public function getNurseryReportsCountAttribute(): ?int
     {
-        if (empty($this->due_at)) {
-            return 0;
-        }
-
-        $nurseryIds = $this->project->nurseries()->pluck('id')->toArray();
-        $month = $this->due_at->month;
-        $year = $this->due_at->year;
-
-        return NurseryReport::whereIn('nursery_id', $nurseryIds)
-            ->whereMonth('due_at', $month)
-            ->whereYear('due_at', $year)
-            ->count();
+        return $this->task->nurseryReports()->count() ?? 0;
     }
 
     public function scopeProjectUuid(Builder $query, string $projectUuid): Builder
@@ -482,12 +438,18 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         return $query->where('project_id', $id);
     }
 
-    public function getReadableCompletionStatusAttribute(): ?string
+    public function createResource(): JsonResource
     {
-        if (empty($this->completion_status)) {
-            return null;
-        }
+        return new ProjectReportResource($this);
+    }
 
-        return data_get(static::$completionStatuses, $this->completion_status, 'Unknown');
+    public function createSchemaResource(): JsonResource
+    {
+        return new ProjectReportWithSchemaResource($this, ['schema' => $this->getForm()]);
+    }
+
+    public function getLinkedFieldsConfig()
+    {
+        return config('wri.linked-fields.models.project-report.fields', []);
     }
 }
