@@ -11,6 +11,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -179,7 +180,7 @@ class Handler extends ExceptionHandler
                 return JsonResponseHelper::error([], 401);
             case NotFoundHttpException::class:
             case ModelNotFoundException::class:
-                return JsonResponseHelper::error([], 404);
+                return new JsonResponse($exception->getMessage(), 404);
             case MethodNotAllowedHttpException::class:
                 return JsonResponseHelper::error([], 405);
             case ValidationException::class:
