@@ -213,7 +213,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-const REPORT_TYPES = ['project-reports', 'site-reports', 'nursery-reports'];
 const ENTITY_TYPES = ['projects', 'project-reports', 'sites', 'site-reports', 'nurseries', 'nursery-reports'];
 
 Route::get('debug/error', function () {

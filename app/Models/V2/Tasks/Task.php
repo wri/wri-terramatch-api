@@ -9,6 +9,7 @@ use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\ReportModel;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\ReportStatusStateMachine;
@@ -120,6 +121,7 @@ class Task extends Model
 
         // Then, ensure all reports are in a complete state. This is done after checking all reports to avoid
         // submitting an unsubmitable report.
+        /** @var ReportModel $report */
         foreach ($reports as $report) {
             if ($report->isComplete()) {
                 continue;
@@ -142,7 +144,7 @@ class Task extends Model
      */
     public function checkStatus(): void
     {
-        if (in_array($this->status, [TaskStatusStateMachine::DUE, TaskStatusStateMachine::APPROVED])) {
+        if ($this->status == TaskStatusStateMachine::DUE) {
             return;
         }
 

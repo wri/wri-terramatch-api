@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Site;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use Closure;
 use Illuminate\Http\Request;
