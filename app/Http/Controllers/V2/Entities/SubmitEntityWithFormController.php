@@ -15,8 +15,9 @@ class SubmitEntityWithFormController extends Controller
     {
         $this->authorize('submit', $entity);
 
-        $form = $entity->getForm();
-        if (empty($form)) {
+        if (empty($entity->getForm())) {
+            // The form is needed internally for generating the schema resource, so let's blow up early if there
+            // isn't one found.
             return new JsonResponse('No form schema found for this framework.', 404);
         }
 
