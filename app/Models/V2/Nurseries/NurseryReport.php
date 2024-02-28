@@ -195,7 +195,7 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
 
     public function getTaskUuidAttribute(): ?string
     {
-        return $this->task->uuid ?? null;
+        return $this->task?->uuid ?? null;
     }
 
     public function getFrameworkUuidAttribute(): ?string

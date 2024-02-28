@@ -299,7 +299,7 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
 
     public function getTaskUuidAttribute(): ?string
     {
-        return $this->task->uuid ?? null;
+        return $this->task?->uuid ?? null;
     }
 
     public function toSearchableArray()

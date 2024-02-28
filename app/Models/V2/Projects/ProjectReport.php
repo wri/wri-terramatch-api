@@ -285,7 +285,7 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
     /** Calculated Values */
     public function getTaskUuidAttribute(): ?string
     {
-        return $this->task->uuid ?? null;
+        return $this->task?->uuid ?? null;
     }
 
     public function getFrameworkUuidAttribute(): ?string
@@ -406,12 +406,12 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
 
     public function getSiteReportsCountAttribute(): int
     {
-        return $this->task->siteReports()->count() ?? 0;
+        return $this->task?->siteReports()->count() ?? 0;
     }
 
     public function getNurseryReportsCountAttribute(): ?int
     {
-        return $this->task->nurseryReports()->count() ?? 0;
+        return $this->task?->nurseryReports()->count() ?? 0;
     }
 
     public function scopeProjectUuid(Builder $query, string $projectUuid): Builder
