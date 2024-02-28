@@ -430,7 +430,7 @@ Route::prefix('forms')->group(function () {
         ->middleware('modelInterface')
         ->group(function() {
             Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
-            Route::put('{entity}', UpdateEntityWithFormController::class);
+            Route::put('/{entity}', UpdateEntityWithFormController::class);
             Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
         });
 
