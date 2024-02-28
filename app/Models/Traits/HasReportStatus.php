@@ -67,6 +67,24 @@ trait HasReportStatus {
         return in_array($this->status, [ReportStatusStateMachine::DUE, ReportStatusStateMachine::STARTED]);
     }
 
+    public function isCompletable(): bool
+    {
+        if ($this->isComplete()) {
+            return true;
+        }
+
+        if ($this->status == ReportStatusStateMachine::DUE && !$this->supportsNothingToReport()) {
+            return false;
+        }
+
+        return $this->status()->canBe(ReportStatusStateMachine::AWAITING_APPROVAL);
+    }
+
+    public function isComplete(): bool
+    {
+        return in_array($this->status, self::COMPLETE_STATUSES);
+    }
+
     public function getForm(): ?Form
     {
         if (is_null($this->form)) {

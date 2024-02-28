@@ -46,4 +46,14 @@ class ReportStatusStateMachine extends StateMachine
 
         return parent::validatorForTransition($from, $to, $model);
     }
+
+    public function afterTransitionHooks(): array
+    {
+        $updateTaskStatus = fn ($fromStatus, $model) => $model->task->checkStatus();
+        return [
+            self::NEEDS_MORE_INFORMATION => [$updateTaskStatus],
+            self::AWAITING_APPROVAL => [$updateTaskStatus],
+            self::APPROVED => [$updateTaskStatus],
+        ];
+    }
 }
