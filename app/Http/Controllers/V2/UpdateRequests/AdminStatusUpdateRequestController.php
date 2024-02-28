@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\UpdateRequests\StatusChangeRequest;
 use App\Http\Resources\V2\UpdateRequests\UpdateRequestResource;
 use App\Models\Site;
+use App\Models\V2\EntityModel;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
@@ -70,8 +71,9 @@ class AdminStatusUpdateRequestController extends Controller
 
     private function applyUpdates(UpdateRequest $updateRequest)
     {
+        /** @var EntityModel $entity */
         $entity = $updateRequest->updaterequestable;
-        $entityProps = $entity->mapEntityAnswers($updateRequest->content, $entity->getCurrentForm(), data_get($entity->getFormConfig(), 'fields', []));
+        $entityProps = $entity->mapEntityAnswers($updateRequest->content, $entity->getForm(), data_get($entity->getFormConfig(), 'fields', []));
         $entity->update($entityProps);
     }
 

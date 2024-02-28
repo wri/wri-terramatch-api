@@ -27,13 +27,15 @@ class UpdateEntityWithFormController extends Controller
         // TODO (NJC) This path will get an update in epic TM-558. The problem here is that admins are automatically
         //   putting reports into the approved state when updating them.
         if (Auth::user()->can('framework-' . $entity->framework_key)) {
-            $entity->update($entity->mapEntityAnswers($answers, $form, $entity->getLinkedFieldsConfig()));
+            $config = data_get($entity->getFormConfig(), 'fields', []);
+            $entity->update($entity->mapEntityAnswers($answers, $form, $config));
             $entity->approve();
             return $entity->createResource();
         }
 
         if ($entity->isEditable()) {
-            $entity->update($entity->mapEntityAnswers($answers, $form, $entity->getLinkedFieldsConfig()));
+            $config = data_get($entity->getFormConfig(), 'fields', []);
+            $entity->update($entity->mapEntityAnswers($answers, $form, $config));
             if ($entity instanceof ReportModel) {
                 $entity->updateInProgress();
             }

@@ -5,7 +5,6 @@ namespace App\Models\V2\Sites;
 use App\Http\Resources\V2\SiteReports\SiteReportResource;
 use App\Http\Resources\V2\SiteReports\SiteReportWithSchemaResource;
 use App\Models\Framework;
-use App\Models\Traits\HasForm;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
@@ -51,7 +50,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
-    use HasForm;
 
     protected $auditInclude = [
         'status',
@@ -360,10 +358,5 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
     public function supportsNothingToReport(): bool
     {
         return true;
-    }
-
-    public function getLinkedFieldsConfig()
-    {
-        return config('wri.linked-fields.models.site-report.fields', []);
     }
 }

@@ -5,7 +5,6 @@ namespace App\Models\V2\Nurseries;
 use App\Http\Resources\V2\NurseryReports\NurseryReportResource;
 use App\Http\Resources\V2\NurseryReports\NurseryReportWithSchemaResource;
 use App\Models\Framework;
-use App\Models\Traits\HasForm;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
@@ -46,7 +45,6 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
     use HasV2MediaCollections;
     use Auditable;
     use HasUpdateRequests;
-    use HasForm;
 
     protected $auditInclude = [
         'status',
@@ -253,10 +251,5 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
     public function supportsNothingToReport(): bool
     {
         return true;
-    }
-
-    public function getLinkedFieldsConfig()
-    {
-        return config('wri.linked-fields.models.nursery-report.fields', []);
     }
 }

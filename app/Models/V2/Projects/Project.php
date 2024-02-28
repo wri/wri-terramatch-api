@@ -7,7 +7,6 @@ use App\Http\Resources\V2\Projects\ProjectWithSchemaResource;
 use App\Models\Framework;
 use App\Models\Organisation;
 use App\Models\Traits\HasEntityStatus;
-use App\Models\Traits\HasForm;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasStatus;
@@ -57,7 +56,6 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
     use SoftDeletes;
     use Auditable;
     use HasUpdateRequests;
-    use HasForm;
     use HasEntityStatus;
 
     protected $auditInclude = [
@@ -461,10 +459,5 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
     public function createSchemaResource(): JsonResource
     {
         return new ProjectWithSchemaResource($this, ['schema' => $this->getForm()]);
-    }
-
-    public function getLinkedFieldsConfig()
-    {
-        return config('wri.linked-fields.models.project.fields', []);
     }
 }
