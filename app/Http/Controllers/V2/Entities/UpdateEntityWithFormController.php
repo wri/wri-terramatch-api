@@ -24,29 +24,20 @@ class UpdateEntityWithFormController extends Controller
             return new JsonResponse('No form schema found for this framework.', 404);
         }
 
-        // TODO (NJC) This path will get an update in epic TM-558. The problem here is that admins are automatically
-        //   putting reports into the approved state when updating them.
-        if (Auth::user()->can('framework-' . $entity->framework_key)) {
-            $config = data_get($entity->getFormConfig(), 'fields', []);
-            $entity->update($entity->mapEntityAnswers($answers, $form, $config));
-            $entity->approve();
-            return $entity->createResource();
-        }
-
-        if ($entity->isEditable()) {
+        /** @var UpdateRequest $updateRequest */
+        $updateRequest = $entity->updateRequests()->isUnapproved()->first();
+        $isAdmin = Auth::user()->can("framework-$entity->framework_key");
+        if ($entity->isEditable() || ($isAdmin && empty($updateRequest))) {
             $config = data_get($entity->getFormConfig(), 'fields', []);
             $entity->update($entity->mapEntityAnswers($answers, $form, $config));
             if ($entity instanceof ReportModel) {
-                $entity->updateInProgress();
+                $entity->updateInProgress($isAdmin);
             }
             return $entity->createResource();
         }
 
-        /** @var UpdateRequest $updateRequest */
-        $updateRequest = $entity->updateRequests()->isUnapproved()->first();
         if (!empty($updateRequest)) {
-            $updateRequest->content = array_merge($updateRequest->content, $answers);
-            $updateRequest->save();
+            $updateRequest->update([ 'content' => array_merge($updateRequest->content, $answers) ]);
         } else {
             $updateRequest = UpdateRequest::create([
                 'organisation_id' => $entity->organisation ? $entity->organisation->id : $entity->project->organisation_id,
