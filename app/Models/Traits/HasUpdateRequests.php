@@ -11,6 +11,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 trait HasUpdateRequests {
     public function updateRequests(): MorphMany
     {
-        $this->morphMany(UpdateRequest::class, 'updaterequestable');
+        return $this->morphMany(UpdateRequest::class, 'updaterequestable');
     }
 }
