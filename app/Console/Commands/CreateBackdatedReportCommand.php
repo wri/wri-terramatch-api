@@ -49,7 +49,7 @@ class CreateBackdatedReportCommand extends Command
 
         $entity = $entityModel::where('uuid', $uuid)->first();
         if ($entity == null) {
-            $this->error("Entity not found [type=$type, uuid=$uuid]");
+            $this->error("Entity.php not found [type=$type, uuid=$uuid]");
             return 1;
         }
 

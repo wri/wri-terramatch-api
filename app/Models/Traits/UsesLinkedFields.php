@@ -6,6 +6,8 @@ use App\Models\V2\Forms\Form;
 
 trait UsesLinkedFields
 {
+    private ?Form $form = null;
+
     public function updateAllAnswers(array $input): array
     {
         $localAnswers = [];
@@ -180,11 +182,14 @@ trait UsesLinkedFields
         }
     }
 
-    public function getCurrentForm(): Form
+    public function getForm(): Form
     {
-        return Form::where('model', get_class($this))
-            ->where('framework_key', $this->framework_key)
-            ->first();
+        if (is_null($this->form)) {
+            $this->form = Form::where('model', get_class($this))
+                ->where('framework_key', $this->framework_key)
+                ->first();
+        }
+        return $this->form;
     }
 
     public function getFormConfig(): ?array

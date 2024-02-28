@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Models\Traits;
+
+use App\Events\V2\General\EntityStatusChangeEvent;
+use App\StateMachines\EntityStatusStateMachine;
+use Illuminate\Database\Eloquent\Builder;
+
+/**
+ * @property string $status
+ * @property string $feedback
+ * @property string $feedback_fields
+ * @property string $name
+ * @property string $readable_status
+ * @method status
+ */
+trait HasEntityStatus {
+    public $stateMachines = [
+        'status' => EntityStatusStateMachine::class,
+    ];
+
+    public static array $statuses = [
+        EntityStatusStateMachine::STARTED => 'Started',
+        EntityStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
+        EntityStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
+        EntityStatusStateMachine::APPROVED => 'Approved',
+    ];
+
+    public function scopeIsApproved(Builder $query): Builder
+    {
+        return $this->scopeIsStatus($query, EntityStatusStateMachine::APPROVED);
+    }
+
+    public function isEditable(): bool
+    {
+        return $this->status == EntityStatusStateMachine::STARTED;
+    }
+
+    public function approve($feedback = NULL): void
+    {
+        if (!is_null($feedback)) {
+            $this->feedback = $feedback;
+        }
+        $this->status()->transitionTo(EntityStatusStateMachine::APPROVED);
+    }
+
+    public function submitForApproval(): void
+    {
+        $this->status()->transitionTo(EntityStatusStateMachine::AWAITING_APPROVAL);
+    }
+
+    public function needsMoreInformation($feedback, $feedbackFields): void
+    {
+        $this->feedback = $feedback;
+        $this->feedback_fields = $feedbackFields;
+        $this->status()->transitionTo(EntityStatusStateMachine::NEEDS_MORE_INFORMATION);
+    }
+
+    public function dispatchStatusChangeEvent($user): void
+    {
+        EntityStatusChangeEvent::dispatch($user, $this, $this->name, '', $this->readable_status);
+    }
+}

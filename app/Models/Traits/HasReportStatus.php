@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Models\V2\Forms\Form;
+use App\Events\V2\General\EntityStatusChangeEvent;
 use App\StateMachines\ReportStatusStateMachine;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,8 +21,6 @@ use Illuminate\Support\Facades\Auth;
 trait HasReportStatus {
     use HasStatus;
     use HasStateMachines;
-
-    private ?Form $form = null;
 
     public $stateMachines = [
         'status' => ReportStatusStateMachine::class,
@@ -85,17 +83,6 @@ trait HasReportStatus {
         return in_array($this->status, self::COMPLETE_STATUSES);
     }
 
-    public function getForm(): ?Form
-    {
-        if (is_null($this->form)) {
-            $this->form = Form::where('model', get_class($this))
-                ->where('framework_key', $this->framework_key)
-                ->first();
-        }
-
-        return $this->form;
-    }
-
     public function nothingToReport(): void
     {
         if (!$this->supportsNothingToReport()) {
@@ -105,7 +92,7 @@ trait HasReportStatus {
         }
 
         $this->nothing_to_report = true;
-        $this->awaitingApproval();
+        $this->submitForApproval();
     }
 
     public function updateInProgress(): void
@@ -137,10 +124,12 @@ trait HasReportStatus {
         $this->status()->transitionTo(ReportStatusStateMachine::NEEDS_MORE_INFORMATION);
     }
 
-    public function awaitingApproval(): void
+    public function submitForApproval(): void
     {
-        $this->completion = 100;
-        $this->submitted_at = now();
+        if (empty($this->submitted_at)) {
+            $this->completion = 100;
+            $this->submitted_at = now();
+        }
         $this->status()->transitionTo(ReportStatusStateMachine::AWAITING_APPROVAL);
     }
 
@@ -156,5 +145,10 @@ trait HasReportStatus {
             100 => 'Complete',
             default => 'Started'
         };
+    }
+
+    public function dispatchStatusChangeEvent($user): void
+    {
+        EntityStatusChangeEvent::dispatch($user, $this);
     }
 }

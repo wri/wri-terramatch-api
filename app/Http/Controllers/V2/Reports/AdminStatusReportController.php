@@ -28,7 +28,7 @@ class AdminStatusReportController extends Controller
                 return new JsonResponse('status not supported', 401);
         }
 
-        EntityStatusChangeEvent::dispatch($request->user(), $report);
+        $report->dispatchStatusChangeEvent($request->user());
 
         return $report->createResource();
     }
