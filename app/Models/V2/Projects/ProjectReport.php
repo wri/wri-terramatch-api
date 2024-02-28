@@ -5,9 +5,11 @@ namespace App\Models\V2\Projects;
 use App\Http\Resources\V2\ProjectReports\ProjectReportResource;
 use App\Http\Resources\V2\ProjectReports\ProjectReportWithSchemaResource;
 use App\Models\Framework;
+use App\Models\Traits\HasForm;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
+use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
@@ -19,8 +21,6 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use App\Models\V2\UpdateRequests\ApprovalFlow;
-use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,7 +36,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class ProjectReport extends Model implements HasMedia, AuditableContract, ApprovalFlow, ReportModel
+class ProjectReport extends Model implements HasMedia, AuditableContract, ReportModel
 {
     use HasFactory;
     use HasUuid;
@@ -49,6 +49,8 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
     use HasV2MediaCollections;
     use HasFrameworkKey;
     use Auditable;
+    use HasUpdateRequests;
+    use HasForm;
 
     protected $auditInclude = [
         'status',
@@ -227,11 +229,6 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         return $this->morphMany(Polygon::class, 'polygonable');
     }
 
-    public function updateRequests()
-    {
-        return $this->morphMany(UpdateRequest::class, 'updaterequestable');
-    }
-
     public function treeSpecies()
     {
         return $this->morphMany(TreeSpecies::class, 'speciesable');
@@ -328,7 +325,7 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
             $month = $this->due_at->month;
             $year = $this->due_at->year;
             $nurseryIds = Nursery::where('project_id', data_get($this->project, 'id'))
-                ->where('status', Nursery::STATUS_APPROVED)
+                ->isApproved()
                 ->pluck('id')
                 ->toArray();
 
@@ -353,7 +350,7 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         $month = $this->due_at->month;
         $year = $this->due_at->year;
         $siteIds = Site::where('project_id', data_get($this->project, 'id'))
-            ->where('status', Site::STATUS_APPROVED)
+            ->isApproved()
             ->pluck('id')
             ->toArray();
 

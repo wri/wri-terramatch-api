@@ -2,31 +2,21 @@
 
 namespace App\StateMachines;
 
-use Asantibanez\LaravelEloquentStateMachines\StateMachines\StateMachine;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 
-class ReportStatusStateMachine extends StateMachine
+class ReportStatusStateMachine extends EntityStatusStateMachine
 {
     public const DUE = 'due';
-    public const STARTED = 'started';
-    public const AWAITING_APPROVAL = 'awaiting-approval';
-    public const NEEDS_MORE_INFORMATION = 'needs-more-information';
-    public const APPROVED = 'approved';
-
-    public function recordHistory(): bool
-    {
-        return true;
-    }
 
     public function transitions(): array
     {
-        return [
-            self::DUE => [self::STARTED, self::AWAITING_APPROVAL],
-            self::STARTED => [self::AWAITING_APPROVAL],
-            self::AWAITING_APPROVAL => [self::APPROVED, self::NEEDS_MORE_INFORMATION],
-            self::NEEDS_MORE_INFORMATION => [self::APPROVED],
-        ];
+        return array_merge(
+            [
+                self::DUE => [self::STARTED, self::AWAITING_APPROVAL],
+            ],
+            parent::transitions()
+        );
     }
 
     public function defaultState(): ?string
