@@ -9,7 +9,6 @@ class DashboardDocumentationController extends Controller
 {
     public function readAsYamlAction(Request $request): Response
     {
-        $this->authorize('yes', 'App\\Models\\Default');
         $url = config('app.url');
         $host = str_replace(['http://', 'https://'], '', $url);
         $scheme = substr($url, 0, 5) == 'https' ? 'https' : 'http';
