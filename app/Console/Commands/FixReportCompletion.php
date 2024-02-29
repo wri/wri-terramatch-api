@@ -4,7 +4,9 @@ namespace App\Console\Commands;
 
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\ReportModel;
 use App\Models\V2\Sites\SiteReport;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Console\Command;
 
 class FixReportCompletion extends Command
@@ -21,35 +23,36 @@ class FixReportCompletion extends Command
      *
      * @var string
      */
-    protected $description = 'Fixes reports that have a completion of 0 despite being in approved or awaiting-approval status';
+    protected $description = 'Fixes reports that have an incorrect completion due to being updated before the computation code was fixed.';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        ProjectReport::withoutTimestamps(function () {
-            $projectReportsUpdated = ProjectReport::withTrashed()
-                ->isComplete()
-                ->where('completion', 0)
-                ->update(['completion' => 100]);
-            $this->info("Project Reports Updated: $projectReportsUpdated");
-        });
+        $totalUpdated = 0;
+        $totalAlreadyCorrect = 0;
+        collect([ProjectReport::class, SiteReport::class, NurseryReport::class])->each(
+            function($modelClass) use (&$totalUpdated, &$totalAlreadyCorrect) {
+                $modelClass::whereNot('status', ReportStatusStateMachine::DUE)->where('completion', '<', 100)->chunkById(
+                    100,
+                    function ($reports) use (&$totalUpdated, &$totalAlreadyCorrect) {
+                        /** @var ReportModel $report */
+                        foreach ($reports as $report) {
+                            $initialValue = $report->completion;
+                            $report->calculateCompletion($report->getForm());
+                            if ($initialValue != $report->completion) {
+                                $report->save();
+                                $totalUpdated++;
+                            } else {
+                                $totalAlreadyCorrect++;
+                            }
+                        }
+                    }
+                );
+            }
+        );
 
-        SiteReport::withoutTimestamps(function () {
-            $siteReportsUpdated = SiteReport::withTrashed()
-                ->isComplete()
-                ->where('completion', 0)
-                ->update(['completion' => 100]);
-            $this->info("Site Reports Updated: $siteReportsUpdated");
-        });
-
-        NurseryReport::withoutTimestamps(function () {
-            $nurseryReportsUpdated = NurseryReport::withTrashed()
-                ->isComplete()
-                ->where('completion', 0)
-                ->update(['completion' => 100]);
-            $this->info("Nursery Reports Updated: $nurseryReportsUpdated");
-        });
+        $this->info("Total reports updated: $totalUpdated. $totalAlreadyCorrect reports already had the correct value.");
     }
 }
