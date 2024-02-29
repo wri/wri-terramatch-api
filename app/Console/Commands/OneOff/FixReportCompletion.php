@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\ProjectReport;
@@ -16,7 +16,7 @@ class FixReportCompletion extends Command
      *
      * @var string
      */
-    protected $signature = 'app:fix-report-completion';
+    protected $signature = 'one-off:fix-report-completion';
 
     /**
      * The console command description.
