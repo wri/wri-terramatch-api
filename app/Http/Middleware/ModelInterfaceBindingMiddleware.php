@@ -20,13 +20,19 @@ class ModelInterfaceBindingMiddleware
     private const CONCRETE_MODELS = [
         // EntityModel concrete classes
         'projects' => Project::class,
+        'project' => Project::class,
         'sites' => Site::class,
+        'site' => Site::class,
         'nurseries' => Nursery::class,
+        'nursery' => Nursery::class,
 
         // ReportModel (which extends EntityModel) concrete classes
         'project-reports' => ProjectReport::class,
+        'project-report' => ProjectReport::class,
         'site-reports' => SiteReport::class,
+        'site-report' => SiteReport::class,
         'nursery-reports' => NurseryReport::class,
+        'nursery-report' => NurseryReport::class,
     ];
 
     public function handle(Request $request, Closure $next)
