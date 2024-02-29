@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneOff;
 
 use App\Exceptions\InvalidStatusException;
 use App\Models\V2\Tasks\Task;
@@ -15,7 +15,7 @@ class MigrateTaskStatuses extends Command
      *
      * @var string
      */
-    protected $signature = 'app:migrate-task-statuses';
+    protected $signature = 'one-off:migrate-task-statuses';
 
     /**
      * The console command description.
