@@ -20,6 +20,7 @@ class ViewTreeRestorationGoalController extends Controller
         $query = $this->prepareProjectQuery($request, $organizationTypes);
         $rawProjectIds = $this->getRawProjectIds($query);
         $allProjectIds = $this->getAllProjectIds($rawProjectIds);
+        
         $siteIds = $this->getSiteIds($allProjectIds);
         $distinctDates = $this->getDistinctDates($siteIds);
         $latestDueDate = $this->getLatestDueDate($distinctDates);
