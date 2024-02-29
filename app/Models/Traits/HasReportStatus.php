@@ -95,10 +95,10 @@ trait HasReportStatus {
         $this->submitForApproval();
     }
 
-    public function updateInProgress(): void
+    public function updateInProgress(bool $isAdmin = false): void
     {
         $this->setCompletion();
-        if (empty($report->created_by)) {
+        if (!$isAdmin && empty($report->created_by)) {
             $this->created_by = Auth::user()->id;
         }
         if ($this->status == ReportStatusStateMachine::STARTED) {
