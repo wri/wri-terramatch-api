@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminsController;
+use App\Http\Controllers\DashboardDocumentationController;
 use App\Http\Controllers\DefaultController;
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\DocumentationVersionedController;
@@ -38,3 +39,5 @@ Route::get('/documentation/{version}/raw', [DocumentationVersionedController::cl
 
 Route::get('/users/{encrypted_id}/unsubscribe', [UsersController::class, 'unsubscribeAction']);
 Route::get('/admins/{encrypted_id}/unsubscribe', [AdminsController::class, 'unsubscribeAction']);
+
+Route::get('/dashboard/documentation/raw', [DashboardDocumentationController::class, 'readAsYamlAction']);
