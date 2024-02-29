@@ -53,8 +53,11 @@ class ActiveCountriesTableController extends Controller
 
     public function projectsCountry($country)
     {
-        return Project::where('framework_key', 'terrafund')
-            ->where('country', $country);
+        $query = Project::where('framework_key', 'terrafund')
+            ->whereHas('organisation', function ($query) {
+            $query->whereIn('type', ['for-profit-organization', 'non-profit-organization']);
+        });
+        return $query->where('country', $country);
     }
 
     public function numberOfProjects($country)
