@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\UpdateRequestStatusStateMachine;
@@ -13,7 +13,7 @@ class MigrateUpdateRequestStatuses extends Command
      *
      * @var string
      */
-    protected $signature = 'app:migrate-update-request-statuses';
+    protected $signature = 'one-off:migrate-update-request-statuses';
 
     /**
      * The console command description.
