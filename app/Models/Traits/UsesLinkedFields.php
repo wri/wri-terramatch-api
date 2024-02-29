@@ -104,7 +104,7 @@ trait UsesLinkedFields
             }
         }
 
-        return round(($answeredCount / $questionCount) * 100);
+        return $questionCount == 0 ? 100 : round(($answeredCount / $questionCount) * 100);
     }
 
     public function getAllAnswers(array $params = []): array
