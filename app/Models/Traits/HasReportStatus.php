@@ -67,7 +67,7 @@ trait HasReportStatus {
 
     public function isCompletable(): bool
     {
-        if ($this->isComplete()) {
+        if ($this->hasCompleteStatus()) {
             return true;
         }
 
@@ -78,7 +78,7 @@ trait HasReportStatus {
         return $this->status()->canBe(ReportStatusStateMachine::AWAITING_APPROVAL);
     }
 
-    public function isComplete(): bool
+    public function hasCompleteStatus(): bool
     {
         return in_array($this->status, self::COMPLETE_STATUSES);
     }
