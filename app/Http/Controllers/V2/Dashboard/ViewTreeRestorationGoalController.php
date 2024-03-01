@@ -11,6 +11,7 @@ use App\Models\V2\TreeSpecies\TreeSpecies;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Helpers\TerrafundDashboardQueryHelper;
 
 class ViewTreeRestorationGoalController extends Controller
 {
@@ -63,13 +64,7 @@ class ViewTreeRestorationGoalController extends Controller
             ->where('v2_projects.framework_key', '=', 'terrafund')
             ->whereIn('organisations.type', $organizationTypes);
 
-        if ($request->has('country')) {
-            $country = $request->input('country');
-            $query->where('country', $country);
-        } elseif ($request->has('uuid')) {
-            $projectUuid = $request->input('uuid');
-            $query->where('v2_projects.uuid', $projectUuid);
-        }
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
 
         return $query;
     }
