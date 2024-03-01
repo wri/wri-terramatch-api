@@ -18948,3 +18948,194 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+ /v2/dashboard/jobs-created:
+    get:
+      operationId: get-v2-jobs-created.yml
+      summary: view Jobs created for dashboard
+      parameters:
+        - in: query
+          name: country
+          schema:
+            type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: uuid
+          schema:
+            type: string
+          description: Optional. Filter counts and metrics by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobsCreatedResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+    components:
+    schemas:
+      JobsCreatedResponse:
+        type: object
+        properties:
+          	totalJobsCreated:
+            type: integer
+            forProfitJobsCreated:
+            type: integer
+            nonProfitJobsCreated:
+            type: integer
+            total_ft:
+            type: integer
+            total_pt:
+            type: integer
+            total_men:
+            type: integer
+            total_pt_men:
+            type: integer
+            total_ft_men:
+            type: integer
+            total_women:
+            type: integer
+            total_pt_women:
+            type: integer
+            total_ft_women:
+            type: integer
+            total_youth:
+            type: integer
+            total_pt_youth:
+            type: integer
+            total_ft_youth:
+            type: integer
+            total_non_youth:
+            type: integer
+            total_pt_non_youth:
+            type: integer
+            total_ft_non_youth:
+            type: integer
+  /v2/dashboard/restoration-strategy:
+    get:
+      operationId: get-v2-restoration-strategy.yml
+      summary: View Restoration Strategy for dashboard
+      parameters:
+        - in: query
+          name: country
+          schema:
+            type: string
+          description: Optional. Filter restoration strategy by country.
+        - in: query
+          name: uuid
+          schema:
+            type: string
+          description: Optional. Filter restoration strategy by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestorationStrategyResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      components:
+        schemas:
+          RestorationStrategyResponse:
+            type: object
+            properties:
+              restorationStrategies:
+                type: object
+                properties:
+                  direct-seeding:
+                  type: integer
+                  tree-planting:
+                  type: integer
+                  assisted-natural-regeneration:
+                  type: integer
+              landUseTypes:
+                type: object
+                properties:
+                  agroforest:
+                  type: integer
+                  open-natural-ecosystem:
+                  type: integer
+                  mangrove:
+                  type: integer
+                  natural-forest:
+                  type: integer
+                  peatland:
+                  type: integer
+                  riparian-area-or-wetland:
+                  type: integer
+                  silvopasture:
+                  type: integer
+                  urban-forest:
+                  type: integer
+                  woodlot-or-plantation:
+                  type: integer
+  /v2/dashboard/tree-restoration-goal:
+    get:
+      operationId: get-v2-tree-restoration-goal.yml
+      summary: View Tree Restoration Goal for dashboard
+      parameters:
+        - in: query
+          name: country
+          schema:
+            type: string
+          description: Optional. Filter tree restoration goal by country.
+        - in: query
+          name: uuid
+          schema:
+            type: string
+          description: Optional. Filter tree restoration goal by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreeRestorationGoalResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      components:
+        schemas:
+          TreeRestorationGoalResponse:
+            type: object
+            properties:
+              forProfitTreeCount:
+                type: integer
+              nonProfitTreeCount:
+                type: integer
+              totalTreesGrownGoal:
+                type: integer
+              treesUnderRestorationActualTotal:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TreesUnderRestorationActual'
+              treesUnderRestorationActualForProfit:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TreesUnderRestorationActual'
+              treesUnderRestorationActualNonProfit:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TreesUnderRestorationActual'
+              averageSurvivalRateTotal:
+                type: number
+              averageSurvivalRateForProfit:
+                type: number
+              averageSurvivalRateNonProfit:
+                type: number
+          TreesUnderRestorationActual:
+            type: object
+            properties:
+              dueDate:
+                type: string
+                format: date
+              treeSpeciesAmount:
+                type: integer
+              treeSpeciesPercentage:
+                type: number
