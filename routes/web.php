@@ -39,5 +39,3 @@ Route::get('/documentation/{version}/raw', [DocumentationVersionedController::cl
 
 Route::get('/users/{encrypted_id}/unsubscribe', [UsersController::class, 'unsubscribeAction']);
 Route::get('/admins/{encrypted_id}/unsubscribe', [AdminsController::class, 'unsubscribeAction']);
-
-Route::get('/dashboard/documentation/raw', [DashboardDocumentationController::class, 'readAsYamlAction']);
