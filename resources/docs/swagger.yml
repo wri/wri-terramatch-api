@@ -9010,6 +9010,94 @@ definitions:
       enterprise_survival_rate:
         type: number
         description: Survival rate for enterprise entities.
+  DashboardTotalSectionHeaderResponse:
+    type: object
+    properties:
+      total_non_profit_count:
+        type: integer
+        description: Total number of non profit projects.
+      total_enterprise_count:
+        type: integer
+        description: Total number of enterprise projects.
+      total_entries:
+        type: integer
+        description: Total number of jobs created.
+      total_hectares_retored:
+        type: integer
+        description: Total number of hectares restored goal.
+      total_trees_restored:
+        type: integer
+        description: Total number of trees restored.
+      total_trees_restored_goal:
+        type: integer
+        description: Total number of trees restored goal.
+  DashboardTopProjectsResponse:
+    top_projects_most_planted_trees:
+      type: array
+      items:
+        type: object
+        properties:
+          project:
+            type: string
+          trees_planted:
+            type: integer
+    top_tree_species_planted:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          amount:
+            type: integer
+  DashboardActiveCountriesResponse:
+    active_countries:
+      type: array
+      items:
+        type: object
+        properties:
+          country:
+            type: string
+          number_of_projects:
+            type: integer
+          total_trees_planted:
+            type: integer
+          total_jobs_created:
+            type: integer
+          number_of_sites:
+            type: integer
+          number_of_nurseries:
+            type: integer
+  DashboardActiveProjectsListViewResponse:
+    project_list:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          organisation:
+            type: string
+          trees_under_restoration:
+            type: integer
+          jobs_created:
+            type: integer
+          volunteers:
+            type: integer
+          beneficiaries:
+            type: integer
+          survival_rate:
+            type: integer
+          number_of_sites:
+            type: integer
+          number_of_nurseries:
+            type: integer
+          project_country:
+            type: string
+          number_of_trees_goal:
+            type: integer
+          date_added:
+            type: string
 paths:
   '/organisations/{ID}/users':
     get:
@@ -18948,6 +19036,86 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /v2/dashboard/total-section-header:
+    get:
+      summary: Retrieve totals and metrics for total section header
+      description: |
+        This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/DashboardTotalSectionHeaderResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/top-trees-planted:
+    get:
+      summary: Retrieve top 10 projects and top 20 tree species planted
+      description: |
+        This endpoint returns Tops and metrics related to projects and tree species.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/DashboardTopProjectsResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/active-countries:
+    get:
+      summary: Retrieve all active countries.
+      description: |
+        This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
+      parameters:
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/DashboardActiveCountriesResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/active-projects:
+    get:
+      summary: Retrieve all active projects list view.
+      description: |
+        This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/DashboardActiveProjectListViewResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error /v2/dashboard/jobs-created:
  /v2/dashboard/jobs-created:
     get:
       operationId: get-v2-jobs-created.yml
