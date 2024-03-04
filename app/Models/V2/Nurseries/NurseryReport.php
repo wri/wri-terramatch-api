@@ -2,9 +2,8 @@
 
 namespace App\Models\V2\Nurseries;
 
-use App\Http\Resources\V2\NurseryReports\NurseryReportResource;
-use App\Http\Resources\V2\NurseryReports\NurseryReportWithSchemaResource;
 use App\Models\Framework;
+use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
@@ -23,7 +22,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -45,6 +43,7 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
     use HasV2MediaCollections;
     use Auditable;
     use HasUpdateRequests;
+    use HasEntityResources;
 
     protected $auditInclude = [
         'status',
@@ -236,16 +235,6 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
                 $qry->where('country', $country);
             });
         });
-    }
-
-    public function createResource(): JsonResource
-    {
-        return new NurseryReportResource($this);
-    }
-
-    public function createSchemaResource(): JsonResource
-    {
-        return new NurseryReportWithSchemaResource($this, ['schema' => $this->getForm()]);
     }
 
     public function supportsNothingToReport(): bool

@@ -2,9 +2,8 @@
 
 namespace App\Models\V2\Nurseries;
 
-use App\Http\Resources\V2\Nurseries\NurseryResource;
-use App\Http\Resources\V2\Nurseries\NurseyWithSchemaResource;
 use App\Models\Framework;
+use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
@@ -24,7 +23,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -47,6 +45,7 @@ class Nursery extends Model implements HasMedia, AuditableContract, EntityModel
     use Auditable;
     use HasUpdateRequests;
     use HasEntityStatus;
+    use HasEntityResources;
 
     protected $auditInclude = [
         'status',
@@ -207,15 +206,5 @@ class Nursery extends Model implements HasMedia, AuditableContract, EntityModel
                 $query->where('uuid', $uuid);
             });
         });
-    }
-
-    public function createSchemaResource(): JsonResource
-    {
-        return new NurseyWithSchemaResource($this, ['schema' => $this->getForm()]);
-    }
-
-    public function createResource(): JsonResource
-    {
-        return new NurseryResource($this);
     }
 }

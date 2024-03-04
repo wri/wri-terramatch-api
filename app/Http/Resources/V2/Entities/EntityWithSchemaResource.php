@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Http\Resources\V2\SiteReports;
+namespace App\Http\Resources\V2\Entities;
 
 use App\Http\Resources\V2\Forms\FormResource;
+use App\Models\V2\EntityModel;
+use App\Models\V2\Forms\Form;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SiteReportWithSchemaResource extends JsonResource
+class EntityWithSchemaResource extends JsonResource
 {
-    public function __construct($resource, $params)
+    protected Form $schema;
+
+    public function __construct(EntityModel $resource)
     {
         parent::__construct($resource);
-        $this->schema = data_get($params, 'schema', null);
+        $this->schema = $resource->getForm();
     }
 
     public function toArray($request)

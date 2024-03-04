@@ -3,8 +3,8 @@
 namespace App\Models\V2\Sites;
 
 use App\Http\Resources\V2\SiteReports\SiteReportResource;
-use App\Http\Resources\V2\SiteReports\SiteReportWithSchemaResource;
 use App\Models\Framework;
+use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
@@ -50,6 +50,7 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
+    use HasEntityResources;
 
     protected $auditInclude = [
         'status',
@@ -348,15 +349,5 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
     public function createResource(): JsonResource
     {
         return new SiteReportResource($this);
-    }
-
-    public function createSchemaResource(): JsonResource
-    {
-        return new SiteReportWithSchemaResource($this, ['schema' => $this->getForm()]);
-    }
-
-    public function supportsNothingToReport(): bool
-    {
-        return true;
     }
 }
