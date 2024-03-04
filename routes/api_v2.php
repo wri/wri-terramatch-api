@@ -16,8 +16,10 @@ use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
 use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
+use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
+use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
@@ -693,4 +695,6 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/jobs-created', GetJobsCreatedController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/active-countries', ActiveCountriesTableController::class);
+    Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
+    Route::get('/active-projects', ActiveProjectsTableController::class);
 });

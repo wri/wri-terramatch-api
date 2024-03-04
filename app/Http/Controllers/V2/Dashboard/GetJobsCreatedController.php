@@ -7,6 +7,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Helpers\TerrafundDashboardQueryHelper;
 
 class GetJobsCreatedController extends Controller
 {
@@ -18,13 +19,7 @@ class GetJobsCreatedController extends Controller
             ->where('v2_projects.framework_key', '=', 'terrafund')
             ->whereIn('organisations.type', $organizationTypes);
 
-        if ($request->has('country')) {
-            $country = $request->input('country');
-            $query->where('country', $country);
-        } elseif ($request->has('uuid')) {
-            $projectUuid = $request->input('uuid');
-            $query->where('v2_projects.uuid', $projectUuid);
-        }
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
 
         $rawProjectIds = $query->select('v2_projects.id', 'organisations.type')->get();
 

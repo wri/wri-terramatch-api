@@ -8,6 +8,7 @@ use App\Models\V2\Projects\Project;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\V2\Sites\Site;
+use App\Helpers\TerrafundDashboardQueryHelper;
 
 class ViewRestorationStrategyController extends Controller
 {
@@ -34,13 +35,7 @@ class ViewRestorationStrategyController extends Controller
         $query = Project::join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
             ->where('v2_projects.framework_key', '=', 'terrafund');
 
-        if ($request->has('country')) {
-            $country = $request->input('country');
-            $query->where('country', $country);
-        } elseif ($request->has('uuid')) {
-            $projectUuid = $request->input('uuid');
-            $query->where('v2_projects.uuid', $projectUuid);
-        }
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
 
         return $query;
     }

@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\Models\V2\Sites\Site;
 use Illuminate\Support\Facades\DB;
 
 class ActiveCountriesTableController extends Controller
@@ -22,21 +20,25 @@ class ActiveCountriesTableController extends Controller
 
     public function getAllCountries()
     {
+        $projects = Project::where('framework_key', 'terrafund')
+            ->whereHas('organisation', function ($query) {
+                $query->whereIn('type', ['for-profit-organization', 'non-profit-organization']);
+            })->get();
         $countryId = FormOptionList::where('key', 'countries')->value('id');
         $countries = FormOptionListOption::where('form_option_list_id', $countryId)
             ->orderBy('label')
             ->get();
         $activeCountries = [];
         foreach ($countries as $country) {
-            $totalProjects = $this->numberOfProjects($country->slug);
+            $totalProjects = $this->numberOfProjects($country->slug, $projects);
 
-            $totalSpeciesAmount = $this->totalSpeciesAmount($country->slug);
+            $totalSpeciesAmount = $this->totalSpeciesAmount($country->slug, $projects);
 
-            $totalJobsCreated = $this->totalJobsCreated($country->slug);
+            $totalJobsCreated = $this->totalJobsCreated($country->slug, $projects);
 
-            $numberOfSites = $this->numberOfSites($country->slug);
+            $numberOfSites = $this->numberOfSites($country->slug, $projects);
 
-            $totalNurseries = $this->numberOfNurseries($country->slug);
+            $totalNurseries = $this->numberOfNurseries($country->slug, $projects);
 
             $activeCountries[] = [
                 'country' => $country->label,
@@ -51,59 +53,48 @@ class ActiveCountriesTableController extends Controller
         return $activeCountries;
     }
 
-    public function projectsCountry($country)
+    public function numberOfProjects($country, $projects)
     {
-        return Project::where('framework_key', 'terrafund')
-            ->where('country', $country);
+        return $projects->where('country', $country)->count();
     }
 
-    public function numberOfProjects($country)
+    public function totalSpeciesAmount($country, $projects)
     {
-        return $this->projectsCountry($country)->count();
-    }
+        $projects = $projects->where('country', $country);
 
-    public function totalSpeciesAmount($country)
-    {
-        $projects = $this->projectsCountry($country)->get();
-        $totalSpeciesAmount = 0;
-        foreach ($projects as $project) {
-            $sites = $project->sites()->pluck('id')->toArray();
-            foreach ($sites as $siteId) {
-                $latestSiteReportId = SiteReport::where('site_id', $siteId)
-                    ->orderByDesc('due_at')
-                    ->value('id');
-                if ($latestSiteReportId !== null) {
-                    $totalSpeciesAmount += TreeSpecies::where('speciesable_id', $latestSiteReportId)->sum('amount');
-                }
+        return Site::whereIn('project_id', $projects->pluck('id'))->get()->sum(function ($site) {
+            $latestReport = $site->reports()->orderByDesc('due_at')->first();
+            if ($latestReport) {
+                return $latestReport->treeSpecies()->sum('amount');
             }
-        }
 
-        return $totalSpeciesAmount;
+            return 0;
+        });
     }
 
-    public function totalJobsCreated($country)
+    public function totalJobsCreated($country, $projects)
     {
-        $projects = $this->projectsCountry($country)->get();
+        $projects = $projects->where('country', $country);
+
         return $projects->sum(function ($project) {
-            $latestProjectReport = ProjectReport::where('project_id', $project->id)
+            $latestProjectReport = $project->reports()
                 ->orderByDesc('due_at')
                 ->value(DB::raw('pt_total + ft_total'));
+
             return $latestProjectReport;
         });
     }
 
-    public function numberOfSites($country)
+    public function numberOfSites($country, $projects)
     {
-        $projects = $this->projectsCountry($country)->get();
+        $projects = $projects->where('country', $country);
 
-        return $projects->sum(function ($project) {
-            return $project->sites()->count();
-        });
+        return Site::whereIn('project_id', $projects->pluck('id'))->count();
     }
 
-    public function numberOfNurseries($country)
+    public function numberOfNurseries($country, $projects)
     {
-        $projects = $this->projectsCountry($country)->get();
+        $projects = $projects->where('country', $country);
 
         return $projects->sum(function ($project) {
             return $project->nurseries()->count();
