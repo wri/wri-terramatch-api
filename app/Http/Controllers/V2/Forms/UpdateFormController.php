@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Forms;
 
+use App\Helpers\I18nHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Forms\UpdateFormRequest;
 use App\Http\Resources\V2\Forms\FormResource;
@@ -10,9 +11,7 @@ use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Forms\FormQuestionOption;
 use App\Models\V2\Forms\FormSection;
 use App\Models\V2\Forms\FormTableHeader;
-use App\Models\V2\I18n\I18nItem;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateFormController extends Controller
@@ -73,9 +72,9 @@ class UpdateFormController extends Controller
 
         $form->update($data);
 
-        $form->title_id = $this->generateI18nItem($form, 'title');
-        $form->subtitle_id = $this->generateI18nItem($form, 'subtitle');
-        $form->description_id = $this->generateI18nItem($form, 'description');
+        $form->title_id = I18nHelper::generateI18nItem($form, 'title');
+        $form->subtitle_id = I18nHelper::generateI18nItem($form, 'subtitle');
+        $form->description_id = I18nHelper::generateI18nItem($form, 'description');
         $form->save();
 
         return $form;
@@ -92,9 +91,9 @@ class UpdateFormController extends Controller
             $data
         );
 
-        $formSection->title_id = $this->generateI18nItem($formSection, 'title');
-        $formSection->subtitle_id = $this->generateI18nItem($formSection, 'subtitle');
-        $formSection->description_id = $this->generateI18nItem($formSection, 'description');
+        $formSection->title_id = I18nHelper::generateI18nItem($formSection, 'title');
+        $formSection->subtitle_id = I18nHelper::generateI18nItem($formSection, 'subtitle');
+        $formSection->description_id = I18nHelper::generateI18nItem($formSection, 'description');
         $formSection->save();
 
         return $formSection;
@@ -111,9 +110,9 @@ class UpdateFormController extends Controller
             $data,
         );
 
-        $formQuestion->label_id = $this->generateI18nItem($formQuestion, 'label');
-        $formQuestion->description_id = $this->generateI18nItem($formQuestion, 'description');
-        $formQuestion->placeholder_id = $this->generateI18nItem($formQuestion, 'placeholder');
+        $formQuestion->label_id = I18nHelper::generateI18nItem($formQuestion, 'label');
+        $formQuestion->description_id = I18nHelper::generateI18nItem($formQuestion, 'description');
+        $formQuestion->placeholder_id = I18nHelper::generateI18nItem($formQuestion, 'placeholder');
         $formQuestion->save();
 
         return $formQuestion;
@@ -129,7 +128,7 @@ class UpdateFormController extends Controller
             $data
         );
 
-        $tableHeader->label_id = $this->generateI18nItem($tableHeader, 'label');
+        $tableHeader->label_id = I18nHelper::generateI18nItem($tableHeader, 'label');
         $tableHeader->save();
 
         return $tableHeader;
@@ -153,28 +152,9 @@ class UpdateFormController extends Controller
             $data
         );
 
-        $formQuestionOption->label_id = $this->generateI18nItem($formQuestionOption, 'label');
+        $formQuestionOption->label_id = I18nHelper::generateI18nItem($formQuestionOption, 'label');
         $formQuestionOption->save();
 
         return $formQuestionOption;
-    }
-
-    /* TODO: use I18nHelper */
-    private function generateI18nItem(Model $target, string $property): ?int
-    {
-        $value = trim(data_get($target, $property, false));
-        $short = strlen($value) <= 256;
-        if ($value && data_get($target, $property . '_id', true)) {
-            $i18nItem = I18nItem::create([
-                'type' => $short ? 'short' : 'long',
-                'status' => I18nItem::STATUS_DRAFT,
-                'short_value' => $short ? $value : null,
-                'long_value' => $short ? null : $value,
-            ]);
-
-            return $i18nItem->id;
-        }
-
-        return data_get($target, $property . '_id');
     }
 }
