@@ -8,6 +8,7 @@ use App\Models\V2\Projects\Project;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\V2\Sites\Site;
+use App\Http\Resources\V2\Dashboard\ViewRestorationStrategyResource;
 
 class ViewRestorationStrategyController extends Controller
 {
@@ -26,7 +27,7 @@ class ViewRestorationStrategyController extends Controller
             'landUseTypes' => $this->getResultArray($landUseType, 'land_use')
         ];
 
-        return new JsonResponse($result);
+        return new JsonResponse(ViewRestorationStrategyResource::make($result));
     }
 
     private function buildProjectQuery(Request $request)
