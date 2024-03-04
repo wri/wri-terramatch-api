@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Sites\Site;
 use Illuminate\Support\Facades\DB;
 
 class ActiveCountriesTableController extends Controller
@@ -61,13 +62,13 @@ class ActiveCountriesTableController extends Controller
     {
         $projects = $projects->where('country', $country);
 
-        return $projects->sum(function ($project) {
-            return $project->sites()->get()->sum(function ($site) {
-                $latestReport = $site->reports()->orderByDesc('due_at')->first();
-                if ($latestReport) {
-                    return $latestReport->treeSpecies()->sum('amount');
-                }
-            });
+        return Site::whereIn('project_id', $projects->pluck('id'))->get()->sum(function ($site) {
+            $latestReport = $site->reports()->orderByDesc('due_at')->first();
+            if ($latestReport) {
+                return $latestReport->treeSpecies()->sum('amount');
+            }
+
+            return 0;
         });
     }
 
@@ -88,9 +89,7 @@ class ActiveCountriesTableController extends Controller
     {
         $projects = $projects->where('country', $country);
 
-        return $projects->sum(function ($project) {
-            return $project->sites()->count();
-        });
+        return Site::whereIn('project_id', $projects->pluck('id'))->count();
     }
 
     public function numberOfNurseries($country, $projects)
