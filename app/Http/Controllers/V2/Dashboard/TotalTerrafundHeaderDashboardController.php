@@ -4,23 +4,26 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V2\Dashboard\TotalSectionHeaderResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TotalTerrafundHeaderDashboardController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): TotalSectionHeaderResource
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
 
-        return response()->json([
+        $response = (object)[
             'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
             'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
             'total_entries' => $this->getTotalJobsCreatedSum($projects),
             'total_hectares_retored' => $this->getTotalHectaresRestoredGoalSum($projects),
             'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
             'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($projects),
-        ]);
+        ];
+
+        return new TotalSectionHeaderResource($response);
     }
 
     public function getTotalNonProfitCount($projects)

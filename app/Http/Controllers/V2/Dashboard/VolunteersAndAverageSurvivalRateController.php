@@ -13,7 +13,7 @@ class VolunteersAndAverageSurvivalRateController extends Controller
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
 
-        $projectsResponse = (object)[
+        $response = (object)[
             'total_volunteers' => $this->getTotalVolunteerSum($projects),
             'men_volunteers' => $this->getVolunteersSum($projects, 'volunteer_men'),
             'women_volunteers' => $this->getVolunteersSum($projects, 'volunteer_women'),
@@ -23,7 +23,7 @@ class VolunteersAndAverageSurvivalRateController extends Controller
             'enterprise_survival_rate' => $this->getAverageSurvivalRate($projects, 'for-profit-organization'),
         ];
 
-        return new VolunteersAndAverageResource($projectsResponse);
+        return new VolunteersAndAverageResource($response);
     }
 
     public function getTotalVolunteerSum($projects)
