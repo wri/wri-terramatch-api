@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V2\Dashboard\ActiveProjectsTableResource;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use Illuminate\Http\Request;
@@ -11,11 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 class ActiveProjectsTableController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): ActiveProjectsTableResource
     {
-        return response()->json([
-            'project_list' => $this->getAllProjects($request),
-        ]);
+        $response = (object) [
+            'active_projects_list_view' => $this->getAllProjects($request),
+        ];
+
+        return new ActiveProjectsTableResource($response);
     }
 
     public function getAllProjects($request)
