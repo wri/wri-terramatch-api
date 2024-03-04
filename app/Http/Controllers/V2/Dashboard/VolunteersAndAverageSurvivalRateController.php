@@ -4,55 +4,45 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Models\V2\Projects\Project;
-use App\Models\V2\Projects\ProjectReport;
 use Illuminate\Http\Request;
 
 class VolunteersAndAverageSurvivalRateController extends Controller
 {
     public function __invoke(Request $request)
     {
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
+
         return response()->json([
-            'total_volunteers' => $this->getTotalVolunteerSum($request),
-            'men_volunteers' => $this->getVolunteersSum($request, 'volunteer_men'),
-            'women_volunteers' => $this->getVolunteersSum($request, 'volunteer_women'),
-            'youth_volunteers' => $this->getVolunteersSum($request, 'volunteer_youth'),
-            'non_youth_volunteers' => $this->getVolunteersSum($request, 'volunteer_non_youth'),
-            'non_profit_survival_rate' => $this->getAverageSurvivalRate($request, 'non-profit-organization'),
-            'enterprise_survival_rate' => $this->getAverageSurvivalRate($request, 'for-profit-organization'),
+            'total_volunteers' => $this->getTotalVolunteerSum($projects),
+            'men_volunteers' => $this->getVolunteersSum($projects, 'volunteer_men'),
+            'women_volunteers' => $this->getVolunteersSum($projects, 'volunteer_women'),
+            'youth_volunteers' => $this->getVolunteersSum($projects, 'volunteer_youth'),
+            'non_youth_volunteers' => $this->getVolunteersSum($projects, 'volunteer_non_youth'),
+            'non_profit_survival_rate' => $this->getAverageSurvivalRate($projects, 'non-profit-organization'),
+            'enterprise_survival_rate' => $this->getAverageSurvivalRate($projects, 'for-profit-organization'),
         ]);
     }
 
-    public function getTotalVolunteerSum($request)
+    public function getTotalVolunteerSum($projects)
     {
-        $query = Project::query();
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request)->get();
-
         return $projects->sum(function ($project) {
-            return ProjectReport::where('project_id', $project->id)
-                ->orderByDesc('due_at')
-                ->value('volunteer_total');
+            return $project->reports()->orderByDesc('due_at')->value('volunteer_total');
         });
     }
 
-    public function getVolunteersSum($request, $volunteerType)
+    public function getVolunteersSum($projects, $volunteerType)
     {
-        $query = Project::query();
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request)->get();
-
         return $projects->sum(function ($project) use ($volunteerType) {
-            return ProjectReport::where('project_id', $project->id)->sum($volunteerType);
+            return $project->reports()->sum($volunteerType);
         });
     }
 
-    public function getAverageSurvivalRate($request, $typeOrganisation)
+    public function getAverageSurvivalRate($projects, $typeOrganisation)
     {
-        $query = Project::query();
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
-        $query = $query->whereHas('organisation', function ($query) use ($typeOrganisation) {
-            $query->where('type', $typeOrganisation);
+        $projects = $projects->filter(function ($project) use ($typeOrganisation) {
+            return $project->organisation->type === $typeOrganisation;
         });
-        $average = $query->avg('survival_rate');
+        $average = $projects->avg('survival_rate');
 
         return intval($average);
     }

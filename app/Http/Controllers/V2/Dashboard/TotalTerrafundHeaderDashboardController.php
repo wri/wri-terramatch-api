@@ -4,10 +4,6 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Models\V2\Projects\Project;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\TreeSpecies\TreeSpecies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,91 +11,64 @@ class TotalTerrafundHeaderDashboardController extends Controller
 {
     public function __invoke(Request $request)
     {
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
+
         return response()->json([
-            'total_non_profit_count' => $this->getTotalNonProfitCount($request),
-            'total_enterprise_count' => $this->getTotalEnterpriseCount($request),
-            'total_entries' => $this->getTotalJobsCreatedSum($request),
-            'total_hectares_retored' => $this->getTotalHectaresRestoredGoalSum($request),
-            'total_trees_restored' => $this->getTotalTreesRestoredSum($request),
-            'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($request),
+            'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
+            'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
+            'total_entries' => $this->getTotalJobsCreatedSum($projects),
+            'total_hectares_retored' => $this->getTotalHectaresRestoredGoalSum($projects),
+            'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
+            'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($projects),
         ]);
     }
 
-    public function getTotalNonProfitCount(Request $request)
+    public function getTotalNonProfitCount($projects)
     {
-        $query = Project::query();
-        $query = $query->whereHas('organisation', function ($query) {
-            $query->where('type', 'non-profit-organization');
+        $projects = $projects->filter(function ($project) {
+            return $project->organisation->type === 'non-profit-organization';
         });
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
 
         return $projects->count();
     }
 
-    public function getTotalEnterpriseCount(Request $request)
+    public function getTotalEnterpriseCount($projects)
     {
-        $query = Project::query();
-        $query = $query->whereHas('organisation', function ($query) {
-            $query->where('type', 'for-profit-organization');
+        $projects = $projects->filter(function ($project) {
+            return $project->organisation->type === 'for-profit-organization';
         });
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
 
         return $projects->count();
     }
 
-    public function getTotalJobsCreatedSum(Request $request)
+    public function getTotalJobsCreatedSum($projects)
     {
-        $query = Project::query();
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
-        $projects = $query->pluck('id')->toArray();
-        $totalSum = 0;
-        foreach ($projects as $projectId) {
-            $reports = ProjectReport::where('project_id', $projectId)
-                ->sum(DB::raw('pt_total + ft_total'));
-            $totalSum += $reports;
-        }
-
-        return intval($totalSum);
+        return $projects->sum(function ($project) {
+            return $project->reports()->sum(DB::raw('pt_total + ft_total'));
+        });
     }
 
-    public function getTotalHectaresRestoredGoalSum(Request $request)
+    public function getTotalHectaresRestoredGoalSum($projects)
     {
-        $query = Project::query();
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
-        $total = $query->sum('total_hectares_restored_goal');
-
-        return intval($total);
+        return $projects->sum('total_hectares_restored_goal');
     }
 
-    public function getTotalTreesRestoredSum(Request $request)
+    public function getTotalTreesRestoredSum($projects)
     {
-        $query = Project::query();
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
-        $projects = $query->get();
-
-        $totalSpeciesAmount = 0;
-
-        foreach ($projects as $project) {
-            $sites = $project->sites()->pluck('id')->toArray();
-            foreach ($sites as $siteId) {
-                $latestSiteReportId = SiteReport::where('site_id', $siteId)
-                    ->orderByDesc('due_at')
-                    ->value('id');
-                if ($latestSiteReportId !== null) {
-                    $totalSpeciesAmount += TreeSpecies::where('speciesable_id', $latestSiteReportId)->sum('amount');
+        return $projects->sum(function ($project) {
+            return $project->sites()->get()->sum(function ($site) {
+                $latestReport = $site->reports()->orderByDesc('due_at')->first();
+                if ($latestReport) {
+                    return $latestReport->treeSpecies()->sum('amount');
+                } else {
+                    return 0;
                 }
-            }
-        }
-
-        return $totalSpeciesAmount;
+            });
+        });
     }
 
-    public function getTotalTreesGrownGoalSum(Request $request)
+    public function getTotalTreesGrownGoalSum($projects)
     {
-        $query = Project::query();
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
-        $total = $projects->sum('trees_grown_goal');
-
-        return intval($total);
+        return $projects->sum('trees_grown_goal');
     }
 }
