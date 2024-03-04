@@ -18,7 +18,7 @@ class TaskResource extends JsonResource
             'readable_status' => $this->readable_status,
             'project' => new ProjectLiteResource($this->project),
             'completion_status' => $this->completion_status,
-//            'organisation' => new OrganisationLiteResource($this->organisation),
+            'organisation' => new OrganisationLiteResource($this->organisation),
         ];
     }
 }
