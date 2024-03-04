@@ -9098,6 +9098,113 @@ definitions:
             type: integer
           date_added:
             type: string
+  DashboardJobsCreatedResponse:
+    type: object
+    properties:
+      totalJobsCreated:
+        type: integer
+      forProfitJobsCreated:
+        type: integer
+      nonProfitJobsCreated:
+        type: integer
+      total_ft:
+        type: integer
+      total_pt:
+        type: integer
+      total_men:
+        type: integer
+      total_pt_men:
+        type: integer
+      total_ft_men:
+        type: integer
+      total_women:
+        type: integer
+      total_pt_women:
+        type: integer
+      total_ft_women:
+        type: integer
+      total_youth:
+        type: integer
+      total_pt_youth:
+        type: integer
+      total_ft_youth:
+        type: integer
+      total_non_youth:
+        type: integer
+      total_pt_non_youth:
+        type: integer
+      total_ft_non_youth:
+        type: integer
+  DashboardRestorationStrategyResponse:
+    type: object
+    properties:
+      restorationStrategies:
+        type: object
+        properties:
+          direct-seeding:
+            type: integer
+          tree-planting:
+            type: integer
+          assisted-natural-regeneration:
+            type: integer
+      landUseTypes:
+        type: object
+        properties:
+          agroforest:
+            type: integer
+          open-natural-ecosystem:
+            type: integer
+          mangrove:
+            type: integer
+          natural-forest:
+            type: integer
+          peatland:
+            type: integer
+          riparian-area-or-wetland:
+            type: integer
+          silvopasture:
+            type: integer
+          urban-forest:
+            type: integer
+          woodlot-or-plantation:
+            type: integer
+  DashboardTreeRestorationGoalResponse:
+    type: object
+    properties:
+      forProfitTreeCount:
+        type: integer
+      nonProfitTreeCount:
+        type: integer
+      totalTreesGrownGoal:
+        type: integer
+      treesUnderRestorationActualTotal:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardTreesUnderRestorationActual'
+      treesUnderRestorationActualForProfit:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardTreesUnderRestorationActual'
+      treesUnderRestorationActualNonProfit:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardTreesUnderRestorationActual'
+      averageSurvivalRateTotal:
+        type: number
+      averageSurvivalRateForProfit:
+        type: number
+      averageSurvivalRateNonProfit:
+        type: number
+  DashboardTreesUnderRestorationActual:
+    type: object
+    properties:
+      dueDate:
+        type: string
+        format: date
+      treeSpeciesAmount:
+        type: integer
+      treeSpeciesPercentage:
+        type: number
 paths:
   '/organisations/{ID}/users':
     get:
@@ -19011,7 +19118,7 @@ paths:
           description: OK
           schema:
             type: file
-  /v2/dashboard/volunteers-survival-rate:
+  '/v2/dashboard/volunteers-survival-rate':
     get:
       summary: Retrieve counts and metrics for volunteers survival rate
       description: |
@@ -19036,7 +19143,7 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/dashboard/total-section-header:
+  '/v2/dashboard/total-section-header':
     get:
       summary: Retrieve totals and metrics for total section header
       description: |
@@ -19057,7 +19164,7 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/dashboard/top-trees-planted:
+  '/v2/dashboard/top-trees-planted':
     get:
       summary: Retrieve top 10 projects and top 20 tree species planted
       description: |
@@ -19078,12 +19185,20 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/dashboard/active-countries:
+  '/v2/dashboard/active-countries':
     get:
       summary: Retrieve all active countries.
       description: |
         This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
       parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter restoration strategy by UUID.
       responses:
         '200':
           description: Successful response
@@ -19095,7 +19210,7 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/dashboard/active-projects:
+  '/v2/dashboard/active-projects':
     get:
       summary: Retrieve all active projects list view.
       description: |
@@ -19111,25 +19226,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/definitions/DashboardActiveProjectListViewResponse'
+                $ref: '#/definitions/DashboardActiveProjectsListViewResponse'
         '400':
           description: Bad request
         '500':
-          description: Internal server error /v2/dashboard/jobs-created:
- /v2/dashboard/jobs-created:
+          description: 'Internal server error'
+  '/v2/dashboard/jobs-created':
     get:
-      operationId: get-v2-jobs-created.yml
       summary: view Jobs created for dashboard
       parameters:
         - in: query
           name: country
-          schema:
-            type: string
+          type: string
           description: Optional. Filter counts and metrics by country.
         - in: query
           name: uuid
-          schema:
-            type: string
+          type: string
           description: Optional. Filter counts and metrics by UUID.
       responses:
         '200':
@@ -19137,64 +19249,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JobsCreatedResponse'
+                $ref: '#/definitions/DashboardJobsCreatedResponse'
         '400':
           description: Bad request
         '500':
-          description: Internal server error
-    components:
-    schemas:
-      JobsCreatedResponse:
-        type: object
-        properties:
-          	totalJobsCreated:
-            type: integer
-            forProfitJobsCreated:
-            type: integer
-            nonProfitJobsCreated:
-            type: integer
-            total_ft:
-            type: integer
-            total_pt:
-            type: integer
-            total_men:
-            type: integer
-            total_pt_men:
-            type: integer
-            total_ft_men:
-            type: integer
-            total_women:
-            type: integer
-            total_pt_women:
-            type: integer
-            total_ft_women:
-            type: integer
-            total_youth:
-            type: integer
-            total_pt_youth:
-            type: integer
-            total_ft_youth:
-            type: integer
-            total_non_youth:
-            type: integer
-            total_pt_non_youth:
-            type: integer
-            total_ft_non_youth:
-            type: integer
-  /v2/dashboard/restoration-strategy:
+          description: Internal server error 
+  '/v2/dashboard/restoration-strategy':
     get:
       operationId: get-v2-restoration-strategy.yml
       summary: View Restoration Strategy for dashboard
       parameters:
         - in: query
           name: country
-          schema:
-            type: string
+          type: string
           description: Optional. Filter restoration strategy by country.
         - in: query
           name: uuid
-          schema:
-            type: string
+          type: string
           description: Optional. Filter restoration strategy by UUID.
       responses:
         '200':
@@ -19202,60 +19273,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestorationStrategyResponse'
+                $ref: '#/definitions/DashboardRestorationStrategyResponse'
         '400':
           description: Bad request
         '500':
-          description: Internal server error
-      components:
-        schemas:
-          RestorationStrategyResponse:
-            type: object
-            properties:
-              restorationStrategies:
-                type: object
-                properties:
-                  direct-seeding:
-                  type: integer
-                  tree-planting:
-                  type: integer
-                  assisted-natural-regeneration:
-                  type: integer
-              landUseTypes:
-                type: object
-                properties:
-                  agroforest:
-                  type: integer
-                  open-natural-ecosystem:
-                  type: integer
-                  mangrove:
-                  type: integer
-                  natural-forest:
-                  type: integer
-                  peatland:
-                  type: integer
-                  riparian-area-or-wetland:
-                  type: integer
-                  silvopasture:
-                  type: integer
-                  urban-forest:
-                  type: integer
-                  woodlot-or-plantation:
-                  type: integer
-  /v2/dashboard/tree-restoration-goal:
+          description: Internal server error          
+  '/v2/dashboard/tree-restoration-goal':
     get:
       operationId: get-v2-tree-restoration-goal.yml
       summary: View Tree Restoration Goal for dashboard
       parameters:
         - in: query
           name: country
-          schema:
-            type: string
+          type: string
           description: Optional. Filter tree restoration goal by country.
         - in: query
           name: uuid
-          schema:
-            type: string
+          type: string
           description: Optional. Filter tree restoration goal by UUID.
       responses:
         '200':
@@ -19263,47 +19297,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TreeRestorationGoalResponse'
+                $ref: '#/definitions/DashboardTreeRestorationGoalResponse'
         '400':
           description: Bad request
         '500':
           description: Internal server error
-      components:
-        schemas:
-          TreeRestorationGoalResponse:
-            type: object
-            properties:
-              forProfitTreeCount:
-                type: integer
-              nonProfitTreeCount:
-                type: integer
-              totalTreesGrownGoal:
-                type: integer
-              treesUnderRestorationActualTotal:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TreesUnderRestorationActual'
-              treesUnderRestorationActualForProfit:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TreesUnderRestorationActual'
-              treesUnderRestorationActualNonProfit:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TreesUnderRestorationActual'
-              averageSurvivalRateTotal:
-                type: number
-              averageSurvivalRateForProfit:
-                type: number
-              averageSurvivalRateNonProfit:
-                type: number
-          TreesUnderRestorationActual:
-            type: object
-            properties:
-              dueDate:
-                type: string
-                format: date
-              treeSpeciesAmount:
-                type: integer
-              treeSpeciesPercentage:
-                type: number
