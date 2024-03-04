@@ -4,19 +4,22 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V2\Dashboard\TopProjectsAndTopTreeSpeciesResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class TopProjectsAndTopTreeSpeciesController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): TopProjectsAndTopTreeSpeciesResource
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
 
-        return response()->json([
+        $response = (object) [
             'top_projects_most_planted_trees' => $this->getTopProjects($projects),
             'top_tree_species_planted' => $this->getTopTreeSpecies($projects),
-        ]);
+        ];
+
+        return new TopProjectsAndTopTreeSpeciesResource($response);
     }
 
     public function getTopProjects($projects)
