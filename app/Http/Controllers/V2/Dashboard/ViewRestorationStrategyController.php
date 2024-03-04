@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\V2\Sites\Site;
 use App\Helpers\TerrafundDashboardQueryHelper;
+use App\Http\Resources\V2\Dashboard\ViewRestorationStrategyResource;
 
 class ViewRestorationStrategyController extends Controller
 {
@@ -27,15 +28,13 @@ class ViewRestorationStrategyController extends Controller
             'landUseTypes' => $this->getResultArray($landUseType, 'land_use')
         ];
 
-        return new JsonResponse($result);
+        return new JsonResponse(ViewRestorationStrategyResource::make($result));
     }
 
     private function buildProjectQuery(Request $request)
     {
-        $query = Project::join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
-            ->where('v2_projects.framework_key', '=', 'terrafund');
-
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
+ 
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
 
         return $query;
     }

@@ -4,15 +4,16 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V2\Dashboard\VolunteersAndAverageResource;
 use Illuminate\Http\Request;
 
 class VolunteersAndAverageSurvivalRateController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): VolunteersAndAverageResource
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
 
-        return response()->json([
+        $response = (object)[
             'total_volunteers' => $this->getTotalVolunteerSum($projects),
             'men_volunteers' => $this->getVolunteersSum($projects, 'volunteer_men'),
             'women_volunteers' => $this->getVolunteersSum($projects, 'volunteer_women'),
@@ -20,7 +21,9 @@ class VolunteersAndAverageSurvivalRateController extends Controller
             'non_youth_volunteers' => $this->getVolunteersSum($projects, 'volunteer_non_youth'),
             'non_profit_survival_rate' => $this->getAverageSurvivalRate($projects, 'non-profit-organization'),
             'enterprise_survival_rate' => $this->getAverageSurvivalRate($projects, 'for-profit-organization'),
-        ]);
+        ];
+
+        return new VolunteersAndAverageResource($response);
     }
 
     public function getTotalVolunteerSum($projects)

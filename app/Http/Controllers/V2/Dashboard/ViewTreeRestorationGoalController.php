@@ -12,13 +12,13 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Helpers\TerrafundDashboardQueryHelper;
+use App\Http\Resources\V2\Dashboard\ViewTreeRestorationGoalResource;
 
 class ViewTreeRestorationGoalController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
-        $organizationTypes = ['non-profit-organization', 'for-profit-organization'];
-        $query = $this->prepareProjectQuery($request, $organizationTypes);
+        $query = $this->prepareProjectQuery($request);
         $rawProjectIds = $this->getRawProjectIds($query);
         $allProjectIds = $this->getAllProjectIds($rawProjectIds);
         $siteIds = $this->getSiteIds($allProjectIds);
@@ -55,23 +55,23 @@ class ViewTreeRestorationGoalController extends Controller
             'averageSurvivalRateNonProfit' => floatval($averageSurvivalRateNonProfit),
         ];
 
-        return new JsonResponse($result);
+        return new JsonResponse(ViewTreeRestorationGoalResource::make($result));
     }
 
-    private function prepareProjectQuery(Request $request, array $organizationTypes)
+    private function prepareProjectQuery(Request $request)
     {
-        $query = Project::join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
-            ->where('v2_projects.framework_key', '=', 'terrafund')
-            ->whereIn('organisations.type', $organizationTypes);
 
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($query, $request);
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
 
         return $query;
     }
 
     private function getRawProjectIds($query)
     {
-        return $query->select('v2_projects.id', 'organisations.type')->get();
+        return $query
+        ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+        ->select('v2_projects.id', 'organisations.type')
+        ->get();
     }
 
     private function getAllProjectIds($projectIds)
