@@ -2,17 +2,22 @@
 
 namespace App\Helpers;
 
+use App\Models\V2\Projects\Project;
+
 class TerrafundDashboardQueryHelper
 {
-    public static function buildQueryFromRequest($query, $request)
+    public static function buildQueryFromRequest($request)
     {
-        $query = $query->where('framework_key', 'terrafund');
+        $query = Project::where('framework_key', 'terrafund')
+            ->whereHas('organisation', function ($query) {
+                $query->whereIn('type', ['for-profit-organization', 'non-profit-organization']);
+            });
         if ($request->has('country')) {
             $country = $request->input('country');
-            $query->where('country', $country);
+            $query = $query->where('country', $country);
         } elseif ($request->has('uuid')) {
             $projectId = $request->input('uuid');
-            $query->where('uuid', $projectId);
+            $query = $query->where('uuid', $projectId);
         }
 
         return $query;
