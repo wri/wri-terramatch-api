@@ -7,26 +7,19 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use Illuminate\Http\Request;
 use App\Http\Resources\V2\Dashboard\JobsCreatedResource;
+use App\Helpers\TerrafundDashboardQueryHelper;
 
 class GetJobsCreatedController extends Controller
 {
     public function __invoke(Request $request): JobsCreatedResource
     {
-        $organizationTypes = ['non-profit-organization', 'for-profit-organization'];
 
-        $query = Project::join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
-            ->where('v2_projects.framework_key', '=', 'terrafund')
-            ->whereIn('organisations.type', $organizationTypes);
+        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
 
-        if ($request->has('country')) {
-            $country = $request->input('country');
-            $query->where('country', $country);
-        } elseif ($request->has('uuid')) {
-            $projectUuid = $request->input('uuid');
-            $query->where('v2_projects.uuid', $projectUuid);
-        }
-
-        $rawProjectIds = $query->select('v2_projects.id', 'organisations.type')->get();
+        $rawProjectIds = $query
+        ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+        ->select('v2_projects.id', 'organisations.type')
+        ->get();
 
         $forProfitProjectIds = $this->filterProjectIdsByType($rawProjectIds, 'for-profit-organization');
         $nonProfitProjectIds = $this->filterProjectIdsByType($rawProjectIds, 'non-profit-organization');
