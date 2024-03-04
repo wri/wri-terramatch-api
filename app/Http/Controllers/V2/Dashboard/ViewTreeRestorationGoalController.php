@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Helpers\TerrafundDashboardQueryHelper;
+use App\Http\Resources\V2\Dashboard\ViewTreeRestorationGoalResource;
 
 class ViewTreeRestorationGoalController extends Controller
 {
@@ -54,7 +55,7 @@ class ViewTreeRestorationGoalController extends Controller
             'averageSurvivalRateNonProfit' => floatval($averageSurvivalRateNonProfit),
         ];
 
-        return new JsonResponse($result);
+        return new JsonResponse(ViewTreeRestorationGoalResource::make($result));
     }
 
     private function prepareProjectQuery(Request $request)
