@@ -17738,14 +17738,14 @@ definitions:
           type: object
           properties:
             uuid:
-              type: integer
+              type: string
             project:
               type: object
             period_key:
               type: string
             status:
               type: string
-            status_readable:
+            readable_status:
               type: string
       links:
         type: object
@@ -43960,14 +43960,14 @@ definitions:
     type: object
     properties:
       uuid:
-        type: integer
+        type: string
       project:
         type: object
       period_key:
         type: string
       status:
         type: string
-      status_readable:
+      readable_status:
         type: string
   V2TaskActionRead:
     title: V2TaskActionRead
@@ -55077,14 +55077,14 @@ paths:
                   type: object
                   properties:
                     uuid:
-                      type: integer
+                      type: string
                     project:
                       type: object
                     period_key:
                       type: string
                     status:
                       type: string
-                    status_readable:
+                    readable_status:
                       type: string
               links:
                 type: object
@@ -57032,14 +57032,14 @@ paths:
                   type: object
                   properties:
                     uuid:
-                      type: integer
+                      type: string
                     project:
                       type: object
                     period_key:
                       type: string
                     status:
                       type: string
-                    status_readable:
+                    readable_status:
                       type: string
               links:
                 title: V2PaginationLinks
@@ -75463,14 +75463,14 @@ paths:
                   type: object
                   properties:
                     uuid:
-                      type: integer
+                      type: string
                     project:
                       type: object
                     period_key:
                       type: string
                     status:
                       type: string
-                    status_readable:
+                    readable_status:
                       type: string
               links:
                 title: V2PaginationLinks
@@ -75551,14 +75551,14 @@ paths:
                   type: object
                   properties:
                     uuid:
-                      type: integer
+                      type: string
                     project:
                       type: object
                     period_key:
                       type: string
                     status:
                       type: string
-                    status_readable:
+                    readable_status:
                       type: string
               links:
                 title: V2PaginationLinks
@@ -75625,14 +75625,14 @@ paths:
                   type: object
                   properties:
                     uuid:
-                      type: integer
+                      type: string
                     project:
                       type: object
                     period_key:
                       type: string
                     status:
                       type: string
-                    status_readable:
+                    readable_status:
                       type: string
   '/v2/tasks/{UUID}/reports':
     get:
