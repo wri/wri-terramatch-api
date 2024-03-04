@@ -167,6 +167,7 @@ use App\Http\Controllers\V2\Stratas\DeleteStrataController;
 use App\Http\Controllers\V2\Stratas\GetStratasForEntityController;
 use App\Http\Controllers\V2\Stratas\StoreStrataController;
 use App\Http\Controllers\V2\Stratas\UpdateStrataController;
+use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
 use App\Http\Controllers\V2\TreeSpecies\DeleteTreeSpeciesController;
@@ -261,6 +262,10 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::get('', AdminIndexUpdateRequestsController::class);
         Route::delete('/{updateRequest}', AdminSoftDeleteUpdateRequestController::class);
         Route::put('/{updateRequest}/{status}', AdminStatusUpdateRequestController::class);
+    });
+
+    Route::prefix('tasks')->group(function () {
+        Route::get('', AdminIndexTasksController::class);
     });
 
     Route::prefix('projects')->group(function () {
