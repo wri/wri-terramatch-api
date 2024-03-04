@@ -11,7 +11,6 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\TaskStatusStateMachine;
 use App\StateMachines\UpdateRequestStatusStateMachine;
