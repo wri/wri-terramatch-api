@@ -44,7 +44,7 @@ class ActiveProjectsTableController extends Controller
 
     public function treesUnderRestoration($project)
     {
-        return $project->sites()->get()->sum(function ($site) {
+        return $project->sites->sum(function ($site) {
             $latestReport = $site->reports()->orderByDesc('due_at')->first();
             if ($latestReport) {
                 return $latestReport->treeSpecies()->sum('amount');
