@@ -24,21 +24,20 @@ class AdminIndexTasksController extends Controller
             })
             ->selectRaw('
                 v2_tasks.*,
-                (SELECT name FROM organisations WHERE organisations.id = v2_tasks.organisation_id) as organisation_name
+                (SELECT name FROM organisations WHERE organisations.id = v2_projects.organisation_id) as organisation_name,
+                (SELECT name from v2_projects WHERE v2_projects.id = v2_tasks.project_id) as project_name
             ')
             ->allowedFilters([
-                AllowedFilter::exact('framework_key'),
+                AllowedFilter::scope('project_uuid', 'projectUuid'),
+                AllowedFilter::scope('framework_key', 'frameworkKey'),
                 AllowedFilter::exact('status'),
-                AllowedFilter::exact('organisation_uuid', 'organisationUuid'),
             ]);
 
         $this->sort($query, [
-            'created_at', '-created_at',
             'updated_at', '-updated_at',
-            'framework_key', '-framework_key',
             'due_at', '-due_at',
-            'status', '-status',
             'organisation_name', '-organisation_name',
+            'project_name', '-project_name',
         ]);
 
         $this->isolateAuthorizedFrameworks($query, 'v2_projects');
