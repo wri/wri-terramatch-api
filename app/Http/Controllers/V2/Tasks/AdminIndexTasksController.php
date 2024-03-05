@@ -24,7 +24,7 @@ class AdminIndexTasksController extends Controller
             })
             ->selectRaw('
                 v2_tasks.*,
-                (SELECT name FROM organisation WHERE organisations.id = organisation_id) as organisation_name
+                (SELECT name FROM organisations WHERE organisations.id = v2_tasks.organisation_id) as organisation_name
             ')
             ->allowedFilters([
                 AllowedFilter::exact('framework_key'),
