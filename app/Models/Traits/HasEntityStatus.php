@@ -38,9 +38,8 @@ trait HasEntityStatus {
 
     public function approve($feedback = NULL): void
     {
-        if (!is_null($feedback)) {
-            $this->feedback = $feedback;
-        }
+        $this->feedback = $feedback;
+        $this->feedback_fields = null;
         $this->status()->transitionTo(EntityStatusStateMachine::APPROVED);
     }
 
