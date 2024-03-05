@@ -14,6 +14,7 @@ class TaskResource extends JsonResource
             'uuid' => $this->uuid,
             'period_key' => $this->period_key,
             'due_at' => $this->due_at,
+            'updated_at' => $this->updated_at,
             'status' => $this->status,
             'readable_status' => $this->readable_status,
             'project' => new ProjectLiteResource($this->project),

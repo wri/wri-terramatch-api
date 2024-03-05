@@ -98,6 +98,20 @@ class Task extends Model
         return $query->whereNotIn('status', self::COMPLETE_STATUSES);
     }
 
+    public function scopeProjectUuid(Builder $query, string $projectUuid): Builder
+    {
+        return $query->whereHas('project', function ($qry) use ($projectUuid) {
+            $qry->where('uuid', $projectUuid);
+        });
+    }
+
+    public function scopeFrameworkKey(Builder $query, string $frameworkKey): Builder
+    {
+        return $query->whereHas('project', function ($qry) use ($frameworkKey) {
+            $qry->where('framework_key', $frameworkKey);
+        });
+    }
+
     /**
      * @throws InvalidStatusException
      */
