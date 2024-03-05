@@ -111,9 +111,8 @@ trait HasReportStatus {
     public function approve($feedback = NULL): void
     {
         $this->setCompletion();
-        if (!is_null($feedback)) {
-            $this->feedback = $feedback;
-        }
+        $this->feedback = $feedback;
+        $this->feedback_fields = null;
         $this->status()->transitionTo(ReportStatusStateMachine::APPROVED);
     }
 
