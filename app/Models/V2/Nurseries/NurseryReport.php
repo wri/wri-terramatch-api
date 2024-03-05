@@ -173,8 +173,8 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
     public function toSearchableArray()
     {
         return [
-            'project_name' => $this->nursery->project->name,
-            'organisation_name' => $this->nursery->project->organisation->name,
+            'project_name' => $this->nursery->project?->name,
+            'organisation_name' => $this->nursery->project?->organisation?->name,
         ];
     }
 
