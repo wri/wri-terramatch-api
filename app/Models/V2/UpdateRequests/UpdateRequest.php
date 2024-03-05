@@ -68,6 +68,9 @@ class UpdateRequest extends Model implements ApprovalFlow, AuditableContract
         UpdateRequestStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
         UpdateRequestStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
         UpdateRequestStatusStateMachine::APPROVED => 'Approved',
+
+        # Special status used on reports when an update request hasn't been created.
+        self::ENTITY_STATUS_NO_UPDATE => 'No Update',
     ];
 
     public $stateMachines = [
