@@ -108,7 +108,7 @@ trait HasReportStatus {
         }
     }
 
-    public function approve($feedback = NULL): void
+    public function approve($feedback): void
     {
         $this->setCompletion();
         $this->feedback = $feedback;

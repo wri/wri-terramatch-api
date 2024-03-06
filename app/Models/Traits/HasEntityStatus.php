@@ -36,7 +36,7 @@ trait HasEntityStatus {
         return $this->status == EntityStatusStateMachine::STARTED;
     }
 
-    public function approve($feedback = NULL): void
+    public function approve($feedback): void
     {
         $this->feedback = $feedback;
         $this->feedback_fields = null;
