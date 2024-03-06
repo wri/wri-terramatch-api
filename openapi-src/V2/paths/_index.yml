@@ -1135,7 +1135,7 @@
           $ref: '../definitions/_index.yml#/V2LeadershipTeamRead'
     tags:
       - V2 Leadership Team
-  /v2/ownership-stake:
+/v2/ownership-stake:
   post:
     summary: Create a ownership stake
     operationId: post-v2-ownership-stake
