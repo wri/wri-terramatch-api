@@ -62,7 +62,8 @@ trait HasReportStatus {
 
     public function isEditable(): bool
     {
-        return in_array($this->status, [ReportStatusStateMachine::DUE, ReportStatusStateMachine::STARTED]);
+        return in_array($this->status, [ReportStatusStateMachine::DUE, ReportStatusStateMachine::STARTED]) ||
+            ($this->nothing_to_report && $this->status == ReportStatusStateMachine::AWAITING_APPROVAL);
     }
 
     public function isCompletable(): bool
@@ -105,6 +106,11 @@ trait HasReportStatus {
             $this->save();
         } else {
             $this->status()->transitionTo(ReportStatusStateMachine::STARTED);
+        }
+        if ($this->supportsNothingToReport() && $this->nothing_to_report) {
+            // This update has to happen after the transition above, or the transition validation will fail
+            // (see ReportStatusStateMachine)
+            $this->update(['nothing_to_report' => false]);
         }
     }
 
