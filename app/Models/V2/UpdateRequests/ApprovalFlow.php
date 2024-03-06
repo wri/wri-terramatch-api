@@ -6,7 +6,7 @@ interface ApprovalFlow
 {
     public function submitForApproval(): void;
 
-    public function approve($feedback = NULL): void;
+    public function approve($feedback): void;
 
     public function needsMoreInformation($feedback, $feedbackFields): void;
 }
