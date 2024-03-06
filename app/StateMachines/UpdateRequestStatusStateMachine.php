@@ -24,7 +24,7 @@ class UpdateRequestStatusStateMachine extends StateMachine
         return [
             self::DRAFT => [self::AWAITING_APPROVAL],
             self::AWAITING_APPROVAL => [self::APPROVED, self::NEEDS_MORE_INFORMATION],
-            self::NEEDS_MORE_INFORMATION => [self::APPROVED],
+            self::NEEDS_MORE_INFORMATION => [self::APPROVED, self::AWAITING_APPROVAL],
         ];
     }
 
