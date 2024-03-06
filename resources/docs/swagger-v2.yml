@@ -56595,6 +56595,61 @@ paths:
                       type: string
                     nursery_report_form_uuid:
                       type: string
+    post:
+      summary: Create a specific reporting frameworks
+      operationId: post-v2-admin-reporting-frameworks
+      tags:
+        - Funding Programmes
+      parameters:
+        - in: body
+          name: body
+          schema:
+            title: ReportingFrameworkCreate
+            type: object
+            properties:
+              name:
+                type: string
+              access_code:
+                type: string
+              project_form_uuid:
+                type: string
+              project_report_form_uuid:
+                type: string
+              site_form_uuid:
+                type: string
+              site_report_form_uuid:
+                type: string
+              nursery_form_uuid:
+                type: string
+              nursery_report_form_uuid:
+                type: string
+      responses:
+        '201':
+          description: OK
+          schema:
+            title: ReportingFrameworkRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              name:
+                type: string
+              slug:
+                type: string
+              access_code:
+                type: string
+              project_form_uuid:
+                type: string
+              project_report_form_uuid:
+                type: string
+              site_form_uuid:
+                type: string
+              site_report_form_uuid:
+                type: string
+              nursery_form_uuid:
+                type: string
+              nursery_report_form_uuid:
+                type: string
   '/v2/admin/reporting-frameworks/{UUID}':
     put:
       summary: Update a specific reporting frameworks
@@ -70158,7 +70213,7 @@ paths:
                 type: integer
       tags:
         - V2 Leadership Team
-    /v2/ownership-stake: null
+  /v2/ownership-stake:
     post:
       summary: Create a ownership stake
       operationId: post-v2-ownership-stake
