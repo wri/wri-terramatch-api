@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\UpdateRequests\StatusChangeRequest;
 use App\Http\Resources\V2\UpdateRequests\UpdateRequestResource;
 use App\Models\Site;
+use App\Models\V2\EntityModel;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
@@ -27,38 +28,14 @@ class AdminStatusUpdateRequestController extends Controller
         switch($status) {
             case 'approve':
                 $this->applyUpdates($updateRequest);
-                $updateRequest->update([
-                    'status' => UpdateRequest::STATUS_APPROVED,
-                    'feedback' => data_get($data, 'feedback'),
-                ]);
-
-                $entity = $updateRequest->updaterequestable;
-                $entity->update_request_status = UpdateRequest::STATUS_APPROVED;
-                $entity->save();
-
-                break;
-            case 'reject':
-                $updateRequest->update([
-                    'status' => UpdateRequest::STATUS_REJECTED,
-                    'feedback' => data_get($data, 'feedback'),
-                    'feedback_fields' => data_get($data, 'feedback_fields'),
-                ]);
-
-                $entity = $updateRequest->updaterequestable;
-                $entity->update_request_status = UpdateRequest::STATUS_REJECTED;
-                $entity->save();
+                $updateRequest->approve(data_get($data, 'feedback'));
 
                 break;
             case 'moreinfo':
-                $updateRequest->update([
-                    'status' => UpdateRequest::STATUS_NEEDS_MORE_INFORMATION,
-                    'feedback' => data_get($data, 'feedback'),
-                    'feedback_fields' => data_get($data, 'feedback_fields'),
-                ]);
-
-                $entity = $updateRequest->updaterequestable;
-                $entity->update_request_status = UpdateRequest::STATUS_NEEDS_MORE_INFORMATION;
-                $entity->save();
+                $updateRequest->needsMoreInformation(
+                    data_get($data, 'feedback'),
+                    data_get($data, 'feedback_fields')
+                );
 
                 break;
             default:
@@ -94,8 +71,9 @@ class AdminStatusUpdateRequestController extends Controller
 
     private function applyUpdates(UpdateRequest $updateRequest)
     {
+        /** @var EntityModel $entity */
         $entity = $updateRequest->updaterequestable;
-        $entityProps = $entity->mapEntityAnswers($updateRequest->content, $entity->getCurrentForm(), data_get($entity->getFormConfig(), 'fields', []));
+        $entityProps = $entity->mapEntityAnswers($updateRequest->content, $entity->getForm(), data_get($entity->getFormConfig(), 'fields', []));
         $entity->update($entityProps);
     }
 

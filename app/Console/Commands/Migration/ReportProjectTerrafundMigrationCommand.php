@@ -6,6 +6,7 @@ use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundProgrammeSubmission;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Console\Command;
 
 class ReportProjectTerrafundMigrationCommand extends Command
@@ -62,7 +63,7 @@ class ReportProjectTerrafundMigrationCommand extends Command
             'framework_key' => 'terrafund',
 
             'due_at' => $this->handleDueAt($submission),
-            'status' => ProjectReport::STATUS_AWAITING_APPROVAL,
+            'status' => ReportStatusStateMachine::AWAITING_APPROVAL,
             'landscape_community_contribution' => data_get($submission, 'landscape_community_contribution'),
             'top_three_successes' => data_get($submission, 'top_three_successes'),
             'challenges_faced' => data_get($submission, 'challenges_and_lessons'),

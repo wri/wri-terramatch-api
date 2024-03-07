@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\V2\Projects;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Projects\ProjectWithSchemaResource;
+use App\Http\Resources\V2\Entities\EntityWithSchemaResource;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\Request;
 
 class CreateBlankProjectWithFormController extends Controller
 {
-    public function __invoke(Request $request, Form $form): ProjectWithSchemaResource
+    public function __invoke(Request $request, Form $form): EntityWithSchemaResource
     {
         $this->authorize('create', Project::class);
 
@@ -19,9 +20,9 @@ class CreateBlankProjectWithFormController extends Controller
         $project = Project::create([
             'framework_key' => $form->framework_key,
             'organisation_id' => $organizationId,
-            'status' => Project::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
-        return new ProjectWithSchemaResource($project, ['schema' => $form]);
+        return $project->createSchemaResource();
     }
 }

@@ -7477,6 +7477,48 @@ definitions:
         type: string
       age:
         type: integer
+  V2OwnershipStakeCreate:
+    title: V2OwnershipStakeCreate
+    type: object
+    properties:
+      organisation_id:
+        type: string
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+      percent_ownership:
+        type: integer
+  V2OwnershipStakeRead:
+    title: V2OwnershipStakeRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      organisation_id:
+        type: string
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+      percent_ownership:
+        type: integer
+  V2OwnershipStakeUpdate:
+    title: V2OwnershipStakeUpdate
+    type: object
+    properties:
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+      percent_ownership:
+        type: integer
   V2FundingTypeCreate:
     title: V2FundingTypeCreate
     type: object
@@ -11760,6 +11802,8 @@ definitions:
               location:
                 type: string
               read_more_url:
+                type: string
+              framework_key:
                 type: string
               status:
                 type: string
@@ -16533,6 +16577,8 @@ definitions:
             type: string
           read_more_url:
             type: string
+          framework_key:
+            type: string
           status:
             type: string
           organisation_types:
@@ -17659,6 +17705,47 @@ definitions:
             readable_status:
               type: string
             title:
+              type: string
+      links:
+        type: object
+        properties:
+          first:
+            type: string
+          last:
+            type: string
+          prev:
+            type: string
+          next:
+            type: string
+      meta:
+        type: object
+        properties:
+          current_page:
+            type: integer
+          from:
+            type: integer
+          last_page:
+            type: integer
+          next:
+            type: integer
+  TaskPaginated:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          title: V2TaskRead
+          type: object
+          properties:
+            uuid:
+              type: string
+            project:
+              type: object
+            period_key:
+              type: string
+            status:
+              type: string
+            readable_status:
               type: string
       links:
         type: object
@@ -43873,14 +43960,14 @@ definitions:
     type: object
     properties:
       uuid:
-        type: integer
+        type: string
       project:
         type: object
       period_key:
         type: string
       status:
         type: string
-      status_readable:
+      readable_status:
         type: string
   V2TaskActionRead:
     title: V2TaskActionRead
@@ -43896,6 +43983,15 @@ definitions:
         type: string
         format: date-time
       title:
+        type: string
+      report_title:
+        type: string
+      update_request_status:
+        type: string
+      submitted_at:
+        type: string
+        format: date-time
+      parent_name:
         type: string
   StatusUpdate:
     title: StatusUpdate
@@ -54950,6 +55046,78 @@ paths:
                   next:
                     type: integer
       operationId: get-v2-admin-project-reports
+  /v2/admin/tasks:
+    get:
+      summary: View all tasks as an admin
+      tags:
+        - V2 Tasks
+      parameters:
+        - in: body
+          name: body
+          schema:
+            title: V2SearchFilterSort
+            type: object
+            properties:
+              search:
+                type: string
+                description: search term to use on the collection
+              filter:
+                type: string
+                description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+              sort:
+                type: string
+                description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name'
+              per_page:
+                type: integer
+                description: number of results (per page) to return
+              page:
+                type: integer
+                description: page number you want results from
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  title: V2TaskRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    project:
+                      type: object
+                    period_key:
+                      type: string
+                    status:
+                      type: string
+                    readable_status:
+                      type: string
+              links:
+                type: object
+                properties:
+                  first:
+                    type: string
+                  last:
+                    type: string
+                  prev:
+                    type: string
+                  next:
+                    type: string
+              meta:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  from:
+                    type: integer
+                  last_page:
+                    type: integer
+                  next:
+                    type: integer
+      operationId: get-v2-admin-tasks
   /v2/admin/nurseries:
     get:
       summary: View all nurseries as an admin
@@ -56437,14 +56605,10 @@ paths:
                     nursery_report_form_uuid:
                       type: string
     post:
-      summary: Create a a specific reporting frameworks
-      operationId: post-v2-admin-reporting-frameworks-uuid
+      summary: Create a specific reporting frameworks
+      operationId: post-v2-admin-reporting-frameworks
       tags:
         - Funding Programmes
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
         - in: body
           name: body
@@ -56568,6 +56732,30 @@ paths:
       responses:
         '201':
           description: OK
+          schema:
+            title: ReportingFrameworkRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              name:
+                type: string
+              slug:
+                type: string
+              access_code:
+                type: string
+              project_form_uuid:
+                type: string
+              project_report_form_uuid:
+                type: string
+              site_form_uuid:
+                type: string
+              site_report_form_uuid:
+                type: string
+              nursery_form_uuid:
+                type: string
+              nursery_report_form_uuid:
+                type: string
   '/v2/reporting-frameworks/access-code/{ACCESS_CODE}':
     get:
       summary: View a specific reporting framework using an access code
@@ -56790,7 +56978,7 @@ paths:
           name: ENTITY
           in: path
           required: true
-          description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+          description: allowed values projects/sites/nurseries
         - type: string
           name: UUID
           in: path
@@ -56908,14 +57096,14 @@ paths:
                   type: object
                   properties:
                     uuid:
-                      type: integer
+                      type: string
                     project:
                       type: object
                     period_key:
                       type: string
                     status:
                       type: string
-                    status_readable:
+                    readable_status:
                       type: string
               links:
                 title: V2PaginationLinks
@@ -57056,7 +57244,7 @@ paths:
           name: STATUS
           in: path
           required: true
-          description: 'allowed values are approve, reject, moreinfo'
+          description: 'allowed values are approve, moreinfo'
         - in: body
           name: body
           schema:
@@ -70042,18 +70230,18 @@ paths:
         '201':
           description: Created
           schema:
-            title: V2OwnershipStakeCreate
+            title: V2OwnershipStakeRead
             type: object
             properties:
               uuid:
                 type: string
               organisation_id:
                 type: string
-              title:
+              position:
                 type: string
               gender:
                 type: string
-              year_of_birth:
+              age:
                 type: integer
               percent_ownership:
                 type: integer
@@ -70066,11 +70254,11 @@ paths:
             properties:
               organisation_id:
                 type: string
-              title:
+              position:
                 type: string
               gender:
                 type: string
-              year_of_birth:
+              age:
                 type: integer
               percent_ownership:
                 type: integer
@@ -70091,11 +70279,11 @@ paths:
                 type: string
               organisation_id:
                 type: string
-              title:
+              position:
                 type: string
               gender:
                 type: string
-              year_of_birth:
+              age:
                 type: integer
               percent_ownership:
                 type: integer
@@ -70112,11 +70300,11 @@ paths:
             title: V2OwnershipStakeUpdate
             type: object
             properties:
-              title:
+              position:
                 type: string
               gender:
                 type: string
-              year_of_birth:
+              age:
                 type: integer
               percent_ownership:
                 type: integer
@@ -70133,19 +70321,17 @@ paths:
           description: OK
           schema:
             title: V2OwnershipStakeRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
             type: object
             properties:
               uuid:
                 type: string
               organisation_id:
                 type: string
-              title:
+              position:
                 type: string
               gender:
                 type: string
-              year_of_birth:
+              age:
                 type: integer
               percent_ownership:
                 type: integer
@@ -70286,276 +70472,6 @@ paths:
                   next:
                     type: integer
       operationId: get-v2-admin-sites
-  /v2/admin/sites/ppc:
-    get:
-      summary: View all PPC sites as an admin
-      tags:
-        - V2 Sites
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-        - name: sort
-          type: string
-          in: query
-          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
-        - name: per_page
-          type: integer
-          in: query
-          description: number of results (per page) to return
-        - name: page
-          type: integer
-          in: query
-          description: page number you want results from
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    site_id:
-                      type: integer
-                    terrafund_site_id:
-                      type: integer
-                    programme_id:
-                      type: integer
-                    terrafund_programme_id:
-                      type: integer
-                    control_site:
-                      type: boolean
-                    name:
-                      type: string
-                    country:
-                      type: string
-                    project_country:
-                      type: string
-                    continent:
-                      type: string
-                    description:
-                      type: string
-                    planting_pattern:
-                      type: string
-                    stratification_for_heterogeneity:
-                      type: string
-                    history:
-                      type: string
-                    workdays_paid:
-                      type: integer
-                    workdays_volunteer:
-                      type: integer
-                    total_workdays:
-                      type: integer
-                    establishment_date:
-                      type: string
-                      format: date
-                    start_date:
-                      type: string
-                      format: date
-                    end_date:
-                      type: string
-                      format: date
-                    technical_narrative:
-                      type: string
-                    public_narrative:
-                      type: string
-                    aim_survival_rate:
-                      type: number
-                    aim_year_five_crown_cover:
-                      type: number
-                    aim_direct_seeding_survival_rate:
-                      type: number
-                    aim_natural_regeneration_trees_per_hectare:
-                      type: number
-                    aim_natural_regeneration_hectares:
-                      type: number
-                    aim_soil_condition:
-                      type: string
-                    aim_number_of_mature_trees:
-                      type: integer
-                    hectares_to_restore:
-                      type: number
-                    landscape_community_contribution:
-                      type: string
-                    disturbances:
-                      type: string
-                    boundary_geojson:
-                      type: string
-                    created_at:
-                      type: string
-                      format: date-time
-                    updated_at:
-                      type: string
-                      format: date-time
-              links:
-                type: object
-                properties:
-                  first:
-                    type: string
-                  last:
-                    type: string
-                  prev:
-                    type: string
-                  next:
-                    type: string
-              meta:
-                type: object
-                properties:
-                  current_page:
-                    type: integer
-                  from:
-                    type: integer
-                  last_page:
-                    type: integer
-                  next:
-                    type: integer
-      operationId: get-v2-admin-ppc-sites
-  /v2/admin/sites/terrafund:
-    get:
-      summary: View all terrafund sites as an admin
-      tags:
-        - V2 Sites
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-        - name: sort
-          type: string
-          in: query
-          description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
-        - name: per_page
-          type: integer
-          in: query
-          description: number of results (per page) to return
-        - name: page
-          type: integer
-          in: query
-          description: page number you want results from
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    site_id:
-                      type: integer
-                    terrafund_site_id:
-                      type: integer
-                    programme_id:
-                      type: integer
-                    terrafund_programme_id:
-                      type: integer
-                    control_site:
-                      type: boolean
-                    name:
-                      type: string
-                    country:
-                      type: string
-                    project_country:
-                      type: string
-                    continent:
-                      type: string
-                    description:
-                      type: string
-                    planting_pattern:
-                      type: string
-                    stratification_for_heterogeneity:
-                      type: string
-                    history:
-                      type: string
-                    workdays_paid:
-                      type: integer
-                    workdays_volunteer:
-                      type: integer
-                    total_workdays:
-                      type: integer
-                    establishment_date:
-                      type: string
-                      format: date
-                    start_date:
-                      type: string
-                      format: date
-                    end_date:
-                      type: string
-                      format: date
-                    technical_narrative:
-                      type: string
-                    public_narrative:
-                      type: string
-                    aim_survival_rate:
-                      type: number
-                    aim_year_five_crown_cover:
-                      type: number
-                    aim_direct_seeding_survival_rate:
-                      type: number
-                    aim_natural_regeneration_trees_per_hectare:
-                      type: number
-                    aim_natural_regeneration_hectares:
-                      type: number
-                    aim_soil_condition:
-                      type: string
-                    aim_number_of_mature_trees:
-                      type: integer
-                    hectares_to_restore:
-                      type: number
-                    landscape_community_contribution:
-                      type: string
-                    disturbances:
-                      type: string
-                    boundary_geojson:
-                      type: string
-                    created_at:
-                      type: string
-                      format: date-time
-                    updated_at:
-                      type: string
-                      format: date-time
-              links:
-                type: object
-                properties:
-                  first:
-                    type: string
-                  last:
-                    type: string
-                  prev:
-                    type: string
-                  next:
-                    type: string
-              meta:
-                type: object
-                properties:
-                  current_page:
-                    type: integer
-                  from:
-                    type: integer
-                  last_page:
-                    type: integer
-                  next:
-                    type: integer
-      operationId: get-v2-admin-terrafund-sites
   /v2/admin/project-pitches:
     get:
       summary: View project pitches as an admin
@@ -73338,6 +73254,8 @@ paths:
                               type: string
                             read_more_url:
                               type: string
+                            framework_key:
+                              type: string
                             status:
                               type: string
                             organisation_types:
@@ -75609,14 +75527,14 @@ paths:
                   type: object
                   properties:
                     uuid:
-                      type: integer
+                      type: string
                     project:
                       type: object
                     period_key:
                       type: string
                     status:
                       type: string
-                    status_readable:
+                    readable_status:
                       type: string
               links:
                 title: V2PaginationLinks
@@ -75697,14 +75615,14 @@ paths:
                   type: object
                   properties:
                     uuid:
-                      type: integer
+                      type: string
                     project:
                       type: object
                     period_key:
                       type: string
                     status:
                       type: string
-                    status_readable:
+                    readable_status:
                       type: string
               links:
                 title: V2PaginationLinks
@@ -75771,14 +75689,14 @@ paths:
                   type: object
                   properties:
                     uuid:
-                      type: integer
+                      type: string
                     project:
                       type: object
                     period_key:
                       type: string
                     status:
                       type: string
-                    status_readable:
+                    readable_status:
                       type: string
   '/v2/tasks/{UUID}/reports':
     get:
@@ -75817,6 +75735,15 @@ paths:
                       type: string
                       format: date-time
                     title:
+                      type: string
+                    report_title:
+                      type: string
+                    update_request_status:
+                      type: string
+                    submitted_at:
+                      type: string
+                      format: date-time
+                    parent_name:
                       type: string
   '/v2/tasks/{UUID}/submit':
     put:
@@ -79892,6 +79819,8 @@ paths:
                       type: string
                     read_more_url:
                       type: string
+                    framework_key:
+                      type: string
                     status:
                       type: string
                     organisation_types:
@@ -80223,6 +80152,8 @@ paths:
                       type: string
                     read_more_url:
                       type: string
+                    framework_key:
+                      type: string
                     status:
                       type: string
                     organisation_types:
@@ -80539,6 +80470,8 @@ paths:
               location:
                 type: string
               read_more_url:
+                type: string
+              framework_key:
                 type: string
               status:
                 type: string
@@ -80872,6 +80805,8 @@ paths:
                 type: string
               read_more_url:
                 type: string
+              framework_key:
+                type: string
               status:
                 type: string
               organisation_types:
@@ -81142,6 +81077,8 @@ paths:
               location:
                 type: string
               read_more_url:
+                type: string
+              framework_key:
                 type: string
               status:
                 type: string
@@ -81418,6 +81355,8 @@ paths:
                 type: string
               read_more_url:
                 type: string
+              framework_key:
+                type: string
               status:
                 type: string
               organisation_types:
@@ -81693,6 +81632,8 @@ paths:
                 type: string
               read_more_url:
                 type: string
+              framework_key:
+                type: string
               status:
                 type: string
               organisation_types:
@@ -81967,6 +81908,8 @@ paths:
               location:
                 type: string
               read_more_url:
+                type: string
+              framework_key:
                 type: string
               status:
                 type: string
@@ -86890,6 +86833,8 @@ paths:
                     type: string
                   read_more_url:
                     type: string
+                  framework_key:
+                    type: string
                   status:
                     type: string
                   organisation_types:
@@ -89074,6 +89019,8 @@ paths:
                   location:
                     type: string
                   read_more_url:
+                    type: string
+                  framework_key:
                     type: string
                   status:
                     type: string

@@ -13,9 +13,8 @@ class AdminSoftDeleteUpdateRequestController extends Controller
     {
         $this->authorize('delete', $updateRequest);
 
-
         $entity = $updateRequest->updaterequestable;
-        $entity->update_request_status = UpdateRequest::STATUS_NO_UPDATE;
+        $entity->update_request_status = UpdateRequest::ENTITY_STATUS_NO_UPDATE;
         $entity->save();
 
         $updateRequest->delete();
