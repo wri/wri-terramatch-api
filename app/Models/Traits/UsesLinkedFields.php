@@ -6,12 +6,12 @@ use App\Models\V2\Forms\Form;
 
 trait UsesLinkedFields
 {
-    private ?Form $form = null;
+    private ?Form $frameworkModelForm = null;
 
     public function updateAllAnswers(array $input): array
     {
         $localAnswers = [];
-        foreach ($this->form->sections as $section) {
+        foreach ($this->getform()->sections as $section) {
             foreach ($section->questions as $question) {
                 if ($question->input_type !== 'conditional' && ! empty($question->linked_field_key)) {
                     $linkedFieldInfo = $question->getLinkedFieldInfo([
@@ -111,7 +111,7 @@ trait UsesLinkedFields
     {
         $answers = [];
 
-        foreach ($this->form->sections as $section) {
+        foreach ($this->getForm()->sections as $section) {
             foreach ($section->questions as $question) {
                 if ($question->input_type !== 'conditional' && ! empty($question->linked_field_key)) {
                     $linkedFieldInfo = $question->getLinkedFieldInfo($params);
@@ -210,12 +210,17 @@ trait UsesLinkedFields
 
     public function getForm(): Form
     {
-        if (is_null($this->form)) {
-            $this->form = Form::where('model', get_class($this))
+        if (!is_null($this->form)) {
+            // Some classes that use this trait have a direct database link to the form.
+            return $this->form;
+        }
+
+        if (is_null($this->frameworkModelForm)) {
+            $this->frameworkModelForm = Form::where('model', get_class($this))
                 ->where('framework_key', $this->framework_key)
                 ->first();
         }
-        return $this->form;
+        return $this->frameworkModelForm;
     }
 
     public function getFormConfig(): ?array
