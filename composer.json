@@ -52,7 +52,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "platform": {
-            "php": "8.1.14",
+            "php": "8.2.10",
             "ext-gd": "2.1.0"
         },
         "allow-plugins": {
@@ -70,8 +70,10 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         },
+        "//": "Note: When Laravel is updated, the Pluralizer override below will either need to be removed of updated",
         "files": [
-            "app/functions.php"
+            "app/functions.php",
+            "app/Laravel/Pluralizer.php"
         ]
     },
     "autoload-dev": {

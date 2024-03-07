@@ -21,8 +21,6 @@ interface EntityModel extends UpdateRequestableModel, ApprovalFlow
 
     public function mapEntityAnswers(array $input, Form $form, array $cfg): array;
 
-    public function updateRequests(): MorphMany;
-
     public function createResource(): JsonResource;
 
     public function createSchemaResource(): JsonResource;

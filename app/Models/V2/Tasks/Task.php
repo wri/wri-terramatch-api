@@ -11,7 +11,6 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\TaskStatusStateMachine;
 use App\StateMachines\UpdateRequestStatusStateMachine;
@@ -97,6 +96,20 @@ class Task extends Model
     public function scopeIsIncomplete(Builder $query): Builder
     {
         return $query->whereNotIn('status', self::COMPLETE_STATUSES);
+    }
+
+    public function scopeProjectUuid(Builder $query, string $projectUuid): Builder
+    {
+        return $query->whereHas('project', function ($qry) use ($projectUuid) {
+            $qry->where('uuid', $projectUuid);
+        });
+    }
+
+    public function scopeFrameworkKey(Builder $query, string $frameworkKey): Builder
+    {
+        return $query->whereHas('project', function ($qry) use ($frameworkKey) {
+            $qry->where('framework_key', $frameworkKey);
+        });
     }
 
     /**
