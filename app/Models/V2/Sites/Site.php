@@ -7,7 +7,6 @@ use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
-use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
@@ -40,7 +39,6 @@ class Site extends Model implements HasMedia, AuditableContract, EntityModel
 {
     use HasFactory;
     use HasUuid;
-    use HasStatus;
     use SoftDeletes;
     use Searchable;
     use HasLinkedFields;
