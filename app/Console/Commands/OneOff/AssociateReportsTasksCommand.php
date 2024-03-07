@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\Migration;
+namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
@@ -19,7 +19,7 @@ class AssociateReportsTasksCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'migration:associate-reports-and-tasks';
+    protected $signature = 'one-off:associate-reports-and-tasks';
 
     /**
      * The console command description.
