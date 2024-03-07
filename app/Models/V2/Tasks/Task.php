@@ -170,8 +170,8 @@ class Task extends Model
             return;
         } elseif (
             $reportStatuses
-            ->intersect([ReportStatusStateMachine::DUE, ReportStatusStateMachine::STARTED])
-            ->isNotEmpty()
+                ->intersect([ReportStatusStateMachine::DUE, ReportStatusStateMachine::STARTED])
+                ->isNotEmpty()
         ) {
             throw new InvalidStatusException('Task has incomplete reports');
         }
@@ -208,7 +208,7 @@ class Task extends Model
                 // A report in needs-more-information causes the task to go to needs-more-information
                 $this->status()->transitionTo(TaskStatusStateMachine::NEEDS_MORE_INFORMATION);
                 return;
-            } elseif ($report->updateRequests()->isStatus( UpdateRequestStatusStateMachine::NEEDS_MORE_INFORMATION)->exists()) {
+            } elseif ($report->updateRequests()->isStatus(UpdateRequestStatusStateMachine::NEEDS_MORE_INFORMATION)->exists()) {
                 // an awaiting-approval report with a needs-more-information update request causes the task to go to
                 // needs-more-information
                 $this->status()->transitionTo(TaskStatusStateMachine::NEEDS_MORE_INFORMATION);
