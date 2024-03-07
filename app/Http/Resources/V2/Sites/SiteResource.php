@@ -26,6 +26,7 @@ class SiteResource extends JsonResource
             'status' => $this->status,
             'readable_status' => $this->readable_status,
             'update_request_status' => $this->update_request_status,
+            'readable_update_request_status' => $this->readable_update_request_status,
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
             'survival_rate_planted' => $this->survival_rate_planted,

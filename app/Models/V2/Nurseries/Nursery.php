@@ -3,17 +3,19 @@
 namespace App\Models\V2\Nurseries;
 
 use App\Models\Framework;
+use App\Models\Traits\HasEntityResources;
+use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\EntityModel;
 use App\Models\V2\Polygon;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use App\Models\V2\UpdateRequests\ApprovalFlow;
-use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,19 +29,21 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Nursery extends Model implements HasMedia, ApprovalFlow, AuditableContract
+class Nursery extends Model implements HasMedia, AuditableContract, EntityModel
 {
     use HasFrameworkKey;
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
     use Searchable;
-    use HasStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use Auditable;
+    use HasUpdateRequests;
+    use HasEntityStatus;
+    use HasEntityResources;
 
     protected $auditInclude = [
         'status',
@@ -88,18 +92,6 @@ class Nursery extends Model implements HasMedia, ApprovalFlow, AuditableContract
         'answers' => 'array',
     ];
 
-    public const STATUS_STARTED = 'started';
-    public const STATUS_AWAITING_APPROVAL = 'awaiting-approval';
-    public const STATUS_APPROVED = 'approved';
-    public const STATUS_NEEDS_MORE_INFORMATION = 'needs-more-information';
-
-    public static $statuses = [
-        self::STATUS_STARTED => 'Started',
-        self::STATUS_AWAITING_APPROVAL => 'Awaiting approval',
-        self::STATUS_APPROVED => 'Approved',
-        self::STATUS_NEEDS_MORE_INFORMATION => 'Needs more information',
-    ];
-
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumbnail')
@@ -143,11 +135,6 @@ class Nursery extends Model implements HasMedia, ApprovalFlow, AuditableContract
         return $this->hasMany(NurseryReport::class);
     }
 
-    public function updateRequests()
-    {
-        return $this->morphMany(UpdateRequest::class, 'updaterequestable');
-    }
-
     public function polygons()
     {
         return $this->morphMany(Polygon::class, 'polygonable');
@@ -171,7 +158,10 @@ class Nursery extends Model implements HasMedia, ApprovalFlow, AuditableContract
     public function getOverdueNurseryReportsTotalAttribute(): int
     {
         return $this->reports()
-            ->whereIn('status', [self::STATUS_STARTED, self::STATUS_NEEDS_MORE_INFORMATION])
+            ->whereIn(
+                'status',
+                [ReportStatusStateMachine::STARTED, ReportStatusStateMachine::NEEDS_MORE_INFORMATION]
+            )
             ->where('due_at', '<', now())
             ->count();
     }

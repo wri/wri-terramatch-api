@@ -8,7 +8,8 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
+        "asantibanez/laravel-eloquent-state-machines": "^5.2",
         "aws/aws-sdk-php": "^3.131",
         "doctrine/dbal": "^3.5",
         "guzzlehttp/guzzle": "^7.2",
@@ -20,6 +21,7 @@
         "league/csv": "^9.6",
         "league/flysystem-aws-s3-v3": "^3.0",
         "maatwebsite/excel": "^3.1",
+        "mavinoo/laravel-batch": "^2.3",
         "owen-it/laravel-auditing": "^13.5",
         "sentry/sentry-laravel": "^3.2",
         "spatie/laravel-medialibrary": "^10.7",
@@ -50,7 +52,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "platform": {
-            "php": "8.1.14",
+            "php": "8.2.10",
             "ext-gd": "2.1.0"
         },
         "allow-plugins": {
@@ -68,8 +70,10 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         },
+        "//": "Note: When Laravel is updated, the Pluralizer override below will either need to be removed of updated",
         "files": [
-            "app/functions.php"
+            "app/functions.php",
+            "app/Laravel/Pluralizer.php"
         ]
     },
     "autoload-dev": {
