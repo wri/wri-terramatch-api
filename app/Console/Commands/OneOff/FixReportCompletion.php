@@ -34,22 +34,23 @@ class FixReportCompletion extends Command
         $totalAlreadyCorrect = 0;
         collect([ProjectReport::class, SiteReport::class, NurseryReport::class])->each(
             function($modelClass) use (&$totalUpdated, &$totalAlreadyCorrect) {
-                $modelClass::whereNot('status', ReportStatusStateMachine::DUE)->where('completion', '<', 100)->chunkById(
-                    100,
-                    function ($reports) use (&$totalUpdated, &$totalAlreadyCorrect) {
-                        /** @var ReportModel $report */
-                        foreach ($reports as $report) {
-                            $initialValue = $report->completion;
-                            $report->calculateCompletion($report->getForm());
-                            if ($initialValue != $report->completion) {
-                                $report->save();
-                                $totalUpdated++;
-                            } else {
-                                $totalAlreadyCorrect++;
+                $modelClass::withoutTimestamps(function () use ($modelClass, &$totalUpdated, &$totalAlreadyCorrect) {
+                    $modelClass::whereNot('status', ReportStatusStateMachine::DUE)->where('completion', '<', 100)->chunkById(
+                        100,
+                        function ($reports) use (&$totalUpdated, &$totalAlreadyCorrect) {
+                            /** @var ReportModel $report */
+                            foreach ($reports as $report) {
+                                $completion = $report->calculateCompletion($report->getForm());
+                                if ($completion != $report->completion) {
+                                    $report->update([ 'completion' => $completion ]);
+                                    $totalUpdated++;
+                                } else {
+                                    $totalAlreadyCorrect++;
+                                }
                             }
                         }
-                    }
-                );
+                    );
+                });
             }
         );
 
