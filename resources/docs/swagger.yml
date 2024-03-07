@@ -9101,6 +9101,11 @@ definitions:
   DashboardJobsCreatedResponse:
     type: object
     properties:
+      data:
+        $ref: '#/definitions/DashboardJobsCreatedData'
+  DashboardJobsCreatedData:
+    type: object
+    properties:
       totalJobsCreated:
         type: integer
       forProfitJobsCreated:
