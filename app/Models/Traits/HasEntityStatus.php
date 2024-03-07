@@ -4,6 +4,7 @@ namespace App\Models\Traits;
 
 use App\Events\V2\General\EntityStatusChangeEvent;
 use App\StateMachines\EntityStatusStateMachine;
+use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -15,6 +16,9 @@ use Illuminate\Database\Eloquent\Builder;
  * @method status
  */
 trait HasEntityStatus {
+    use HasStatus;
+    use HasStateMachines;
+
     public $stateMachines = [
         'status' => EntityStatusStateMachine::class,
     ];
