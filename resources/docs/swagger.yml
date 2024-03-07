@@ -8989,6 +8989,11 @@ definitions:
   DashboardVolunteersSurvivalRateResponse:
     type: object
     properties:
+      data:
+        $ref: '#/definitions/DashboardVolundteersSurvivalRateData'
+  DashboardVolundteersSurvivalRateData:
+    type: object
+    properties:
       total_volunteers:
         type: integer
         description: Total number of volunteers.
@@ -9009,8 +9014,13 @@ definitions:
         description: Survival rate for non-profit entities.
       enterprise_survival_rate:
         type: number
-        description: Survival rate for enterprise entities.
+        description: Survival rate for enterprise entities.  
   DashboardTotalSectionHeaderResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/DashboardTotalSectionHeaderData'
+  DashboardTotalSectionHeaderData:
     type: object
     properties:
       total_non_profit_count:
@@ -9032,72 +9042,90 @@ definitions:
         type: integer
         description: Total number of trees restored goal.
   DashboardTopProjectsResponse:
-    top_projects_most_planted_trees:
-      type: array
-      items:
-        type: object
-        properties:
-          project:
-            type: string
-          trees_planted:
-            type: integer
-    top_tree_species_planted:
-      type: array
-      items:
-        type: object
-        properties:
-          name:
-            type: string
-          amount:
-            type: integer
+    properties:
+      data:
+        $ref: '#/definitions/DashboardTopProjectsData'
+  DashboardTopProjectsData:
+    type: object
+    properties:
+      top_projects_most_planted_trees:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardTopPlantedTree'
+      top_tree_species_planted:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardTopTreeSpecies'
+  DashboardTopPlantedTree:
+    type: object
+    properties:
+      project:
+        type: string
+      trees_planted:
+        type: integer
+  DashboardTopTreeSpecies:
+    type: object
+    properties:
+      name:
+        type: string
+      amount:
+        type: integer
   DashboardActiveCountriesResponse:
-    active_countries:
-      type: array
-      items:
-        type: object
-        properties:
-          country:
-            type: string
-          number_of_projects:
-            type: integer
-          total_trees_planted:
-            type: integer
-          total_jobs_created:
-            type: integer
-          number_of_sites:
-            type: integer
-          number_of_nurseries:
-            type: integer
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardActiveCountriesData'
+  DashboardActiveCountriesData:
+    type: object
+    properties:
+      country:
+        type: string
+      number_of_projects:
+        type: integer
+      total_trees_planted:
+        type: integer
+      total_jobs_created:
+        type: integer
+      number_of_sites:
+        type: integer
+      number_of_nurseries:
+        type: integer
   DashboardActiveProjectsListViewResponse:
-    project_list:
-      type: array
-      items:
-        type: object
-        properties:
-          name:
-            type: string
-          organisation:
-            type: string
-          trees_under_restoration:
-            type: integer
-          jobs_created:
-            type: integer
-          volunteers:
-            type: integer
-          beneficiaries:
-            type: integer
-          survival_rate:
-            type: integer
-          number_of_sites:
-            type: integer
-          number_of_nurseries:
-            type: integer
-          project_country:
-            type: string
-          number_of_trees_goal:
-            type: integer
-          date_added:
-            type: string
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardActiveProjectData'
+  DashboardActiveProjectData:
+    type: object
+    properties:
+      uuid:
+        type: string
+      name:
+        type: string
+      organisation:
+        type: string
+      trees_under_restoration:
+        type: integer
+      jobs_created:
+        type: integer
+      volunteers:
+        type: integer
+      beneficiaries:
+        type: integer
+      survival_rate:
+        type: integer
+      number_of_sites:
+        type: integer
+      number_of_nurseries:
+        type: integer
+      project_country:
+        type: string
+      number_of_trees_goal:
+        type: integer
+      date_added:
+        type: string
   DashboardJobsCreatedResponse:
     type: object
     properties:

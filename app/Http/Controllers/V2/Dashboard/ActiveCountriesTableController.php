@@ -15,7 +15,7 @@ class ActiveCountriesTableController extends Controller
     public function __invoke(): ActiveCountriesTableResource
     {
         $response = (object) [
-            'active_countries' => $this->getAllCountries(),
+            'data' => $this->getAllCountries(),
         ];
 
         return new ActiveCountriesTableResource($response);

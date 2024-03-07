@@ -15,7 +15,7 @@ class ActiveCountriesTableResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'active_countries' => $this->active_countries,
+            'data' => $this->data,
         ];
     }
 }

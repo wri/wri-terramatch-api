@@ -15,7 +15,7 @@ class ActiveProjectsTableController extends Controller
     public function __invoke(Request $request): ActiveProjectsTableResource
     {
         $response = (object) [
-            'active_projects_list_view' => $this->getAllProjects($request),
+            'data' => $this->getAllProjects($request),
         ];
 
         return new ActiveProjectsTableResource($response);
@@ -27,6 +27,7 @@ class ActiveProjectsTableController extends Controller
         $activeProjects = [];
         foreach ($projects as $project) {
             $activeProjects[] = [
+                'uuid' => $project->uuid,
                 'name' => $project->name,
                 'organisation' => $project->organisation->name,
                 'trees_under_restoration' => $this->treesUnderRestoration($project),
