@@ -43984,6 +43984,15 @@ definitions:
         format: date-time
       title:
         type: string
+      report_title:
+        type: string
+      update_request_status:
+        type: string
+      submitted_at:
+        type: string
+        format: date-time
+      parent_name:
+        type: string
   StatusUpdate:
     title: StatusUpdate
     type: object
@@ -75726,6 +75735,15 @@ paths:
                       type: string
                       format: date-time
                     title:
+                      type: string
+                    report_title:
+                      type: string
+                    update_request_status:
+                      type: string
+                    submitted_at:
+                      type: string
+                      format: date-time
+                    parent_name:
                       type: string
   '/v2/tasks/{UUID}/submit':
     put:

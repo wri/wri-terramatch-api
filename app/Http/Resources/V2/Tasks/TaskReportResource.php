@@ -11,9 +11,11 @@ class TaskReportResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'due_at' => $this->due_at,
+            'submitted_at' => $this->submitted_at,
             'report_title' => $this->report_title,
             'update_at' => $this->updated_at,
             'status' => $this->status,
+            'update_request_status' => $this->update_request_status,
             'nothing_to_report' => $this->nothing_to_report,
             'title' => $this->title,
             'type' => $this->type,
