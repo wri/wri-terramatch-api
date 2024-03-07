@@ -2,9 +2,8 @@
 
 namespace App\Models\V2\Sites;
 
-use App\Http\Resources\V2\Sites\SiteResource;
-use App\Http\Resources\V2\Sites\SiteWithSchemaResource;
 use App\Models\Framework;
+use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
@@ -30,7 +29,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -53,6 +51,7 @@ class Site extends Model implements HasMedia, AuditableContract, EntityModel
     use Auditable;
     use HasUpdateRequests;
     use HasEntityStatus;
+    use HasEntityResources;
 
     protected $auditInclude = [
         'status',
@@ -338,15 +337,5 @@ class Site extends Model implements HasMedia, AuditableContract, EntityModel
         return $hasMonitoringData
             ? $query->has('monitoring')
             : $query->doesntHave('monitoring');
-    }
-
-    public function createSchemaResource(): JsonResource
-    {
-        return new SiteWithSchemaResource($this, ['schema' => $this->getForm()]);
-    }
-
-    public function createResource(): JsonResource
-    {
-        return new SiteResource($this);
     }
 }

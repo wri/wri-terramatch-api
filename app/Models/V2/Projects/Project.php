@@ -2,10 +2,9 @@
 
 namespace App\Models\V2\Projects;
 
-use App\Http\Resources\V2\Projects\ProjectResource;
-use App\Http\Resources\V2\Projects\ProjectWithSchemaResource;
 use App\Models\Framework;
 use App\Models\Organisation;
+use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
@@ -33,7 +32,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -57,6 +55,7 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
     use Auditable;
     use HasUpdateRequests;
     use HasEntityStatus;
+    use HasEntityResources;
 
     protected $auditInclude = [
         'status',
@@ -449,15 +448,5 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
         return [
             'name' => $this->name,
         ];
-    }
-
-    public function createResource(): JsonResource
-    {
-        return new ProjectResource($this);
-    }
-
-    public function createSchemaResource(): JsonResource
-    {
-        return new ProjectWithSchemaResource($this, ['schema' => $this->getForm()]);
     }
 }

@@ -2,9 +2,8 @@
 
 namespace App\Models\V2\Projects;
 
-use App\Http\Resources\V2\ProjectReports\ProjectReportResource;
-use App\Http\Resources\V2\ProjectReports\ProjectReportWithSchemaResource;
 use App\Models\Framework;
+use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
@@ -27,7 +26,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -49,6 +47,7 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
+    use HasEntityResources;
 
     protected $auditInclude = [
         'status',
@@ -431,15 +430,5 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
     public function scopeParentId(Builder $query, string $id): Builder
     {
         return $query->where('project_id', $id);
-    }
-
-    public function createResource(): JsonResource
-    {
-        return new ProjectReportResource($this);
-    }
-
-    public function createSchemaResource(): JsonResource
-    {
-        return new ProjectReportWithSchemaResource($this, ['schema' => $this->getForm()]);
     }
 }
