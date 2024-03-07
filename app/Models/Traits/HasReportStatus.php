@@ -102,11 +102,16 @@ trait HasReportStatus {
         if (!$isAdmin && empty($report->created_by)) {
             $this->created_by = Auth::user()->id;
         }
-        if ($this->status == ReportStatusStateMachine::STARTED) {
+
+        // An admin should be able to directly update a report without a transition unless it's in `due`, in which case
+        // we want the transition to go ahead and take place.
+        $adminDirectSave = $isAdmin && $this->status != ReportStatusStateMachine::DUE;
+        if ($this->status == ReportStatusStateMachine::STARTED || $adminDirectSave) {
             $this->save();
         } else {
             $this->status()->transitionTo(ReportStatusStateMachine::STARTED);
         }
+
         if ($this->supportsNothingToReport() && $this->nothing_to_report) {
             // This update has to happen after the transition above, or the transition validation will fail
             // (see ReportStatusStateMachine)
