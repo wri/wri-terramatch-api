@@ -15,7 +15,7 @@ class ActiveProjectsTableResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'active_projects_list_view' => $this->active_projects_list_view,
+            'data' => $this->data,
         ];
     }
 }
