@@ -9079,6 +9079,8 @@ definitions:
   DashboardActiveCountriesData:
     type: object
     properties:
+      country_slug:
+        type: string
       country:
         type: string
       number_of_projects:

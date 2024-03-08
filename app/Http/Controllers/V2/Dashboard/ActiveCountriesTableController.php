@@ -44,6 +44,7 @@ class ActiveCountriesTableController extends Controller
             $totalNurseries = $this->numberOfNurseries($country->slug, $projects);
 
             $activeCountries[] = [
+                'country_slug' => $country->slug,
                 'country' => $country->label,
                 'number_of_projects' => $totalProjects,
                 'total_trees_planted' => $totalSpeciesAmount,
