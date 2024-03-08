@@ -24,6 +24,7 @@ class CreateBlankProjectWithFormController extends Controller
             'status' => EntityStatusStateMachine::STARTED,
         ]);
 
+        $request->user()->projects()->sync([$project->id => ['is_monitoring' => false]], false);
         $project->dispatchStatusChangeEvent($request->user());
         return $project->createSchemaResource();
     }
