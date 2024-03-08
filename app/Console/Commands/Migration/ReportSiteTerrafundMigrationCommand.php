@@ -6,6 +6,7 @@ use App\Models\Terrafund\TerrafundSite;
 use App\Models\Terrafund\TerrafundSiteSubmission;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Console\Command;
 
 class ReportSiteTerrafundMigrationCommand extends Command
@@ -63,7 +64,7 @@ class ReportSiteTerrafundMigrationCommand extends Command
             'old_id' => $submission->id,
             'framework_key' => 'terrafund',
 
-            'status' => SiteReport::STATUS_AWAITING_APPROVAL,
+            'status' => ReportStatusStateMachine::AWAITING_APPROVAL,
             'due_at' => $this->handleDueAt($submission),
             'shared_drive_link' => data_get($submission, 'shared_drive_link'),
             'submitted_at' => data_get($submission, 'created_at'),

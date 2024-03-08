@@ -4,8 +4,68 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db9b211796c8a2068632c72dae605c4d",
+    "content-hash": "23a6f39e237d46838969535ac510da42",
     "packages": [
+        {
+            "name": "asantibanez/laravel-eloquent-state-machines",
+            "version": "v5.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/asantibanez/laravel-eloquent-state-machines.git",
+                "reference": "7de6234f2903d960195b68c6e7468ccfec6c6b60"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/asantibanez/laravel-eloquent-state-machines/zipball/7de6234f2903d960195b68c6e7468ccfec6c6b60",
+                "reference": "7de6234f2903d960195b68c6e7468ccfec6c6b60",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^6.0|^7.0|^8.0|^9.0|^10.0",
+                "javoscript/laravel-macroable-models": "^1.0",
+                "php": "^7.3|^7.4|^8.0"
+            },
+            "require-dev": {
+                "laravel/legacy-factories": "^1.0.4",
+                "orchestra/testbench": "^4.0|^5.0|^6.0|^7.0|^8.0",
+                "phpunit/phpunit": "^8.0|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Asantibanez\\LaravelEloquentStateMachines\\LaravelEloquentStateMachinesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Asantibanez\\LaravelEloquentStateMachines\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrés Santibáñez",
+                    "email": "santibanez.andres@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "State machines for your Laravel Eloquent models",
+            "homepage": "https://github.com/asantibanez/laravel-eloquent-state-machines",
+            "keywords": [
+                "asantibanez",
+                "laravel-eloquent-state-machines"
+            ],
+            "support": {
+                "issues": "https://github.com/asantibanez/laravel-eloquent-state-machines/issues",
+                "source": "https://github.com/asantibanez/laravel-eloquent-state-machines/tree/v5.2.0"
+            },
+            "time": "2023-01-31T14:51:16+00:00"
+        },
         {
             "name": "aws/aws-crt-php",
             "version": "v1.2.2",
@@ -1814,6 +1874,57 @@
             "time": "2022-05-21T17:30:32+00:00"
         },
         {
+            "name": "javoscript/laravel-macroable-models",
+            "version": "1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/javoscript/laravel-macroable-models.git",
+                "reference": "b60da8c1d1c1731ec8851059c767c69d187c8cd7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/javoscript/laravel-macroable-models/zipball/b60da8c1d1c1731ec8851059c767c69d187c8cd7",
+                "reference": "b60da8c1d1c1731ec8851059c767c69d187c8cd7",
+                "shasum": ""
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8",
+                "phpunit/phpunit": "^10"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Javoscript\\MacroableModels\\MacroableModelsServiceProvider"
+                    ],
+                    "aliases": {
+                        "MacroableModels": "Javoscript\\MacroableModels\\Facades\\MacroableModels"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Javoscript\\MacroableModels\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Javier Ugarte",
+                    "email": "javougarte@gmail.com"
+                }
+            ],
+            "description": "A package for adding methods to Laravel models on the fly",
+            "support": {
+                "issues": "https://github.com/javoscript/laravel-macroable-models/issues",
+                "source": "https://github.com/javoscript/laravel-macroable-models/tree/1.0.6"
+            },
+            "time": "2023-05-23T15:04:41+00:00"
+        },
+        {
             "name": "jean85/pretty-package-versions",
             "version": "2.0.5",
             "source": {
@@ -3429,6 +3540,62 @@
                 "source": "https://github.com/MarkBaker/PHPMatrix/tree/3.0.1"
             },
             "time": "2022-12-02T22:17:43+00:00"
+        },
+        {
+            "name": "mavinoo/laravel-batch",
+            "version": "v2.3.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mavinoo/laravelBatch.git",
+                "reference": "3fc44da87d0785f67e1a3eb15a034d6b82e2a58f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mavinoo/laravelBatch/zipball/3fc44da87d0785f67e1a3eb15a034d6b82e2a58f",
+                "reference": "3fc44da87d0785f67e1a3eb15a034d6b82e2a58f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.3@dev"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Mavinoo\\Batch\\BatchServiceProvider"
+                    ],
+                    "aliases": {
+                        "Batch": "Mavinoo\\Batch\\BatchFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Common/Helpers.php"
+                ],
+                "psr-4": {
+                    "Mavinoo\\Batch\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mohammad Ghanbari",
+                    "email": "mavin.developer@gmail.com"
+                }
+            ],
+            "description": "Insert and update batch (bulk) in laravel",
+            "support": {
+                "issues": "https://github.com/mavinoo/laravelBatch/issues",
+                "source": "https://github.com/mavinoo/laravelBatch/tree/v2.3.6"
+            },
+            "time": "2023-11-21T06:12:51+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -13331,11 +13498,11 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.1"
+        "php": "^8.2"
     },
     "platform-dev": [],
     "platform-overrides": {
-        "php": "8.1.14",
+        "php": "8.2.10",
         "ext-gd": "2.1.0"
     },
     "plugin-api-version": "2.3.0"

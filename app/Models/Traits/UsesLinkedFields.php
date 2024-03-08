@@ -6,10 +6,12 @@ use App\Models\V2\Forms\Form;
 
 trait UsesLinkedFields
 {
+    private ?Form $frameworkModelForm = null;
+
     public function updateAllAnswers(array $input): array
     {
         $localAnswers = [];
-        foreach ($this->form->sections as $section) {
+        foreach ($this->getform()->sections as $section) {
             foreach ($section->questions as $question) {
                 if ($question->input_type !== 'conditional' && ! empty($question->linked_field_key)) {
                     $linkedFieldInfo = $question->getLinkedFieldInfo([
@@ -59,31 +61,57 @@ trait UsesLinkedFields
     {
         $questionCount = 0;
         $answeredCount = 0;
+        $answers = [];
 
         foreach ($form->sections as $section) {
             foreach ($section->questions as $question) {
+                $required = data_get($question, 'validation.required', true);
+                $conditionalOn = data_get($question, 'show_on_parent_condition')
+                    ? data_get($question, 'parent_id')
+                    : null;
+                $value = null;
+
                 $linkedFieldInfo = $question->getLinkedFieldInfo(['model_uuid' => $this->uuid]);
-                if (! empty($linkedFieldInfo)) {
-                    $answers[$question->uuid] = $this->getEntityLinkedFieldValue($linkedFieldInfo);
+                if (!empty($linkedFieldInfo)) {
+                    $value = $this->getEntityLinkedFieldValue($linkedFieldInfo);
+                } else {
+                    $value = data_get($this->answers, $question->uuid);
                 }
+
+                $answers[$question->uuid] = [
+                    'required' => $required,
+                    'conditionalOn' => $conditionalOn,
+                    'value' => $value,
+                ];
             }
         }
 
         foreach ($answers as $answer) {
+            if (!$answer['required']) {
+                // don't count it if the question wasn't required
+                continue;
+            }
+
+            if (!empty($answer['conditionalOn']) &&
+                !$answers[$answer['conditionalOn']]['value']) {
+                // don't count it if the question wasn't shown to the user because the parent conditional is false.
+                continue;
+            }
+
             $questionCount++;
-            if (! empty($answer)) {
+            if (!is_null($answer['value'])) {
                 $answeredCount++;
             }
         }
 
-        return round(($answeredCount / $questionCount) * 100);
+        return $questionCount == 0 ? 100 : round(($answeredCount / $questionCount) * 100);
     }
 
     public function getAllAnswers(array $params = []): array
     {
         $answers = [];
 
-        foreach ($this->form->sections as $section) {
+        foreach ($this->getForm()->sections as $section) {
             foreach ($section->questions as $question) {
                 if ($question->input_type !== 'conditional' && ! empty($question->linked_field_key)) {
                     $linkedFieldInfo = $question->getLinkedFieldInfo($params);
@@ -180,11 +208,19 @@ trait UsesLinkedFields
         }
     }
 
-    public function getCurrentForm(): Form
+    public function getForm(): Form
     {
-        return Form::where('model', get_class($this))
-            ->where('framework_key', $this->framework_key)
-            ->first();
+        if (!is_null($this->form)) {
+            // Some classes that use this trait have a direct database link to the form.
+            return $this->form;
+        }
+
+        if (is_null($this->frameworkModelForm)) {
+            $this->frameworkModelForm = Form::where('model', get_class($this))
+                ->where('framework_key', $this->framework_key)
+                ->first();
+        }
+        return $this->frameworkModelForm;
     }
 
     public function getFormConfig(): ?array
