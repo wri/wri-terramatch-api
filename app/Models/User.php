@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
@@ -198,52 +199,52 @@ class User extends Authenticatable implements JWTSubject
         return null;
     }
 
-    public function projects()
+    public function projects(): BelongsToMany
     {
-        return $this->belongsToMany(Project::class, 'v2_project_users');
+        return $this->belongsToMany(Project::class, 'v2_project_users')->withTimestamps();
     }
 
-    public function devices()
+    public function devices(): HasMany
     {
         return $this->hasMany(Device::class);
     }
 
-    public function elevatorVideos()
+    public function elevatorVideos(): HasMany
     {
         return $this->hasMany(ElevatorVideo::class);
     }
 
-    public function filterRecords()
+    public function filterRecords(): HasMany
     {
         return $this->hasMany(FilterRecord::class);
     }
 
-    public function notifications()
+    public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class);
     }
 
-    public function offerContacts()
+    public function offerContacts(): HasMany
     {
         return $this->hasMany(OfferContact::class);
     }
 
-    public function programmes()
+    public function programmes(): BelongsToMany
     {
         return $this->belongsToMany(Programme::class);
     }
 
-    public function terrafundProgrammes()
+    public function terrafundProgrammes(): BelongsToMany
     {
         return $this->belongsToMany(TerrafundProgramme::class);
     }
 
-    public function frameworks()
+    public function frameworks(): BelongsToMany
     {
         return $this->belongsToMany(Framework::class);
     }
 
-    public function wipeData()
+    public function wipeData(): void
     {
         $this->email_address = Str::uuid();
         $this->phone_number = null;

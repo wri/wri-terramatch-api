@@ -9,9 +9,11 @@ class I18nHelper
 {
     public static function generateI18nItem(Model $target, string $property): ?int
     {
+        $shouldGenerateI18nItem = I18nHelper::shouldGenerateI18nItem($target, $property);
         $value = trim(data_get($target, $property, false));
-        $short = strlen($value) <= 256;
-        if ($value && data_get($target, $property . '_id', true)) {
+        if ($shouldGenerateI18nItem) {
+            $short = strlen($value) <= 256;
+
             $i18nItem = I18nItem::create([
                 'type' => $short ? 'short' : 'long',
                 'status' => I18nItem::STATUS_DRAFT,
@@ -20,8 +22,40 @@ class I18nHelper
             ]);
 
             return $i18nItem->id;
+        } else {
+            return data_get($target, $property . '_id', null);
+        }
+    }
+
+    public static function shouldGenerateI18nItem(Model $target, string $property): bool
+    {
+        $value = trim(data_get($target, $property, false));
+        if (! $value) {
+            return false;
         }
 
-        return data_get($target, $property . '_id');
+        $currentI18nKeyId = data_get($target, $property . '_id');
+        if (is_null($currentI18nKeyId)) {
+            return true;
+        }
+
+        $i18nItem = I18nItem::find($currentI18nKeyId);
+
+        if (is_null($i18nItem)) {
+            return true;
+        }
+
+        $oldType = $i18nItem->type;
+
+        $short = strlen($value) <= 256;
+        $type = $short ? 'short' : 'long';
+
+        if ($oldType !== $type) {
+            return true;
+        }
+
+        $oldValue = $short ? $i18nItem->short_value : $i18nItem->long_value;
+
+        return $value !== $oldValue;
     }
 }

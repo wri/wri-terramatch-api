@@ -4,13 +4,16 @@ namespace App\Models\V2\Projects;
 
 use App\Models\Framework;
 use App\Models\Organisation;
+use App\Models\Traits\HasEntityResources;
+use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\User;
+use App\Models\V2\EntityModel;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
@@ -20,8 +23,6 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use App\Models\V2\UpdateRequests\ApprovalFlow;
-use App\Models\V2\UpdateRequests\UpdateRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,16 +37,13 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
-class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
+class Project extends Model implements HasMedia, AuditableContract, EntityModel
 {
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
     use Searchable;
-    use HasStatus;
     use HasFrameworkKey;
     use HasLinkedFields;
     use UsesLinkedFields;
@@ -53,6 +51,9 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
     use HasV2MediaCollections;
     use SoftDeletes;
     use Auditable;
+    use HasUpdateRequests;
+    use HasEntityStatus;
+    use HasEntityResources;
 
     protected $auditInclude = [
         'status',
@@ -169,18 +170,6 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
         'answers' => 'array',
     ];
 
-    public const STATUS_STARTED = 'started';
-    public const STATUS_AWAITING_APPROVAL = 'awaiting-approval';
-    public const STATUS_APPROVED = 'approved';
-    public const STATUS_NEEDS_MORE_INFORMATION = 'needs-more-information';
-
-    public static $statuses = [
-        self::STATUS_STARTED => 'Started',
-        self::STATUS_AWAITING_APPROVAL => 'Awaiting approval',
-        self::STATUS_APPROVED => 'Approved',
-        self::STATUS_NEEDS_MORE_INFORMATION => 'Needs more information',
-    ];
-
     public const PROJECT_STATUS_NEW = 'new_project';
     public const PROJECT_STATUS_EXISTING = 'existing_expansion';
 
@@ -221,11 +210,6 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
     public function sites(): HasMany
     {
         return $this->hasMany(Site::class);
-    }
-
-    public function updateRequests()
-    {
-        return $this->morphMany(UpdateRequest::class, 'updaterequestable');
     }
 
     public function controlSites(): HasMany
@@ -322,12 +306,12 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
     public function getTreesPlantedCountAttribute(): int
     {
         $siteIds = Site::where('project_id', $this->id)
-            ->where('status', Site::STATUS_APPROVED)
+            ->isApproved()
             ->pluck('id')
             ->toArray();
 
         $submissionsIds = SiteReport::whereIn('site_id', $siteIds)
-            ->whereNotIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
+            ->isComplete()
             ->pluck('id')
             ->toArray();
 
@@ -360,24 +344,19 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
 
     public function getWorkdayCountAttribute(): int
     {
-        $paid = ProjectReport::where('project_id', $this->id)
-            ->where('status', ProjectReport::STATUS_APPROVED)
-            ->sum('workdays_paid');
-
-        $volunteer = ProjectReport::where('project_id', $this->id)
-            ->where('status', ProjectReport::STATUS_APPROVED)
-            ->sum('workdays_volunteer');
+        $paid = $this->reports()->isApproved()->sum('workdays_paid');
+        $volunteer = $this->reports()->isApproved()->sum('workdays_volunteer');
 
         $siteIds = $this->sites()->pluck('id')->toArray();
 
         $sitePaid = SiteReport::whereIn('id', $siteIds)
             ->where('due_at', '<', now())
-            ->whereNotIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
+            ->isComplete()
             ->sum('workdays_paid');
 
         $siteVolunteer = SiteReport::whereIn('id', $siteIds)
             ->where('due_at', '<', now())
-            ->whereNotIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
+            ->isComplete()
             ->sum('workdays_volunteer');
 
         return $paid + $volunteer + $sitePaid + $siteVolunteer;
@@ -396,16 +375,12 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
 
     public function getTotalSitesAttribute(): int
     {
-        return $this->sites()
-            ->where('status', Site::STATUS_APPROVED)
-            ->count();
+        return $this->sites()->isApproved()->count();
     }
 
     public function getTotalNurseriesAttribute(): int
     {
-        return $this->nurseries()
-            ->where('status', Nursery::STATUS_APPROVED)
-            ->count();
+        return $this->nurseries()->isApproved()->count();
     }
 
     public function getTotalProjectReportsAttribute(): int
@@ -420,17 +395,17 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
 
         $pOverdue = $this->reports()
             ->where('due_at', '<', now())
-            ->whereIn('status', [ProjectReport::STATUS_DUE, ProjectReport::STATUS_STARTED])
+            ->isIncomplete()
             ->count();
 
         $sOverdue = SiteReport::whereIn('id', $siteIds)
             ->where('due_at', '<', now())
-            ->whereIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
+            ->isIncomplete()
             ->count();
 
         $nOverdue = NurseryReport::whereIn('id', $nurseryIds)
             ->where('due_at', '<', now())
-            ->whereIn('status', [NurseryReport::STATUS_DUE, NurseryReport::STATUS_STARTED])
+            ->isIncomplete()
             ->count();
 
         return $pOverdue + $sOverdue + $nOverdue;
@@ -443,46 +418,9 @@ class Project extends Model implements HasMedia, AuditableContract, ApprovalFlow
 
     public function getTotalReportingTasksAttribute(): int
     {
-        $siteIds = $this->sites()->pluck('id')->toArray();
-        $nurseryIds = $this->nurseries()->pluck('id')->toArray();
-
-        $RawDueDates = ProjectReport::where('project_id', $this->id)
-            ->pluck('due_at')
-            ->filter()
-            ->map(function ($carbonObject) {
-                return $carbonObject->format('Y-m-d H:i:s');
-            })
-            ->toArray();
-
-        $pendingReportingTasks = 0;
-
-        foreach ($RawDueDates as $RawDueDate) {
-            $dueDate = Carbon::parse($RawDueDate);
-
-            $projectReportPending = $this->getReportPendingCount(ProjectReport::class, $dueDate, "project_id", $siteIds, $nurseryIds);
-            $siteRepPending = $this->getReportPendingCount(SiteReport::class, $dueDate, "site_id", $siteIds, $nurseryIds);
-            $nurRepPending = $this->getReportPendingCount(NurseryReport::class, $dueDate, "nursery_id", $siteIds, $nurseryIds);
-            $hasPendingTask = Task::forProjectAndDate($this, $dueDate)->whereNot('status', Task::STATUS_COMPLETE)->exists();
-
-            if ($projectReportPending + $siteRepPending + $nurRepPending > 0 || $hasPendingTask) {
-                $pendingReportingTasks++;
-            }
-        }
-        
-        return $pendingReportingTasks;
+        return $this->tasks()->isIncomplete()->count();
     }
     
-    private function getReportPendingCount(string $reportType, Carbon $dueDate, string $idColumn, array $siteIds, array $nurseryIds): int
-    {
-        $ids = ($reportType === ProjectReport::class) ? [$this->id] : (($reportType === SiteReport::class) ? $siteIds : $nurseryIds);
-    
-        return $reportType::whereIn($idColumn, $ids)
-            ->whereMonth('due_at', $dueDate->month)
-            ->whereYear('due_at', $dueDate->year)
-            ->whereIn('status', [ProjectReport::STATUS_DUE, ProjectReport::STATUS_STARTED])
-            ->count();
-    }
-
     public function getFrameworkUuidAttribute(): ?string
     {
         return $this->framework ? $this->framework->uuid : null;
