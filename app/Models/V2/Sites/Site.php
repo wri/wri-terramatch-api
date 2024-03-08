@@ -18,6 +18,7 @@ use App\Models\V2\Stratas\Strata;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\UpdateRequests\ApprovalFlow;
 use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\Models\V2\SitePolygon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -208,6 +209,11 @@ class Site extends Model implements HasMedia, AuditableContract, ApprovalFlow
     {
         return $this->HasMany(SiteMonitoring::class)
             ->isStatus(SiteMonitoring::STATUS_ARCHIVED);
+    }
+
+    public function sitePolygon(): HasOne
+    {
+        return $this->hasOne(SitePolygon::class, 'uuid', 'site_id');
     }
 
     public function stratas()
