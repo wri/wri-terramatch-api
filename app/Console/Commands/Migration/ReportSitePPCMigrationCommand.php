@@ -7,6 +7,7 @@ use App\Models\SiteSubmission;
 use App\Models\User;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Console\Command;
 
 class ReportSitePPCMigrationCommand extends Command
@@ -63,7 +64,7 @@ class ReportSitePPCMigrationCommand extends Command
             'framework_key' => 'ppc',
 
             'due_at' => $this->handleDueAt($submission),
-            'status' => SiteReport::STATUS_APPROVED,
+            'status' => ReportStatusStateMachine::APPROVED,
             'approved_at' => data_get($submission, 'approved_at'),
             'approved_by' => data_get($submission, 'approved_by'),
             'created_by' => $this->findUserFromName(data_get($submission, 'created_by')),

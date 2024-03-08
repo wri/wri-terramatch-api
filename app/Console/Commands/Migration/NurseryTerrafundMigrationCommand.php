@@ -6,7 +6,7 @@ use App\Models\Terrafund\TerrafundNursery;
 use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\Site;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Console\Command;
 
 class NurseryTerrafundMigrationCommand extends Command
@@ -65,7 +65,7 @@ class NurseryTerrafundMigrationCommand extends Command
             'name' => data_get($nursery, 'name'),
             'start_date' => data_get($nursery, 'start_date'),
             'end_date' => data_get($nursery, 'end_date'),
-            'status' => Site::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
             'seedling_grown' => data_get($nursery, 'seedling_grown'),
             'planting_contribution' => data_get($nursery, 'planting_contribution'),
             'type' => data_get($nursery, 'nursery_type'),

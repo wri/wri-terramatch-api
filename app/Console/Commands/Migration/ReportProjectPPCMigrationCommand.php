@@ -4,9 +4,9 @@ namespace App\Console\Commands\Migration;
 
 use App\Models\Programme;
 use App\Models\Submission;
-use App\Models\User;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Console\Command;
 
 class ReportProjectPPCMigrationCommand extends Command
@@ -64,7 +64,7 @@ class ReportProjectPPCMigrationCommand extends Command
             'due_at' => $this->handleDueAt($submission),
             'created_by' => $this->findUserFromName(data_get($submission, 'created_by'), $submission->programme),
             'approved_by' => data_get($submission, 'approved_by'),
-            'status' => ProjectReport::STATUS_APPROVED,
+            'status' => ReportStatusStateMachine::APPROVED,
             'title' => data_get($submission, 'title'),
             'workdays_paid' => data_get($submission, 'workdays_paid'),
             'workdays_volunteer' => data_get($submission, 'workdays_volunteer'),
