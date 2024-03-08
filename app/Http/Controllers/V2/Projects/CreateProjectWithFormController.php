@@ -83,8 +83,8 @@ class CreateProjectWithFormController extends Controller
 
         ]);
 
-        EntityStatusChangeEvent::dispatch($request->user(), $project, $project->name, '', $project->readable_status);
-
+        $request->user()->projects()->sync([$project->id => ['is_monitoring' => false]], false);
+        $project->dispatchStatusChangeEvent($request->user());
         return $project->createSchemaResource();
     }
 
