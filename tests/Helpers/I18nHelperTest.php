@@ -3,12 +3,13 @@
 namespace Tests\Helpers;
 
 use App\Helpers\I18nHelper;
-use App\Models\V2\I18n\I18nItem;
 use App\Models\V2\Forms\Form;
+use App\Models\V2\I18n\I18nItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-class I18nHelperTest extends TestCase {
 
+class I18nHelperTest extends TestCase
+{
     use RefreshDatabase;
 
     /** @test */
@@ -16,7 +17,7 @@ class I18nHelperTest extends TestCase {
     {
         $target = Form::factory()->create([
             'title' => 'mock_title',
-            'title_id' => null
+            'title_id' => null,
         ]);
 
         $shouldGenerateI18nItem = I18nHelper::shouldGenerateI18nItem($target, 'title');
@@ -28,7 +29,7 @@ class I18nHelperTest extends TestCase {
     {
         $target = Form::factory()->create([
             'title' => 'mock_title',
-            'title_id' => 1
+            'title_id' => 1,
         ]);
 
         $shouldGenerateI18nItem = I18nHelper::shouldGenerateI18nItem($target, 'title');
@@ -40,11 +41,11 @@ class I18nHelperTest extends TestCase {
     {
         $i18nItem = I18nItem::factory()->create([
             'short_value' => 'Short string',
-            'type' => 'short'
+            'type' => 'short',
         ]);
         $target = Form::factory()->create([
             'title' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec odio Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec odio Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec odio Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec odio.',
-            'title_id' => $i18nItem->id
+            'title_id' => $i18nItem->id,
         ]);
 
         $shouldGenerateI18nItem = I18nHelper::shouldGenerateI18nItem($target, 'title');
@@ -56,11 +57,11 @@ class I18nHelperTest extends TestCase {
     {
         $i18nItem = I18nItem::factory()->create([
             'short_value' => 'Short string',
-            'type' => 'short'
+            'type' => 'short',
         ]);
         $target = Form::factory()->create([
             'title' => 'New short string',
-            'title_id' => $i18nItem->id
+            'title_id' => $i18nItem->id,
         ]);
 
         $shouldGenerateI18nItem = I18nHelper::shouldGenerateI18nItem($target, 'title');
@@ -72,11 +73,11 @@ class I18nHelperTest extends TestCase {
     {
         $i18nItem = I18nItem::factory()->create([
             'short_value' => 'Short string',
-            'type' => 'short'
+            'type' => 'short',
         ]);
         $target = Form::factory()->create([
             'title' => 'Short string',
-            'title_id' => $i18nItem->id
+            'title_id' => $i18nItem->id,
         ]);
 
         $shouldGenerateI18nItem = I18nHelper::shouldGenerateI18nItem($target, 'title');
@@ -90,7 +91,7 @@ class I18nHelperTest extends TestCase {
 
         $target = Form::factory()->create([
             'title' => 'mock_title',
-            'title_id' => null
+            'title_id' => null,
         ]);
 
         $i18nItemId = I18nHelper::generateI18nItem($target, 'title');
@@ -105,7 +106,7 @@ class I18nHelperTest extends TestCase {
     {
         $i18nItem = I18nItem::factory()->create([
             'short_value' => 'mock_title',
-            'type' => 'short'
+            'type' => 'short',
         ]);
         $i18nItemCountBefore = I18nItem::count();
 
@@ -113,7 +114,7 @@ class I18nHelperTest extends TestCase {
 
         $target = Form::factory()->create([
             'title' => 'mock_title',
-            'title_id' => $initialI18nItemId
+            'title_id' => $initialI18nItemId,
         ]);
 
         $i18nItemId = I18nHelper::generateI18nItem($target, 'title');
@@ -122,5 +123,4 @@ class I18nHelperTest extends TestCase {
         $this->assertEquals($i18nItemId, $initialI18nItemId);
         $this->assertEquals($i18nItemCountBefore, $i18nItemCountAfter);
     }
-
 }
