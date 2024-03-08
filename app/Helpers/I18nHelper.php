@@ -9,29 +9,11 @@ class I18nHelper
 {
     public static function generateI18nItem(Model $target, string $property): ?int
     {
+        $shouldGenerateI18nItem = I18nHelper::shouldGenerateI18nItem($target, $property);
         $value = trim(data_get($target, $property, false));
+        if ($shouldGenerateI18nItem) {
+            $short = strlen($value) <= 256;
 
-        if (! $value) {
-            return data_get($target, $property . '_id');
-        }
-
-        $short = strlen($value) <= 256;
-
-        $currentI18nKey = data_get($target, $property . '_id', false);
-        if ($currentI18nKey) {
-            $i18nItem = I18nItem::find($currentI18nKey);
-            if ($i18nItem) {
-                $i18nItem->update([
-                    'type' => $short ? 'short' : 'long',
-                    'status' => I18nItem::STATUS_MODIFIED,
-                    'short_value' => $short ? $value : null,
-                    'long_value' => $short ? null : $value,
-                ]);
-                return $i18nItem->id;
-            } else {
-                return data_get($target, $property . '_id');
-            }
-        } else {
             $i18nItem = I18nItem::create([
                 'type' => $short ? 'short' : 'long',
                 'status' => I18nItem::STATUS_DRAFT,
@@ -40,7 +22,40 @@ class I18nHelper
             ]);
 
             return $i18nItem->id;
+        } else {
+            return data_get($target, $property . '_id', null);
+        }
+    }
+
+    public static function shouldGenerateI18nItem(Model $target, string $property): bool
+    {
+        $value = trim(data_get($target, $property, false));
+        if (! $value) {
+            return false;
         }
 
+        $currentI18nKeyId = data_get($target, $property . '_id');
+        if (is_null($currentI18nKeyId)) {
+            return true;
+        }
+
+        $i18nItem = I18nItem::find($currentI18nKeyId);
+
+        if (is_null($i18nItem)) {
+            return true;
+        }
+
+        $oldType = $i18nItem->type;
+
+        $short = strlen($value) <= 256;
+        $type = $short ? 'short' : 'long';
+
+        if ($oldType !== $type) {
+            return true;
+        }
+
+        $oldValue = $short ? $i18nItem->short_value : $i18nItem->long_value;
+
+        return $value !== $oldValue;
     }
 }

@@ -5,10 +5,12 @@ namespace App\Models\V2\I18n;
 use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasTypes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class I18nItem extends Model
 {
+    use HasFactory;
     use HasStatus;
     use HasTypes;
 
