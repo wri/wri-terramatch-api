@@ -61,6 +61,6 @@ trait HasEntityStatus {
 
     public function dispatchStatusChangeEvent($user): void
     {
-        EntityStatusChangeEvent::dispatch($user, $this, $this->name, '', $this->readable_status);
+        EntityStatusChangeEvent::dispatch($user, $this, $this->name ?? '', '', $this->readable_status);
     }
 }
