@@ -45,7 +45,7 @@ class UpdateFormRequest extends FormRequest
             'form_sections.*.form_questions.*.additional_props' => ['sometimes', 'nullable'],
             'form_sections.*.form_questions.*.order' => ['sometimes', 'nullable', 'integer'],
             'form_sections.*.form_questions.*.options_list' => ['sometimes', 'nullable'],
-            'form_sections.*.form_questions.*.options_other' => ['sometimes', 'boolean'],
+            'form_sections.*.form_questions.*.options_other' => ['sometimes', 'nullable', 'boolean'],
 
             'form_sections.*.form_questions.*.form_question_options' => ['sometimes', 'nullable', 'array'],
             'form_sections.*.form_questions.*.form_question_options.*.uuid' => ['sometimes', 'nullable', 'string'],
