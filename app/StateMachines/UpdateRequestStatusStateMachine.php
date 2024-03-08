@@ -44,8 +44,6 @@ class UpdateRequestStatusStateMachine extends StateMachine
 
             if ($updateRequest->status == self::APPROVED) {
                 $model->approve($updateRequest->feedback);
-            } else if ($updateRequest->status == self::AWAITING_APPROVAL) {
-                $model->submitForApproval();
             } elseif ($model instanceof ReportModel) {
                 // Changing the model status caused a task status check in the block above. Here we have a catch-all
                 // to make sure that if this update request is attached to a report model that a task check happens.
