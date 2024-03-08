@@ -24,8 +24,7 @@ class CreateBlankProjectWithFormController extends Controller
             'status' => EntityStatusStateMachine::STARTED,
         ]);
 
-        EntityStatusChangeEvent::dispatch($request->user(), $project, '', '', $project->readable_status);
-
+        $project->dispatchStatusChangeEvent($request->user());
         return $project->createSchemaResource();
     }
 }
