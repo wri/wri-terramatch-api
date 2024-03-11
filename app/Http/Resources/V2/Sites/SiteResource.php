@@ -53,6 +53,8 @@ class SiteResource extends JsonResource
             'updated_at' => $this->updated_at,
             'has_monitoring_data' => empty($this->has_monitoring_data) ? false : true,
             'seeds_planted_count' => $this->seeds_planted_count,
+            'siting_strategy' => $this->siting_strategy,
+            'description_siting_strategy' => $this->description_siting_strategy,
         ];
 
         return $this->appendFilesToResource($data);

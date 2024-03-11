@@ -90,6 +90,8 @@ class Site extends Model implements HasMedia, AuditableContract, ApprovalFlow
         'aim_number_of_mature_trees',
         'land_use_types',
         'restoration_strategy',
+        'siting_strategy',
+        'description_siting_strategy',
         'framework_key',
         'old_id',
         'old_model',
