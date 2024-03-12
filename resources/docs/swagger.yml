@@ -9015,6 +9015,12 @@ definitions:
       enterprise_survival_rate:
         type: number
         description: Survival rate for enterprise entities.  
+      number_of_sites:
+        type: number
+        description: number of sites.  
+      number_of_nurseries:
+        type: number
+        description: number of nurseries.  
   DashboardTotalSectionHeaderResponse:
     type: object
     properties:
@@ -9127,6 +9133,29 @@ definitions:
       number_of_trees_goal:
         type: integer
       date_added:
+        type: string
+  DashboardCountriesResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardCountryData'
+  DashboardCountryData:
+    type: object
+    properties:
+      id:
+        type: integer
+      country_slug:
+        type: string
+      data:
+        $ref: '#/definitions/DashboardCountryInfo'
+  DashboardCountryInfo:
+    type: object
+    properties:
+      label:
+        type: string
+      icon:
         type: string
   DashboardJobsCreatedResponse:
     type: object
@@ -19262,6 +19291,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/definitions/DashboardActiveProjectsListViewResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: 'Internal server error'
+  '/v2/dashboard/countries':
+    get:
+      summary: Retrieve all countries list view.
+      description: |
+        This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/DashboardCountriesResponse'
         '400':
           description: Bad request
         '500':

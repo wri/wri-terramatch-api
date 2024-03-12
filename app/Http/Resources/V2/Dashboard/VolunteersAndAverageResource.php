@@ -22,6 +22,8 @@ class VolunteersAndAverageResource extends JsonResource
             'non_youth_volunteers' => $this->non_youth_volunteers,
             'non_profit_survival_rate' => $this->non_profit_survival_rate,
             'enterprise_survival_rate' => $this->enterprise_survival_rate,
+            'number_of_sites' => $this->number_of_sites,
+            'number_of_nurseries' => $this->number_of_nurseries,
         ];
     }
 }
