@@ -40,6 +40,9 @@ class ExportAllProjectDataAsProjectDeveloperController extends Controller
             $this->addSiteReportsExports($project, $zip);
         });
         rescue(function () use ($project, $zip) {
+            $this->addSiteShapefiles($project, $zip);
+        });
+        rescue(function () use ($project, $zip) {
             $this->addNurseriesExports($project, $zip);
         });
 
@@ -66,6 +69,16 @@ class ExportAllProjectDataAsProjectDeveloperController extends Controller
         }
     }
 
+    private function addSiteShapefiles(Project $project, \ZipArchive $mainZip): void
+    {
+        $shapefilesFolder = 'Sites Shapefiles/';
+        $mainZip->addEmptyDir($shapefilesFolder);
+
+        foreach ($project->sites as $site) {
+            $filename = $shapefilesFolder . Str::of($site->name)->replace(['/', '\\'], '-') . '.geojson';
+            $mainZip->addFromString($filename, $site->boundary_geojson);
+        }
+    }
     private function addNurseryReportsExports(Project $project, \ZipArchive $mainZip): void
     {
         $form = $this->getForm(NurseryReport::class, $project->framework_key);
