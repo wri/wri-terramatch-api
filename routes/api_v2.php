@@ -698,6 +698,5 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/active-countries', ActiveCountriesTableController::class);
     Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/active-projects', ActiveProjectsTableController::class);
-    Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/countries', CountriesController::class);
 });

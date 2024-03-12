@@ -9015,6 +9015,12 @@ definitions:
       enterprise_survival_rate:
         type: number
         description: Survival rate for enterprise entities.  
+      number_of_sites:
+        type: number
+        description: number of sites.  
+      number_of_nurseries:
+        type: number
+        description: number of nurseries.  
   DashboardTotalSectionHeaderResponse:
     type: object
     properties:
@@ -9144,7 +9150,6 @@ definitions:
         type: string
       data:
         $ref: '#/definitions/DashboardCountryInfo'
-
   DashboardCountryInfo:
     type: object
     properties:

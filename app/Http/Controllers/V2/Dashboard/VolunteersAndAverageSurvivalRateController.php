@@ -21,6 +21,8 @@ class VolunteersAndAverageSurvivalRateController extends Controller
             'non_youth_volunteers' => $this->getVolunteersSum($projects, 'volunteer_non_youth'),
             'non_profit_survival_rate' => $this->getAverageSurvivalRate($projects, 'non-profit-organization'),
             'enterprise_survival_rate' => $this->getAverageSurvivalRate($projects, 'for-profit-organization'),
+            'number_of_sites' => $this->numberOfSites($projects),
+            'number_of_nurseries' => $this->numberOfNurseries($projects)
         ];
 
         return new VolunteersAndAverageResource($response);
@@ -48,5 +50,19 @@ class VolunteersAndAverageSurvivalRateController extends Controller
         $average = $projects->avg('survival_rate');
 
         return intval($average);
+    }
+
+    public function numberOfSites($projects)
+    {
+        return $projects->sum(function ($project) {
+            return $project->sites->count();
+        });
+    }
+
+    public function numberOfNurseries($projects)
+    {
+        return $projects->sum(function ($project) {
+            return $project->nurseries->count();
+        });
     }
 }
