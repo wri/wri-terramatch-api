@@ -537,6 +537,8 @@ return [
                 'site-aim-number-of-mature-trees' => ['property' => 'aim_number_of_mature_trees', 'label' => 'Aim number of mature trees', 'input_type' => 'number'],
                 'site-start-date' => ['property' => 'start_date', 'label' => 'Start date', 'input_type' => 'date'],
                 'site-end-date' => ['property' => 'end_date', 'label' => 'End date', 'input_type' => 'date'],
+                'site-description-siting-strategy' => ['property' => 'description_siting_strategy', 'label' => 'Description siting strategy', 'input_type' => 'text'],
+                'site-col-siting-strategy' => ['property' => 'siting_strategy', 'label' => 'Siting Strategy', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'siting-strategy-collection'],
             ],
             'file-collections' => [
                 'site-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
