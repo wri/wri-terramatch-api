@@ -9100,11 +9100,18 @@ definitions:
       number_of_nurseries:
         type: integer
   DashboardActiveProjectsListViewResponse:
+    type: object
     properties:
       data:
         type: array
         items:
           $ref: '#/definitions/DashboardActiveProjectData'
+      current_page:
+        type: integer
+      per_page:
+        type: integer
+      total:
+        type: integer
   DashboardActiveProjectData:
     type: object
     properties:
