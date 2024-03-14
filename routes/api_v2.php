@@ -225,6 +225,7 @@ use App\Http\Controllers\V2\Workdays\DeleteWorkdayController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Controllers\V2\Workdays\StoreWorkdayController;
 use App\Http\Controllers\V2\Workdays\UpdateWorkdayController;
+use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -669,6 +670,10 @@ Route::prefix('update-requests')->group(function () {
     Route::get('/{updateRequest}', AdminViewUpdateRequestController::class);
     Route::get('/{entity}/{uuid}', EntityUpdateRequestsController::class);
     Route::delete('/{updateRequest}', AdminSoftDeleteUpdateRequestController::class);
+});
+
+Route::prefix('terrafund')->group(function () {
+    Route::post('/polygon', [TerrafundCreateGeometryController::class, 'storeGeometry']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
