@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
         // PPC report jobs
         $schedule->job(new CreateTaskDueJob('ppc', 4))->yearlyOn(1, 7);
 
-        $schedule->job(new CreateTaskDueJob('ppc', 7))->yearlyOn(4, 7);
+        $schedule->job(new CreateTaskDueJob('ppc', 7))->yearlyOn(3, 15);
 
         $schedule->job(new CreateTaskDueJob('ppc', 10))->yearlyOn(7, 7);
 
