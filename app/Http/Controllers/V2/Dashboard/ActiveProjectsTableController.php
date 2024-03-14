@@ -8,17 +8,19 @@ use App\Http\Resources\V2\Dashboard\ActiveProjectsTableResource;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ActiveProjectsTableController extends Controller
 {
     public function __invoke(Request $request): ActiveProjectsTableResource
     {
-        $response = (object) [
-            'data' => $this->getAllProjects($request),
-        ];
+        $perPage = $request->input('per_page', PHP_INT_MAX);
+        $page = $request->input('page', 1);
+        $pagedData = $this->paginate($this->getAllProjects($request), $perPage, $page);
 
-        return new ActiveProjectsTableResource($response);
+        return new ActiveProjectsTableResource($pagedData);
     }
 
     public function getAllProjects($request)
@@ -80,5 +82,13 @@ class ActiveProjectsTableController extends Controller
         return FormOptionListOption::where('form_option_list_id', $countryId)
             ->where('slug', $slug)
             ->value('label');
+    }
+
+    public function paginate($items, $perPage = 10, $page = null, $options = [])
+    {
+        $page = $page ?: (LengthAwarePaginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }

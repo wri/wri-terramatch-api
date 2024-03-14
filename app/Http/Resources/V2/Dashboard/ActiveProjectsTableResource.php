@@ -15,7 +15,10 @@ class ActiveProjectsTableResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'data' => $this->data,
+            'current_page' => $this->currentPage(),
+            'data' => $this->items(),
+            'per_page' => $this->perPage(),
+            'total' => $this->total(),
         ];
     }
 }
