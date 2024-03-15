@@ -32,7 +32,7 @@ class CountriesController extends Controller
             ->get();
         $countriesResponse = [];
         foreach ($countries as $country) {
-            if ($this->verifyProjects($country->slug, $projectsCountrieslug)) {
+            if ($this->hasProjectsInCountry($country->slug, $projectsCountrieslug)) {
                 $countriesResponse[] = [
                     'country_slug' => $country->slug,
                     'id' => $country->id,
@@ -47,7 +47,7 @@ class CountriesController extends Controller
         return $countriesResponse;
     }
 
-    public function verifyProjects($country, $projectsSlug)
+    public function hasProjectsInCountry($country, $projectsSlug)
     {
         $projects = $projectsSlug->contains($country);
         if ($projects) {

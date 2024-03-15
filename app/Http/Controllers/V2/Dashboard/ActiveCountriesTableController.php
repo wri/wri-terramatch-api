@@ -34,27 +34,28 @@ class ActiveCountriesTableController extends Controller
         $activeCountries = [];
         foreach ($countries as $country) {
             $numberOfProjects = $this->numberOfProjects($country->slug, $projects);
-            if ($numberOfProjects > 0) {
-                $totalProjects = $numberOfProjects;
-
-                $totalSpeciesAmount = $this->totalSpeciesAmount($country->slug, $projects);
-
-                $totalJobsCreated = $this->totalJobsCreated($country->slug, $projects);
-
-                $numberOfSites = $this->numberOfSites($country->slug, $projects);
-
-                $totalNurseries = $this->numberOfNurseries($country->slug, $projects);
-
-                $activeCountries[] = [
-                    'country_slug' => $country->slug,
-                    'country' => $country->label,
-                    'number_of_projects' => $totalProjects,
-                    'total_trees_planted' => $totalSpeciesAmount,
-                    'total_jobs_created' => $totalJobsCreated,
-                    'number_of_sites' => $numberOfSites,
-                    'number_of_nurseries' => $totalNurseries,
-                ];
+            if ($numberOfProjects <= 0) {
+                continue;
             }
+            $totalProjects = $numberOfProjects;
+
+            $totalSpeciesAmount = $this->totalSpeciesAmount($country->slug, $projects);
+
+            $totalJobsCreated = $this->totalJobsCreated($country->slug, $projects);
+
+            $numberOfSites = $this->numberOfSites($country->slug, $projects);
+
+            $totalNurseries = $this->numberOfNurseries($country->slug, $projects);
+
+            $activeCountries[] = [
+                'country_slug' => $country->slug,
+                'country' => $country->label,
+                'number_of_projects' => $totalProjects,
+                'total_trees_planted' => $totalSpeciesAmount,
+                'total_jobs_created' => $totalJobsCreated,
+                'number_of_sites' => $numberOfSites,
+                'number_of_nurseries' => $totalNurseries,
+            ];
         }
 
         return $activeCountries;
