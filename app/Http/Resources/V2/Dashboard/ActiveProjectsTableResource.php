@@ -18,6 +18,7 @@ class ActiveProjectsTableResource extends JsonResource
             'current_page' => $this->currentPage(),
             'data' => $this->items(),
             'per_page' => $this->perPage(),
+            'last_page' => $this->lastPage(),
             'total' => $this->total(),
         ];
     }

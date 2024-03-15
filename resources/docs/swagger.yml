@@ -9112,6 +9112,8 @@ definitions:
         type: integer
       total:
         type: integer
+      last_page:
+        type: integer
   DashboardActiveProjectData:
     type: object
     properties:

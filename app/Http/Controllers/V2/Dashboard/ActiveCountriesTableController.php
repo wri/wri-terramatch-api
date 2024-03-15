@@ -33,25 +33,27 @@ class ActiveCountriesTableController extends Controller
             ->get();
         $activeCountries = [];
         foreach ($countries as $country) {
-            $totalProjects = $this->numberOfProjects($country->slug, $projects);
-
-            $totalSpeciesAmount = $this->totalSpeciesAmount($country->slug, $projects);
-
-            $totalJobsCreated = $this->totalJobsCreated($country->slug, $projects);
-
-            $numberOfSites = $this->numberOfSites($country->slug, $projects);
-
-            $totalNurseries = $this->numberOfNurseries($country->slug, $projects);
-
-            $activeCountries[] = [
-                'country_slug' => $country->slug,
-                'country' => $country->label,
-                'number_of_projects' => $totalProjects,
-                'total_trees_planted' => $totalSpeciesAmount,
-                'total_jobs_created' => $totalJobsCreated,
-                'number_of_sites' => $numberOfSites,
-                'number_of_nurseries' => $totalNurseries,
-            ];
+            if ($this->numberOfProjects($country->slug, $projects) > 0) {
+                $totalProjects = $this->numberOfProjects($country->slug, $projects);
+    
+                $totalSpeciesAmount = $this->totalSpeciesAmount($country->slug, $projects);
+    
+                $totalJobsCreated = $this->totalJobsCreated($country->slug, $projects);
+    
+                $numberOfSites = $this->numberOfSites($country->slug, $projects);
+    
+                $totalNurseries = $this->numberOfNurseries($country->slug, $projects);
+    
+                $activeCountries[] = [
+                    'country_slug' => $country->slug,
+                    'country' => $country->label,
+                    'number_of_projects' => $totalProjects,
+                    'total_trees_planted' => $totalSpeciesAmount,
+                    'total_jobs_created' => $totalJobsCreated,
+                    'number_of_sites' => $numberOfSites,
+                    'number_of_nurseries' => $totalNurseries,
+                ];
+            }
         }
 
         return $activeCountries;
