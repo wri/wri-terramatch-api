@@ -49,10 +49,12 @@ class CountriesController extends Controller
 
     public function verifyProjects($country, $projectsSlug)
     {
-        foreach ($projectsSlug as $slug) {
-            if ($slug === $country) {
-                return true;
-            }
+        $projects = $projectsSlug->contains($country);
+        if ($projects) {
+            return true;
+        } else {
+            return false;
         }
+
     }
 }
