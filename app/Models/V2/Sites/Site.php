@@ -297,7 +297,7 @@ class Site extends Model implements HasMedia, AuditableContract, EntityModel
             DB::raw("sum(`workdays_paid`) as paid"),
         ])->first();
 
-        return $totals->volunteer + $totals->paid;
+        return $totals?->paid + $totals?->volunteer;
     }
 
     public function getFrameworkUuidAttribute(): ?string
