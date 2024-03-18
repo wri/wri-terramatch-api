@@ -36,6 +36,7 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
             });
             $topProjects[] = [
                 'project' => $project->name,
+                'uuid' => $project->uuid,
                 'trees_planted' => $totalSpeciesAmountForSiteReport,
             ];
         }

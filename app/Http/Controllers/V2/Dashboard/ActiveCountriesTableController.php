@@ -33,11 +33,10 @@ class ActiveCountriesTableController extends Controller
             ->get();
         $activeCountries = [];
         foreach ($countries as $country) {
-            $numberOfProjects = $this->numberOfProjects($country->slug, $projects);
-            if ($numberOfProjects <= 0) {
+            $totalProjects = $this->numberOfProjects($country->slug, $projects);
+            if ($totalProjects <= 0) {
                 continue;
             }
-            $totalProjects = $numberOfProjects;
 
             $totalSpeciesAmount = $this->totalSpeciesAmount($country->slug, $projects);
 

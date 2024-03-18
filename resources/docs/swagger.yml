@@ -9067,6 +9067,8 @@ definitions:
     properties:
       project:
         type: string
+      uuid:
+        type: string
       trees_planted:
         type: integer
   DashboardTopTreeSpecies:

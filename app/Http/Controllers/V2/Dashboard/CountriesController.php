@@ -49,12 +49,6 @@ class CountriesController extends Controller
 
     public function hasProjectsInCountry($country, $projectsSlug)
     {
-        $projects = $projectsSlug->contains($country);
-        if ($projects) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return $projectsSlug->contains($country);
     }
 }
