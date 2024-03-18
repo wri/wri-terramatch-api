@@ -9038,7 +9038,10 @@ definitions:
       total_entries:
         type: integer
         description: Total number of jobs created.
-      total_hectares_retored:
+      total_hectares_restored:
+        type: integer
+        description: Total number of hectares restored.
+      total_hectares_restored_goal:
         type: integer
         description: Total number of hectares restored goal.
       total_trees_restored:
@@ -9066,6 +9069,8 @@ definitions:
     type: object
     properties:
       project:
+        type: string
+      uuid:
         type: string
       trees_planted:
         type: integer
@@ -9112,6 +9117,8 @@ definitions:
         type: integer
       total:
         type: integer
+      last_page:
+        type: integer
   DashboardActiveProjectData:
     type: object
     properties:
@@ -9136,6 +9143,8 @@ definitions:
       number_of_nurseries:
         type: integer
       project_country:
+        type: string
+      country_slug:
         type: string
       number_of_trees_goal:
         type: integer
