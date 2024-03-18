@@ -38,7 +38,7 @@ class CountriesController extends Controller
                     'id' => $country->id,
                     'data' => (object) [
                         'label' => $country->label,
-                        'icon' => '/flags/' . $country->slug . '.svg',
+                        'icon' => '/flags/' . strtolower($country->slug) . '.svg',
                     ],
                 ];
             }
