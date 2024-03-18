@@ -9038,7 +9038,10 @@ definitions:
       total_entries:
         type: integer
         description: Total number of jobs created.
-      total_hectares_retored:
+      total_hectares_restored:
+        type: integer
+        description: Total number of hectares restored.
+      total_hectares_restored_goal:
         type: integer
         description: Total number of hectares restored goal.
       total_trees_restored:
@@ -9140,6 +9143,8 @@ definitions:
       number_of_nurseries:
         type: integer
       project_country:
+        type: string
+      country_slug:
         type: string
       number_of_trees_goal:
         type: integer

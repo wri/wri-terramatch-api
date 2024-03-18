@@ -18,7 +18,8 @@ class TotalSectionHeaderResource extends JsonResource
             'total_non_profit_count' => $this->total_non_profit_count,
             'total_enterprise_count' => $this->total_enterprise_count,
             'total_entries' => $this->total_entries,
-            'total_hectares_retored' => $this->total_hectares_retored,
+            'total_hectares_restored' => $this->total_hectares_restored,
+            'total_hectares_restored_goal' => $this->total_hectares_restored_goal,
             'total_trees_restored' => $this->total_trees_restored,
             'total_trees_restored_goal' => $this->total_trees_restored_goal,
         ];

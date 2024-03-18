@@ -40,6 +40,7 @@ class ActiveProjectsTableController extends Controller
                 'number_of_sites' => $project->sites()->count(),
                 'number_of_nurseries' => $project->nurseries()->count(),
                 'project_country' => $this->projectCountry($project->country),
+                'country_slug' => $project->country,
                 'number_of_trees_goal' => $project->trees_grown_goal,
                 'date_added' => $project->created_at,
             ];
