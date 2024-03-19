@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -332,22 +333,15 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
 
     public function getWorkdayCountAttribute(): int
     {
-        $paid = $this->reports()->isApproved()->sum('workdays_paid');
-        $volunteer = $this->reports()->isApproved()->sum('workdays_volunteer');
-
-        $siteIds = $this->sites()->pluck('id')->toArray();
-
-        $sitePaid = SiteReport::whereIn('id', $siteIds)
-            ->where('due_at', '<', now())
-            ->hasBeenSubmitted()
-            ->sum('workdays_paid');
-
-        $siteVolunteer = SiteReport::whereIn('id', $siteIds)
-            ->where('due_at', '<', now())
-            ->hasBeenSubmitted()
-            ->sum('workdays_volunteer');
-
-        return $paid + $volunteer + $sitePaid + $siteVolunteer;
+        $sumQueries = [
+            DB::raw("sum(`workdays_paid`) as paid"),
+            DB::raw("sum(`workdays_volunteer`) as volunteer"),
+        ];
+        $projectTotals = $this->reports()->hasBeenSubmitted()->get($sumQueries)->first();
+        // The groupBy is superfluous, but required because Laravel adds "v2_sites.project_id as laravel_through_key" to
+        // the SQL select.
+        $siteTotals = $this->submittedSiteReports()->groupBy('v2_sites.project_id')->get($sumQueries)->first();
+        return $projectTotals?->paid + $projectTotals?->volunteer + $siteTotals?->paid + $siteTotals?->volunteer;
     }
 
     public function getTotalJobsCreatedAttribute(): int
@@ -437,6 +431,18 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
     }
 
     /**
+     * @return HasManyThrough A relation for all site reports associated with this project that is for an approved
+     *   site, and has a report status past due/started (has been submitted).
+     */
+    private function submittedSiteReports(): HasManyThrough
+    {
+        return $this
+            ->siteReports()
+            ->where('v2_sites.status', EntityStatusStateMachine::APPROVED)
+            ->whereNotIn('v2_site_reports.status', SiteReport::UNSUBMITTED_STATUSES);
+    }
+
+    /**
      * @return array The array of site report IDs for all reports associated with sites that have been approved, and
      *   have a report status not in due or started (reports that have been submitted).
      */
@@ -444,11 +450,6 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
     {
         // scopes that use status don't work on the HasManyThrough because both Site and SiteReport have
         // a status field.
-        return $this
-            ->siteReports()
-            ->where('v2_sites.status', EntityStatusStateMachine::APPROVED)
-            ->whereNotIn('v2_site_reports.status', SiteReport::UNSUBMITTED_STATUSES)
-            ->pluck('v2_site_reports.id')
-            ->toArray();
+        return $this->submittedSiteReports()->pluck('v2_site_reports.id')->toArray();
     }
 }
