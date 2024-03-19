@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -291,10 +292,12 @@ class Site extends Model implements HasMedia, AuditableContract, EntityModel
 
     public function getWorkdayCountAttribute(): int
     {
-        $volunteers = $this->reports()->sum('workdays_volunteer');
-        $paid = $this->reports()->sum('workdays_paid');
+        $totals = $this->reports()->hasBeenSubmitted()->get([
+            DB::raw("sum(`workdays_volunteer`) as volunteer"),
+            DB::raw("sum(`workdays_paid`) as paid"),
+        ])->first();
 
-        return $volunteers + $paid;
+        return $totals?->paid + $totals?->volunteer;
     }
 
     public function getFrameworkUuidAttribute(): ?string
