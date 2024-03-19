@@ -388,6 +388,8 @@ Route::prefix('my')->group(function () {
         Route::get('/', IndexMyActionsController::class);
         Route::put('/{action}/complete', CompleteActionController::class);
     });
+
+    Route::get('/projects', ViewMyProjectsController::class);
 });
 
 Route::post('/users/resend', [AuthController::class, 'resendByEmail']);
@@ -519,7 +521,6 @@ Route::prefix('core-team-leader')->group(function () {
     Route::delete('/{coreTeamLeader}', DeleteCoreTeamLeaderController::class);
 });
 
-Route::get('/my/projects', ViewMyProjectsController::class);
 Route::prefix('projects')->group(function () {
     Route::delete('/{project}', SoftDeleteProjectController::class);
     Route::get('/{project}/tasks', ViewProjectTasksController::class);

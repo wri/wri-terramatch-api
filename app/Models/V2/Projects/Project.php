@@ -398,11 +398,6 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
         return $this->monitoring()->count() > 0 ? 1 : 0;
     }
 
-    public function getTotalReportingTasksAttribute(): int
-    {
-        return $this->tasks()->isIncomplete()->count();
-    }
-    
     public function getFrameworkUuidAttribute(): ?string
     {
         return $this->framework ? $this->framework->uuid : null;
