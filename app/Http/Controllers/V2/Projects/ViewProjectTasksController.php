@@ -18,12 +18,13 @@ class ViewProjectTasksController extends Controller
 
         $sortableColumns = [
             'status', '-status',
-            'period_key', '-period_key',
+            'due_at', '-due_at',
         ];
 
-        $query = Task::with(['project'])
-            ->isIncomplete()
-            ->where('project_id', $project->id);
+        $query = QueryBuilder::for(Task::class)
+            ->with('project')
+            ->where('project_id', $project->id)
+            ->defaultSort('-due_at');
 
         if (in_array($request->query('sort'), $sortableColumns)) {
             $query->allowedSorts($sortableColumns);
