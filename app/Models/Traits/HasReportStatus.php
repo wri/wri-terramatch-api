@@ -40,6 +40,11 @@ trait HasReportStatus {
         ReportStatusStateMachine::APPROVED => 'Approved',
     ];
 
+    public const UNSUBMITTED_STATUSES = [
+        ReportStatusStateMachine::DUE,
+        ReportStatusStateMachine::STARTED,
+    ];
+
     public const COMPLETE_STATUSES = [
         ReportStatusStateMachine::AWAITING_APPROVAL,
         ReportStatusStateMachine::APPROVED,
@@ -58,6 +63,11 @@ trait HasReportStatus {
     public function scopeIsComplete(Builder $query): Builder
     {
         return $query->whereIn('status', self::COMPLETE_STATUSES);
+    }
+
+    public function scopeHasBeenSubmitted(Builder $query): Builder
+    {
+        return $query->whereNotIn('status', self::UNSUBMITTED_STATUSES);
     }
 
     public function isEditable(): bool
