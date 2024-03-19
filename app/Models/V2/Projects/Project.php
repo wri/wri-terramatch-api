@@ -431,6 +431,8 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
      */
     private function submittedSiteReports(): HasManyThrough
     {
+        // scopes that use status don't work on the HasManyThrough because both Site and SiteReport have
+        // a status field.
         return $this
             ->siteReports()
             ->where('v2_sites.status', EntityStatusStateMachine::APPROVED)
@@ -443,8 +445,6 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
      */
     private function submittedSiteReportIds(): array
     {
-        // scopes that use status don't work on the HasManyThrough because both Site and SiteReport have
-        // a status field.
         return $this->submittedSiteReports()->pluck('v2_site_reports.id')->toArray();
     }
 }
