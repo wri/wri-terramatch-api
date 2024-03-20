@@ -17,7 +17,7 @@ class TerrafundDashboardQueryHelper
             $query = $query->where('country', $country);
         } elseif ($request->has('uuid')) {
             $projectId = $request->input('uuid');
-            $query = $query->where('uuid', $projectId);
+            $query = $query->where('v2_projects.uuid', $projectId);
         }
 
         return $query;
