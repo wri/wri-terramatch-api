@@ -61,4 +61,22 @@ abstract class Mail extends Mailable implements ShouldQueue
             'year' => date('Y'),
         ]);
     }
+
+    protected function buildRecipients($message): Mail
+    {
+        $overrideRecipients = collect(explode(',', getenv('EMAIL_RECIPIENTS')));
+        if ($overrideRecipients->isEmpty() || empty($overrideRecipients->first())) {
+            return parent::buildRecipients($message);
+        }
+
+        $originalRecipients = [];
+        foreach(['to', 'cc', 'bcc'] as $type) {
+            $originalRecipients[$type] = $this->{$type};
+        }
+        $message->getHeaders()->addTextHeader('X-Original-Emails', json_encode($originalRecipients));
+
+        $overrideRecipients->each(function ($email) use ($message) { $message->to($email); });
+
+        return $this;
+    }
 }
