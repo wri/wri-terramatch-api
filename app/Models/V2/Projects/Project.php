@@ -417,6 +417,12 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
             : $query->doesntHave('monitoring');
     }
 
+    // All Entities are expected to have a project attribute.
+    public function getProjectAttribute(): Project
+    {
+        return $this;
+    }
+
     /** SEARCH */
     public function toSearchableArray()
     {
