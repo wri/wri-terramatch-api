@@ -7,10 +7,13 @@ use App\StateMachines\ReportStatusStateMachine;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 /**
  * @property \Illuminate\Support\Carbon $submitted_at
+ * @property string $uuid
  * @property string $status
+ * @property string $update_request_status
  * @property string $feedback
  * @property string $feedback_fields
  * @property bool $nothing_to_report
@@ -170,5 +173,10 @@ trait HasReportStatus {
     public function dispatchStatusChangeEvent($user): void
     {
         EntityStatusChangeEvent::dispatch($user, $this);
+    }
+
+    public function getViewLinkPath(): string
+    {
+        return '/reports/' . Str::kebab(explode_pop('\\', get_class($this))) . '/' . $this->uuid;
     }
 }

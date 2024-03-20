@@ -431,4 +431,9 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
     {
         return $query->where('project_id', $id);
     }
+
+    public function parentEntity(): BelongsTo
+    {
+        return $this->project();
+    }
 }
