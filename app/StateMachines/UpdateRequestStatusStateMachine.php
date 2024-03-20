@@ -2,6 +2,7 @@
 
 namespace App\StateMachines;
 
+use App\Jobs\V2\SendEntityStatusChangeEmailsJob;
 use App\Models\V2\EntityModel;
 use App\Models\V2\ReportModel;
 use App\Models\V2\UpdateRequests\UpdateRequest;
@@ -35,7 +36,9 @@ class UpdateRequestStatusStateMachine extends StateMachine
 
     public function afterTransitionHooks(): array
     {
-        $updateTaskStatus = function (string $fromStatus, UpdateRequest $updateRequest) {
+        $hooks = parent::afterTransitionHooks();
+
+        $updateEntityStatus = function (string $fromStatus, UpdateRequest $updateRequest) {
             /** @var EntityModel $model */
             $model = $updateRequest->updaterequestable;
             if (in_array('update_request_status', $model->getFillable())) {
@@ -50,10 +53,13 @@ class UpdateRequestStatusStateMachine extends StateMachine
                 $model->task->checkStatus();
             }
         };
-        return [
-            self::NEEDS_MORE_INFORMATION => [$updateTaskStatus],
-            self::AWAITING_APPROVAL => [$updateTaskStatus],
-            self::APPROVED => [$updateTaskStatus],
-        ];
+
+        $hooks[self::NEEDS_MORE_INFORMATION][] = $updateEntityStatus;
+        $hooks[self::NEEDS_MORE_INFORMATION][] = fn (string $fromStatus, UpdateRequest $updateRequest) =>
+            SendEntityStatusChangeEmailsJob::dispatch($updateRequest->updaterequestable);
+        $hooks[self::AWAITING_APPROVAL][] = $updateEntityStatus;
+        $hooks[self::APPROVED][] = $updateEntityStatus;
+
+        return $hooks;
     }
 }
