@@ -24,6 +24,10 @@ use Illuminate\Support\Str;
 trait HasReportStatus {
     use HasStatus;
     use HasStateMachines;
+    use HasEntityStatusScopesAndTransitions {
+        approve as entityStatusApprove;
+        submitForApproval as entityStatusSubmitForApproval;
+    }
 
     public $stateMachines = [
         'status' => ReportStatusStateMachine::class,
@@ -52,11 +56,6 @@ trait HasReportStatus {
         ReportStatusStateMachine::AWAITING_APPROVAL,
         ReportStatusStateMachine::APPROVED,
     ];
-
-    public function scopeIsApproved(Builder $query): Builder
-    {
-        return $this->scopeIsStatus($query, ReportStatusStateMachine::APPROVED);
-    }
 
     public function scopeIsIncomplete(Builder $query): Builder
     {
@@ -135,16 +134,7 @@ trait HasReportStatus {
     public function approve($feedback): void
     {
         $this->setCompletion();
-        $this->feedback = $feedback;
-        $this->feedback_fields = null;
-        $this->status()->transitionTo(ReportStatusStateMachine::APPROVED);
-    }
-
-    public function needsMoreInformation($feedback, $feedbackFields): void
-    {
-        $this->feedback = $feedback;
-        $this->feedback_fields = $feedbackFields;
-        $this->status()->transitionTo(ReportStatusStateMachine::NEEDS_MORE_INFORMATION);
+        $this->entityStatusApprove($feedback);
     }
 
     public function submitForApproval(): void
@@ -153,7 +143,7 @@ trait HasReportStatus {
             $this->completion = 100;
             $this->submitted_at = now();
         }
-        $this->status()->transitionTo(ReportStatusStateMachine::AWAITING_APPROVAL);
+        $this->entityStatusSubmitForApproval();
     }
 
     public function setCompletion(): void
