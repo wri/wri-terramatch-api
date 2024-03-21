@@ -241,4 +241,9 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
     {
         return true;
     }
+
+    public function parentEntity(): BelongsTo
+    {
+        return $this->nursery();
+    }
 }
