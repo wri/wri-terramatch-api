@@ -70,7 +70,7 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
 
     private function exportShapefiles(Project $project)
     {
-        $filename = public_path('storage/'.Str::of($project->name)->replace(['/', '\\'], '-') . ' Sites Shapefiles - ' . now() . '.zip');
+        $filename = storage_path('./'.Str::of($project->name)->replace(['/', '\\'], '-') . ' Sites Shapefiles - ' . now() . '.zip');
         $zip = new \ZipArchive();
         $zip->open($filename, \ZipArchive::CREATE);
 
