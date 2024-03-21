@@ -23,7 +23,7 @@ class ExportAllProjectDataAsProjectDeveloperController extends Controller
         $form = $this->getForm(Project::class, $project->framework_key);
         $this->authorize('export', [Project::class, $form, $project]);
 
-        $filename = public_path('storage/'.Str::of($project->name)->replace(['/', '\\'], '-') . ' full export - ' . now() . '.zip');
+        $filename = storage_path('./'.Str::of($project->name)->replace(['/', '\\'], '-') . ' full export - ' . now() . '.zip');
         $zip = new \ZipArchive();
         $zip->open($filename, \ZipArchive::CREATE);
 
