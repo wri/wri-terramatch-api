@@ -30,6 +30,8 @@ class GenerateApplicationExportJob implements ShouldQueue
 
     public function handle()
     {
+        ini_set('memory_limit', '-1');
+
         $name = 'exports/' . $this->fundingProgramme->name . ' Export - ' . now() . '.csv';
 
         $export = (new ApplicationExport($this->fundingProgramme->applications()->getQuery(), $this->fundingProgramme));
