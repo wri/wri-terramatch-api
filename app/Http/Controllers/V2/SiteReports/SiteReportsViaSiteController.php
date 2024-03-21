@@ -33,7 +33,7 @@ class SiteReportsViaSiteController extends Controller
                 AllowedFilter::exact('framework_key'),
             ])
             ->where('site_id', $site->id)
-            ->isComplete();
+            ->hasBeenSubmitted();
 
         if (in_array($request->query('sort'), $sortableColumns)) {
             $qry->allowedSorts($sortableColumns);

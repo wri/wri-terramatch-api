@@ -20,8 +20,12 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
     {
         ini_set('memory_limit', '-1');
         Validator::make(['entity' => $entity], [
-            'entity' => 'required|in:sites,nurseries,project-reports',
+            'entity' => 'required|in:sites,nurseries,project-reports,shapefiles',
         ])->validate();
+
+        if ($entity === 'shapefiles') {
+            return $this->exportShapefiles($project);
+        }
 
         $modelClass = $this->getModelClass($entity);
 
@@ -63,4 +67,31 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
 
         return $model;
     }
+
+    private function exportShapefiles(Project $project)
+    {
+        $filename = storage_path('./'.Str::of($project->name)->replace(['/', '\\'], '-') . ' Sites Shapefiles - ' . now() . '.zip');
+        $zip = new \ZipArchive();
+        $zip->open($filename, \ZipArchive::CREATE);
+
+        rescue(function () use ($project, $zip) {
+            $this->addSiteShapefiles($project, $zip);
+        });
+
+        $zip->close();
+
+        return response()->download($filename)->deleteFileAfterSend();
+    }
+
+    private function addSiteShapefiles(Project $project, \ZipArchive $mainZip): void
+    {
+        $shapefilesFolder = 'Sites Shapefiles/';
+        $mainZip->addEmptyDir($shapefilesFolder);
+
+        foreach ($project->sites as $site) {
+            $geojsonFilename = $shapefilesFolder . Str::of($site->name)->replace(['/', '\\'], '-') . '.geojson';
+            $mainZip->addFromString($geojsonFilename, $site->boundary_geojson);
+        }
+    }
+
 }

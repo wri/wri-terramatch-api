@@ -387,14 +387,14 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
 
             $sitePaid = SiteReport::whereIn('id', $siteIds)
                 ->where('due_at', '<', now())
-                ->isComplete()
+                ->hasBeenSubmitted()
                 ->whereMonth('due_at', $month)
                 ->whereYear('due_at', $year)
                 ->sum('workdays_paid');
 
             $siteVolunteer = SiteReport::whereIn('id', $siteIds)
                 ->where('due_at', '<', now())
-                ->isComplete()
+                ->hasBeenSubmitted()
                 ->whereMonth('due_at', $month)
                 ->whereYear('due_at', $year)
                 ->sum('workdays_volunteer');
