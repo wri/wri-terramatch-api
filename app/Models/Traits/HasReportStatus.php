@@ -7,10 +7,13 @@ use App\StateMachines\ReportStatusStateMachine;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 /**
  * @property \Illuminate\Support\Carbon $submitted_at
+ * @property string $uuid
  * @property string $status
+ * @property string $update_request_status
  * @property string $feedback
  * @property string $feedback_fields
  * @property bool $nothing_to_report
@@ -21,6 +24,10 @@ use Illuminate\Support\Facades\Auth;
 trait HasReportStatus {
     use HasStatus;
     use HasStateMachines;
+    use HasEntityStatusScopesAndTransitions {
+        approve as entityStatusApprove;
+        submitForApproval as entityStatusSubmitForApproval;
+    }
 
     public $stateMachines = [
         'status' => ReportStatusStateMachine::class,
@@ -49,11 +56,6 @@ trait HasReportStatus {
         ReportStatusStateMachine::AWAITING_APPROVAL,
         ReportStatusStateMachine::APPROVED,
     ];
-
-    public function scopeIsApproved(Builder $query): Builder
-    {
-        return $this->scopeIsStatus($query, ReportStatusStateMachine::APPROVED);
-    }
 
     public function scopeIsIncomplete(Builder $query): Builder
     {
@@ -132,16 +134,7 @@ trait HasReportStatus {
     public function approve($feedback): void
     {
         $this->setCompletion();
-        $this->feedback = $feedback;
-        $this->feedback_fields = null;
-        $this->status()->transitionTo(ReportStatusStateMachine::APPROVED);
-    }
-
-    public function needsMoreInformation($feedback, $feedbackFields): void
-    {
-        $this->feedback = $feedback;
-        $this->feedback_fields = $feedbackFields;
-        $this->status()->transitionTo(ReportStatusStateMachine::NEEDS_MORE_INFORMATION);
+        $this->entityStatusApprove($feedback);
     }
 
     public function submitForApproval(): void
@@ -150,7 +143,7 @@ trait HasReportStatus {
             $this->completion = 100;
             $this->submitted_at = now();
         }
-        $this->status()->transitionTo(ReportStatusStateMachine::AWAITING_APPROVAL);
+        $this->entityStatusSubmitForApproval();
     }
 
     public function setCompletion(): void
@@ -170,5 +163,10 @@ trait HasReportStatus {
     public function dispatchStatusChangeEvent($user): void
     {
         EntityStatusChangeEvent::dispatch($user, $this);
+    }
+
+    public function getViewLinkPath(): string
+    {
+        return '/reports/' . Str::kebab(explode_pop('\\', get_class($this))) . '/' . $this->uuid;
     }
 }
