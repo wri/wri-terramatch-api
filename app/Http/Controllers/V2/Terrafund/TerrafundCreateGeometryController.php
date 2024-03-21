@@ -51,7 +51,44 @@ class TerrafundCreateGeometryController extends Controller
         ]);
         return response()->json(['uuid' => $uuid], 200);
     }
-   
+    public function uploadKMLFile(Request $request) {
+      
+      if ($request->hasFile('kml_file')) {
+          $file = $request->file('kml_file');
+  
+          $directory = storage_path('app/public/kml_files');
+  
+          if (!file_exists($directory)) {
+              mkdir($directory, 0755, true);
+          }
+  
+          $filename = uniqid('kml_file_') . '.' . $file->getClientOriginalExtension();
+  
+          $file->move($directory, $filename);
+  
+          return response()->json(['message' => 'KML file uploaded successfully', 'filename' => $filename], 200);
+      } else {
+          return response()->json(['error' => 'KML file not provided'], 400);
+      }
+  }
+  
+    public function uploadShapefile(Request $request) {
+      $hasFile = $request->hasFile('shapefile');
+      if ($hasFile) {
+          $file = $request->file('shapefile');
+          $directory = storage_path('app/public/shapefiles');
+          if (!file_exists($directory)) {
+              mkdir($directory, 0755, true);
+          }
+          $filename = uniqid('shapefile_') . '.' . $file->getClientOriginalExtension();
+
+          $file->move($directory, $filename);
+          return response()->json(['message' => 'Shapefile uploaded successfully', 'filename' => $filename], 200);
+      } else {
+          return response()->json(['error' => $hasFile], 400);
+      }
+    }
+  
     public function uploadGeoJSONFile(Request $request)
     {
       // Validate incoming request
@@ -61,15 +98,15 @@ class TerrafundCreateGeometryController extends Controller
       
       $file = $request->file('geojson_file');
       $filename = $file->getClientOriginalName();
-      // $directory = storage_path('app/public/geojson');
-      // if (!file_exists($directory)) {
-      //   mkdir($directory, 0755, true);
-      // }
+      $directory = storage_path('app/public/geojson');
+      if (!file_exists($directory)) {
+        mkdir($directory, 0755, true);
+      }
       // $destination = $directory . '/' . $filename;
-      $writerType = 'geojson';
-      $name = 'exports/all-entity-records/'.$filename;
-      Excel::store($file, $name, 's3', $writerType);
-      // $file->move($directory, $filename);
-      return response()->json(['message' => 'Geometry received successfully', $name], 200);
+      // $writerType = 'geojson';
+      // $name = 'exports/all-entity-records/'.$filename;
+      // Excel::store($file, $name, 's3', $writerType);
+      $file->move($directory, $filename);
+      return response()->json(['message' => 'Geometry received successfully', $filename], 200);
     }
 }
