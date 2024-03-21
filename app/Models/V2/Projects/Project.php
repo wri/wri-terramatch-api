@@ -23,6 +23,7 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -305,29 +307,16 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
 
     public function getTreesPlantedCountAttribute(): int
     {
-        $siteIds = Site::where('project_id', $this->id)
-            ->isApproved()
-            ->pluck('id')
-            ->toArray();
-
-        $submissionsIds = SiteReport::whereIn('site_id', $siteIds)
-            ->isComplete()
-            ->pluck('id')
-            ->toArray();
-
         return TreeSpecies::where('speciesable_type', SiteReport::class)
-            ->whereIn('speciesable_id', $submissionsIds)
+            ->whereIn('speciesable_id', $this->submittedSiteReportIds())
             ->where('collection', TreeSpecies::COLLECTION_PLANTED)
             ->sum('amount');
     }
 
     public function getSeedsPlantedCountAttribute(): int
     {
-        $siteIds = $this->sites()->pluck('id')->toArray();
-        $submissionsIds = SiteReport::whereIn('site_id', $siteIds)->pluck('id')->toArray();
-
         return Seeding::where('seedable_type', SiteReport::class)
-            ->whereIn('seedable_id', $submissionsIds)
+            ->whereIn('seedable_id', $this->submittedSiteReportIds())
             ->sum('amount');
     }
 
@@ -344,22 +333,15 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
 
     public function getWorkdayCountAttribute(): int
     {
-        $paid = $this->reports()->isApproved()->sum('workdays_paid');
-        $volunteer = $this->reports()->isApproved()->sum('workdays_volunteer');
-
-        $siteIds = $this->sites()->pluck('id')->toArray();
-
-        $sitePaid = SiteReport::whereIn('id', $siteIds)
-            ->where('due_at', '<', now())
-            ->isComplete()
-            ->sum('workdays_paid');
-
-        $siteVolunteer = SiteReport::whereIn('id', $siteIds)
-            ->where('due_at', '<', now())
-            ->isComplete()
-            ->sum('workdays_volunteer');
-
-        return $paid + $volunteer + $sitePaid + $siteVolunteer;
+        $sumQueries = [
+            DB::raw("sum(`workdays_paid`) as paid"),
+            DB::raw("sum(`workdays_volunteer`) as volunteer"),
+        ];
+        $projectTotals = $this->reports()->hasBeenSubmitted()->get($sumQueries)->first();
+        // The groupBy is superfluous, but required because Laravel adds "v2_sites.project_id as laravel_through_key" to
+        // the SQL select.
+        $siteTotals = $this->submittedSiteReports()->groupBy('v2_sites.project_id')->get($sumQueries)->first();
+        return $projectTotals?->paid + $projectTotals?->volunteer + $siteTotals?->paid + $siteTotals?->volunteer;
     }
 
     public function getTotalJobsCreatedAttribute(): int
@@ -398,12 +380,12 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
             ->isIncomplete()
             ->count();
 
-        $sOverdue = SiteReport::whereIn('id', $siteIds)
+        $sOverdue = SiteReport::whereIn('site_id', $siteIds)
             ->where('due_at', '<', now())
             ->isIncomplete()
             ->count();
 
-        $nOverdue = NurseryReport::whereIn('id', $nurseryIds)
+        $nOverdue = NurseryReport::whereIn('nursery_id', $nurseryIds)
             ->where('due_at', '<', now())
             ->isIncomplete()
             ->count();
@@ -416,11 +398,6 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
         return $this->monitoring()->count() > 0 ? 1 : 0;
     }
 
-    public function getTotalReportingTasksAttribute(): int
-    {
-        return $this->tasks()->isIncomplete()->count();
-    }
-    
     public function getFrameworkUuidAttribute(): ?string
     {
         return $this->framework ? $this->framework->uuid : null;
@@ -446,5 +423,28 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
         return [
             'name' => $this->name,
         ];
+    }
+
+    /**
+     * @return HasManyThrough A relation for all site reports associated with this project that is for an approved
+     *   site, and has a report status past due/started (has been submitted).
+     */
+    private function submittedSiteReports(): HasManyThrough
+    {
+        return $this
+            ->siteReports()
+            ->where('v2_sites.status', EntityStatusStateMachine::APPROVED)
+            ->whereNotIn('v2_site_reports.status', SiteReport::UNSUBMITTED_STATUSES);
+    }
+
+    /**
+     * @return array The array of site report IDs for all reports associated with sites that have been approved, and
+     *   have a report status not in due or started (reports that have been submitted).
+     */
+    private function submittedSiteReportIds(): array
+    {
+        // scopes that use status don't work on the HasManyThrough because both Site and SiteReport have
+        // a status field.
+        return $this->submittedSiteReports()->pluck('v2_site_reports.id')->toArray();
     }
 }
