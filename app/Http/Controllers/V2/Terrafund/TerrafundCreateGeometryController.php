@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TerrafundCreateGeometryController extends Controller
 {
@@ -35,5 +37,26 @@ class TerrafundCreateGeometryController extends Controller
 
         // Return a response
         return response()->json(['message' => 'Geometry received successfully'], 200);
+    }
+   
+    public function uploadGeoJSONFile(Request $request)
+    {
+      // Validate incoming request
+      $validatedData = $request->validate([
+          'geojson_file' => 'required|file|mimetypes:application/json', // Validate GeoJSON file
+      ]);
+      
+      $file = $request->file('geojson_file');
+      $filename = $file->getClientOriginalName();
+      // $directory = storage_path('app/public/geojson');
+      // if (!file_exists($directory)) {
+      //   mkdir($directory, 0755, true);
+      // }
+      // $destination = $directory . '/' . $filename;
+      $writerType = 'geojson';
+      $name = 'exports/all-entity-records/'.$filename;
+      Excel::store($file, $name, 's3', $writerType);
+      // $file->move($directory, $filename);
+      return response()->json(['message' => 'Geometry received successfully', $name], 200);
     }
 }
