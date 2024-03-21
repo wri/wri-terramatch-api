@@ -675,6 +675,7 @@ Route::prefix('update-requests')->group(function () {
 Route::prefix('terrafund')->group(function () {
     Route::post('/polygon', [TerrafundCreateGeometryController::class, 'storeGeometry']);
     Route::post('/upload', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFile']);
+    Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');

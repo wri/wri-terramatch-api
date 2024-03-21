@@ -9,9 +9,24 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\V2\PolygonGeometry;
 
 class TerrafundCreateGeometryController extends Controller
 {
+    public function processGeometry(string $uuid) {
+        $geometry = PolygonGeometry::where('uuid', $uuid)
+        ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
+        ->first();
+
+        $geojson = $geometry->geojson;
+
+        if ($geojson) {
+            return response()->json(['geometry' => $geojson], 200);
+        } else {
+            return response()->json(['error' => 'Geometry not found'], 404);
+        }
+    }
+
     public function storeGeometry(Request $request)
     {
         // Validate incoming request if needed
@@ -26,17 +41,15 @@ class TerrafundCreateGeometryController extends Controller
 
         $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
 
-        // Log::info($geom);
+        $uuid = Str::uuid();
 
         DB::table('polygon_geometry')->insert([
-            'uuid' => Str::uuid(),
+            'uuid' => $uuid,
             'geom' => $geom,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
-        // Return a response
-        return response()->json(['message' => 'Geometry received successfully'], 200);
+        return response()->json(['uuid' => $uuid], 200);
     }
    
     public function uploadGeoJSONFile(Request $request)
