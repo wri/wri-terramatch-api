@@ -72,31 +72,21 @@ class TerrafundCreateGeometryController extends Controller
     }
     public function insertGeojsonToDB(string $geojsonFilename)
     {
-        // Read GeoJSON file contents
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
         $geojson = json_decode($geojsonData, true);
-    
-        // Check if GeoJSON contains features
         if (!isset($geojson['features'])) {
-            // If no features, return with an error message
             return ['error' => 'GeoJSON file does not contain features'];
         }
-    
-        // Iterate over each feature
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
-            // Check if feature is of type "Polygon" or "MultiPolygon"
             if ($feature['geometry']['type'] === 'Polygon') {
-                // If single polygon, insert into the database
                 $uuids[] = $this->insertSinglePolygon($feature['geometry']);
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
-                // If multi-polygon, iterate over each polygon and insert into the database
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
                     $uuids[] = $this->insertSinglePolygon(['type' => 'Polygon', 'coordinates' => $polygon]);
                 }
             }
         }
-    
         return $uuids;
     }
     public function uploadKMLFile(Request $request) {
