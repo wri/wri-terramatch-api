@@ -31,18 +31,11 @@ class TerrafundCreateGeometryController extends Controller
 
     public function storeGeometry(Request $request)
     {
-        // Validate incoming request if needed
         $validatedData = $request->validate([
             'geometry' => 'required|json',
         ]);
-
-        // Process the incoming JSON payload
         $geometry = json_decode($request->input('geometry'));
-
-        Log::info('Geometry received: ' . json_encode($geometry));
-
         $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
-
         $uuid = Str::uuid();
 
         DB::table('polygon_geometry')->insert([
@@ -131,14 +124,10 @@ class TerrafundCreateGeometryController extends Controller
           if ($zip->open($file->getPathname()) === true) {
               $zip->extractTo($directory);
               $zip->close();
-  
-              // Find the .shp file inside the extracted directory
               $shpFile = $this->findShpFile($directory);
               if (!$shpFile) {
                   return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
               }
-  
-              // Convert .shp file to GeoJSON
               $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
               $geojsonPath = storage_path("app/public/geojson_files/{$geojsonFilename}");
               $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
@@ -185,6 +174,9 @@ class TerrafundCreateGeometryController extends Controller
           $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
           $file->move($directory, $filename);
           $uuid = $this->insertGeojsonToDB($filename);
+          if (is_array($uuid) && isset($uuid['error'])) {
+            return response()->json(['error' => 'Failed to insert GeoJSON data into the database'], 500);
+          }
           return response()->json(['message' => 'GeoJSON file processed and inserted successfully', 'uuid' => $uuid], 200);
       } else {
           return response()->json(['error' => 'GeoJSON file not provided'], 400);
