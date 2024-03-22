@@ -19341,6 +19341,14 @@ paths:
           name: country
           type: string
           description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: per_page
+          type: string
+          description: Optional. per_page to projects.
+        - in: query
+          name: page
+          type: string
+          description: Optional. page to projects.
       responses:
         '200':
           description: Successful response
