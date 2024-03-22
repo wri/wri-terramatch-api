@@ -108,7 +108,6 @@ class TerrafundCreateGeometryController extends Controller
               return response()->json(['error' => 'Failed to convert KML to GeoJSON'], 500);
           }
           $uuid = $this->insertGeojsonToDB($geojsonFilename);
-          // Return a success response
           return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
       
       } else {
@@ -140,18 +139,21 @@ public function uploadShapefile(Request $request) {
 }
 
   
+
     public function uploadGeoJSONFile(Request $request)
     { 
-      $validatedData = $request->validate([
-          'geojson_file' => 'required|file|mimetypes:application/json', 
-      ]); 
-      $file = $request->file('geojson_file');
-      $filename = $file->getClientOriginalName();
-      $directory = storage_path('app/public/geojson');
-      if (!file_exists($directory)) {
-        mkdir($directory, 0755, true);
+      if ($request->hasFile('geojson_file')) {
+          $file = $request->file('geojson_file');
+          $directory = storage_path('app/public/geojson_files');
+          if (!file_exists($directory)) {
+              mkdir($directory, 0755, true);
+          }
+          $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
+          $file->move($directory, $filename);
+          $uuid = $this->insertGeojsonToDB($filename);
+          return response()->json(['message' => 'GeoJSON file processed and inserted successfully', 'uuid' => $uuid], 200);
+      } else {
+          return response()->json(['error' => 'GeoJSON file not provided'], 400);
       }
-      $file->move($directory, $filename);
-      return response()->json(['message' => 'Geometry received successfully', $filename], 200);
     }
 }

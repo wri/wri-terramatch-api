@@ -674,7 +674,7 @@ Route::prefix('update-requests')->group(function () {
 
 Route::prefix('terrafund')->group(function () {
     Route::post('/polygon', [TerrafundCreateGeometryController::class, 'storeGeometry']);
-    Route::post('/upload', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFile']);
+    Route::post('/upload-geojson', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFile']);
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
