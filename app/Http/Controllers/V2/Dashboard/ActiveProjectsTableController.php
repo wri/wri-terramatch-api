@@ -25,10 +25,13 @@ class ActiveProjectsTableController extends Controller
 
     public function getAllProjects($request)
     {
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
-        $activeProjects = [];
-        foreach ($projects as $project) {
-            $activeProjects[] = [
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+            ->with('organisation')
+            ->withCount(['sites', 'nurseries'])
+            ->get();
+
+        return $projects->map(function ($project) {
+            return [
                 'uuid' => $project->uuid,
                 'name' => $project->name,
                 'organisation' => $project->organisation->name,
@@ -37,16 +40,14 @@ class ActiveProjectsTableController extends Controller
                 'volunteers' => $this->volunteers($project),
                 'beneficiaries' => $this->beneficiaries($project),
                 'survival_rate' => $project->survival_rate,
-                'number_of_sites' => $project->sites()->count(),
-                'number_of_nurseries' => $project->nurseries()->count(),
+                'number_of_sites' => $project->sites_count,
+                'number_of_nurseries' => $project->nurseries_count,
                 'project_country' => $this->projectCountry($project->country),
                 'country_slug' => $project->country,
                 'number_of_trees_goal' => $project->trees_grown_goal,
                 'date_added' => $project->created_at,
             ];
-        }
-
-        return $activeProjects;
+        });
     }
 
     public function treesUnderRestoration($project)

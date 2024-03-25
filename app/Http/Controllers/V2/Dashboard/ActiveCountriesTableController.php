@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\ActiveCountriesTableResource;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
+use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +31,7 @@ class ActiveCountriesTableController extends Controller
         $countryId = FormOptionList::where('key', 'countries')->value('id');
         $countries = FormOptionListOption::where('form_option_list_id', $countryId)
             ->orderBy('label')
-            ->get();
+            ->get(['slug', 'label']);
         $activeCountries = [];
         foreach ($countries as $country) {
             $totalProjects = $this->numberOfProjects($country->slug, $projects);
@@ -94,17 +95,15 @@ class ActiveCountriesTableController extends Controller
 
     public function numberOfSites($country, $projects)
     {
-        $projects = $projects->where('country', $country);
+        $projectIds = $projects->where('country', $country)->pluck('id');
 
-        return Site::whereIn('project_id', $projects->pluck('id'))->count();
+        return Site::whereIn('project_id', $projectIds)->count();
     }
 
     public function numberOfNurseries($country, $projects)
     {
-        $projects = $projects->where('country', $country);
+        $projectIds = $projects->where('country', $country)->pluck('id');
 
-        return $projects->sum(function ($project) {
-            return $project->nurseries()->count();
-        });
+        return Nursery::whereIn('project_id', $projectIds)->count();
     }
 }
