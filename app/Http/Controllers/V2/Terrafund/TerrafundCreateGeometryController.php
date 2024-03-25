@@ -83,8 +83,8 @@ class TerrafundCreateGeometryController extends Controller
         return $uuids;
     }
     public function uploadKMLFile(Request $request) {
-      if ($request->hasFile('kml_file')) {
-          $kmlfile = $request->file('kml_file');
+      if ($request->hasFile('file')) {
+          $kmlfile = $request->file('file');
           $directory = storage_path('app/public/kml_files');
           if (!file_exists($directory)) {
               mkdir($directory, 0755, true);
@@ -111,8 +111,8 @@ class TerrafundCreateGeometryController extends Controller
 
   public function uploadShapefile(Request $request)
   {
-      if ($request->hasFile('shapefile')) {
-          $file = $request->file('shapefile');
+      if ($request->hasFile('file')) {
+          $file = $request->file('file');
           if ($file->getClientOriginalExtension() !== 'zip') {
               return response()->json(['error' => 'Only ZIP files are allowed'], 400);
           }
@@ -165,8 +165,8 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadGeoJSONFile(Request $request)
     { 
-      if ($request->hasFile('geojson_file')) {
-          $file = $request->file('geojson_file');
+      if ($request->hasFile('file')) {
+          $file = $request->file('file');
           $directory = storage_path('app/public/geojson_files');
           if (!file_exists($directory)) {
               mkdir($directory, 0755, true);
