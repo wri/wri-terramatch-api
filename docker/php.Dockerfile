@@ -9,7 +9,16 @@ RUN apt-get install -y \
     libfreetype6-dev \
     libmagickwand-dev \
     mariadb-client \
-    libzip-dev
+    libzip-dev \
+    gdal-bin \
+    libgdal-dev
+# RUN apt-get update && \
+#     apt-get install -y nodejs npm && \
+#     npm install -g npm@latest && \
+#     npm config set prefix /usr/local && \
+#     export PATH="$PATH:/usr/local/bin"
+
+
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install \
     bcmath \
