@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminsController;
+use App\Http\Controllers\DashboardDocumentationController;
 use App\Http\Controllers\DefaultController;
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\DocumentationVersionedController;
