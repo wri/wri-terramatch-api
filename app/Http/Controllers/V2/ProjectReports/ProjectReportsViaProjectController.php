@@ -35,7 +35,7 @@ class ProjectReportsViaProjectController extends Controller
                 AllowedFilter::exact('update_request_status'),
             ])
             ->where('project_id', $project->id)
-            ->whereNotIn('status', [ProjectReport::STATUS_DUE,ProjectReport::STATUS_STARTED]);
+            ->hasBeenSubmitted();
 
         if (in_array($request->query('sort'), $sortableColumns)) {
             $qry->allowedSorts($sortableColumns);

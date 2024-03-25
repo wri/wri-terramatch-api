@@ -16,9 +16,6 @@ build:
 	docker-compose run php php ./artisan jwt:secret
 	docker-compose run npm npm run development
 
-composer:
-	docker-compose run composer composer install --ignore-platform-reqs
-
 up:
 	docker-compose up -d
 

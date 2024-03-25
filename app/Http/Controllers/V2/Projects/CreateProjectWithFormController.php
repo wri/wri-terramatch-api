@@ -4,15 +4,16 @@ namespace App\Http\Controllers\V2\Projects;
 
 use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Projects\ProjectWithSchemaResource;
+use App\Http\Resources\V2\Entities\EntityWithSchemaResource;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\Request;
 
 class CreateProjectWithFormController extends Controller
 {
-    public function __invoke(Request $request): ProjectWithSchemaResource
+    public function __invoke(Request $request): EntityWithSchemaResource
     {
         $this->authorize('create', Project::class);
         $data = $request->validate([
@@ -33,7 +34,7 @@ class CreateProjectWithFormController extends Controller
             'framework_key' => $form ? $form->framework_key : 'terrafund',
             'organisation_id' => $application->organisation->id,
             'application_id' => $application->id,
-            'status' => Project::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
             'project_status' => null,
             'name' => $projectPitch->project_name,
             'boundary_geojson' => $projectPitch->proj_boundary,
@@ -82,9 +83,9 @@ class CreateProjectWithFormController extends Controller
 
         ]);
 
-        EntityStatusChangeEvent::dispatch($request->user(), $project, $project->name, '', $project->readable_status);
-
-        return new ProjectWithSchemaResource($project, ['schema' => $form]);
+        $request->user()->projects()->sync([$project->id => ['is_monitoring' => false]], false);
+        $project->dispatchStatusChangeEvent($request->user());
+        return $project->createSchemaResource();
     }
 
     private function getForm(string $form_uuid): Form

@@ -26,6 +26,7 @@ class SiteResource extends JsonResource
             'status' => $this->status,
             'readable_status' => $this->readable_status,
             'update_request_status' => $this->update_request_status,
+            'readable_update_request_status' => $this->readable_update_request_status,
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
             'survival_rate_planted' => $this->survival_rate_planted,
@@ -53,6 +54,8 @@ class SiteResource extends JsonResource
             'updated_at' => $this->updated_at,
             'has_monitoring_data' => empty($this->has_monitoring_data) ? false : true,
             'seeds_planted_count' => $this->seeds_planted_count,
+            'siting_strategy' => $this->siting_strategy,
+            'description_siting_strategy' => $this->description_siting_strategy,
         ];
 
         return $this->appendFilesToResource($data);

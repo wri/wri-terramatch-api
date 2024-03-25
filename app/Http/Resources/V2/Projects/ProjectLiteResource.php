@@ -21,7 +21,6 @@ class ProjectLiteResource extends JsonResource
             'organisation' => new OrganisationLiteResource($this->organisation),
             'planting_start_date' => $this->planting_start_date,
             'has_monitoring_data' => $this->has_monitoring_data,
-            'total_reporting_tasks' => $this->total_reporting_tasks,
             'project_reports_total' => $this->project_reports_total,
         ];
 
