@@ -210,7 +210,8 @@ class TerrafundCreateGeometryController extends Controller
 
     public function getPolygonsAsGeoJSON()
     {
-      $limit = 2;
+        $limit = 2;
+
         // Fetch polygons from the database as GeoJSON
         $polygons = DB::table('polygon_geometry')
             ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
@@ -223,17 +224,27 @@ class TerrafundCreateGeometryController extends Controller
         $features = [];
 
         foreach ($polygons as $polygon) {
-            $features[] = json_decode($polygon->geojson);
+            $coordinates = json_decode($polygon->geojson)->coordinates;
+            $feature = [
+                'type' => 'Feature',
+                'geometry' => [
+                    'type' => 'Polygon',
+                    'coordinates' => $coordinates,
+                ],
+                'properties' => [], // You can add properties if needed
+            ];
+            $features[] = $feature;
         }
 
         // Convert features array to GeoJSON format
         $geojson = [
             'type' => 'FeatureCollection',
-            'features' => $features
+            'features' => $features,
         ];
 
         // Return the GeoJSON data
         return response()->json($geojson);
     }
+
 
 }
