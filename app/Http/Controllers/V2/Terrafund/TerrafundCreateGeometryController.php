@@ -215,6 +215,7 @@ class TerrafundCreateGeometryController extends Controller
         $polygons = DB::table('polygon_geometry')
             ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
             ->orderBy('created_at', 'desc')
+            ->whereNotNull('geom')
             ->limit($limit)
             ->get();
 
