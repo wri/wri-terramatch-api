@@ -82,6 +82,27 @@ class TerrafundCreateGeometryController extends Controller
         }
         return $uuids;
     }
+    public function getGeometryProperties(string $geojsonFilename)
+    {
+        $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
+        $geojson = json_decode($geojsonData, true);
+        if (!isset($geojson['features'])) {
+            return ['error' => 'GeoJSON file does not contain features'];
+        }
+
+        $propertiesList = [];
+        foreach ($geojson['features'] as $feature) {
+            $properties = $feature['properties'];
+            $geometryType = $feature['geometry']['type'];
+
+            // Extract properties only if the geometry type is Polygon or MultiPolygon
+            if ($geometryType === 'Polygon' || $geometryType === 'MultiPolygon') {
+                $propertiesList[] = $properties;
+            }
+        }
+
+        return $propertiesList;
+    }
     public function uploadKMLFile(Request $request) {
       if ($request->hasFile('file')) {
           $kmlfile = $request->file('file');
@@ -101,7 +122,8 @@ class TerrafundCreateGeometryController extends Controller
               return response()->json(['error' => 'Failed to convert KML to GeoJSON'], 500);
           }
           $uuid = $this->insertGeojsonToDB($geojsonFilename);
-          return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
+          $properties = $this->getGeometryProperties($geojsonFilename);
+          return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid, 'properties' => $properties], 200);
       
       } else {
           return response()->json(['error' => 'KML file not provided'], 400);
@@ -139,7 +161,8 @@ class TerrafundCreateGeometryController extends Controller
   
               // Insert GeoJSON data into the database
               $uuid = $this->insertGeojsonToDB($geojsonFilename);
-              return response()->json(['message' => 'Shapefile processed and inserted successfully', 'uuid' => $uuid], 200);
+              $properties = $this->getGeometryProperties($geojsonFilename);
+              return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid, 'properties' => $properties], 200);
           } else {
               return response()->json(['error' => 'Failed to open the ZIP file'], 400);
           }
@@ -174,12 +197,42 @@ class TerrafundCreateGeometryController extends Controller
           $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
           $file->move($directory, $filename);
           $uuid = $this->insertGeojsonToDB($filename);
+          
           if (is_array($uuid) && isset($uuid['error'])) {
             return response()->json(['error' => 'Failed to insert GeoJSON data into the database'], 500);
           }
-          return response()->json(['message' => 'GeoJSON file processed and inserted successfully', 'uuid' => $uuid], 200);
+          $properties = $this->getGeometryProperties($filename);
+          return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid, 'properties' => $properties], 200);
       } else {
           return response()->json(['error' => 'GeoJSON file not provided'], 400);
       }
     }
+
+    public function getPolygonsAsGeoJSON()
+    {
+      $limit = 20;
+        // Fetch polygons from the database as GeoJSON
+        $polygons = DB::table('polygon_geometry')
+            ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get();
+
+        // Array to store GeoJSON features
+        $features = [];
+
+        foreach ($polygons as $polygon) {
+            $features[] = json_decode($polygon->geojson);
+        }
+
+        // Convert features array to GeoJSON format
+        $geojson = [
+            'type' => 'FeatureCollection',
+            'features' => $features
+        ];
+
+        // Return the GeoJSON data
+        return response()->json($geojson);
+    }
+
 }
