@@ -210,7 +210,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function getPolygonsAsGeoJSON()
     {
-      $limit = 20;
+      $limit = 2;
         // Fetch polygons from the database as GeoJSON
         $polygons = DB::table('polygon_geometry')
             ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
