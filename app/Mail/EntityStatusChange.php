@@ -71,7 +71,11 @@ class EntityStatusChange extends Mail
             $feedback = $this->entity->feedback;
         }
 
-        return empty($feedback) ? null : $feedback;
+        if (empty($feedback)) {
+            return null;
+        }
+
+        return str_replace("\n", "<br>", $feedback);
     }
 
     private function getBodyParagraphs(): Collection
