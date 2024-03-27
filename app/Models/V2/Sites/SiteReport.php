@@ -351,6 +351,11 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
         return new SiteReportResource($this);
     }
 
+    public function supportsNothingToReport(): bool
+    {
+        return true;
+    }
+
     public function parentEntity(): BelongsTo
     {
         return $this->site();
