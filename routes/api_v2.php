@@ -640,6 +640,9 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
     Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonsAsGeoJSON']);
+    Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
+    Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
+    Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');

@@ -46,25 +46,29 @@ class TerrafundCreateGeometryController extends Controller
         ]);
         return response()->json(['uuid' => $uuid], 200);
     }
-    private function insertSinglePolygon(array $geometry)
+    private function insertSinglePolygon(array $geometry, int $srid)
     {
-        // Convert geometry to GeoJSON string
-        $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry]);
-
+        // Convert geometry to GeoJSON string with specified SRID
+        $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => "EPSG:$srid"]]]);
+    
         // Insert GeoJSON data into the database
         $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
         $uuid = Str::uuid();
+    
         DB::table('polygon_geometry')->insert([
             'uuid' => $uuid,
             'geom' => $geom,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
+    
         return $uuid;
     }
+    
+    
     public function insertGeojsonToDB(string $geojsonFilename)
     {
+        $srid = 4326;
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
         $geojson = json_decode($geojsonData, true);
         if (!isset($geojson['features'])) {
@@ -73,10 +77,10 @@ class TerrafundCreateGeometryController extends Controller
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
             if ($feature['geometry']['type'] === 'Polygon') {
-                $uuids[] = $this->insertSinglePolygon($feature['geometry']);
+                $uuids[] = $this->insertSinglePolygon($feature['geometry'], $srid);
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
-                    $uuids[] = $this->insertSinglePolygon(['type' => 'Polygon', 'coordinates' => $polygon]);
+                    $uuids[] = $this->insertSinglePolygon(['type' => 'Polygon', 'coordinates' => $polygon], $srid);
                 }
             }
         }
@@ -184,7 +188,64 @@ class TerrafundCreateGeometryController extends Controller
       return $shpFile;
   }
 
-  
+    public function checkSelfIntersection(Request $request)
+    {
+        $uuid = $request->query('uuid');
+        $geometry = PolygonGeometry::where('uuid', $uuid)->first();
+
+        if (!$geometry) {
+            return response()->json(['error' => 'Geometry not found'], 404);
+        }
+
+        // Check if the geometry has self-intersection
+        $isSimple = DB::selectOne("SELECT ST_IsSimple(geom) AS is_simple FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->is_simple;
+
+        if ($isSimple) {
+            return response()->json(['message' => 'Geometry does not have self-intersection', 'uuid' => $uuid], 200);
+        } else {
+            return response()->json(['error' => 'Geometry has self-intersection', 'uuid' => $uuid], 400);
+        }
+    }
+    public function validatePolygonSize(Request $request)
+    {
+        $uuid = $request->query('uuid');
+        $geometry = PolygonGeometry::where('uuid', $uuid)->first();
+    
+        if (!$geometry) {
+            return response()->json(['error' => 'Geometry not found'], 404);
+        }
+    
+        // Calculate area in square decimal degrees
+        $areaSqDegrees = DB::selectOne("SELECT ST_Area(geom) AS area FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->area;
+    
+        // Convert square decimal degrees to square meters
+        // The conversion formula depends on the latitude of the polygon
+        // Assuming the polygon is within the range of EPSG:4326 (WGS 84), we use the following formula:
+        // Area in square meters = Area in square decimal degrees * (111,320 * cos(latitude))^2
+        $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(geom)) AS latitude FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->latitude;
+        $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
+    
+        if ($areaSqMeters > 10000000) { // 1 hectare = 10,000 square meters
+            return response()->json([
+                'valid' => false,
+                'message' => 'Polygon area is greater than 1000 hectares',
+                'area_hectares' => $areaSqMeters / 10000, // Convert to hectares
+                'area_sqmeters' => $areaSqMeters,
+                'uuid' => $uuid
+            ], 200);
+        } else {
+            return response()->json([
+                'valid' => true,
+                'message' => 'Polygon area is within the acceptable range',
+                'area_hectares' => $areaSqMeters / 10000, // Convert to hectares
+                'area_sqmeters' => $areaSqMeters,
+                'uuid' => $uuid
+            ], 200);
+        }
+    }
+    
+    
+
 
     public function uploadGeoJSONFile(Request $request)
     { 
@@ -211,16 +272,12 @@ class TerrafundCreateGeometryController extends Controller
     public function getPolygonsAsGeoJSON()
     {
         $limit = 2;
-
-        // Fetch polygons from the database as GeoJSON
         $polygons = DB::table('polygon_geometry')
             ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
             ->orderBy('created_at', 'desc')
             ->whereNotNull('geom')
             ->limit($limit)
             ->get();
-
-        // Array to store GeoJSON features
         $features = [];
 
         foreach ($polygons as $polygon) {
@@ -231,12 +288,10 @@ class TerrafundCreateGeometryController extends Controller
                     'type' => 'Polygon',
                     'coordinates' => $coordinates,
                 ],
-                'properties' => [], // You can add properties if needed
+                'properties' => [],
             ];
             $features[] = $feature;
         }
-
-        // Convert features array to GeoJSON format
         $geojson = [
             'type' => 'FeatureCollection',
             'features' => $features,
