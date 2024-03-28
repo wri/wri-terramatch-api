@@ -64,10 +64,44 @@ class TerrafundCreateGeometryController extends Controller
     
         return $uuid;
     }
+    private function insertCountryPolygon(array $geometry, int $srid)
+    {
+        // Convert geometry to GeoJSON string with specified SRID
+        $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => "EPSG:$srid"]]]);
     
+        // Insert GeoJSON data into the database
+        $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
+        $uuid = Str::uuid();
+    
+        DB::table('world_countries')->insert([
+            'geom' => $geom
+        ]);
+    
+        return $uuid;
+    }
+    public function insertCountriesToDB(string $geojsonFilename)
+    {
+        $srid = 4326;
+        $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
+        $geojson = json_decode($geojsonData, true);
+        if (!isset($geojson['features'])) {
+            return ['error' => 'GeoJSON file does not contain features'];
+        }
+        $uuids = [];
+        foreach ($geojson['features'] as $feature) {
+            if ($feature['geometry']['type'] === 'Polygon') {
+                $uuids[] = $this->insertCountryPolygon($feature['geometry'], $srid);
+            } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+                foreach ($feature['geometry']['coordinates'] as $polygon) {
+                    $uuids[] = $this->insertCountryPolygon(['type' => 'Polygon', 'coordinates' => $polygon], $srid);
+                }
+            }
+        }
+        return $uuids;
+    }
     public function insertCountryFileToDB() {
         $geojsonFilename = 'countries.geojson';
-        $uuids = $this->insertGeojsonToDB($geojsonFilename);
+        $uuids = $this->insertCountriesToDB($geojsonFilename);
         return response()->json(['message' => 'Countries GeoJSON file inserted successfully', 'uuids' => $uuids], 200);
     }
     public function insertGeojsonToDB(string $geojsonFilename)
