@@ -64,17 +64,30 @@ class TerrafundCreateGeometryController extends Controller
     
         return $uuid;
     }
-    private function insertCountryPolygon(array $geometry, int $srid)
+    private function insertCountryPolygon(array $feature, int $srid)
     {
+        $properties = $feature['properties'];
+    
         // Convert geometry to GeoJSON string with specified SRID
-        $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => "EPSG:$srid"]]]);
+        $geojson = json_encode([
+            'type' => 'Feature',
+            'geometry' => $feature['geometry'],
+            'properties' => $properties,
+            'crs' => [
+                'type' => 'name',
+                'properties' => ['name' => "EPSG:$srid"]
+            ]
+        ]);
     
         // Insert GeoJSON data into the database
         $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
-        $uuid = Str::uuid();
     
-        DB::table('world_countries')->insert([
-            'geom' => $geom
+        DB::table('world_countries_generalized')->insert([
+            'geom' => $geom,
+            'country' => $properties['COUNTRY'],
+            'iso' => $properties['ISO'],
+            'country_aff' => $properties['COUNTRYAFF'],
+            'aff_iso' => $properties['AFF_ISO']
         ]);
     
         return $uuid;
