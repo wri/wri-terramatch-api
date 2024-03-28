@@ -6,6 +6,9 @@ use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectReport;
+use App\StateMachines\TaskStatusStateMachine;
 use App\Models\V2\Tasks\Task;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -30,6 +33,11 @@ class CreateBackdatedReportCommand extends Command
     {
         $type = $this->option('type');
         switch ($type) {
+            case 'project':
+                $entityModel = Project::class;
+                $reportModel = ProjectReport::class;
+                break;
+
             case 'site':
                 $entityModel = Site::class;
                 $reportModel = SiteReport::class;
@@ -53,7 +61,16 @@ class CreateBackdatedReportCommand extends Command
             return 1;
         }
 
-        $task = Task::withTrashed()->where('project_id', $entity->project_id)->latest()->first();
+        if ($type === 'project') {
+            $task = Task::create([
+                'organisation_id' => $entity->organisation_id,
+                'project_id' => $entity->id,
+                'status' => TaskStatusStateMachine::DUE,
+            ]);
+        } else {
+            $task = Task::withTrashed()->where('project_id', $entity->project_id)->latest()->first();
+        }
+
         if ($task == null) {
             $this->error("Task not found for project [$entity->project_id]");
             return 1;
