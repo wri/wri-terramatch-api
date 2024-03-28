@@ -65,7 +65,11 @@ class TerrafundCreateGeometryController extends Controller
         return $uuid;
     }
     
-    
+    public function insertCountryFileToDB() {
+        $geojsonFilename = 'countries.geojson';
+        $uuids = $this->insertGeojsonToDB($geojsonFilename);
+        return response()->json(['message' => 'Countries GeoJSON file inserted successfully', 'uuids' => $uuids], 200);
+    }
     public function insertGeojsonToDB(string $geojsonFilename)
     {
         $srid = 4326;

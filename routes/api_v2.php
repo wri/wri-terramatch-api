@@ -643,6 +643,7 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
     Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
+    Route::get('/countries', [TerrafundCreateGeometryController::class, 'insertCountryFileToDB']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
