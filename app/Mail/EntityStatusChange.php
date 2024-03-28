@@ -19,11 +19,11 @@ class EntityStatusChange extends Mail
         $this->title = $this->subject;
         $this->body = $this->getBodyParagraphs()->join('<br><br>');
         $this->link = $this->entity->getViewLinkPath();
-        $this->cta = 'View ' . $this->getEntityName();
+        $this->cta = 'View ' . $this->getEntityTypeName();
         $this->transactional = true;
     }
 
-    private function getEntityName(): string
+    private function getEntityTypeName(): string
     {
         if ($this->entity instanceof ReportModel) {
             return 'Report';
@@ -50,9 +50,9 @@ class EntityStatusChange extends Mail
     {
         return match ($this->getEntityStatus()) {
             EntityStatusStateMachine::APPROVED =>
-                'Your ' . $this->getEntityName() . ' Has Been Approved',
+                'Your ' . $this->getEntityTypeName() . ' Has Been Approved',
             EntityStatusStateMachine::NEEDS_MORE_INFORMATION =>
-                'There is More Information Requested About Your ' . $this->getEntityName(),
+                'There is More Information Requested About Your ' . $this->getEntityTypeName(),
             default => '',
         };
     }
@@ -71,7 +71,11 @@ class EntityStatusChange extends Mail
             $feedback = $this->entity->feedback;
         }
 
-        return empty($feedback) ? null : $feedback;
+        if (empty($feedback)) {
+            return null;
+        }
+
+        return str_replace("\n", "<br>", $feedback);
     }
 
     private function getBodyParagraphs(): Collection
@@ -83,8 +87,10 @@ class EntityStatusChange extends Mail
                 ' report.');
         } else {
             $paragraphs->push('Thank you for submitting your ' .
-                strtolower($this->getEntityName()) .
-                ' information.');
+                strtolower($this->getEntityTypeName()) .
+                ' information for ' .
+                $this->entity->name .
+                '.');
         }
 
         $paragraphs->push(match ($this->getEntityStatus()) {
