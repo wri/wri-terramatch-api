@@ -64,7 +64,7 @@ class TerrafundCreateGeometryController extends Controller
     
         return $uuid;
     }
-   
+    
     public function insertGeojsonToDB(string $geojsonFilename)
     {
         $srid = 4326;
@@ -204,6 +204,55 @@ class TerrafundCreateGeometryController extends Controller
         } else {
             return response()->json(['error' => 'Geometry has self-intersection', 'uuid' => $uuid], 400);
         }
+    }
+  public function calculateDistance($point1, $point2) {
+      $lat1 = $point1[1];
+      $lon1 = $point1[0];
+      $lat2 = $point2[1];
+      $lon2 = $point2[0];
+      
+      $theta = $lon1 - $lon2;
+      $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+      $dist = acos($dist);
+      $dist = rad2deg($dist);
+      $miles = $dist * 60 * 1.1515;
+      return $miles * 1.609344; // Convert to kilometers
+  }
+  public function detectSpikes($geometry) {
+    $spikes = [];
+    if ($geometry['type'] === 'Polygon' || $geometry['type'] === 'MultiPolygon') {
+        $coordinates = $geometry['type'] === 'Polygon' ? $geometry['coordinates'][0] : $geometry['coordinates'][0][0]; // First ring of the polygon or the first polygon in the MultiPolygon
+        $numVertices = count($coordinates);
+        $perimeter = 0;
+        for ($i = 0; $i < $numVertices - 1; $i++) {
+            // Calculate distance between consecutive vertices
+            $distance = $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
+            $perimeter += $distance;
+        }
+        // Check for spikes (vertices with distances significantly different from average)
+        $averageDistance = $perimeter / ($numVertices - 1);
+        $threshold = $averageDistance * 1.25; // Adjust this threshold as needed
+        for ($i = 0; $i < $numVertices - 1; $i++) {
+            $distance = $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
+            if (abs($distance - $averageDistance) > $threshold) {
+                $spikes[] = $coordinates[$i]; // Flag vertex as a spike
+            }
+        }
+    }
+    return $spikes;
+}
+    public function checkBoundarySegments(Request $request) {
+        $uuid = $request->query('uuid');
+        $geometry = PolygonGeometry::where('uuid', $uuid)->first();
+    
+        if (!$geometry) {
+            return response()->json(['error' => 'Geometry not found'], 404);
+        }
+        $geojson = DB::selectOne("SELECT ST_AsGeoJSON(geom) AS geojson FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->geojson;
+        $geojsonArray = json_decode($geojson, true);
+        $spikes = $this->detectSpikes($geojsonArray);
+
+        return response()->json(['spikes' => $spikes]);
     }
     public function validatePolygonSize(Request $request)
     {
