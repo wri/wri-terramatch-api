@@ -17,6 +17,6 @@ class PolygonGeometry extends Model
     ];
     public function criteriaSite()
     {
-        return $this->hasOne(CriteriaSite::class, 'polygon_id', 'polygon_id');
+        return $this->hasMany(CriteriaSite::class, 'polygon_id', 'polygon_id');
     }
 }

@@ -12,6 +12,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\V2\PolygonGeometry;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use App\Models\V2\Sites\CriteriaSite;
+
 
 class TerrafundCreateGeometryController extends Controller
 {
@@ -198,12 +200,11 @@ class TerrafundCreateGeometryController extends Controller
 
         // Check if the geometry has self-intersection
         $isSimple = DB::selectOne("SELECT ST_IsSimple(geom) AS is_simple FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->is_simple;
+        $SELF_CRITERIA_ID = 4;
+        $message = $isSimple ? 'The geometry is valid' : 'The geometry has self-intersections';
+        $insertionSuccess = $this->insertCriteriaSite($geometry->id, $SELF_CRITERIA_ID, $isSimple);
+        return response()->json(['selfintersects' => $message, 'geometry_id' => $geometry->id, 'insertion_success' => $insertionSuccess, 'valid' => $isSimple], 200);
 
-        if ($isSimple) {
-            return response()->json(['message' => 'Geometry does not have self-intersection', 'uuid' => $uuid], 200);
-        } else {
-            return response()->json(['error' => 'Geometry has self-intersection', 'uuid' => $uuid], 400);
-        }
     }
   public function calculateDistance($point1, $point2) {
       $lat1 = $point1[1];
@@ -241,6 +242,20 @@ class TerrafundCreateGeometryController extends Controller
     }
     return $spikes;
 }
+public function insertCriteriaSite($POLYGON_ID, $CRITERIA_ID, $valid) {
+  $criteriaSite = new CriteriaSite();
+  $criteriaSite->polygon_id = $POLYGON_ID;
+  $criteriaSite->criteria_id = $CRITERIA_ID;
+  $criteriaSite->uuid = Str::uuid();
+  $criteriaSite->valid = $valid;
+  try {
+      $criteriaSite->save();
+      return true;
+  } catch (\Exception $e) {
+      return $e->getMessage();
+  }
+}
+
     public function checkBoundarySegments(Request $request) {
         $uuid = $request->query('uuid');
         $geometry = PolygonGeometry::where('uuid', $uuid)->first();
@@ -251,8 +266,10 @@ class TerrafundCreateGeometryController extends Controller
         $geojson = DB::selectOne("SELECT ST_AsGeoJSON(geom) AS geojson FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->geojson;
         $geojsonArray = json_decode($geojson, true);
         $spikes = $this->detectSpikes($geojsonArray);
-
-        return response()->json(['spikes' => $spikes]);
+        $SPIKE_CRITERIA_ID = 8;
+        $valid = count($spikes) === 0;
+        $insertionSuccess = $this->insertCriteriaSite($geometry->id, $SPIKE_CRITERIA_ID, $valid);
+        return response()->json(['spikes' => $spikes, 'geometry_id' => $geometry->id, 'insertion_success' => $insertionSuccess, 'valid' => $valid], 200);
     }
     public function validatePolygonSize(Request $request)
     {
@@ -272,24 +289,16 @@ class TerrafundCreateGeometryController extends Controller
         // Area in square meters = Area in square decimal degrees * (111,320 * cos(latitude))^2
         $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(geom)) AS latitude FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->latitude;
         $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
-    
-        if ($areaSqMeters > 10000000) { // 1 hectare = 10,000 square meters
-            return response()->json([
-                'valid' => false,
-                'message' => 'Polygon area is greater than 1000 hectares',
-                'area_hectares' => $areaSqMeters / 10000, // Convert to hectares
-                'area_sqmeters' => $areaSqMeters,
-                'uuid' => $uuid
-            ], 200);
-        } else {
-            return response()->json([
-                'valid' => true,
-                'message' => 'Polygon area is within the acceptable range',
-                'area_hectares' => $areaSqMeters / 10000, // Convert to hectares
-                'area_sqmeters' => $areaSqMeters,
-                'uuid' => $uuid
-            ], 200);
-        }
+        $SIZE_CRITERIA_ID = 6;
+        $valid = $areaSqMeters <= 10000000;
+        $insertionSuccess = $this->insertCriteriaSite($geometry->id, $SIZE_CRITERIA_ID, $valid);
+        return response()->json([
+          'area_hectares' => $areaSqMeters / 10000, // Convert to hectares
+          'area_sqmeters' => $areaSqMeters,
+          'geometry_id' => $geometry->id,
+          'insertion_success' => $insertionSuccess,
+          'valid' => $valid
+        ], 200);
     }
     
     
