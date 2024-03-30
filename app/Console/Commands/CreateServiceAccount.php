@@ -47,6 +47,8 @@ class CreateServiceAccount extends Command
 
             $user = new User($data);
             $user->saveOrFail();
+            // TODO Allow other types of service account, when/if necessary.
+            $user->assignRole('greenhouse-service-account');
 
             $this->info("Created service account $email with API Key: $apiKey");
             return 0;
