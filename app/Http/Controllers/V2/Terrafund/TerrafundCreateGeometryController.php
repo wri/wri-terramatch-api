@@ -280,13 +280,7 @@ public function insertCriteriaSite($POLYGON_ID, $CRITERIA_ID, $valid) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
     
-        // Calculate area in square decimal degrees
         $areaSqDegrees = DB::selectOne("SELECT ST_Area(geom) AS area FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->area;
-    
-        // Convert square decimal degrees to square meters
-        // The conversion formula depends on the latitude of the polygon
-        // Assuming the polygon is within the range of EPSG:4326 (WGS 84), we use the following formula:
-        // Area in square meters = Area in square decimal degrees * (111,320 * cos(latitude))^2
         $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(geom)) AS latitude FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->latitude;
         $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
         $SIZE_CRITERIA_ID = 6;
@@ -300,9 +294,36 @@ public function insertCriteriaSite($POLYGON_ID, $CRITERIA_ID, $valid) {
           'valid' => $valid
         ], 200);
     }
-    
-    
 
+    public function checkWithinCountry(Request $request) {
+      $countryName = $request->input('country');
+      $polygonUuid = $request->input('uuid');
+      $geometry = PolygonGeometry::where('uuid', $polygonUuid)->first();
+    
+      if (!$geometry) {
+          return response()->json(['error' => 'Geometry not found'], 404);
+      }
+      $totalArea = DB::table('polygon_geometry')
+          ->where('uuid', $polygonUuid)
+          ->selectRaw('ST_Area(geom) AS area')
+          ->first()->area;
+  
+      $intersectionArea = DB::table('world_countries_generalized')
+          ->where('country', $countryName)
+          ->selectRaw('ST_Area(ST_Intersection(world_countries_generalized.geometry, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) AS area', [$polygonUuid])
+          ->first()->area;
+      $insidePercentage = $intersectionArea / $totalArea * 100;
+
+      $insideThreshold = 75;
+      $insideViolation = $insidePercentage < $insideThreshold;
+      $WITHIN_COUNTRY_CRITERIA_ID = 7;
+      $insertionSuccess = $this->insertCriteriaSite($$geometry->id, $WITHIN_COUNTRY_CRITERIA_ID, !$insideViolation);
+      return response()->json([
+          'inside_percentage' => $insidePercentage,
+          'inside_violation' => $insideViolation,
+      ]);
+  }
+  
 
     public function uploadGeoJSONFile(Request $request)
     { 
