@@ -317,10 +317,12 @@ public function insertCriteriaSite($POLYGON_ID, $CRITERIA_ID, $valid) {
       $insideThreshold = 75;
       $insideViolation = $insidePercentage < $insideThreshold;
       $WITHIN_COUNTRY_CRITERIA_ID = 7;
-      $insertionSuccess = $this->insertCriteriaSite($$geometry->id, $WITHIN_COUNTRY_CRITERIA_ID, !$insideViolation);
+      $insertionSuccess = $this->insertCriteriaSite($geometry->id, $WITHIN_COUNTRY_CRITERIA_ID, !$insideViolation);
       return response()->json([
           'inside_percentage' => $insidePercentage,
-          'inside_violation' => $insideViolation,
+          'valid' => !$insideViolation,
+          'geometry_id' => $geometry->id,
+          'insertion_success' => $insertionSuccess
       ]);
   }
   
