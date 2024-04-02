@@ -13,6 +13,7 @@ use App\Models\V2\PolygonGeometry;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use App\Models\V2\Sites\CriteriaSite;
+use App\Models\V2\WorldCountryGeneralized;
 
 
 class TerrafundCreateGeometryController extends Controller
@@ -391,6 +392,13 @@ public function insertCriteriaSite($POLYGON_ID, $CRITERIA_ID, $valid) {
         // Return the GeoJSON data
         return response()->json($geojson);
     }
-
+    public function getAllCountryNames()
+    {
+        $countries = WorldCountryGeneralized::select('country')
+        ->distinct()
+        ->orderBy('country')
+        ->pluck('country');
+        return response()->json(['countries' => $countries]);
+    }
 
 }
