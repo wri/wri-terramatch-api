@@ -81,7 +81,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     return $this->stringifyModel($answer, ['first_name', 'last_name', 'position', 'gender', 'age', 'role']);
 
                 case 'fundingType':
-                    return $this->stringifyModel($answer, ['source', 'amount', 'year']);
+                    return $this->stringifyModel($answer, ['type', 'source', 'amount', 'year']);
 
                 case 'ownershipStake':
                     return $this->stringifyModel($answer, ['first_name', 'last_name', 'title', 'gender', 'percent_ownership', 'year_of_birth',]);
