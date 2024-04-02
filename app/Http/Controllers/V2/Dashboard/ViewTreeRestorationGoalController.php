@@ -33,7 +33,7 @@ class ViewTreeRestorationGoalController extends Controller
         $forProfitTreeCount = $this->treeCountByDueDate($forProfitProjectIds, $latestDueDate["year"], $latestDueDate["month"]);
         $nonProfitTreeCount = $this->treeCountByDueDate($nonProfitProjectIds, $latestDueDate["year"], $latestDueDate["month"]);
 
-        $totalTreesGrownGoal = Project::sum('trees_grown_goal');
+        $totalTreesGrownGoal = $query->sum('trees_grown_goal');
 
         $treesUnderRestorationActualTotal = $this->treeCountPerPeriod($siteIds, $distinctDates);
         $treesUnderRestorationActualForProfit = $this->treeCountPerPeriod($forProfitSiteIds, $distinctDates);
