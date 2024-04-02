@@ -87,9 +87,14 @@ class ActiveCountriesTableController extends Controller
         return $projects->sum(function ($project) {
             $latestProjectReport = $project->reports()
                 ->orderByDesc('due_at')
-                ->value(DB::raw('pt_total + ft_total'));
-
-            return $latestProjectReport;
+                ->groupBy('project_id')
+                ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')->first();
+            
+            if ($latestProjectReport) {
+                return $latestProjectReport->total_ft + $latestProjectReport->total_pt;
+            } else {
+                return 0;
+            }
         });
     }
 
