@@ -20,6 +20,10 @@ class ProjectPolicy extends Policy
             return true;
         }
 
+        if ($user->can('projects-read')) {
+            return true;
+        }
+
         return false;
 
     }
