@@ -198,12 +198,11 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Geometry not found'], 404);
         }
 
-        // Check if the geometry has self-intersection
         $isSimple = DB::selectOne("SELECT ST_IsSimple(geom) AS is_simple FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->is_simple;
         $SELF_CRITERIA_ID = 4;
         $message = $isSimple ? 'The geometry is valid' : 'The geometry has self-intersections';
         $insertionSuccess = $this->insertCriteriaSite($geometry->id, $SELF_CRITERIA_ID, $isSimple);
-        return response()->json(['selfintersects' => $message, 'geometry_id' => $geometry->id, 'insertion_success' => $insertionSuccess, 'valid' => $isSimple], 200);
+        return response()->json(['selfintersects' => $message, 'geometry_id' => $geometry->id, 'insertion_success' => $insertionSuccess, 'valid' => $isSimple ? true : false], 200);
 
     }
   public function calculateDistance($point1, $point2) {
@@ -226,17 +225,15 @@ class TerrafundCreateGeometryController extends Controller
         $numVertices = count($coordinates);
         $perimeter = 0;
         for ($i = 0; $i < $numVertices - 1; $i++) {
-            // Calculate distance between consecutive vertices
             $distance = $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
             $perimeter += $distance;
         }
-        // Check for spikes (vertices with distances significantly different from average)
         $averageDistance = $perimeter / ($numVertices - 1);
         $threshold = $averageDistance * 1.25; // Adjust this threshold as needed
         for ($i = 0; $i < $numVertices - 1; $i++) {
             $distance = $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
             if (abs($distance - $averageDistance) > $threshold) {
-                $spikes[] = $coordinates[$i]; // Flag vertex as a spike
+                $spikes[] = $coordinates[$i]; 
             }
         }
     }
@@ -326,7 +323,21 @@ public function insertCriteriaSite($POLYGON_ID, $CRITERIA_ID, $valid) {
       ]);
   }
   
+  public function getGeometryType(Request $request)
+    {
+        $uuid = $request->input('uuid');
 
+        // Fetch the geometry type based on the UUID using SQL query
+        $query = "SELECT ST_GeometryType(geom) AS geometry_type FROM polygon_geometry WHERE uuid = ?";
+        $result = DB::selectOne($query, [$uuid]);
+
+        if ($result) {
+            $geometryType = $result->geometry_type;
+            return response()->json(['uuid' => $uuid, 'geometry_type' => $geometryType]);
+        } else {
+            return response()->json(['error' => 'Geometry not found for the given UUID'], 404);
+        }
+    }
     public function uploadGeoJSONFile(Request $request)
     { 
       if ($request->hasFile('file')) {
