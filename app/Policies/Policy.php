@@ -37,6 +37,11 @@ abstract class Policy
         return ! $this->isGuest($user) && $user->role == 'admin';
     }
 
+    protected function isServiceAccount(?UserModel $user): bool
+    {
+        return !$this->isGuest($user) && $user->role == 'service';
+    }
+
     protected function isOrphanedUser(?UserModel $user): bool
     {
         return $this->isUser($user) && ! ((bool) $user->organisation_id) && (count($user->all_my_organisations) == 0);
