@@ -93,7 +93,7 @@ public function insertGeojsonToDB(string $geojsonFilename)
             }
         }
     }
-    return ['uuids' => $uuids];
+    return $uuids;
 }
 private function validateSchema(array $properties, array $fields): bool {
   foreach ($fields as $field) {
@@ -121,17 +121,13 @@ private function insertSitePolygon(string $polygonId, array $properties) {
       $DATA_CRITERIA_ID = 14;
       $validData = true;
       if (!$this->validateSchema($properties, $fieldsToValidate)) {
-        echo 'validate schema false ';
         $validSchema = false; 
         $validData = false;
       } else if (!$this->validateData($properties, $fieldsToValidate)) {
-        echo 'validate data false ';
           $validData = false;
       }
       $insertionSchemaSuccess = $this->insertCriteriaSite($polygonId, $SCHEMA_CRITERIA_ID, $validSchema);
-      echo $insertionSchemaSuccess;
       $insertionDataSuccess = $this->insertCriteriaSite($polygonId, $DATA_CRITERIA_ID, $validData);
-      echo $insertionDataSuccess;
 
       $sitePolygon = new SitePolygon();
       $sitePolygon->uuid = Str::uuid();
@@ -154,7 +150,6 @@ private function insertSitePolygon(string $polygonId, array $properties) {
       $sitePolygon->updated_at = now();
       $sitePolygon->save();
   } catch (\Exception $e) {
-    echo $e->getMessage();
       return $e->getMessage();
   }
 }
