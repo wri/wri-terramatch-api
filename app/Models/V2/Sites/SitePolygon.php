@@ -2,30 +2,34 @@
 
 namespace App\Models\V2\Sites;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\V2\PolygonGeometry;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SitePolygon extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
 
+    protected $table = 'site_polygon';
     protected $fillable = [
-        'project_id',
-        'project_label',
-        'site_id',
-        'site_name',
-        'poly_label',
-        'poly_id',
-        'plant_date',
-        'country',
-        'org_name',
-        'practice',
-        'target_sys',
-        'dist',
+      'proj_name',
+      'org_name',
+      'country',
+      'poly_id',
+      'poly_name',
+      'site_id',
+      'site_name',
+      'poly_label',
+      'plantstart',
+      'plantend',
+      'practice',
+      'target_sys',
+      'distr',
+      'num_trees',
+      'est_area'
     ];
-
-    public function site(): BelongsTo
+    public function polygonGeometry()
     {
-        return $this->belongsTo(Site::class);
+        return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'id');
     }
 }

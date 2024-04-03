@@ -13,6 +13,7 @@ class CreateIndicatorSite extends Migration
      */
     public function up()
     {
+      Schema::dropIfExists('indicator_site');
       Schema::create('indicator_site', function (Blueprint $table) {
         $table->id();
         $table->uuid('uuid')->unique();

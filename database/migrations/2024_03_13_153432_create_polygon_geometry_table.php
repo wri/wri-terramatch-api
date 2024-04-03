@@ -15,7 +15,6 @@ return new class extends Migration
       Schema::create('polygon_geometry', function (Blueprint $table) {
           $table->id();
           $table->uuid('uuid')->unique();
-          $table->integer('polygon_id')->nullable();;
           $table->geometry('geom')->nullable();;
           // $table->foreign('polygon_id')->references('id')->on('indicator_site')->onDelete('cascade');
           $table->softDeletes();

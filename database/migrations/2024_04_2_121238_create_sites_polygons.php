@@ -13,22 +13,26 @@ class CreateSitesPolygons extends Migration
      */
     public function up()
     {
+      Schema::dropIfExists('site_polygon');
       Schema::create('site_polygon', function (Blueprint $table) {
         $table->id();
         $table->uuid('uuid')->unique();
         $table->integer('project_id')->nullable();
-        $table->string('project_label')->nullable();
-        $table->integer('site_id')->nullable();
+        $table->string('proj_name')->nullable();
+        $table->string('org_name')->nullable();
+        $table->string('country')->nullable();
+        $table->integer('poly_id')->nullable();
+        $table->string('poly_name')->nullable();
+        $table->string('site_id')->nullable();
         $table->string('site_name')->nullable();
         $table->string('poly_label')->nullable();
-        $table->date('plant_date')->nullable();
-        $table->string('country')->nullable();
-        $table->string('org_name')->nullable();
+        $table->date('plantstart')->nullable();
+        $table->date('plantend')->nullable();
         $table->string('practice')->nullable();
         $table->string('target_sys')->nullable();
-        $table->string('dist')->nullable();
-        $table->integer('tree_count')->nullable();
-        $table->float('estimated_area')->nullable();
+        $table->string('distr')->nullable();
+        $table->integer('num_trees')->nullable();
+        $table->float('est_area')->nullable();
         $table->date('date_modified')->nullable();
         $table->string('created_by')->nullable();
         $table->string('last_modified_by')->nullable();
