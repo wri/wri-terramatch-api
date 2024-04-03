@@ -9289,6 +9289,21 @@ definitions:
             type: integer
           woodlot-or-plantation:
             type: integer
+      landTenures:
+        type: object
+        properties:
+          communal:
+            type: integer
+          indigenous:
+            type: integer
+          national_protected_area:
+            type: integer
+          other:
+            type: integer
+          private:
+            type: integer
+          public:
+            type: integer
   DashboardTreeRestorationGoalResponse:
     type: object
     properties:
