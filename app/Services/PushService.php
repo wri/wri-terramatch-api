@@ -18,8 +18,12 @@ class PushService
         $this->snsClient = App::make('CustomSnsClient');
     }
 
-    public function fetchEndpointArn(string $os, string $pushToken): string
+    public function fetchEndpointArn(string $os, string $pushToken): ?string
     {
+        if (!config('app.sns.enabled')) {
+            return null;
+        }
+
         if (! in_array($os, ['android', 'ios']) || empty($pushToken)) {
             throw new Exception();
         }
