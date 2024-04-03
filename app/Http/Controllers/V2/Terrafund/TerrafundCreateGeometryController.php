@@ -84,41 +84,83 @@ public function insertGeojsonToDB(string $geojsonFilename)
         if ($feature['geometry']['type'] === 'Polygon') {
             $data = $this->insertSinglePolygon($feature['geometry'], $srid);
             $uuids[] = $data['uuid'];
-            $this->insertSitePolygon($data['id'], $feature['properties'], $feature['geometry']['type']);
+            $this->insertSitePolygon($data['id'], $feature['properties']);
         } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
             foreach ($feature['geometry']['coordinates'] as $polygon) {
                 $data = $this->insertSinglePolygon(['type' => 'Polygon', 'coordinates' => $polygon], $srid);
                 $uuids[] = $data['uuid'];
-                $this->insertSitePolygon($data['id'], $feature['properties'], $feature['geometry']['type']);
+                $this->insertSitePolygon($data['id'], $feature['properties']);
             }
         }
     }
     return ['uuids' => $uuids];
 }
-
-private function insertSitePolygon(string $polygonId, array $properties, string $geometryType)
-{
-    $sitePolygon = new SitePolygon();
-    $sitePolygon->uuid = Str::uuid();
-    $sitePolygon->proj_name = $properties['proj_name'] ?? null;
-    $sitePolygon->org_name = $properties['org_name'] ?? null;
-    $sitePolygon->country = $properties['country'] ?? null;
-    $sitePolygon->poly_id = $polygonId ? $polygonId : 'nullx';
-    $sitePolygon->poly_name = $properties['poly_name'] ?? null;
-    $sitePolygon->site_id = $properties['site_id'] ?? null;
-    $sitePolygon->site_name = $properties['site_name'] ?? null;
-    $sitePolygon->poly_label = $properties['poly_label'] ?? null;
-    $sitePolygon->plantstart = $properties['plantstart'] ?? null;
-    $sitePolygon->plantend = $properties['plantend'] ?? null;
-    $sitePolygon->practice = $properties['practice'] ?? null;
-    $sitePolygon->target_sys = $properties['target_sys'] ?? null;
-    $sitePolygon->distr = $properties['distr'] ?? null;
-    $sitePolygon->num_trees = $properties['num_trees'] ?? null;
-    $sitePolygon->est_area = $properties['est_area'] ?? null;
-    $sitePolygon->created_at = now();
-    $sitePolygon->updated_at = now();
-    $sitePolygon->save();
+private function validateSchema(array $properties, array $fields): bool {
+  foreach ($fields as $field) {
+      if (!array_key_exists($field, $properties)) {
+          return false;
+      }
+  }
+  return true;
 }
+
+private function validateData(array $properties, array $fields): bool {
+  foreach ($fields as $field) {
+      $value = $properties[$field];
+      if ($value === null || strtoupper($value) === 'NULL' || $value === '') {
+          return false;
+      }
+  }
+  return true;
+}
+private function insertSitePolygon(string $polygonId, array $properties) {
+  try {
+      $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'est_area'];
+      $SCHEMA_CRITERIA_ID = 13;
+      $validSchema = true;
+      $DATA_CRITERIA_ID = 14;
+      $validData = true;
+      if (!$this->validateSchema($properties, $fieldsToValidate)) {
+        echo 'validate schema false ';
+        $validSchema = false; 
+        $validData = false;
+      } else if (!$this->validateData($properties, $fieldsToValidate)) {
+        echo 'validate data false ';
+          $validData = false;
+      }
+      $insertionSchemaSuccess = $this->insertCriteriaSite($polygonId, $SCHEMA_CRITERIA_ID, $validSchema);
+      echo $insertionSchemaSuccess;
+      $insertionDataSuccess = $this->insertCriteriaSite($polygonId, $DATA_CRITERIA_ID, $validData);
+      echo $insertionDataSuccess;
+
+      $sitePolygon = new SitePolygon();
+      $sitePolygon->uuid = Str::uuid();
+      $sitePolygon->proj_name = $properties['proj_name'] ?? null;
+      $sitePolygon->org_name = $properties['org_name'] ?? null;
+      $sitePolygon->country = $properties['country'] ?? null;
+      $sitePolygon->poly_id = $polygonId ?? null;
+      $sitePolygon->poly_name = $properties['poly_name'] ?? null;
+      $sitePolygon->site_id = $properties['site_id'] ?? null;
+      $sitePolygon->site_name = $properties['site_name'] ?? null;
+      $sitePolygon->poly_label = $properties['poly_label'] ?? null;
+      $sitePolygon->plantstart = !empty($properties['plantstart']) ? $properties['plantstart'] : null;
+      $sitePolygon->plantend = !empty($properties['plantend']) ? $properties['plantend'] : null;
+      $sitePolygon->practice = $properties['practice'] ?? null;
+      $sitePolygon->target_sys = $properties['target_sys'] ?? null;
+      $sitePolygon->distr = $properties['distr'] ?? null;
+      $sitePolygon->num_trees = $properties['num_trees'] ?? null;
+      $sitePolygon->est_area = $properties['est_area'] ?? null;
+      $sitePolygon->created_at = now();
+      $sitePolygon->updated_at = now();
+      $sitePolygon->save();
+  } catch (\Exception $e) {
+    echo $e->getMessage();
+      return $e->getMessage();
+  }
+}
+
+
+
   public function getGeometryProperties(string $geojsonFilename)
   {
     $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
@@ -371,6 +413,56 @@ private function insertSitePolygon(string $polygonId, array $properties, string 
       return response()->json(['error' => 'Geometry not found for the given UUID'], 404);
     }
   }
+
+
+public function getCriteriaData(Request $request)
+{
+    $uuid = $request->input('uuid');
+
+    // Find the ID of the polygon based on the UUID
+    $polygonIdQuery = "SELECT id FROM polygon_geometry WHERE uuid = ?";
+    $polygonIdResult = DB::selectOne($polygonIdQuery, [$uuid]);
+
+    if (!$polygonIdResult) {
+        return response()->json(['error' => 'Polygon not found for the given UUID'], 404);
+    }
+
+    $polygonId = $polygonIdResult->id;
+
+    // Fetch data from criteria_site with distinct criteria_id based on the latest created_at
+    $criteriaDataQuery = "SELECT criteria_id, MAX(created_at) AS latest_created_at
+                          FROM criteria_site 
+                          WHERE polygon_id = ?
+                          GROUP BY criteria_id";
+
+    $criteriaData = DB::select($criteriaDataQuery, [$polygonId]);
+
+    if (empty($criteriaData)) {
+        return response()->json(['error' => 'Criteria data not found for the given polygon ID'], 404);
+    }
+
+    // Determine the validity of each criteria
+    $criteriaList = [];
+    foreach ($criteriaData as $criteria) {
+        $criteriaId = $criteria->criteria_id;
+
+        // Check if the criteria is valid
+        $validCriteriaQuery = "SELECT valid FROM criteria_site 
+                               WHERE polygon_id = ? AND criteria_id = ? AND created_at = ?";
+        $validResult = DB::selectOne($validCriteriaQuery, [$polygonId, $criteriaId, $criteria->latest_created_at]);
+        
+        $valid = $validResult ? $validResult->valid : null;
+
+        $criteriaList[] = [
+            'criteria_id' => $criteriaId,
+            'latest_created_at' => $criteria->latest_created_at,
+            'valid' => $valid
+        ];
+    }
+
+    return response()->json(['polygon_id' => $polygonId, 'criteria_list' => $criteriaList]);
+}
+
   public function uploadGeoJSONFile(Request $request)
   {
     if ($request->hasFile('file')) {

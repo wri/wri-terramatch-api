@@ -646,6 +646,7 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/within-country', [TerrafundCreateGeometryController::class, 'checkWithinCountry']);
     Route::get('/validation/geometry-type', [TerrafundCreateGeometryController::class, 'getGeometryType']);
     Route::get('/country-names', [TerrafundCreateGeometryController::class, 'getAllCountryNames']);
+    Route::get('/validation/criteria-data', [TerrafundCreateGeometryController::class, 'getCriteriaData']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
