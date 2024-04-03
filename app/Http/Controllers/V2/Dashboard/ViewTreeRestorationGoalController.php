@@ -104,16 +104,20 @@ class ViewTreeRestorationGoalController extends Controller
     private function treeCountByDueDate(array $projectIds, $year, $month)
     {
         $siteIds = Site::whereIn('project_id', $projectIds)->pluck('id');
-
-        return $siteIds->sum(function ($id) {
-            $latestReport = SiteReport::where('site_id', $id)->orderByDesc('due_at')->first();
-            if ($latestReport) {
-                return $latestReport->treeSpecies()->sum('amount');
-            } else {
-                return 0;
+    
+        $totalTreeCount = 0;
+    
+        foreach ($siteIds as $siteId) {
+            $reports = SiteReport::where('site_id', $siteId)->get();
+    
+            foreach ($reports as $report) {
+                $totalTreeCount += $report->treeSpecies()->sum('amount');
             }
-        });
+        }
+    
+        return $totalTreeCount;
     }
+    
 
     private function treeCountPerPeriod($siteIds, $distinctDates)
     {

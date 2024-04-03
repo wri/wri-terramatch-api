@@ -26,20 +26,19 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
     {
 
         $topProjects = [];
-        $totalSpeciesAmountForSiteReport = 0;
-        foreach($projects as $project) {
-            $totalSpeciesAmountForSiteReport = $project->sites()->get()->sum(function ($site) {
-                $latestReport = $site->reports()->orderByDesc('due_at')->first();
-                if ($latestReport) {
-                    return $latestReport->treeSpecies()->sum('amount');
-                }
+
+        $projects->each((function ($project) use (&$topProjects) {
+            $totalSpeciesAmountForSiteReport = $project->sites()->with(['reports.treeSpecies'])->get()->sum(function ($site) {
+                return $site->reports->sum(function ($report) {
+                    return $report->treeSpecies->sum('amount');
+                });
             });
             $topProjects[] = [
                 'project' => $project->name,
                 'uuid' => $project->uuid,
                 'trees_planted' => $totalSpeciesAmountForSiteReport,
             ];
-        }
+        }));
 
         return collect($topProjects)->sortByDesc('trees_planted')->take(10)->values()->all();
     }
@@ -48,21 +47,19 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
     {
 
         $topSpecies = [];
-        foreach($projects as $project) {
-            $sites = $project->sites()->get();
-            foreach ($sites as $site) {
-                $latestReport = $site->reports()->orderByDesc('due_at')->first();
-                if ($latestReport) {
-                    $treesSpecies = $latestReport->treeSpecies()->get();
-                    foreach ($treesSpecies as $species) {
+
+        $projects->each(function ($project) use (&$topSpecies) {
+            $project->sites()->with(['reports.treeSpecies'])->get()->each(function ($site) use (&$topSpecies) {
+                $site->reports->each(function ($report) use (&$topSpecies) {
+                    $report->treeSpecies->each(function ($species) use (&$topSpecies) {
                         $topSpecies[] = [
                             'name' => $species->name,
                             'amount' => $species->amount,
                         ];
-                    }
-                }
-            }
-        }
+                    });
+                });
+            });
+        });
         $speciesCollection = new Collection($topSpecies);
         $speciesGrouped = $speciesCollection->groupBy('name');
 
