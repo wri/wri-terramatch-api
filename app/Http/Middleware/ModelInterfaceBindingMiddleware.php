@@ -17,6 +17,9 @@ use Illuminate\Http\Request;
  */
 class ModelInterfaceBindingMiddleware
 {
+    public const ENTITY_TYPES_PLURAL = ['projects', 'project-reports', 'sites', 'site-reports', 'nurseries', 'nursery-reports'];
+    public const ENTITY_TYPES_SINGULAR = ['project', 'project-report', 'site', 'site-report', 'nursery', 'nursery-report'];
+
     private const CONCRETE_MODELS = [
         // EntityModel concrete classes
         'projects' => Project::class,
