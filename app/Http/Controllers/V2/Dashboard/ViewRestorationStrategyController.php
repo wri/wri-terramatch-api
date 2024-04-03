@@ -23,9 +23,12 @@ class ViewRestorationStrategyController extends Controller
 
         $landUseType = $this->getLandUseType($projectIds);
 
+        $landTenures = $this->getLandTenures($projectIds);
+
         $result = [
             'restorationStrategies' => $this->getResultArray($restorationStrategy, 'strategy'),
-            'landUseTypes' => $this->getResultArray($landUseType, 'land_use')
+            'landUseTypes' => $this->getResultArray($landUseType, 'land_use'),
+            'landTenures' => $this->getResultArray($landTenures, 'land_tenure')
         ];
 
         return new JsonResponse(ViewRestorationStrategyResource::make($result));
@@ -92,6 +95,34 @@ class ViewRestorationStrategyController extends Controller
                 $join->on('v2_sites.project_id', '=', 'subquery.project_id');
             })
             ->groupBy('land_use')
+            ->get();
+    }
+
+    private function getLandTenures(array $projectIds)
+    {
+        $landTenures = ["private", "public", "indigenous", "other", "national_protected_area", "communal"];
+
+        $conditions = implode(' OR ', array_map(function ($type) {
+            return "JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_tenures, CONCAT('\$[', numbers.n, ']'))) = '$type'";
+        }, $landTenures));
+
+        $numbers = implode(' UNION ALL ', array_map(function ($n) {
+            return "SELECT $n AS n";
+        }, range(0, 4)));
+
+        return Site::select('land_tenure', DB::raw('COUNT(DISTINCT v2_sites.project_id) as count_per_project'))
+            ->join(DB::raw("(SELECT project_id,
+                                JSON_UNQUOTE(JSON_EXTRACT(land_tenures, CONCAT('\$[', numbers.n, ']'))) AS land_tenure
+                            FROM v2_sites
+                            CROSS JOIN
+                                ($numbers) numbers
+                            WHERE
+                                v2_sites.project_id IN (" . implode(',', $projectIds) . ")
+                                AND ($conditions)
+                        ) AS subquery"), function ($join) {
+                $join->on('v2_sites.project_id', '=', 'subquery.project_id');
+            })
+            ->groupBy('land_tenure')
             ->get();
     }
 

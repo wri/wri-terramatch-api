@@ -33,7 +33,7 @@ class ViewTreeRestorationGoalController extends Controller
         $forProfitTreeCount = $this->treeCountByDueDate($forProfitProjectIds, $latestDueDate["year"], $latestDueDate["month"]);
         $nonProfitTreeCount = $this->treeCountByDueDate($nonProfitProjectIds, $latestDueDate["year"], $latestDueDate["month"]);
 
-        $totalTreesGrownGoal = Project::sum('trees_grown_goal');
+        $totalTreesGrownGoal = $query->sum('trees_grown_goal');
 
         $treesUnderRestorationActualTotal = $this->treeCountPerPeriod($siteIds, $distinctDates);
         $treesUnderRestorationActualForProfit = $this->treeCountPerPeriod($forProfitSiteIds, $distinctDates);
@@ -69,9 +69,9 @@ class ViewTreeRestorationGoalController extends Controller
     private function getRawProjectIds($query)
     {
         return $query
-        ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
-        ->select('v2_projects.id', 'organisations.type')
-        ->get();
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+            ->select('v2_projects.id', 'organisations.type')
+            ->get();
     }
 
     private function getAllProjectIds($projectIds)
@@ -104,16 +104,15 @@ class ViewTreeRestorationGoalController extends Controller
     private function treeCountByDueDate(array $projectIds, $year, $month)
     {
         $siteIds = Site::whereIn('project_id', $projectIds)->pluck('id');
-        $siteReportIds = SiteReport::whereIn('site_id', $siteIds)
-            ->whereYear('due_at', $year)
-            ->whereMonth('due_at', $month)
-            ->pluck('id');
 
-        $totalAmount = TreeSpecies::whereIn('speciesable_id', $siteReportIds)
-            ->where('speciesable_type', SiteReport::class)
-            ->sum('amount');
-
-        return $totalAmount;
+        return $siteIds->sum(function ($id) {
+            $latestReport = SiteReport::where('site_id', $id)->orderByDesc('due_at')->first();
+            if ($latestReport) {
+                return $latestReport->treeSpecies()->sum('amount');
+            } else {
+                return 0;
+            }
+        });
     }
 
     private function treeCountPerPeriod($siteIds, $distinctDates)

@@ -17,6 +17,7 @@ class ViewRestorationStrategyResource extends JsonResource
         return [
             'restorationStrategies' => $this->resource['restorationStrategies'] ?? null,
             'landUseTypes' => $this->resource['landUseTypes'] ?? null,
+            'landTenures' => $this->resource['landTenures'] ?? null,
         ];
     }
 }

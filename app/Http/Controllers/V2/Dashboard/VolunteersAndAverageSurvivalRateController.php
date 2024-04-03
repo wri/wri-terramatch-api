@@ -31,7 +31,7 @@ class VolunteersAndAverageSurvivalRateController extends Controller
     public function getTotalVolunteerSum($projects)
     {
         return $projects->sum(function ($project) {
-            return $project->reports()->orderByDesc('due_at')->value('volunteer_total');
+            return $project->reports()->value('volunteer_total');
         });
     }
 
