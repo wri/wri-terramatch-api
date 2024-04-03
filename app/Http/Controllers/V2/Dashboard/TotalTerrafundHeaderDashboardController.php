@@ -60,13 +60,10 @@ class TotalTerrafundHeaderDashboardController extends Controller
     public function getTotalTreesRestoredSum($projects)
     {
         return $projects->sum(function ($project) {
-            return $project->sites()->get()->sum(function ($site) {
-                $latestReport = $site->reports()->orderByDesc('due_at')->first();
-                if ($latestReport) {
-                    return $latestReport->treeSpecies()->sum('amount');
-                } else {
-                    return 0;
-                }
+            return $project->sites()->with(['reports.treeSpecies'])->get()->sum(function ($site) {
+                return $site->reports->sum(function ($report) {
+                    return $report->treeSpecies->sum('amount');
+                });
             });
         });
     }
