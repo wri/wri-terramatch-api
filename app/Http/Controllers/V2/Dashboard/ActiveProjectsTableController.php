@@ -53,12 +53,9 @@ class ActiveProjectsTableController extends Controller
     public function treesUnderRestoration($project)
     {
         return $project->sites->sum(function ($site) {
-            $latestReport = $site->reports()->orderByDesc('due_at')->first();
-            if ($latestReport) {
-                return $latestReport->treeSpecies()->sum('amount');
-            } else {
-                return 0;
-            }
+            return $site->reports->sum(function ($report) {
+                    return $report->treeSpecies->sum('amount');
+            });
         });
     }
 
@@ -67,7 +64,6 @@ class ActiveProjectsTableController extends Controller
         $projectReport = $project->reports()
             ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
             ->groupBy('project_id')
-            ->orderByDesc('due_at')
             ->first();
     
         if ($projectReport) {
@@ -79,12 +75,14 @@ class ActiveProjectsTableController extends Controller
 
     public function volunteers($project)
     {
-        return $project->reports()->orderByDesc('due_at')->value('volunteer_total');
+        $totalVolunteers = $project->reports()->selectRaw('SUM(volunteer_total) as total')->first();
+        return $totalVolunteers ? intval($totalVolunteers->total) : 0;
     }
 
     public function beneficiaries($project)
     {
-        return $project->reports()->orderByDesc('due_at')->value('beneficiaries');
+        $totalBeneficiaries = $project->reports()->selectRaw('SUM(beneficiaries) as total')->first();
+        return $totalBeneficiaries ? intval($totalBeneficiaries->total) : 0;
     }
 
     public function projectCountry($slug)

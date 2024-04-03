@@ -70,13 +70,12 @@ class ActiveCountriesTableController extends Controller
     {
         $projects = $projects->where('country', $country);
 
-        return Site::whereIn('project_id', $projects->pluck('id'))->get()->sum(function ($site) {
-            $latestReport = $site->reports()->orderByDesc('due_at')->first();
-            if ($latestReport) {
-                return $latestReport->treeSpecies()->sum('amount');
-            }
-
-            return 0;
+        return $projects->sum(function ($project) {
+            return $project->sites()->with(['reports.treeSpecies'])->get()->sum(function ($site) {
+                return $site->reports->sum(function ($report) {
+                    return $report->treeSpecies->sum('amount');
+                });
+            });
         });
     }
 
@@ -85,13 +84,12 @@ class ActiveCountriesTableController extends Controller
         $projects = $projects->where('country', $country);
 
         return $projects->sum(function ($project) {
-            $latestProjectReport = $project->reports()
-                ->orderByDesc('due_at')
+            $totalSum = $project->reports()
                 ->groupBy('project_id')
                 ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')->first();
-            
-            if ($latestProjectReport) {
-                return $latestProjectReport->total_ft + $latestProjectReport->total_pt;
+
+            if ($totalSum) {
+                return $totalSum->total_ft + $totalSum->total_pt;
             } else {
                 return 0;
             }
