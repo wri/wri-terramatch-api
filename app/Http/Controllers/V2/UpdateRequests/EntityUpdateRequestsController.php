@@ -19,9 +19,7 @@ class EntityUpdateRequestsController extends Controller
     public function __invoke(Request $request, EntityModel $entity)
     {
         $this->authorize('read', $entity);
-        $latest = $entity->updateRequests()
-            ->orderBy('updated_at', 'DESC')
-            ->first();
+        $latest = $entity->updateRequests()->isUnapproved()->orderBy('updated_at', 'DESC')->first();
 
         if (is_null($latest)) {
             return new JsonResponse('There is not any update request for this resource', 404);

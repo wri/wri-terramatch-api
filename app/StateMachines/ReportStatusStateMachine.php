@@ -45,11 +45,18 @@ class ReportStatusStateMachine extends EntityStatusStateMachine
 
     public function afterTransitionHooks(): array
     {
+        $hooks = parent::afterTransitionHooks();
+
         $updateTaskStatus = fn ($fromStatus, $model) => $model->task?->checkStatus();
-        return [
-            self::NEEDS_MORE_INFORMATION => [$updateTaskStatus],
-            self::AWAITING_APPROVAL => [$updateTaskStatus],
-            self::APPROVED => [$updateTaskStatus],
-        ];
+        $hooks[self::NEEDS_MORE_INFORMATION][] = $updateTaskStatus;
+        $hooks[self::AWAITING_APPROVAL][] = $updateTaskStatus;
+        $hooks[self::APPROVED][] = $updateTaskStatus;
+
+        return $hooks;
+    }
+
+    private function addHook ($hooks, $status, $hook)
+    {
+        $hooks[$status] = [$hook];
     }
 }

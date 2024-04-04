@@ -2,6 +2,7 @@
 
 namespace App\StateMachines;
 
+use App\Jobs\V2\SendEntityStatusChangeEmailsJob;
 use Asantibanez\LaravelEloquentStateMachines\StateMachines\StateMachine;
 
 class EntityStatusStateMachine extends StateMachine
@@ -29,5 +30,16 @@ class EntityStatusStateMachine extends StateMachine
     public function defaultState(): ?string
     {
         return self::STARTED;
+    }
+
+    public function afterTransitionHooks(): array
+    {
+        $hooks = parent::afterTransitionHooks();
+
+        $sendStatusChangeEmail = fn ($fromStatus, $model) => SendEntityStatusChangeEmailsJob::dispatch($model);
+        $hooks[self::NEEDS_MORE_INFORMATION][] = $sendStatusChangeEmail;
+        $hooks[self::APPROVED][] = $sendStatusChangeEmail;
+
+        return $hooks;
     }
 }

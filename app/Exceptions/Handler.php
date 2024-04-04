@@ -8,6 +8,7 @@ use App\Exceptions\Terrafund\NoProgrammeFilesException;
 use App\Helpers\ErrorHelper;
 use App\Helpers\JsonResponseHelper;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
@@ -161,9 +162,7 @@ class Handler extends ExceptionHandler
                 return;
             default:
                 if (config('app.env') != 'local') {
-                    if (config('app.env') == 'production') {
-                        App::make('sentry')->captureException($exception);
-                    }
+                    App::make('sentry')->captureException($exception);
                     Log::error($exception);
                 }
 
@@ -174,6 +173,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         switch (get_class($exception)) {
+            case AuthenticationException::class:
             case AuthorizationException::class:
                 return JsonResponseHelper::error([], 403);
             case FailedLoginException::class:
