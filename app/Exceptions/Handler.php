@@ -162,9 +162,7 @@ class Handler extends ExceptionHandler
                 return;
             default:
                 if (config('app.env') != 'local') {
-                    if (config('app.env') == 'production') {
-                        App::make('sentry')->captureException($exception);
-                    }
+                    App::make('sentry')->captureException($exception);
                     Log::error($exception);
                 }
 
