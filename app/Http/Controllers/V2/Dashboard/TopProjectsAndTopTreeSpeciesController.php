@@ -45,19 +45,14 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
 
     public function getTopTreeSpecies($projects)
     {
-
         $topSpecies = [];
 
         $projects->each(function ($project) use (&$topSpecies) {
-            $project->sites()->with(['reports.treeSpecies'])->get()->each(function ($site) use (&$topSpecies) {
-                $site->reports->each(function ($report) use (&$topSpecies) {
-                    $report->treeSpecies->each(function ($species) use (&$topSpecies) {
-                        $topSpecies[] = [
-                            'name' => $species->name,
-                            'amount' => $species->amount,
-                        ];
-                    });
-                });
+            $project->treeSpecies->each(function ($species) use (&$topSpecies) {
+                $topSpecies[] = [
+                    'name' => $species->name,
+                    'amount' => $species->amount,
+                ];
             });
         });
         $speciesCollection = new Collection($topSpecies);
