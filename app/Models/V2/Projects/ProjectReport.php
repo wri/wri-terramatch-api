@@ -13,6 +13,7 @@ use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Sites\Site;
@@ -32,6 +33,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Znck\Eloquent\Relations\BelongsToThrough;
+use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class ProjectReport extends Model implements HasMedia, AuditableContract, ReportModel
 {
@@ -48,6 +51,7 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
     use Auditable;
     use HasUpdateRequests;
     use HasEntityResources;
+    use BelongsToThroughTrait;
 
     protected $auditInclude = [
         'status',
@@ -206,9 +210,13 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
         return $this->belongsTo(Task::class);
     }
 
-    public function organisation(): BelongsTo
+    public function organisation(): BelongsToThrough
     {
-        return empty($this->project) ? $this->project : $this->project->organisation();
+        return $this->belongsToThrough(
+            Organisation::class,
+            Project::class,
+            foreignKeyLookup: [Project::class => 'project_id']
+        );
     }
 
     public function createdBy(): BelongsTo
@@ -430,5 +438,10 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
     public function scopeParentId(Builder $query, string $id): Builder
     {
         return $query->where('project_id', $id);
+    }
+
+    public function parentEntity(): BelongsTo
+    {
+        return $this->project();
     }
 }
