@@ -517,4 +517,26 @@ public function getCriteriaData(Request $request)
       ->pluck('country');
     return response()->json(['countries' => $countries]);
   }
+
+  public function getSitePolygonData(string $uuid)
+  {
+    $polygonGeometryId = PolygonGeometry::where('uuid', $uuid)->pluck('id')->first();
+    if (!$polygonGeometryId) {
+      return response()->json(['error' => 'Polygon not found for the given UUID'], 404);
+    }
+    $sitePolygon = SitePolygon::where('poly_id', $polygonGeometryId)->first();
+    if (!$sitePolygon) {
+      return response()->json(['error' => 'Site polygon data not found for the given polygon ID'], 404);
+    }
+    return response()->json(['site_polygon' => $sitePolygon]);
+  }
+
+  public function updateGeometry(string $uuid, Request $request) {
+    $sitePolygon = SitePolygon::where('uuid', $uuid)->first();
+    if (!$sitePolygon) {
+        return response()->json(['error' => 'Site polygon not found'], 404);
+    }
+    $sitePolygon->update($request->all());
+    return response()->json(['site_polygon' => $sitePolygon], 200);
+  }
 }
