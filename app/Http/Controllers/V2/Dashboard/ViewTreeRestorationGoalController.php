@@ -127,13 +127,16 @@ class ViewTreeRestorationGoalController extends Controller
         foreach ($distinctDates as $date) {
             $year = $date["year"];
             $month = $date["month"];
+            $treeSpeciesAmount = 0;
 
-            $treeSpeciesAmount = TreeSpecies::join('v2_site_reports', 'v2_tree_species.speciesable_id', '=', 'v2_site_reports.id')
-                ->whereIn('v2_site_reports.site_id', $siteIds)
-                ->where('v2_tree_species.speciesable_type', SiteReport::class)
+            $reports = SiteReport::whereIn('site_id', $siteIds)
                 ->whereYear('v2_site_reports.due_at', $year)
                 ->whereMonth('v2_site_reports.due_at', $month)
-                ->sum('v2_tree_species.amount');
+                ->get();
+
+            foreach ($reports as $report) {
+                $treeSpeciesAmount += $report->treeSpecies()->sum('amount');
+            }
 
             $totalAmount += $treeSpeciesAmount;
 
