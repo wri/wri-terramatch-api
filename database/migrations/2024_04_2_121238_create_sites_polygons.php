@@ -17,13 +17,13 @@ class CreateSitesPolygons extends Migration
       Schema::create('site_polygon', function (Blueprint $table) {
         $table->id();
         $table->uuid('uuid')->unique();
-        $table->integer('project_id')->nullable();
+        $table->string('project_id')->nullable();
         $table->string('proj_name')->nullable();
         $table->string('site_id')->nullable();
         $table->string('site_name')->nullable();
         $table->string('org_name')->nullable();
         $table->string('country')->nullable();
-        $table->integer('poly_id')->nullable();
+        $table->string('poly_id')->nullable();
         $table->string('poly_name')->nullable();
         $table->string('poly_label')->nullable();
         $table->date('plantstart')->nullable();
