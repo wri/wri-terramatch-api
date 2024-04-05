@@ -8,7 +8,9 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\UpdateRequests\UpdateRequest;
-//use Illuminate\Support\Facades\Artisan;
+use App\StateMachines\EntityStatusStateMachine;
+use Illuminate\Support\Facades\Artisan;
+use App\StateMachines\UpdateRequestStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,7 +20,7 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
 
     public function test_invoke_action_permissions(): void
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $project = Project::factory()->create([
             'framework_key' => 'ppc',
@@ -36,7 +38,7 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
             'project_id' => $project->id,
             'updaterequestable_type' => Site::class,
             'updaterequestable_id' => $site->id,
-            'status' => UpdateRequest::STATUS_REQUESTED,
+            'status' => UpdateRequestStatusStateMachine::AWAITING_APPROVAL,
         ]);
 
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
@@ -51,8 +53,8 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
         $ppcAdmin = User::factory()->admin()->create();
         $ppcAdmin->givePermissionTo('framework-ppc');
 
-        $payload = ['comments' => 'testing rejection'];
-        $uri = '/api/v2/admin/update-requests/' . $updateRequest->uuid . '/reject';
+        $payload = ['comments' => 'testing more information'];
+        $uri = '/api/v2/admin/update-requests/' . $updateRequest->uuid . '/moreinfo';
 
         $this->actingAs($random)
             ->putJson($uri, $payload)
@@ -73,7 +75,7 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
 
     public function test_flow(): void
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $project = Project::factory()->create([
             'framework_key' => 'ppc',
@@ -91,7 +93,7 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
             'project_id' => $project->id,
             'updaterequestable_type' => Site::class,
             'updaterequestable_id' => $site->id,
-            'status' => UpdateRequest::STATUS_REQUESTED,
+            'status' => UpdateRequestStatusStateMachine::AWAITING_APPROVAL,
         ]);
 
         $ppcAdmin = User::factory()->admin()->create();
@@ -100,19 +102,14 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
         $uri = '/api/v2/admin/update-requests/' . $updateRequest->uuid;
 
         $this->actingAs($ppcAdmin)
-            ->putJson($uri . '/reject', ['comments' => 'testing rejection'])
-            ->assertSuccessful()
-            ->assertJsonFragment(['status' => UpdateRequest::STATUS_REJECTED]);
-
-        $this->actingAs($ppcAdmin)
             ->putJson($uri . '/moreinfo', ['comments' => 'blah blah blah'])
             ->assertSuccessful()
-            ->assertJsonFragment(['status' => UpdateRequest::STATUS_NEEDS_MORE_INFORMATION]);
+            ->assertJsonFragment(['status' => UpdateRequestStatusStateMachine::NEEDS_MORE_INFORMATION]);
     }
 
     public function test_approve_updates(): void
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
         $owner->givePermissionTo('manage-own');
@@ -128,7 +125,7 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
         $site = Site::factory()->create([
             'project_id' => $project->id,
             'framework_key' => 'ppc',
-            'status' => Site::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('site', 'ppc');
@@ -147,14 +144,14 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
             'project_id' => $project->id,
             'updaterequestable_type' => Site::class,
             'updaterequestable_id' => $site->id,
-            'status' => UpdateRequest::STATUS_REQUESTED,
+            'status' => UpdateRequestStatusStateMachine::AWAITING_APPROVAL,
             'content' => $answers,
         ]);
 
         $this->actingAs($ppcAdmin)
             ->putJson('/api/v2/admin/update-requests/' . $updateRequest->uuid . '/approve', [])
             ->assertSuccessful()
-            ->assertJsonFragment(['status' => UpdateRequest::STATUS_APPROVED]);
+            ->assertJsonFragment(['status' => UpdateRequestStatusStateMachine::APPROVED]);
 
         //        $updated = Site::find($site->id);
         //        $this->assertEquals('* testing name updated *', $updated->name);
