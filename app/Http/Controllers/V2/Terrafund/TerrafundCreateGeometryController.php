@@ -458,6 +458,7 @@ public function getCriteriaData(Request $request)
     return response()->json(['polygon_id' => $polygonId, 'criteria_list' => $criteriaList]);
 }
 
+
   public function uploadGeoJSONFile(Request $request)
   {
     if ($request->hasFile('file')) {
@@ -477,6 +478,34 @@ public function getCriteriaData(Request $request)
       return response()->json(['error' => 'GeoJSON file not provided in request'], 400);
     }
   }
+
+  public function validateOverlapping(Request $request) {
+    $uuid = $request->input('uuid');
+    $sitePolygon = DB::table('site_polygon')
+        ->where('poly_id', $uuid)
+        ->first();
+    
+    if (!$sitePolygon) {
+        return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 404);
+    }
+    
+    $projectId = $sitePolygon->project_id;
+
+    $relatedPolyIds = DB::table('site_polygon')
+        ->where('project_id', $projectId)
+        ->where('poly_id', '!=', $uuid)
+        ->pluck('poly_id');
+
+    $intersects = DB::table('polygon_geometry')
+        ->whereIn('uuid', $relatedPolyIds)
+        ->selectRaw('ST_Intersects(geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?)) as intersects', [$uuid])
+        ->get()
+        ->pluck('intersects');
+
+    $intersects = in_array(1, $intersects->toArray());
+    return response()->json(['intersects' => $intersects, 'project_id' => $projectId, 'uuid' => $uuid]);
+}
+
 
   public function getPolygonsAsGeoJSON()
   {
