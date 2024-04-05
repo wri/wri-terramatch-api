@@ -73,7 +73,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $organisation->name ?? null,
             $entity->project->name ?? null,
             $entity->status ?? null,
-            $entity->due_at ?? null
+            $entity->due_at ?? null,
         ];
 
         if (in_array($this->form->type, ['nursery', 'nursery-report','site', 'site-report', 'project-report'])) {
@@ -83,8 +83,8 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         if ($this->form->type === 'project-report') {
             $mapped[] = $entity->project->uuid ?? null;
             if($this->form->framework_key === 'ppc') {
-                $mapped[] = $entity->seedlings_grown  ?? null;
-            } 
+                $mapped[] = $entity->seedlings_grown ?? null;
+            }
         }
         if ($this->form->type === 'nursery-report') {
             $mapped[] = $entity->nursery->old_id ?? ($entity->nursery->id ?? null);
@@ -96,9 +96,9 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $mapped[] = $entity->site->name ?? null;
             $sumTreeSPecies = $entity->treeSpecies()->sum('amount');
             $mapped[] = $sumTreeSPecies > 0 ? $sumTreeSPecies : null;
-            $mapped[] = $entity->site->trees_planted_count ?? null; 
+            $mapped[] = $entity->site->trees_planted_count ?? null;
             if($this->form->framework_key === 'ppc') {
-                $sumSeeding = $entity->seedings()->sum('amount'); 
+                $sumSeeding = $entity->seedings()->sum('amount');
                 $mapped[] = $sumSeeding > 0 ? $sumSeeding : null;
                 $mapped[] = $entity->site->seeds_planted_count ?? null;
             }
@@ -116,7 +116,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             'organization-name',
             'project_name',
             'status',
-            'due_date'
+            'due_date',
         ];
 
         if (in_array($this->form->type, ['nursery', 'nursery-report','site', 'site-report', 'project-report'])) {
@@ -127,7 +127,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $initialHeadings[] = 'project_uuid';
             if($this->form->framework_key === 'ppc') {
                 $initialHeadings[] = 'total_seedlings_grown';
-            } 
+            }
         }
 
         if ($this->form->type === 'nursery-report') {
@@ -139,7 +139,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             if($this->form->framework_key === 'ppc') {
                 $initialHeadings[] = 'total_seeds_planted_report';
                 $initialHeadings[] = 'total_seeds_planted';
-            } 
+            }
         }
 
         return $initialHeadings;

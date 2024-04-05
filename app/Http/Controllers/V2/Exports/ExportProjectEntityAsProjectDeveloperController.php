@@ -93,5 +93,4 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
             $mainZip->addFromString($geojsonFilename, $site->boundary_geojson);
         }
     }
-
 }

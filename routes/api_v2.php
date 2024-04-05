@@ -298,7 +298,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('{modelSlug}')
         ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
         ->middleware('modelInterface')
-        ->group(function() {
+        ->group(function () {
             Route::put('/{entity}/{status}', AdminStatusEntityController::class);
             Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
         });
@@ -411,7 +411,7 @@ Route::prefix('forms')->group(function () {
     Route::prefix('{modelSlug}')
         ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
         ->middleware('modelInterface')
-        ->group(function() {
+        ->group(function () {
             Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
             Route::put('/{entity}', UpdateEntityWithFormController::class);
             Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
@@ -547,14 +547,14 @@ Route::prefix('tasks')->group(function () {
 Route::prefix('{modelSlug}')
     ->whereIn('modelSlug', ['site-reports', 'nursery-reports'])
     ->middleware('modelInterface')
-    ->group(function() {
+    ->group(function () {
         Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
     });
 
 Route::prefix('{modelSlug}')
     ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
     ->middleware('modelInterface')
-    ->group(function() {
+    ->group(function () {
         Route::get('/{entity}', ViewEntityController::class);
     });
 

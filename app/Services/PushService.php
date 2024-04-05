@@ -20,7 +20,7 @@ class PushService
 
     public function fetchEndpointArn(string $os, string $pushToken): ?string
     {
-        if (!config('app.sns.enabled')) {
+        if (! config('app.sns.enabled')) {
             return null;
         }
 

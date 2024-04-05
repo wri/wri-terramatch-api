@@ -33,7 +33,7 @@ class FixReportCompletion extends Command
         $totalUpdated = 0;
         $totalAlreadyCorrect = 0;
         collect([ProjectReport::class, SiteReport::class, NurseryReport::class])->each(
-            function($modelClass) use (&$totalUpdated, &$totalAlreadyCorrect) {
+            function ($modelClass) use (&$totalUpdated, &$totalAlreadyCorrect) {
                 $modelClass::withoutTimestamps(function () use ($modelClass, &$totalUpdated, &$totalAlreadyCorrect) {
                     $modelClass::whereNot('status', ReportStatusStateMachine::DUE)->where('completion', '<', 100)->chunkById(
                         100,

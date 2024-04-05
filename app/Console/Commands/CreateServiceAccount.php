@@ -8,7 +8,6 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use Illuminate\Console\Command;
-use Spatie\Permission\Models\Role;
 
 class CreateServiceAccount extends Command
 {
@@ -51,11 +50,13 @@ class CreateServiceAccount extends Command
             $user->assignRole('greenhouse-service-account');
 
             $this->info("Created service account $email with API Key: $apiKey");
+
             return 0;
 
         } catch (Exception $exception) {
             $this->error($exception->getMessage());
             $this->error('Creation failed');
+
             return -1;
         }
     }

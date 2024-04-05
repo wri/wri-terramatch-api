@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\V2\Reports;
 
-use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\UpdateRequests\StatusChangeRequest;
 use App\Models\V2\ReportModel;
@@ -18,10 +17,12 @@ class AdminStatusReportController extends Controller
         switch($status) {
             case 'approve':
                 $report->approve(data_get($data, 'feedback'));
+
                 break;
 
             case 'moreinfo':
                 $report->needsMoreInformation(data_get($data, 'feedback'), data_get($data, 'feedback_fields'));
+
                 break;
 
             default:

@@ -21,7 +21,8 @@ use Illuminate\Support\Str;
  * @property int $created_by
  * @method status
  */
-trait HasReportStatus {
+trait HasReportStatus
+{
     use HasStatus;
     use HasStateMachines;
     use HasEntityStatusScopesAndTransitions {
@@ -84,7 +85,7 @@ trait HasReportStatus {
             return true;
         }
 
-        if ($this->status == ReportStatusStateMachine::DUE && !$this->supportsNothingToReport()) {
+        if ($this->status == ReportStatusStateMachine::DUE && ! $this->supportsNothingToReport()) {
             return false;
         }
 
@@ -98,7 +99,7 @@ trait HasReportStatus {
 
     public function nothingToReport(): void
     {
-        if (!$this->supportsNothingToReport()) {
+        if (! $this->supportsNothingToReport()) {
             throw new \InvalidArgumentException(
                 'This report model does not support the nothing-to-report status'
             );
@@ -111,7 +112,7 @@ trait HasReportStatus {
     public function updateInProgress(bool $isAdmin = false): void
     {
         $this->setCompletion();
-        if (!$isAdmin && empty($report->created_by)) {
+        if (! $isAdmin && empty($report->created_by)) {
             $this->created_by = Auth::user()->id;
         }
 

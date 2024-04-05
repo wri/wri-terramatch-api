@@ -17,6 +17,7 @@ class SubmitProjectTasksController extends Controller
     {
         $this->authorize('update', $task);
         $task->submitForApproval();
+
         return new JsonResponse('Reports successfully submitted', 200);
     }
 }

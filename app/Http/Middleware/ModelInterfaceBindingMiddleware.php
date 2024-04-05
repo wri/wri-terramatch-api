@@ -42,7 +42,7 @@ class ModelInterfaceBindingMiddleware
     {
         $route = $request->route();
         $parameterKeys = array_keys($route->parameters);
-        $modelSlugIndex = array_search('modelSlug' , array_keys($route->parameters));
+        $modelSlugIndex = array_search('modelSlug', array_keys($route->parameters));
         if ($modelSlugIndex < 0 || count($parameterKeys) <= $modelSlugIndex) {
             return $next($request);
         }
