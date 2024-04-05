@@ -18,21 +18,21 @@ class AdminIndexProjectReportsController extends Controller
     {
         $this->authorize('readAll', ProjectReport::class);
 
-       $query = QueryBuilder::for(ProjectReport::class)
-            ->join('v2_projects', function ($join) {
-                $join->on('v2_project_reports.project_id', '=', 'v2_projects.id');
-            })
-            ->selectRaw('
+        $query = QueryBuilder::for(ProjectReport::class)
+             ->join('v2_projects', function ($join) {
+                 $join->on('v2_project_reports.project_id', '=', 'v2_projects.id');
+             })
+             ->selectRaw('
                 v2_project_reports.*,
                 (SELECT name FROM organisations WHERE organisations.id = v2_projects.organisation_id) as organisation_name
             ')
-            ->allowedFilters([
-                AllowedFilter::scope('project_uuid', 'projectUuid'),
-                AllowedFilter::scope('country'),
-                AllowedFilter::exact('status'),
-                AllowedFilter::exact('update_request_status'),
-                AllowedFilter::exact('framework_key'),
-            ]);
+             ->allowedFilters([
+                 AllowedFilter::scope('project_uuid', 'projectUuid'),
+                 AllowedFilter::scope('country'),
+                 AllowedFilter::exact('status'),
+                 AllowedFilter::exact('update_request_status'),
+                 AllowedFilter::exact('framework_key'),
+             ]);
 
         $this->sort($query, [
             'created_at', '-created_at',
@@ -51,6 +51,7 @@ class AdminIndexProjectReportsController extends Controller
         }
 
         $this->isolateAuthorizedFrameworks($query, 'v2_project_reports');
+
         return new ProjectReportsCollection($this->paginate($query));
     }
 }

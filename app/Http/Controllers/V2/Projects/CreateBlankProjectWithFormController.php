@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\V2\Projects;
 
-use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Entities\EntityWithSchemaResource;
 use App\Models\V2\Forms\Form;
@@ -26,6 +25,7 @@ class CreateBlankProjectWithFormController extends Controller
 
         $request->user()->projects()->sync([$project->id => ['is_monitoring' => false]], false);
         $project->dispatchStatusChangeEvent($request->user());
+
         return $project->createSchemaResource();
     }
 }

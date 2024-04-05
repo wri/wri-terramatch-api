@@ -30,7 +30,7 @@ class Workday extends Model
         'gender',
         'age',
         'ethnicity',
-        'indigeneity'
+        'indigeneity',
     ];
 
     public const COLLECTION_PROJECT_PAID_PROJECT_ESTABLISHMENT = 'paid-project-establishment';

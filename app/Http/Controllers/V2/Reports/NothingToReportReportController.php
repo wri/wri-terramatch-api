@@ -12,6 +12,7 @@ class NothingToReportReportController extends Controller
     {
         $this->authorize('update', $report);
         $report->nothingToReport();
+
         return $report->createResource();
     }
 }

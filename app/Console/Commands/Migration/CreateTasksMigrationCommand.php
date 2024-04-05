@@ -5,7 +5,6 @@ namespace App\Console\Commands\Migration;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Tasks\Task;
-use App\StateMachines\TaskStatusStateMachine;
 use Illuminate\Console\Command;
 
 class CreateTasksMigrationCommand extends Command

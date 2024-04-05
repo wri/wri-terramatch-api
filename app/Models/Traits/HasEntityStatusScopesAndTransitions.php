@@ -5,7 +5,8 @@ namespace App\Models\Traits;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 
-trait HasEntityStatusScopesAndTransitions {
+trait HasEntityStatusScopesAndTransitions
+{
     public function scopeIsApproved(Builder $query): Builder
     {
         return $this->scopeIsStatus($query, EntityStatusStateMachine::APPROVED);

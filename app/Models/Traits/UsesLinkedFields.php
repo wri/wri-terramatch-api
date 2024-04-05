@@ -72,7 +72,7 @@ trait UsesLinkedFields
                 $value = null;
 
                 $linkedFieldInfo = $question->getLinkedFieldInfo(['model_uuid' => $this->uuid]);
-                if (!empty($linkedFieldInfo)) {
+                if (! empty($linkedFieldInfo)) {
                     $value = $this->getEntityLinkedFieldValue($linkedFieldInfo);
                 } else {
                     $value = data_get($this->answers, $question->uuid);
@@ -87,19 +87,19 @@ trait UsesLinkedFields
         }
 
         foreach ($answers as $answer) {
-            if (!$answer['required']) {
+            if (! $answer['required']) {
                 // don't count it if the question wasn't required
                 continue;
             }
 
-            if (!empty($answer['conditionalOn']) &&
-                !$answers[$answer['conditionalOn']]['value']) {
+            if (! empty($answer['conditionalOn']) &&
+                ! $answers[$answer['conditionalOn']]['value']) {
                 // don't count it if the question wasn't shown to the user because the parent conditional is false.
                 continue;
             }
 
             $questionCount++;
-            if (!is_null($answer['value'])) {
+            if (! is_null($answer['value'])) {
                 $answeredCount++;
             }
         }
@@ -210,7 +210,7 @@ trait UsesLinkedFields
 
     public function getForm(): Form
     {
-        if (!is_null($this->form)) {
+        if (! is_null($this->form)) {
             // Some classes that use this trait have a direct database link to the form.
             return $this->form;
         }
@@ -220,6 +220,7 @@ trait UsesLinkedFields
                 ->where('framework_key', $this->framework_key)
                 ->first();
         }
+
         return $this->frameworkModelForm;
     }
 

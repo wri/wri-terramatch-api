@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\Site;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint ;
 

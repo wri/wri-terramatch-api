@@ -47,7 +47,7 @@ class Task extends Model
 
     public const COMPLETE_STATUSES = [
         TaskStatusStateMachine::AWAITING_APPROVAL,
-        TaskStatusStateMachine::APPROVED
+        TaskStatusStateMachine::APPROVED,
     ];
 
     protected $fillable = [
@@ -115,9 +115,9 @@ class Task extends Model
     /**
      * @throws InvalidStatusException
      */
-    public function submitForApproval ()
+    public function submitForApproval()
     {
-        if (!$this->status()->canBe(TaskStatusStateMachine::AWAITING_APPROVAL)) {
+        if (! $this->status()->canBe(TaskStatusStateMachine::AWAITING_APPROVAL)) {
             throw new InvalidStatusException(
                 'Task is not in a state that can be moved to awaiting approval'
             );
@@ -125,8 +125,8 @@ class Task extends Model
 
         // First, make sure all reports are either complete, or completable
         $reports = collect([$this->projectReport])->concat($this->siteReports)->concat($this->nurseryReports);
-        $hasIncomplete = $reports->reduce(function($hasIncomplete, $report) {
-            return $hasIncomplete || !$report->isCompletable();
+        $hasIncomplete = $reports->reduce(function ($hasIncomplete, $report) {
+            return $hasIncomplete || ! $report->isCompletable();
         });
         if ($hasIncomplete) {
             throw new InvalidStatusException('Task is not submittable due to incomplete reports');
@@ -167,6 +167,7 @@ class Task extends Model
         })->flatten()->unique();
         if ($reportStatuses->containsOneItem() && $reportStatuses[0] == ReportStatusStateMachine::APPROVED) {
             $this->status()->transitionTo(TaskStatusStateMachine::APPROVED);
+
             return;
         } elseif (
             $reportStatuses
@@ -182,7 +183,8 @@ class Task extends Model
             return $relation
                 ->whereIn(
                     'status',
-                    [ReportStatusStateMachine::NEEDS_MORE_INFORMATION, ReportStatusStateMachine::AWAITING_APPROVAL])
+                    [ReportStatusStateMachine::NEEDS_MORE_INFORMATION, ReportStatusStateMachine::AWAITING_APPROVAL]
+                )
                 ->select('id', 'status')
                 ->get();
         })->flatten();
@@ -207,11 +209,13 @@ class Task extends Model
 
                 // A report in needs-more-information causes the task to go to needs-more-information
                 $this->status()->transitionTo(TaskStatusStateMachine::NEEDS_MORE_INFORMATION);
+
                 return;
             } elseif ($report->updateRequests()->isStatus(UpdateRequestStatusStateMachine::NEEDS_MORE_INFORMATION)->exists()) {
                 // an awaiting-approval report with a needs-more-information update request causes the task to go to
                 // needs-more-information
                 $this->status()->transitionTo(TaskStatusStateMachine::NEEDS_MORE_INFORMATION);
+
                 return;
             }
         }
@@ -230,10 +234,11 @@ class Task extends Model
         $hasStartedReport = $this->getReportRelations()->reduce(function ($hasStarted, $relation) {
             return $hasStarted || $relation->where('completion', '>', '0')->exists();
         });
+
         return $hasStartedReport ? 'started' : 'not-started';
     }
 
-    private function getReportRelations (): Collection
+    private function getReportRelations(): Collection
     {
         return collect([$this->projectReport(), $this->siteReports(), $this->nurseryReports()]);
     }
