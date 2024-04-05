@@ -12,7 +12,8 @@ class I18nHelper
         $shouldGenerateI18nItem = I18nHelper::shouldGenerateI18nItem($target, $property);
         $value = trim(data_get($target, $property, false));
         if ($shouldGenerateI18nItem) {
-            $short = strlen($value) < 256;
+            $short = strlen($value) <= 256;
+
             $i18nItem = I18nItem::create([
                 'type' => $short ? 'short' : 'long',
                 'status' => I18nItem::STATUS_DRAFT,
@@ -46,7 +47,7 @@ class I18nHelper
 
         $oldType = $i18nItem->type;
 
-        $short = strlen($value) < 256;
+        $short = strlen($value) <= 256;
         $type = $short ? 'short' : 'long';
 
         if ($oldType !== $type) {

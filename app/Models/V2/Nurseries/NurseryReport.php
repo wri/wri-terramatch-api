@@ -11,9 +11,7 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
-use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
@@ -30,8 +28,6 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Znck\Eloquent\Relations\BelongsToThrough;
-use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class NurseryReport extends Model implements HasMedia, AuditableContract, ReportModel
 {
@@ -48,7 +44,6 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
     use Auditable;
     use HasUpdateRequests;
     use HasEntityResources;
-    use BelongsToThroughTrait;
 
     protected $auditInclude = [
         'status',
@@ -144,13 +139,9 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
         return $this->belongsTo(Nursery::class);
     }
 
-    public function project(): BelongsToThrough
+    public function project(): BelongsTo
     {
-        return $this->belongsToThrough(
-            Project::class,
-            Nursery::class,
-            foreignKeyLookup: [Project::class => 'project_id', Nursery::class => 'nursery_id']
-        );
+        return  empty($this->nursery) ? $this->nursery : $this->nursery->project();
     }
 
     public function task(): BelongsTo
@@ -158,13 +149,9 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
         return $this->belongsTo(Task::class);
     }
 
-    public function organisation(): BelongsToThrough
+    public function organisation(): BelongsTo
     {
-        return $this->belongsToThrough(
-            Organisation::class,
-            [Project::class, Nursery::class],
-            foreignKeyLookup: [Project::class => 'project_id', Nursery::class => 'nurseyr_id']
-        );
+        return empty($this->project) ? $this->project : $this->project->organisation();
     }
 
     public function createdBy(): BelongsTo
@@ -185,8 +172,8 @@ class NurseryReport extends Model implements HasMedia, AuditableContract, Report
     public function toSearchableArray()
     {
         return [
-            'project_name' => $this->project?->name,
-            'organisation_name' => $this->organisation?->name,
+            'project_name' => $this->nursery->project?->name,
+            'organisation_name' => $this->nursery->project?->organisation?->name,
         ];
     }
 

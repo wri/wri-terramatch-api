@@ -112,22 +112,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::pattern('id', '[0-9]+');
 
-Route::withoutMiddleware('auth:service-api-key,api')->group(function () {
-    Route::middleware('throttle:30,1')->group(function () {
-        Route::post('/auth/login', [AuthController::class, 'loginAction']);
-        Route::get('/auth/resend', [AuthController::class, 'resendAction']);
-        Route::post('/auth/reset', [AuthController::class, 'resetAction']);
-        Route::patch('/auth/change', [AuthController::class, 'changeAction']);
-        Route::patch('/v2/auth/verify', [AuthController::class, 'verifyUnauthorizedAction']);
-    });
-
-    Route::get('/auth/logout', [AuthController::class, 'logoutAction']);
-    Route::get('/auth/refresh', [AuthController::class, 'refreshAction']);
+Route::middleware('throttle:30,1')->group(function () {
+    Route::post('/auth/login', [AuthController::class, 'loginAction']);
+    Route::get('/auth/resend', [AuthController::class, 'resendAction']);
+    Route::post('/auth/reset', [AuthController::class, 'resetAction']);
+    Route::patch('/auth/change', [AuthController::class, 'changeAction']);
+    Route::patch('/v2/auth/verify', [AuthController::class, 'verifyUnauthorizedAction']);
 });
 
+Route::get('/auth/logout', [AuthController::class, 'logoutAction']);
+Route::get('/auth/refresh', [AuthController::class, 'refreshAction']);
 Route::patch('/auth/verify', [AuthController::class, 'verifyAction']);
-Route::delete('/auth/delete_me', [AuthController::class, 'deleteMeAction']);
 Route::get('/auth/me', [AuthController::class, 'meAction']);
+Route::delete('/auth/delete_me', [AuthController::class, 'deleteMeAction']);
 
 Route::post('/uploads', [UploadsController::class, 'createAction']);
 Route::put('/uploads/{upload}/update', [UploadsController::class, 'updateAction']);

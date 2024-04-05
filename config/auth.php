@@ -45,11 +45,6 @@ return [
             'driver' => 'jwt',
             'provider' => 'users'
         ],
-
-        'service-api-key' => [
-            'driver' => 'service-account',
-            'provider' => 'users',
-        ],
     ],
 
     /*

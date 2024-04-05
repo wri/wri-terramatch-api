@@ -7,8 +7,5 @@ return [
     'users-manage' => 'Manage users',
     'monitoring-manage' => 'Manage monitoring',
     'reports-manage' => 'Manage Reports',
-    'manage-own' => 'Manage own',
-    'projects-read' => 'Read all projects',
-    'polygons-manage' => 'Manage polygons',
-    'media-manage' => 'Manage media',
+    'manage-own' => 'Manage own'
 ];

@@ -39,14 +39,7 @@ class SendEntityStatusChangeEmailsJob implements ShouldQueue
             return;
         }
 
-        // TODO: This is a temporary hack to avoid spamming folks that have a funky role right now. In the future,
-        // they will have a different role, and we can simply skip sending this email to anybody with that role.
-        $skipRecipients = collect(explode(',', getenv('ENTITY_UPDATE_DO_NOT_EMAIL')));
         foreach ($emailAddresses as $emailAddress) {
-            if ($skipRecipients->contains($emailAddress)) {
-                continue;
-            }
-
             Mail::to($emailAddress)->send(new EntityStatusChangeMail($this->entity));
         }
     }

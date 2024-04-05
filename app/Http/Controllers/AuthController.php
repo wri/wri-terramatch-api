@@ -11,6 +11,7 @@ use App\Http\Requests\ResendByEmailRequest;
 use App\Http\Requests\ResendRequest;
 use App\Http\Requests\ResetRequest;
 use App\Http\Requests\VerifyRequest;
+use App\Http\Resources\V2\Projects\ProjectInviteResource;
 use App\Http\Resources\V2\User\MeResource;
 use App\Jobs\ResetPasswordJob;
 use App\Jobs\UserVerificationJob;

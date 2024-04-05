@@ -6,7 +6,7 @@ use App\Models\V2\Forms\FormOptionListOption;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Str;
 
-return new class extends Migration
+class SeedOptionsListSitingStrategy extends Migration
 {
     /**
      * This migration seeds the default options
@@ -36,4 +36,4 @@ return new class extends Migration
             $option->save();
         }
     }
-};
+}

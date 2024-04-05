@@ -14,9 +14,7 @@ use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
-use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Seeding;
 use App\Models\V2\Tasks\Task;
@@ -37,8 +35,6 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Znck\Eloquent\Relations\BelongsToThrough;
-use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class SiteReport extends Model implements HasMedia, AuditableContract, ReportModel
 {
@@ -55,7 +51,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
     use Auditable;
     use HasUpdateRequests;
     use HasEntityResources;
-    use BelongsToThroughTrait;
 
     protected $auditInclude = [
         'status',
@@ -163,13 +158,9 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
         return $this->belongsTo(Site::class);
     }
 
-    public function project(): BelongsToThrough
+    public function project(): BelongsTo
     {
-        return $this->belongsToThrough(
-            Project::class,
-            Site::class,
-            foreignKeyLookup: [Project::class => 'project_id', Site::class => 'site_id']
-        );
+        return empty($this->site) ? $this->site : $this->site->project();
     }
 
     public function task(): BelongsTo
@@ -177,13 +168,9 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
         return $this->belongsTo(Task::class);
     }
 
-    public function organisation(): BelongsToThrough
+    public function organisation(): BelongsTo
     {
-        return $this->belongsToThrough(
-            Organisation::class,
-            [Project::class, Site::class],
-            foreignKeyLookup: [Project::class => 'project_id', Site::class => 'site_id']
-        );
+        return  empty($this->project) ? $this->project : $this->project->organisation();
     }
 
     public function polygons(): MorphMany
@@ -319,8 +306,8 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
     public function toSearchableArray()
     {
         return [
-            'project_name' => $this->project?->name,
-            'organisation_name' => $this->organisation?->name,
+            'project_name' => $this->site->project->name,
+            'organisation_name' => $this->organisation->name,
         ];
     }
 
@@ -362,11 +349,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
     public function createResource(): JsonResource
     {
         return new SiteReportResource($this);
-    }
-
-    public function supportsNothingToReport(): bool
-    {
-        return true;
     }
 
     public function parentEntity(): BelongsTo
