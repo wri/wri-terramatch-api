@@ -53,22 +53,30 @@ class TerrafundCreateGeometryController extends Controller
   }
   private function insertSinglePolygon(array $geometry, int $srid)
 {
-    // Convert geometry to GeoJSON string with specified SRID
-    $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => "EPSG:$srid"]]]);
+  try {
+      // Convert geometry to GeoJSON string with specified SRID
+      $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => "EPSG:$srid"]]]);
 
-    // Insert GeoJSON data into the database
-    $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
-    $uuid = Str::uuid();
+      // Insert GeoJSON data into the database
+      $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
+      $uuid = Str::uuid();
+      $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
+      $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
+      $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
 
-    // Insert data into the polygon_geometry table
-    $id = DB::table('polygon_geometry')->insertGetId([
-        'uuid' => $uuid,
-        'geom' => $geom,
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
+      $areaHectares = $areaSqMeters / 10000;
 
-    return ['uuid' => $uuid, 'id' => $id];
+      $id = DB::table('polygon_geometry')->insertGetId([
+          'uuid' => $uuid,
+          'geom' => $geom,
+          'created_at' => now(),
+          'updated_at' => now(),
+      ]);
+      return ['uuid' => $uuid, 'id' => $id, 'area' => $areaHectares];
+  } catch (\Exception $e) {
+    echo $e;
+      return $e->getMessage();
+  }
 }
 
 public function insertGeojsonToDB(string $geojsonFilename)
@@ -84,12 +92,14 @@ public function insertGeojsonToDB(string $geojsonFilename)
         if ($feature['geometry']['type'] === 'Polygon') {
             $data = $this->insertSinglePolygon($feature['geometry'], $srid);
             $uuids[] = $data['uuid'];
-            $this->insertSitePolygon($data['id'], $feature['properties']);
+            $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
+            echo $returnSite;
         } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
             foreach ($feature['geometry']['coordinates'] as $polygon) {
                 $data = $this->insertSinglePolygon(['type' => 'Polygon', 'coordinates' => $polygon], $srid);
                 $uuids[] = $data['uuid'];
-                $this->insertSitePolygon($data['id'], $feature['properties']);
+                $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
+                echo $returnSite;
             }
         }
     }
@@ -113,9 +123,9 @@ private function validateData(array $properties, array $fields): bool {
   }
   return true;
 }
-private function insertSitePolygon(string $polygonId, array $properties) {
+private function insertSitePolygon(string $polygonId, array $properties, float $area) {
   try {
-      $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'est_area'];
+      $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
       $SCHEMA_CRITERIA_ID = 13;
       $validSchema = true;
       $DATA_CRITERIA_ID = 14;
@@ -131,6 +141,7 @@ private function insertSitePolygon(string $polygonId, array $properties) {
 
       $sitePolygon = new SitePolygon();
       $sitePolygon->uuid = Str::uuid();
+      $sitePolygon->project_id = $properties['project_id'] ?? null;
       $sitePolygon->proj_name = $properties['proj_name'] ?? null;
       $sitePolygon->org_name = $properties['org_name'] ?? null;
       $sitePolygon->country = $properties['country'] ?? null;
@@ -145,10 +156,11 @@ private function insertSitePolygon(string $polygonId, array $properties) {
       $sitePolygon->target_sys = $properties['target_sys'] ?? null;
       $sitePolygon->distr = $properties['distr'] ?? null;
       $sitePolygon->num_trees = $properties['num_trees'] ?? null;
-      $sitePolygon->est_area = $properties['est_area'] ?? null;
+      $sitePolygon->est_area = $area ?? null;
       $sitePolygon->created_at = now();
       $sitePolygon->updated_at = now();
       $sitePolygon->save();
+      return 'has saved correctly';
   } catch (\Exception $e) {
       return $e->getMessage();
   }
@@ -505,6 +517,44 @@ public function getCriteriaData(Request $request)
     $intersects = in_array(1, $intersects->toArray());
     return response()->json(['intersects' => $intersects, 'project_id' => $projectId, 'uuid' => $uuid]);
 }
+public function validateEstimatedArea(Request $request) {
+  $uuid = $request->input('uuid');
+  $sitePolygon = DB::table('site_polygon')
+      ->where('poly_id', $uuid)
+      ->first();
+
+  if (!$sitePolygon) {
+      return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 404);
+  }
+
+  $projectId = $sitePolygon->project_id;
+
+  $sumEstArea = DB::table('site_polygon')
+      ->where('project_id', $projectId)
+      ->sum('est_area');
+
+  $project = DB::table('v2_projects')
+      ->where('uuid', $projectId)
+      ->first();
+
+  if (!$project) {
+      return response()->json(['error' => 'Project not found for the given project ID'], 404);
+  }
+
+  $totalHectaresRestoredGoal = $project->total_hectares_restored_goal;
+  if ($totalHectaresRestoredGoal === null || $totalHectaresRestoredGoal === 0) {
+      return response()->json(['error' => 'Total hectares restored goal not set for the project'], 400);
+  }
+  $lowerBound = 0.75 * $totalHectaresRestoredGoal;
+  $upperBound = 1.25 * $totalHectaresRestoredGoal;
+  $valid = false;
+  if ($sumEstArea >= $lowerBound && $sumEstArea <= $upperBound) {
+      $valid = true;
+  }
+
+  return response()->json(['valid' => $valid, 'sum area ' => $sumEstArea, '$totalHectaresRestoredGoal' => $totalHectaresRestoredGoal], 200);
+}
+
 
 
   public function getPolygonsAsGeoJSON()

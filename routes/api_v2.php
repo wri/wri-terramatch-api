@@ -650,6 +650,7 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/country-names', [TerrafundCreateGeometryController::class, 'getAllCountryNames']);
     Route::get('/validation/criteria-data', [TerrafundCreateGeometryController::class, 'getCriteriaData']);
     Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
+    Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
