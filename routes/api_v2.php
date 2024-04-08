@@ -390,7 +390,7 @@ Route::prefix('my')->group(function () {
     Route::get('/projects', ViewMyProjectsController::class);
 });
 
-Route::post('/users/resend', [AuthController::class, 'resendByEmail']);
+Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
 
 Route::prefix('forms')->group(function () {
     Route::get('/my/submissions', ViewMyFormSubmissionsController::class)->middleware('i18n');
