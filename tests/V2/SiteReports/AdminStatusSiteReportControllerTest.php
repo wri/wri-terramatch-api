@@ -6,7 +6,8 @@ use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
-//use Illuminate\Support\Facades\Artisan;
+use App\StateMachines\EntityStatusStateMachine;
+use Illuminate\Support\Facades\Artisan;
 use App\Models\V2\Sites\SiteReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,7 +18,7 @@ class AdminStatusSiteReportControllerTest extends TestCase
 
     public function test_invoke_action(): void
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $project = Project::factory()->create([
             'framework_key' => 'ppc',
@@ -32,7 +33,7 @@ class AdminStatusSiteReportControllerTest extends TestCase
         $report = SiteReport::factory()->create([
             'site_id' => $site->id,
             'framework_key' => 'ppc',
-            'status' => SiteReport::STATUS_AWAITING_APPROVAL,
+            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
         ]);
 
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
@@ -65,6 +66,6 @@ class AdminStatusSiteReportControllerTest extends TestCase
         $this->actingAs($ppcAdmin)
             ->putJson($uri, $payload)
             ->assertSuccessful()
-            ->assertJsonFragment(['status' => SiteReport::STATUS_NEEDS_MORE_INFORMATION]);
+            ->assertJsonFragment(['status' => EntityStatusStateMachine::NEEDS_MORE_INFORMATION]);
     }
 }

@@ -7,7 +7,8 @@ use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
-//use Illuminate\Support\Facades\Artisan;
+use App\StateMachines\EntityStatusStateMachine;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -17,7 +18,7 @@ class AdminStatusNurseryReportControllerTest extends TestCase
 
     public function test_invoke_action(): void
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $project = Project::factory()->create([
             'framework_key' => 'ppc',
@@ -32,7 +33,7 @@ class AdminStatusNurseryReportControllerTest extends TestCase
         $report = NurseryReport::factory()->create([
             'nursery_id' => $nursery->id,
             'framework_key' => 'ppc',
-            'status' => NurseryReport::STATUS_AWAITING_APPROVAL,
+            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
         ]);
 
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
@@ -65,6 +66,6 @@ class AdminStatusNurseryReportControllerTest extends TestCase
         $this->actingAs($ppcAdmin)
             ->putJson($uri, $payload)
             ->assertSuccessful()
-            ->assertJsonFragment(['status' => NurseryReport::STATUS_NEEDS_MORE_INFORMATION]);
+            ->assertJsonFragment(['status' => EntityStatusStateMachine::NEEDS_MORE_INFORMATION]);
     }
 }

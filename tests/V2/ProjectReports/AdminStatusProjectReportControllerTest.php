@@ -6,7 +6,8 @@ use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
-//use Illuminate\Support\Facades\Artisan;
+use App\StateMachines\EntityStatusStateMachine;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,7 +17,7 @@ class AdminStatusProjectReportControllerTest extends TestCase
 
     public function test_invoke_action(): void
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $project = Project::factory()->create([
             'framework_key' => 'ppc',
@@ -26,7 +27,7 @@ class AdminStatusProjectReportControllerTest extends TestCase
         $report = ProjectReport::factory()->create([
             'project_id' => $project->id,
             'framework_key' => 'ppc',
-            'status' => ProjectReport::STATUS_AWAITING_APPROVAL,
+            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
         ]);
 
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
@@ -59,6 +60,6 @@ class AdminStatusProjectReportControllerTest extends TestCase
         $this->actingAs($ppcAdmin)
             ->putJson($uri, $payload)
             ->assertSuccessful()
-            ->assertJsonFragment(['status' => ProjectReport::STATUS_NEEDS_MORE_INFORMATION]);
+            ->assertJsonFragment(['status' => EntityStatusStateMachine::NEEDS_MORE_INFORMATION]);
     }
 }
