@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,7 +18,7 @@ class UpdateReportingFrameworkControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();
         $admin->givePermissionTo(['framework-ppc', 'framework-terrafund']);
@@ -41,7 +41,7 @@ class UpdateReportingFrameworkControllerTest extends TestCase
     public function test_clean_up_action()
     {
         $admin = User::factory()->admin()->create();
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $admin->givePermissionTo(['framework-ppc', 'framework-terrafund']);
 
         $formP1 = CustomFormHelper::generateFakeForm('project', 'ppc');

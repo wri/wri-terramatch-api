@@ -1,13 +1,15 @@
 <?php
 
-namespace Seedings;
+namespace Tests\V2\Seedings;
 
 use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\Site;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class UpdateSeedingControllerTest extends TestCase
@@ -17,7 +19,7 @@ class UpdateSeedingControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
     }
 
     /**
@@ -39,7 +41,7 @@ class UpdateSeedingControllerTest extends TestCase
         $site = Site::factory()->create([
             'project_id' => $project->id,
             'framework_key' => $fmKey,
-            'status' => Site::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $seeding = Seeding::factory()->create([
