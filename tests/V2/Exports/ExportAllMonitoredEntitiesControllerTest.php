@@ -1,6 +1,6 @@
 <?php
 
-namespace Exports;
+namespace Tests\V2\Exports;
 
 use App\Helpers\CustomFormHelper;
 use App\Jobs\V2\GenerateAdminAllEntityRecordsExportJob;
@@ -26,7 +26,7 @@ class ExportAllMonitoredEntitiesControllerTest extends TestCase
      */
     public function test_an_admin_user_can_export_all_monitored_entities(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $user = User::factory()->admin()->create();
         $user->givePermissionTo($permission);

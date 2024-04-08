@@ -16,7 +16,7 @@ class AdminSitesMultiControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $admin = User::factory()->admin()->create();
         $admin->givePermissionTo('framework-terrafund');
         $admin->givePermissionTo('framework-ppc');

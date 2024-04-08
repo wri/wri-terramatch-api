@@ -48,7 +48,7 @@ class SoftDeleteSiteControllerTest extends TestCase
      */
     public function test_project_developer_cant_soft_delete_sites_with_reports(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $project = Project::factory()->create(['framework_key' => $fmKey]);
         $site = Site::factory()->{$fmKey}()->create([
