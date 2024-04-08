@@ -1,6 +1,6 @@
 <?php
 
-namespace Audits;
+namespace Tests\V2\Audits;
 
 use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
