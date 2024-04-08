@@ -8,9 +8,10 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class SubmitSiteReportControllerTest extends TestCase
@@ -20,7 +21,7 @@ class SubmitSiteReportControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles --fresh');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
         $owner->givePermissionTo('manage-own');
@@ -40,6 +41,7 @@ class SubmitSiteReportControllerTest extends TestCase
         $report = SiteReport::factory()->create([
             'site_id' => $site->id,
             'framework_key' => 'ppc',
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         CustomFormHelper::generateFakeForm('site-report', 'ppc');
