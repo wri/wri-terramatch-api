@@ -205,7 +205,7 @@ private function insertSitePolygon(string $polygonId, array $properties, float $
       $process->run();
       if (!$process->isSuccessful()) {
         Log::error('Error converting KML to GeoJSON: ' . $process->getErrorOutput());
-        return response()->json(['error' => 'Failed to convert KML to GeoJSON'], 500);
+        return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
       }
       $uuid = $this->insertGeojsonToDB($geojsonFilename);
       return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
@@ -240,7 +240,7 @@ private function insertSitePolygon(string $polygonId, array $properties, float $
         $process->run();
         if (!$process->isSuccessful()) {
           Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
-          return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON'], 500);
+          return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
         }
         $uuid = $this->insertGeojsonToDB($geojsonFilename);
         return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
