@@ -93,13 +93,11 @@ public function insertGeojsonToDB(string $geojsonFilename)
             $data = $this->insertSinglePolygon($feature['geometry'], $srid);
             $uuids[] = $data['uuid'];
             $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
-            echo $returnSite;
         } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
             foreach ($feature['geometry']['coordinates'] as $polygon) {
                 $data = $this->insertSinglePolygon(['type' => 'Polygon', 'coordinates' => $polygon], $srid);
                 $uuids[] = $data['uuid'];
                 $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
-                echo $returnSite;
             }
         }
     }
