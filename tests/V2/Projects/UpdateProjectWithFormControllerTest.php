@@ -6,9 +6,10 @@ use App\Helpers\CustomFormHelper;
 use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class UpdateProjectWithFormControllerTest extends TestCase
@@ -18,7 +19,7 @@ class UpdateProjectWithFormControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -34,7 +35,7 @@ class UpdateProjectWithFormControllerTest extends TestCase
         $project = Project::factory()->create([
             'organisation_id' => $organisation->id,
             'framework_key' => 'ppc',
-            'status' => Project::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('project', 'ppc');
@@ -79,7 +80,7 @@ class UpdateProjectWithFormControllerTest extends TestCase
 
     public function test_update_request()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
         $owner->givePermissionTo('manage-own');
@@ -87,7 +88,7 @@ class UpdateProjectWithFormControllerTest extends TestCase
         $project = Project::factory()->create([
             'organisation_id' => $organisation->id,
             'framework_key' => 'ppc',
-            'status' => Project::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('project', 'ppc');

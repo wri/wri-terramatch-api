@@ -8,9 +8,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-// use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ViewProjectMonitoringPartnersControllerTest extends TestCase
@@ -20,7 +18,7 @@ class ViewProjectMonitoringPartnersControllerTest extends TestCase
 
     public function test_it_returns_project_partners()
     {
-//        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
 
         $user = User::factory()->create(['organisation_id' => $organisation->id]);
