@@ -73,9 +73,6 @@ class UpdateProjectWithFormControllerTest extends TestCase
         $this->actingAs($owner)
             ->putJson($uri, $payload)
             ->assertSuccessful();
-
-        //        $updated = $project->fresh();
-        //        $this->assertEquals($updated->name, '* testing name updated *');
     }
 
     public function test_update_request()
