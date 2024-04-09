@@ -328,28 +328,57 @@ class TerrafundCreateGeometryController extends Controller
     $miles = $dist * 60 * 1.1515;
     return $miles * 1.609344; // Convert to kilometers
   }
+  // public function detectSpikes($geometry)
+  // {
+  //   $spikes = [];
+  //   if ($geometry['type'] === 'Polygon' || $geometry['type'] === 'MultiPolygon') {
+  //     $coordinates = $geometry['type'] === 'Polygon' ? $geometry['coordinates'][0] : $geometry['coordinates'][0][0]; // First ring of the polygon or the first polygon in the MultiPolygon
+  //     $numVertices = count($coordinates);
+  //     $perimeter = 0;
+  //     for ($i = 0; $i < $numVertices - 1; $i++) {
+  //       $distance = $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
+  //       $perimeter += $distance;
+  //     }
+  //     $averageDistance = $perimeter / ($numVertices - 1);
+  //     $threshold = $averageDistance * 1.25; // Adjust this threshold as needed
+  //     for ($i = 0; $i < $numVertices - 1; $i++) {
+  //       $distance = $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
+  //       if (abs($distance - $averageDistance) > $threshold) {
+  //         $spikes[] = $coordinates[$i];
+  //       }
+  //     }
+  //   }
+  //   return $spikes;
+  // }
   public function detectSpikes($geometry)
-  {
+{
     $spikes = [];
+
     if ($geometry['type'] === 'Polygon' || $geometry['type'] === 'MultiPolygon') {
-      $coordinates = $geometry['type'] === 'Polygon' ? $geometry['coordinates'][0] : $geometry['coordinates'][0][0]; // First ring of the polygon or the first polygon in the MultiPolygon
-      $numVertices = count($coordinates);
-      $perimeter = 0;
-      for ($i = 0; $i < $numVertices - 1; $i++) {
-        $distance = $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
-        $perimeter += $distance;
-      }
-      $averageDistance = $perimeter / ($numVertices - 1);
-      $threshold = $averageDistance * 1.25; // Adjust this threshold as needed
-      for ($i = 0; $i < $numVertices - 1; $i++) {
-        $distance = $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
-        if (abs($distance - $averageDistance) > $threshold) {
-          $spikes[] = $coordinates[$i];
+        $coordinates = $geometry['type'] === 'Polygon' ? $geometry['coordinates'][0] : $geometry['coordinates'][0][0]; // First ring of the polygon or the first polygon in the MultiPolygon
+        $numVertices = count($coordinates);
+        $totalDistance = 0;
+
+        // Calculate total distance of the boundary
+        for ($i = 0; $i < $numVertices - 1; $i++) {
+            $totalDistance += $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
         }
-      }
+
+        // Check for spikes
+        for ($i = 0; $i < $numVertices - 1; $i++) {
+            $distance1 = $this->calculateDistance($coordinates[$i], $coordinates[($i + 1) % $numVertices]);
+            $distance2 = $this->calculateDistance($coordinates[($i + 1) % $numVertices], $coordinates[($i + 2) % $numVertices]);
+            $combinedDistance = $distance1 + $distance2;
+
+            if ($combinedDistance > 0.25 * $totalDistance) {
+                // Vertex and its adjacent vertices contribute more than 25% of the total boundary path distance
+                $spikes[] = $coordinates[($i + 1) % $numVertices];
+            }
+        }
     }
+
     return $spikes;
-  }
+}
   public function insertCriteriaSite($POLYGON_ID, $CRITERIA_ID, $valid)
   {
     $criteriaSite = new CriteriaSite();
