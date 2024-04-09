@@ -123,6 +123,8 @@ Route::withoutMiddleware('auth:service-api-key,api')->group(function () {
 
     Route::get('/auth/logout', [AuthController::class, 'logoutAction']);
     Route::get('/auth/refresh', [AuthController::class, 'refreshAction']);
+
+    Route::post('/users', [UsersController::class, 'createAction']);
 });
 
 Route::patch('/auth/verify', [AuthController::class, 'verifyAction']);
@@ -141,7 +143,6 @@ Route::get('/uploads/stratification/example', [StratificationController::class, 
 Route::post('/uploads/site_programme_media', [MediaUploadController::class, 'createAction']);
 
 Route::get('/organisations/{id}/users', [UsersController::class, 'readAllByOrganisationAction']);
-Route::post('/users', [UsersController::class, 'createAction']);
 Route::get('/users/all', [UsersController::class, 'readAllAction']);
 Route::get('/users/unverified', [UsersController::class, 'readAllUnverifiedAction']);
 Route::post('/users/invite', [UsersController::class, 'inviteAction']);
