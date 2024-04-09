@@ -1,8 +1,0 @@
-name: lint-test-on-pull-request
-on: workflow_dispatch
-jobs:
-  lint-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
