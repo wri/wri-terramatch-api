@@ -8,7 +8,6 @@ use App\Models\V2\Projects\ProjectReport;
 use Illuminate\Http\Request;
 use App\Http\Resources\V2\Dashboard\JobsCreatedResource;
 use App\Helpers\TerrafundDashboardQueryHelper;
-use Illuminate\Support\Facades\DB;
 
 class GetJobsCreatedController extends Controller
 {
@@ -18,9 +17,9 @@ class GetJobsCreatedController extends Controller
         $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
 
         $rawProjectIds = $query
-            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
-            ->select('v2_projects.id', 'organisations.type')
-            ->get();
+        ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+        ->select('v2_projects.id', 'organisations.type')
+        ->get();
 
         $forProfitProjectIds = $this->filterProjectIdsByType($rawProjectIds, 'for-profit-organization');
         $nonProfitProjectIds = $this->filterProjectIdsByType($rawProjectIds, 'non-profit-organization');
@@ -90,8 +89,10 @@ class GetJobsCreatedController extends Controller
     {
         $sumData = ProjectReport::whereIn('project_id', $projectIds)
             ->where('framework_key', 'terrafund')
-            ->sum(DB::raw('ft_total + pt_total'));
-        return $sumData;
+            ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
+            ->first();
+
+        return $sumData->total_ft + $sumData->total_pt;
     }
 
     private function getJobsCreatedDetailed($projectIds)
