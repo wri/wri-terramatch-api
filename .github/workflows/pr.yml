@@ -1,4 +1,4 @@
-name: lin-test-on-pull-request
+name: lint-test-on-pull-request
 on: workflow_dispatch
 jobs:
   lint-test:
@@ -6,4 +6,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build
-        run: make rebuild-with-composer
+        run: make up
