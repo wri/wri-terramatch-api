@@ -46,8 +46,9 @@ class VolunteersAndAverageSurvivalRateController extends Controller
     {
         $projects = $projects->filter(function ($project) use ($typeOrganisation) {
             return $project->organisation->type === $typeOrganisation;
-        });
-        $average = $projects->avg('survival_rate');
+        })->flatMap(function ($project) {
+            return $project->reports;
+        })->avg('pct_survival_to_date');
 
         return intval($average);
     }
