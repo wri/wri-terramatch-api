@@ -48,7 +48,8 @@ class TotalTerrafundHeaderDashboardController extends Controller
     public function getTotalJobsCreatedSum($projects)
     {
         return $projects->sum(function ($project) {
-            return $project->reports()->sum(DB::raw('ft_total + pt_total'));
+            $totalSum = $project->reports()->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')->first();
+            return $totalSum->total_ft + $totalSum->total_pt;
         });
     }
 

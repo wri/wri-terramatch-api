@@ -61,7 +61,16 @@ class ActiveProjectsTableController extends Controller
 
     public function jobsCreated($project)
     {
-        return intval($project->reports()->sum(DB::raw('ft_total + pt_total')));
+        $projectReport = $project->reports()
+            ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
+            ->groupBy('project_id')
+            ->first();
+
+        if ($projectReport) {
+            return $projectReport->total_ft + $projectReport->total_pt;
+        } else {
+            return 0;
+        }
     }
 
     public function volunteers($project)
