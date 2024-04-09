@@ -370,7 +370,7 @@ class TerrafundCreateGeometryController extends Controller
             $distance2 = $this->calculateDistance($coordinates[($i + 1) % $numVertices], $coordinates[($i + 2) % $numVertices]);
             $combinedDistance = $distance1 + $distance2;
 
-            if ($combinedDistance > 0.25 * $totalDistance) {
+            if ($combinedDistance > 0.4 * $totalDistance) {
                 // Vertex and its adjacent vertices contribute more than 25% of the total boundary path distance
                 $spikes[] = $coordinates[($i + 1) % $numVertices];
             }
@@ -567,7 +567,9 @@ class TerrafundCreateGeometryController extends Controller
     }
 
     $projectId = $sitePolygon->project_id;
-
+    if(!$projectId) {
+      return response()->json(['error' => 'Project ID not found for the given polygon ID'], 200);
+    }
     $relatedPolyIds = DB::table('site_polygon')
       ->where('project_id', $projectId)
       ->where('poly_id', '!=', $uuid)
@@ -607,7 +609,7 @@ class TerrafundCreateGeometryController extends Controller
       ->first();
 
     if (!$project) {
-      return response()->json(['error' => 'Project not found for the given project ID'], 404);
+      return response()->json(['error' => 'Project not found for the given project ID', 'projectId' => $projectId], 200);
     }
 
     $totalHectaresRestoredGoal = $project->total_hectares_restored_goal;
