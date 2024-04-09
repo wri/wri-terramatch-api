@@ -5,8 +5,8 @@ namespace Tests\V2\UpdateRequests;
 use App\Models\Framework;
 use App\Models\User;
 use App\Models\V2\UpdateRequests\UpdateRequest;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexUpdateRequestControllerTest extends TestCase

@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\V2\Nurseries\NurseryReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
- use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexNurseryReportsControllerTest extends TestCase

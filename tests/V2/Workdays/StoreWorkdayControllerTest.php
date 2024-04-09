@@ -7,10 +7,10 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
-use App\StateMachines\EntityStatusStateMachine;
-use Illuminate\Support\Facades\Artisan;
 use App\Models\V2\Workdays\Workday;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class StoreWorkdayControllerTest extends TestCase

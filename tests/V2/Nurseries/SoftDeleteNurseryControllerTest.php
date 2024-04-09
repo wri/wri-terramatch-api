@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\Site;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

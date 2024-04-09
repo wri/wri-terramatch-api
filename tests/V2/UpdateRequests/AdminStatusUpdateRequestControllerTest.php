@@ -9,9 +9,9 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\EntityStatusStateMachine;
-use Illuminate\Support\Facades\Artisan;
 use App\StateMachines\UpdateRequestStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminStatusUpdateRequestControllerTest extends TestCase
