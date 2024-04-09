@@ -8,8 +8,8 @@ use App\Models\User;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class UpdateReportingFrameworkControllerTest extends TestCase

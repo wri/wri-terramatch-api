@@ -9,8 +9,8 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Workdays\Workday;
 use App\StateMachines\EntityStatusStateMachine;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class UpdateWorkdayControllerTest extends TestCase

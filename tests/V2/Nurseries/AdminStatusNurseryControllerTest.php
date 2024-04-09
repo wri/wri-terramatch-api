@@ -7,8 +7,8 @@ use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\StateMachines\EntityStatusStateMachine;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminStatusNurseryControllerTest extends TestCase

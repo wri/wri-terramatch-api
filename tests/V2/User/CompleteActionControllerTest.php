@@ -4,8 +4,8 @@ namespace Tests\V2\User;
 
 use App\Models\User;
 use App\Models\V2\Action;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class CompleteActionControllerTest extends TestCase
