@@ -54,24 +54,15 @@ class ActiveProjectsTableController extends Controller
     {
         return $project->sites->sum(function ($site) {
             return $site->reports->sum(function ($report) {
-                    return $report->treeSpecies->sum('amount');
+                return $report->treeSpecies->sum('amount');
             });
         });
     }
 
     public function jobsCreated($project)
     {
-        $projectReport = $project->reports()
-            ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
-            ->groupBy('project_id')
-            ->first();
-    
-        if ($projectReport) {
-            return $projectReport->total_ft + $projectReport->total_pt;
-        } else {
-            return 0;
-        }
-    }    
+        return intval($project->reports()->sum(DB::raw('ft_total + pt_total')));
+    }
 
     public function volunteers($project)
     {
