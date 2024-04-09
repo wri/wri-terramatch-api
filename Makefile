@@ -24,8 +24,14 @@ migrate-seed:
 	docker-compose exec php php ./artisan migrate-services
 	docker-compose exec php php ./artisan db:seed
 
-test: migrate-seed
-	docker-compose exec php ./vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no
+migrate-seed-test:
+	echo "create database if not exists terramatch_test;" | docker-compose exec -T mariadb mysql -h localhost -u root -proot
+	echo "grant all on terramatch_test.* to 'wri'@'%';" | docker-compose exec -T mariadb mysql -h localhost -u root -proot
+	docker-compose exec php php artisan --env=testing migrate:fresh
+	docker-compose exec php php artisan --env=testing migrate-services
+	docker-compose exec php php artisan --env=testing db:seed
+
+test: lint migrate-seed-test
 	docker-compose exec php ./vendor/bin/phpunit
 
 test-single:
@@ -33,11 +39,13 @@ test-single:
 
 ts: test-single
 
-quick-test: migrate-seed
-	docker-compose exec php ./vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no
+quick-test: lint migrate-seed-test
 	docker-compose exec php ./vendor/bin/phpunit --exclude=skipPipeline,slow
 
 lint:
+	docker-compose exec php ./vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no
+
+lint-fix:
 	docker-compose exec php ./vendor/bin/php-cs-fixer fix -v
 
 lint-test:
