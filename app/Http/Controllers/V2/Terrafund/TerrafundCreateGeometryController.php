@@ -359,18 +359,16 @@ class TerrafundCreateGeometryController extends Controller
         $numVertices = count($coordinates);
         $totalDistance = 0;
 
-        // Calculate total distance of the boundary
         for ($i = 0; $i < $numVertices - 1; $i++) {
             $totalDistance += $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
         }
 
-        // Check for spikes
         for ($i = 0; $i < $numVertices - 1; $i++) {
             $distance1 = $this->calculateDistance($coordinates[$i], $coordinates[($i + 1) % $numVertices]);
             $distance2 = $this->calculateDistance($coordinates[($i + 1) % $numVertices], $coordinates[($i + 2) % $numVertices]);
             $combinedDistance = $distance1 + $distance2;
 
-            if ($combinedDistance > 0.4 * $totalDistance) {
+            if ($combinedDistance > 0.6 * $totalDistance) {
                 // Vertex and its adjacent vertices contribute more than 25% of the total boundary path distance
                 $spikes[] = $coordinates[($i + 1) % $numVertices];
             }
