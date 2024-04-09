@@ -17,7 +17,7 @@ class CreateCriteriaSite extends Migration
         $table->id();
         $table->uuid('uuid')->unique();
         $table->integer('criteria_id')->nullable();
-        $table->integer('polygon_id')->nullable();
+        $table->string('polygon_id')->nullable();
         $table->integer('valid')->nullable();
         $table->date('date_created')->nullable();
         $table->softDeletes();
