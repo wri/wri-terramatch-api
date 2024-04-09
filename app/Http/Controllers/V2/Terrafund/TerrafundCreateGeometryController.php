@@ -622,7 +622,7 @@ class TerrafundCreateGeometryController extends Controller
     }
     $ESTIMATED_AREA_CRITERIA_ID = 12;
     $insertionSuccess = $this->insertCriteriaSite($uuid, $ESTIMATED_AREA_CRITERIA_ID, $valid);
-    return response()->json(['valid' => $valid, 'sum area ' => $sumEstArea, '$totalHectaresRestoredGoal' => $totalHectaresRestoredGoal, 'insertionSuccess' => $insertionSuccess], 200);
+    return response()->json(['valid' => $valid, 'sum_area_project' => $sumEstArea, 'total_area_project' => $totalHectaresRestoredGoal, 'insertionSuccess' => $insertionSuccess], 200);
   }
 
   
