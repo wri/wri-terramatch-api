@@ -84,15 +84,7 @@ class ActiveCountriesTableController extends Controller
         $projects = $projects->where('country', $country);
 
         return $projects->sum(function ($project) {
-            $totalSum = $project->reports()
-                ->groupBy('project_id')
-                ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')->first();
-
-            if ($totalSum) {
-                return $totalSum->total_ft + $totalSum->total_pt;
-            } else {
-                return 0;
-            }
+            return $project->reports()->sum(DB::raw('ft_total + pt_total'));
         });
     }
 

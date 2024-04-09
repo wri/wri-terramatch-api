@@ -6,6 +6,7 @@ use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\TotalSectionHeaderResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TotalTerrafundHeaderDashboardController extends Controller
 {
@@ -47,8 +48,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
     public function getTotalJobsCreatedSum($projects)
     {
         return $projects->sum(function ($project) {
-            $totalSum = $project->reports()->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')->first();
-            return $totalSum->total_ft + $totalSum->total_pt;
+            return $project->reports()->sum(DB::raw('ft_total + pt_total'));
         });
     }
 
