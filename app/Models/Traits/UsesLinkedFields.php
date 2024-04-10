@@ -8,6 +8,27 @@ trait UsesLinkedFields
 {
     private ?Form $frameworkModelForm = null;
 
+    public function getForm(): Form
+    {
+        if (! is_null($this->form)) {
+            // Some classes that use this trait have a direct database link to the form.
+            return $this->form;
+        }
+
+        if (is_null($this->frameworkModelForm)) {
+            $this->frameworkModelForm = Form::where('model', get_class($this))
+                ->where('framework_key', $this->framework_key)
+                ->first();
+        }
+
+        return $this->frameworkModelForm;
+    }
+
+    public function getFormConfig(): ?array
+    {
+        return config('wri.linked-fields.models.' . $this->shortName);
+    }
+
     public function updateAllAnswers(array $input): array
     {
         $localAnswers = [];
@@ -29,14 +50,16 @@ trait UsesLinkedFields
         return $localAnswers;
     }
 
-    public function mapEntityAnswers(array $input, Form $form, array $cfg): array
+    public function updateFromForm(array $input): void
     {
+        $form = $this->getForm();
+        $fieldsConfig = data_get($this->getFormConfig(), 'fields', []);
         $localAnswers = [];
         $entityProps = [];
         foreach ($form->sections as $section) {
             foreach ($section->questions as $question) {
                 if ($question->input_type !== 'conditional') {
-                    $fieldConfig = data_get($cfg, $question->linked_field_key);
+                    $fieldConfig = data_get($fieldsConfig, $question->linked_field_key);
                     $property = data_get($fieldConfig, 'property', null);
                     $value = data_get($input, $question->uuid, null);
 
@@ -54,7 +77,7 @@ trait UsesLinkedFields
             }
         }
 
-        return $entityProps;
+        $this->update($entityProps);
     }
 
     public function calculateCompletion(Form $form): int
@@ -208,24 +231,4 @@ trait UsesLinkedFields
         }
     }
 
-    public function getForm(): Form
-    {
-        if (! is_null($this->form)) {
-            // Some classes that use this trait have a direct database link to the form.
-            return $this->form;
-        }
-
-        if (is_null($this->frameworkModelForm)) {
-            $this->frameworkModelForm = Form::where('model', get_class($this))
-                ->where('framework_key', $this->framework_key)
-                ->first();
-        }
-
-        return $this->frameworkModelForm;
-    }
-
-    public function getFormConfig(): ?array
-    {
-        return config('wri.linked-fields.models.' . $this->shortName);
-    }
 }
