@@ -25,6 +25,7 @@ use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
+use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
 use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
 use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
@@ -673,4 +674,5 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/countries', CountriesController::class);
     Route::get('/project-details', ProjectProfileDetailsController::class);
+    Route::get('/project-list-export', ProjectListExportController::class);
 });

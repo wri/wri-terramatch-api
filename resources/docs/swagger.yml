@@ -19489,3 +19489,15 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  '/v2/dashboard/project-list-export':
+    get:
+      summary: Export CSV document of active projects
+      tags:
+        - Export
+      produces:
+        - text/plain
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: file

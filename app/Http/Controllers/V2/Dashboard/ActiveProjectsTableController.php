@@ -18,7 +18,8 @@ class ActiveProjectsTableController extends Controller
     {
         $perPage = $request->input('per_page', PHP_INT_MAX);
         $page = $request->input('page', 1);
-        $pagedData = $this->paginate($this->getAllProjects($request), $perPage, $page);
+        $projects = $this->getAllProjects($request);
+        $pagedData = $this->paginate($projects, $perPage, $page);
 
         return new ActiveProjectsTableResource($pagedData);
     }
