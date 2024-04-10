@@ -50,10 +50,17 @@ class CustomFormHelper
                 break;
         }
 
+        $form = Form::where(['framework_key' => $framework, 'model' => $model])->first();
+        if ($form != null) {
+            // If we've already generated a fake form for this combo, use it because otherwise the form the
+            // controller gets from the DB will be different from the form in use by the test.
+            return $form;
+        }
+
         $form = Form::factory()->create(['framework_key' => $framework, 'model' => $model]);
         $section = FormSection::factory()->create(['form_id' => $form->uuid]);
         foreach (config('wri.linked-fields.models.' . $type . '.fields') as $key => $fieldCfg) {
-            $questions = FormQuestion::factory()->create(
+            FormQuestion::factory()->create(
                 [
                     'input_type' => data_get($fieldCfg, 'input_type'),
                     'label' => data_get($fieldCfg, 'label'),

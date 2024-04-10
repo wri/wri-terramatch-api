@@ -5,10 +5,8 @@ namespace App\Http\Controllers\V2\Projects;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\IsAdminIndex;
 use App\Http\Resources\V2\Projects\ProjectsCollection;
-use App\Models\Framework;
 use App\Models\V2\Projects\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -49,6 +47,7 @@ class AdminIndexProjectsController extends Controller
         }
 
         $this->isolateAuthorizedFrameworks($query, 'v2_projects');
+
         return new ProjectsCollection($this->paginate($query));
     }
 }

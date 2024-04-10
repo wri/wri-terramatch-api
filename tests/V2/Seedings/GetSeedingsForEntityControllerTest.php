@@ -1,6 +1,6 @@
 <?php
 
-namespace Seedings;
+namespace Tests\V2\Seedings;
 
 use App\Models\User;
 use App\Models\V2\Organisation;
@@ -8,7 +8,9 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class GetSeedingsForEntityControllerTest extends TestCase
@@ -18,7 +20,7 @@ class GetSeedingsForEntityControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
     }
 
     /**
@@ -40,7 +42,7 @@ class GetSeedingsForEntityControllerTest extends TestCase
         $site = Site::factory()->create([
             'project_id' => $project->id,
             'framework_key' => $fmKey,
-            'status' => Site::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         Seeding::factory()->count(3)->create([
@@ -78,13 +80,13 @@ class GetSeedingsForEntityControllerTest extends TestCase
         $site = Site::factory()->create([
             'project_id' => $project->id,
             'framework_key' => $fmKey,
-            'status' => Site::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $siteReport = SiteReport::factory()->create([
             'site_id' => $site->id,
             'framework_key' => $fmKey,
-            'status' => SiteReport::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         Seeding::factory()->create([

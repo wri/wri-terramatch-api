@@ -191,6 +191,7 @@ use App\Http\Controllers\V2\Workdays\DeleteWorkdayController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Controllers\V2\Workdays\StoreWorkdayController;
 use App\Http\Controllers\V2\Workdays\UpdateWorkdayController;
+use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -203,9 +204,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the 'api' middleware group. Enjoy building your API!
 |
 */
-
-const ENTITY_TYPES_PLURAL = ['projects', 'project-reports', 'sites', 'site-reports', 'nurseries', 'nursery-reports'];
-const ENTITY_TYPES_SINGULAR = ['project', 'project-report', 'site', 'site-report', 'nursery', 'nursery-report'];
 
 Route::get('debug/error', function () {
     throw new Exception('Test exception', 500);
@@ -298,9 +296,9 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
 
     Route::prefix('{modelSlug}')
-        ->whereIn('modelSlug', ENTITY_TYPES_PLURAL)
+        ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
         ->middleware('modelInterface')
-        ->group(function() {
+        ->group(function () {
             Route::put('/{entity}/{status}', AdminStatusEntityController::class);
             Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
         });
@@ -392,7 +390,7 @@ Route::prefix('my')->group(function () {
     Route::get('/projects', ViewMyProjectsController::class);
 });
 
-Route::post('/users/resend', [AuthController::class, 'resendByEmail']);
+Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
 
 Route::prefix('forms')->group(function () {
     Route::get('/my/submissions', ViewMyFormSubmissionsController::class)->middleware('i18n');
@@ -411,9 +409,9 @@ Route::prefix('forms')->group(function () {
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
     Route::prefix('{modelSlug}')
-        ->whereIn('modelSlug', ENTITY_TYPES_PLURAL)
+        ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
         ->middleware('modelInterface')
-        ->group(function() {
+        ->group(function () {
             Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
             Route::put('/{entity}', UpdateEntityWithFormController::class);
             Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
@@ -549,14 +547,14 @@ Route::prefix('tasks')->group(function () {
 Route::prefix('{modelSlug}')
     ->whereIn('modelSlug', ['site-reports', 'nursery-reports'])
     ->middleware('modelInterface')
-    ->group(function() {
+    ->group(function () {
         Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
     });
 
 Route::prefix('{modelSlug}')
-    ->whereIn('modelSlug', ENTITY_TYPES_PLURAL)
+    ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
     ->middleware('modelInterface')
-    ->group(function() {
+    ->group(function () {
         Route::get('/{entity}', ViewEntityController::class);
     });
 
@@ -615,7 +613,7 @@ Route::prefix('update-requests')->group(function () {
     Route::delete('/{updateRequest}', AdminSoftDeleteUpdateRequestController::class);
 
     Route::prefix('/{modelSlug}')
-        ->whereIn('modelSlug', ENTITY_TYPES_SINGULAR)
+        ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_SINGULAR)
         ->middleware('modelInterface')
         ->group(function () {
             Route::get('/{entity}', EntityUpdateRequestsController::class);

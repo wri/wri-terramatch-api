@@ -20,7 +20,7 @@ class NurseryReportFactory extends Factory
         return [
             'framework_key' => $this->faker->randomElement($frameworks),
             'nursery_id' => Nursery::factory()->create()->id,
-            'status' => $this->faker->randomElement(array_keys(NurseryReport::$statuses)),
+            'status' => array_keys(NurseryReport::$statuses)[0],
             'title' => $this->faker->text(30),
             'seedlings_young_trees' => $this->faker->numberBetween(0, 9999999),
             'interesting_facts' => $this->faker->text(500),

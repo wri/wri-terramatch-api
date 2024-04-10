@@ -17,10 +17,12 @@ class AdminStatusEntityController extends Controller
         switch($status) {
             case 'approve':
                 $entity->approve(data_get($data, 'feedback'));
+
                 break;
 
             case 'moreinfo':
                 $entity->needsMoreInformation(data_get($data, 'feedback'), data_get($data, 'feedback_fields'));
+
                 break;
 
             default:

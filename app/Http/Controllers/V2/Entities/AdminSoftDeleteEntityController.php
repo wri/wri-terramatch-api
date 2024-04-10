@@ -15,6 +15,7 @@ class AdminSoftDeleteEntityController extends Controller
         $this->authorize('delete', $entity);
         $entity->delete();
         EntityDeleteEvent::dispatch($request->user(), $entity);
+
         return $entity->createResource();
     }
 }

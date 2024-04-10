@@ -5,7 +5,6 @@ namespace App\Http\Controllers\V2\SiteReports;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\IsAdminIndex;
 use App\Http\Resources\V2\SiteReports\SiteReportsCollection;
-use App\Models\Framework;
 use App\Models\V2\Sites\SiteReport;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -55,6 +54,7 @@ class AdminIndexSiteReportsController extends Controller
         }
 
         $this->isolateAuthorizedFrameworks($query, 'v2_site_reports');
+
         return new SiteReportsCollection($this->paginate($query));
     }
 }

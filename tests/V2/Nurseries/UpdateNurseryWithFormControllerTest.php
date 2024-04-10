@@ -7,9 +7,9 @@ use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
@@ -20,7 +20,7 @@ class UpdateNurseryWithFormControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -41,7 +41,7 @@ class UpdateNurseryWithFormControllerTest extends TestCase
         $nursery = Nursery::factory()->create([
             'project_id' => $project->id,
             'framework_key' => 'ppc',
-            'status' => Nursery::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('nursery', 'ppc');
@@ -87,7 +87,7 @@ class UpdateNurseryWithFormControllerTest extends TestCase
 
     public function test_nursery_update_request()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
 
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
@@ -101,7 +101,7 @@ class UpdateNurseryWithFormControllerTest extends TestCase
         $nursery = Nursery::factory()->create([
             'project_id' => $project->id,
             'framework_key' => 'ppc',
-            'status' => Nursery::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('nursery', 'ppc');

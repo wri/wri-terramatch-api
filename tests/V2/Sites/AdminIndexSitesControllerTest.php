@@ -2,9 +2,11 @@
 
 namespace Tests\V2\Sites;
 
+use App\Models\Framework;
 use App\Models\User;
 use App\Models\V2\Sites\Site;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexSitesControllerTest extends TestCase
@@ -16,8 +18,10 @@ class AdminIndexSitesControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        // Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $this->user = User::factory()->admin()->create();
+        Framework::factory()->create(['slug' => 'terrafund']);
+        Framework::factory()->create(['slug' => 'ppc']);
         $this->user->givePermissionTo('framework-terrafund');
 
         Site::query()->delete();

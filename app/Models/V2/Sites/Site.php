@@ -293,8 +293,8 @@ class Site extends Model implements HasMedia, AuditableContract, EntityModel
     public function getWorkdayCountAttribute(): int
     {
         $totals = $this->reports()->hasBeenSubmitted()->get([
-            DB::raw("sum(`workdays_volunteer`) as volunteer"),
-            DB::raw("sum(`workdays_paid`) as paid"),
+            DB::raw('sum(`workdays_volunteer`) as volunteer'),
+            DB::raw('sum(`workdays_paid`) as paid'),
         ])->first();
 
         return $totals?->paid + $totals?->volunteer;

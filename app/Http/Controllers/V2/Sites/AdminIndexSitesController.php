@@ -56,6 +56,7 @@ class AdminIndexSitesController extends Controller
         }
 
         $this->isolateAuthorizedFrameworks($query, 'v2_sites');
+
         return new V2SitesCollection($this->paginate($query));
     }
 }

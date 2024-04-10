@@ -41,7 +41,7 @@ class AssociateReportsTasksCommand extends Command
         );
     }
 
-    protected function addTaskIds ($class, $projectGetter = null): void
+    protected function addTaskIds($class, $projectGetter = null): void
     {
         if ($projectGetter == null) {
             $projectGetter = fn ($report) => $report->project()->withTrashed()->first();
@@ -61,12 +61,14 @@ class AssociateReportsTasksCommand extends Command
                 $project = $projectGetter($report);
                 if ($project == null) {
                     $skipped++;
+
                     continue;
                 }
 
                 $task = $this->taskForProjectAndDate($project, $report->due_at)->first();
                 if ($task == null) {
                     $skipped++;
+
                     continue;
                 }
 
@@ -82,7 +84,7 @@ class AssociateReportsTasksCommand extends Command
         $this->info("Completed $className migration [target=$target, updated=$updated, skipped=$skipped]");
     }
 
-    protected function taskForProjectAndDate (Project $project, Carbon $date): Builder
+    protected function taskForProjectAndDate(Project $project, Carbon $date): Builder
     {
         return Task::where('project_id', $project->id)
             ->whereMonth('due_at', $date->month)

@@ -32,7 +32,7 @@ class ViewProjectNurseriesControllerTest extends TestCase
     {
         parent::setUp();
 
-        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $this->ppcAdmin = User::factory()->admin()->create();
         $this->ppcAdmin->givePermissionTo('framework-ppc');
 
