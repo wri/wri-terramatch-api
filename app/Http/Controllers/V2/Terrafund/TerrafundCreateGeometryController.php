@@ -668,13 +668,5 @@ class TerrafundCreateGeometryController extends Controller
   }
 
 
-  public function updateGeometry(string $uuid, Request $request)
-  {
-    $sitePolygon = SitePolygon::where('uuid', $uuid)->first();
-    if (!$sitePolygon) {
-      return response()->json(['error' => 'Site polygon not found'], 200);
-    }
-    $sitePolygon->update($request->all());
-    return response()->json(['site_polygon' => $sitePolygon], 200);
-  }
+
 }
