@@ -17,7 +17,8 @@ use Illuminate\Support\Str;
  * @property string $readable_status
  * @method status
  */
-trait HasEntityStatus {
+trait HasEntityStatus
+{
     use HasStatus;
     use HasStateMachines;
     use HasEntityStatusScopesAndTransitions;

@@ -17,6 +17,9 @@ use Illuminate\Http\Request;
  */
 class ModelInterfaceBindingMiddleware
 {
+    public const ENTITY_TYPES_PLURAL = ['projects', 'project-reports', 'sites', 'site-reports', 'nurseries', 'nursery-reports'];
+    public const ENTITY_TYPES_SINGULAR = ['project', 'project-report', 'site', 'site-report', 'nursery', 'nursery-report'];
+
     private const CONCRETE_MODELS = [
         // EntityModel concrete classes
         'projects' => Project::class,
@@ -39,7 +42,7 @@ class ModelInterfaceBindingMiddleware
     {
         $route = $request->route();
         $parameterKeys = array_keys($route->parameters);
-        $modelSlugIndex = array_search('modelSlug' , array_keys($route->parameters));
+        $modelSlugIndex = array_search('modelSlug', array_keys($route->parameters));
         if ($modelSlugIndex < 0 || count($parameterKeys) <= $modelSlugIndex) {
             return $next($request);
         }

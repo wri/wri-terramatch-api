@@ -1,6 +1,6 @@
 <?php
 
-namespace Models\V2\Sites;
+namespace Tests\Unit\Models\V2\Sites;
 
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteMonitoring;

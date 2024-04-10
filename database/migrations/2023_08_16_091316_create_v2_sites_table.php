@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\Site;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint ;
 
@@ -20,7 +19,7 @@ class CreateV2SitesTable extends Migration
             $table->string('framework_key', 20)->nullable()->index();
             $table->foreignIdFor(Project::class)->nullable();
             $table->string('name')->nullable();
-            $table->string('status')->default(Site::STATUS_STARTED);
+            $table->string('status')->default(\App\StateMachines\EntityStatusStateMachine::STARTED);
             $table->boolean('control_site')->nullable();
             $table->longText('boundary_geojson')->nullable();
             $table->text('land_use_types')->nullable();

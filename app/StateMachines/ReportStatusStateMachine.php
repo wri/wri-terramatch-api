@@ -14,6 +14,7 @@ class ReportStatusStateMachine extends EntityStatusStateMachine
         $parentTransitions = parent::transitions();
         // Reports can go from awaiting approval to started if the nothing_to_report flag is true (see validations below)
         $parentTransitions[self::AWAITING_APPROVAL][] = self::STARTED;
+
         return array_merge(
             [
                 self::DUE => [self::STARTED, self::AWAITING_APPROVAL],
@@ -55,7 +56,7 @@ class ReportStatusStateMachine extends EntityStatusStateMachine
         return $hooks;
     }
 
-    private function addHook ($hooks, $status, $hook)
+    private function addHook($hooks, $status, $hook)
     {
         $hooks[$status] = [$hook];
     }

@@ -39,7 +39,7 @@ abstract class Policy
 
     protected function isServiceAccount(?UserModel $user): bool
     {
-        return !$this->isGuest($user) && $user->role == 'service';
+        return ! $this->isGuest($user) && $user->role == 'service';
     }
 
     protected function isOrphanedUser(?UserModel $user): bool

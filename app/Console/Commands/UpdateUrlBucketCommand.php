@@ -50,6 +50,7 @@ class UpdateUrlBucketCommand extends Command
         // Add more tables if needed
 
         $this->info('Update completed successfully.');
+
         return 0;
     }
 

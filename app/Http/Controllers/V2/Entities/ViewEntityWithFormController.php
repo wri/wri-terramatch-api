@@ -10,6 +10,7 @@ class ViewEntityWithFormController extends Controller
     public function __invoke(EntityModel $entity)
     {
         $this->authorize('read', $entity);
+
         return $entity->createSchemaResource();
     }
 }

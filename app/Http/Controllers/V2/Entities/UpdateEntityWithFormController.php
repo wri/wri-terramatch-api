@@ -33,10 +33,11 @@ class UpdateEntityWithFormController extends Controller
             if ($entity instanceof ReportModel) {
                 $entity->updateInProgress($isAdmin);
             }
+
             return $entity->createResource();
         }
 
-        if (!empty($updateRequest)) {
+        if (! empty($updateRequest)) {
             $updateRequest->update([ 'content' => array_merge($updateRequest->content, $answers) ]);
         } else {
             $updateRequest = UpdateRequest::create([

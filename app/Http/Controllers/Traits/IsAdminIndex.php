@@ -9,14 +9,14 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 trait IsAdminIndex
 {
-    protected function sort ($query, $sortableColumns): void
+    protected function sort($query, $sortableColumns): void
     {
         if (in_array(request()->query('sort'), $sortableColumns)) {
             $query->allowedSorts($sortableColumns);
         }
     }
 
-    protected function isolateAuthorizedFrameworks (QueryBuilder $query, string $tableName): void
+    protected function isolateAuthorizedFrameworks(QueryBuilder $query, string $tableName): void
     {
         $user = Auth::user();
         $frameworks = Framework::all();
@@ -29,7 +29,7 @@ trait IsAdminIndex
             return $framework->slug;
         })->toArray();
 
-        if (!$user->hasAllPermissions($frameworkNamesWithPref)) {
+        if (! $user->hasAllPermissions($frameworkNamesWithPref)) {
             $query->where(function ($query) use ($tableName, $frameworkNames, $user) {
                 foreach ($frameworkNames as $framework) {
                     $frameworkPermission = 'framework-' . $framework;
@@ -41,9 +41,10 @@ trait IsAdminIndex
         }
     }
 
-    protected function paginate (QueryBuilder $query): LengthAwarePaginator
+    protected function paginate(QueryBuilder $query): LengthAwarePaginator
     {
         $perPage = request()->query('per_page') ?? config('app.pagination_default', 15);
+
         return $query->paginate($perPage)->appends(request()->query());
     }
 }

@@ -25,6 +25,7 @@ trait HasEntityResources
         }
 
         $resourceClassName = join('\\', $resourceNamespaceParts) . '\\' . $class->getShortName() . 'Resource';
+
         return new $resourceClassName($this);
     }
 

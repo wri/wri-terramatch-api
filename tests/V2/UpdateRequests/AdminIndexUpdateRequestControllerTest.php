@@ -2,10 +2,11 @@
 
 namespace Tests\V2\UpdateRequests;
 
+use App\Models\Framework;
 use App\Models\User;
 use App\Models\V2\UpdateRequests\UpdateRequest;
-//use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexUpdateRequestControllerTest extends TestCase
@@ -14,14 +15,16 @@ class AdminIndexUpdateRequestControllerTest extends TestCase
 
     public function test_invoke_action(): void
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         UpdateRequest::truncate();
         $user = User::factory()->create();
         $user->givePermissionTo('manage-own');
 
+        Framework::factory()->create(['slug' => 'terrafund']);
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
+        Framework::factory()->create(['slug' => 'ppc']);
         $ppcAdmin = User::factory()->admin()->create();
         $ppcAdmin->givePermissionTo('framework-ppc');
 

@@ -111,7 +111,7 @@ final class AdminUserControllerTest extends TestCase
 
     public function test_create_action(): void
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();
 
@@ -155,7 +155,7 @@ final class AdminUserControllerTest extends TestCase
      */
     public function test_an_user_can_have_been_assigned_with_a_role(string $primaryRole, string $expectedUserType)
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
 
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();

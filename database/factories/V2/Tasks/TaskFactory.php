@@ -20,7 +20,7 @@ class TaskFactory extends Factory
         $date = Carbon::create($fakedDate);
 
         return [
-            'status' => $this->faker->randomElement(Task::$statuses),
+            'status' => array_keys(Task::$statuses)[0],
             'organisation_id' => (Organisation::factory()->create())->id,
             'project_id' => (Organisation::factory()->create())->id,
             'period_key' => $date->year . '-' . $date->month,

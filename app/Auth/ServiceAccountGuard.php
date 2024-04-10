@@ -14,9 +14,9 @@ class ServiceAccountGuard implements Guard
 {
     use GuardHelpers;
 
-    const HEADER = 'authorization';
-    CONST PREFIX = 'bearer';
-    const API_KEY_LENGTH = 64;
+    public const HEADER = 'authorization';
+    public const PREFIX = 'bearer';
+    public const API_KEY_LENGTH = 64;
 
     protected Request $request;
 

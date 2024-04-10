@@ -79,6 +79,7 @@ class ExportAllProjectDataAsProjectDeveloperController extends Controller
             $mainZip->addFromString($filename, $site->boundary_geojson);
         }
     }
+
     private function addNurseryReportsExports(Project $project, \ZipArchive $mainZip): void
     {
         $form = $this->getForm(NurseryReport::class, $project->framework_key);
