@@ -35,9 +35,9 @@ class ViewTreeRestorationGoalController extends Controller
 
         $totalTreesGrownGoal = $query->sum('trees_grown_goal');
 
-        $treesUnderRestorationActualTotal = $this->treeCountPerPeriod($siteIds, $distinctDates);
-        $treesUnderRestorationActualForProfit = $this->treeCountPerPeriod($forProfitSiteIds, $distinctDates);
-        $treesUnderRestorationActualNonProfit = $this->treeCountPerPeriod($nonProfitSiteIds, $distinctDates);
+        $treesUnderRestorationActualTotal = $this->treeCountPerPeriod($siteIds, $distinctDates, $totalTreesGrownGoal);
+        $treesUnderRestorationActualForProfit = $this->treeCountPerPeriod($forProfitSiteIds, $distinctDates, $totalTreesGrownGoal);
+        $treesUnderRestorationActualNonProfit = $this->treeCountPerPeriod($nonProfitSiteIds, $distinctDates, $totalTreesGrownGoal);
 
         $averageSurvivalRateTotal = $this->getAverageSurvival($allProjectIds);
         $averageSurvivalRateForProfit = $this->getAverageSurvival($forProfitProjectIds);
@@ -119,7 +119,7 @@ class ViewTreeRestorationGoalController extends Controller
     }
     
 
-    private function treeCountPerPeriod($siteIds, $distinctDates)
+    private function treeCountPerPeriod($siteIds, $distinctDates, $totalTreesGrownGoal)
     {
         $treesUnderRestorationActual = [];
         $totalAmount = 0;
@@ -138,7 +138,7 @@ class ViewTreeRestorationGoalController extends Controller
                 $treeSpeciesAmount += $report->treeSpecies()->sum('amount');
             }
 
-            $totalAmount += $treeSpeciesAmount;
+            $totalAmount = $totalTreesGrownGoal;
 
             $formattedDate = Carbon::create($year, $month, 1);
 
