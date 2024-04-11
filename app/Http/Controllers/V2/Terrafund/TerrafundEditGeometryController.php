@@ -118,10 +118,11 @@ class TerrafundEditGeometryController extends Controller
             'est_area' => $areaHectares, // Assign the calculated area
             'target_sys' => $validatedData['target_sys'],
         ]);
+        $sitePolygon->poly_id = $uuid;
         $sitePolygon->uuid = Str::uuid();
         $sitePolygon->save();
 
-        return response()->json(['message' => 'Site polygon created successfully'], 201);
+        return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon], 201);
     } catch (\Exception $e) {
         // Handle other exceptions
         return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
