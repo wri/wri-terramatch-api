@@ -103,9 +103,8 @@ class TerrafundEditGeometryController extends Controller
         if (!$polygonGeometry) {
             return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
         }
-        $geojson = $polygonGeometry->geometry;
-        $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
-        $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
+        $areaSqDegrees = DB::selectOne("SELECT ST_Area(geom) AS area FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->area;
+        $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(geom)) AS latitude FROM polygon_geometry WHERE uuid = :uuid", ['uuid' => $uuid])->latitude;
         $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
         $areaHectares = $areaSqMeters / 10000;
         $sitePolygon = new SitePolygon([
@@ -122,7 +121,7 @@ class TerrafundEditGeometryController extends Controller
         $sitePolygon->uuid = Str::uuid();
         $sitePolygon->save();
 
-        return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon], 201);
+        return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);
     } catch (\Exception $e) {
         // Handle other exceptions
         return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
