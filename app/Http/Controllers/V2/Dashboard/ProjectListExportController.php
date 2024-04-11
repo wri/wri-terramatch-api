@@ -4,20 +4,23 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use League\Csv\Writer;
 
 class ProjectListExportController extends Controller
 {
-    public function __invoke()
+    public function __invoke(Request $request)
     {
-        return $this->exportCsv();
+        return $this->exportCsv($request);
     }
 
-    public function exportCsv()
+    public function exportCsv($request)
     {
         $activeProjectsController = new ActiveProjectsTableController();
+        $perPage = $request->input('per_page', PHP_INT_MAX);
+        $page = $request->input('page', 1);
 
-        $projects = $activeProjectsController->getAllProjects(request());
+        $projects = $activeProjectsController->getAllProjects($request, $perPage, $page);
 
         $headers = [
             'uuid' => 'UUID',

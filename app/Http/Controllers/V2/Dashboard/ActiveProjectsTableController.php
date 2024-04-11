@@ -18,18 +18,32 @@ class ActiveProjectsTableController extends Controller
     {
         $perPage = $request->input('per_page', PHP_INT_MAX);
         $page = $request->input('page', 1);
-        $projects = $this->getAllProjects($request);
-        $pagedData = $this->paginate($projects, $perPage, $page);
 
-        return new ActiveProjectsTableResource($pagedData);
+        $projects = $this->getAllProjects($request, $perPage, $page);
+        $count = $this->getQuery($request)->count();
+
+        return new ActiveProjectsTableResource([
+            'current_page' => $page,
+            'data' => $projects,
+            'per_page' => $perPage,
+            'last_page' => ceil($count / $perPage),
+            'total' => $count,
+        ]);
     }
 
-    public function getAllProjects($request)
-    {
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+    public function getQuery($request) {
+        return TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->with('organisation')
-            ->withCount(['sites', 'nurseries'])
-            ->get();
+            ->withCount(['sites', 'nurseries']);
+    }
+
+    public function getAllProjects($request, $perPage, $page)
+    {
+        $query = $this->getQuery($request)
+            ->skip(($page - 1) * $perPage)
+            ->take($perPage);
+
+        $projects = $query->get();
 
         return $projects->map(function ($project) {
             return [
