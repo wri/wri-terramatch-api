@@ -87,8 +87,45 @@ class TerrafundEditGeometryController extends Controller
     }
   }
   public function createSitePolygon(string $uuid, Request $request) {
-    try {} catch(\Exception $e) {
-      return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+    try {
+        $validatedData = $request->validate([
+            'poly_name' => 'nullable|string',
+            'plantstart' => 'nullable|date',
+            'plantend' => 'nullable|date',
+            'practice' => 'nullable|string',
+            'distr' => 'nullable|string',
+            'num_trees' => 'nullable|integer',
+            'target_sys' => 'nullable|string',
+        ]);
+
+        // Get the geometry from the polygon_geometry table using the UUID
+        $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+        if (!$polygonGeometry) {
+            return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+        }
+        $geojson = $polygonGeometry->geometry;
+        $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
+        $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
+        $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
+        $areaHectares = $areaSqMeters / 10000;
+        $sitePolygon = new SitePolygon([
+            'poly_name' => $validatedData['poly_name'],
+            'plantstart' => $validatedData['plantstart'],
+            'plantend' => $validatedData['plantend'],
+            'practice' => $validatedData['practice'],
+            'distr' => $validatedData['distr'],
+            'num_trees' => $validatedData['num_trees'],
+            'est_area' => $areaHectares, // Assign the calculated area
+            'target_sys' => $validatedData['target_sys'],
+        ]);
+        $sitePolygon->uuid = Str::uuid();
+        $sitePolygon->save();
+
+        return response()->json(['message' => 'Site polygon created successfully'], 201);
+    } catch (\Exception $e) {
+        // Handle other exceptions
+        return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
     }
-  }
+}
+
 }

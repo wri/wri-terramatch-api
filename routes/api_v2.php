@@ -658,6 +658,7 @@ Route::prefix('terrafund')->group(function () {
     Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
+    Route::post('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
