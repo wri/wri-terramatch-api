@@ -203,6 +203,7 @@ use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Controllers\V2\Workdays\StoreWorkdayController;
 use App\Http\Controllers\V2\Workdays\UpdateWorkdayController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
+use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -640,8 +641,7 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
-    Route::get('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'getSitePolygonData']);
-    Route::put('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'updateGeometry']);
+    
     Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonsAsGeoJSON']);
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
@@ -652,6 +652,10 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/criteria-data', [TerrafundCreateGeometryController::class, 'getCriteriaData']);
     Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
     Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
+
+    Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
+    Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
+    Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
