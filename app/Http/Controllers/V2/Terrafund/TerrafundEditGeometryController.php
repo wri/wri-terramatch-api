@@ -62,4 +62,33 @@ class TerrafundEditGeometryController extends Controller
         'geojson' => $geojsonData
     ]);
   }
+  public function updateSitePolygon(string $uuid, Request $request) {
+    try {
+      $sitePolygon = SitePolygon::where('uuid', $uuid)->first();
+      if (!$sitePolygon) {
+        return response()->json(['message' => 'No site polygons found for the given UUID.'], 404);
+      }
+      $validatedData = $request->validate([
+        'poly_name' => 'nullable|string',
+        'plantstart' => 'nullable|date',
+        'plantend' => 'nullable|date',
+        'practice' => 'nullable|string',
+        'distr' => 'nullable|string',
+        'num_trees' => 'nullable|integer',
+        'est_area' => 'nullable|numeric',
+        'target_sys' => 'nullable|string',
+      ]);
+
+      $sitePolygon->update($validatedData);
+      return response()->json(['message' => 'Site polygon updated successfully'], 200);
+    } catch (\Exception $e) {
+        // Handle other exceptions
+        return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+    }
+  }
+  public function createSitePolygon(string $uuid, Request $request) {
+    try {} catch(\Exception $e) {
+      return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+    }
+  }
 }
