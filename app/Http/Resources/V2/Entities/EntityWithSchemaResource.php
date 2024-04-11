@@ -24,6 +24,7 @@ class EntityWithSchemaResource extends JsonResource
             'model' => $this,
         ];
 
+        $updateRequest = $this->updateRequests()->isUnapproved()->select('uuid', 'content')->first();
         return [
             'uuid' => $this->uuid,
             'name' => $this->name,
@@ -31,6 +32,11 @@ class EntityWithSchemaResource extends JsonResource
             'answers' => $this->getEntityAnswers($this->schema),
             'status' => $this->status,
             'form_title' => $this->report_title ?? $this->title ?? $this->name,
+            'update_request' => [
+                'uuid' => $updateRequest?->uuid,
+                'status' => $updateRequest?->status,
+                'content' => $updateRequest?->content,
+            ]
         ];
     }
 }
