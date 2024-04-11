@@ -13,6 +13,12 @@ properties:
     type: object
   form_title:
     type: string
+  feedback:
+    type: string
+  feedback_fields:
+    type: array
+    items:
+      type: string
   update_request:
     type: object
     properties:
@@ -22,3 +28,9 @@ properties:
         type: string
       content:
         type: object
+      feedback:
+        type: string
+      feedback_fields:
+        type: array
+        items:
+          type: string

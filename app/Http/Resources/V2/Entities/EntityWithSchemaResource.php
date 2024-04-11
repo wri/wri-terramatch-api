@@ -9,14 +9,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class EntityWithSchemaResource extends JsonResource
 {
-    protected Form $schema;
-
-    public function __construct(EntityModel $resource)
-    {
-        parent::__construct($resource);
-        $this->schema = $resource->getForm();
-    }
-
     public function toArray($request)
     {
         $params = [
@@ -28,14 +20,18 @@ class EntityWithSchemaResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'name' => $this->name,
-            'form' => (new FormResource($this->schema))->params($params),
-            'answers' => $this->getEntityAnswers($this->schema),
+            'form' => (new FormResource($this->getForm()))->params($params),
+            'answers' => $this->getEntityAnswers($this->getForm()),
             'status' => $this->status,
             'form_title' => $this->report_title ?? $this->title ?? $this->name,
-            'update_request' => [
-                'uuid' => $updateRequest?->uuid,
-                'status' => $updateRequest?->status,
-                'content' => $updateRequest?->content,
+            'feedback' => $this->feedback,
+            'feedback_fields' => $this->feedback_fields,
+            'update_request' => $updateRequest == null ? null : [
+                'uuid' => $updateRequest->uuid,
+                'status' => $updateRequest->status,
+                'content' => $updateRequest->content,
+                'feedback' => $updateRequest->feedback,
+                'feedback_fields' => $updateRequest->feedback_fields,
             ]
         ];
     }
