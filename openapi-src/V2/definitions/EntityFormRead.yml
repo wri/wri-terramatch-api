@@ -11,3 +11,14 @@ properties:
     type: object
   answers:
     type: object
+  form_title:
+    type: string
+  update_request:
+    type: object
+    properties:
+      uuid:
+        type: string
+      status:
+        type: string
+      content:
+        type: object
