@@ -160,6 +160,17 @@ definitions:
         type: object
       answers:
         type: object
+      form_title:
+        type: string
+      update_request:
+        type: object
+        properties:
+          uuid:
+            type: string
+          status:
+            type: string
+          content:
+            type: object
   UserRead:
     type: object
     properties:
@@ -56871,6 +56882,17 @@ paths:
                 type: object
               answers:
                 type: object
+              form_title:
+                type: string
+              update_request:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  status:
+                    type: string
+                  content:
+                    type: object
     put:
       operationId: put-v2-forms-entity-form-uuid
       summary: Update a specific entity using a form schema
@@ -56922,6 +56944,17 @@ paths:
                 type: object
               answers:
                 type: object
+              form_title:
+                type: string
+              update_request:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  status:
+                    type: string
+                  content:
+                    type: object
   '/v2/forms/{ENTITY}/{UUID}/submit':
     put:
       operationId: put-v2-forms-entity-form-uuid-submit
@@ -56961,6 +56994,17 @@ paths:
                 type: object
               answers:
                 type: object
+              form_title:
+                type: string
+              update_request:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  status:
+                    type: string
+                  content:
+                    type: object
   '/v2/forms/{ENTITY}':
     post:
       summary: Create an entity with a custom form
@@ -57014,6 +57058,17 @@ paths:
                 type: object
               answers:
                 type: object
+              form_title:
+                type: string
+              update_request:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  status:
+                    type: string
+                  content:
+                    type: object
   '/v2/forms/projects/{UUID}':
     post:
       summary: Create a project with a custom form
@@ -57057,6 +57112,17 @@ paths:
                 type: object
               answers:
                 type: object
+              form_title:
+                type: string
+              update_request:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  status:
+                    type: string
+                  content:
+                    type: object
   '/v2/projects/{UUID}/site-polygons':
     get:
       summary: Get the polygons (geojson) from all sites belonging to a specific project
