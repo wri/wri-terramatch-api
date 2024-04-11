@@ -50,28 +50,39 @@ trait UsesLinkedFields
         return $localAnswers;
     }
 
-    public function updateFromForm(array $input): void
+    public function updateFromForm(array $formData): void
     {
         $form = $this->getForm();
-        $fieldsConfig = data_get($this->getFormConfig(), 'fields', []);
+        $formConfig = $this->getFormConfig();
+        $fieldsConfig = data_get($formConfig, 'fields', []);
+        $relationsConfig = data_get($formConfig, 'relations', []);
         $localAnswers = [];
         $entityProps = [];
+
         foreach ($form->sections as $section) {
             foreach ($section->questions as $question) {
                 if ($question->input_type !== 'conditional') {
                     $fieldConfig = data_get($fieldsConfig, $question->linked_field_key);
-                    $property = data_get($fieldConfig, 'property', null);
-                    $value = data_get($input, $question->uuid, null);
+                    if ($fieldConfig != null) {
+                        $property = data_get($fieldConfig, 'property', null);
+                        $value = data_get($formData, $question->uuid, null);
 
-                    if (! is_null($value)) {
-                        if (empty($property)) {
-                            $localAnswers[$question->uuid] = data_get($input, $question->uuid);
+                        if (! is_null($value)) {
+                            if (empty($property)) {
+                                $localAnswers[$question->uuid] = data_get($formData, $question->uuid);
+                            }
+
+                            $entityProps[$property] = $value;
                         }
-
-                        $entityProps[$property] = $value;
+                    } else {
+                        $property = data_get($relationsConfig, "$question->linked_field_key.property");
+                        if (! empty($property)) {
+                            $this->syncRelation($property, collect(data_get($formData, $question->uuid)));
+                        }
                     }
+
                 } else {
-                    $localAnswers[$question->uuid] = data_get($input, $question->uuid, null);
+                    $localAnswers[$question->uuid] = data_get($formData, $question->uuid, null);
                     $entityProps['answers'] = $localAnswers;
                 }
             }
@@ -231,4 +242,31 @@ trait UsesLinkedFields
         }
     }
 
+    private function syncRelation(string $property, $data): void
+    {
+        // This will expand as we complete more tickets in TM-747, until eventually we support all form relations.
+        if ($property != 'treeSpecies') {
+            return;
+        }
+
+        $this->$property()->whereNotIn('uuid', $data->pluck('uuid')->filter())->delete();
+
+        // This would be better as a bulk operation, but too much processing is required to make that feasible
+        // in Eloquent (upsert isn't supported on MorphMany, for instance), and these sets will always be small
+        // so doing them one at a time is OK.
+        $entries = $this->$property()->get();
+        foreach ($data as $entry) {
+            $model = null;
+            if (! empty($entry['uuid'])) {
+                $model = $entries->firstWhere('uuid', $entry['uuid']);
+            }
+            if ($model != null) {
+                $model->update($entry);
+            } else {
+                // protection against updating a deleted entry
+                unset($entry['uuid']);
+                $this->$property()->create($entry);
+            }
+        }
+    }
 }

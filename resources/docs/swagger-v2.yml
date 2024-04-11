@@ -162,6 +162,12 @@ definitions:
         type: object
       form_title:
         type: string
+      feedback:
+        type: string
+      feedback_fields:
+        type: array
+        items:
+          type: string
       update_request:
         type: object
         properties:
@@ -171,6 +177,12 @@ definitions:
             type: string
           content:
             type: object
+          feedback:
+            type: string
+          feedback_fields:
+            type: array
+            items:
+              type: string
   UserRead:
     type: object
     properties:
@@ -56884,6 +56896,12 @@ paths:
                 type: object
               form_title:
                 type: string
+              feedback:
+                type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
               update_request:
                 type: object
                 properties:
@@ -56893,6 +56911,12 @@ paths:
                     type: string
                   content:
                     type: object
+                  feedback:
+                    type: string
+                  feedback_fields:
+                    type: array
+                    items:
+                      type: string
     put:
       operationId: put-v2-forms-entity-form-uuid
       summary: Update a specific entity using a form schema
@@ -56946,6 +56970,12 @@ paths:
                 type: object
               form_title:
                 type: string
+              feedback:
+                type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
               update_request:
                 type: object
                 properties:
@@ -56955,6 +56985,12 @@ paths:
                     type: string
                   content:
                     type: object
+                  feedback:
+                    type: string
+                  feedback_fields:
+                    type: array
+                    items:
+                      type: string
   '/v2/forms/{ENTITY}/{UUID}/submit':
     put:
       operationId: put-v2-forms-entity-form-uuid-submit
@@ -56996,6 +57032,12 @@ paths:
                 type: object
               form_title:
                 type: string
+              feedback:
+                type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
               update_request:
                 type: object
                 properties:
@@ -57005,6 +57047,12 @@ paths:
                     type: string
                   content:
                     type: object
+                  feedback:
+                    type: string
+                  feedback_fields:
+                    type: array
+                    items:
+                      type: string
   '/v2/forms/{ENTITY}':
     post:
       summary: Create an entity with a custom form
@@ -57060,6 +57108,12 @@ paths:
                 type: object
               form_title:
                 type: string
+              feedback:
+                type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
               update_request:
                 type: object
                 properties:
@@ -57069,6 +57123,12 @@ paths:
                     type: string
                   content:
                     type: object
+                  feedback:
+                    type: string
+                  feedback_fields:
+                    type: array
+                    items:
+                      type: string
   '/v2/forms/projects/{UUID}':
     post:
       summary: Create a project with a custom form
@@ -57114,6 +57174,12 @@ paths:
                 type: object
               form_title:
                 type: string
+              feedback:
+                type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
               update_request:
                 type: object
                 properties:
@@ -57123,6 +57189,12 @@ paths:
                     type: string
                   content:
                     type: object
+                  feedback:
+                    type: string
+                  feedback_fields:
+                    type: array
+                    items:
+                      type: string
   '/v2/projects/{UUID}/site-polygons':
     get:
       summary: Get the polygons (geojson) from all sites belonging to a specific project

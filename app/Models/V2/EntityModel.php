@@ -19,7 +19,7 @@ interface EntityModel extends UpdateRequestableModel, ApprovalFlow
 
     public function getFormConfig(): ?array;
 
-    public function updateFromForm(array $formValues): array;
+    public function updateFromForm(array $formValues): void;
 
     public function createResource(): JsonResource;
 

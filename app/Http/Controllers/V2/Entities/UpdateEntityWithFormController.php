@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V2\Entities;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Forms\UpdateFormSubmissionRequest;
-use App\Http\Resources\V2\UpdateRequests\UpdateRequestResource;
 use App\Models\V2\EntityModel;
 use App\Models\V2\ReportModel;
 use App\Models\V2\UpdateRequests\UpdateRequest;
@@ -33,13 +32,13 @@ class UpdateEntityWithFormController extends Controller
                 $entity->updateInProgress($isAdmin);
             }
 
-            return $entity->createResource();
+            return $entity->createSchemaResource();
         }
 
         if (! empty($updateRequest)) {
             $updateRequest->update([ 'content' => array_merge($updateRequest->content, $answers) ]);
         } else {
-            $updateRequest = UpdateRequest::create([
+            UpdateRequest::create([
                 'organisation_id' => $entity->organisation ? $entity->organisation->id : $entity->project->organisation_id,
                 'project_id' => $entity->project ? $entity->project->id : $entity->id,
                 'created_by_id' => Auth::user()->id,
@@ -52,6 +51,6 @@ class UpdateEntityWithFormController extends Controller
             $entity->update(['update_request_status' => UpdateRequestStatusStateMachine::DRAFT]);
         }
 
-        return new UpdateRequestResource($updateRequest);
+        return $entity->createSchemaResource();
     }
 }
