@@ -35,12 +35,15 @@ class TerrafundEditGeometryController extends Controller
   }
   public function updateGeometry(string $uuid, Request $request)
   {
-    $sitePolygon = SitePolygon::where('uuid', $uuid)->first();
-    if (!$sitePolygon) {
-      return response()->json(['error' => 'Site polygon not found'], 200);
+    $geometry = json_decode($request->input('geometry'));
+    $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
+    $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+    if (!$polygonGeometry) {
+      return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
     }
-    $sitePolygon->update($request->all());
-    return response()->json(['site_polygon' => $sitePolygon], 200);
+    $polygonGeometry->geom = $geom;
+    $polygonGeometry->save();
+    return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
   }
   public function getPolygonGeojson(string $uuid)
   {
