@@ -30,6 +30,7 @@ class EntityWithSchemaResource extends JsonResource
             'form' => (new FormResource($this->schema))->params($params),
             'answers' => $this->getEntityAnswers($this->schema),
             'status' => $this->status,
+            'form_title' => $this->report_title ?? $this->title ?? $this->name,
         ];
     }
 }
