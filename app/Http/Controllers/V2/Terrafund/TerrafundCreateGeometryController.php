@@ -139,6 +139,43 @@ class TerrafundCreateGeometryController extends Controller
     }
     return true;
   }
+  public function validateDataInDB(Request $request) {
+    $polygonUuid = $request->input('uuid');
+    $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
+    $DATA_CRITERIA_ID = 14;
+    // Check if the polygon with the specified poly_id exists
+    $polygonExists = DB::table('site_polygon')
+        ->where('poly_id', $polygonUuid)
+        ->exists();
+    $valid = false;
+    if (!$polygonExists) {
+        return response()->json(['valid' => $valid, 'message' => 'No site polygon found with the specified poly_id.']);
+    }
+
+    // Proceed with validation of attribute values
+    $whereConditions = [];
+    foreach ($fieldsToValidate as $field) {
+        $whereConditions[] = "(IFNULL($field, '') = '' OR $field IS NULL)";
+    }
+
+    $sitePolygonData = DB::table('site_polygon')
+        ->where('poly_id', $polygonUuid)
+        ->where(function($query) use ($whereConditions) {
+            foreach ($whereConditions as $condition) {
+                $query->orWhereRaw($condition);
+            }
+        })
+        ->first();
+    $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $valid);
+    if ($sitePolygonData) {
+        return response()->json(['valid' => $valid, 'message' => 'Some attributes of the site polygon are invalid.']);
+    }
+
+    $valid = true;
+      $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $valid);
+    return response()->json(['valid' => $valid]);
+}
+
 
   private function validateData(array $properties, array $fields): bool
   {
@@ -434,38 +471,62 @@ class TerrafundCreateGeometryController extends Controller
 
   public function checkWithinCountry(Request $request)
   {
-    $countryName = $request->input('country');
-    $polygonUuid = $request->input('uuid');
-    $geometry = PolygonGeometry::where('uuid', $polygonUuid)->first();
-    if ($countryName === null || $countryName === '' || $polygonUuid === null || $polygonUuid === '') {
-      return response()->json(['error' => 'Country name and/or UUID not provided'], 200);
-    }
-    if (!$geometry) {
-      return response()->json(['error' => 'Geometry not found'], 404);
-    }
-    $totalArea = DB::table('polygon_geometry')
-      ->where('uuid', $polygonUuid)
-      ->selectRaw('ST_Area(geom) AS area')
-      ->first()->area;
-
-    $intersectionArea = DB::table('world_countries_generalized')
-      ->where('country', $countryName)
-      ->selectRaw('ST_Area(ST_Intersection(world_countries_generalized.geometry, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) AS area', [$polygonUuid])
-      ->first()->area;
-    $insidePercentage = $intersectionArea / $totalArea * 100;
-
-    $insideThreshold = 75;
-    $insideViolation = $insidePercentage < $insideThreshold;
-    $WITHIN_COUNTRY_CRITERIA_ID = 7;
-    $insertionSuccess = $this->insertCriteriaSite($polygonUuid, $WITHIN_COUNTRY_CRITERIA_ID, !$insideViolation);
-    return response()->json([
-      'inside_percentage' => $insidePercentage,
-      'valid' => !$insideViolation,
-      'geometry_id' => $geometry->id,
-      'insertion_success' => $insertionSuccess
-    ]);
+      $polygonUuid = $request->input('uuid');
+  
+      if ($polygonUuid === null || $polygonUuid === '') {
+          return response()->json(['error' => 'UUID not provided'], 200);
+      }
+  
+      $geometry = PolygonGeometry::where('uuid', $polygonUuid)->first();
+  
+      if (!$geometry) {
+          return response()->json(['error' => 'Geometry not found'], 404);
+      }
+  
+      $totalArea = DB::table('polygon_geometry')
+          ->where('uuid', $polygonUuid)
+          ->selectRaw('ST_Area(geom) AS area')
+          ->first()->area;
+  
+      // Find site_polygon_id and project_id using the polygonUuid
+      $sitePolygonData = DB::table('site_polygon')
+          ->where('poly_id', $polygonUuid)
+          ->select('id', 'project_id')
+          ->first();
+  
+      if (!$sitePolygonData) {
+          return response()->json(['error' => 'Site polygon data not found for the specified polygonUuid'], 404);
+      }
+  
+      // Find the country ISO using project_id from v2projects
+      $countryIso = DB::table('v2_projects')
+          ->where('uuid', $sitePolygonData->project_id)
+          ->value('country');
+  
+      if (!$countryIso) {
+          return response()->json(['error' => 'Country ISO not found for the specified project_id'], 404);
+      }
+  
+      $intersectionArea = DB::table('world_countries_generalized')
+          ->where('iso', $countryIso)
+          ->selectRaw('ST_Area(ST_Intersection(world_countries_generalized.geometry, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) AS area', [$polygonUuid])
+          ->first()->area;
+  
+      $insidePercentage = $intersectionArea / $totalArea * 100;
+  
+      $insideThreshold = 75;
+      $insideViolation = $insidePercentage < $insideThreshold;
+      $WITHIN_COUNTRY_CRITERIA_ID = 7;
+      $insertionSuccess = $this->insertCriteriaSite($polygonUuid, $WITHIN_COUNTRY_CRITERIA_ID, !$insideViolation);
+  
+      return response()->json([
+          'inside_percentage' => $insidePercentage,
+          'valid' => !$insideViolation,
+          'geometry_id' => $geometry->id,
+          'insertion_success' => $insertionSuccess
+      ]);
   }
-
+  
   public function getGeometryType(Request $request)
   {
     $uuid = $request->input('uuid');
