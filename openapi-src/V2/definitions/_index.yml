@@ -86,12 +86,8 @@ V2FileGallery:
   $ref: './V2FileGallery.yml'
 V2FileGalleryLite:
   $ref: './V2FileGalleryLite.yml'
-V2TreeSpeciesCreate:
-  $ref: './V2TreeSpeciesCreate.yml'
 V2TreeSpeciesRead:
   $ref: './V2TreeSpeciesRead.yml'
-V2TreeSpeciesUpdate:
-  $ref: './V2TreeSpeciesUpdate.yml'
 V2CoreTeamLeaderCreate:
   $ref: './V2CoreTeamLeaderCreate.yml'
 V2CoreTeamLeaderRead:
