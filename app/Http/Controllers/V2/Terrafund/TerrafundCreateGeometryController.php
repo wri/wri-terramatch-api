@@ -489,8 +489,7 @@ class TerrafundCreateGeometryController extends Controller
           ->first()->area;
   
       // Find site_polygon_id and project_id using the polygonUuid
-      $sitePolygonData = DB::table('site_polygon')
-          ->where('poly_id', $polygonUuid)
+      $sitePolygonData = SitePolygon::where('poly_id', $polygonUuid)
           ->select('id', 'project_id')
           ->first();
   
