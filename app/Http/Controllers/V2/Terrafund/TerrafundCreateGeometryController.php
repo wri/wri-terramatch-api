@@ -506,24 +506,29 @@ class TerrafundCreateGeometryController extends Controller
           return response()->json(['error' => 'Country ISO not found for the specified project_id'], 404);
       }
   
-      $intersectionArea = DB::table('world_countries_generalized')
-          ->where('iso', $countryIso)
-          ->selectRaw('ST_Area(ST_Intersection(world_countries_generalized.geometry, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) AS area', [$polygonUuid])
-          ->first()->area;
-  
+      $intersectionData = DB::table('world_countries_generalized')
+        ->where('iso', $countryIso)
+        ->selectRaw('world_countries_generalized.country AS country, ST_Area(ST_Intersection(world_countries_generalized.geometry, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) AS area', [$polygonUuid])
+        ->first();
+
+      $intersectionArea = $intersectionData->area;
+      $countryName = $intersectionData->country;
+
       $insidePercentage = $intersectionArea / $totalArea * 100;
-  
+
       $insideThreshold = 75;
       $insideViolation = $insidePercentage < $insideThreshold;
       $WITHIN_COUNTRY_CRITERIA_ID = 7;
       $insertionSuccess = $this->insertCriteriaSite($polygonUuid, $WITHIN_COUNTRY_CRITERIA_ID, !$insideViolation);
-  
+
       return response()->json([
+          'country_name' => $countryName,
           'inside_percentage' => $insidePercentage,
           'valid' => !$insideViolation,
           'geometry_id' => $geometry->id,
           'insertion_success' => $insertionSuccess
       ]);
+
   }
   
   public function getGeometryType(Request $request)
