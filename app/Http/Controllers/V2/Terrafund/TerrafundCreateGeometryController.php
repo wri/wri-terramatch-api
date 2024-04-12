@@ -144,8 +144,7 @@ class TerrafundCreateGeometryController extends Controller
     $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
     $DATA_CRITERIA_ID = 14;
     // Check if the polygon with the specified poly_id exists
-    $polygonExists = DB::table('site_polygon')
-        ->where('poly_id', $polygonUuid)
+    $polygonExists = SitePolygon::where('poly_id', $polygonUuid)
         ->exists();
     $valid = false;
     if (!$polygonExists) {
@@ -158,8 +157,7 @@ class TerrafundCreateGeometryController extends Controller
         $whereConditions[] = "(IFNULL($field, '') = '' OR $field IS NULL)";
     }
 
-    $sitePolygonData = DB::table('site_polygon')
-        ->where('poly_id', $polygonUuid)
+    $sitePolygonData = SitePolygon::where('poly_id', $polygonUuid)
         ->where(function($query) use ($whereConditions) {
             foreach ($whereConditions as $condition) {
                 $query->orWhereRaw($condition);
@@ -621,8 +619,7 @@ class TerrafundCreateGeometryController extends Controller
   public function validateOverlapping(Request $request)
   {
     $uuid = $request->input('uuid');
-    $sitePolygon = DB::table('site_polygon')
-      ->where('poly_id', $uuid)
+    $sitePolygon = SitePolygon::where('poly_id', $uuid)
       ->first();
 
     if (!$sitePolygon) {
@@ -633,8 +630,7 @@ class TerrafundCreateGeometryController extends Controller
     if(!$projectId) {
       return response()->json(['error' => 'Project ID not found for the given polygon ID'], 200);
     }
-    $relatedPolyIds = DB::table('site_polygon')
-      ->where('project_id', $projectId)
+    $relatedPolyIds = SitePolygon::where('project_id', $projectId)
       ->where('poly_id', '!=', $uuid)
       ->pluck('poly_id');
 
@@ -653,8 +649,7 @@ class TerrafundCreateGeometryController extends Controller
   public function validateEstimatedArea(Request $request)
   {
     $uuid = $request->input('uuid');
-    $sitePolygon = DB::table('site_polygon')
-      ->where('poly_id', $uuid)
+    $sitePolygon = SitePolygon::where('poly_id', $uuid)
       ->first();
 
     if (!$sitePolygon) {
@@ -663,8 +658,7 @@ class TerrafundCreateGeometryController extends Controller
 
     $projectId = $sitePolygon->project_id;
 
-    $sumEstArea = DB::table('site_polygon')
-      ->where('project_id', $projectId)
+    $sumEstArea = SitePolygon::where('project_id', $projectId)
       ->sum('est_area');
 
     $project = DB::table('v2_projects')
