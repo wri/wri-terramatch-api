@@ -3,8 +3,6 @@
 namespace App\Http\Resources\V2\Entities;
 
 use App\Http\Resources\V2\Forms\FormResource;
-use App\Models\V2\EntityModel;
-use App\Models\V2\Forms\Form;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class EntityWithSchemaResource extends JsonResource
@@ -17,6 +15,7 @@ class EntityWithSchemaResource extends JsonResource
         ];
 
         $updateRequest = $this->updateRequests()->isUnapproved()->select('uuid', 'content')->first();
+
         return [
             'uuid' => $this->uuid,
             'name' => $this->name,
@@ -32,7 +31,7 @@ class EntityWithSchemaResource extends JsonResource
                 'content' => $updateRequest->content,
                 'feedback' => $updateRequest->feedback,
                 'feedback_fields' => $updateRequest->feedback_fields,
-            ]
+            ],
         ];
     }
 }
