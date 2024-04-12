@@ -172,7 +172,7 @@ class TerrafundCreateGeometryController extends Controller
     }
 
     $valid = true;
-      $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $valid);
+    $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $valid);
     return response()->json(['valid' => $valid]);
 }
 
