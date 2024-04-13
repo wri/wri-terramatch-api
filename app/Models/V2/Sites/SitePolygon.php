@@ -14,7 +14,6 @@ class SitePolygon extends Model
     protected $fillable = [
       'proj_name',
       'org_name',
-      'country',
       'poly_id',
       'poly_name',
       'site_id',

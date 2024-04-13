@@ -22,7 +22,6 @@ class CreateSitesPolygons extends Migration
         $table->string('site_id')->nullable();
         $table->string('site_name')->nullable();
         $table->string('org_name')->nullable();
-        $table->string('country')->nullable();
         $table->string('poly_id')->nullable();
         $table->string('poly_name')->nullable();
         $table->string('poly_label')->nullable();
