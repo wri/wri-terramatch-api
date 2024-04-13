@@ -20,17 +20,4 @@ properties:
     items:
       type: string
   update_request:
-    type: object
-    properties:
-      uuid:
-        type: string
-      status:
-        type: string
-      content:
-        type: object
-      feedback:
-        type: string
-      feedback_fields:
-        type: array
-        items:
-          type: string
+    $ref: './UpdateRequestRead.yml'
