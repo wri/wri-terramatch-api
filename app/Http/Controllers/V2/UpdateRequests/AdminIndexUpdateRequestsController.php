@@ -59,7 +59,7 @@ class AdminIndexUpdateRequestsController extends Controller
             $query->where(function ($query) use ($frameworkNames, $user) {
                 foreach ($frameworkNames as $framework) {
                     $frameworkPermission = 'framework-' . $framework;
-                    if ($user->hasPermissionTo($frameworkPermission)) {
+                    if ($user->can($frameworkPermission)) {
                         $query->orWhere('framework_key', $framework);
                     }
                 }
