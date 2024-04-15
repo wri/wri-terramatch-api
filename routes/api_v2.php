@@ -170,10 +170,7 @@ use App\Http\Controllers\V2\Stratas\UpdateStrataController;
 use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
-use App\Http\Controllers\V2\TreeSpecies\DeleteTreeSpeciesController;
 use App\Http\Controllers\V2\TreeSpecies\GetTreeSpeciesForEntityController;
-use App\Http\Controllers\V2\TreeSpecies\StoreTreeSpeciesController;
-use App\Http\Controllers\V2\TreeSpecies\UpdateTreeSpeciesController;
 use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
 use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\AdminStatusUpdateRequestController;
@@ -459,9 +456,6 @@ Route::prefix('project-pitches')->group(function () {
 });
 
 Route::prefix('tree-species')->group(function () {
-    Route::post('/', StoreTreeSpeciesController::class);
-    Route::patch('/{treeSpecies}', UpdateTreeSpeciesController::class);
-    Route::delete('/{treeSpecies}', DeleteTreeSpeciesController::class);
     Route::get('/{entity}/{uuid}', GetTreeSpeciesForEntityController::class);
 });
 

@@ -8,6 +8,27 @@ trait UsesLinkedFields
 {
     private ?Form $frameworkModelForm = null;
 
+    public function getForm(): Form
+    {
+        if (! is_null($this->form)) {
+            // Some classes that use this trait have a direct database link to the form.
+            return $this->form;
+        }
+
+        if (is_null($this->frameworkModelForm)) {
+            $this->frameworkModelForm = Form::where('model', get_class($this))
+                ->where('framework_key', $this->framework_key)
+                ->first();
+        }
+
+        return $this->frameworkModelForm;
+    }
+
+    public function getFormConfig(): ?array
+    {
+        return config('wri.linked-fields.models.' . $this->shortName);
+    }
+
     public function updateAllAnswers(array $input): array
     {
         $localAnswers = [];
@@ -29,32 +50,45 @@ trait UsesLinkedFields
         return $localAnswers;
     }
 
-    public function mapEntityAnswers(array $input, Form $form, array $cfg): array
+    public function updateFromForm(array $formData): void
     {
+        $form = $this->getForm();
+        $formConfig = $this->getFormConfig();
+        $fieldsConfig = data_get($formConfig, 'fields', []);
+        $relationsConfig = data_get($formConfig, 'relations', []);
         $localAnswers = [];
         $entityProps = [];
+
         foreach ($form->sections as $section) {
             foreach ($section->questions as $question) {
                 if ($question->input_type !== 'conditional') {
-                    $fieldConfig = data_get($cfg, $question->linked_field_key);
-                    $property = data_get($fieldConfig, 'property', null);
-                    $value = data_get($input, $question->uuid, null);
+                    $fieldConfig = data_get($fieldsConfig, $question->linked_field_key);
+                    if ($fieldConfig != null) {
+                        $property = data_get($fieldConfig, 'property', null);
+                        $value = data_get($formData, $question->uuid, null);
 
-                    if (! is_null($value)) {
-                        if (empty($property)) {
-                            $localAnswers[$question->uuid] = data_get($input, $question->uuid);
+                        if (! is_null($value)) {
+                            if (empty($property)) {
+                                $localAnswers[$question->uuid] = data_get($formData, $question->uuid);
+                            }
+
+                            $entityProps[$property] = $value;
                         }
-
-                        $entityProps[$property] = $value;
+                    } else {
+                        $property = data_get($relationsConfig, "$question->linked_field_key.property");
+                        if (! empty($property)) {
+                            $this->syncRelation($property, collect(data_get($formData, $question->uuid)));
+                        }
                     }
+
                 } else {
-                    $localAnswers[$question->uuid] = data_get($input, $question->uuid, null);
+                    $localAnswers[$question->uuid] = data_get($formData, $question->uuid, null);
                     $entityProps['answers'] = $localAnswers;
                 }
             }
         }
 
-        return $entityProps;
+        $this->update($entityProps);
     }
 
     public function calculateCompletion(Form $form): int
@@ -208,24 +242,31 @@ trait UsesLinkedFields
         }
     }
 
-    public function getForm(): Form
+    private function syncRelation(string $property, $data): void
     {
-        if (! is_null($this->form)) {
-            // Some classes that use this trait have a direct database link to the form.
-            return $this->form;
+        // This will expand as we complete more tickets in TM-747, until eventually we support all form relations.
+        if ($property != 'treeSpecies') {
+            return;
         }
 
-        if (is_null($this->frameworkModelForm)) {
-            $this->frameworkModelForm = Form::where('model', get_class($this))
-                ->where('framework_key', $this->framework_key)
-                ->first();
+        $this->$property()->whereNotIn('uuid', $data->pluck('uuid')->filter())->delete();
+
+        // This would be better as a bulk operation, but too much processing is required to make that feasible
+        // in Eloquent (upsert isn't supported on MorphMany, for instance), and these sets will always be small
+        // so doing them one at a time is OK.
+        $entries = $this->$property()->get();
+        foreach ($data as $entry) {
+            $model = null;
+            if (! empty($entry['uuid'])) {
+                $model = $entries->firstWhere('uuid', $entry['uuid']);
+            }
+            if ($model != null) {
+                $model->update($entry);
+            } else {
+                // protection against updating a deleted entry
+                unset($entry['uuid']);
+                $this->$property()->create($entry);
+            }
         }
-
-        return $this->frameworkModelForm;
-    }
-
-    public function getFormConfig(): ?array
-    {
-        return config('wri.linked-fields.models.' . $this->shortName);
     }
 }
