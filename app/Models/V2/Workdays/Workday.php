@@ -33,27 +33,19 @@ class Workday extends Model
         'indigeneity',
     ];
 
-    public const COLLECTION_PROJECT_PAID_PROJECT_ESTABLISHMENT = 'paid-project-establishment';
     public const COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS = 'paid-nursery-operations';
     public const COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT = 'paid-project-management';
-    public const COLLECTION_PROJECT_PAID_SEED_COLLECTION = 'paid-seed-collection';
     public const COLLECTION_PROJECT_PAID_OTHER = 'paid-other-activities';
-    public const COLLECTION_PROJECT_VOLUNTEER_PROJECT_ESTABLISHMENT = 'volunteer-project-establishment';
     public const COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPRERATIONS = 'volunteer-nursery-operations';
     public const COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT = 'volunteer-project-management';
-    public const COLLECTION_PROJECT_VOLUNTEER_SEED_COLLECTION = 'volunteer-seed-collection';
     public const COLLECTION_PROJECT_VOLUNTEER_OTHER = 'volunteer-other-activities';
 
     public static $projectCollections = [
-        self::COLLECTION_PROJECT_PAID_PROJECT_ESTABLISHMENT => 'Paid Project Establishment',
         self::COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS => 'Paid Nursery Operations',
         self::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT => 'Paid Project Management',
-        self::COLLECTION_PROJECT_PAID_SEED_COLLECTION => 'Paid Seed Collection',
         self::COLLECTION_PROJECT_PAID_OTHER => 'Paid Other Activities',
-        self::COLLECTION_PROJECT_VOLUNTEER_PROJECT_ESTABLISHMENT => 'Volunteer Project Establishment',
         self::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPRERATIONS => 'Volunteer Nursery Operations',
         self::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT => 'Volunteer Project Management',
-        self::COLLECTION_PROJECT_VOLUNTEER_SEED_COLLECTION => 'Volunteer Seed Collection',
         self::COLLECTION_PROJECT_VOLUNTEER_OTHER => 'Volunteer Other Activities',
     ];
 

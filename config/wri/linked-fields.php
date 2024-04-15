@@ -424,14 +424,6 @@ return [
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
                 ],
-                // 'pro-rep-rel-paid-project-establishment' => [
-                //     'property' => 'workdaysPaidProjectEstablishment',
-                //     'label' => 'Paid Project Establishment',
-                //     'resource' => 'App\Http\Resources\V2\Workdays\WorkdayResource',
-                //     'input_type' => 'workdays',
-                //     'collection' => 'paid-project-establishment',
-                //     'option_list_key' => 'workdays-ethnicity',
-                // ],
                 'pro-rep-rel-paid-nursery-operations' => [
                     'property' => 'workdaysPaidNurseryOperations',
                     'label' => 'Paid Nursery Operations',
@@ -448,14 +440,6 @@ return [
                     'collection' => 'paid-project-management',
                     'option_list_key' => 'workdays-ethnicity',
                 ],
-                // 'pro-rep-rel-paid-seed-collection' => [
-                //     'property' => 'workdaysPaidSeedCollection',
-                //     'label' => 'Paid Seed Collection',
-                //     'resource' => 'App\Http\Resources\V2\Workdays\WorkdayResource',
-                //     'input_type' => 'workdays',
-                //     'collection' => 'paid-seed-collection',
-                //     'option_list_key' => 'workdays-ethnicity',
-                // ],
                 'pro-rep-rel-paid-other-activities' => [
                     'property' => 'workdaysPaidOtherActivities',
                     'label' => 'Paid Other Activities',
@@ -464,14 +448,6 @@ return [
                     'collection' => 'paid-other-activities',
                     'option_list_key' => 'workdays-ethnicity',
                 ],
-                // 'pro-rep-rel-volunteer-project-establishment' => [
-                //     'property' => 'workdaysVolunteerProjectEstablishment',
-                //     'label' => 'Volunteer Project Establishment',
-                //     'resource' => 'App\Http\Resources\V2\Workdays\WorkdayResource',
-                //     'input_type' => 'workdays',
-                //     'collection' => 'volunteer-project-establishment',
-                //     'option_list_key' => 'workdays-ethnicity',
-                // ],
                 'pro-rep-rel-volunteer-nursery-operations' => [
                     'property' => 'workdaysVolunteerNurseryOperations',
                     'label' => 'Volunteer Nursery Operations',
@@ -488,14 +464,6 @@ return [
                     'collection' => 'volunteer-project-management',
                     'option_list_key' => 'workdays-ethnicity',
                 ],
-                // 'pro-rep-rel-volunteer-seed-collection' => [
-                //     'property' => 'workdaysVolunteerSeedCollection',
-                //     'label' => 'Volunteer Seed Collection',
-                //     'resource' => 'App\Http\Resources\V2\Workdays\WorkdayResource',
-                //     'input_type' => 'workdays',
-                //     'collection' => 'volunteer-seed-collection',
-                //     'option_list_key' => 'workdays-ethnicity',
-                // ],
                 'pro-rep-rel-volunteer-other-activities' => [
                     'property' => 'workdaysVolunteerOtherActivities',
                     'label' => 'Volunteer Other Activities',

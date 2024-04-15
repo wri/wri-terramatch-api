@@ -231,11 +231,6 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
         return $this->morphMany(TreeSpecies::class, 'speciesable');
     }
 
-    public function workdaysPaidProjectEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_PROJECT_ESTABLISHMENT);
-    }
-
     public function workdaysPaidNurseryOperations()
     {
         return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS);
@@ -246,19 +241,9 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
         return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT);
     }
 
-    public function workdaysPaidSeedCollection()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_SEED_COLLECTION);
-    }
-
     public function workdaysPaidOtherActivities()
     {
         return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_OTHER);
-    }
-
-    public function workdaysVolunteerProjectEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_ESTABLISHMENT);
     }
 
     public function workdaysVolunteerNurseryOperations()
@@ -269,11 +254,6 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
     public function workdaysVolunteerProjectManagement()
     {
         return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT);
-    }
-
-    public function workdaysVolunteerSeedCollection()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_SEED_COLLECTION);
     }
 
     public function workdaysVolunteerOtherActivities()
