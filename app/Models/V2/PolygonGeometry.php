@@ -2,9 +2,9 @@
 
 namespace App\Models\V2;
 
+use App\Models\V2\Sites\CriteriaSite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\V2\Sites\CriteriaSite;
 
 class PolygonGeometry extends Model
 {
@@ -13,8 +13,9 @@ class PolygonGeometry extends Model
     protected $table = 'polygon_geometry';
 
     protected $fillable = [
-        'uuid', 'polygon_id', 'geom'
+        'uuid', 'polygon_id', 'geom',
     ];
+
     public function criteriaSite()
     {
         return $this->hasMany(CriteriaSite::class, 'polygon_id', 'polygon_id');

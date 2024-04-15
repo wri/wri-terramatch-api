@@ -13,16 +13,16 @@ class CreateCriteriaSite extends Migration
      */
     public function up()
     {
-      Schema::create('criteria_site', function (Blueprint $table) {
-        $table->id();
-        $table->uuid('uuid')->unique();
-        $table->integer('criteria_id')->nullable();
-        $table->string('polygon_id')->nullable();
-        $table->integer('valid')->nullable();
-        $table->date('date_created')->nullable();
-        $table->softDeletes();
-        $table->timestamps();
-      });
+        Schema::create('criteria_site', function (Blueprint $table) {
+            $table->id();
+            $table->uuid('uuid')->unique();
+            $table->integer('criteria_id')->nullable();
+            $table->string('polygon_id')->nullable();
+            $table->integer('valid')->nullable();
+            $table->date('date_created')->nullable();
+            $table->softDeletes();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -32,6 +32,6 @@ class CreateCriteriaSite extends Migration
      */
     public function down()
     {
-      Schema::dropIfExists('criteria_site');
+        Schema::dropIfExists('criteria_site');
     }
 }

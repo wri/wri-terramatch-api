@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Models\V2\Sites;
 
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +38,4 @@ class CriteriaSite extends Model
         'deleted_at',
         'date_created',
     ];
-
-
 }
