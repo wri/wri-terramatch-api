@@ -160,6 +160,40 @@ definitions:
         type: object
       answers:
         type: object
+      form_title:
+        type: string
+      feedback:
+        type: string
+      feedback_fields:
+        type: array
+        items:
+          type: string
+      update_request:
+        title: UpdateRequestRead
+        type: object
+        properties:
+          uuid:
+            type: string
+          framework_key:
+            type: string
+          status:
+            type: string
+          readable_status:
+            type: string
+          content:
+            type: string
+          feedback:
+            type: string
+          feedback_fields:
+            type: array
+            items:
+              type: string
+          project:
+            type: object
+          organisation:
+            type: object
+          created_by:
+            type: object
   UserRead:
     type: object
     properties:
@@ -7335,24 +7369,6 @@ definitions:
             type: number
           lng:
             type: number
-  V2TreeSpeciesCreate:
-    title: V2TreeSpeciesCreate
-    x-stoplight:
-      id: 5wwltusko93cr
-    type: object
-    properties:
-      model_type:
-        type: string
-      model_uuid:
-        type: integer
-      name:
-        type: string
-      amount:
-        type: integer
-      type:
-        type: string
-      collection:
-        type: string
   V2TreeSpeciesRead:
     title: V2TreeSpeciesRead
     x-stoplight:
@@ -7361,20 +7377,6 @@ definitions:
     properties:
       uuid:
         type: string
-      name:
-        type: string
-      amount:
-        type: integer
-      type:
-        type: string
-      collection:
-        type: string
-  V2TreeSpeciesUpdate:
-    title: V2TreeSpeciesUpdate
-    x-stoplight:
-      id: cp2imcqm79i8w
-    type: object
-    properties:
       name:
         type: string
       amount:
@@ -43899,8 +43901,12 @@ definitions:
         type: string
       content:
         type: string
-      comments:
+      feedback:
         type: string
+      feedback_fields:
+        type: array
+        items:
+          type: string
       project:
         type: object
       organisation:
@@ -56871,6 +56877,40 @@ paths:
                 type: object
               answers:
                 type: object
+              form_title:
+                type: string
+              feedback:
+                type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              update_request:
+                title: UpdateRequestRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  framework_key:
+                    type: string
+                  status:
+                    type: string
+                  readable_status:
+                    type: string
+                  content:
+                    type: string
+                  feedback:
+                    type: string
+                  feedback_fields:
+                    type: array
+                    items:
+                      type: string
+                  project:
+                    type: object
+                  organisation:
+                    type: object
+                  created_by:
+                    type: object
     put:
       operationId: put-v2-forms-entity-form-uuid
       summary: Update a specific entity using a form schema
@@ -56922,6 +56962,40 @@ paths:
                 type: object
               answers:
                 type: object
+              form_title:
+                type: string
+              feedback:
+                type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              update_request:
+                title: UpdateRequestRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  framework_key:
+                    type: string
+                  status:
+                    type: string
+                  readable_status:
+                    type: string
+                  content:
+                    type: string
+                  feedback:
+                    type: string
+                  feedback_fields:
+                    type: array
+                    items:
+                      type: string
+                  project:
+                    type: object
+                  organisation:
+                    type: object
+                  created_by:
+                    type: object
   '/v2/forms/{ENTITY}/{UUID}/submit':
     put:
       operationId: put-v2-forms-entity-form-uuid-submit
@@ -56961,6 +57035,40 @@ paths:
                 type: object
               answers:
                 type: object
+              form_title:
+                type: string
+              feedback:
+                type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              update_request:
+                title: UpdateRequestRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  framework_key:
+                    type: string
+                  status:
+                    type: string
+                  readable_status:
+                    type: string
+                  content:
+                    type: string
+                  feedback:
+                    type: string
+                  feedback_fields:
+                    type: array
+                    items:
+                      type: string
+                  project:
+                    type: object
+                  organisation:
+                    type: object
+                  created_by:
+                    type: object
   '/v2/forms/{ENTITY}':
     post:
       summary: Create an entity with a custom form
@@ -57014,6 +57122,40 @@ paths:
                 type: object
               answers:
                 type: object
+              form_title:
+                type: string
+              feedback:
+                type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              update_request:
+                title: UpdateRequestRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  framework_key:
+                    type: string
+                  status:
+                    type: string
+                  readable_status:
+                    type: string
+                  content:
+                    type: string
+                  feedback:
+                    type: string
+                  feedback_fields:
+                    type: array
+                    items:
+                      type: string
+                  project:
+                    type: object
+                  organisation:
+                    type: object
+                  created_by:
+                    type: object
   '/v2/forms/projects/{UUID}':
     post:
       summary: Create a project with a custom form
@@ -57057,6 +57199,40 @@ paths:
                 type: object
               answers:
                 type: object
+              form_title:
+                type: string
+              feedback:
+                type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              update_request:
+                title: UpdateRequestRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  framework_key:
+                    type: string
+                  status:
+                    type: string
+                  readable_status:
+                    type: string
+                  content:
+                    type: string
+                  feedback:
+                    type: string
+                  feedback_fields:
+                    type: array
+                    items:
+                      type: string
+                  project:
+                    type: object
+                  organisation:
+                    type: object
+                  created_by:
+                    type: object
   '/v2/projects/{UUID}/site-polygons':
     get:
       summary: Get the polygons (geojson) from all sites belonging to a specific project
@@ -57274,8 +57450,12 @@ paths:
                 type: string
               content:
                 type: string
-              comments:
+              feedback:
                 type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
               project:
                 type: object
               organisation:
@@ -57352,8 +57532,12 @@ paths:
                 type: string
               content:
                 type: string
-              comments:
+              feedback:
                 type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
               project:
                 type: object
               organisation:
@@ -57406,8 +57590,12 @@ paths:
                 type: string
               content:
                 type: string
-              comments:
+              feedback:
                 type: string
+              feedback_fields:
+                type: array
+                items:
+                  type: string
               project:
                 type: object
               organisation:
@@ -69736,129 +69924,6 @@ paths:
       responses:
         '200':
           description: OK
-  /v2/tree-species:
-    post:
-      summary: Create a tree species
-      operationId: post-v2-tree-species
-      responses:
-        '201':
-          description: Created
-          schema:
-            title: V2TreeSpeciesRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
-            type: object
-            properties:
-              uuid:
-                type: string
-              name:
-                type: string
-              amount:
-                type: integer
-              type:
-                type: string
-              collection:
-                type: string
-      parameters:
-        - in: body
-          name: body
-          schema:
-            title: V2TreeSpeciesCreate
-            x-stoplight:
-              id: 5wwltusko93cr
-            type: object
-            properties:
-              model_type:
-                type: string
-              model_uuid:
-                type: integer
-              name:
-                type: string
-              amount:
-                type: integer
-              type:
-                type: string
-              collection:
-                type: string
-      tags:
-        - V2 Tree Species
-  '/v2/tree-species/{UUID}':
-    patch:
-      summary: Update a tree species
-      operationId: patch-v2-tree-species-UUID
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2TreeSpeciesCreate
-            x-stoplight:
-              id: 5wwltusko93cr
-            type: object
-            properties:
-              model_type:
-                type: string
-              model_uuid:
-                type: integer
-              name:
-                type: string
-              amount:
-                type: integer
-              type:
-                type: string
-              collection:
-                type: string
-      tags:
-        - V2 Tree Species
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - in: body
-          name: body
-          schema:
-            title: V2TreeSpeciesUpdate
-            x-stoplight:
-              id: cp2imcqm79i8w
-            type: object
-            properties:
-              name:
-                type: string
-              amount:
-                type: integer
-              type:
-                type: string
-              collection:
-                type: string
-    delete:
-      summary: Delete a tree species
-      operationId: delete-v2-tree-species-UUID
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2TreeSpeciesRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
-            type: object
-            properties:
-              uuid:
-                type: string
-              name:
-                type: string
-              amount:
-                type: integer
-              type:
-                type: string
-              collection:
-                type: string
-      tags:
-        - V2 Tree Species
   /v2/funding-type:
     post:
       summary: Create a funding type entry
