@@ -33,7 +33,7 @@ trait IsAdminIndex
             $query->where(function ($query) use ($tableName, $frameworkNames, $user) {
                 foreach ($frameworkNames as $framework) {
                     $frameworkPermission = 'framework-' . $framework;
-                    if ($user->hasPermissionTo($frameworkPermission)) {
+                    if ($user->can($frameworkPermission)) {
                         $query->orWhere("$tableName.framework_key", $framework);
                     }
                 }
