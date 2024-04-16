@@ -81,18 +81,14 @@ class TerrafundCreateGeometryController extends Controller
   private function validatePolygonBounds(array $geometry): bool {
     if ($geometry['type'] !== 'Polygon') {
         return false;
-    }
+    } 
     $coordinates = $geometry['coordinates'][0];
     foreach ($coordinates as $coordinate) {
         $latitude = $coordinate[1];
-        $longitude = $coordinate[0];
-
-        // Check latitude bounds
+        $longitude = $coordinate[0];        
         if ($latitude < -90 || $latitude > 90) {
             return false;
         }
-
-        // Check longitude bounds
         if ($longitude < -180 || $longitude > 180) {
             return false;
         }
@@ -119,10 +115,11 @@ class TerrafundCreateGeometryController extends Controller
         $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
       } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
         foreach ($feature['geometry']['coordinates'] as $polygon) {
-          if (!$this->validatePolygonBounds($feature['geometry'])) {
+          $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
+          if (!$this->validatePolygonBounds($singlePolygon)) {
             return ['error' => 'Invalid polygon bounds'];
           }
-          $data = $this->insertSinglePolygon(['type' => 'Polygon', 'coordinates' => $polygon], $srid);
+          $data = $this->insertSinglePolygon($singlePolygon, $srid);
           $uuids[] = $data['uuid'];
           $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
         }
