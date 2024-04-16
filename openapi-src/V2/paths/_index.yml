@@ -104,14 +104,6 @@
 /v2/update-requests/{ENTITY}/{UUID}:
   get:
     $ref: './UpdateRequests/get-v2-update-requests-entity-uuid.yml'
-/v2/workdays:
-  post:
-    $ref: './Workdays/post-v2-workday.yml'
-/v2/workdays/{UUID}:
-  patch:
-    $ref: './Workdays/patch-v2-workday-uuid.yml'
-  delete:
-    $ref: './Workdays/delete-v2-workday-uuid.yml'
 /v2/workdays/{ENTITY}/{UUID}:
   get:
     $ref: './Workdays/get-v2-workdays-entity-uuid.yml'

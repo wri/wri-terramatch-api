@@ -197,10 +197,7 @@ use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
 use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
-use App\Http\Controllers\V2\Workdays\DeleteWorkdayController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
-use App\Http\Controllers\V2\Workdays\StoreWorkdayController;
-use App\Http\Controllers\V2\Workdays\UpdateWorkdayController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -473,9 +470,6 @@ Route::prefix('tree-species')->group(function () {
 });
 
 Route::prefix('workdays')->group(function () {
-    Route::post('/', StoreWorkdayController::class);
-    Route::patch('/{workday}', UpdateWorkdayController::class);
-    Route::delete('/{workday}', DeleteWorkdayController::class);
     Route::get('/{entity}/{uuid}', GetWorkdaysForEntityController::class);
 });
 
