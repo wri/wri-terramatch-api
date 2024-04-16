@@ -85,7 +85,7 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ReportMod
         'feedback_fields',
         'polygon_status',
         'answers',
-        'paid_other_activity_description'
+        'paid_other_activity_description',
     ];
 
     public $fileConfiguration = [

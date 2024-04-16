@@ -1,0 +1,15 @@
+name: pull-request
+on:
+  pull_request:
+    branches: [main, staging, release/**]
+jobs:
+  lintTest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps
+        run: make composer
+      - name: Bring up Docker
+        run: make up
+      - name: Lint & Test
+        run: make test

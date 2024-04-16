@@ -934,57 +934,6 @@
     responses:
       '200':
         description: OK
-/v2/tree-species:
-  post:
-    summary: Create a tree species
-    operationId: post-v2-tree-species
-    responses:
-      '201':
-        description: Created
-        schema:
-          $ref: '../definitions/_index.yml#/V2TreeSpeciesRead'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2TreeSpeciesCreate'
-    tags:
-      - V2 Tree Species
-'/v2/tree-species/{UUID}':
-  patch:
-    summary: Update a tree species
-    operationId: patch-v2-tree-species-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2TreeSpeciesCreate'
-    tags:
-      - V2 Tree Species
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2TreeSpeciesUpdate'
-  delete:
-    summary: Delete a tree species
-    operationId: delete-v2-tree-species-UUID
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2TreeSpeciesRead'
-    tags:
-      - V2 Tree Species
 /v2/funding-type:
   post:
     summary: Create a funding type entry

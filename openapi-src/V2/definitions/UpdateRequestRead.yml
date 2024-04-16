@@ -11,8 +11,12 @@ properties:
     type: string
   content:
     type: string
-  comments:
+  feedback:
     type: string
+  feedback_fields:
+    type: array
+    items:
+      type: string
   project:
     type: object
   organisation:

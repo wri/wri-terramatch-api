@@ -1,6 +1,6 @@
 <?php
 
-namespace Sites;
+namespace Tests\V2\Sites;
 
 use App\Models\User;
 use App\Models\V2\Projects\Project;
@@ -21,7 +21,7 @@ class SoftDeleteSiteControllerTest extends TestCase
      */
     public function test_project_developer_can_soft_delete_sites_without_reports(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $project = Project::factory()->create(['framework_key' => $fmKey]);
         $site = Site::factory()->{$fmKey}()->create([
@@ -48,7 +48,7 @@ class SoftDeleteSiteControllerTest extends TestCase
      */
     public function test_project_developer_cant_soft_delete_sites_with_reports(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $project = Project::factory()->create(['framework_key' => $fmKey]);
         $site = Site::factory()->{$fmKey}()->create([

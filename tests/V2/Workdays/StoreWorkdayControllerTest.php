@@ -7,9 +7,10 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
-//use Illuminate\Support\Facades\Artisan;
 use App\Models\V2\Workdays\Workday;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class StoreWorkdayControllerTest extends TestCase
@@ -18,7 +19,7 @@ class StoreWorkdayControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
         $owner->givePermissionTo('manage-own');
@@ -33,13 +34,13 @@ class StoreWorkdayControllerTest extends TestCase
         $site = Site::factory()->create([
             'project_id' => $project->id,
             'framework_key' => 'ppc',
-            'status' => Site::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $report = SiteReport::factory()->create([
             'site_id' => $site->id,
             'framework_key' => 'ppc',
-            'status' => SiteReport::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $payload = [

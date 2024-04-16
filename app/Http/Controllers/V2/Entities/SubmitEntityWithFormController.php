@@ -23,7 +23,7 @@ class SubmitEntityWithFormController extends Controller
 
         /** @var UpdateRequest $updateRequest */
         $updateRequest = $entity->updateRequests()->isUnapproved()->first();
-        if (!empty($updateRequest)) {
+        if (! empty($updateRequest)) {
             $updateRequest->submitForApproval();
             Action::forTarget($updateRequest)->delete();
         } else {

@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 /**
  * @method morphMany(string $class, string $string)
  */
-trait HasUpdateRequests {
+trait HasUpdateRequests
+{
     public function updateRequests(): MorphMany
     {
         return $this->morphMany(UpdateRequest::class, 'updaterequestable');

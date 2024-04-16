@@ -12,12 +12,6 @@ RUN apt-get install -y \
     libzip-dev \
     gdal-bin \
     libgdal-dev
-# RUN apt-get update && \
-#     apt-get install -y nodejs npm && \
-#     npm install -g npm@latest && \
-#     npm config set prefix /usr/local && \
-#     export PATH="$PATH:/usr/local/bin"
-
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install \
@@ -42,3 +36,4 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 ## APACHE
 RUN a2enmod rewrite
 COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/php.ini /usr/local/etc/php/php.ini

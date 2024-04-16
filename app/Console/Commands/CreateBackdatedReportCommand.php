@@ -4,10 +4,12 @@ namespace App\Console\Commands;
 
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
-use Carbon\Carbon;
+use App\StateMachines\TaskStatusStateMachine;
 use Illuminate\Console\Command;
 
 class CreateBackdatedReportCommand extends Command
@@ -30,18 +32,27 @@ class CreateBackdatedReportCommand extends Command
     {
         $type = $this->option('type');
         switch ($type) {
+            case 'project':
+                $entityModel = Project::class;
+                $reportModel = ProjectReport::class;
+
+                break;
+
             case 'site':
                 $entityModel = Site::class;
                 $reportModel = SiteReport::class;
+
                 break;
 
             case 'nursery':
                 $entityModel = Nursery::class;
                 $reportModel = NurseryReport::class;
+
                 break;
 
             default:
                 $this->error('Type must be one of "site" or "nursery"');
+
                 return 1;
         }
 
@@ -50,12 +61,14 @@ class CreateBackdatedReportCommand extends Command
         $entity = $entityModel::where('uuid', $uuid)->first();
         if ($entity == null) {
             $this->error("Entity.php not found [type=$type, uuid=$uuid]");
+
             return 1;
         }
 
         $task = Task::withTrashed()->where('project_id', $entity->project_id)->latest()->first();
         if ($task == null) {
             $this->error("Task not found for project [$entity->project_id]");
+
             return 1;
         }
 

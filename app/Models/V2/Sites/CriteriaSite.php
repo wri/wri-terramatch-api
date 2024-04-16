@@ -1,13 +1,14 @@
 <?php
 
-
 namespace App\Models\V2\Sites;
 
+use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CriteriaSite extends Model
 {
+    use HasUuid;
     use SoftDeletes;
 
     /**
@@ -23,7 +24,6 @@ class CriteriaSite extends Model
      * @var array
      */
     protected $fillable = [
-        'uuid',
         'criteria_id',
         'polygon_id',
         'valid',
@@ -39,6 +39,4 @@ class CriteriaSite extends Model
         'deleted_at',
         'date_created',
     ];
-
-
 }

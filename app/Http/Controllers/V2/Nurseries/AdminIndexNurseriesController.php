@@ -52,6 +52,7 @@ class AdminIndexNurseriesController extends Controller
         }
 
         $this->isolateAuthorizedFrameworks($query, 'v2_nurseries');
+
         return new NurseriesCollection($this->paginate($query));
     }
 }

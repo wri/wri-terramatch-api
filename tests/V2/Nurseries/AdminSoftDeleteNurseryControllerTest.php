@@ -1,6 +1,6 @@
 <?php
 
-namespace Nurseries;
+namespace Tests\V2\Nurseries;
 
 use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
@@ -30,7 +30,7 @@ class AdminSoftDeleteNurseryControllerTest extends TestCase
      */
     public function test_admins_can_soft_delete_nurseries(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $user = User::factory()->admin()->create();
         $user->givePermissionTo($permission);

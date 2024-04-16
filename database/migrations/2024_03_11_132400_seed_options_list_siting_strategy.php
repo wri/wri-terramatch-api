@@ -6,8 +6,7 @@ use App\Models\V2\Forms\FormOptionListOption;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Str;
 
-class SeedOptionsListSitingStrategy extends Migration
-{
+return new class extends Migration {
     /**
      * This migration seeds the default options
      *

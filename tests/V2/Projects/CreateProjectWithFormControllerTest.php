@@ -1,6 +1,6 @@
 <?php
 
-namespace Projects;
+namespace Tests\V2\Projects;
 
 use App\Helpers\CustomFormHelper;
 use App\Models\User;
@@ -10,9 +10,9 @@ use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
@@ -26,7 +26,7 @@ class CreateProjectWithFormControllerTest extends TestCase
      */
     public function test_a_project_developer_can_create_a_project_from_a_given_form(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
 
         list($fundingProgramme, $application, $organisation, $projectPitch, $formSubmissions, $form) = $this->prepareData($fmKey);
 
@@ -37,6 +37,7 @@ class CreateProjectWithFormControllerTest extends TestCase
         $payload = [
             'parent_entity' => 'application',
             'parent_uuid' => $application->uuid,
+            'form_uuid' => $form->uuid,
         ];
 
         $uri = '/api/v2/forms/projects';
@@ -53,7 +54,7 @@ class CreateProjectWithFormControllerTest extends TestCase
             'framework_key' => $form->framework_key,
             'organisation_id' => $application->organisation->id,
             'application_id' => $application->id,
-            'status' => Project::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
             'project_status' => null,
             'name' => $projectPitch->project_name,
             'boundary_geojson' => $projectPitch->proj_boundary,
@@ -90,7 +91,7 @@ class CreateProjectWithFormControllerTest extends TestCase
      */
     public function test_an_unauthorized_user_cant_create_a_project_from_a_given_form(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
 
         list($fundingProgramme, $application, $organisation, $projectPitch, $formSubmissions, $form) = $this->prepareData($fmKey);
 

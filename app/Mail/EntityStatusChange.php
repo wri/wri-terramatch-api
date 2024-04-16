@@ -71,7 +71,11 @@ class EntityStatusChange extends Mail
             $feedback = $this->entity->feedback;
         }
 
-        return empty($feedback) ? null : $feedback;
+        if (empty($feedback)) {
+            return null;
+        }
+
+        return str_replace("\n", '<br>', $feedback);
     }
 
     private function getBodyParagraphs(): Collection
@@ -94,7 +98,7 @@ class EntityStatusChange extends Mail
             ],
             EntityStatusStateMachine::NEEDS_MORE_INFORMATION => [
                 'The information has been reviewed by your project manager and they would like to see the following updates:',
-                $this->getFeedback() ?? '(No feedback)'
+                $this->getFeedback() ?? '(No feedback)',
             ],
             default => null
         });
