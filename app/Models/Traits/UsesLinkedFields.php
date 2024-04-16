@@ -77,7 +77,8 @@ trait UsesLinkedFields
                     } else {
                         $property = data_get($relationsConfig, "$question->linked_field_key.property");
                         if (! empty($property)) {
-                            $this->syncRelation($property, collect(data_get($formData, $question->uuid)));
+                            $inputType = data_get($relationsConfig, "$question->linked_field_key.input_type");
+                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)));
                         }
                     }
 
@@ -242,10 +243,10 @@ trait UsesLinkedFields
         }
     }
 
-    private function syncRelation(string $property, $data): void
+    private function syncRelation(string $property, string $inputType, $data): void
     {
         // This will expand as we complete more tickets in TM-747, until eventually we support all form relations.
-        if ($property != 'treeSpecies') {
+        if (! in_array($inputType, ['treeSpecies', 'workdays'])) {
             return;
         }
 
