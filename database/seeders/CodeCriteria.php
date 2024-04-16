@@ -145,7 +145,7 @@ class CodeCriteria extends Seeder
         ];
 
         foreach ($criteria as $criterion) {
-          DB::table('code_criteria')->insert($criterion);
+            DB::table('code_criteria')->insert($criterion);
         }
     }
 }

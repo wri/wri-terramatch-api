@@ -13,18 +13,18 @@ class CreateIndicatorSite extends Migration
      */
     public function up()
     {
-      Schema::dropIfExists('indicator_site');
-      Schema::create('indicator_site', function (Blueprint $table) {
-        $table->id();
-        $table->uuid('uuid')->unique();
-        $table->integer('indicator_id');
-        $table->integer('polygon_id');
-        $table->integer('year');
-        $table->float('value');
-        $table->date('date_created');
-        $table->softDeletes();
-        $table->timestamps();
-      });
+        Schema::dropIfExists('indicator_site');
+        Schema::create('indicator_site', function (Blueprint $table) {
+            $table->id();
+            $table->uuid('uuid')->unique();
+            $table->integer('indicator_id');
+            $table->integer('polygon_id');
+            $table->integer('year');
+            $table->float('value');
+            $table->date('date_created');
+            $table->softDeletes();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -34,6 +34,6 @@ class CreateIndicatorSite extends Migration
      */
     public function down()
     {
-      Schema::dropIfExists('indicator_site');
+        Schema::dropIfExists('indicator_site');
     }
 }

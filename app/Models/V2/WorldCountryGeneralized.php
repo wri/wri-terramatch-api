@@ -9,6 +9,6 @@ class WorldCountryGeneralized extends Model
     protected $table = 'world_countries_generalized';
 
     protected $fillable = [
-        'countryaff', 'country', 'iso', 'country_aff', 'aff_iso', 'geometry', 'OGR_FID'
+        'countryaff', 'country', 'iso', 'country_aff', 'aff_iso', 'geometry', 'OGR_FID',
     ];
 }

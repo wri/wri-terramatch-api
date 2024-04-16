@@ -170,6 +170,8 @@ use App\Http\Controllers\V2\Stratas\UpdateStrataController;
 use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
+use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
+use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
 use App\Http\Controllers\V2\TreeSpecies\GetTreeSpeciesForEntityController;
 use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
 use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestController;
@@ -189,8 +191,6 @@ use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Controllers\V2\Workdays\StoreWorkdayController;
 use App\Http\Controllers\V2\Workdays\UpdateWorkdayController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
-use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
-use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -622,7 +622,7 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
-    
+
     Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonsAsGeoJSON']);
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
