@@ -33,6 +33,7 @@ class CreateSitesPolygons extends Migration
             $table->integer('num_trees')->nullable();
             $table->float('est_area')->nullable();
             $table->date('date_modified')->nullable();
+            $table->string('country')->nullable();
             $table->string('created_by')->nullable();
             $table->string('last_modified_by')->nullable();
             $table->softDeletes();

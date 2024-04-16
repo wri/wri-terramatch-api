@@ -65,6 +65,32 @@ class TerrafundCreateGeometryController extends Controller
     return true;
     }
 }
+
+private function insertSinglePolygon(array $geometry, int $srid)
+{
+    try {
+        // Convert geometry to GeoJSON string with specified SRID
+        $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => "EPSG:$srid"]]]);
+
+        // Insert GeoJSON data into the database
+        $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
+        $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
+        $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
+        $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
+
+        $areaHectares = $areaSqMeters / 10000;
+
+        $polygonGeometry = PolygonGeometry::create([
+          'geom' => $geom,
+        ]);
+
+        return ['uuid' => $polygonGeometry->uuid, 'id' => $polygonGeometry->id, 'area' => $areaHectares];
+    } catch (\Exception $e) {
+        echo $e;
+
+        return $e->getMessage();
+    }
+}
   public function insertGeojsonToDB(string $geojsonFilename)
   {
     $srid = 4326;
@@ -82,6 +108,7 @@ class TerrafundCreateGeometryController extends Controller
         $data = $this->insertSinglePolygon($feature['geometry'], $srid);
         $uuids[] = $data['uuid'];
         $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
+        Log::info($returnSite)  ;
       } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
         foreach ($feature['geometry']['coordinates'] as $polygon) {
           $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
@@ -91,6 +118,7 @@ class TerrafundCreateGeometryController extends Controller
           $data = $this->insertSinglePolygon($singlePolygon, $srid);
           $uuids[] = $data['uuid'];
           $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
+          Log::info($returnSite);
         }
       }
     }
@@ -173,7 +201,7 @@ class TerrafundCreateGeometryController extends Controller
             }
             $insertionSchemaSuccess = $this->insertCriteriaSite($polygonUuid, $SCHEMA_CRITERIA_ID, $validSchema);
             $insertionDataSuccess = $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $validData);
-
+            
             $sitePolygon = new SitePolygon();
             $sitePolygon->project_id = $properties['project_id'] ?? null;
             $sitePolygon->proj_name = $properties['proj_name'] ?? null;
@@ -274,7 +302,7 @@ class TerrafundCreateGeometryController extends Controller
         return response()->json(['error' => 'Only ZIP files are allowed'], 400);
       }
       $directory = storage_path('app/public/shapefiles/' . uniqid('shapefile_'));
-      mkdir($directory, 0755, true);
+    mkdir($directory, 0755, true);
 
       // Extract the contents of the ZIP file
       $zip = new \ZipArchive();

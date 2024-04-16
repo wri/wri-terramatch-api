@@ -29,6 +29,7 @@ class SitePolygon extends Model
       'distr',
       'num_trees',
       'est_area',
+      'country'
     ];
 
     public function polygonGeometry()
