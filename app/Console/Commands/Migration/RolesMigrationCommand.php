@@ -72,7 +72,9 @@ class RolesMigrationCommand extends Command
 
         User::whereIn('role', ['user','admin', 'terrafund-admin'])->get()
             ->each(function (User $user) {
-                assignSpatieRole($user);
+                if ($user->primary_role == null) {
+                    assignSpatieRole($user);
+                }
             });
 
         if ($this->option('log')) {

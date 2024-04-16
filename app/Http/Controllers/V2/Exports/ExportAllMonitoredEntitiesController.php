@@ -41,8 +41,10 @@ class ExportAllMonitoredEntitiesController extends Controller
     private function getSlug(string $framework)
     {
         $frameworkModel = Framework::where('access_code', $framework)->firstOrFail();
+
         return $frameworkModel->slug;
     }
+
     private function getForm(string $modelClass, string $framework)
     {
         return Form::where('model', $modelClass)
