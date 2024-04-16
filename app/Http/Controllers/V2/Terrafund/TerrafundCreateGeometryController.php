@@ -47,88 +47,55 @@ class TerrafundCreateGeometryController extends Controller
 
         return response()->json(['uuid' => $polygonGeometry->uuid], 200);
     }
-
-    private function insertSinglePolygon(array $geometry, int $srid)
-    {
-        try {
-            // Convert geometry to GeoJSON string with specified SRID
-            $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => "EPSG:$srid"]]]);
-
-            // Insert GeoJSON data into the database
-            $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
-            $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
-            $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
-            $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
-
-            $areaHectares = $areaSqMeters / 10000;
-
-            $polygonGeometry = PolygonGeometry::create([
-              'geom' => $geom,
-            ]);
-
-            return ['uuid' => $polygonGeometry->uuid, 'id' => $polygonGeometry->id, 'area' => $areaHectares];
-        } catch (\Exception $e) {
-            echo $e;
-
-            return $e->getMessage();
-        }
-    }
-
-    private function validatePolygonBounds(array $geometry): bool
-    {
-        if ($geometry['type'] !== 'Polygon') {
+  private function validatePolygonBounds(array $geometry): bool {
+    if ($geometry['type'] !== 'Polygon') {
+        return false;
+    } 
+    $coordinates = $geometry['coordinates'][0];
+    foreach ($coordinates as $coordinate) {
+        $latitude = $coordinate[1];
+        $longitude = $coordinate[0];        
+        if ($latitude < -90 || $latitude > 90) {
             return false;
         }
-        $coordinates = $geometry['coordinates'][0];
-        foreach ($coordinates as $coordinate) {
-            $latitude = $coordinate[1];
-            $longitude = $coordinate[0];
-
-            // Check latitude bounds
-            if ($latitude < -90 || $latitude > 90) {
-                return false;
-            }
-
-            // Check longitude bounds
-            if ($longitude < -180 || $longitude > 180) {
-                return false;
-            }
+        if ($longitude < -180 || $longitude > 180) {
+            return false;
         }
 
-        return true;
+    return true;
     }
-
-    public function insertGeojsonToDB(string $geojsonFilename)
-    {
-        $srid = 4326;
-        $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
-        $geojson = json_decode($geojsonData, true);
-        if (! isset($geojson['features'])) {
-            return ['error' => 'GeoJSON file does not contain features'];
-        }
-        $uuids = [];
-        foreach ($geojson['features'] as $feature) {
-            if ($feature['geometry']['type'] === 'Polygon') {
-                if (! $this->validatePolygonBounds($feature['geometry'])) {
-                    return ['error' => 'Invalid polygon bounds'];
-                }
-                $data = $this->insertSinglePolygon($feature['geometry'], $srid);
-                $uuids[] = $data['uuid'];
-                $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
-            } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
-                foreach ($feature['geometry']['coordinates'] as $polygon) {
-                    if (! $this->validatePolygonBounds($feature['geometry'])) {
-                        return ['error' => 'Invalid polygon bounds'];
-                    }
-                    $data = $this->insertSinglePolygon(['type' => 'Polygon', 'coordinates' => $polygon], $srid);
-                    $uuids[] = $data['uuid'];
-                    $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
-                }
-            }
-        }
-
-        return $uuids;
+}
+  public function insertGeojsonToDB(string $geojsonFilename)
+  {
+    $srid = 4326;
+    $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
+    $geojson = json_decode($geojsonData, true);
+    if (!isset($geojson['features'])) {
+      return ['error' => 'GeoJSON file does not contain features'];
     }
+    $uuids = [];
+    foreach ($geojson['features'] as $feature) {
+      if ($feature['geometry']['type'] === 'Polygon') {
+        if (!$this->validatePolygonBounds($feature['geometry'])) {
+          return ['error' => 'Invalid polygon bounds'];
+        }
+        $data = $this->insertSinglePolygon($feature['geometry'], $srid);
+        $uuids[] = $data['uuid'];
+        $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
+      } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+        foreach ($feature['geometry']['coordinates'] as $polygon) {
+          $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
+          if (!$this->validatePolygonBounds($singlePolygon)) {
+            return ['error' => 'Invalid polygon bounds'];
+          }
+          $data = $this->insertSinglePolygon($singlePolygon, $srid);
+          $uuids[] = $data['uuid'];
+          $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
+        }
+      }
+    }
+    return $uuids;
+  }
 
     private function validateSchema(array $properties, array $fields): bool
     {
