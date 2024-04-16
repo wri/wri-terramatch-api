@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
@@ -33,21 +34,18 @@ class TerrafundCreateGeometryController extends Controller
 
     public function storeGeometry(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
           'geometry' => 'required|json',
         ]);
+
         $geometry = json_decode($request->input('geometry'));
         $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
-        $uuid = Str::uuid();
 
-        DB::table('polygon_geometry')->insert([
-          'uuid' => $uuid,
+        $polygonGeometry = PolygonGeometry::create([
           'geom' => $geom,
-          'created_at' => now(),
-          'updated_at' => now(),
         ]);
 
-        return response()->json(['uuid' => $uuid], 200);
+        return response()->json(['uuid' => $polygonGeometry->uuid], 200);
     }
 
     private function insertSinglePolygon(array $geometry, int $srid)
@@ -58,21 +56,17 @@ class TerrafundCreateGeometryController extends Controller
 
             // Insert GeoJSON data into the database
             $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
-            $uuid = Str::uuid();
             $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
             $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
             $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
 
             $areaHectares = $areaSqMeters / 10000;
 
-            $id = DB::table('polygon_geometry')->insertGetId([
-              'uuid' => $uuid,
+            $polygonGeometry = PolygonGeometry::create([
               'geom' => $geom,
-              'created_at' => now(),
-              'updated_at' => now(),
             ]);
 
-            return ['uuid' => $uuid, 'id' => $id, 'area' => $areaHectares];
+            return ['uuid' => $polygonGeometry->uuid, 'id' => $polygonGeometry->id, 'area' => $areaHectares];
         } catch (\Exception $e) {
             echo $e;
 
@@ -155,9 +149,9 @@ class TerrafundCreateGeometryController extends Controller
         // Check if the polygon with the specified poly_id exists
         $polygonExists = SitePolygon::where('poly_id', $polygonUuid)
             ->exists();
-        $valid = false;
+
         if (! $polygonExists) {
-            return response()->json(['valid' => $valid, 'message' => 'No site polygon found with the specified poly_id.']);
+            return response()->json(['valid' => false, 'message' => 'No site polygon found with the specified poly_id.']);
         }
 
         // Proceed with validation of attribute values
@@ -173,15 +167,15 @@ class TerrafundCreateGeometryController extends Controller
                 }
             })
             ->first();
-        $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $valid);
+        $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, false);
         if ($sitePolygonData) {
-            return response()->json(['valid' => $valid, 'message' => 'Some attributes of the site polygon are invalid.']);
+            return response()->json(['valid' => false, 'message' => 'Some attributes of the site polygon are invalid.']);
         }
 
         $valid = true;
         $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $valid);
 
-        return response()->json(['valid' => $valid]);
+        return response()->json(['valid' => true]);
     }
 
     private function validateData(array $properties, array $fields): bool
@@ -214,7 +208,6 @@ class TerrafundCreateGeometryController extends Controller
             $insertionDataSuccess = $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $validData);
 
             $sitePolygon = new SitePolygon();
-            $sitePolygon->uuid = Str::uuid();
             $sitePolygon->project_id = $properties['project_id'] ?? null;
             $sitePolygon->proj_name = $properties['proj_name'] ?? null;
             $sitePolygon->org_name = $properties['org_name'] ?? null;
@@ -231,8 +224,6 @@ class TerrafundCreateGeometryController extends Controller
             $sitePolygon->distr = $properties['distr'] ?? null;
             $sitePolygon->num_trees = $properties['num_trees'] ?? null;
             $sitePolygon->est_area = $area ?? null;
-            $sitePolygon->created_at = now();
-            $sitePolygon->updated_at = now();
             $sitePolygon->save();
 
             return 'has saved correctly';
@@ -380,31 +371,9 @@ class TerrafundCreateGeometryController extends Controller
         $dist = rad2deg($dist);
         $miles = $dist * 60 * 1.1515;
 
-        return $miles * 1.609344; // Convert to kilometers
+        return $miles * 1.609344;
     }
 
-    // public function detectSpikes($geometry)
-    // {
-    //   $spikes = [];
-    //   if ($geometry['type'] === 'Polygon' || $geometry['type'] === 'MultiPolygon') {
-    //     $coordinates = $geometry['type'] === 'Polygon' ? $geometry['coordinates'][0] : $geometry['coordinates'][0][0]; // First ring of the polygon or the first polygon in the MultiPolygon
-    //     $numVertices = count($coordinates);
-    //     $perimeter = 0;
-    //     for ($i = 0; $i < $numVertices - 1; $i++) {
-    //       $distance = $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
-    //       $perimeter += $distance;
-    //     }
-    //     $averageDistance = $perimeter / ($numVertices - 1);
-    //     $threshold = $averageDistance * 1.25; // Adjust this threshold as needed
-    //     for ($i = 0; $i < $numVertices - 1; $i++) {
-    //       $distance = $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
-    //       if (abs($distance - $averageDistance) > $threshold) {
-    //         $spikes[] = $coordinates[$i];
-    //       }
-    //     }
-    //   }
-    //   return $spikes;
-    // }
     public function detectSpikes($geometry)
     {
         $spikes = [];
@@ -433,12 +402,11 @@ class TerrafundCreateGeometryController extends Controller
         return $spikes;
     }
 
-    public function insertCriteriaSite($POLYGON_ID, $CRITERIA_ID, $valid)
+    public function insertCriteriaSite($polygonId, $criteriaId, $valid)
     {
         $criteriaSite = new CriteriaSite();
-        $criteriaSite->polygon_id = $POLYGON_ID;
-        $criteriaSite->criteria_id = $CRITERIA_ID;
-        $criteriaSite->uuid = Str::uuid();
+        $criteriaSite->polygon_id = $polygonId;
+        $criteriaSite->criteria_id = $criteriaId;
         $criteriaSite->valid = $valid;
 
         try {
@@ -507,8 +475,7 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Geometry not found'], 404);
         }
 
-        $totalArea = DB::table('polygon_geometry')
-            ->where('uuid', $polygonUuid)
+        $totalArea = PolygonGeometry::where('uuid', $polygonUuid)
             ->selectRaw('ST_Area(geom) AS area')
             ->first()->area;
 
@@ -522,16 +489,14 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         // Find the country ISO using project_id from v2projects
-        $countryIso = DB::table('v2_projects')
-            ->where('uuid', $sitePolygonData->project_id)
+        $countryIso = Project::where('uuid', $sitePolygonData->project_id)
             ->value('country');
 
         if (! $countryIso) {
             return response()->json(['error' => 'Country ISO not found for the specified project_id'], 404);
         }
 
-        $intersectionData = DB::table('world_countries_generalized')
-          ->where('iso', $countryIso)
+        $intersectionData = WorldCountryGeneralized::where('iso', $countryIso)
           ->selectRaw('world_countries_generalized.country AS country, ST_Area(ST_Intersection(world_countries_generalized.geometry, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) AS area', [$polygonUuid])
           ->first();
 
@@ -565,7 +530,7 @@ class TerrafundCreateGeometryController extends Controller
 
         if ($result) {
             $geometryType = $result->geometry_type;
-            $valid = $geometryType === 'POLYGON' ? true : false;
+            $valid = $geometryType === 'POLYGON';
             $GEOMETRY_TYPE_CRITERIA_ID = 10;
             $insertionSuccess = $this->insertCriteriaSite($uuid, $GEOMETRY_TYPE_CRITERIA_ID, $valid);
 
@@ -660,8 +625,7 @@ class TerrafundCreateGeometryController extends Controller
           ->where('poly_id', '!=', $uuid)
           ->pluck('poly_id');
 
-        $intersects = DB::table('polygon_geometry')
-          ->whereIn('uuid', $relatedPolyIds)
+        $intersects = PolygonGeometry::whereIn('uuid', $relatedPolyIds)
           ->selectRaw('ST_Intersects(geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?)) as intersects', [$uuid])
           ->get()
           ->pluck('intersects');
@@ -689,8 +653,7 @@ class TerrafundCreateGeometryController extends Controller
         $sumEstArea = SitePolygon::where('project_id', $projectId)
           ->sum('est_area');
 
-        $project = DB::table('v2_projects')
-          ->where('uuid', $projectId)
+        $project = Project::where('uuid', $projectId)
           ->first();
 
         if (! $project) {
@@ -716,8 +679,7 @@ class TerrafundCreateGeometryController extends Controller
     public function getPolygonsAsGeoJSON()
     {
         $limit = 2;
-        $polygons = DB::table('polygon_geometry')
-          ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
+        $polygons = PolygonGeometry::select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
           ->orderBy('created_at', 'desc')
           ->whereNotNull('geom')
           ->limit($limit)

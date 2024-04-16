@@ -2,12 +2,14 @@
 
 namespace App\Models\V2\Sites;
 
+use App\Models\Traits\HasUuid;
 use App\Models\V2\PolygonGeometry;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SitePolygon extends Model
 {
+    use HasUuid;
     use SoftDeletes;
 
     protected $table = 'site_polygon';
