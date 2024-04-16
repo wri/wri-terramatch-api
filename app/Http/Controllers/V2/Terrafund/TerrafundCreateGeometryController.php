@@ -251,48 +251,6 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
-    public function uploadShapefile(Request $request)
-    {
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            if ($file->getClientOriginalExtension() !== 'zip') {
-                return response()->json(['error' => 'Only ZIP files are allowed'], 400);
-            }
-            $directory = storage_path('app/public/shapefiles/' . uniqid('shapefile_'));
-            mkdir($directory, 0755, true);
-
-            // Extract the contents of the ZIP file
-            $zip = new \ZipArchive();
-            if ($zip->open($file->getPathname()) === true) {
-                $zip->extractTo($directory);
-                $zip->close();
-                $shpFile = $this->findShpFile($directory);
-                if (! $shpFile) {
-                    return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
-                }
-                $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
-                $geojsonPath = storage_path("app/public/geojson_files/{$geojsonFilename}");
-                $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
-                $process->run();
-                if (! $process->isSuccessful()) {
-                    Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
-
-                    return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
-                }
-                $uuid = $this->insertGeojsonToDB($geojsonFilename);
-                if (isset($uuid['error'])) {
-                    return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
-                }
-
-                return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
-            } else {
-                return response()->json(['error' => 'Failed to open the ZIP file'], 400);
-            }
-        } else {
-            return response()->json(['error' => 'No file uploaded'], 400);
-        }
-    }
-
     private function findShpFile($directory)
     {
         $shpFile = null;
@@ -307,6 +265,47 @@ class TerrafundCreateGeometryController extends Controller
 
         return $shpFile;
     }
+  public function uploadShapefile(Request $request)
+  {
+    Log::debug('File not found in request', ['request' => $request->all()]);
+    if ($request->hasFile('file')) {
+      $file = $request->file('file');
+      if ($file->getClientOriginalExtension() !== 'zip') {
+        return response()->json(['error' => 'Only ZIP files are allowed'], 400);
+      }
+      $directory = storage_path('app/public/shapefiles/' . uniqid('shapefile_'));
+      mkdir($directory, 0755, true);
+
+      // Extract the contents of the ZIP file
+      $zip = new \ZipArchive();
+      if ($zip->open($file->getPathname()) === true) {
+        $zip->extractTo($directory);
+        $zip->close();
+        $shpFile = $this->findShpFile($directory);
+        if (!$shpFile) {
+          return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
+        }
+        $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
+        $geojsonPath = storage_path("app/public/geojson_files/{$geojsonFilename}");
+        $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
+        $process->run();
+        if (!$process->isSuccessful()) {
+          Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
+          return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
+        }
+        $uuid = $this->insertGeojsonToDB($geojsonFilename);
+        if (isset($uuid['error'])) {
+          return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
+        }
+        return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
+      } else {
+        return response()->json(['error' => 'Failed to open the ZIP file'], 400);
+      }
+    } else {
+      
+      return response()->json(['error' => 'No file uploaded'], 400);
+    }
+  }
 
     public function checkSelfIntersection(Request $request)
     {
