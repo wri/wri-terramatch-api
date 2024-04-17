@@ -200,6 +200,7 @@ use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\EntityModel;
+use App\Models\V2\MediaModel;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -639,7 +640,14 @@ Route::prefix('terrafund')->group(function () {
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
 Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
 
-Route::post('file/upload/{model}/{collection}/{uuid}', UploadController::class);
+ModelInterfaceBindingMiddleware::with(
+    MediaModel::class,
+    function () {
+        Route::post('/{collection}/{mediaModel}', UploadController::class);
+    },
+    prefix: 'file/upload',
+    modelParameter: 'mediaModel'
+);
 
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
