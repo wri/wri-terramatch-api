@@ -9,7 +9,6 @@ use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
-use Illuminate\Support\Facades\DB;
 
 class ActiveCountriesTableController extends Controller
 {

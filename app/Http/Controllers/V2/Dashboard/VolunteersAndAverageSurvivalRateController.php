@@ -22,7 +22,7 @@ class VolunteersAndAverageSurvivalRateController extends Controller
             'non_profit_survival_rate' => $this->getAverageSurvivalRate($projects, 'non-profit-organization'),
             'enterprise_survival_rate' => $this->getAverageSurvivalRate($projects, 'for-profit-organization'),
             'number_of_sites' => $this->numberOfSites($projects),
-            'number_of_nurseries' => $this->numberOfNurseries($projects)
+            'number_of_nurseries' => $this->numberOfNurseries($projects),
         ];
 
         return new VolunteersAndAverageResource($response);

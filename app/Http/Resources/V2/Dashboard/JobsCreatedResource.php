@@ -35,4 +35,3 @@ class JobsCreatedResource extends JsonResource
         ];
     }
 }
-

@@ -10,7 +10,6 @@ use App\Models\V2\Forms\FormOptionListOption;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class ActiveProjectsTableController extends Controller
 {
@@ -31,7 +30,8 @@ class ActiveProjectsTableController extends Controller
         ]);
     }
 
-    public function getQuery($request) {
+    public function getQuery($request)
+    {
         return TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->with('organisation')
             ->withCount(['sites', 'nurseries']);
@@ -69,7 +69,7 @@ class ActiveProjectsTableController extends Controller
     {
         return $project->sites->sum(function ($site) {
             return $site->reports->sum(function ($report) {
-                    return $report->treeSpecies->sum('amount');
+                return $report->treeSpecies->sum('amount');
             });
         });
     }
@@ -80,23 +80,25 @@ class ActiveProjectsTableController extends Controller
             ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
             ->groupBy('project_id')
             ->first();
-    
+
         if ($projectReport) {
             return $projectReport->total_ft + $projectReport->total_pt;
         } else {
             return 0;
         }
-    }    
+    }
 
     public function volunteers($project)
     {
         $totalVolunteers = $project->reports()->selectRaw('SUM(volunteer_total) as total')->first();
+
         return $totalVolunteers ? intval($totalVolunteers->total) : 0;
     }
 
     public function beneficiaries($project)
     {
         $totalBeneficiaries = $project->reports()->selectRaw('SUM(beneficiaries) as total')->first();
+
         return $totalBeneficiaries ? intval($totalBeneficiaries->total) : 0;
     }
 

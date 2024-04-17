@@ -9,7 +9,6 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
-use App\StateMachines\TaskStatusStateMachine;
 use Illuminate\Console\Command;
 
 class CreateBackdatedReportCommand extends Command

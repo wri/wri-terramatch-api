@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
+use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Models\V2\Projects\Project;
+use App\Http\Resources\V2\Dashboard\JobsCreatedResource;
 use App\Models\V2\Projects\ProjectReport;
 use Illuminate\Http\Request;
-use App\Http\Resources\V2\Dashboard\JobsCreatedResource;
-use App\Helpers\TerrafundDashboardQueryHelper;
 
 class GetJobsCreatedController extends Controller
 {

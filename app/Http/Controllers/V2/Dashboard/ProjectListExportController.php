@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
-use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use League\Csv\Writer;
@@ -32,7 +31,7 @@ class ProjectListExportController extends Controller
             'jobs_created' => 'No. of Jobs Created',
             'date_added' => 'Date Added',
             'number_of_sites' => 'No. of Sites',
-            'number_of_nurseries' => 'No. of Nurseries'
+            'number_of_nurseries' => 'No. of Nurseries',
         ];
 
         $filteredProjects = [];
@@ -58,7 +57,7 @@ class ProjectListExportController extends Controller
 
         return response($csvContent, 200, [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $fileName . '"'
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
         ]);
     }
 }

@@ -17,7 +17,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
             'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
             'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
             'total_entries' => $this->getTotalJobsCreatedSum($projects),
-            'total_hectares_restored' => "-",
+            'total_hectares_restored' => '-',
             'total_hectares_restored_goal' => $this->getTotalHectaresRestoredGoalSum($projects),
             'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
             'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($projects),
@@ -48,6 +48,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
     {
         return $projects->sum(function ($project) {
             $totalSum = $project->reports()->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')->first();
+
             return $totalSum->total_ft + $totalSum->total_pt;
         });
     }
