@@ -53,7 +53,7 @@ class ModelInterfaceBindingMiddleware
 
     private static array $typeSlugsCache = [];
 
-    public static function with(string $interface, callable $routeGroup): RouteRegistrar
+    public static function with(string $interface, callable $routeGroup, string $prefix = null, string $modelParameter = null): RouteRegistrar
     {
         $typeSlugs = self::$typeSlugsCache[$interface] ?? [];
         if (empty($typeSlugs)) {
@@ -66,13 +66,15 @@ class ModelInterfaceBindingMiddleware
             self::$typeSlugsCache[$interface] = $typeSlugs;
         }
 
-        return Route::prefix('/{modelSlug}')
+        $middleware = $modelParameter == null ? 'modelInterface' : "modelInterface:$modelParameter";
+
+        return Route::prefix("$prefix/{modelSlug}")
             ->whereIn('modelSlug', $typeSlugs)
-            ->middleware('modelInterface')
+            ->middleware($middleware)
             ->group($routeGroup);
     }
 
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, $modelParameter = null)
     {
         $route = $request->route();
         $parameterKeys = array_keys($route->parameters);
@@ -85,8 +87,10 @@ class ModelInterfaceBindingMiddleware
         $concreteClass = self::CONCRETE_MODELS[$modelSlug];
         abort_unless($concreteClass, 404, "Concrete class not found for model interface $modelSlug");
 
-        // assume the model key (e.g. "report") is the next param down the list from the interface name.
-        $modelParameter = $parameterKeys[$modelSlugIndex + 1];
+        if ($modelParameter == null) {
+            // assume the model key (e.g. "report") is the next param down the list from the interface name.
+            $modelParameter = $parameterKeys[$modelSlugIndex + 1];
+        }
         $modelId = $route->parameter($modelParameter);
         abort_unless($modelId, 404, "Model ID not found for $concreteClass");
 
