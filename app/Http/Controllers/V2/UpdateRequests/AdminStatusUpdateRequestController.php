@@ -73,8 +73,7 @@ class AdminStatusUpdateRequestController extends Controller
     {
         /** @var EntityModel $entity */
         $entity = $updateRequest->updaterequestable;
-        $entityProps = $entity->mapEntityAnswers($updateRequest->content, $entity->getForm(), data_get($entity->getFormConfig(), 'fields', []));
-        $entity->update($entityProps);
+        $entity->updateFromForm($updateRequest->content);
     }
 
     private function handleAction(StatusChangeRequest $request, UpdateRequest $updateRequest)

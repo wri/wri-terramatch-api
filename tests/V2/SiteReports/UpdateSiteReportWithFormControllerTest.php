@@ -8,9 +8,10 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class UpdateSiteReportWithFormControllerTest extends TestCase
@@ -20,7 +21,7 @@ class UpdateSiteReportWithFormControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -46,7 +47,7 @@ class UpdateSiteReportWithFormControllerTest extends TestCase
         $report = SiteReport::factory()->create([
             'site_id' => $site->id,
             'framework_key' => 'ppc',
-            'status' => SiteReport::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('site-report', 'ppc');
@@ -92,7 +93,7 @@ class UpdateSiteReportWithFormControllerTest extends TestCase
 
     public function test_update_request()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
         $owner->givePermissionTo('manage-own');
@@ -110,7 +111,7 @@ class UpdateSiteReportWithFormControllerTest extends TestCase
         $report = SiteReport::factory()->create([
             'site_id' => $site->id,
             'framework_key' => 'ppc',
-            'status' => SiteReport::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('site-report', 'ppc');

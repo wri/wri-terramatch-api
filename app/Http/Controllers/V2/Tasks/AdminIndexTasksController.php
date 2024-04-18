@@ -19,7 +19,7 @@ class AdminIndexTasksController extends Controller
         $this->authorize('readAll', Task::class);
 
         $query = QueryBuilder::for(Task::class)
-            ->join('v2_projects', function($join) {
+            ->join('v2_projects', function ($join) {
                 $join->on('v2_tasks.project_id', '=', 'v2_projects.id');
             })
             ->selectRaw('
@@ -41,6 +41,7 @@ class AdminIndexTasksController extends Controller
         ]);
 
         $this->isolateAuthorizedFrameworks($query, 'v2_projects');
+
         return new TasksCollection($this->paginate($query));
     }
 }

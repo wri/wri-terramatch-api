@@ -7,9 +7,10 @@ use App\Models\User;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-// use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class SiteReportsViaSiteControllerTest extends TestCase
@@ -19,7 +20,7 @@ class SiteReportsViaSiteControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //         Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -37,7 +38,11 @@ class SiteReportsViaSiteControllerTest extends TestCase
         $site = Site::factory()->create(['project_id' => $project->id, 'framework_key' => 'ppc']);
 
         SiteReport::query()->delete();
-        SiteReport::factory()->count(4)->create(['site_id' => $site->id, 'framework_key' => 'ppc', 'status' => SiteReport::STATUS_APPROVED]);
+        SiteReport::factory()->count(4)->create([
+            'site_id' => $site->id,
+            'framework_key' => 'ppc',
+            'status' => EntityStatusStateMachine::APPROVED,
+        ]);
         SiteReport::factory()->count(2)->create(['framework_key' => 'ppc']);
 
         $uri = '/api/v2/sites/' . $site->uuid . '/reports';

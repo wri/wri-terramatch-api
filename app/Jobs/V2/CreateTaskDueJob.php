@@ -81,11 +81,17 @@ class CreateTaskDueJob implements ShouldQueue
                     }
 
                     $labels = ['Project'];
-                    if ($hasSite) $labels[] = 'site';
-                    if ($hasNursery) $labels[] = 'nursery';
-                    $message = printf('%s %s available',
+                    if ($hasSite) {
+                        $labels[] = 'site';
+                    }
+                    if ($hasNursery) {
+                        $labels[] = 'nursery';
+                    }
+                    $message = printf(
+                        '%s %s available',
                         implode(', ', $labels),
-                        count($labels) > 1 ? 'reports' : 'report');
+                        count($labels) > 1 ? 'reports' : 'report'
+                    );
 
                     Action::create([
                         'status' => Action::STATUS_PENDING,

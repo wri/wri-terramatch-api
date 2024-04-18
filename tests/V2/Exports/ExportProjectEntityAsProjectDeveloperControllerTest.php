@@ -1,6 +1,6 @@
 <?php
 
-namespace Exports;
+namespace Tests\V2\Exports;
 
 use App\Helpers\CustomFormHelper;
 use App\Models\User;
@@ -30,8 +30,6 @@ class ExportProjectEntityAsProjectDeveloperControllerTest extends TestCase
      */
     public function test_an_user_can_export_all_sites_establishment_data_for_a_given_project(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
-
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
         $owner->givePermissionTo('manage-own');
