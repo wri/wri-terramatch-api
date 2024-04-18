@@ -17,9 +17,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Tests\TestCase;
-use function PHPUnit\Framework\assertContains;
 
 final class UploadControllerTest extends TestCase
 {
@@ -518,26 +516,26 @@ final class UploadControllerTest extends TestCase
 
         // UUID isn't allowed
         $content = $this->actingAs($service)
-            ->postJson("/api/v2/file/upload/site/photos/$site->uuid/bulk_url", [["uuid" => "test", "download_url" => "test"]])
+            ->postJson("/api/v2/file/upload/site/photos/$site->uuid/bulk_url", [['uuid' => 'test', 'download_url' => 'test']])
             ->assertStatus(422)
             ->json();
         $this->assertStringContainsString('uuid field is prohibited', $content['errors'][0]['detail']);
 
         // Payload isn't an array of images
         $this->actingAs($service)
-            ->postJson("/api/v2/file/upload/site/photos/$site->uuid/bulk_url", ["download_url" => "test"])
+            ->postJson("/api/v2/file/upload/site/photos/$site->uuid/bulk_url", ['download_url' => 'test'])
             ->assertStatus(422);
 
         // Payload has incorrect download URL format
         $content = $this->actingAs($service)
-            ->postJson("/api/v2/file/upload/site/photos/$site->uuid/bulk_url", [["download_url" => "test"]])
+            ->postJson("/api/v2/file/upload/site/photos/$site->uuid/bulk_url", [['download_url' => 'test']])
             ->assertStatus(422)
             ->json();
         $this->assertStringContainsString('format is invalid', $content['errors'][0]['detail']);
 
         // Unreachable URL
         $content = $this->actingAs($service)
-            ->postJson("/api/v2/file/upload/site/photos/$site->uuid/bulk_url", [["download_url" => 'https://terramatch.org/foo.jpg']])
+            ->postJson("/api/v2/file/upload/site/photos/$site->uuid/bulk_url", [['download_url' => 'https://terramatch.org/foo.jpg']])
             ->assertStatus(422)
             ->json();
         $this->assertStringContainsString('cannot be reached', $content['errors'][0]['detail']);
@@ -557,7 +555,7 @@ final class UploadControllerTest extends TestCase
         $this->actingAs($service)
             ->postJson(
                 "/api/v2/file/upload/site/photos/$site->uuid/bulk_url",
-                [["download_url" => $url]]
+                [['download_url' => $url]]
             )
             ->assertSuccessful();
         $site = $site->refresh();
@@ -571,7 +569,8 @@ final class UploadControllerTest extends TestCase
         $content = $this->actingAs($service)
             ->postJson(
                 "/api/v2/file/upload/site/photos/$site->uuid/bulk_url",
-                [["download_url" => $url], ["download_url" => $badMimeUrl]])
+                [['download_url' => $url], ['download_url' => $badMimeUrl]]
+            )
             ->assertStatus(422)
             ->json();
         $this->assertStringContainsString('File has a mime type', $content['errors'][0]['detail']);
@@ -583,7 +582,7 @@ final class UploadControllerTest extends TestCase
         $this->actingAs($service)
             ->postJson(
                 "/api/v2/file/upload/site/photos/$site->uuid/bulk_url",
-                [["download_url" => $url], ["download_url" => $url]]
+                [['download_url' => $url], ['download_url' => $url]]
             )
             ->assertSuccessful();
         $site = $site->refresh();
@@ -595,11 +594,11 @@ final class UploadControllerTest extends TestCase
             ->postJson(
                 "/api/v2/file/upload/site/photos/$site->uuid/bulk_url",
                 [[
-                    "download_url" => $url,
-                    "title" => "Test Image",
-                    "lat" => 42,
-                    "lng" => -50,
-                    "is_public" => false,
+                    'download_url' => $url,
+                    'title' => 'Test Image',
+                    'lat' => 42,
+                    'lng' => -50,
+                    'is_public' => false,
                 ]]
             )
             ->assertSuccessful();

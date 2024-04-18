@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\V2\File;
 
-use App\Rules\CheckMimeTypeRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BulkUploadRequest extends FormRequest

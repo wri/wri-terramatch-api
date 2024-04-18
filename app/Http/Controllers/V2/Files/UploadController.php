@@ -7,9 +7,9 @@ use App\Http\Requests\V2\File\BulkUploadRequest;
 use App\Http\Requests\V2\File\UploadRequest;
 use App\Http\Resources\V2\Files\FileResource;
 use App\Models\V2\MediaModel;
+use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
-use Exception;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UploadController extends Controller
@@ -41,6 +41,7 @@ class UploadController extends Controller
 
         $config = $this->getConfiguration($mediaModel, $collection);
         $files = [];
+
         try {
             foreach ($request->getPayload() as $data) {
                 // The downloadable file gets shuttled through the internals of Spatie without a chance for us to run
