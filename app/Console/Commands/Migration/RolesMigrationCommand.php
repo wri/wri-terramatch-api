@@ -75,7 +75,7 @@ class RolesMigrationCommand extends Command
             $role->givePermissionTo(['projects-read', 'polygons-manage', 'media-manage']);
         }
 
-        User::whereIn('role', ['user','admin', 'terrafund-admin'])->get()
+        User::whereIn('role', ['user', 'admin', 'terrafund-admin', 'service'])->get()
             ->each(function (User $user) {
                 if ($user->primary_role == null) {
                     assignSpatieRole($user);

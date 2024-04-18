@@ -644,6 +644,7 @@ ModelInterfaceBindingMiddleware::with(
     MediaModel::class,
     function () {
         Route::post('/{collection}/{mediaModel}', UploadController::class);
+        Route::post('/{collection}/{mediaModel}/bulk_url', [UploadController::class, 'bulkUrlUpload']);
     },
     prefix: 'file/upload',
     modelParameter: 'mediaModel'
