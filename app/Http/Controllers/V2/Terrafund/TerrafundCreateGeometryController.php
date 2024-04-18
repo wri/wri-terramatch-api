@@ -444,9 +444,10 @@ private function insertSinglePolygon(array $geometry, int $srid)
         if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
+        $areaAndLatitude = $geometry->getDbGeometryAttribute();
 
-        $areaSqDegrees = DB::selectOne('SELECT ST_Area(geom) AS area FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->area;
-        $latitude = DB::selectOne('SELECT ST_Y(ST_Centroid(geom)) AS latitude FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->latitude;
+        $areaSqDegrees = $areaAndLatitude->area;
+        $latitude = $areaAndLatitude->latitude;
         $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
         $SIZE_CRITERIA_ID = 6;
         $valid = $areaSqMeters <= 10000000;
