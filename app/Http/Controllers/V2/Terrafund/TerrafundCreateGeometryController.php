@@ -489,10 +489,7 @@ private function insertSinglePolygon(array $geometry, int $srid)
             return response()->json(['error' => 'Site polygon data not found for the specified polygonUuid'], 404);
         }
 
-        // Find the country ISO using project_id from v2projects
-        $countryIso = Project::where('uuid', $sitePolygonData->project_id)
-            ->value('country');
-
+        $countryIso = $sitePolygonData->project->country;
         if (! $countryIso) {
             return response()->json(['error' => 'Country ISO not found for the specified project_id'], 404);
         }
