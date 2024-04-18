@@ -31,15 +31,16 @@ class SitePolygon extends Model
       'distr',
       'num_trees',
       'est_area',
-      'country'
+      'country',
     ];
 
     public function polygonGeometry()
     {
         return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'uuid');
     }
+
     public function project()
     {
-        return $this->belongsTo(Project::class, 'project_id','uuid');
+        return $this->belongsTo(Project::class, 'project_id', 'uuid');
     }
 }

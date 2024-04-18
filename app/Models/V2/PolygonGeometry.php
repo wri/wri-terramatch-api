@@ -23,9 +23,11 @@ class PolygonGeometry extends Model
     {
         return $this->hasMany(CriteriaSite::class, 'polygon_id', 'polygon_id');
     }
+
     public function getDbGeometryAttribute()
     {
-        $result = DB::selectOne('
+        $result = DB::selectOne(
+            '
             SELECT ST_Area(geom) AS area, ST_Y(ST_Centroid(geom)) AS latitude
             FROM polygon_geometry
             WHERE uuid = :uuid',
