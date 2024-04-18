@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\V2\Files;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V2\File\BulkUploadRequest;
 use App\Http\Requests\V2\File\UploadRequest;
 use App\Http\Resources\V2\Files\FileResource;
 use App\Models\V2\MediaModel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
-use mysql_xdevapi\Exception;
+use Exception;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UploadController extends Controller
 {
@@ -22,13 +24,48 @@ class UploadController extends Controller
         $this->prepHandler($qry, $request->all(), $mediaModel, $config, $collection);
         $details = $this->executeHandler($qry, $collection);
 
-        if (Arr::has($request->all(), ['lat', 'lng'])) {
-            $this->saveFileCoordinates($details, $request);
-        }
-
-        $this->saveAdditionalFileProperties($details, $request, $config);
+        $this->saveFileCoordinates($details, $request->all());
+        $this->saveAdditionalFileProperties($details, $request->all(), $config);
 
         return new FileResource($details);
+    }
+
+    public function bulkUrlUpload(BulkUploadRequest $request, string $collection, MediaModel $mediaModel)
+    {
+        $this->authorize('uploadFiles', $mediaModel);
+
+        if ($collection != 'photos') {
+            // Only the photos collection is allowed for bulk upload
+            throw new NotFoundHttpException();
+        }
+
+        $config = $this->getConfiguration($mediaModel, $collection);
+        $files = [];
+        try {
+            foreach ($request->getPayload() as $data) {
+                // The downloadable file gets shuttled through the internals of Spatie without a chance for us to run
+                // our own validations on them. png/jpg are the only mimes allowed for the photos collection according
+                // to config/file-handling.php, and we disallow other collections than 'photos' above.
+                $handler = $mediaModel->addMediaFromUrl($data['download_url'], 'image/png', 'image/jpg');
+
+                $this->prepHandler($handler, $data, $mediaModel, $config, $collection);
+                $details = $this->executeHandler($handler, $collection);
+
+                $this->saveFileCoordinates($details, $data);
+                $this->saveAdditionalFileProperties($details, $data, $config);
+
+                $files[] = $details;
+            }
+        } catch (Exception $exception) {
+            // if we get an error in the bulk upload, remove any media that did successfully get saved.
+            foreach ($files as $file) {
+                $file->delete();
+            }
+
+            throw $exception;
+        }
+
+        return FileResource::collection($files);
     }
 
     private function getConfiguration(MediaModel $mediaModel, $collection): array
@@ -76,17 +113,19 @@ class UploadController extends Controller
         ->toMediaCollection($collection);
     }
 
-    private function saveFileCoordinates($media, $request)
+    private function saveFileCoordinates($media, $data)
     {
-        $media->lat = $request->lat;
-        $media->lng = $request->lng;
-        $media->save();
+        if (Arr::has($data, ['lat', 'lng'])) {
+            $media->lat = $data['lat'];
+            $media->lng = $data['lng'];
+            $media->save();
+        }
     }
 
-    private function saveAdditionalFileProperties($media, $request, $config)
+    private function saveAdditionalFileProperties($media, $data, $config)
     {
         $media->file_type = $this->getType($media, $config);
-        $media->is_public = $request->is_public ?? true;
+        $media->is_public = $data['is_public'] ?? true;
         $media->save();
     }
 
