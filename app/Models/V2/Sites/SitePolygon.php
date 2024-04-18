@@ -4,6 +4,7 @@ namespace App\Models\V2\Sites;
 
 use App\Models\Traits\HasUuid;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Projects\Project;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -21,6 +22,7 @@ class SitePolygon extends Model
       'poly_name',
       'site_id',
       'site_name',
+      'project_id',
       'poly_label',
       'plantstart',
       'plantend',
@@ -34,6 +36,11 @@ class SitePolygon extends Model
 
     public function polygonGeometry()
     {
-        return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'id');
+        return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'uuid');
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id', 'uuid');
     }
 }

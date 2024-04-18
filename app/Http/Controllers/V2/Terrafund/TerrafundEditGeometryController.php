@@ -28,12 +28,12 @@ class TerrafundEditGeometryController extends Controller
 
     public function updateGeometry(string $uuid, Request $request)
     {
-        $geometry = json_decode($request->input('geometry'));
-        $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
         $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
         if (! $polygonGeometry) {
             return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
         }
+        $geometry = json_decode($request->input('geometry'));
+        $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
         $polygonGeometry->geom = $geom;
         $polygonGeometry->save();
 
@@ -42,17 +42,11 @@ class TerrafundEditGeometryController extends Controller
 
     public function getPolygonGeojson(string $uuid)
     {
-        // get the st_geojson from polygon_geometry
-        $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
-        if (! $polygonGeometry) {
+        $geometryQuery = PolygonGeometry::isUuid($uuid);
+        if (! $geometryQuery->exists()) {
             return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
         }
-        $geojson = DB::table('polygon_geometry')
-        ->select(DB::raw('ST_AsGeoJSON(geom) as geojson'))
-        ->where('uuid', '=', $uuid)
-        ->get();
-
-        $geojsonData = json_decode($geojson[0]->geojson, true);
+        $geojsonData = json_decode($geometryQuery->select(DB::raw('ST_AsGeoJSON(geom) as geojson'))->first()->geojson, true);
 
         return response()->json([
             'geojson' => $geojsonData,
@@ -99,7 +93,6 @@ class TerrafundEditGeometryController extends Controller
                 'target_sys' => 'nullable|string',
             ]);
 
-            // Get the geometry from the polygon_geometry table using the UUID
             $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
             if (! $polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
