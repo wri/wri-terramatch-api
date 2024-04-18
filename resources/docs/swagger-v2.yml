@@ -69825,7 +69825,7 @@ paths:
           in: formData
         - type: boolean
           name: is_public
-          default: false
+          default: true
           in: formData
       responses:
         '200':
@@ -69858,6 +69858,77 @@ paths:
                 type: boolean
               created_at:
                 type: string
+  '/v2/file/upload/site/photos/{UUID}/bulk_url':
+    post:
+      summary: Upload a batch of photos to a specific site
+      operationId: v2-post-upload-file-site-photos-uuid-bulk
+      tags:
+        - Files
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - description: Batch of photos to upload
+          in: body
+          name: body
+          required: true
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                download_url:
+                  type: string
+                title:
+                  type: string
+                  default: Name of image
+                lat:
+                  type: integer
+                  default: null
+                lng:
+                  type: integer
+                  default: null
+                is_public:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              title: V2FileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                url:
+                  type: string
+                thumb_url:
+                  type: string
+                collection_name:
+                  type: string
+                title:
+                  type: string
+                file_name:
+                  type: string
+                mime_type:
+                  type: string
+                size:
+                  type: integer
+                lat:
+                  type: integer
+                lng:
+                  type: integer
+                is_public:
+                  type: boolean
+                created_at:
+                  type: string
   '/v2/files/{UUID}':
     put:
       summary: Update properties of a specific file
