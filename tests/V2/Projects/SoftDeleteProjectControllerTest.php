@@ -1,13 +1,14 @@
 <?php
 
-namespace Projects;
+namespace Tests\V2\Projects;
 
 use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class SoftDeleteProjectControllerTest extends TestCase
@@ -17,7 +18,7 @@ class SoftDeleteProjectControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $user = User::factory()->create();
 
         $organisation = Organisation::factory()->create();
@@ -27,13 +28,13 @@ class SoftDeleteProjectControllerTest extends TestCase
         $project1 = Project::factory()->create([
             'organisation_id' => $organisation->id,
             'framework_key' => 'terrafund',
-            'status' => Project::STATUS_AWAITING_APPROVAL,
+            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
         ]);
 
         $project2 = Project::factory()->create([
             'organisation_id' => $organisation->id,
             'framework_key' => 'terrafund',
-            'status' => Project::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $uri1 = '/api/v2/projects/' . $project1->uuid;

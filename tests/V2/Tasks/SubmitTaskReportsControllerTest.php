@@ -12,10 +12,13 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
+use App\StateMachines\EntityStatusStateMachine;
+use App\StateMachines\ReportStatusStateMachine;
+use App\StateMachines\TaskStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class SubmitTaskReportsControllerTest extends TestCase
@@ -25,7 +28,7 @@ class SubmitTaskReportsControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
 
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
@@ -60,23 +63,28 @@ class SubmitTaskReportsControllerTest extends TestCase
 
         $projectReport = ProjectReport::factory()->create([
             'project_id' => $project->id,
+            'task_id' => $task->id,
             'framework_key' => 'ppc',
             'due_at' => $date,
-            'status' => ProjectReport::STATUS_DUE,
+            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
         ]);
 
         $siteReport = SiteReport::factory()->create([
             'site_id' => $site->id,
+            'task_id' => $task->id,
             'framework_key' => 'ppc',
             'due_at' => $date,
-            'status' => SiteReport::STATUS_DUE,
+            'nothing_to_report' => true,
+            'status' => ReportStatusStateMachine::DUE,
         ]);
 
         $nurseryReport = NurseryReport::factory()->create([
             'nursery_id' => $nursery->id,
+            'task_id' => $task->id,
             'framework_key' => 'ppc',
             'due_at' => $date,
-            'status' => NurseryReport::STATUS_DUE,
+            'completion' => 100,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         CustomFormHelper::generateFakeForm('site', 'ppc');
@@ -92,21 +100,15 @@ class SubmitTaskReportsControllerTest extends TestCase
              ->assertSuccessful();
 
         $projectReport->refresh();
-        $this->assertEquals(ProjectReport::STATUS_AWAITING_APPROVAL, $projectReport->status);
-        $this->assertEquals(ProjectReport::COMPLETION_STATUS_COMPLETE, $projectReport->completion_status);
-        $this->assertEquals(100, $projectReport->completion);
+        $this->assertEquals(EntityStatusStateMachine::AWAITING_APPROVAL, $projectReport->status);
 
         $siteReport->refresh();
-        $this->assertEquals(SiteReport::STATUS_AWAITING_APPROVAL, $siteReport->status);
-        $this->assertEquals(SiteReport::COMPLETION_STATUS_COMPLETE, $siteReport->completion_status);
-        $this->assertEquals(100, $siteReport->completion);
+        $this->assertEquals(EntityStatusStateMachine::AWAITING_APPROVAL, $siteReport->status);
 
         $nurseryReport->refresh();
-        $this->assertEquals(NurseryReport::STATUS_AWAITING_APPROVAL, $nurseryReport->status);
-        $this->assertEquals(NurseryReport::COMPLETION_STATUS_COMPLETE, $nurseryReport->completion_status);
-        $this->assertEquals(100, $nurseryReport->completion);
+        $this->assertEquals(EntityStatusStateMachine::AWAITING_APPROVAL, $nurseryReport->status);
 
-        $updatedTask = Task::find($task->id) ;
-        $this->assertEquals(Task::STATUS_COMPLETE, $updatedTask->status);
+        $updatedTask = Task::find($task->id);
+        $this->assertEquals(TaskStatusStateMachine::AWAITING_APPROVAL, $updatedTask->status);
     }
 }

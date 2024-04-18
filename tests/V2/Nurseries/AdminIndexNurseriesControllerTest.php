@@ -17,7 +17,7 @@ class AdminIndexNurseriesControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        // Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $this->user = User::factory()->admin()->create();
         $this->user->givePermissionTo('framework-terrafund');
         $this->user->givePermissionTo('framework-ppc');

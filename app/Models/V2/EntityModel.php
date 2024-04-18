@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Models\V2;
+
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\UpdateRequests\ApprovalFlow;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -19,7 +19,7 @@ interface EntityModel extends UpdateRequestableModel, ApprovalFlow
 
     public function getFormConfig(): ?array;
 
-    public function mapEntityAnswers(array $input, Form $form, array $cfg): array;
+    public function updateFromForm(array $formValues): void;
 
     public function createResource(): JsonResource;
 

@@ -56,6 +56,7 @@ class AdminIndexNurseryReportsController extends Controller
         }
 
         $this->isolateAuthorizedFrameworks($query, 'v2_nursery_reports');
+
         return new NurseryReportsCollection($this->paginate($query));
     }
 }

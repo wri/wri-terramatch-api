@@ -14,15 +14,6 @@
     <testsuite name="Other">
       <directory suffix="Test.php">./tests/Other</directory>
     </testsuite>
-    <testsuite name="LegacyFeature">
-      <directory suffix="Test.php">./tests/Legacy/Feature</directory>
-    </testsuite>
-    <testsuite name="LegacyUnit">
-      <directory suffix="Test.php">./tests/Legacy/Unit</directory>
-    </testsuite>
-    <testsuite name="LegacyOther">
-      <directory suffix="Test.php">./tests/Legacy/Other</directory>
-    </testsuite>
     <testsuite name="V2">
       <directory suffix="Test.php">./tests/V2</directory>
     </testsuite>

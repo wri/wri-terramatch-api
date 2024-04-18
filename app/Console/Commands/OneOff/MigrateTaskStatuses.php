@@ -42,7 +42,7 @@ class MigrateTaskStatuses extends Command
         // statuses aren't part of the updated state machine), we're re-implementing most of the logic in
         // Task->checkStatus
         Task::withoutTimestamps(function () use (&$numErrors, &$numClean) {
-            Task::withTrashed()->whereNotIn('status',self::VALID_STATUSES)->chunkbyId(
+            Task::withTrashed()->whereNotIn('status', self::VALID_STATUSES)->chunkbyId(
                 100,
                 function ($tasks) use (&$numErrors, &$numClean) {
                     foreach ($tasks as $task) {
@@ -66,7 +66,8 @@ class MigrateTaskStatuses extends Command
                             }
                         }
                     }
-                });
+                }
+            );
         });
 
         echo "Migration completed. [Tasks with errors: $numErrors, successful transitions: $numClean]";
@@ -74,10 +75,11 @@ class MigrateTaskStatuses extends Command
 
     private function processException(Task $task, InvalidStatusException $exception): bool
     {
-        if (!$task->projectReport()->exists() && !$task->siteReports()->exists() && !$task->nurseryReports()->exists()) {
+        if (! $task->projectReport()->exists() && ! $task->siteReports()->exists() && ! $task->nurseryReports()->exists()) {
             echo "Task $task->id was due on $task->due_at and has no associated reports. Moving to 'approved'.\n";
             $task->status = TaskStatusStateMachine::APPROVED;
             $task->save();
+
             return true;
         }
 
@@ -93,11 +95,13 @@ class MigrateTaskStatuses extends Command
             echo "Task $task->id was due on $task->due_at and has reports in 'due' or 'started'. Moving to 'due'.\n";
             $task->status = TaskStatusStateMachine::DUE;
             $task->save();
+
             return true;
         }
 
         $message = $exception->getMessage();
         echo "Task $task->id: $message\n";
+
         return false;
     }
 }

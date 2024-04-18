@@ -12,6 +12,7 @@ class ViewEntityController extends Controller
     public function __invoke(Request $request, EntityModel $entity): JsonResource
     {
         $this->authorize('read', $entity);
+
         return $entity->createResource();
     }
 }
