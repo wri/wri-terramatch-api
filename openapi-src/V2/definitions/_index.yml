@@ -152,10 +152,6 @@ V2SeedingPaginated:
   $ref: './V2SeedingPaginated.yml'
 V2WorkdayRead:
   $ref: './V2WorkdayRead.yml'
-V2WorkdayCreate:
-  $ref: './V2WorkdayCreate.yml'
-V2WorkdayUpdate:
-  $ref: './V2WorkdayUpdate.yml'
 V2WorkdaysPaginated:
   $ref: './V2WorkdaysPaginated.yml'
 V2DisturbanceRead:
