@@ -108,7 +108,9 @@ private function insertSinglePolygon(array $geometry, int $srid)
         $data = $this->insertSinglePolygon($feature['geometry'], $srid);
         $uuids[] = $data['uuid'];
         $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
-        Log::info($returnSite)  ;
+        if ($returnSite) {
+          Log::info($returnSite)  ;
+        }
       } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
         foreach ($feature['geometry']['coordinates'] as $polygon) {
           $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
@@ -118,7 +120,9 @@ private function insertSinglePolygon(array $geometry, int $srid)
           $data = $this->insertSinglePolygon($singlePolygon, $srid);
           $uuids[] = $data['uuid'];
           $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
-          Log::info($returnSite);
+          if ($returnSite) {
+            Log::info($returnSite)  ;
+          }
         }
       }
     }
@@ -221,7 +225,7 @@ private function insertSinglePolygon(array $geometry, int $srid)
             $sitePolygon->est_area = $area ?? null;
             $sitePolygon->save();
 
-            return 'has saved correctly';
+            return null;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -281,6 +285,8 @@ private function insertSinglePolygon(array $geometry, int $srid)
 
     private function findShpFile($directory)
     {
+      Log::info('find shp: ' . $directory);
+
         $shpFile = null;
         $files = scandir($directory);
         foreach ($files as $file) {
@@ -295,7 +301,7 @@ private function insertSinglePolygon(array $geometry, int $srid)
     }
   public function uploadShapefile(Request $request)
   {
-    Log::debug('File not found in request', ['request' => $request->all()]);
+    Log::debug('Upload Shape file data', ['request' => $request->all()]);
     if ($request->hasFile('file')) {
       $file = $request->file('file');
       if ($file->getClientOriginalExtension() !== 'zip') {
@@ -561,15 +567,8 @@ private function insertSinglePolygon(array $geometry, int $srid)
         // Determine the validity of each criteria
         $criteriaList = [];
         foreach ($criteriaData as $criteria) {
-            $criteriaId = $criteria->criteria_id;
-
-            // Check if the criteria is valid
-            $validCriteriaQuery = 'SELECT valid FROM criteria_site 
-                               WHERE polygon_id = ? AND criteria_id = ?';
-            $validResult = DB::selectOne($validCriteriaQuery, [$uuid, $criteriaId]);
-
-            $valid = $validResult ? $validResult->valid : null;
-
+            $criteriaId = $criteria->criteria_id;          
+            $valid = CriteriaSite::where(['polygon_id' => $uuid, 'criteria_id' => $criteriaId])->select('valid')->first()?->valid;
             $criteriaList[] = [
               'criteria_id' => $criteriaId,
               'latest_created_at' => $criteria->latest_created_at,
