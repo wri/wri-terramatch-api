@@ -76,7 +76,9 @@ private function insertSinglePolygon(array $geometry, int $srid)
         $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
         $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
         $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
-        $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
+        // 111320 is the length of one degree of latitude in meters at the equator
+        $unitLatitude = 111320;
+        $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
 
         $areaHectares = $areaSqMeters / 10000;
 
