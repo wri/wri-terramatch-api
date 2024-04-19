@@ -81,7 +81,7 @@ tags:
   - name: V2 Organisations
   - name: V2 Project Developer
   - name: V2 Users
-  - name: Register
+  - name: Users Registration
 definitions:
   OfferVisibility:
     type: object
@@ -8986,7 +8986,7 @@ definitions:
       updated_at:
         type: string
         format: date-time
-  RegisterUserCreate:
+  RegistrationUsersCreate:
     type: object
     properties:
       first_name:
@@ -9015,7 +9015,7 @@ definitions:
         type: string
       callback_url:
         type: string
-  RegisterUserRead:
+  RegistrationUsersRead:
     type: object
     properties:
       id:
@@ -18983,7 +18983,7 @@ paths:
     post:
       summary: Create a user
       tags:
-        - Register
+        - Users Registration
       security: []
       consumes:
         - application/json
@@ -18994,14 +18994,14 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/RegisterUserCreate'
+            $ref: '#/definitions/RegistrationUsersCreate'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/definitions/RegisterUserRead'
+                $ref: '#/definitions/RegistrationUsersRead'
         '400':
           description: Bad request
         '500':
