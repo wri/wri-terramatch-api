@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminUserRoleController extends Controller
 {
-    public function store(StoreUserRequest $request, $id)
+    public function store(StoreUserRequest $request)
     {
         $this->authorize('create', User::class);
 
         $data = $request->all();
-        $data = ['role' => $id];
+        $role_id = $data['role_id'];
         switch ($request->get('primary_role')) {
             case 'admin-super':
             case 'admin-ppc':
@@ -31,7 +31,7 @@ class AdminUserRoleController extends Controller
 
                 break;
         }
-
+        $data['role_id'] = $role_id;
         $user = User::create($data);
 
         if (! empty($request->get('primary_role')) && Auth::user()->hasRole('admin-super')) {
