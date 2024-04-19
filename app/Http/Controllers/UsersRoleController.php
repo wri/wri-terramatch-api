@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\JsonResponseHelper;
 use App\Jobs\UserVerificationJob;
 use App\Models\User as UserModel;
-use App\Resources\UserResource;
+use App\Resources\UserRoleResource;
 use App\Validators\UserRoleValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,6 +30,6 @@ class UsersRoleController extends Controller
 
         UserVerificationJob::dispatch($user, $url);
 
-        return JsonResponseHelper::success(new UserResource($user), 201);
+        return JsonResponseHelper::success(new UserRoleResource($user), 201);
     }
 }
