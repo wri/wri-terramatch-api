@@ -232,6 +232,7 @@ Route::prefix('imports')->group(function () {
 });
 
 Route::prefix('media')->group(function () {
+    Route::delete('', [MediaController::class, 'bulkDelete']);
     Route::delete('/{uuid}', [MediaController::class, 'delete']);
     Route::delete('/{uuid}/{collection}', [MediaController::class, 'delete']);
 });
