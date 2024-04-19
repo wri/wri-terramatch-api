@@ -50,7 +50,10 @@ class UploadController extends Controller
                 // to config/file-handling.php, and we disallow other collections than 'photos' above.
                 $handler = $mediaModel->addMediaFromUrl(
                     $data['download_url'],
-                    'image/png', 'image/jpg', 'image/jpeg');
+                    'image/png',
+                    'image/jpg',
+                    'image/jpeg'
+                );
 
                 $this->prepHandler($handler, $data, $mediaModel, $config, $collection);
                 $details = $this->executeHandler($handler, $collection);

@@ -38,7 +38,7 @@ class MediaController extends Controller
 
     public function bulkDelete(Request $request): JsonResponse
     {
-        if (!Auth::user()->can('media-manage')) {
+        if (! Auth::user()->can('media-manage')) {
             throw new AuthorizationException('No permission to bulk delete');
         }
 
