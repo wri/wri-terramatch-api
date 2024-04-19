@@ -2388,6 +2388,35 @@ definitions:
         type: string
       callback_url:
         type: string
+  UserRoleCreate:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+      job_id:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      callback_url:
+        type: string
   MaskedUserRead:
     type: object
     properties:
@@ -9117,6 +9146,27 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/UserAccept'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/UserRead'
+  /users/register-user:
+    post:
+      summary: Create a user
+      tags:
+        - Users
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserRoleCreate'
       responses:
         '201':
           description: Created

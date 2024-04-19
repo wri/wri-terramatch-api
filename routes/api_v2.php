@@ -319,7 +319,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::get('export', AdminExportUsersController::class);
         Route::put('reset-password/{user}', AdminResetPasswordController::class);
         Route::patch('verify/{user}', AdminVerifyUserController::class);
-        Route::post('register-user', AdminUserRoleController::class);
+        // Route::post('register-user', AdminUserRoleController::class);
     });
     Route::resource('users', AdminUserController::class);
 
