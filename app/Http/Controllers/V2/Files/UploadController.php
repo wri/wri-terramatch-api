@@ -47,7 +47,9 @@ class UploadController extends Controller
                 // The downloadable file gets shuttled through the internals of Spatie without a chance for us to run
                 // our own validations on them. png/jpg are the only mimes allowed for the photos collection according
                 // to config/file-handling.php, and we disallow other collections than 'photos' above.
-                $handler = $mediaModel->addMediaFromUrl($data['download_url'], 'image/png', 'image/jpg');
+                $handler = $mediaModel->addMediaFromUrl(
+                    $data['download_url'],
+                    'image/png', 'image/jpg', 'image/jpeg');
 
                 $this->prepHandler($handler, $data, $mediaModel, $config, $collection);
                 $details = $this->executeHandler($handler, $collection);
