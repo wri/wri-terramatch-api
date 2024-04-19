@@ -18979,7 +18979,7 @@ paths:
           description: OK
           schema:
             type: file
-  /register-user:
+  '/register-user':
     post:
       summary: Create a user
       tags:
@@ -18996,7 +18996,13 @@ paths:
           schema:
             $ref: '#/definitions/RegisterUserCreate'
       responses:
-        '201':
-          description: Created
-          schema:
-            $ref: '#/definitions/RegisterUserRead'
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/RegisterUserRead'
+        '400':
+          description: Bad request
+        '500':
+          description: 'Internal server error'
