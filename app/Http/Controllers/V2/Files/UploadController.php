@@ -9,6 +9,7 @@ use App\Http\Resources\V2\Files\FileResource;
 use App\Models\V2\MediaModel;
 use Exception;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -129,6 +130,7 @@ class UploadController extends Controller
     {
         $media->file_type = $this->getType($media, $config);
         $media->is_public = $data['is_public'] ?? true;
+        $media->created_by = Auth::user()->id;
         $media->save();
     }
 
