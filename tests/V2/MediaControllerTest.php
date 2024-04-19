@@ -3,21 +3,11 @@
 namespace Tests\V2;
 
 use App\Models\User;
-use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Nurseries\NurseryReport;
-use App\Models\V2\Organisation;
-use App\Models\V2\Projects\Project;
-use App\Models\V2\Projects\ProjectMonitoring;
-use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
-use App\Models\V2\Sites\SiteMonitoring;
-use App\Models\V2\Sites\SiteReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Storage;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Tests\TestCase;
 
 final class MediaControllerTest extends TestCase
@@ -41,7 +31,7 @@ final class MediaControllerTest extends TestCase
 
         // No UUIDS is a 404
         $this->actingAs($service)
-            ->delete("/api/v2/media")
+            ->delete('/api/v2/media')
             ->assertNotFound();
 
         // Can't delete photo created by admin
