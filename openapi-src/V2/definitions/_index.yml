@@ -272,3 +272,7 @@ V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
 V2ProjectInviteCreate:
   $ref: './V2ProjectInviteCreate.yml'
+RegistrationUsersCreate:
+  $ref: './RegistrationUsersCreate.yml'
+RegistrationUsersRead:
+  $ref: './RegistrationUsersRead.yml'

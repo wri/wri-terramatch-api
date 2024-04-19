@@ -2450,3 +2450,30 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
+/register-user:
+  post:
+    summary: Create a user
+    tags:
+      - Users Registration
+    security: []
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - name: Body
+        in: body
+        required: true
+        schema:
+          $ref: '../definitions/_index.yml#/RegistrationUsersCreate'
+    responses:
+      '200':
+        description: Successful response
+        content:
+          application/json:
+            schema:
+              $ref: '../definitions/_index.yml#/RegistrationUsersRead'
+      '400':
+        description: Bad request
+      '500':
+        description: 'Internal server error'
