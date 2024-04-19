@@ -83,7 +83,23 @@ class SitePolicy extends Policy
 
     public function uploadFiles(?User $user, ?Site $site = null): bool
     {
-        return $user->email_address_verified_at != null;
+        if ($user->email_address_verified_at == null) {
+            return false;
+        }
+
+        if ($user->can('manage-own') && $this->isTheirs($user, $site)) {
+            return true;
+        }
+
+        if ($user->can('framework-' . $site->framework_key)) {
+            return true;
+        }
+
+        if ($user->can('media-manage')) {
+            return true;
+        }
+
+        return false;
     }
 
     public function export(?User $user, ?Form $form = null, ?Project $project = null): bool
