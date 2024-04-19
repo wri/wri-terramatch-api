@@ -22,8 +22,6 @@ class UsersRoleController extends Controller
         $data = $request->json()->all();
         UserValidator::validate('CREATE', $data);
         $data['role'] = 'user';
-        $role_id = $data['role_id'];
-        $data['role_id'] = $role_id;
         $user = new UserModel($data);
         $user->saveOrFail();
         $user->refresh();

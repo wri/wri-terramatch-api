@@ -81,6 +81,7 @@ tags:
   - name: V2 Organisations
   - name: V2 Project Developer
   - name: V2 Users
+  - name: Register
 definitions:
   OfferVisibility:
     type: object
@@ -2385,35 +2386,6 @@ definitions:
     type: object
     properties:
       uuid:
-        type: string
-      callback_url:
-        type: string
-  UserRoleCreate:
-    type: object
-    properties:
-      first_name:
-        type: string
-      last_name:
-        type: string
-      email_address:
-        type: string
-      password:
-        type: string
-      job_role:
-        type: string
-      job_id:
-        type: string
-      facebook:
-        type: string
-      twitter:
-        type: string
-      instagram:
-        type: string
-      linkedin:
-        type: string
-      phone_number:
-        type: string
-      whatsapp_phone:
         type: string
       callback_url:
         type: string
@@ -9014,6 +8986,86 @@ definitions:
       updated_at:
         type: string
         format: date-time
+  RegisterUserCreate:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+      role_id:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      callback_url:
+        type: string
+  RegisterUserRead:
+    type: object
+    properties:
+      id:
+        type: integer
+      organisation_id:
+        type: integer
+      organisation_name:
+        type: string
+      my_organisation:
+        $ref: '#/definitions/V2AdminOrganisationRead'
+      my_monitoring_organisations:
+        type: array
+        items:
+          $ref: '#/definitions/V2MonitoringOrganisationRead'
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      email_address_verified_at:
+        type: string
+        format: date-time
+      role:
+        type: string
+      role_id:
+        type: string
+      last_logged_in_at:
+        type: string
+        format: date-time
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      has_ppc_projects:
+        type: boolean
+      has_terrafund_projects:
+        type: boolean
 paths:
   '/organisations/{ID}/users':
     get:
@@ -9146,27 +9198,6 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/UserAccept'
-      responses:
-        '201':
-          description: Created
-          schema:
-            $ref: '#/definitions/UserRead'
-  /users/register-user:
-    post:
-      summary: Create a user
-      tags:
-        - Users
-      security: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: Body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/UserRoleCreate'
       responses:
         '201':
           description: Created
@@ -18948,3 +18979,24 @@ paths:
           description: OK
           schema:
             type: file
+  /register-user:
+    post:
+      summary: Create a user
+      tags:
+        - Register
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RegisterUserCreate'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/RegisterUserRead'
