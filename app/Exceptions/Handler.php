@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\MimeTypeNotAllowed;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\UnreachableUrl;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -343,6 +345,9 @@ class Handler extends ExceptionHandler
                 return JsonResponseHelper::error([], 404);
             case InvalidStatusException::class:
                 return JsonResponseHelper::error($exception->getMessage(), 422);
+            case MimeTypeNotAllowed::class:
+            case UnreachableUrl::class:
+                return JsonResponseHelper::error([[$exception->getMessage()]], 422);
             default:
                 if (config('app.env') == 'local') {
                     return new Response($this->renderExceptionContent($exception), 500, ['Content-Type' => 'text/html']);

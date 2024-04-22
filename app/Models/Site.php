@@ -19,7 +19,7 @@ class Site extends Model
 
     public $fillable = [
         'programme_id',
-        'control_site'
+        'control_site',
         'name',
         'description',
         'establishment_date',

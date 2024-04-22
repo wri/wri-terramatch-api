@@ -197,11 +197,10 @@ use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
 use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
-use App\Http\Controllers\V2\Workdays\DeleteWorkdayController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
-use App\Http\Controllers\V2\Workdays\StoreWorkdayController;
-use App\Http\Controllers\V2\Workdays\UpdateWorkdayController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
+use App\Models\V2\EntityModel;
+use App\Models\V2\MediaModel;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -305,13 +304,10 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
 
-    Route::prefix('{modelSlug}')
-        ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
-        ->middleware('modelInterface')
-        ->group(function () {
-            Route::put('/{entity}/{status}', AdminStatusEntityController::class);
-            Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
-        });
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::put('/{entity}/{status}', AdminStatusEntityController::class);
+        Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
+    });
 
     Route::get('nursery-reports', AdminIndexNurseryReportsController::class);
     Route::get('site-reports', AdminIndexSiteReportsController::class);
@@ -418,14 +414,11 @@ Route::prefix('forms')->group(function () {
     Route::get('/', IndexFormController::class);
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
-    Route::prefix('{modelSlug}')
-        ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
-        ->middleware('modelInterface')
-        ->group(function () {
-            Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
-            Route::put('/{entity}', UpdateEntityWithFormController::class);
-            Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
-        });
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
+        Route::put('/{entity}', UpdateEntityWithFormController::class);
+        Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
+    });
 
     Route::prefix('projects')->group(function () {
         Route::post('', CreateProjectWithFormController::class);
@@ -473,9 +466,6 @@ Route::prefix('tree-species')->group(function () {
 });
 
 Route::prefix('workdays')->group(function () {
-    Route::post('/', StoreWorkdayController::class);
-    Route::patch('/{workday}', UpdateWorkdayController::class);
-    Route::delete('/{workday}', DeleteWorkdayController::class);
     Route::get('/{entity}/{uuid}', GetWorkdaysForEntityController::class);
 });
 
@@ -558,12 +548,9 @@ Route::prefix('{modelSlug}')
         Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
     });
 
-Route::prefix('{modelSlug}')
-    ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
-    ->middleware('modelInterface')
-    ->group(function () {
-        Route::get('/{entity}', ViewEntityController::class);
-    });
+ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+    Route::get('/{entity}', ViewEntityController::class);
+});
 
 Route::prefix('project-reports')->group(function () {
     Route::get('/{projectReport}/files', ViewProjectReportGalleryController::class);
@@ -619,12 +606,9 @@ Route::prefix('update-requests')->group(function () {
     Route::get('/{updateRequest}', AdminViewUpdateRequestController::class);
     Route::delete('/{updateRequest}', AdminSoftDeleteUpdateRequestController::class);
 
-    Route::prefix('/{modelSlug}')
-        ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_SINGULAR)
-        ->middleware('modelInterface')
-        ->group(function () {
-            Route::get('/{entity}', EntityUpdateRequestsController::class);
-        });
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::get('/{entity}', EntityUpdateRequestsController::class);
+    });
 });
 
 Route::prefix('terrafund')->group(function () {
@@ -633,7 +617,7 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
-    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonsAsGeoJSON']);
+    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSON']);
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
     Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
@@ -658,7 +642,15 @@ Route::prefix('terrafund')->group(function () {
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
 Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
 
-Route::post('file/upload/{model}/{collection}/{uuid}', UploadController::class);
+ModelInterfaceBindingMiddleware::with(
+    MediaModel::class,
+    function () {
+        Route::post('/{collection}/{mediaModel}', UploadController::class);
+        Route::post('/{collection}/{mediaModel}/bulk_url', [UploadController::class, 'bulkUrlUpload']);
+    },
+    prefix: 'file/upload',
+    modelParameter: 'mediaModel'
+);
 
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);

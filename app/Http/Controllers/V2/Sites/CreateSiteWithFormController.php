@@ -23,10 +23,14 @@ class CreateSiteWithFormController extends Controller
             return new JsonResponse('No Project found for this site.', 404);
         }
 
+        $lastOldId = Site::orderByDesc('old_id')
+            ->value('old_id');
+
         $site = Site::create([
             'framework_key' => $project->framework_key,
             'project_id' => $project->id,
             'status' => EntityStatusStateMachine::STARTED,
+            'old_id' => $lastOldId + 1,
         ]);
 
         return $site->createSchemaResource();

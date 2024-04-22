@@ -11,6 +11,7 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\MediaModel;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Polygon;
@@ -29,11 +30,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class ProjectReport extends Model implements HasMedia, AuditableContract, ReportModel
+class ProjectReport extends Model implements MediaModel, AuditableContract, ReportModel
 {
     use HasFactory;
     use HasUuid;
@@ -231,11 +231,6 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
         return $this->morphMany(TreeSpecies::class, 'speciesable');
     }
 
-    public function workdaysPaidProjectEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_PROJECT_ESTABLISHMENT);
-    }
-
     public function workdaysPaidNurseryOperations()
     {
         return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS);
@@ -246,19 +241,9 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
         return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT);
     }
 
-    public function workdaysPaidSeedCollection()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_SEED_COLLECTION);
-    }
-
     public function workdaysPaidOtherActivities()
     {
         return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_OTHER);
-    }
-
-    public function workdaysVolunteerProjectEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_ESTABLISHMENT);
     }
 
     public function workdaysVolunteerNurseryOperations()
@@ -269,11 +254,6 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Report
     public function workdaysVolunteerProjectManagement()
     {
         return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT);
-    }
-
-    public function workdaysVolunteerSeedCollection()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_SEED_COLLECTION);
     }
 
     public function workdaysVolunteerOtherActivities()

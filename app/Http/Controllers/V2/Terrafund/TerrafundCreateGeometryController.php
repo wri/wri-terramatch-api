@@ -78,7 +78,9 @@ class TerrafundCreateGeometryController extends Controller
             $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
             $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
             $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
-            $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
+            // 111320 is the length of one degree of latitude in meters at the equator
+            $unitLatitude = 111320;
+            $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
 
             $areaHectares = $areaSqMeters / 10000;
 
@@ -111,7 +113,9 @@ class TerrafundCreateGeometryController extends Controller
                 $data = $this->insertSinglePolygon($feature['geometry'], $srid);
                 $uuids[] = $data['uuid'];
                 $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
-                Log::info($returnSite)  ;
+                if ($returnSite) {
+                    Log::info($returnSite)  ;
+                }
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
                     $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
@@ -121,10 +125,10 @@ class TerrafundCreateGeometryController extends Controller
                     $data = $this->insertSinglePolygon($singlePolygon, $srid);
                     $uuids[] = $data['uuid'];
                     $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
-                    Log::info($returnSite);
+                    if ($returnSite) {
+                        Log::info($returnSite)  ;
+                    }
                 }
-            } else {
-                return ['error' => 'Invalid geometry type, geometry should be Polygon or MultiPolygon type.'];
             }
         }
 
@@ -225,7 +229,7 @@ class TerrafundCreateGeometryController extends Controller
             $sitePolygon->est_area = $area ?? null;
             $sitePolygon->save();
 
-            return 'has saved correctly';
+            return null;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -285,6 +289,8 @@ class TerrafundCreateGeometryController extends Controller
 
     private function findShpFile($directory)
     {
+        Log::info('find shp: ' . $directory);
+
         $shpFile = null;
         $files = scandir($directory);
         foreach ($files as $file) {
@@ -300,8 +306,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadShapefile(Request $request)
     {
-        ini_set('memory_limit', '-1');
-        Log::debug('File not found in request', ['request' => $request->all()]);
+        Log::debug('Upload Shape file data', ['request' => $request->all()]);
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             if ($file->getClientOriginalExtension() !== 'zip') {
@@ -446,9 +451,10 @@ class TerrafundCreateGeometryController extends Controller
         if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
+        $areaAndLatitude = $geometry->getDbGeometryAttribute();
 
-        $areaSqDegrees = DB::selectOne('SELECT ST_Area(geom) AS area FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->area;
-        $latitude = DB::selectOne('SELECT ST_Y(ST_Centroid(geom)) AS latitude FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->latitude;
+        $areaSqDegrees = $areaAndLatitude->area;
+        $latitude = $areaAndLatitude->latitude;
         $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
         $SIZE_CRITERIA_ID = 6;
         $valid = $areaSqMeters <= 10000000;
@@ -490,10 +496,7 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Site polygon data not found for the specified polygonUuid'], 404);
         }
 
-        // Find the country ISO using project_id from v2projects
-        $countryIso = Project::where('uuid', $sitePolygonData->project_id)
-            ->value('country');
-
+        $countryIso = $sitePolygonData->project->country;
         if (! $countryIso) {
             return response()->json(['error' => 'Country ISO not found for the specified project_id'], 404);
         }
@@ -570,14 +573,7 @@ class TerrafundCreateGeometryController extends Controller
         $criteriaList = [];
         foreach ($criteriaData as $criteria) {
             $criteriaId = $criteria->criteria_id;
-
-            // Check if the criteria is valid
-            $validCriteriaQuery = 'SELECT valid FROM criteria_site 
-                               WHERE polygon_id = ? AND criteria_id = ?';
-            $validResult = DB::selectOne($validCriteriaQuery, [$uuid, $criteriaId]);
-
-            $valid = $validResult ? $validResult->valid : null;
-
+            $valid = CriteriaSite::where(['polygon_id' => $uuid, 'criteria_id' => $criteriaId])->select('valid')->first()?->valid;
             $criteriaList[] = [
               'criteria_id' => $criteriaId,
               'latest_created_at' => $criteria->latest_created_at,
@@ -678,35 +674,46 @@ class TerrafundCreateGeometryController extends Controller
         return response()->json(['valid' => $valid, 'sum_area_project' => $sumEstArea, 'total_area_project' => $totalHectaresRestoredGoal, 'insertionSuccess' => $insertionSuccess], 200);
     }
 
-    public function getPolygonsAsGeoJSON()
+    public function getPolygonAsGeoJSON(Request $request)
     {
-        $limit = 2;
-        $polygons = PolygonGeometry::select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
-          ->orderBy('created_at', 'desc')
-          ->whereNotNull('geom')
-          ->limit($limit)
-          ->get();
-        $features = [];
+        try {
+            $uuid = $request->query('uuid');
 
-        foreach ($polygons as $polygon) {
-            $coordinates = json_decode($polygon->geojson)->coordinates;
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)
+            ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
+            ->first();
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+
+            $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
+            if (! $sitePolygon) {
+                return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
+            }
+
+            $properties = [];
+            $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
+            foreach ($fieldsToValidate as $field) {
+                $properties[$field] = $sitePolygon->$field;
+            }
+
+            $propertiesJson = json_encode($properties);
+
             $feature = [
-              'type' => 'Feature',
-              'geometry' => [
-                'type' => 'Polygon',
-                'coordinates' => $coordinates,
-              ],
-              'properties' => [],
+                'type' => 'Feature',
+                'geometry' => json_decode($polygonGeometry->geojson),
+                'properties' => json_decode($propertiesJson),
             ];
-            $features[] = $feature;
-        }
-        $geojson = [
-          'type' => 'FeatureCollection',
-          'features' => $features,
-        ];
 
-        // Return the GeoJSON data
-        return response()->json($geojson);
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => [$feature],
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function getAllCountryNames()

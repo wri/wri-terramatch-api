@@ -11,6 +11,7 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\MediaModel;
 use App\Models\V2\Polygon;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Tasks\Task;
@@ -25,11 +26,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class NurseryReport extends Model implements HasMedia, AuditableContract, ReportModel
+class NurseryReport extends Model implements MediaModel, AuditableContract, ReportModel
 {
     use HasFrameworkKey;
     use HasFactory;
