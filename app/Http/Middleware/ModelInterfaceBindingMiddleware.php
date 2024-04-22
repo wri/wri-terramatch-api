@@ -2,14 +2,23 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\V2\Forms\Form;
+use App\Models\V2\Forms\FormQuestionOption;
+use App\Models\V2\FundingProgramme;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Organisation;
+use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectMonitoring;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SiteMonitoring;
 use App\Models\V2\Sites\SiteReport;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Routing\RouteRegistrar;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Implicit binding doesn't work for interfaces, so we need to figure out the concrete model class and
@@ -17,28 +26,55 @@ use Illuminate\Http\Request;
  */
 class ModelInterfaceBindingMiddleware
 {
-    public const ENTITY_TYPES_PLURAL = ['projects', 'project-reports', 'sites', 'site-reports', 'nurseries', 'nursery-reports'];
-    public const ENTITY_TYPES_SINGULAR = ['project', 'project-report', 'site', 'site-report', 'nursery', 'nursery-report'];
-
     private const CONCRETE_MODELS = [
-        // EntityModel concrete classes
+        // EntityModel and MediaModel concrete classes
         'projects' => Project::class,
         'project' => Project::class,
-        'sites' => Site::class,
-        'site' => Site::class,
-        'nurseries' => Nursery::class,
-        'nursery' => Nursery::class,
-
-        // ReportModel (which extends EntityModel) concrete classes
         'project-reports' => ProjectReport::class,
         'project-report' => ProjectReport::class,
+        'sites' => Site::class,
+        'site' => Site::class,
         'site-reports' => SiteReport::class,
         'site-report' => SiteReport::class,
+        'nurseries' => Nursery::class,
+        'nursery' => Nursery::class,
         'nursery-reports' => NurseryReport::class,
         'nursery-report' => NurseryReport::class,
+
+        // MediaModel concrete classes
+        'organisation' => Organisation::class,
+        'project-pitch' => ProjectPitch::class,
+        'funding-programme' => FundingProgramme::class,
+        'form' => Form::class,
+        'form-question-option' => FormQuestionOption::class,
+        'project-monitoring' => ProjectMonitoring::class,
+        'site-monitoring' => SiteMonitoring::class,
     ];
 
-    public function handle(Request $request, Closure $next)
+    private static array $typeSlugsCache = [];
+
+    public static function with(string $interface, callable $routeGroup, string $prefix = null, string $modelParameter = null): RouteRegistrar
+    {
+        $typeSlugs = self::$typeSlugsCache[$interface] ?? [];
+        if (empty($typeSlugs)) {
+            foreach (self::CONCRETE_MODELS as $slug => $concrete) {
+                if (is_a($concrete, $interface, true)) {
+                    $typeSlugs[] = $slug;
+                }
+            }
+
+            self::$typeSlugsCache[$interface] = $typeSlugs;
+        }
+
+        $middleware = $modelParameter == null ? 'modelInterface' : "modelInterface:$modelParameter";
+
+        return Route::prefix("$prefix/{modelSlug}")
+            ->whereIn('modelSlug', $typeSlugs)
+            ->middleware($middleware)
+            ->group($routeGroup);
+    }
+
+    public function handle(Request $request, Closure $next, $modelParameter = null)
     {
         $route = $request->route();
         $parameterKeys = array_keys($route->parameters);
@@ -51,8 +87,10 @@ class ModelInterfaceBindingMiddleware
         $concreteClass = self::CONCRETE_MODELS[$modelSlug];
         abort_unless($concreteClass, 404, "Concrete class not found for model interface $modelSlug");
 
-        // assume the model key (e.g. "report") is the next param down the list from the interface name.
-        $modelParameter = $parameterKeys[$modelSlugIndex + 1];
+        if ($modelParameter == null) {
+            // assume the model key (e.g. "report") is the next param down the list from the interface name.
+            $modelParameter = $parameterKeys[$modelSlugIndex + 1];
+        }
         $modelId = $route->parameter($modelParameter);
         abort_unless($modelId, 404, "Model ID not found for $concreteClass");
 

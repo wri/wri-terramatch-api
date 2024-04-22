@@ -879,13 +879,58 @@
         in: formData
       - type: boolean
         name: is_public
-        default: false
+        default: true
         in: formData
     responses:
       '200':
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/V2FileRead'
+/v2/file/upload/site/photos/{UUID}/bulk_url:
+  post:
+    summary: Upload a batch of photos to a specific site
+    operationId: v2-post-upload-file-site-photos-uuid-bulk
+    tags:
+      - Files
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - description: Batch of photos to upload
+        in: body
+        name: body
+        required: true
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              download_url:
+                type: string
+              title:
+                type: string
+                default: Name of image
+              lat:
+                type: integer
+                default: null
+              lng:
+                type: integer
+                default: null
+              is_public:
+                type: boolean
+                default: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: array
+          items:
+            $ref: '../definitions/_index.yml#/V2FileRead'
 /v2/files/{UUID}:
   put:
     summary: Update properties of a specific file
@@ -2450,30 +2495,3 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
-/register-user:
-  post:
-    summary: Create a user
-    tags:
-      - Users Registration
-    security: []
-    consumes:
-      - application/json
-    produces:
-      - application/json
-    parameters:
-      - name: Body
-        in: body
-        required: true
-        schema:
-          $ref: '../definitions/_index.yml#/RegistrationUsersCreate'
-    responses:
-      '200':
-        description: Successful response
-        content:
-          application/json:
-            schema:
-              $ref: '../definitions/_index.yml#/RegistrationUsersRead'
-      '400':
-        description: Bad request
-      '500':
-        description: 'Internal server error'
