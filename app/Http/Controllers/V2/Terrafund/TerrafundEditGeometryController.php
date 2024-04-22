@@ -7,8 +7,8 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class TerrafundEditGeometryController extends Controller
 {
@@ -27,45 +27,47 @@ class TerrafundEditGeometryController extends Controller
         }
     }
 
-    function updateEstAreainSitePolygon($polygonGeometry, $geometry) {
-      $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
+    public function updateEstAreainSitePolygon($polygonGeometry, $geometry)
+    {
+        $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
 
-      // Recalculate the area in hectares
-      $geojson = json_encode($geometry);
-      $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
-      $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
-      // 111320 is the length of one degree of latitude in meters at the equator
-      $unitLatitude = 111320;
-      $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
-      $areaHectares = $areaSqMeters / 10000;
-  
-      // Update site_polygon area with recalculated value
-      if ($sitePolygon) {
-          $sitePolygon->est_area = $areaHectares;
-          $sitePolygon->save();
-      }
-      Log::info("Updated area for site polygon with UUID: $areaSqMeters");
+        // Recalculate the area in hectares
+        $geojson = json_encode($geometry);
+        $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
+        $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
+        // 111320 is the length of one degree of latitude in meters at the equator
+        $unitLatitude = 111320;
+        $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
+        $areaHectares = $areaSqMeters / 10000;
+
+        // Update site_polygon area with recalculated value
+        if ($sitePolygon) {
+            $sitePolygon->est_area = $areaHectares;
+            $sitePolygon->save();
+        }
+        Log::info("Updated area for site polygon with UUID: $areaSqMeters");
     }
 
     public function updateGeometry(string $uuid, Request $request)
     {
-      try {
-        Log::info("Updating geometry for polygon with UUID: $uuid");
+        try {
+            Log::info("Updating geometry for polygon with UUID: $uuid");
 
-        $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
-        if (! $polygonGeometry) {
-            return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+            $geometry = json_decode($request->input('geometry'));
+            $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
+            $polygonGeometry->geom = $geom;
+            $polygonGeometry->save();
+            Log::info('ABOUT TO CREATE');
+            $this -> updateEstAreainSitePolygon($polygonGeometry, $geometry);
+
+            return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
-        $geometry = json_decode($request->input('geometry'));
-        $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
-        $polygonGeometry->geom = $geom;
-        $polygonGeometry->save();
-        Log::info("ABOUT TO CREATE");
-        $this -> updateEstAreainSitePolygon($polygonGeometry, $geometry);
-        return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
-      } catch (\Exception $e) {
-        return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
-      }
     }
 
     public function getPolygonGeojson(string $uuid)
