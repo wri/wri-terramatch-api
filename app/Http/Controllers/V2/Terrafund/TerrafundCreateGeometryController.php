@@ -676,36 +676,46 @@ class TerrafundCreateGeometryController extends Controller
         return response()->json(['valid' => $valid, 'sum_area_project' => $sumEstArea, 'total_area_project' => $totalHectaresRestoredGoal, 'insertionSuccess' => $insertionSuccess], 200);
     }
 
-    public function getPolygonsAsGeoJSON()
-    {
-        $limit = 2;
-        $polygons = PolygonGeometry::select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
-          ->orderBy('created_at', 'desc')
-          ->whereNotNull('geom')
-          ->limit($limit)
-          ->get();
-        $features = [];
+    public function getPolygonAsGeoJSON(Request $request)
+    { 
+        try {
+          $uuid = $request->query('uuid');
 
-        foreach ($polygons as $polygon) {
-            $coordinates = json_decode($polygon->geojson)->coordinates;
-            $feature = [
+          $polygonGeometry = PolygonGeometry::where('uuid', $uuid)
+          ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
+          ->first();
+          if (!$polygonGeometry) {
+              return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+          }
+          
+          $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
+          if (!$sitePolygon) {
+              return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
+          }
+          
+          $properties = [];
+          $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
+          foreach ($fieldsToValidate as $field) {
+            $properties[$field] = $sitePolygon->$field;
+          }
+
+          $propertiesJson = json_encode($properties);
+
+          $feature = [
               'type' => 'Feature',
-              'geometry' => [
-                'type' => 'Polygon',
-                'coordinates' => $coordinates,
-              ],
-              'properties' => [],
-            ];
-            $features[] = $feature;
-        }
-        $geojson = [
-          'type' => 'FeatureCollection',
-          'features' => $features,
-        ];
+              'geometry' => json_decode($polygonGeometry->geojson),
+              'properties' => json_decode($propertiesJson),
+          ];
 
-        // Return the GeoJSON data
-        return response()->json($geojson);
-    }
+          $featureCollection = [
+              'type' => 'FeatureCollection',
+              'features' => [$feature],
+          ];
+          return response()->json($featureCollection);
+      } catch (\Exception $e) {
+          return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+      }
+    } 
 
     public function getAllCountryNames()
     {
