@@ -44011,6 +44011,8 @@ definitions:
         type: string
       job_role:
         type: string
+      role_id:
+        type: string
       facebook:
         type: string
       twitter:
@@ -44051,6 +44053,8 @@ definitions:
         type: string
         format: date-time
       role:
+        type: string
+      role_id:
         type: string
       last_logged_in_at:
         type: string
