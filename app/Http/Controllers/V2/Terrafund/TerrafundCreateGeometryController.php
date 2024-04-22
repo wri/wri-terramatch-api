@@ -639,7 +639,7 @@ class TerrafundCreateGeometryController extends Controller
         $OVERLAPPING_CRITERIA_ID = 3;
         $insertionSuccess = $this->insertCriteriaSite($uuid, $OVERLAPPING_CRITERIA_ID, $valid);
 
-        return response()->json(['intersects' => $intersects, 'project_id' => $projectId, 'uuid' => $uuid, 'valid' => $valid, 'creteria_succes' => $insertionSuccess], 200);
+        return response()->json(['intersects' => $intersects, 'project_id' => $projectId, 'uuid' => $uuid, 'valid' => $valid, 'criteria_success' => $insertionSuccess], 200);
     }
 
     public function validateEstimatedArea(Request $request)
