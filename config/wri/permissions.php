@@ -12,4 +12,5 @@ return [
     'projects-read' => 'Read all projects',
     'polygons-manage' => 'Manage polygons',
     'media-manage' => 'Manage media',
+    'view-dashboard' => 'View dashboard',
 ];

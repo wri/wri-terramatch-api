@@ -75,6 +75,21 @@ class RolesMigrationCommand extends Command
             $role->givePermissionTo(['projects-read', 'polygons-manage', 'media-manage']);
         }
 
+        if (Role::where('name', 'project-developer')->count() === 0) {
+            $role = Role::create(['name' => 'project-developer']);
+            $role->givePermissionTo(['view-dashboard']);
+        }
+
+        if (Role::where('name', 'government')->count() === 0) {
+            $role = Role::create(['name' => 'government']);
+            $role->givePermissionTo(['view-dashboard']);
+        }
+
+        if (Role::where('name', 'funder')->count() === 0) {
+            $role = Role::create(['name' => 'funder']);
+            $role->givePermissionTo(['view-dashboard']);
+        }
+
         User::whereIn('role', ['user', 'admin', 'terrafund-admin', 'service'])->get()
             ->each(function (User $user) {
                 if ($user->primary_role == null) {
