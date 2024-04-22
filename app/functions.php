@@ -167,5 +167,12 @@ function assignSpatieRole($user)
             break;
         case 'service':
             $user->assignRole('greenhouse-service-account');
+
+        case 'project-developer':
+        case 'funder':
+        case 'government':
+            $user->assignRole($user->role);
+
+            break;
     }
 }
