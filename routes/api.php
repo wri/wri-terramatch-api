@@ -126,7 +126,7 @@ Route::withoutMiddleware('auth:service-api-key,api')->group(function () {
     Route::get('/auth/refresh', [AuthController::class, 'refreshAction']);
 
     Route::post('/users', [UsersController::class, 'createAction']);
-    Route::post('/register-user', [UsersRoleController::class, 'createAction']);
+    Route::post('/users-register', [UsersRoleController::class, 'createAction']);
 });
 
 Route::patch('/auth/verify', [AuthController::class, 'verifyAction']);
