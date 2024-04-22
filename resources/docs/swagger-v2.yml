@@ -93607,7 +93607,6 @@ paths:
         - V2 Sites
         - V2 Nurseries
         - Exports
-        - Roles here
       parameters:
         - type: string
           name: ENTITY

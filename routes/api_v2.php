@@ -181,7 +181,6 @@ use App\Http\Controllers\V2\UpdateRequests\EntityUpdateRequestsController;
 use App\Http\Controllers\V2\User\AdminExportUsersController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
 use App\Http\Controllers\V2\User\AdminUserController;
-use App\Http\Controllers\V2\User\AdminUserRoleController;
 use App\Http\Controllers\V2\User\AdminUserMultiController;
 use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
