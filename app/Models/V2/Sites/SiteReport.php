@@ -15,7 +15,6 @@ use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
 use App\Models\V2\MediaModel;
-use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Seeding;
