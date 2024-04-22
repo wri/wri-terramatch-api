@@ -156,7 +156,7 @@ class TerrafundCreateGeometryController extends Controller
             ->exists();
 
         if (! $polygonExists) {
-            return response()->json(['valid' => false, 'message' => 'No site polygon found with the specified poly_id.']);
+            return response()->json(['valid' => false, 'message' => 'No site polygon found with the specified poly_id.'], 400);
         }
 
         // Proceed with validation of attribute values
@@ -174,13 +174,13 @@ class TerrafundCreateGeometryController extends Controller
             ->first();
         $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, false);
         if ($sitePolygonData) {
-            return response()->json(['valid' => false, 'message' => 'Some attributes of the site polygon are invalid.']);
+            return response()->json(['valid' => false, 'message' => 'Some attributes of the site polygon are invalid.'], 200);
         }
 
         $valid = true;
         $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $valid);
 
-        return response()->json(['valid' => true]);
+        return response()->json(['valid' => true], 200);
     }
 
     private function validateData(array $properties, array $fields): bool
@@ -614,12 +614,12 @@ class TerrafundCreateGeometryController extends Controller
           ->first();
 
         if (! $sitePolygon) {
-            return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 200);
+            return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 400);
         }
 
         $projectId = $sitePolygon->project_id;
         if(! $projectId) {
-            return response()->json(['error' => 'Project ID not found for the given polygon ID'], 200);
+            return response()->json(['error' => 'Project ID not found for the given polygon ID'], 400);
         }
         $relatedPolyIds = SitePolygon::where('project_id', $projectId)
           ->where('poly_id', '!=', $uuid)
@@ -645,7 +645,7 @@ class TerrafundCreateGeometryController extends Controller
           ->first();
 
         if (! $sitePolygon) {
-            return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 200);
+            return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 400);
         }
 
         $projectId = $sitePolygon->project_id;
@@ -657,7 +657,7 @@ class TerrafundCreateGeometryController extends Controller
           ->first();
 
         if (! $project) {
-            return response()->json(['error' => 'Project not found for the given project ID', 'projectId' => $projectId], 200);
+            return response()->json(['error' => 'Project not found for the given project ID', 'projectId' => $projectId], 400);
         }
 
         $totalHectaresRestoredGoal = $project->total_hectares_restored_goal;
