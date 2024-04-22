@@ -123,6 +123,8 @@ class TerrafundCreateGeometryController extends Controller
                     $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
                     Log::info($returnSite);
                 }
+            } else {
+                return ['error' => 'Invalid geometry type, geometry should be Polygon or MultiPolygon type.'];
             }
         }
 
