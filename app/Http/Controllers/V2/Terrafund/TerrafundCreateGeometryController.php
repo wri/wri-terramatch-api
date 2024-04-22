@@ -147,7 +147,6 @@ class TerrafundCreateGeometryController extends Controller
         $polygonUuid = $request->input('uuid');
         $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
         $DATA_CRITERIA_ID = 14;
-        // Check if the polygon with the specified poly_id exists
         $polygonExists = SitePolygon::where('poly_id', $polygonUuid)
             ->exists();
 
@@ -155,7 +154,6 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['valid' => false, 'message' => 'No site polygon found with the specified poly_id.']);
         }
 
-        // Proceed with validation of attribute values
         $whereConditions = [];
         foreach ($fieldsToValidate as $field) {
             $whereConditions[] = "(IFNULL($field, '') = '' OR $field IS NULL)";
@@ -720,4 +718,33 @@ class TerrafundCreateGeometryController extends Controller
 
         return response()->json(['countries' => $countries]);
     }
-}
+    public function getCountryBbox(string $iso) 
+    {
+        // Get the bbox of the country and the name
+        $countryData = WorldCountryGeneralized::where('iso', $iso)
+            ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) AS bbox, country')
+            ->first();
+    
+        if (! $countryData) {
+            return response()->json(['error' => 'Country not found'], 404);
+        }
+    
+        // Decode the GeoJSON bbox
+        $geoJson = json_decode($countryData->bbox);
+    
+        // Extract the bounding box coordinates
+        $coordinates = $geoJson->coordinates[0];
+    
+        // Get the country name
+        $countryName = $countryData->country;
+    
+        // Construct the bbox data in the specified format
+        $countryBbox = [
+            $countryName,
+            [$coordinates[0][0], $coordinates[0][1], $coordinates[2][0], $coordinates[2][1]]
+        ];
+    
+        return response()->json(['bbox' => $countryBbox]);
+    }
+    
+  }
