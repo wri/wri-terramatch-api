@@ -727,6 +727,4 @@ class TerrafundCreateGeometryController extends Controller
 
         return response()->json(['countries' => $countries]);
     }
-   
-    
-  }
+}

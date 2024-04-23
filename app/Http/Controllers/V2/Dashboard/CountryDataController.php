@@ -3,46 +3,36 @@
 namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\CriteriaSite;
-use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Symfony\Component\Process\Process;
 
-class CountryDataController extends Controller 
+class CountryDataController extends Controller
 {
-  public function getCountryBbox(string $iso) 
-  {
-      // Get the bbox of the country and the name
-      $countryData = WorldCountryGeneralized::where('iso', $iso)
-          ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) AS bbox, country')
-          ->first();
-  
-      if (! $countryData) {
-          return response()->json(['error' => 'Country not found'], 404);
-      }
-  
-      // Decode the GeoJSON bbox
-      $geoJson = json_decode($countryData->bbox);
-  
-      // Extract the bounding box coordinates
-      $coordinates = $geoJson->coordinates[0];
-  
-      // Get the country name
-      $countryName = $countryData->country;
-  
-      // Construct the bbox data in the specified format
-      $countryBbox = [
-          $countryName,
-          [$coordinates[0][0], $coordinates[0][1], $coordinates[2][0], $coordinates[2][1]]
-      ];
-  
-      return response()->json(['bbox' => $countryBbox]);
-  }
+    public function getCountryBbox(string $iso)
+    {
+        // Get the bbox of the country and the name
+        $countryData = WorldCountryGeneralized::where('iso', $iso)
+            ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) AS bbox, country')
+            ->first();
+
+        if (! $countryData) {
+            return response()->json(['error' => 'Country not found'], 404);
+        }
+
+        // Decode the GeoJSON bbox
+        $geoJson = json_decode($countryData->bbox);
+
+        // Extract the bounding box coordinates
+        $coordinates = $geoJson->coordinates[0];
+
+        // Get the country name
+        $countryName = $countryData->country;
+
+        // Construct the bbox data in the specified format
+        $countryBbox = [
+            $countryName,
+            [$coordinates[0][0], $coordinates[0][1], $coordinates[2][0], $coordinates[2][1]],
+        ];
+
+        return response()->json(['bbox' => $countryBbox]);
+    }
 }

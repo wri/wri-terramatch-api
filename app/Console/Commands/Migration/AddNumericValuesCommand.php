@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Migration;
 
-use Illuminate\Console\Command;
 use App\Models\V2\Projects\Project;
+use Illuminate\Console\Command;
 
 class AddNumericValuesCommand extends Command
 {
@@ -31,6 +31,7 @@ class AddNumericValuesCommand extends Command
             ]);
         }
         $this->info('Lat and long values updated successfully for all v2 projects.');
+
         return 0;
     }
 }

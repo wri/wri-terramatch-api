@@ -14,6 +14,7 @@ class GetProjectsController extends Controller
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->select('id', 'long', 'lat', 'name')
             ->get();
+
         return new GetProjectsResource([
             'data' => $projects,
         ]);
