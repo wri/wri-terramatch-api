@@ -13,7 +13,12 @@ class GetProjectsController extends Controller
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->select('id', 'long', 'lat', 'name')
-            ->get();
+            ->get()
+            ->map(function ($project) {
+                $project->lat = round($project->lat, 2);
+                $project->long = round($project->long, 2);
+                return $project;
+            });
         return new GetProjectsResource([
             'data' => $projects,
         ]);

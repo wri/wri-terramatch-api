@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('v2_projects', function (Blueprint $table) {
-            $table->decimal('lat', 10, 8)->nullable();
-            $table->decimal('long', 11, 8)->nullable();
+            $table->decimal('lat', 10, 2)->nullable();
+            $table->decimal('long', 11, 2)->nullable();
         });
     }
 
