@@ -9360,6 +9360,11 @@ definitions:
       long:
         type: number
         format: double
+  DashboardBBOXCountry:
+    type: object
+    properties:
+      bbox:
+        type: array
 paths:
   '/organisations/{ID}/users':
     get:
@@ -19541,3 +19546,21 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  '/v2/dashboard/country/{country}':
+    get:
+      summary: Get the bounding box of a country
+      tags:
+        - Country
+      parameters:
+        - in: path
+          name: country
+          type: string
+          description: ISO code of the country
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/DashboardBBOXCountry'
+        '404':
+          description: Country not found
