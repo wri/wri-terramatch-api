@@ -152,7 +152,7 @@ function getDataFromMorphable(string $type, int $id)
  */
 function assignSpatieRole($user)
 {
-    switch($user->role) {
+    switch ($user->role) {
         case 'user':
             $user->assignRole('project-developer');
 
@@ -167,5 +167,12 @@ function assignSpatieRole($user)
             break;
         case 'service':
             $user->assignRole('greenhouse-service-account');
+
+        case 'project-developer':
+        case 'funder':
+        case 'government':
+            $user->assignRole($user->role);
+
+            break;
     }
 }

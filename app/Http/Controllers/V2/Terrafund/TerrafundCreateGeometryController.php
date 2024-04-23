@@ -151,6 +151,7 @@ class TerrafundCreateGeometryController extends Controller
         $polygonUuid = $request->input('uuid');
         $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
         $DATA_CRITERIA_ID = 14;
+        // Check if the polygon with the specified poly_id exists
         $polygonExists = SitePolygon::where('poly_id', $polygonUuid)
             ->exists();
 
@@ -158,6 +159,7 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['valid' => false, 'message' => 'No site polygon found with the specified poly_id.']);
         }
 
+        // Proceed with validation of attribute values
         $whereConditions = [];
         foreach ($fieldsToValidate as $field) {
             $whereConditions[] = "(IFNULL($field, '') = '' OR $field IS NULL)";

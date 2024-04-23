@@ -97,6 +97,7 @@ use App\Http\Controllers\TreeSpeciesController;
 use App\Http\Controllers\TreeSpeciesVersionsController;
 use App\Http\Controllers\UploadsController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\UsersRoleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -125,6 +126,7 @@ Route::withoutMiddleware('auth:service-api-key,api')->group(function () {
     Route::get('/auth/refresh', [AuthController::class, 'refreshAction']);
 
     Route::post('/users', [UsersController::class, 'createAction']);
+    Route::post('/users-register', [UsersRoleController::class, 'createAction']);
 });
 
 Route::get('/auth/logout', [AuthController::class, 'logoutAction']);
