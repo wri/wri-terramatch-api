@@ -6,11 +6,14 @@ use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\ViewTreeRestorationGoalResource;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\StateMachines\EntityStatusStateMachine;
 
 class ViewTreeRestorationGoalController extends Controller
 {
@@ -28,8 +31,8 @@ class ViewTreeRestorationGoalController extends Controller
         $forProfitSiteIds = $this->getSiteIds($forProfitProjectIds);
         $nonProfitSiteIds = $this->getSiteIds($nonProfitProjectIds);
 
-        $forProfitTreeCount = $this->treeCountByDueDate($forProfitProjectIds, $latestDueDate['year'], $latestDueDate['month']);
-        $nonProfitTreeCount = $this->treeCountByDueDate($nonProfitProjectIds, $latestDueDate['year'], $latestDueDate['month']);
+        $forProfitTreeCount = $this->treeCountByDueDate($forProfitProjectIds);
+        $nonProfitTreeCount = $this->treeCountByDueDate($nonProfitProjectIds);
 
         $totalTreesGrownGoal = $query->sum('trees_grown_goal');
 
@@ -78,8 +81,8 @@ class ViewTreeRestorationGoalController extends Controller
     }
 
     private function getSiteIds($projectIds)
-    {
-        return Site::whereIn('project_id', $projectIds)->pluck('id');
+    {   
+        return Site::whereIn('project_id', $projectIds)->where('status', EntityStatusStateMachine::APPROVED)->pluck('id');
     }
 
     private function getDistinctDates($siteIds)
@@ -99,21 +102,13 @@ class ViewTreeRestorationGoalController extends Controller
         })->pluck('id')->toArray();
     }
 
-    private function treeCountByDueDate(array $projectIds, $year, $month)
+    private function treeCountByDueDate(array $projectIds)
     {
-        $siteIds = Site::whereIn('project_id', $projectIds)->pluck('id');
+        $projects = Project::whereIn('id', $projectIds)->get();
 
-        $totalTreeCount = 0;
-
-        foreach ($siteIds as $siteId) {
-            $reports = SiteReport::where('site_id', $siteId)->get();
-
-            foreach ($reports as $report) {
-                $totalTreeCount += $report->treeSpecies()->sum('amount');
-            }
-        }
-
-        return $totalTreeCount;
+        return $projects->sum(function ($project) {
+            return $project->trees_planted_count;
+        });
     }
 
     private function treeCountPerPeriod($siteIds, $distinctDates, $totalTreesGrownGoal)
@@ -127,12 +122,13 @@ class ViewTreeRestorationGoalController extends Controller
             $treeSpeciesAmount = 0;
 
             $reports = SiteReport::whereIn('site_id', $siteIds)
+                ->whereNotIn('v2_site_reports.status', SiteReport::UNSUBMITTED_STATUSES)
                 ->whereYear('v2_site_reports.due_at', $year)
                 ->whereMonth('v2_site_reports.due_at', $month)
                 ->get();
 
             foreach ($reports as $report) {
-                $treeSpeciesAmount += $report->treeSpecies()->sum('amount');
+                $treeSpeciesAmount += $report->treeSpecies()->where('collection', TreeSpecies::COLLECTION_PLANTED)->sum('amount');
             }
 
             $totalAmount = $totalTreesGrownGoal;
