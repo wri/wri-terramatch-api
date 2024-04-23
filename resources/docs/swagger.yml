@@ -9341,6 +9341,25 @@ definitions:
         type: integer
       treeSpeciesPercentage:
         type: number
+  DashboardGetProjectsResponse:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardGetProjectsData'
+  DashboardGetProjectsData:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      lat:
+        type: number
+        format: double
+      long:
+        type: number
+        format: double
 paths:
   '/organisations/{ID}/users':
     get:
@@ -19501,3 +19520,24 @@ paths:
           description: OK
           schema:
             type: file
+  '/v2/dashboard/get-projects':
+    get:
+      summary: Retrieve all project.
+      description: |
+        This endpoint returns all project by country.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/DashboardGetProjectsResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error

@@ -20,6 +20,7 @@ use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\CountriesController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
+use App\Http\Controllers\V2\Dashboard\GetProjectsController;
 use App\Http\Controllers\V2\Dashboard\ProjectProfileDetailsController;
 use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
@@ -668,4 +669,5 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/countries', CountriesController::class);
     Route::get('/project-details', ProjectProfileDetailsController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
+    Route::get('/get-projects', GetProjectsController::class);
 });
