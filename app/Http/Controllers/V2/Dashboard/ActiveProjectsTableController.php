@@ -67,11 +67,7 @@ class ActiveProjectsTableController extends Controller
 
     public function treesUnderRestoration($project)
     {
-        return $project->sites->sum(function ($site) {
-            return $site->reports->sum(function ($report) {
-                return $report->treeSpecies->sum('amount');
-            });
-        });
+        return $project->trees_planted_count;
     }
 
     public function jobsCreated($project)

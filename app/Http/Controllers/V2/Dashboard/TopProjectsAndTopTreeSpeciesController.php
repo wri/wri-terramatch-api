@@ -28,11 +28,8 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
         $topProjects = [];
 
         $projects->each((function ($project) use (&$topProjects) {
-            $totalSpeciesAmountForSiteReport = $project->sites()->with(['reports.treeSpecies'])->get()->sum(function ($site) {
-                return $site->reports->sum(function ($report) {
-                    return $report->treeSpecies->sum('amount');
-                });
-            });
+            $totalSpeciesAmountForSiteReport = $project->trees_planted_count;
+
             $topProjects[] = [
                 'project' => $project->name,
                 'uuid' => $project->uuid,
