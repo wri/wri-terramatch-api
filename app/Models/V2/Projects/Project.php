@@ -121,6 +121,8 @@ class Project extends Model implements HasMedia, AuditableContract, EntityModel
         'pct_beneficiaries_large',
         'pct_beneficiaries_youth',
         'land_tenure_project_area',
+        'lat',
+        'long',
         'answers',
     ];
 
