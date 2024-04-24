@@ -18,7 +18,7 @@ class GetPolygonsController extends Controller
         $projectIds = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->pluck('id');
         Log::info('Project ID: ' . $projectIds);
-        $sitesIds = Site::whereIn('project_id', $projectIds)->pluck('id');
+        $sitesIds = Site::whereIn('project_id', $projectIds)->pluck('uuid');
         $sitePolygonsIds = SitePolygon::whereIn('site_id', $sitesIds)->pluck('poly_id');
         $polygons = PolygonGeometry::whereIn('uuid', $sitePolygonsIds)->pluck('uuid');
 
