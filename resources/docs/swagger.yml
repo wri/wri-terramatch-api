@@ -9347,6 +9347,17 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/DashboardGetProjectsData'
+  DashboardGetPolygonsResponse:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardGetPolygonsData'
+  DashboardGetPolygonsData:
+    type: array
+    items:
+      type: string
+
   DashboardGetProjectsData:
     type: object
     properties:
@@ -19535,6 +19546,27 @@ paths:
           name: country
           type: string
           description: Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/DashboardGetProjectsResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/dashboard/get-polygons':
+    get:
+      summary: Retrieve all polygons.
+      description: |
+        This endpoint returns all polygons by project uuid.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: uuid for the given project
       responses:
         '200':
           description: Successful response
