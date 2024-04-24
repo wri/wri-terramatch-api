@@ -4,7 +4,11 @@ namespace App\Console\Commands;
 
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
+use App\Models\V2\ReportModel;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\StateMachines\EntityStatusStateMachine;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
@@ -60,7 +64,9 @@ class MergeEntities extends Command
         }
 
         $feederUuids = $this->argument('feeders');
-        $feeders = Site::whereIn('uuid', $feederUuids)->get();
+        // This would be faster as a whereIn, but we want to keep the order intact; matching it with the
+        // order that was passed into the command
+        $feeders = collect($feederUuids)->map(fn ($uuid) => $modelClass::isUuid($uuid)->first());
         if (count($feeders) != count($feederUuids)) {
             $this->abort('Some feeders not found: ' . json_encode($feederUuids));
         }
@@ -86,6 +92,9 @@ class MergeEntities extends Command
         }
     }
 
+    // Note for future expansion, the code to merge nurseries would be basically the same as this, but this pattern
+    // wouldn't work for projects because it relies on ensuring that the parent entity (the project for sites/nurseries)
+    // is the same, and projects would need to dig into merging their sites and nurseries as well.
     private function mergeSites(Site $mergeSite, Collection $feederSites): void
     {
         $frameworks = $feederSites->map(fn (Site $site) => $site->framework_key)->push($mergeSite->framework_key)->unique();
@@ -102,13 +111,10 @@ class MergeEntities extends Command
 
         try {
             DB::beginTransaction();
+
             $this->mergeEntities($mergeSite, $feederSites);
-
-            // merge report information from the same reporting period (should be on the same task) and remove all update requests
-
-            // remove all outstanding update requests
-
-            // remove all feeder entities
+            $this->mergeReports($mergeSite, $feederSites);
+            $feederSites->each(function ($site) { $site->delete(); });
 
             DB::commit();
         } catch (Exception $e) {
@@ -119,7 +125,27 @@ class MergeEntities extends Command
     }
 
     /**
-     * Merges entity information and remove all update requests. Merged entity will be in 'awaiting-approval' state
+     * Merges all reports from the feeder entities into the merge entity's reports. Finds associated reporting
+     * periods through the task associated with the merge entity's reports. The feeder's reports are removed and the
+     * Merge reports are put in the 'awaiting-approval' state. All associated update requests are removed.
+     * @throws Exception
+     */
+    private function mergeReports(EntityModel $merge, Collection $feeders): void
+    {
+        /** @var ReportModel $report */
+        $foreignKey = $merge->reports()->getForeignKeyName();
+        foreach ($merge->reports()->get() as $report) {
+            $hasMany = $report->task->hasMany(get_class($report));
+            // A whereIn would be faster, but we want to keep the reports in the same order as the feeders
+            $associatedReports = $feeders->map(fn ($feeder) => $hasMany->where($foreignKey, $feeder->id)->first());
+            $this->mergeEntities($report, $associatedReports);
+            $associatedReports->each(function ($report) { $report->delete(); });
+        }
+    }
+
+    /**
+     * Merges entity information and remove all update requests. Merged entity will be in 'awaiting-approval' state.
+     * The caller is responsible for removing the feeder entities.
      * @throws Exception
      */
     private function mergeEntities(EntityModel $merge, Collection $feeders): void
@@ -158,6 +184,11 @@ class MergeEntities extends Command
                     $merge->$property = $values->sum();
                     break;
 
+                case 'ensure-unique-string':
+                    $texts = $entities->map(fn ($entity) => $entity->$property);
+                    $merge->$property = $this->ensureUniqueString($property, $texts);
+                    break;
+
                 default:
                     throw new Exception("Unknown properties command: $command");
             }
@@ -169,6 +200,10 @@ class MergeEntities extends Command
             switch ($command) {
                 case 'move-to-merged':
                     $this->moveAssociations($property, $merge, $feeders);
+                    break;
+
+                case 'tree-species-merge':
+                    $this->treeSpeciesMerge($property, $merge, $feeders);
                     break;
 
                 default:
@@ -189,6 +224,14 @@ class MergeEntities extends Command
                     throw new Exception("Unknown file collections command: $command");
             }
         }
+
+        $merge->save();
+        $merge->updateRequests()->delete();
+        $feeders->each(function ($feeder) { $feeder->updateRequests()->delete(); });
+        $merge->update([
+            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
+            'update_request_status' => UpdateRequest::ENTITY_STATUS_NO_UPDATE,
+        ]);
     }
 
     /**
@@ -207,6 +250,23 @@ class MergeEntities extends Command
         });
     }
 
+    /**
+     * @throws Exception
+     */
+    private function ensureUniqueString(string $property, Collection $texts): ?string
+    {
+        $unique = $texts->filter()->unique();
+        if ($unique->count() == 0) {
+            return null;
+        }
+
+        if ($unique->count() > 1) {
+            throw new Exception("Property required to be unique as is not: $property, " . json_encode($unique));
+        }
+
+        return $unique->first();
+    }
+
     private function moveAssociations(string $property, EntityModel $merge, Collection $feeders): void
     {
         // In this method we assume that the type of $merge and the models in $feeders match, so we simply
@@ -216,6 +276,26 @@ class MergeEntities extends Command
         $foreignKey = $merge->$property()->getForeignKeyName();
         foreach ($feeders as $feeder) {
             $feeder->$property()->update([$foreignKey => $merge->id]);
+        }
+    }
+
+    private function treeSpeciesMerge(string $property, EntityModel $merge, Collection $feeders): void
+    {
+        $foreignKey = $merge->$property()->getForeignKeyName();
+        foreach ($feeders as $feeder) {
+            /** @var TreeSpecies $feederTree */
+            foreach ($feeder->$property()->get() as $feederTree) {
+                if ($merge->$property()->where('name', $feederTree->name)->exists()) {
+                    /** @var TreeSpecies $baseTree */
+                    $baseTree = $merge->$property()->where('name', $feederTree->name)->first();
+                    $baseTree->update(['amount' => $baseTree->amount + $feederTree->amount]);
+                    $feederTree->delete();
+                } else {
+                    $feederTree->update([$foreignKey => $merge->id]);
+                    // Make sure that the merge model's association is aware of the addition
+                    $merge->refresh();
+                }
+            }
         }
     }
 

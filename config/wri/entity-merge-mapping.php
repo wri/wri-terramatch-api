@@ -6,7 +6,7 @@ return [
             'frameworks' => [
                 'terrafund' => [
                     'properties' => [
-                        // Skip 'name' because it's from the merged site
+                        // Skip 'name' because the merged site keeps its name
                         'start_date' => 'date:first',
                         'end_date' => 'date:last',
                         'landscape_community_contribution' => 'long-text',
@@ -29,13 +29,19 @@ return [
             'frameworks' => [
                 'terrafund' => [
                     'properties' => [
-
+                        'polygon_status' => 'long-text',
+                        'technical_narrative' => 'long-text',
+                        'shared_drive_link' => 'ensure-unique-string',
                     ],
-                    'linked-fields' => [
-
+                    'relations' => [
+                        'disturbances' => 'move-to-merged',
+                        'treeSpecies' => 'tree-species-merge',
+                        'nonTreeSpecies' => 'tree-species-merge',
+                    ],
+                    'file-collections' => [
+                        'photos' => 'move-to-merged',
                     ],
                     'conditionals' => [
-
                     ]
                 ]
             ]
