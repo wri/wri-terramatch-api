@@ -21,6 +21,7 @@ use App\Http\Controllers\V2\Dashboard\CountriesController;
 use App\Http\Controllers\V2\Dashboard\CountryDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetProjectsController;
+use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
 use App\Http\Controllers\V2\Dashboard\ProjectProfileDetailsController;
 use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
@@ -672,5 +673,6 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/project-details', ProjectProfileDetailsController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/get-projects', GetProjectsController::class);
+    Route::get('/get-polygons', GetPolygonsController::class);
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
 });
