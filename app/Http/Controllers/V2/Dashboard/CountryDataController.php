@@ -67,18 +67,16 @@ class CountryDataController extends Controller
 
         $country = WorldCountryGeneralized::where('iso', $project->country)->first();
         $data = [
-            ['title' => 'Polygon Name', 'value' => $sitePolygon->poly_name],
-            ['title' => 'Site', 'value' => $site->name],
-            ['title' => 'Number of trees', 'value' => $sitePolygon->num_trees],
-            ['title' => 'Country', 'value' => $country->country],
-            ['title' => 'country_iso', 'value' => $project->country],
-            ['title' => 'Project', 'value' => $project->name],
-            ['title' => 'Site', 'value' => $site->name],
-            ['title' => 'Organization', 'value' => $organization->name],
-            ['title' => 'Plant Start Date', 'value' => $sitePolygon->plantstart],
-            ['title' => 'Status', 'value' => $sitePolygon->status]
+          ['title' => 'title', 'value' => $sitePolygon->poly_name ?? null],
+          ['title' => 'Site', 'value' => $site?->name ?? null],
+          ['title' => 'Number of trees', 'value' => $sitePolygon->num_trees ?? null],
+          ['title' => 'Country', 'value' => $country?->country ?? null],
+          ['title' => 'country_iso', 'value' => $project?->country ?? null],
+          ['title' => 'Project', 'value' => $project?->name ?? null],
+          ['title' => 'Organization', 'value' => $organization?->name ?? null],
+          ['title' => 'Plant Start Date', 'value' => $sitePolygon->plantstart ?? null],
+          ['title' => 'Status', 'value' => $sitePolygon->status ?? null]
         ];
-    
         return response()->json(['data' => $data]);
     }
     
