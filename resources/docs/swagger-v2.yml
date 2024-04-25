@@ -44013,6 +44013,10 @@ definitions:
         type: string
       role_id:
         type: string
+      country:
+        type: string
+      program:
+        type: string
       facebook:
         type: string
       twitter:
@@ -44056,6 +44060,10 @@ definitions:
         type: string
       role_id:
         type: string
+      country:
+        type: string
+      program:
+        type: string
       last_logged_in_at:
         type: string
         format: date-time
@@ -44079,6 +44087,29 @@ definitions:
         type: boolean
       has_terrafund_projects:
         type: boolean
+  DashboardCountriesResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardCountryData'
+  DashboardCountryData:
+    type: object
+    properties:
+      id:
+        type: integer
+      country_slug:
+        type: string
+      data:
+        $ref: '#/definitions/DashboardCountryInfo'
+  DashboardCountryInfo:
+    type: object
+    properties:
+      label:
+        type: string
+      icon:
+        type: string
   SitePolygonsDataResponse:
     type: array
     items:
@@ -93710,7 +93741,7 @@ paths:
         '201':
           description: Created
           schema:
-            $ref: '#/definitions/RoleUserRead'  
+            $ref: '#/definitions/RoleUserRead'
   '/v2/sites/{site}/polygon':
     get:
       operationId: get-v2-site-polygons
@@ -93731,4 +93762,4 @@ paths:
         '400':
           description: Bad request
         '500':
-          description: Internal server error  
+          description: Internal server error 
