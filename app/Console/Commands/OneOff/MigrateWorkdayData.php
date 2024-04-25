@@ -30,56 +30,30 @@ class MigrateWorkdayData extends Command
     ];
 
     private const SUBTYPE_NULL = 'subtype-null';
-    private const VALUE_NULL = 'value-null';
+    private const NAME_NULL = 'name-null';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $result = [
-            $this->testCase(\App\Models\V2\Projects\ProjectReport::class, 783),
-            $this->testCase(\App\Models\V2\Sites\SiteReport::class, 15109),
-            $this->testCase(\App\Models\V2\Projects\ProjectReport::class, 784),
-            $this->testCase(\App\Models\V2\Sites\SiteReport::class, 13965),
-            $this->testCase(\App\Models\V2\Projects\ProjectReport::class, 763),
-            $this->testCase(\App\Models\V2\Sites\SiteReport::class, 15170),
-            $this->testCase(\App\Models\V2\Sites\SiteReport::class, 15400),
-            $this->testCase(\App\Models\V2\Sites\SiteReport::class, 13805),
-            $this->testCase(\App\Models\V2\Projects\ProjectReport::class, 778),
-        ];
-        echo json_encode($result, JSON_PRETTY_PRINT);
+        $entityTypes = Workday::select('workdayable_type')->distinct()->pluck('workdayable_type');
+        foreach ($entityTypes as $entityType) {
+            $entityIds = Workday::where('workdayable_type', $entityType)
+                ->select('workdayable_id')
+                ->distinct()
+                ->pluck('workdayable_id');
+            $count = $entityIds->count();
+            $shortName = explode_pop('\\', $entityType);
+            echo "Processing $shortName: $count records\n";
 
-
-        // TODO (NJC): The code below will be needed when this has been updated to perform the actual migration instead
-        //   of just testing a few isolated cases and dumping a JSON result.
-        //        $entityTypes = Workday::select('workdayable_type')->distinct()->pluck('workdayable_type');
-        //        foreach ($entityTypes as $entityType) {
-        //            $entityIds = Workday::where('workdayable_type', $entityType)
-        //                ->select('workdayable_id')
-        //                ->distinct()
-        //                ->pluck('workdayable_id');
-        //            $count = $entityIds->count();
-        //            $shortName = explode_pop('\\', $entityType);
-        //            echo "Processing $shortName: $count records\n";
-        //
-        //            foreach ($entityIds as $entityId) {
-        //                $this->updateEntity($entityType, $entityId);
-        //            }
-        //        }
+            foreach ($entityIds as $entityId) {
+                $this->updateEntityWorkdays($entityType, $entityId);
+            }
+        }
     }
 
-    private function testCase(string $entityType, int $entityId): array
-    {
-        return [
-            'type' => $entityType,
-            'id' => $entityId,
-            'uuid' => $entityType::find($entityId)->uuid,
-            'mapping' => $this->updateEntityWorkdays($entityType, $entityId),
-        ];
-    }
-
-    private function updateEntityWorkdays(string $entityType, int $entityId): array
+    private function updateEntityWorkdays(string $entityType, int $entityId): void
     {
         $workdayCollections = Workday::where(['workdayable_type' => $entityType, 'workdayable_id' => $entityId])
             ->get()
@@ -89,48 +63,58 @@ class MigrateWorkdayData extends Command
                 return $carry;
             }, []);
 
-        $results = [];
         foreach ($workdayCollections as $collection => $workdays) {
-            $results[$collection] = $this->mapWorkdayCollection($workdays);
-        }
+            $mapping = $this->mapWorkdayCollection($workdays);
+            $framework_key = $workdays[0]->framework_key;
 
-        return $results;
+            $workday = Workday::create([
+                'workdayable_type' => $entityType,
+                'workdayable_id' => $entityId,
+                'framework_key' => $framework_key,
+                'collection' => $collection,
+            ]);
+            foreach ($mapping as $demographic => $subTypes) {
+                foreach ($subTypes as $subType => $names) {
+                    foreach ($names as $name => $amount) {
+                        WorkdayDemographic::create([
+                            'workday_id' => $workday->id,
+                            'type' => $demographic,
+                            'subtype' => $subType == self::SUBTYPE_NULL ? null : $subType,
+                            'name' => $name == self::NAME_NULL ? null : $name,
+                            'amount' => $amount,
+                        ]);
+                    }
+                }
+            }
+
+            $workdayIds = collect($workdays)->map(fn ($workday) => $workday->id)->all();
+            Workday::whereIn('id', $workdayIds)->update(['migrated_to_demographics' => true]);
+            Workday::whereIn('id', $workdayIds)->delete();
+        }
     }
 
     private function mapWorkdayCollection(array $workdays): array
     {
-        $results = ['original' => collect($workdays)->map(function ($workday) {
-            return [
-                'amount' => $workday->amount,
-                'gender' => $workday->gender,
-                'age' => $workday->age,
-                'ethnicity' => $workday->ethnicity,
-                'indigeneity' => $workday->indigeneity,
-            ];
-        })];
-
         $demographics = [];
         foreach (self::DEMOGRAPHICS as $demographic) {
             foreach ($workdays as $workday) {
                 $subType = $this->getSubtype($demographic, $workday);
-                $value = match ($workday[$demographic]) {
-                    null, 'gender-undefined', 'age-undefined' => 'unknown',
+                $name = match ($workday[$demographic]) {
+                    null, 'gender-undefined', 'age-undefined', 'decline-to-specify' => 'unknown',
                     default => $workday[$demographic],
                 };
-                if ($subType == 'unknown' && strcasecmp($value, 'unknown') == 0) {
+                if ($subType == 'unknown' && strcasecmp($name, 'unknown') == 0) {
                     // We only get an unknown subtype when we're working on ethnicity. If the value is also unknown in
                     // this case, we want to leave it null.
-                    $value = self::VALUE_NULL;
+                    $name = self::NAME_NULL;
                 }
 
-                $current = data_get($demographics, "$demographic.$subType.$value.amount");
-                data_set($demographics, "$demographic.$subType.$value.amount", $current + $workday->amount);
+                $current = data_get($demographics, "$demographic.$subType.$name");
+                data_set($demographics, "$demographic.$subType.$name", $current + $workday->amount);
             }
         }
 
-        $results['new-workday-demographics'] = $demographics;
-
-        return $results;
+        return $demographics;
     }
 
     private function getSubtype(string $demographic, Workday $workday): string

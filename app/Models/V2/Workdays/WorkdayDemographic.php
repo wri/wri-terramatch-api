@@ -14,8 +14,9 @@ class WorkdayDemographic extends Model
 
     protected $fillable = [
         'workday_id',
-        'demographic_type',
-        'demographic_value',
+        'type',
+        'subtype',
+        'name',
         'amount',
     ];
 
