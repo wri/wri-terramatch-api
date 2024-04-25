@@ -67,15 +67,15 @@ class CountryDataController extends Controller
 
         $country = WorldCountryGeneralized::where('iso', $project->country)->first();
         $data = [
-          ['title' => 'title', 'value' => $sitePolygon->poly_name ?? null],
-          ['title' => 'Site', 'value' => $site?->name ?? null],
-          ['title' => 'Number of trees', 'value' => $sitePolygon->num_trees ?? null],
-          ['title' => 'Country', 'value' => $country?->country ?? null],
-          ['title' => 'country_iso', 'value' => $project?->country ?? null],
-          ['title' => 'Project', 'value' => $project?->name ?? null],
-          ['title' => 'Organization', 'value' => $organization?->name ?? null],
-          ['title' => 'Plant Start Date', 'value' => $sitePolygon->plantstart ?? null],
-          ['title' => 'Status', 'value' => $sitePolygon->status ?? null]
+          ['key'=> 'poly_name', 'title' => 'title', 'value' => $sitePolygon->poly_name ?? null],
+          ['key'=> 'site_name', 'title' => 'Site', 'value' => $site?->name ?? null],
+          ['key'=> 'num_trees', 'title' => 'Number of trees', 'value' => $sitePolygon->num_trees ?? null],
+          ['key'=> 'country', 'title' => 'Country', 'value' => $country?->country ?? null],
+          ['key'=> 'country_iso', 'title' => 'country_iso', 'value' => $project?->country ?? null],
+          ['key'=> 'project_name', 'title' => 'Project', 'value' => $project?->name ?? null],
+          ['key'=> 'organization_name', 'title' => 'Organization', 'value' => $organization?->name ?? null],
+          ['key'=> 'plantstart', 'title' => 'Plant Start Date', 'value' => $sitePolygon->plantstart ?? null],
+          ['key'=> 'status', 'title' => 'Status', 'value' => $sitePolygon->status ?? null]
         ];
         return response()->json(['data' => $data]);
     }
