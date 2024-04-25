@@ -14,9 +14,9 @@ return new class extends Migration {
         Schema::create('workday_demographics', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Workday::class);
-            $table->string('demographic_type');
-            $table->string('demographic_subtype')->nullable();
-            $table->string('demographic_value');
+            $table->string('type');
+            $table->string('subtype')->nullable();
+            $table->string('name')->nullable();
             $table->integer('amount');
 
             $table->softDeletes();

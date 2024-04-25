@@ -32,6 +32,7 @@ class Workday extends Model
         'age',
         'ethnicity',
         'indigeneity',
+        'migrated_to_demographics',
     ];
 
     public const COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS = 'paid-nursery-operations';
@@ -87,19 +88,19 @@ class Workday extends Model
     public function genderDemographics(): HasMany
     {
         return $this->hasMany(WorkdayDemographic::class)
-            ->where('demographic_type', WorkdayDemographic::GENDER);
+            ->where('type', WorkdayDemographic::GENDER);
     }
 
     public function ageDemographics(): HasMany
     {
         return $this->hasMany(WorkdayDemographic::class)
-            ->where('demographic_type', WorkdayDemographic::AGE);
+            ->where('type', WorkdayDemographic::AGE);
     }
 
     public function ethnicityDemographics(): HasMany
     {
         return $this->hasMany(WorkdayDemographic::class)
-            ->where('demographic_type', WorkdayDemographic::ETHNICITY);
+            ->where('type', WorkdayDemographic::ETHNICITY);
     }
 
     public function getReadableCollectionAttribute(): ?string
