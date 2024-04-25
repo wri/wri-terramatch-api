@@ -30,6 +30,7 @@ class MigrateWorkdayData extends Command
     ];
 
     private const SUBTYPE_NULL = 'subtype-null';
+    private const VALUE_NULL = 'value-null';
 
     /**
      * Execute the console command.
@@ -116,6 +117,11 @@ class MigrateWorkdayData extends Command
                     null, 'gender-undefined', 'age-undefined' => 'unknown',
                     default => $workday[$demographic],
                 };
+                if ($subType == 'unknown' && strcasecmp($value, 'unknown') == 0) {
+                    // We only get an unknown subtype when we're working on ethnicity. If the value is also unknown in
+                    // this case, we want to leave it null.
+                    $value = self::VALUE_NULL;
+                }
 
                 $current = data_get($demographics, "$demographic.$subType.$value.amount");
                 data_set($demographics, "$demographic.$subType.$value.amount", $current + $workday->amount);
@@ -133,8 +139,7 @@ class MigrateWorkdayData extends Command
             return self::SUBTYPE_NULL;
         }
 
-        if ($workday->indigeneity != null) {
-            // TODO (NJC): Waiting to hear back on what to do with `decline to specify` and `unknown` rows
+        if ($workday->indigeneity != null && $workday->indigeneity != 'decline to specify') {
             return $workday->indigeneity;
         }
 
@@ -144,9 +149,6 @@ class MigrateWorkdayData extends Command
             return 'other';
         }
 
-        // TODO (NJC): Based on what's in the DB, this can only be `decline-to-specify` or `unknown`, see TODO above
-        //  Note that when it appears in the indigeneity column, it's `decline to specify`, but when it's in the
-        //  ethnicity column, it's `decline-to-specify`.
-        return $workday->ethnicity;
+        return 'unknown';
     }
 }
