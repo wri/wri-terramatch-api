@@ -124,7 +124,7 @@ class MergeEntities extends Command
             $this->abort('Exception encountered during merge operation, transaction aborted: ' . $e->getMessage());
         }
 
-        echo "Merge complete!";
+        echo 'Merge complete!';
     }
 
     /**
