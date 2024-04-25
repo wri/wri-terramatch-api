@@ -9361,7 +9361,7 @@ definitions:
   DashboardGetProjectsData:
     type: object
     properties:
-      id:
+      uuid:
         type: string
       name:
         type: string
