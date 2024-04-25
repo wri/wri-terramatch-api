@@ -23,6 +23,8 @@ class UserRoleResource
         $this->email_address = $user->email_address;
         $this->role = $user->role;
         $this->role_id = $user->role_id;
+        $this->country = $user->country;
+        $this->program = $user->program;
         $this->email_address_verified_at = $user->email_address_verified_at;
         $this->last_logged_in_at = $user->last_logged_in_at;
         $this->job_role = $user->job_role;

@@ -55,6 +55,8 @@ class User extends Authenticatable implements JWTSubject
         'has_consented',
         'whatsapp_phone',
         'banners',
+        'country',
+        'program'
     ];
 
     protected $casts = [

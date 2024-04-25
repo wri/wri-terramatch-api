@@ -9376,6 +9376,96 @@ definitions:
     properties:
       bbox:
         type: array
+  RoleUserCreate:
+    title: RoleUserCreate
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+      role_id:
+        type: string
+      country:
+        type: string
+      program:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      callback_url:
+        type: string
+  RoleUserRead:
+    title: RoleUserRead
+    type: object
+    properties:
+      id:
+        type: integer
+      organisation_id:
+        type: integer
+      organisation_name:
+        type: string
+      my_organisation:
+        $ref: '#/definitions/V2AdminOrganisationRead'
+      my_monitoring_organisations:
+        type: array
+        items:
+          $ref: '#/definitions/V2MonitoringOrganisationRead'
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      email_address_verified_at:
+        type: string
+        format: date-time
+      role:
+        type: string
+      role_id:
+        type: string
+      country:
+        type: string
+      program:
+        type: string
+      last_logged_in_at:
+        type: string
+        format: date-time
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      has_ppc_projects:
+        type: boolean
+      has_terrafund_projects:
+        type: boolean
   DashboardPolygonData:
     type: object
     properties:
@@ -19628,4 +19718,25 @@ paths:
             $ref: '#/definitions/DashboardPolygonData'
         '404':
           description: Polygon not found
+  /users-register:
+    post:
+      summary: Create a user role
+      tags:
+        - Users Roles
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RoleUserCreate'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/RoleUserRead'
          
