@@ -12,6 +12,7 @@ class SitePolygonDataController extends Controller
     {
         $sitePolygons = SitePolygon::where('site_id', $site)->get();
         Log::info(json_encode($sitePolygons));
+
         return $sitePolygons;
     }
 };

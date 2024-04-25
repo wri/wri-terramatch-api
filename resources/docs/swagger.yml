@@ -9480,6 +9480,11 @@ definitions:
             value:
               type: string
               description: Value of the data field
+  DashboardBBOXProject:
+    type: object
+    properties:
+      bbox:
+        type: array
 paths:
   '/organisations/{ID}/users':
     get:
@@ -19739,4 +19744,21 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/RoleUserRead'
-         
+  '/v2/dashboard/get-bbox-project':
+    get:
+      summary: Get Bbox of all polygons of project
+      tags:
+        - Projects 
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: UUID of the project
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/DashboardBBOXProject'
+        '404':
+          description: Project not found
