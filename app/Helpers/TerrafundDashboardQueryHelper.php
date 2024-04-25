@@ -2,7 +2,10 @@
 
 namespace App\Helpers;
 
+use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
 
 class TerrafundDashboardQueryHelper
 {
@@ -21,5 +24,14 @@ class TerrafundDashboardQueryHelper
         }
 
         return $query;
+    }
+
+    public static function getPolygonIdsOfProject($request)
+    {
+      $projectIds = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+      ->pluck('id');
+      $sitesIds = Site::whereIn('project_id', $projectIds)->pluck('uuid');
+      $polygonsIds = SitePolygon::whereIn('site_id', $sitesIds)->pluck('poly_id');
+      return $polygonsIds;
     }
 }

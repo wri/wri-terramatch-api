@@ -13,17 +13,51 @@ use Illuminate\Support\Facades\Log;
 
 class GetPolygonsController extends Controller
 {
-    public function __invoke(Request $request): GetPolygonsResource
-    {
-        $projectIds = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
-            ->pluck('id');
-        Log::info('Project ID: ' . $projectIds);
-        $sitesIds = Site::whereIn('project_id', $projectIds)->pluck('uuid');
-        $sitePolygonsIds = SitePolygon::whereIn('site_id', $sitesIds)->pluck('poly_id');
-        $polygons = PolygonGeometry::whereIn('uuid', $sitePolygonsIds)->pluck('uuid');
+  public function getPolygonsOfProject(Request $request): GetPolygonsResource
+  {
+    $polygonsIds = TerrafundDashboardQueryHelper::getPolygonIdsOfProject($request);
+    $polygons = PolygonGeometry::whereIn('uuid', $polygonsIds)->pluck('uuid');
+    return new GetPolygonsResource([
+      'data' => $polygons,
+    ]);
+  }
+  public function getBboxOfCompleteProject(Request $request)
+  {
+    try {
+      $polygonsIds = TerrafundDashboardQueryHelper::getPolygonIdsOfProject($request);
 
-        return new GetPolygonsResource([
-            'data' => $polygons,
-        ]);
-    }
+      // Fetch the ST_Envelope of each geometry as GeoJSON
+      $envelopes = PolygonGeometry::whereIn('uuid', $polygonsIds)
+        ->selectRaw('ST_ASGEOJSON(ST_Envelope(geom)) as envelope')
+        ->get();
+  
+      // Initialize variables for maximum and minimum coordinates
+      $maxX = $maxY = PHP_INT_MIN;
+      $minX = $minY = PHP_INT_MAX;
+  
+      // Iterate through each envelope to extract bounding box coordinates
+      foreach ($envelopes as $envelope) {
+        $geojson = json_decode($envelope->envelope);
+        $coordinates = $geojson->coordinates[0]; // Get the exterior ring coordinates
+  
+        // Update maximum and minimum coordinates
+        foreach ($coordinates as $point) {
+          $x = $point[0];
+          $y = $point[1];
+          $maxX = max($maxX, $x);
+          $minX = min($minX, $x);
+          $maxY = max($maxY, $y);
+          $minY = min($minY, $y);
+        }
+      }
+  
+      // Construct the bounding box coordinates
+      $bboxCoordinates = [$minX, $minY, $maxX, $maxY];
+  
+      return response()->json(['bbox' => $bboxCoordinates]);
+    } catch (\Exception $e) {
+      Log::error($e->getMessage());
+      return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
+    }  
+  }
 };
