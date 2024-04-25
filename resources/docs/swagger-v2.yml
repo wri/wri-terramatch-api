@@ -44174,6 +44174,11 @@ definitions:
         type: string
       country:
         type: string
+  SitePolygonsBboxResponse:
+    type: object
+    properties:
+      bbox:
+        type: array
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93784,3 +93789,24 @@ paths:
           description: Bad request
         '500':
           description: 'Internal server error'
+  '/v2/sites/{site}/bbox':
+    get:
+      operationId: get-v2-site-polygons-bbox
+      summary: Get bbox for a specific site
+      parameters:
+        - in: path
+          name: site
+          required: true
+          type: string
+          description: The ID of the site
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygonsBboxResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
