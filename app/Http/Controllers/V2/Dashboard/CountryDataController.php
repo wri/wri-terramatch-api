@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Support\Facades\Log;
@@ -58,25 +59,43 @@ class CountryDataController extends Controller
             Log::error("Site not found for site polygon with ID: $sitePolygon->id");
         }
 
-        $organization = $project->organisation()->first();
+        $data = [
+          ['key' => 'poly_name', 'title' => 'title', 'value' => $sitePolygon->poly_name ?? null],
+          ['key' => 'site_name', 'title' => 'Site', 'value' => $site?->name ?? null],
+          ['key' => 'num_trees', 'title' => 'Number of trees', 'value' => $sitePolygon->num_trees ?? null],
+          ['key' => 'plantstart', 'title' => 'Plant Start Date', 'value' => $sitePolygon->plantstart ?? null],
+          ['key' => 'status', 'title' => 'Status', 'value' => $sitePolygon->status ?? null],
+        ];
 
+        return response()->json(['data' => $data]);
+    }
+    public function getProjectData(string $uuid)
+    {
+      try {
+        $project = Project::isUuid($uuid)->first();
+
+        if (! $project) {
+            Log::error("Project not found for project with UUID: $uuid");
+        }
+        $countSitePolygons = $project->getTotalSitePolygons();
+        $organization = $project->organisation()->first();
         if (! $organization) {
             Log::error("Organization not found for project with ID: $project->id");
         }
 
         $country = WorldCountryGeneralized::where('iso', $project->country)->first();
         $data = [
-          ['key' => 'poly_name', 'title' => 'title', 'value' => $sitePolygon->poly_name ?? null],
-          ['key' => 'site_name', 'title' => 'Site', 'value' => $site?->name ?? null],
-          ['key' => 'num_trees', 'title' => 'Number of trees', 'value' => $sitePolygon->num_trees ?? null],
-          ['key' => 'country', 'title' => 'Country', 'value' => $country?->country ?? null],
-          ['key' => 'country_iso', 'title' => 'country_iso', 'value' => $project?->country ?? null],
-          ['key' => 'project_name', 'title' => 'Project', 'value' => $project?->name ?? null],
-          ['key' => 'organization_name', 'title' => 'Organization', 'value' => $organization?->name ?? null],
-          ['key' => 'plantstart', 'title' => 'Plant Start Date', 'value' => $sitePolygon->plantstart ?? null],
-          ['key' => 'status', 'title' => 'Status', 'value' => $sitePolygon->status ?? null],
+          ['key' => 'project_name', 'title' => 'title', 'value' => $project->name ?? null],
+          ['key' => 'country', 'title' => 'Country', 'value' => $country->country ?? null],
+          ['key' => 'polygon_counts', 'title' => 'No. of Site - Polygons', 'value' => $countSitePolygons ?? null],
+          ['key' => 'organizations', 'title' => 'Organization', 'value' => $organization->name ?? null]
         ];
 
         return response()->json(['data' => $data]);
+      } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        return response()->json(['error' => 'An error occurred while fetching project data'], 500);
+      }
+        
     }
 }

@@ -21,6 +21,7 @@ use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Polygon;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
@@ -455,5 +456,13 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     private function submittedSiteReportIds(): array
     {
         return $this->submittedSiteReports()->pluck('v2_site_reports.id')->toArray();
+    }
+    public function sitePolygons()
+    {
+        return $this->hasMany(SitePolygon::class, 'project_id','uuid');
+    }
+    public function getTotalSitePolygons()
+    {
+        return $this->sitePolygons()->count();
     }
 }

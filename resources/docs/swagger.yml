@@ -9480,6 +9480,9 @@ definitions:
             value:
               type: string
               description: Value of the data field
+            key:
+              type: string
+              description: Key of the data field
   DashboardBBOXProject:
     type: object
     properties:
@@ -19762,3 +19765,21 @@ paths:
             $ref: '#/definitions/DashboardBBOXProject'
         '404':
           description: Project not found
+  '/v2/dashboard/project-data/{uuid}':
+    get:
+      summary: Get project point data by UUID
+      tags:
+        - Project point data by UUID
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          description: UUID of the project point
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/DashboardPolygonData'
+        '500':
+          description: Error in queries
