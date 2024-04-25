@@ -74,7 +74,8 @@ class MergeEntities extends Command
         return collect([$merged])->push($feeders)->flatten();
     }
 
-    #[NoReturn] private function abort(string $message, int $exitCode = 1): void
+    #[NoReturn]
+    private function abort(string $message, int $exitCode = 1): void
     {
         echo $message;
         exit($exitCode);
@@ -87,7 +88,7 @@ class MergeEntities extends Command
             "  Feeder Entity Names: \n    " .
             $feederNames->join("\n    ")
             . "\n\n";
-        if (!$this->confirm($mergeMessage)) {
+        if (! $this->confirm($mergeMessage)) {
             $this->abort('Merge aborted', 0);
         }
     }
@@ -120,7 +121,7 @@ class MergeEntities extends Command
         } catch (Exception $e) {
             DB::rollBack();
 
-            $this->abort("Exception encountered during merge operation, transaction aborted: " . $e->getMessage());
+            $this->abort('Exception encountered during merge operation, transaction aborted: ' . $e->getMessage());
         }
     }
 
@@ -155,75 +156,12 @@ class MergeEntities extends Command
             throw new Exception("Merge mapping configuration not found: $merge->shortName, $merge->framework_key");
         }
 
-        $entities = collect([$merge])->push($feeders)->flatten();
-        foreach ($config['properties'] ?? [] as $property => $commandSpec) {
-            $commandParts = explode(':', $commandSpec);
-            $command = array_shift($commandParts);
-            switch ($command) {
-                case 'date':
-                    $dates = $entities->map(fn ($entity) => Carbon::parse($entity->$property));
-                    $merge->$property = $this->mergeDates($dates, ...$commandParts);
-                    break;
-
-                case 'long-text':
-                    $texts = $entities->map(fn ($entity) => $entity->$property);
-                    $merge->$property = $texts->join("\n\n");
-                    break;
-
-                case 'set-null':
-                    $merge->$property = null;
-                    break;
-
-                case 'union':
-                    $sets = $entities->map(fn ($entity) => $entity->$property);
-                    $merge->$property = $sets->flatten()->filter()->unique()->all();
-                    break;
-
-                case 'sum':
-                    $values = $entities->map(fn ($entity) => $entity->$property);
-                    $merge->$property = $values->sum();
-                    break;
-
-                case 'ensure-unique-string':
-                    $texts = $entities->map(fn ($entity) => $entity->$property);
-                    $merge->$property = $this->ensureUniqueString($property, $texts);
-                    break;
-
-                default:
-                    throw new Exception("Unknown properties command: $command");
-            }
-        }
-
-        foreach ($config['relations'] ?? [] as $property => $commandSpec) {
-            $commandParts = explode(':', $commandSpec);
-            $command = array_shift($commandParts);
-            switch ($command) {
-                case 'move-to-merged':
-                    $this->moveAssociations($property, $merge, $feeders);
-                    break;
-
-                case 'tree-species-merge':
-                    $this->treeSpeciesMerge($property, $merge, $feeders);
-                    break;
-
-                default:
-                    throw new Exception("Unknown relations command: $command");
-            }
-        }
-
-        foreach ($config['file-collections'] ?? [] as $property => $commandSpec) {
-            $commandParts = explode(':', $commandSpec);
-            $command = array_shift($commandParts);
-            switch ($command) {
-                case 'move-to-merged':
-                    /** @var MediaModel $merge */
-                    $this->moveMedia($property, $merge, $feeders);
-                    break;
-
-                default:
-                    throw new Exception("Unknown file collections command: $command");
-            }
-        }
+        $this->processProperties(data_get($config, 'properties'), $merge, $feeders);
+        $this->processRelations(data_get($config, 'relations'), $merge, $feeders);
+        $this->processConditionals(data_get($config, 'conditionals'), $merge, $feeders);
+        // Saving file collections for last because I'm not entirely sure that rolling back the transaction will actually
+        // undo the spatie media "move", so we want to avoid aborting the process at this point if at all possible.
+        $this->processFileCollections(data_get($config, 'file-collections'), $merge, $feeders);
 
         $merge->save();
         $merge->updateRequests()->delete();
@@ -237,10 +175,151 @@ class MergeEntities extends Command
     /**
      * @throws Exception
      */
+    private function processProperties($properties, $merge, $feeders): void
+    {
+        $entities = collect([$merge])->push($feeders)->flatten();
+        foreach ($properties ?? [] as $property => $commandSpec) {
+            $commandParts = explode(':', $commandSpec);
+            $command = array_shift($commandParts);
+            switch ($command) {
+                case 'date':
+                    $dates = $entities->map(fn ($entity) => Carbon::parse($entity->$property));
+                    $merge->$property = $this->mergeDates($dates, ...$commandParts);
+
+                    break;
+
+                case 'long-text':
+                    $texts = $entities->map(fn ($entity) => $entity->$property);
+                    $merge->$property = $texts->join("\n\n");
+
+                    break;
+
+                case 'set-null':
+                    $merge->$property = null;
+
+                    break;
+
+                case 'union':
+                    $sets = $entities->map(fn ($entity) => $entity->$property);
+                    $merge->$property = $sets->flatten()->filter()->unique()->all();
+
+                    break;
+
+                case 'sum':
+                    $values = $entities->map(fn ($entity) => $entity->$property);
+                    $merge->$property = $values->sum();
+
+                    break;
+
+                case 'ensure-unique-string':
+                    $texts = $entities->map(fn ($entity) => $entity->$property);
+                    $merge->$property = $this->ensureUniqueString($property, $texts);
+
+                    break;
+
+                default:
+                    throw new Exception("Unknown properties command: $command");
+            }
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function processRelations($relations, $merge, $feeders): void
+    {
+        foreach ($relations ?? [] as $property => $commandSpec) {
+            $commandParts = explode(':', $commandSpec);
+            $command = array_shift($commandParts);
+            switch ($command) {
+                case 'move-to-merged':
+                    $this->moveAssociations($property, $merge, $feeders);
+
+                    break;
+
+                case 'tree-species-merge':
+                    $this->treeSpeciesMerge($property, $merge, $feeders);
+
+                    break;
+
+                default:
+                    throw new Exception("Unknown relations command: $command");
+            }
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function processConditionals($conditionals, $merge, $feeders): void
+    {
+        // Conditionals are specified differently from the other sets. It's an array of linked field keys. The task of
+        // this block is to find the conditional that controls the display of that linked field and make sure that it's
+        // set to "true" if any of entities have it set to true. We also want to clear out the answers fiend from the
+        // merged entity because most of it is incorrect at this point (aside from what we set in this block).
+        $answers = [];
+        if (! empty($conditionals)) {
+            $form = $merge->getForm();
+            // get an associative array of uuid -> question for all questions in the form.
+            $questions = $form
+                ->sections
+                ->map(fn ($section) => $section->questions)
+                ->flatten()
+                ->mapWithKeys(fn ($question) => [$question->uuid => $question]);
+            foreach ($conditionals as $linkedField) {
+                $linkedFieldQuestion = $questions->first(fn ($question) => $question->linked_field_key == $linkedField);
+                if ($linkedFieldQuestion == null) {
+                    throw new Exception("No question found for linked field: $linkedFieldQuestion");
+                }
+                if (! $linkedFieldQuestion->show_on_parent_conditional) {
+                    throw new Exception("Question for linked field isn't gated by a conditional: $linkedFieldQuestion");
+                }
+
+                $conditional = $questions[$linkedField->parent_id];
+                if ($conditional == null) {
+                    throw new Exception("No parent conditional found for linked field: $linkedFieldQuestion");
+                }
+                if ($conditional['input_type'] != 'conditional') {
+                    throw new Exception("Parent of linked field question is not a conditional: $linkedFieldQuestion");
+                }
+
+                $answers[$conditional->uuid] = data_get($merge->answers, $conditional->uuid) ||
+                    $feeders->contains(fn ($feeder) => data_get($feeder->answers, $conditional->uuid));
+            }
+        }
+        $merge->answers = $answers;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function processFileCollections($fileCollections, $merge, $feeders): void
+    {
+        foreach ($fileCollections ?? [] as $property => $commandSpec) {
+            $commandParts = explode(':', $commandSpec);
+            $command = array_shift($commandParts);
+            switch ($command) {
+                case 'move-to-merged':
+                    /** @var MediaModel $merge */
+                    $this->moveMedia($property, $merge, $feeders);
+
+                    break;
+
+                default:
+                    throw new Exception("Unknown file collections command: $command");
+            }
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
     private function mergeDates(Collection $dates, $strategy): Carbon
     {
         return $dates->reduce(function (?Carbon $carry, Carbon $date) use ($strategy) {
-            if ($carry == null) return $date;
+            if ($carry == null) {
+                return $date;
+            }
 
             return match ($strategy) {
                 'first' => $carry->minimum($date),
