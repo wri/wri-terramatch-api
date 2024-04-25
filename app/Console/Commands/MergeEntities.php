@@ -138,7 +138,7 @@ class MergeEntities extends Command
         foreach ($merge->reports()->get() as $report) {
             $hasMany = $report->task->hasMany(get_class($report));
             // A whereIn would be faster, but we want to keep the reports in the same order as the feeders
-            $associatedReports = $feeders->map(fn ($feeder) => $hasMany->where($foreignKey, $feeder->id)->first());
+            $associatedReports = $feeders->map(fn ($feeder) => (clone $hasMany)->where($foreignKey, $feeder->id)->first())->filter();
             $this->mergeEntities($report, $associatedReports);
             $associatedReports->each(function ($report) { $report->delete(); });
         }
@@ -271,11 +271,11 @@ class MergeEntities extends Command
                 if ($linkedFieldQuestion == null) {
                     throw new Exception("No question found for linked field: $linkedFieldQuestion");
                 }
-                if (! $linkedFieldQuestion->show_on_parent_conditional) {
+                if (! $linkedFieldQuestion->show_on_parent_condition) {
                     throw new Exception("Question for linked field isn't gated by a conditional: $linkedFieldQuestion");
                 }
 
-                $conditional = $questions[$linkedField->parent_id];
+                $conditional = $questions[$linkedFieldQuestion->parent_id];
                 if ($conditional == null) {
                     throw new Exception("No parent conditional found for linked field: $linkedFieldQuestion");
                 }
