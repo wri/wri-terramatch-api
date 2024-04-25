@@ -7,11 +7,9 @@ return [
                 'terrafund' => [
                     'properties' => [
                         // Skip 'name' because the merged site keeps its name
-                        // Last minute decision was made to let these three keep their values from the base site, but
-                        // the implementation for these commands is complete.
-                        // 'start_date' => 'date:first',
-                        // 'end_date' => 'date:last',
-                        // 'hectares_to_restore_goal' => 'sum',
+                        'start_date' => 'date:first',
+                        'end_date' => 'date:last',
+                        'hectares_to_restore_goal' => 'sum',
                         'landscape_community_contribution' => 'long-text',
                         'boundary_geojson' => 'set-null',
                         'land_use_types' => 'union',
