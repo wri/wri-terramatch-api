@@ -21,6 +21,9 @@ return [
                     ],
                     'file-collections' => [
                         'photos' => 'move-to-merged',
+                        // It doesn't appear to be possible for a TF site or site report to create a photo in any
+                        // collection aside from 'photos' today, but there are historical collections that have them.
+                        'file' => 'move-to-merged',
                     ],
                 ]
             ]
@@ -40,8 +43,8 @@ return [
                     ],
                     'file-collections' => [
                         'photos' => 'move-to-merged',
-                        // It doesn't appear to be possible for a TF site or site report to create a photo in this
-                        // collection today, but there are historical collections that have them.
+                        // It doesn't appear to be possible for a TF site or site report to create a photo in any
+                        // collection aside from 'photos' today, but there are historical collections that have them.
                         'file' => 'move-to-merged',
                     ],
                     'conditionals' => [
