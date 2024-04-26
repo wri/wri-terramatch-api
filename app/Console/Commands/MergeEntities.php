@@ -323,13 +323,13 @@ class MergeEntities extends Command
      */
     private function processFileCollections($fileCollections, $merge, $feeders): void
     {
-        foreach ($fileCollections ?? [] as $property => $commandSpec) {
+        foreach ($fileCollections ?? [] as $collection => $commandSpec) {
             $commandParts = explode(':', $commandSpec);
             $command = array_shift($commandParts);
             switch ($command) {
                 case 'move-to-merged':
                     /** @var MediaModel $merge */
-                    $this->moveMedia($property, $merge, $feeders);
+                    $this->moveMedia($collection, $merge, $feeders);
 
                     break;
 
