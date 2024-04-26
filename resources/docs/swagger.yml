@@ -9420,12 +9420,6 @@ definitions:
         type: integer
       organisation_name:
         type: string
-      my_organisation:
-        $ref: '#/definitions/V2AdminOrganisationRead'
-      my_monitoring_organisations:
-        type: array
-        items:
-          $ref: '#/definitions/V2MonitoringOrganisationRead'
       first_name:
         type: string
       last_name:
