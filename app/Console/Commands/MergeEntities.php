@@ -160,15 +160,24 @@ class MergeEntities extends Command
 
         $this->processProperties(data_get($config, 'properties'), $merge, $feeders);
         $this->processRelations(data_get($config, 'relations'), $merge, $feeders);
+
+        // Conditionals has to come after properties and relations because it relies on the data for the above being
+        // accurate. We also want to make sure none of the relations are cached with incorrect values, so a save and
+        // refresh is appropriate here.
+        $merge->save();
+        $merge->refresh();
         $this->processConditionals(data_get($config, 'conditionals'), $merge, $feeders);
-        // Saving file collections for last because I'm not entirely sure that rolling back the transaction will actually
-        // undo the spatie media "move", so we want to avoid aborting the process at this point if at all possible.
+
+        // Saving file collections for last because I'm not entirely sure that rolling back the transaction will
+        // actually undo the spatie media "move", so we want to avoid aborting the process at this point if at all
+        // possible.
         $this->processFileCollections(data_get($config, 'file-collections'), $merge, $feeders);
 
         $merge->save();
         $merge->updateRequests()->delete();
         $feeders->each(function ($feeder) { $feeder->updateRequests()->delete(); });
         $merge->update([
+            'answers' => $merge->getEntityAnswers($merge->getForm()),
             'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
             'update_request_status' => UpdateRequest::ENTITY_STATUS_NO_UPDATE,
         ]);
@@ -191,7 +200,7 @@ class MergeEntities extends Command
                     break;
 
                 case 'long-text':
-                    $texts = $entities->map(fn ($entity) => $entity->$property);
+                    $texts = $entities->map(fn ($entity) => $entity->$property)->filter();
                     $merge->$property = $texts->join("\n\n");
 
                     break;
@@ -255,10 +264,9 @@ class MergeEntities extends Command
      */
     private function processConditionals($conditionals, $merge, $feeders): void
     {
-        // Conditionals are specified differently from the other sets. It's an array of linked field keys. The task of
-        // this block is to find the conditional that controls the display of that linked field and make sure that it's
-        // set to "true" if any of entities have it set to true. We also want to clear out the answers fiend from the
-        // merged entity because most of it is incorrect at this point (aside from what we set in this block).
+        // Some of the reports that are merging in are "migrated" models, which means that we can't rely on their
+        // answers field as a source of truth. Instead, we set the conditional to true if the field that it hides
+        // has any content.
         $answers = [];
         if (! empty($conditionals)) {
             $form = $merge->getForm();
@@ -268,7 +276,8 @@ class MergeEntities extends Command
                 ->map(fn ($section) => $section->questions)
                 ->flatten()
                 ->mapWithKeys(fn ($question) => [$question->uuid => $question]);
-            foreach ($conditionals as $linkedField) {
+
+            foreach ($conditionals as $linkedField => $commandSpec) {
                 $linkedFieldQuestion = $questions->first(fn ($question) => $question->linked_field_key == $linkedField);
                 if ($linkedFieldQuestion == null) {
                     throw new Exception("No question found for linked field: $linkedFieldQuestion");
@@ -285,8 +294,22 @@ class MergeEntities extends Command
                     throw new Exception("Parent of linked field question is not a conditional: $linkedFieldQuestion");
                 }
 
-                $answers[$conditional->uuid] = data_get($merge->answers, $conditional->uuid) ||
-                    $feeders->contains(fn ($feeder) => data_get($feeder->answers, $conditional->uuid));
+                $commandParts = explode(':', $commandSpec);
+                $command = array_shift($commandParts);
+                switch ($command) {
+                    case 'has-relation':
+                        $property = $commandParts[0];
+                        $answers[$conditional->uuid] = $merge->$property()->count() > 0;
+                        break;
+
+                    case 'has-text':
+                        $property = $commandParts[0];
+                        $answers[$conditional->uuid] = !empty($merge->$property);
+                        break;
+
+                    default:
+                        throw new Exception("Unknown conditionals command: $command");
+                }
             }
         }
         $merge->answers = $answers;
@@ -342,7 +365,7 @@ class MergeEntities extends Command
         }
 
         if ($unique->count() > 1) {
-            throw new Exception("Property required to be unique as is not: $property, " . json_encode($unique));
+            throw new Exception("Property required to be unique is not: $property, " . json_encode($unique));
         }
 
         return $unique->first();
