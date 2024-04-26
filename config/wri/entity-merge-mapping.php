@@ -40,6 +40,9 @@ return [
                     ],
                     'file-collections' => [
                         'photos' => 'move-to-merged',
+                        // It doesn't appear to be possible for a TF site or site report to create a photo in this
+                        // collection today, but there are historical collections that have them.
+                        'file' => 'move-to-merged',
                     ],
                     'conditionals' => [
                         'site-rep-rel-disturbances' => 'has-relation:disturbances',
