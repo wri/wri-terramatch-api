@@ -65,7 +65,7 @@ class CountryDataController extends Controller
           ['key' => 'num_trees', 'title' => 'Number of trees', 'value' => $sitePolygon->num_trees ?? null],
           ['key' => 'plantstart', 'title' => 'Plant Start Date', 'value' => $sitePolygon->plantstart ?? null],
           ['key' => 'status', 'title' => 'Status', 'value' => $sitePolygon->status ?? null],
-          ['key' => 'project_name', 'title' => 'Project', 'value' => $project->name ?? null]
+          ['key' => 'project_name', 'title' => 'Project', 'value' => $project->name ?? null],
         ];
 
         return response()->json(['data' => $data]);

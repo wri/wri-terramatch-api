@@ -22,7 +22,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
             'total_hectares_restored_goal' => $this->getTotalHectaresRestoredGoalSum($projects),
             'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
             'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($projects),
-            'country_name' => $countryName
+            'country_name' => $countryName,
         ];
 
         return new TotalSectionHeaderResource($response);
