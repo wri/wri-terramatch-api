@@ -232,6 +232,9 @@ class MergeEntities extends Command
                     throw new Exception("Unknown properties command: $command");
             }
         }
+
+        // Make sure any property changes don't get wiped out be a refresh() further down the migration process.
+        $merge->save();
     }
 
     /**
