@@ -29,6 +29,8 @@ class UpdateUserRequest extends FormRequest
 
             'organisation' => 'sometimes|nullable|string|between:1,255',
             'monitoring_organisations' => 'sometimes|nullable|array',
+            'country' => 'sometimes|nullable|string|between:1,255',
+            'program' => 'sometimes|nullable|string|between:1,255',
         ];
     }
 }

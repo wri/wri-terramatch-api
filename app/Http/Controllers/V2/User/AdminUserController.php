@@ -139,6 +139,14 @@ class AdminUserController extends Controller
                     $data['role'] = 'user';
 
                     break;
+                case 'government':
+                    $data['role'] = 'government';
+
+                    break;
+                case 'funder':
+                    $data['role'] = 'funder';
+
+                    break;
             }
         }
 
