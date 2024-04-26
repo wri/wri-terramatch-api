@@ -69,33 +69,35 @@ class CountryDataController extends Controller
 
         return response()->json(['data' => $data]);
     }
+
     public function getProjectData(string $uuid)
     {
-      try {
-        $project = Project::isUuid($uuid)->first();
+        try {
+            $project = Project::isUuid($uuid)->first();
 
-        if (! $project) {
-            Log::error("Project not found for project with UUID: $uuid");
+            if (! $project) {
+                Log::error("Project not found for project with UUID: $uuid");
+            }
+            $countSitePolygons = $project->getTotalSitePolygons();
+            $organization = $project->organisation()->first();
+            if (! $organization) {
+                Log::error("Organization not found for project with ID: $project->id");
+            }
+
+            $country = WorldCountryGeneralized::where('iso', $project->country)->first();
+            $data = [
+              ['key' => 'project_name', 'title' => 'title', 'value' => $project->name ?? null],
+              ['key' => 'country', 'title' => 'Country', 'value' => $country->country ?? null],
+              ['key' => 'polygon_counts', 'title' => 'No. of Site - Polygons', 'value' => $countSitePolygons ?? null],
+              ['key' => 'organizations', 'title' => 'Organization', 'value' => $organization->name ?? null],
+            ];
+
+            return response()->json(['data' => $data]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json(['error' => 'An error occurred while fetching project data'], 500);
         }
-        $countSitePolygons = $project->getTotalSitePolygons();
-        $organization = $project->organisation()->first();
-        if (! $organization) {
-            Log::error("Organization not found for project with ID: $project->id");
-        }
 
-        $country = WorldCountryGeneralized::where('iso', $project->country)->first();
-        $data = [
-          ['key' => 'project_name', 'title' => 'title', 'value' => $project->name ?? null],
-          ['key' => 'country', 'title' => 'Country', 'value' => $country->country ?? null],
-          ['key' => 'polygon_counts', 'title' => 'No. of Site - Polygons', 'value' => $countSitePolygons ?? null],
-          ['key' => 'organizations', 'title' => 'Organization', 'value' => $organization->name ?? null]
-        ];
-
-        return response()->json(['data' => $data]);
-      } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        return response()->json(['error' => 'An error occurred while fetching project data'], 500);
-      }
-        
     }
 }

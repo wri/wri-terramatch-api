@@ -457,10 +457,12 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     {
         return $this->submittedSiteReports()->pluck('v2_site_reports.id')->toArray();
     }
+
     public function sitePolygons()
     {
-        return $this->hasMany(SitePolygon::class, 'project_id','uuid');
+        return $this->hasMany(SitePolygon::class, 'project_id', 'uuid');
     }
+
     public function getTotalSitePolygons()
     {
         return $this->sitePolygons()->count();
