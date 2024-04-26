@@ -42,8 +42,8 @@ return [
                         'photos' => 'move-to-merged',
                     ],
                     'conditionals' => [
-                        'site-rep-rel-disturbances',
-                        'site-rep-technical-narrative',
+                        'site-rep-rel-disturbances' => 'has-relation:disturbances',
+                        'site-rep-technical-narrative' => 'has-text:technical_narrative',
                     ]
                 ]
             ]
