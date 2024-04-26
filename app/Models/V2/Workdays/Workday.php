@@ -6,6 +6,7 @@ use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Workday extends Model
@@ -31,6 +32,7 @@ class Workday extends Model
         'age',
         'ethnicity',
         'indigeneity',
+        'migrated_to_demographics',
     ];
 
     public const COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS = 'paid-nursery-operations';
@@ -81,6 +83,24 @@ class Workday extends Model
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    public function genderDemographics(): HasMany
+    {
+        return $this->hasMany(WorkdayDemographic::class)
+            ->where('type', WorkdayDemographic::GENDER);
+    }
+
+    public function ageDemographics(): HasMany
+    {
+        return $this->hasMany(WorkdayDemographic::class)
+            ->where('type', WorkdayDemographic::AGE);
+    }
+
+    public function ethnicityDemographics(): HasMany
+    {
+        return $this->hasMany(WorkdayDemographic::class)
+            ->where('type', WorkdayDemographic::ETHNICITY);
     }
 
     public function getReadableCollectionAttribute(): ?string
