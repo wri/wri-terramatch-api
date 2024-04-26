@@ -22,6 +22,7 @@ class TotalSectionHeaderResource extends JsonResource
             'total_hectares_restored_goal' => $this->total_hectares_restored_goal,
             'total_trees_restored' => $this->total_trees_restored,
             'total_trees_restored_goal' => $this->total_trees_restored_goal,
+            'country_name' => $this->country_name,
         ];
     }
 }
