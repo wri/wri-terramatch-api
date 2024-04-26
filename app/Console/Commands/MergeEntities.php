@@ -124,7 +124,7 @@ class MergeEntities extends Command
             $this->abort('Exception encountered during merge operation, transaction aborted: ' . $e->getMessage());
         }
 
-        echo 'Merge complete!';
+        echo 'Merge complete!\n\n';
     }
 
     /**
@@ -303,11 +303,13 @@ class MergeEntities extends Command
                     case 'has-relation':
                         $property = $commandParts[0];
                         $answers[$conditional->uuid] = $merge->$property()->count() > 0;
+
                         break;
 
                     case 'has-text':
                         $property = $commandParts[0];
-                        $answers[$conditional->uuid] = !empty($merge->$property);
+                        $answers[$conditional->uuid] = ! empty($merge->$property);
+
                         break;
 
                     default:
