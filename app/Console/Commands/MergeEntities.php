@@ -121,10 +121,10 @@ class MergeEntities extends Command
         } catch (Exception $e) {
             DB::rollBack();
 
-            $this->abort('Exception encountered during merge operation, transaction aborted: ' . $e->getMessage());
+            $this->abort('Exception encountered during merge operation, transaction aborted: ' . $e->getMessage() . "\n\n");
         }
 
-        echo 'Merge complete!\n\n';
+        echo "Merge complete!\n\n";
     }
 
     /**
@@ -160,18 +160,15 @@ class MergeEntities extends Command
 
         $this->processProperties(data_get($config, 'properties'), $merge, $feeders);
         $this->processRelations(data_get($config, 'relations'), $merge, $feeders);
+        $this->processFileCollections(data_get($config, 'file-collections'), $merge, $feeders);
 
-        // Conditionals has to come after properties and relations because it relies on the data for the above being
-        // accurate. We also want to make sure none of the relations are cached with incorrect values, so a save and
-        // refresh is appropriate here.
+        // Conditionals has to come after the other sets because it relies on the data for the above being accurate. We
+        // also want to make sure none of the relations are cached with incorrect values, so a save and refresh is
+        // appropriate here.
         $merge->save();
         $merge->refresh();
         $this->processConditionals(data_get($config, 'conditionals'), $merge, $feeders);
 
-        // Saving file collections for last because I'm not entirely sure that rolling back the transaction will
-        // actually undo the spatie media "move", so we want to avoid aborting the process at this point if at all
-        // possible.
-        $this->processFileCollections(data_get($config, 'file-collections'), $merge, $feeders);
 
         $merge->save();
         $merge->updateRequests()->delete();
@@ -414,7 +411,10 @@ class MergeEntities extends Command
         foreach ($feeders as $feeder) {
             /** @var Media $media */
             foreach ($feeder->getMedia($collection) as $media) {
-                $media->move($merge, $collection);
+                // Spatie as a "move" method, but it tries to download, copy, upload and then remove the original media.
+                // It appears to be kosher for us to just move the DB association, which is both faster and testable on
+                // staging.
+                $media->update(['model_id' => $merge->id]);
             }
         }
     }
