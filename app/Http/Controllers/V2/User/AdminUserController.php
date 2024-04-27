@@ -95,6 +95,14 @@ class AdminUserController extends Controller
                 $data['role'] = 'user';
 
                 break;
+            case 'government':
+                $data['role'] = 'user';
+
+                break;
+            case 'funder':
+                $data['role'] = 'user';
+
+                break;
         }
 
         $user = User::create($data);
@@ -140,11 +148,11 @@ class AdminUserController extends Controller
 
                     break;
                 case 'government':
-                    $data['role'] = 'government';
+                    $data['role'] = 'user';
 
                     break;
                 case 'funder':
-                    $data['role'] = 'funder';
+                    $data['role'] = 'user';
 
                     break;
             }
