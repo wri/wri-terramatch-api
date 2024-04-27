@@ -9361,7 +9361,7 @@ definitions:
   DashboardGetProjectsData:
     type: object
     properties:
-      id:
+      uuid:
         type: string
       name:
         type: string
@@ -9372,6 +9372,112 @@ definitions:
         type: number
         format: double
   DashboardBBOXCountry:
+    type: object
+    properties:
+      bbox:
+        type: array
+  RoleUserCreate:
+    title: RoleUserCreate
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+      role_id:
+        type: string
+      country:
+        type: string
+      program:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      callback_url:
+        type: string
+  RoleUserRead:
+    title: RoleUserRead
+    type: object
+    properties:
+      id:
+        type: integer
+      organisation_id:
+        type: integer
+      organisation_name:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      email_address_verified_at:
+        type: string
+        format: date-time
+      role:
+        type: string
+      role_id:
+        type: string
+      country:
+        type: string
+      program:
+        type: string
+      last_logged_in_at:
+        type: string
+        format: date-time
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      has_ppc_projects:
+        type: boolean
+      has_terrafund_projects:
+        type: boolean
+  DashboardPolygonData:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+              description: Title of the data field
+            value:
+              type: string
+              description: Value of the data field
+            key:
+              type: string
+              description: Key of the data field
+  DashboardBBOXProject:
     type: object
     properties:
       bbox:
@@ -19596,3 +19702,78 @@ paths:
             $ref: '#/definitions/DashboardBBOXCountry'
         '404':
           description: Country not found
+  '/v2/dashboard/polygon-data/{uuid}':
+    get:
+      summary: Get polygon data by UUID
+      tags:
+        - Polygon data by UUID
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          description: UUID of the polygon
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/DashboardPolygonData'
+        '404':
+          description: Polygon not found
+  /users-register:
+    post:
+      summary: Create a user role
+      tags:
+        - Users Roles
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RoleUserCreate'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/RoleUserRead'
+  '/v2/dashboard/get-bbox-project':
+    get:
+      summary: Get Bbox of all polygons of project
+      tags:
+        - Projects 
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: UUID of the project
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/DashboardBBOXProject'
+        '404':
+          description: Project not found
+  '/v2/dashboard/project-data/{uuid}':
+    get:
+      summary: Get project point data by UUID
+      tags:
+        - Project point data by UUID
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          description: UUID of the project point
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/DashboardPolygonData'
+        '500':
+          description: Error in queries

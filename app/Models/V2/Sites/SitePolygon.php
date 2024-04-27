@@ -43,4 +43,9 @@ class SitePolygon extends Model
     {
         return $this->belongsTo(Project::class, 'project_id', 'uuid');
     }
+
+    public function site()
+    {
+        return $this->belongsTo(Site::class, 'site_id', 'uuid');
+    }
 }

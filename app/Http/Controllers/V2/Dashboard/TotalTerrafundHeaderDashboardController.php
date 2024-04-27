@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\Dashboard;
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\TotalSectionHeaderResource;
+use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
 
 class TotalTerrafundHeaderDashboardController extends Controller
@@ -12,7 +13,10 @@ class TotalTerrafundHeaderDashboardController extends Controller
     public function __invoke(Request $request): TotalSectionHeaderResource
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
-
+        $countryName = "";
+        if ($request->country) {
+          $countryName = WorldCountryGeneralized::where('iso', $request->country)->first()->country;
+        }
         $response = (object)[
             'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
             'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
@@ -21,6 +25,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
             'total_hectares_restored_goal' => $this->getTotalHectaresRestoredGoalSum($projects),
             'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
             'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($projects),
+            'country_name' => $countryName,
         ];
 
         return new TotalSectionHeaderResource($response);

@@ -5,15 +5,15 @@ namespace App\Http\Controllers\V2\Dashboard;
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\ViewTreeRestorationGoalResource;
-use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Projects\Project;
-use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\StateMachines\EntityStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\StateMachines\EntityStatusStateMachine;
 
 class ViewTreeRestorationGoalController extends Controller
 {
@@ -81,7 +81,7 @@ class ViewTreeRestorationGoalController extends Controller
     }
 
     private function getSiteIds($projectIds)
-    {   
+    {
         return Site::whereIn('project_id', $projectIds)->where('status', EntityStatusStateMachine::APPROVED)->pluck('id');
     }
 

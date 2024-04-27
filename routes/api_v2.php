@@ -20,8 +20,8 @@ use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\CountriesController;
 use App\Http\Controllers\V2\Dashboard\CountryDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
-use App\Http\Controllers\V2\Dashboard\GetProjectsController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
+use App\Http\Controllers\V2\Dashboard\GetProjectsController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
 use App\Http\Controllers\V2\Dashboard\ProjectProfileDetailsController;
 use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
@@ -169,6 +169,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
@@ -568,6 +569,8 @@ Route::prefix('sites')->group(function () {
     Route::get('/{site}/image/locations', SiteImageLocationsController::class);
     Route::delete('/{site}', SoftDeleteSiteController::class);
     Route::get('/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
+    Route::get('/{site}/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
+    Route::get('/{site}/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
 });
 
 Route::prefix('project-monitorings')->group(function () {
@@ -674,6 +677,9 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/project-details', ProjectProfileDetailsController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/get-projects', GetProjectsController::class);
-    Route::get('/get-polygons', GetPolygonsController::class);
+    Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
+    Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
+    Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
+    Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
 });

@@ -1,46 +1,39 @@
 <?php
 
-namespace App\Http\Controllers\V2\Dashboard;
+namespace App\Http\Controllers\V2\Sites;
 
-use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Dashboard\GetPolygonsResource;
 use App\Models\V2\PolygonGeometry;
-use Illuminate\Http\Request;
+use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Support\Facades\Log;
 
-class GetPolygonsController extends Controller
+class SitePolygonDataController extends Controller
 {
-    public function getPolygonsOfProject(Request $request): GetPolygonsResource
+    public function getSitePolygonData($site)
     {
-        $polygonsIds = TerrafundDashboardQueryHelper::getPolygonIdsOfProject($request);
-        $polygons = PolygonGeometry::whereIn('uuid', $polygonsIds)->pluck('uuid');
+        $sitePolygons = SitePolygon::where('site_id', $site)->get();
+        Log::info(json_encode($sitePolygons));
 
-        return new GetPolygonsResource([
-          'data' => $polygons,
-        ]);
+        return $sitePolygons;
     }
 
-    public function getBboxOfCompleteProject(Request $request)
+    public function getBboxOfCompleteSite($site)
     {
         try {
-            $polygonsIds = TerrafundDashboardQueryHelper::getPolygonIdsOfProject($request);
+            $sitePolygons = SitePolygon::where('site_id', $site)->get();
+            $polygonsIds = $sitePolygons->pluck('poly_id');
 
-            // Fetch the ST_Envelope of each geometry as GeoJSON
             $envelopes = PolygonGeometry::whereIn('uuid', $polygonsIds)
               ->selectRaw('ST_ASGEOJSON(ST_Envelope(geom)) as envelope')
               ->get();
 
-            // Initialize variables for maximum and minimum coordinates
             $maxX = $maxY = PHP_INT_MIN;
             $minX = $minY = PHP_INT_MAX;
 
-            // Iterate through each envelope to extract bounding box coordinates
             foreach ($envelopes as $envelope) {
                 $geojson = json_decode($envelope->envelope);
-                $coordinates = $geojson->coordinates[0]; // Get the exterior ring coordinates
+                $coordinates = $geojson->coordinates[0];
 
-                // Update maximum and minimum coordinates
                 foreach ($coordinates as $point) {
                     $x = $point[0];
                     $y = $point[1];
@@ -51,7 +44,6 @@ class GetPolygonsController extends Controller
                 }
             }
 
-            // Construct the bounding box coordinates
             $bboxCoordinates = [$minX, $minY, $maxX, $maxY];
 
             return response()->json(['bbox' => $bboxCoordinates]);

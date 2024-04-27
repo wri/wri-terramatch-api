@@ -44013,6 +44013,10 @@ definitions:
         type: string
       role_id:
         type: string
+      country:
+        type: string
+      program:
+        type: string
       facebook:
         type: string
       twitter:
@@ -44056,6 +44060,10 @@ definitions:
         type: string
       role_id:
         type: string
+      country:
+        type: string
+      program:
+        type: string
       last_logged_in_at:
         type: string
         format: date-time
@@ -44079,6 +44087,98 @@ definitions:
         type: boolean
       has_terrafund_projects:
         type: boolean
+  DashboardCountriesResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardCountryData'
+  DashboardCountryData:
+    type: object
+    properties:
+      id:
+        type: integer
+      country_slug:
+        type: string
+      data:
+        $ref: '#/definitions/DashboardCountryInfo'
+  DashboardCountryInfo:
+    type: object
+    properties:
+      label:
+        type: string
+      icon:
+        type: string
+  SitePolygonsDataResponse:
+    type: array
+    items:
+      $ref: '#/definitions/SitePolygon'
+  SitePolygon:
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      project_id:
+        type: string
+      proj_name:
+        type: string
+      org_name:
+        type: string
+      poly_id:
+        type: string
+      poly_name:
+        type: string
+      site_id:
+        type: string
+      site_name:
+        type: string
+      poly_label:
+        type: string
+      plantstart:
+        type: string
+        format: date
+      plantend:
+        type: string
+        format: date
+      practice:
+        type: string
+      target_sys:
+        type: string
+      distr:
+        type: string
+      num_trees:
+        type: integer
+      est_area:
+        type: number
+        format: float
+      date_modified:
+        type: string
+        format: date-time
+      created_by:
+        type: string
+      last_modified_by:
+        type: string
+      deleted_at:
+        type: string
+        format: date-time
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+      status:
+        type: string
+      country:
+        type: string
+  SitePolygonsBboxResponse:
+    type: object
+    properties:
+      bbox:
+        type: array
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93646,4 +93746,67 @@ paths:
         '201':
           description: Created
           schema:
-            $ref: '#/definitions/RoleUserRead'  
+            $ref: '#/definitions/RoleUserRead'
+  '/v2/sites/{site}/polygon':
+    get:
+      operationId: get-v2-site-polygons
+      summary: Get polygons for a specific site
+      parameters:
+        - in: path
+          name: site
+          required: true
+          type: string
+          description: The ID of the site
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygonsDataResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/dashboard/countries':
+    get:
+      summary: Retrieve all countries list view.
+      description: |
+        This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/DashboardCountriesResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: 'Internal server error'
+  '/v2/sites/{site}/bbox':
+    get:
+      operationId: get-v2-site-polygons-bbox
+      summary: Get bbox for a specific site
+      parameters:
+        - in: path
+          name: site
+          required: true
+          type: string
+          description: The ID of the site
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygonsBboxResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
