@@ -645,6 +645,7 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
 
     Route::get('/centroids/{uuid}', [TerrafundPointsController::class, 'calculateCentroidOfCentroids']);
+    Route::get('/centroids-update', [TerrafundPointsController::class, 'updateProjectCentroids']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');

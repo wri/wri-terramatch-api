@@ -2,54 +2,50 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
-use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Sites\SitePolygon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\V2\Projects\Project;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use PDO;
-use PDOException;
 
 class TerrafundPointsController extends Controller
 {
-  public function calculateCentroidOfCentroids(string $projectUuid): string
+  public function calculateCentroidOfCentroids(string $projectUuid)
   {
-    $sitePolygons = SitePolygon::where('project_id', $projectUuid)->get();
-
-    if ($sitePolygons->isEmpty()) {
-      return null; // Return null if no polygons are found for the given projectUuid
-    }
-
-    $polyIds = $sitePolygons->pluck('poly_id')->toArray();
-
-    $centroids = PolygonGeometry::selectRaw("ST_AsGeoJSON(ST_Centroid(geom)) AS centroid")
-      ->whereIn('uuid', $polyIds)
-      ->get();
-
-    if ($centroids->isEmpty()) {
-      return null; // Return null if no centroids are found
-    }
-
-    $centroidCount = $centroids->count();
-    $totalLatitude = 0;
-    $totalLongitude = 0;
-
-    foreach ($centroids as $centroid) {
-      $centroidData = json_decode($centroid->centroid, true);
-      $totalLatitude += $centroidData['coordinates'][1];
-      $totalLongitude += $centroidData['coordinates'][0];
-    }
-
-    $averageLatitude = $totalLatitude / $centroidCount;
-    $averageLongitude = $totalLongitude / $centroidCount;
-
-    $centroidOfCentroids = json_encode([
-      'type' => 'Point',
-      'coordinates' => [$averageLongitude, $averageLatitude]
-    ]);
-
-    return $centroidOfCentroids;
+    $geometryHelper = new GeometryHelper(); 
+    $centroid = $geometryHelper->centroidOfProject($projectUuid);
+    return $centroid;
   }
+  public function updateProjectCentroids()
+  {
+      $geometryHelper = new GeometryHelper(); // Instantiate GeometryHelper
+  
+      $projectUuids = Project::distinct()->pluck('uuid');
+  
+      foreach ($projectUuids as $projectUuid) {
+          $centroid = $geometryHelper->centroidOfProject($projectUuid);
+  
+          if ($centroid === null) {
+              Log::warning("Invalid centroid for projectUuid: $projectUuid");
+              continue; 
+          }
+  
+          $centroidArray = json_decode($centroid, true);
+
+          $latitude = $centroidArray['coordinates'][1];
+          $longitude = $centroidArray['coordinates'][0];
+  
+          
+          Project::where('uuid', $projectUuid)
+              ->update([
+                  'lat' => $latitude,
+                  'long' => $longitude,
+              ]);
+  
+          
+          Log::info("Centroid updated for projectUuid: $projectUuid");
+      }
+  
+      return "Centroids updated successfully!";
+  }
+  
 }
