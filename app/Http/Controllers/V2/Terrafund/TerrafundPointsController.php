@@ -14,21 +14,42 @@ use PDOException;
 
 class TerrafundPointsController extends Controller
 {
-  public function calculateCentroidOfCentroids(string $projectUuid): string {
-    // Retrieve the list of poly_id through the site_polygon table with the given projectUuid
+  public function calculateCentroidOfCentroids(string $projectUuid): string
+  {
     $sitePolygons = SitePolygon::where('project_id', $projectUuid)->get();
+
+    if ($sitePolygons->isEmpty()) {
+      return null; // Return null if no polygons are found for the given projectUuid
+    }
+
     $polyIds = $sitePolygons->pluck('poly_id')->toArray();
 
-    // Create a placeholder string for the polyIds
-    $placeholders = implode(',', array_fill(0, count($polyIds), '?'));
+    $centroids = PolygonGeometry::selectRaw("ST_AsGeoJSON(ST_Centroid(geom)) AS centroid")
+      ->whereIn('uuid', $polyIds)
+      ->get();
 
-    // Bind the array values to the placeholders
-    $centroid = PolygonGeometry::selectRaw("ST_AsGeoJSON(ST_Centroid(geom)) AS centroid")
-        ->whereRaw("uuid IN ($placeholders)", $polyIds)
-        ->value('centroid');
+    if ($centroids->isEmpty()) {
+      return null; // Return null if no centroids are found
+    }
 
-    return $centroid;
+    $centroidCount = $centroids->count();
+    $totalLatitude = 0;
+    $totalLongitude = 0;
+
+    foreach ($centroids as $centroid) {
+      $centroidData = json_decode($centroid->centroid, true);
+      $totalLatitude += $centroidData['coordinates'][1];
+      $totalLongitude += $centroidData['coordinates'][0];
+    }
+
+    $averageLatitude = $totalLatitude / $centroidCount;
+    $averageLongitude = $totalLongitude / $centroidCount;
+
+    $centroidOfCentroids = json_encode([
+      'type' => 'Point',
+      'coordinates' => [$averageLongitude, $averageLatitude]
+    ]);
+
+    return $centroidOfCentroids;
+  }
 }
-
-}
-?>
