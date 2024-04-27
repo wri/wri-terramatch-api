@@ -187,6 +187,7 @@ use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
+use App\Http\Controllers\V2\Terrafund\TerrafundPointsController;
 use App\Http\Controllers\V2\TreeSpecies\GetTreeSpeciesForEntityController;
 use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
 use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestController;
@@ -643,7 +644,8 @@ Route::prefix('terrafund')->group(function () {
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
     Route::post('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
 
-
+    Route::get('/centroids/{uuid}', [TerrafundPointsController::class, 'calculateCentroidOfCentroids']);
+    Route::get('/centroids-update', [TerrafundPointsController::class, 'updateProjectCentroids']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
