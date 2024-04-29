@@ -52,7 +52,6 @@ class GeometryHelper
   public function updateProjectCentroid(string $projectUuid)
   {
     try {
-      Log::info("Updating centroid in helper for projectUuid: $projectUuid");
       $centroid = $this->centroidOfProject($projectUuid);
   
       if ($centroid === null) {

@@ -82,10 +82,8 @@ class TerrafundEditGeometryController extends Controller
   public function deletePolygonAndSitePolygon(string $uuid)
   {
       try {
-          Log::info("Deleting polygon and site polygon for UUID: $uuid");
           $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
           if (!$polygonGeometry) {
-              Log::info("No polygon geometry found for UUID: $uuid");
               return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
           }
           $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
@@ -94,10 +92,8 @@ class TerrafundEditGeometryController extends Controller
               Log::info("Deleting associated site polygon for UUID: $uuid");
               $sitePolygon->delete();
           }
-          Log::info("Updating project centroid for UUID: $uuid");
           $geometryHelper = new GeometryHelper();
           $geometryHelper->updateProjectCentroid($projectUuid);
-          Log::info("Deleting polygon geometry for UUID: $uuid");
           $polygonGeometry->delete();
           Log::info("Polygon geometry and associated site polygon deleted successfully for UUID: $uuid");
           return response()->json(['message' => 'Polygon geometry and associated site polygon deleted successfully.', 'uuid' => $uuid]);
