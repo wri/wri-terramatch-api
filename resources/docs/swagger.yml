@@ -9482,6 +9482,14 @@ definitions:
     properties:
       bbox:
         type: array
+  DashboardProjectViewResponse:
+    type: object
+    properties:
+      data:
+        object: object
+        properties:
+          allowed:
+            type: boolean
 paths:
   '/organisations/{ID}/users':
     get:
@@ -19704,9 +19712,9 @@ paths:
           description: Country not found
   '/v2/dashboard/polygon-data/{uuid}':
     get:
-      summary: Get polygon data by UUID
+      summary: Get Get allowed to project
       tags:
-        - Polygon data by UUID
+        - Get allowed to project
       parameters:
         - in: path
           name: uuid
@@ -19777,3 +19785,21 @@ paths:
             $ref: '#/definitions/DashboardPolygonData'
         '500':
           description: Error in queries
+  '/v2/dashboard/view-project/{uuid}':
+    get:
+      summary: Get allowed to project
+      tags:
+        - Get allowed to project
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          description: UUID of the project
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/DashboardProjectViewResponse'
+        '404':
+          description: Polygon not found
