@@ -44215,6 +44215,11 @@ definitions:
                   type: string
                 num_trees:
                   type: integer
+  PolygonBboxResponse:
+    type: object
+    properties:
+      bbox:
+        type: array
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93864,6 +93869,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/definitions/GeoJSONResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/polygon/bbox/{uuid}':
+    get:
+      operationId: get-v2-polygon-bbox
+      summary: Get bbox for a polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/PolygonBboxResponse'
         '400':
           description: Bad request
         '500':
