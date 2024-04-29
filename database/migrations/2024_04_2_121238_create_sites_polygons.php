@@ -28,7 +28,7 @@ class CreateSitesPolygons extends Migration
             $table->string('target_sys')->nullable();
             $table->string('distr')->nullable();
             $table->integer('num_trees')->nullable();
-            $table->float('est_area')->nullable();
+            $table->decimal('est_area', 15, 2)->nullable();
             $table->date('date_modified')->nullable();
             $table->string('status')->nullable();
             $table->string('created_by')->nullable();
