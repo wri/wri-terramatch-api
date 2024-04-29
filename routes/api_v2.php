@@ -125,10 +125,6 @@ use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
-use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
-use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
-use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
-use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
@@ -690,10 +686,4 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
     Route::get('/view-project/{uuid}', ViewProjectController::class);
-    Route::prefix('/project-pipeline')->group(function () {
-        Route::get('/', GetProjectPipelineController::class);
-        Route::post('/', StoreProjectPipelineController::class);
-        Route::patch('/{projectPipeline}', UpdateProjectPipelineController::class);
-        Route::delete('/{projectPipeline}', DeleteProjectPipelineController::class);
-    });
 });
