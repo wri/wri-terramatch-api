@@ -18,10 +18,7 @@ class CreateSitesPolygons extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('project_id')->nullable();
-            $table->string('proj_name')->nullable();
             $table->string('site_id')->nullable();
-            $table->string('site_name')->nullable();
-            $table->string('org_name')->nullable();
             $table->string('poly_id')->nullable();
             $table->string('poly_name')->nullable();
             $table->string('poly_label')->nullable();
@@ -33,7 +30,6 @@ class CreateSitesPolygons extends Migration
             $table->integer('num_trees')->nullable();
             $table->float('est_area')->nullable();
             $table->date('date_modified')->nullable();
-            $table->string('country')->nullable();
             $table->string('status')->nullable();
             $table->string('created_by')->nullable();
             $table->string('last_modified_by')->nullable();

@@ -47,5 +47,5 @@ class TerrafundPointsController extends Controller
   
       return "Centroids updated successfully!";
   }
-  
+
 }
