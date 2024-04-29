@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
@@ -198,6 +199,7 @@ class TerrafundCreateGeometryController extends Controller
     private function insertSitePolygon(string $polygonUuid, array $properties, float $area)
     {
         try {
+            Log::info('Inserting site polygon', ['properties' => $properties, "polygonUuid" => $polygonUuid]);
             $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
             $SCHEMA_CRITERIA_ID = 13;
             $validSchema = true;
@@ -214,13 +216,10 @@ class TerrafundCreateGeometryController extends Controller
 
             $sitePolygon = new SitePolygon();
             $sitePolygon->project_id = $properties['project_id'] ?? null;
-            $sitePolygon->proj_name = $properties['proj_name'] ?? null;
-            $sitePolygon->org_name = $properties['org_name'] ?? null;
             $sitePolygon->country = $properties['country'] ?? null;
             $sitePolygon->poly_id = $polygonUuid ?? null;
             $sitePolygon->poly_name = $properties['poly_name'] ?? null;
             $sitePolygon->site_id = $properties['site_id'] ?? null;
-            $sitePolygon->site_name = $properties['site_name'] ?? null;
             $sitePolygon->poly_label = $properties['poly_label'] ?? null;
             $sitePolygon->plantstart = ! empty($properties['plantstart']) ? $properties['plantstart'] : null;
             $sitePolygon->plantend = ! empty($properties['plantend']) ? $properties['plantend'] : null;
@@ -230,7 +229,10 @@ class TerrafundCreateGeometryController extends Controller
             $sitePolygon->num_trees = $properties['num_trees'] ?? null;
             $sitePolygon->est_area = $area ?? null;
             $sitePolygon->save();
-
+            if ($sitePolygon->project_id) {
+              $geometryHelper = new GeometryHelper();
+              $geometryHelper -> updateProjectCentroid($sitePolygon->project_id);
+            }
             return null;
         } catch (\Exception $e) {
             return $e->getMessage();

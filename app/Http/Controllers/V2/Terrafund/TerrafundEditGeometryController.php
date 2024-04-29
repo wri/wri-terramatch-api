@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,24 +31,55 @@ class TerrafundEditGeometryController extends Controller
 
     public function updateEstAreainSitePolygon($polygonGeometry, $geometry)
     {
-        $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-
-        // Recalculate the area in hectares
-        $geojson = json_encode($geometry);
-        $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
-        $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
-        // 111320 is the length of one degree of latitude in meters at the equator
-        $unitLatitude = 111320;
-        $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
-        $areaHectares = $areaSqMeters / 10000;
-
-        // Update site_polygon area with recalculated value
-        if ($sitePolygon) {
-            $sitePolygon->est_area = $areaHectares;
-            $sitePolygon->save();
+        try {
+            $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
+    
+            if ($sitePolygon) {
+                $geojson = json_encode($geometry);
+                $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
+                $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
+                $unitLatitude = 111320;
+                $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
+                $areaHectares = $areaSqMeters / 10000;
+  
+                $sitePolygon->est_area = $areaHectares;
+                $sitePolygon->save();
+    
+                Log::info("Updated area for site polygon with UUID: $sitePolygon->uuid");
+            } else {
+                Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
+            }
+        } catch (\Exception $e) {
+            Log::error("Error updating area in site polygon: " . $e->getMessage());
         }
-        Log::info("Updated area for site polygon with UUID: $areaSqMeters");
     }
+    
+    public function updateProjectCentroid($polygonGeometry)
+    {
+        try {
+            $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
+    
+            if ($sitePolygon) {
+                $project = Project::where('uuid', $sitePolygon->project_id)->first();
+    
+                if ($project) {
+                    $geometryHelper = new GeometryHelper();
+                    $centroid = $geometryHelper->centroidOfProject($project->uuid);
+    
+                    if ($centroid === null) {
+                        Log::warning("Invalid centroid for project UUID: $project->uuid");
+                    }
+                } else {
+                    Log::warning("Project with UUID $sitePolygon->project_id not found.");
+                }
+            } else {
+                Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
+            }
+        } catch (\Exception $e) {
+            Log::error("Error updating project centroid: " . $e->getMessage());
+        }
+    }
+    
 
     public function updateGeometry(string $uuid, Request $request)
     {
@@ -63,6 +96,7 @@ class TerrafundEditGeometryController extends Controller
             $polygonGeometry->save();
             Log::info('ABOUT TO CREATE');
             $this -> updateEstAreainSitePolygon($polygonGeometry, $geometry);
+            $this -> updateProjectCentroid($polygonGeometry);
 
             return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
         } catch (\Exception $e) {

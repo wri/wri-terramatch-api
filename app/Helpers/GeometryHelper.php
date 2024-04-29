@@ -3,7 +3,9 @@
 namespace App\Helpers;
 
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class GeometryHelper
@@ -45,5 +47,39 @@ class GeometryHelper
     ]);
 
     return $centroidOfCentroids;
+  }
+  public function updateProjectCentroid(string $projectUuid)
+  {
+    try {
+      $centroid = $this->centroidOfProject($projectUuid);
+  
+      if ($centroid === null) {
+          Log::warning("Invalid centroid for projectUuid: $projectUuid");
+      }
+  
+      $centroidArray = json_decode($centroid, true);
+  
+      $latitude = $centroidArray['coordinates'][1];
+      $longitude = $centroidArray['coordinates'][0];
+  
+      
+      Project::where('uuid', $projectUuid)
+          ->update([
+              'lat' => $latitude,
+              'long' => $longitude,
+          ]);
+  
+      
+      Log::info("Centroid updated for projectUuid: $projectUuid");
+    
+      return "Centroids updated successfully!";
+    } catch (\Exception $e) {
+      Log::error("Error updating centroid for projectUuid: $projectUuid");
+      return response()->json([
+        'message' => 'Error updating centroid',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+   
   }
 }
