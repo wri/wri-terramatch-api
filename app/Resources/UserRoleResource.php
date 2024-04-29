@@ -21,8 +21,7 @@ class UserRoleResource
         $this->first_name = $user->first_name;
         $this->last_name = $user->last_name;
         $this->email_address = $user->email_address;
-        $this->role = $user->role;
-        $this->role_id = $user->role_id;
+        $this->role = $user->primary_role ? $user->primary_role->name : '';
         $this->country = $user->country;
         $this->program = $user->program;
         $this->email_address_verified_at = $user->email_address_verified_at;

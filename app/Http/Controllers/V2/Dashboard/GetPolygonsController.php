@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
+use App\Helpers\GeometryHelper;
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\GetPolygonsResource;
 use App\Models\V2\PolygonGeometry;
 use Illuminate\Http\Request;
-use App\Helpers\GeometryHelper;
 use Illuminate\Support\Facades\Log;
 
 class GetPolygonsController extends Controller
@@ -16,7 +16,7 @@ class GetPolygonsController extends Controller
     {
         $polygonsIds = TerrafundDashboardQueryHelper::getPolygonIdsOfProject($request);
         $polygons = PolygonGeometry::whereIn('uuid', $polygonsIds)->pluck('uuid');
-      
+
         return new GetPolygonsResource([
           'data' => $polygons,
         ]);
