@@ -684,5 +684,5 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
-    Route::get('/view-project', ViewProjectController::class);
+    Route::get('/view-project/{uuid}', ViewProjectController::class);
 });

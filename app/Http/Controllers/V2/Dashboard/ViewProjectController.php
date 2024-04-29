@@ -11,10 +11,10 @@ use App\Models\V2\Projects\Project;
 
 class ViewProjectController extends Controller
 {
-    public function __invoke(Request $request): ViewProjectResource
+    public function __invoke(String $uuid): ViewProjectResource
     {
         $user = Auth::user();
-        $projectId = Project::where('uuid', $request->uuid)
+        $projectId = Project::where('uuid', $uuid)
             ->value('id');
         $isInvite = ProjectInvite::where('email_address', $user->email_address)
             ->where('project_id', $projectId)->first();
