@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\V2\Sites;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
-use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Support\Facades\Log;
-use App\Helpers\GeometryHelper;
 
 class SitePolygonDataController extends Controller
 {

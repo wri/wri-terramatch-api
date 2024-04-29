@@ -53,32 +53,32 @@ class TerrafundEditGeometryController extends Controller
       Log::error("Error updating area in site polygon: " . $e->getMessage());
     }
   }
+    public function updateProjectCentroid($polygonGeometry)
+    {
+        try {
+            $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
 
-  public function updateProjectCentroid($polygonGeometry)
-  {
-    try {
-      $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
+            if ($sitePolygon) {
+                $project = Project::where('uuid', $sitePolygon->project_id)->first();
 
-      if ($sitePolygon) {
-        $project = Project::where('uuid', $sitePolygon->project_id)->first();
+                if ($project) {
+                    $geometryHelper = new GeometryHelper();
+                    $centroid = $geometryHelper->centroidOfProject($project->uuid);
 
-        if ($project) {
-          $geometryHelper = new GeometryHelper();
-          $centroid = $geometryHelper->centroidOfProject($project->uuid);
-
-          if ($centroid === null) {
-            Log::warning("updating Centroid: Invalid centroid for project UUID: $project->uuid");
-          }
-        } else {
-          Log::warning("updating Centroid: Project with UUID $sitePolygon->project_id not found.");
+                    if ($centroid === null) {
+                        Log::warning("Invalid centroid for project UUID: $project->uuid");
+                    }
+                } else {
+                    Log::warning("Project with UUID $sitePolygon->project_id not found.");
+                }
+            } else {
+                Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
+            }
+        } catch (\Exception $e) {
+            Log::error('Error updating project centroid: ' . $e->getMessage());
         }
-      } else {
-        Log::warning("updating Centroid: Site polygon with UUID $polygonGeometry->uuid not found.");
-      }
-    } catch (\Exception $e) {
-      Log::error("Error updating project centroid: " . $e->getMessage());
     }
-  }
+
   public function deletePolygonAndSitePolygon(string $uuid)
   {
       try {

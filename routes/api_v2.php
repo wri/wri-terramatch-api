@@ -22,11 +22,11 @@ use App\Http\Controllers\V2\Dashboard\CountryDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
 use App\Http\Controllers\V2\Dashboard\GetProjectsController;
-use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
 use App\Http\Controllers\V2\Dashboard\ProjectProfileDetailsController;
 use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
+use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
@@ -649,7 +649,7 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
 
     Route::get('/centroids/{uuid}', [TerrafundPointsController::class, 'calculateCentroidOfCentroids']);
-    Route::get('/centroids-update', [TerrafundPointsController::class, 'updateProjectCentroids']);  
+    Route::get('/centroids-update', [TerrafundPointsController::class, 'updateProjectCentroids']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
@@ -683,6 +683,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/get-projects', GetProjectsController::class);
     Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
+    Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsByStatusOfProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
