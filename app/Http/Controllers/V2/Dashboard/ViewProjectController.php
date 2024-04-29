@@ -6,7 +6,6 @@ use App\Models\V2\Projects\ProjectInvite;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\ViewProjectResource;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Models\V2\Projects\Project;
 
 class ViewProjectController extends Controller
@@ -14,13 +13,27 @@ class ViewProjectController extends Controller
     public function __invoke(String $uuid): ViewProjectResource
     {
         $user = Auth::user();
-        $projectId = Project::where('uuid', $uuid)
-            ->value('id');
-        $isInvite = ProjectInvite::where('email_address', $user->email_address)
-            ->where('project_id', $projectId)->first();
-        $response = (object)[
-            'allowed' => $isInvite ? true : false,
-        ];
+        if ($user->country !== null) {
+            $isAllowed = Project::where('uuid', $uuid)
+                ->where('country', $user->country)->first();
+            $response = (object)[
+                'allowed' => $isAllowed ? true : false,
+            ];
+        } else if ($user->program !== null) {
+            $isAllowed = Project::where('uuid', $uuid)
+                ->where('framework', $user->program)->first();
+            $response = (object)[
+                'allowed' => $isAllowed ? true : false,
+            ];
+        } else {
+            $projectId = Project::where('uuid', $uuid)
+                ->value('id');
+            $isInvite = ProjectInvite::where('email_address', $user->email_address)
+                ->where('project_id', $projectId)->first();
+            $response = (object)[
+                'allowed' => $isInvite ? true : false,
+            ];
+        }
         return new ViewProjectResource($response);
     }
 };

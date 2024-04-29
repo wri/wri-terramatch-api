@@ -44011,7 +44011,7 @@ definitions:
         type: string
       job_role:
         type: string
-      role_id:
+      primary_role:
         type: string
       country:
         type: string
@@ -44056,9 +44056,7 @@ definitions:
       email_address_verified_at:
         type: string
         format: date-time
-      role:
-        type: string
-      role_id:
+      primary_role:
         type: string
       country:
         type: string
