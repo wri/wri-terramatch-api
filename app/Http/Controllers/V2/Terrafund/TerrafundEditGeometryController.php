@@ -209,4 +209,17 @@ class TerrafundEditGeometryController extends Controller
       return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
     }
   }
+
+    public function getPolygonBbox(string $uuid)
+    {
+        try {
+            $bboxCoordinates = GeometryHelper::getPolygonsBbox([$uuid]);
+
+            return response()->json(['bbox' => $bboxCoordinates]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
+        }
+    }
 }
