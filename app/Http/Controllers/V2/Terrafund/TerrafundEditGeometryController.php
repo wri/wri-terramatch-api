@@ -88,6 +88,9 @@ class TerrafundEditGeometryController extends Controller
           }
           $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
           $projectUuid = $sitePolygon->project_id;
+          if (!$projectUuid) {
+              return response()->json(['message' => 'No project found for the given UUID.'], 404);
+          }
           if ($sitePolygon) {
               Log::info("Deleting associated site polygon for UUID: $uuid");
               $sitePolygon->delete();
