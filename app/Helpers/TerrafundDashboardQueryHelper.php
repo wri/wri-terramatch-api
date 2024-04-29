@@ -28,9 +28,8 @@ class TerrafundDashboardQueryHelper
     public static function getPolygonIdsOfProject($request)
     {
         $projectIds = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
-        ->pluck('id');
-        $sitesIds = Site::whereIn('project_id', $projectIds)->pluck('uuid');
-        $polygonsIds = SitePolygon::whereIn('site_id', $sitesIds)->pluck('poly_id');
+        ->pluck('uuid');
+        $polygonsIds = SitePolygon::whereIn('project_id', $projectIds)->pluck('poly_id');
 
         return $polygonsIds;
     }
