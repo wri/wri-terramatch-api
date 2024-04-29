@@ -82,7 +82,7 @@ class GeometryHelper
     }
    
   }
-  public function getPolygonsBbox ($polygonsIds) {
+  public static function getPolygonsBbox ($polygonsIds) {
     $envelopes = PolygonGeometry::whereIn('uuid', $polygonsIds)
       ->selectRaw('ST_ASGEOJSON(ST_Envelope(geom)) as envelope')
       ->get();

@@ -189,8 +189,7 @@ class TerrafundEditGeometryController extends Controller
     public function getPolygonBbox(string $uuid)
     {
         try {
-            $geometryHelper = new GeometryHelper();
-            $bboxCoordinates = $geometryHelper->getPolygonsBbox([$uuid]);
+            $bboxCoordinates = GeometryHelper::getPolygonsBbox([$uuid]);
 
             return response()->json(['bbox' => $bboxCoordinates]);
         } catch (\Exception $e) {

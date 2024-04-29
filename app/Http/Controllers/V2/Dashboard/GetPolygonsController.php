@@ -26,8 +26,7 @@ class GetPolygonsController extends Controller
     {
         try {
             $polygonsIds = TerrafundDashboardQueryHelper::getPolygonIdsOfProject($request);
-            $geometryHelper = new GeometryHelper();
-            $bboxCoordinates = $geometryHelper->getPolygonsBbox($polygonsIds);
+            $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsIds);
 
             return response()->json(['bbox' => $bboxCoordinates]);
         } catch (\Exception $e) {
