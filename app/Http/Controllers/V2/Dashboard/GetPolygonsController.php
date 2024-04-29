@@ -16,7 +16,7 @@ class GetPolygonsController extends Controller
     {
         $polygonsIds = TerrafundDashboardQueryHelper::getPolygonIdsOfProject($request);
         $polygons = PolygonGeometry::whereIn('uuid', $polygonsIds)->pluck('uuid');
-
+      
         return new GetPolygonsResource([
           'data' => $polygons,
         ]);
