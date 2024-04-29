@@ -33,7 +33,7 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-    
+
             if ($sitePolygon) {
                 $geojson = json_encode($geometry);
                 $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
@@ -41,31 +41,31 @@ class TerrafundEditGeometryController extends Controller
                 $unitLatitude = 111320;
                 $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
                 $areaHectares = $areaSqMeters / 10000;
-  
+
                 $sitePolygon->est_area = $areaHectares;
                 $sitePolygon->save();
-    
+
                 Log::info("Updated area for site polygon with UUID: $sitePolygon->uuid");
             } else {
                 Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
             }
         } catch (\Exception $e) {
-            Log::error("Error updating area in site polygon: " . $e->getMessage());
+            Log::error('Error updating area in site polygon: ' . $e->getMessage());
         }
     }
-    
+
     public function updateProjectCentroid($polygonGeometry)
     {
         try {
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-    
+
             if ($sitePolygon) {
                 $project = Project::where('uuid', $sitePolygon->project_id)->first();
-    
+
                 if ($project) {
                     $geometryHelper = new GeometryHelper();
                     $centroid = $geometryHelper->centroidOfProject($project->uuid);
-    
+
                     if ($centroid === null) {
                         Log::warning("Invalid centroid for project UUID: $project->uuid");
                     }
@@ -76,10 +76,9 @@ class TerrafundEditGeometryController extends Controller
                 Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
             }
         } catch (\Exception $e) {
-            Log::error("Error updating project centroid: " . $e->getMessage());
+            Log::error('Error updating project centroid: ' . $e->getMessage());
         }
     }
-    
 
     public function updateGeometry(string $uuid, Request $request)
     {

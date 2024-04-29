@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 
 class TerrafundDashboardQueryHelper

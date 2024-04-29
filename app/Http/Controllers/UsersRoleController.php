@@ -23,6 +23,7 @@ class UsersRoleController extends Controller
         $user->syncRoles([$request->get('primary_role')]);
         $user->saveOrFail();
         $user->refresh();
+
         return JsonResponseHelper::success(new UserRoleResource($user), 201);
     }
 }

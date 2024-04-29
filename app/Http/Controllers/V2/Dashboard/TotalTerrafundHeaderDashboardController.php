@@ -13,9 +13,9 @@ class TotalTerrafundHeaderDashboardController extends Controller
     public function __invoke(Request $request): TotalSectionHeaderResource
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
-        $countryName = "";
+        $countryName = '';
         if ($request->country) {
-          $countryName = WorldCountryGeneralized::where('iso', $request->country)->first()->country;
+            $countryName = WorldCountryGeneralized::where('iso', $request->country)->first()->country;
         }
         $response = (object)[
             'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
