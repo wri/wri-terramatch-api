@@ -12,6 +12,7 @@ class GeometryHelper
 {
   public function centroidOfProject($projectUuid)
   {
+    Log::info("Calculating centroid of projectUuid: $projectUuid");
     $sitePolygons = SitePolygon::where('project_id', $projectUuid)->get();
 
     if ($sitePolygons->isEmpty()) {
@@ -19,7 +20,7 @@ class GeometryHelper
     }
 
     $polyIds = $sitePolygons->pluck('poly_id')->toArray();
-
+    Log::info("Polygons found for projectUuid: $projectUuid");
     $centroids = PolygonGeometry::selectRaw("ST_AsGeoJSON(ST_Centroid(geom)) AS centroid")
       ->whereIn('uuid', $polyIds)
       ->get();
@@ -51,6 +52,7 @@ class GeometryHelper
   public function updateProjectCentroid(string $projectUuid)
   {
     try {
+      Log::info("Updating centroid in helper for projectUuid: $projectUuid");
       $centroid = $this->centroidOfProject($projectUuid);
   
       if ($centroid === null) {
@@ -75,10 +77,7 @@ class GeometryHelper
       return "Centroids updated successfully!";
     } catch (\Exception $e) {
       Log::error("Error updating centroid for projectUuid: $projectUuid");
-      return response()->json([
-        'message' => 'Error updating centroid',
-        'error' => $e->getMessage()
-      ], 500);
+      return $e->getMessage();
     }
    
   }
