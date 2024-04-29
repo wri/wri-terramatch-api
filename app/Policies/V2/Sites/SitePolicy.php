@@ -102,6 +102,11 @@ class SitePolicy extends Policy
         return false;
     }
 
+    public function uploadPolygons(?User $user, ?Site $site): bool
+    {
+        return $site != null && $user->can('polygons-manage');
+    }
+
     public function export(?User $user, ?Form $form = null, ?Project $project = null): bool
     {
         return $user->can('framework-' .  $form->framework_key) or
