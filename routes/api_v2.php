@@ -156,6 +156,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringContro
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
+use App\Http\Controllers\V2\Sites\StoreBulkSitePolygonsController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
 use App\Http\Controllers\V2\Stages\IndexStageController;
@@ -547,13 +548,14 @@ Route::prefix('project-reports')->group(function () {
     Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
 });
 
-Route::prefix('sites')->group(function () {
-    Route::get('/{site}/files', ViewSiteGalleryController::class);
-    Route::get('/{site}/reports', SiteReportsViaSiteController::class);
-    Route::get('/{site}/monitorings', ViewASitesMonitoringsController::class);
-    Route::get('/{site}/image/locations', SiteImageLocationsController::class);
-    Route::delete('/{site}', SoftDeleteSiteController::class);
-    Route::get('/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
+Route::prefix('sites/{site}')->group(function () {
+    Route::get('/files', ViewSiteGalleryController::class);
+    Route::get('/reports', SiteReportsViaSiteController::class);
+    Route::get('/monitorings', ViewASitesMonitoringsController::class);
+    Route::get('/image/locations', SiteImageLocationsController::class);
+    Route::delete('/', SoftDeleteSiteController::class);
+    Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
+    Route::post('/polygons', StoreBulkSitePolygonsController::class);
 });
 
 Route::prefix('project-monitorings')->group(function () {
