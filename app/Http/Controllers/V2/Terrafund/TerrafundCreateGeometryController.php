@@ -8,11 +8,13 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
+use App\Validators\SitePolygonValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\Process\Process;
 
 class TerrafundCreateGeometryController extends Controller
@@ -35,7 +37,7 @@ class TerrafundCreateGeometryController extends Controller
     public function storeGeometry(Request $request)
     {
         $request->validate([
-          'geometry' => 'required|json',
+          'geometry' => 'required|json|geo_json',
         ]);
 
         $geometry = json_decode($request->input('geometry'));
@@ -46,26 +48,6 @@ class TerrafundCreateGeometryController extends Controller
         ]);
 
         return response()->json(['uuid' => $polygonGeometry->uuid], 200);
-    }
-
-    private function validatePolygonBounds(array $geometry): bool
-    {
-        if ($geometry['type'] !== 'Polygon') {
-            return false;
-        }
-        $coordinates = $geometry['coordinates'][0];
-        foreach ($coordinates as $coordinate) {
-            $latitude = $coordinate[1];
-            $longitude = $coordinate[0];
-            if ($latitude < -90 || $latitude > 90) {
-                return false;
-            }
-            if ($longitude < -180 || $longitude > 180) {
-                return false;
-            }
-
-            return true;
-        }
     }
 
     private function insertSinglePolygon(array $geometry, int $srid)
@@ -96,32 +78,28 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function insertGeojsonToDB(string $geojsonFilename)
     {
         $srid = 4326;
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
         $geojson = json_decode($geojsonData, true);
-        if (! isset($geojson['features'])) {
-            return ['error' => 'GeoJSON file does not contain features'];
-        }
+        SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson);
+
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
             if ($feature['geometry']['type'] === 'Polygon') {
-                if (! $this->validatePolygonBounds($feature['geometry'])) {
-                    return ['error' => 'Invalid polygon bounds'];
-                }
                 $data = $this->insertSinglePolygon($feature['geometry'], $srid);
                 $uuids[] = $data['uuid'];
                 $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
                 if ($returnSite) {
-                    Log::info($returnSite)  ;
+                    Log::info($returnSite);
                 }
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
                     $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
-                    if (! $this->validatePolygonBounds($singlePolygon)) {
-                        return ['error' => 'Invalid polygon bounds'];
-                    }
                     $data = $this->insertSinglePolygon($singlePolygon, $srid);
                     $uuids[] = $data['uuid'];
                     $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
