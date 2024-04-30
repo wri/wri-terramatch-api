@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\JsonResponseHelper;
-use App\Models\User as UserModel;
+use App\Models\V2\User;
 use App\Resources\UserRoleResource;
 use App\Validators\UserRoleValidator;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +19,7 @@ class UsersRoleController extends Controller
         $data = $request->json()->all();
         UserRoleValidator::validate('CREATE', $data);
         $data['role'] = 'user';
-        $user = new UserModel($data);
+        $user = new User($data);
         $user->syncRoles([$request->get('primary_role')]);
         $user->saveOrFail();
         $user->refresh();

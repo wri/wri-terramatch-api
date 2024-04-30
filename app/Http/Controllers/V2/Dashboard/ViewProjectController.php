@@ -13,28 +13,36 @@ class ViewProjectController extends Controller
     public function __invoke(String $uuid): ViewProjectResource
     {
         $user = Auth::user();
-        if ($user->country !== null) {
+
+        if ($user->primary_role->name == 'admin-super' || $user->primary_role->name == 'admin') {
+            $response = (object)[
+                'allowed' => true,
+            ];
+        }
+        if ($user->primary_role->name == 'government' && $user->country !== null) {
             $isAllowed = Project::where('uuid', $uuid)
                 ->where('country', $user->country)
                 ->first();
             $response = (object)[
-                'allowed' => $isAllowed ? true : false,
+                'allowed' => boolval($isAllowed),
             ];
-        } elseif ($user->program !== null) {
+        }
+        if ($user->primary_role->name == 'funder' && $user->program !== null) {
             $isAllowed = Project::where('uuid', $uuid)
-                ->where('framework', $user->program)
+                ->where('framework_key', $user->program)
                 ->first();
             $response = (object)[
-                'allowed' => $isAllowed ? true : false,
+                'allowed' => boolval($isAllowed),
             ];
-        } else {
+        }
+        if ($user->primary_role->name == 'project-developer') {
             $projectId = Project::where('uuid', $uuid)
                 ->value('id');
             $isInvite = ProjectInvite::where('email_address', $user->email_address)
                 ->where('project_id', $projectId)
                 ->first();
             $response = (object)[
-                'allowed' => $isInvite ? true : false,
+                'allowed' => boolval($isInvite),
             ];
         }
 
