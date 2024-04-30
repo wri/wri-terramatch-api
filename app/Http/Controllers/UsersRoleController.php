@@ -13,14 +13,12 @@ class UsersRoleController extends Controller
 {
     public function createAction(Request $request): JsonResponse
     {
-        $this->authorize('create', \App\Models\User::class);
-        $url = $request->get('callback_url') ? $request->get('callback_url') : null;
-        $request->request->remove('callback_url');
+        $this->authorize('create', UserModel::class);
         $data = $request->json()->all();
         UserRoleValidator::validate('CREATE', $data);
-        $data['role'] = 'user';
+        $data['role'] = $data['primary_role'];
         $user = new UserModel($data);
-        $user->syncRoles([$request->get('primary_role')]);
+        $user->assignRole($data['primary_role']);
         $user->saveOrFail();
         $user->refresh();
 
