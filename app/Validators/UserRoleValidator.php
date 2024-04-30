@@ -58,7 +58,6 @@ class UserRoleValidator extends Validator
         'email_address' => 'sometimes|required|string|email|between:1,255',
         'password' => 'sometimes|required|string|min:10|contain_upper|contain_lower|contain_number',
         'job_role' => 'sometimes|required|string|between:1,255',
-        'role_id' => 'required|string|between:1,255',
         'country' => 'sometimes|nullable|between:1,255',
         'program' => 'sometimes|nullable|between:1,255',
         'facebook' => 'sometimes|present|nullable|string|soft_url|starts_with_facebook|between:1,255',
