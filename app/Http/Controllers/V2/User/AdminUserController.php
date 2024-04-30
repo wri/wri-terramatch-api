@@ -92,15 +92,15 @@ class AdminUserController extends Controller
 
                 break;
             case 'project-developer':
-                $data['role'] = 'user';
+                $data['role'] = 'project-developer';
 
                 break;
             case 'government':
-                $data['role'] = 'user';
+                $data['role'] = 'government';
 
                 break;
             case 'funder':
-                $data['role'] = 'user';
+                $data['role'] = 'funder';
 
                 break;
         }
@@ -144,15 +144,15 @@ class AdminUserController extends Controller
 
                     break;
                 case 'project-developer':
-                    $data['role'] = 'user';
+                    $data['role'] = 'project-developer';
 
                     break;
                 case 'government':
-                    $data['role'] = 'user';
+                    $data['role'] = 'government';
 
                     break;
                 case 'funder':
-                    $data['role'] = 'user';
+                    $data['role'] = 'funder';
 
                     break;
             }

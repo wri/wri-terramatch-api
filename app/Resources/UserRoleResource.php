@@ -4,13 +4,12 @@ namespace App\Resources;
 
 use App\Http\Resources\V2\Organisation\MonitoringOrganisationResource;
 use App\Http\Resources\V2\Organisation\OrganisationResource;
-use App\Models\User as UserModel;
 use App\Models\V2\User as V2UserModel;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserRoleResource
 {
-    public function __construct(UserModel $user)
+    public function __construct(V2UserModel $user)
     {
         $v2user = V2UserModel::find($user->id);
         $this->id = $user->id;
@@ -21,8 +20,7 @@ class UserRoleResource
         $this->first_name = $user->first_name;
         $this->last_name = $user->last_name;
         $this->email_address = $user->email_address;
-        $this->role = $user->role;
-        $this->role_id = $user->role_id;
+        $this->role = $user->primary_role ? $user->primary_role->name : '';
         $this->country = $user->country;
         $this->program = $user->program;
         $this->email_address_verified_at = $user->email_address_verified_at;

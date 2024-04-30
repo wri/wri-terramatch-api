@@ -33,7 +33,7 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-    
+
             if ($sitePolygon) {
                 $geojson = json_encode($geometry);
                 $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
@@ -41,31 +41,31 @@ class TerrafundEditGeometryController extends Controller
                 $unitLatitude = 111320;
                 $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
                 $areaHectares = $areaSqMeters / 10000;
-  
+
                 $sitePolygon->est_area = $areaHectares;
                 $sitePolygon->save();
-    
+
                 Log::info("Updated area for site polygon with UUID: $sitePolygon->uuid");
             } else {
-                Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
+                Log::warning("Updating Area: Site polygon with UUID $polygonGeometry->uuid not found.");
             }
         } catch (\Exception $e) {
-            Log::error("Error updating area in site polygon: " . $e->getMessage());
+            Log::error('Error updating area in site polygon: ' . $e->getMessage());
         }
     }
-    
+
     public function updateProjectCentroid($polygonGeometry)
     {
         try {
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-    
+
             if ($sitePolygon) {
                 $project = Project::where('uuid', $sitePolygon->project_id)->first();
-    
+
                 if ($project) {
                     $geometryHelper = new GeometryHelper();
                     $centroid = $geometryHelper->centroidOfProject($project->uuid);
-    
+
                     if ($centroid === null) {
                         Log::warning("Invalid centroid for project UUID: $project->uuid");
                     }
@@ -76,10 +76,39 @@ class TerrafundEditGeometryController extends Controller
                 Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
             }
         } catch (\Exception $e) {
-            Log::error("Error updating project centroid: " . $e->getMessage());
+            Log::error('Error updating project centroid: ' . $e->getMessage());
         }
     }
-    
+
+    public function deletePolygonAndSitePolygon(string $uuid)
+    {
+        try {
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+            $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
+            $projectUuid = $sitePolygon->project_id;
+            if (! $projectUuid) {
+                return response()->json(['message' => 'No project found for the given UUID.'], 404);
+            }
+            if ($sitePolygon) {
+                Log::info("Deleting associated site polygon for UUID: $uuid");
+                $sitePolygon->delete();
+            }
+            $geometryHelper = new GeometryHelper();
+            $geometryHelper->updateProjectCentroid($projectUuid);
+            $polygonGeometry->delete();
+            Log::info("Polygon geometry and associated site polygon deleted successfully for UUID: $uuid");
+
+            return response()->json(['message' => 'Polygon geometry and associated site polygon deleted successfully.', 'uuid' => $uuid]);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+
+            // Return error response if an exception occurs
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
 
     public function updateGeometry(string $uuid, Request $request)
     {
@@ -95,8 +124,8 @@ class TerrafundEditGeometryController extends Controller
             $polygonGeometry->geom = $geom;
             $polygonGeometry->save();
             Log::info('ABOUT TO CREATE');
-            $this -> updateEstAreainSitePolygon($polygonGeometry, $geometry);
-            $this -> updateProjectCentroid($polygonGeometry);
+            $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
+            $this->updateProjectCentroid($polygonGeometry);
 
             return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
         } catch (\Exception $e) {
@@ -113,7 +142,7 @@ class TerrafundEditGeometryController extends Controller
         $geojsonData = json_decode($geometryQuery->select(DB::raw('ST_AsGeoJSON(geom) as geojson'))->first()->geojson, true);
 
         return response()->json([
-            'geojson' => $geojsonData,
+          'geojson' => $geojsonData,
         ]);
     }
 
@@ -148,13 +177,13 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'poly_name' => 'nullable|string',
-                'plantstart' => 'nullable|date',
-                'plantend' => 'nullable|date',
-                'practice' => 'nullable|string',
-                'distr' => 'nullable|string',
-                'num_trees' => 'nullable|integer',
-                'target_sys' => 'nullable|string',
+              'poly_name' => 'nullable|string',
+              'plantstart' => 'nullable|date',
+              'plantend' => 'nullable|date',
+              'practice' => 'nullable|string',
+              'distr' => 'nullable|string',
+              'num_trees' => 'nullable|integer',
+              'target_sys' => 'nullable|string',
             ]);
 
             $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
@@ -166,14 +195,14 @@ class TerrafundEditGeometryController extends Controller
             $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
             $areaHectares = $areaSqMeters / 10000;
             $sitePolygon = new SitePolygon([
-                'poly_name' => $validatedData['poly_name'],
-                'plantstart' => $validatedData['plantstart'],
-                'plantend' => $validatedData['plantend'],
-                'practice' => $validatedData['practice'],
-                'distr' => $validatedData['distr'],
-                'num_trees' => $validatedData['num_trees'],
-                'est_area' => $areaHectares, // Assign the calculated area
-                'target_sys' => $validatedData['target_sys'],
+              'poly_name' => $validatedData['poly_name'],
+              'plantstart' => $validatedData['plantstart'],
+              'plantend' => $validatedData['plantend'],
+              'practice' => $validatedData['practice'],
+              'distr' => $validatedData['distr'],
+              'num_trees' => $validatedData['num_trees'],
+              'est_area' => $areaHectares, // Assign the calculated area
+              'target_sys' => $validatedData['target_sys'],
             ]);
             $sitePolygon->poly_id = $uuid;
             $sitePolygon->uuid = Str::uuid();

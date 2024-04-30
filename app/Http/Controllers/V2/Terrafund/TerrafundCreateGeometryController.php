@@ -199,7 +199,7 @@ class TerrafundCreateGeometryController extends Controller
     private function insertSitePolygon(string $polygonUuid, array $properties, float $area)
     {
         try {
-            Log::info('Inserting site polygon', ['properties' => $properties, "polygonUuid" => $polygonUuid]);
+            Log::info('Inserting site polygon', ['properties' => $properties, 'polygonUuid' => $polygonUuid]);
             $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
             $SCHEMA_CRITERIA_ID = 13;
             $validSchema = true;
@@ -230,9 +230,10 @@ class TerrafundCreateGeometryController extends Controller
             $sitePolygon->est_area = $area ?? null;
             $sitePolygon->save();
             if ($sitePolygon->project_id) {
-              $geometryHelper = new GeometryHelper();
-              $geometryHelper -> updateProjectCentroid($sitePolygon->project_id);
+                $geometryHelper = new GeometryHelper();
+                $geometryHelper -> updateProjectCentroid($sitePolygon->project_id);
             }
+
             return null;
         } catch (\Exception $e) {
             return $e->getMessage();
