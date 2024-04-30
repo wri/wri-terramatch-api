@@ -91,8 +91,8 @@ class AdminUserController extends Controller
                 $data['role'] = 'terrafund_admin';
 
                 break;
-            case 'project-developer':
-                $data['role'] = 'project-developer';
+            case 'project_developer':
+                $data['role'] = 'project_developer';
 
                 break;
             case 'government':
@@ -143,8 +143,8 @@ class AdminUserController extends Controller
                     $data['role'] = 'terrafund_admin';
 
                     break;
-                case 'project-developer':
-                    $data['role'] = 'project-developer';
+                case 'project_developer':
+                    $data['role'] = 'project_developer';
 
                     break;
                 case 'government':
