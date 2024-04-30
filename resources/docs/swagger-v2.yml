@@ -94007,6 +94007,7 @@ paths:
                   error:
                     type: string
                     example: Internal Server Error
+  '/v2/terrafund/polygon/geojson/{uuid}':
     get:
       summary: Retrieve polygon GeoJSON by UUID
       description: |
