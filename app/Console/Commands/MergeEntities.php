@@ -191,7 +191,9 @@ class MergeEntities extends Command
             $command = array_shift($commandParts);
             switch ($command) {
                 case 'date':
-                    $dates = $entities->map(fn ($entity) => Carbon::parse($entity->$property));
+                    $dates = $entities
+                        ->map(fn ($entity) => empty($entity->$property) ? null : Carbon::parse($entity->$property))
+                        ->filter();
                     $merge->$property = $this->mergeDates($dates, ...$commandParts);
 
                     break;
