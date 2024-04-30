@@ -93940,3 +93940,37 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  '/v2/terrafund/polygon/{uuid}':
+    get:
+      summary: Retrieve site polygon data
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the site polygon
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygon'
+        '404':
+          description: Site polygon not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
