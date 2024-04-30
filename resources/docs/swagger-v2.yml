@@ -93940,3 +93940,119 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  '/v2/terrafund/polygon/{uuid}':
+    put:
+      summary: Update geometry for a polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon geometry to update
+        - in: body
+          name: geometry
+          required: true
+          schema:
+            $ref: '#/definitions/GeometryData'
+          description: The new geometry data
+      responses:
+        '200':
+          description: Geometry updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Geometry updated successfully.
+                  geometry:
+                    type: object
+                    description: The updated geometry data
+                  uuid:
+                    type: string
+        '404':
+          description: No polygon geometry found for the given UUID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No polygon geometry found for the given UUID.
+        '500':
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+    get:
+      summary: get data for a polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon
+      responses:
+        '200':
+          description: Get geometry data successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygonsDataResponse'
+        '404':
+          description: No polygon data found for the given UUID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No polygon geometry found for the given UUID.
+        '500':
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+  '/v2/terrafund/polygon/geojson/{uuid}':
+    get:
+      summary: Retrieve polygon GeoJSON by UUID
+      description: |
+        Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          required: true
+          description: The UUID of the polygon geometry to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/GeojsonData'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message indicating that no polygon geometry was found for the provided UUID.
