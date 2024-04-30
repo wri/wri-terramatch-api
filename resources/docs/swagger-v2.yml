@@ -44220,6 +44220,28 @@ definitions:
     properties:
       bbox:
         type: array
+  SitePolygonResponse:
+    type: object
+    properties:
+      poly_name:
+        type: string
+      plantstart:
+        type: string
+        format: date
+      plantend:
+        type: string
+        format: date
+      practice:
+        type: string
+      target_sys:
+        type: string
+      distr:
+        type: string
+      num_trees:
+        type: integer
+      est_area:
+        type: number
+        format: float
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93890,6 +93912,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/definitions/PolygonBboxResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/site-polygon/{uuid}':
+    put:
+      operationId: put-v2-site-polygon-uuid
+      summary: Update site polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the site polygon
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SitePolygonResponse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygonResponse'
         '400':
           description: Bad request
         '500':
