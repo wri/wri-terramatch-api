@@ -44250,6 +44250,12 @@ definitions:
             type: array
           type:
             type: string
+  GeojsonData: 
+    type: object
+    properties:
+      geojson:
+        type: object
+        description: The GeoJSON representation of the polygon geometry.
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93963,7 +93969,7 @@ paths:
           name: geometry
           required: true
           schema:
-            $ref: '#/components/schemas/GeometryData'
+            $ref: '#/definitions/GeometryData'
           description: The new geometry data
       responses:
         '200':
@@ -94001,3 +94007,32 @@ paths:
                   error:
                     type: string
                     example: Internal Server Error
+    get:
+      summary: Retrieve polygon GeoJSON by UUID
+      description: |
+        Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          required: true
+          description: The UUID of the polygon geometry to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/GeojsonData'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message indicating that no polygon geometry was found for the provided UUID.
