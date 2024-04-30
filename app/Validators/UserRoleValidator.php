@@ -29,6 +29,7 @@ class UserRoleValidator extends Validator
         'instagram' => 'sometimes|nullable|string|soft_url|starts_with_instagram|between:1,255',
         'phone_number' => 'required|string|between:1,255',
         'whatsapp_phone' => 'sometimes|nullable|string|between:1,255',
+        'callback_url' => 'sometimes|nullable|string',
     ];
 
     /**
