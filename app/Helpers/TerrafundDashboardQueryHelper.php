@@ -32,25 +32,25 @@ class TerrafundDashboardQueryHelper
 
         return $polygonsIds;
     }
+
     public static function getPolygonsByStatusOfProject($request)
     {
         $projectIds = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->pluck('uuid');
-        
+
         $statuses = ['Needs More Info', 'Submitted', 'Approved'];
-    
+
         $polygons = [];
-    
+
         foreach ($statuses as $status) {
             // Get polygons of the project filtered by status
             $polygonsOfProject = SitePolygon::whereIn('project_id', $projectIds)
                 ->where('status', $status)
                 ->pluck('poly_id');
-            
+
             $polygons[$status] = $polygonsOfProject;
         }
-    
+
         return $polygons;
     }
-    
 }

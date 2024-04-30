@@ -23,7 +23,7 @@ class ViewProjectController extends Controller
             ];
         } elseif ($role === 'funder') {
             $isAllowed = Project::where('uuid', $uuid)
-                ->where('framework', $user->program)
+                ->where('framework_key', $user->program)
                 ->first();
             $response = (object)[
                 'allowed' => $isAllowed ? true : false,
