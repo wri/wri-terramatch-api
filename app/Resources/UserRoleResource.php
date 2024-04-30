@@ -4,12 +4,13 @@ namespace App\Resources;
 
 use App\Http\Resources\V2\Organisation\MonitoringOrganisationResource;
 use App\Http\Resources\V2\Organisation\OrganisationResource;
+use App\Models\User as UserModel;
 use App\Models\V2\User as V2UserModel;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserRoleResource
 {
-    public function __construct(V2UserModel $user)
+    public function __construct(UserModel $user)
     {
         $v2user = V2UserModel::find($user->id);
         $this->id = $user->id;
