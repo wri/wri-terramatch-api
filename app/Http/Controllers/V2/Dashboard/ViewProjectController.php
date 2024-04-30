@@ -12,7 +12,7 @@ class ViewProjectController extends Controller
 {
     public function __invoke(String $uuid): ViewProjectResource
     {
-        $user = Auth::user();
+       $user = Auth::user();
 
         if ($user->primary_role->name == 'admin-super' || $user->primary_role->name == 'admin') {
             $response = (object)[
