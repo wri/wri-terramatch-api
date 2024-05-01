@@ -9404,7 +9404,7 @@ definitions:
         type: string
       job_role:
         type: string
-      primary_role:
+      role_id:
         type: string
       country:
         type: string
@@ -9445,7 +9445,7 @@ definitions:
         format: date-time
       role:
         type: string
-      primary_role:
+      role_id:
         type: string
       country:
         type: string

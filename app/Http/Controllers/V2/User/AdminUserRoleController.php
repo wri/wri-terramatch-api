@@ -26,7 +26,7 @@ class AdminUserRoleController extends Controller
                 $data['role'] = 'terrafund_admin';
 
                 break;
-            case 'project-developer':
+            case 'project_developer':
                 $data['role'] = 'user';
 
                 break;
