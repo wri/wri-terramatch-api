@@ -9,13 +9,13 @@ use App\Validators\Extensions\Extension;
 
 class WithinCountry extends Extension
 {
-    public static $name = 'has_polygon_site';
+    public static $name = 'within_country';
 
     public static $message = [
-        'HAS_POLYGON_SITE',
-        'The {{attribute}} field must represent a polygon with an attached site',
+        'WITHIN_COUNTRY',
+        'The {{attribute}} field must represent a polygon that is within its assigned country',
         ['attribute' => ':attribute'],
-        'The :attribute field must represent a polygon with an attached site'
+        'The :attribute field must represent a polygon that is within its assigned country',
     ];
 
     public const THRESHOLD_PERCENTAGE = 75;
@@ -23,6 +23,7 @@ class WithinCountry extends Extension
     public static function passes($attribute, $value, $parameters, $validator): bool
     {
         $result = self::getIntersectionData($value);
+
         return $result != null && $result['valid'];
     }
 
@@ -54,10 +55,11 @@ class WithinCountry extends Extension
 
         $totalArea = $geometry->db_geometry->area;
         $insidePercentage = $intersectionData->area / $totalArea * 100;
+
         return [
             'valid' => $insidePercentage >= self::THRESHOLD_PERCENTAGE,
             'inside_percentage' => $insidePercentage,
-            'country_name' => $intersectionData->country
+            'country_name' => $intersectionData->country,
         ];
     }
 }

@@ -13,7 +13,7 @@ class HasPolygonSite extends Extension
         'HAS_POLYGON_SITE',
         'The {{attribute}} field must represent a polygon with an attached site',
         ['attribute' => ':attribute'],
-        'The :attribute field must represent a polygon with an attached site'
+        'The :attribute field must represent a polygon with an attached site',
     ];
 
     public static function passes($attribute, $value, $parameters, $validator): bool
