@@ -5,9 +5,13 @@ namespace App\Models\V2\Sites;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @method static forPolygonGeometry($value):  Builder
+ */
 class SitePolygon extends Model
 {
     use HasUuid;
@@ -37,6 +41,11 @@ class SitePolygon extends Model
     public function polygonGeometry()
     {
         return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'uuid');
+    }
+
+    public function scopeForPolygonGeometry($query, $uuid): Builder
+    {
+        return $query->where('poly_id', $uuid);
     }
 
     public function project()

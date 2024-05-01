@@ -66,7 +66,13 @@ class Validator
         \App\Validators\Extensions\TerrafundDisturbance::class,
         \App\Validators\Extensions\CompletePercentage::class,
         \App\Validators\Extensions\OrganisationFileType::class,
-        Extensions\Polygons\FeatureBounds::class,
+        \App\validators\Extensions\Polygons\FeatureBounds::class,
+        \App\validators\Extensions\Polygons\HasPolygonSite::class,
+        \App\validators\Extensions\Polygons\PolygonSize::class,
+        \App\validators\Extensions\Polygons\PolygonType::class,
+        \App\validators\Extensions\Polygons\SelfIntersection::class,
+        \App\validators\Extensions\Polygons\Spikes::class,
+        \App\validators\Extensions\Polygons\WithinCountry::class,
     ];
 
     private function __construct()

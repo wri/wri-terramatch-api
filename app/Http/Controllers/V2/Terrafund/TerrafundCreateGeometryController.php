@@ -13,6 +13,7 @@ use App\Validators\Extensions\Polygons\PolygonSize;
 use App\Validators\Extensions\Polygons\PolygonType;
 use App\Validators\Extensions\Polygons\SelfIntersection;
 use App\Validators\Extensions\Polygons\Spikes;
+use App\Validators\Extensions\Polygons\WithinCountry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -67,8 +68,7 @@ class TerrafundCreateGeometryController extends Controller
         $polygonUuid = $request->input('uuid');
         $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
         // Check if the polygon with the specified poly_id exists
-        $polygonExists = SitePolygon::where('poly_id', $polygonUuid)
-            ->exists();
+        $polygonExists = SitePolygon::forPolygonGeometry($polygonUuid)->exists();
 
         if (! $polygonExists) {
             return response()->json(['valid' => false, 'message' => 'No site polygon found with the specified poly_id.']);
@@ -80,7 +80,7 @@ class TerrafundCreateGeometryController extends Controller
             $whereConditions[] = "(IFNULL($field, '') = '' OR $field IS NULL)";
         }
 
-        $sitePolygonData = SitePolygon::where('poly_id', $polygonUuid)
+        $sitePolygonData = SitePolygon::forPolygonGeometry($polygonUuid)
             ->where(function ($query) use ($whereConditions) {
                 foreach ($whereConditions as $condition) {
                     $query->orWhereRaw($condition);
@@ -282,44 +282,17 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Geometry not found'], 404);
         }
 
-        $totalArea = $geometry->db_geometry->area;
-
-        // Find site_polygon_id and project_id using the polygonUuid
-        $sitePolygonData = SitePolygon::where('poly_id', $polygonUuid)
-            ->select('id', 'project_id')
-            ->first();
-
-        if (! $sitePolygonData) {
-            return response()->json(['error' => 'Site polygon data not found for the specified polygonUuid'], 404);
+        $response = WithinCountry::getIntersectionData($polygonUuid);
+        if ($response == null) {
+            return response()->json(['error' => 'Data is missing for within country calculation'], 404);
         }
 
-        $countryIso = $sitePolygonData->project->country;
-        if (! $countryIso) {
-            return response()->json(['error' => 'Country ISO not found for the specified project_id'], 404);
-        }
-
-        $intersectionData = WorldCountryGeneralized::where('iso', $countryIso)
-          ->selectRaw('world_countries_generalized.country AS country, ST_Area(ST_Intersection(world_countries_generalized.geometry, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) AS area', [$polygonUuid])
-          ->first();
-
-        $intersectionArea = $intersectionData->area;
-        $countryName = $intersectionData->country;
-
-        $insidePercentage = $intersectionArea / $totalArea * 100;
-
-        $insideThreshold = 75;
-        $insideViolation = $insidePercentage < $insideThreshold;
         $insertionSuccess = App::make(PolygonService::class)
-            ->createCriteraSite($polygonUuid, PolygonService::WITHIN_COUNTRY_CRITERIA_ID, ! $insideViolation);
+            ->createCriteraSite($polygonUuid, PolygonService::WITHIN_COUNTRY_CRITERIA_ID, $response['valid']);
 
-        return response()->json([
-            'country_name' => $countryName,
-            'inside_percentage' => $insidePercentage,
-            'valid' => ! $insideViolation,
-            'geometry_id' => $geometry->id,
-            'insertion_success' => $insertionSuccess,
-        ]);
-
+        $response['geometry_id'] = $geometry->id;
+        $response['insertion_success'] = $insertionSuccess;
+        return response()->json($response);
     }
 
     public function getGeometryType(Request $request)
@@ -398,8 +371,7 @@ class TerrafundCreateGeometryController extends Controller
     public function validateOverlapping(Request $request)
     {
         $uuid = $request->input('uuid');
-        $sitePolygon = SitePolygon::where('poly_id', $uuid)
-          ->first();
+        $sitePolygon = SitePolygon::forPolygonGeometry($uuid)->first();
 
         if (! $sitePolygon) {
             return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 200);
@@ -429,8 +401,7 @@ class TerrafundCreateGeometryController extends Controller
     public function validateEstimatedArea(Request $request)
     {
         $uuid = $request->input('uuid');
-        $sitePolygon = SitePolygon::where('poly_id', $uuid)
-          ->first();
+        $sitePolygon = SitePolygon::forPolygonGeometry($uuid)->first();
 
         if (! $sitePolygon) {
             return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 200);
