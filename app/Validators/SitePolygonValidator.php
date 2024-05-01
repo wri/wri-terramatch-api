@@ -9,6 +9,10 @@ class SitePolygonValidator extends Validator
         'features.*' => 'polygon_feature_bounds',
     ];
 
+    public const WITHIN_COUNTRY = [
+        '*' => 'required|string|uuid|has_polygon_site|within_country'
+    ];
+
     public const SCHEMA = [
         'poly_name' => 'required',
         'plantstart' => 'required',
