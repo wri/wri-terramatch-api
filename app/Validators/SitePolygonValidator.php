@@ -6,7 +6,7 @@ class SitePolygonValidator extends Validator
 {
     public const FEATURE_BOUNDS = [
         'features' => 'required|array',
-        'features.*' => 'feature_bounds',
+        'features.*' => 'polygon_feature_bounds',
     ];
 
     public const SCHEMA = [

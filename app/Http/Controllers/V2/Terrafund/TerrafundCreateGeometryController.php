@@ -9,6 +9,10 @@ use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
+use App\Validators\Extensions\Polygons\PolygonSize;
+use App\Validators\Extensions\Polygons\PolygonType;
+use App\Validators\Extensions\Polygons\SelfIntersection;
+use App\Validators\Extensions\Polygons\Spikes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -22,14 +26,10 @@ class TerrafundCreateGeometryController extends Controller
 {
     public function processGeometry(string $uuid)
     {
-        $geometry = PolygonGeometry::where('uuid', $uuid)
-          ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
-          ->first();
+        $geometry = PolygonGeometry::isUuid($uuid)->first();
 
-        $geojson = $geometry->geojson;
-
-        if ($geojson) {
-            return response()->json(['geometry' => $geojson], 200);
+        if ($geometry) {
+            return response()->json(['geometry' => $geometry->geo_json], 200);
         } else {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
@@ -87,16 +87,16 @@ class TerrafundCreateGeometryController extends Controller
                 }
             })
             ->first();
-        $service = App::make(PolygonService::class);
-        $service->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, false);
-        if ($sitePolygonData) {
-            return response()->json(['valid' => false, 'message' => 'Some attributes of the site polygon are invalid.']);
+        $valid = $sitePolygonData == null;
+        $responseData = ['valid' => $valid];
+        if (! $valid) {
+            $responseData['message'] = 'Some attributes of the site polygon are invalid.';
         }
 
-        $valid = true;
-        $service->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $valid);
+        App::make(PolygonService::class)
+            ->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $valid);
 
-        return response()->json(['valid' => true]);
+        return response()->json($responseData);
     }
 
     public function getGeometryProperties(string $geojsonFilename)
@@ -221,7 +221,7 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Geometry not found'], 404);
         }
 
-        $isSimple = DB::selectOne('SELECT ST_IsSimple(geom) AS is_simple FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->is_simple;
+        $isSimple = SelfIntersection::uuidValid($uuid);
         $message = $isSimple ? 'The geometry is valid' : 'The geometry has self-intersections';
         $insertionSuccess = App::make(PolygonService::class)
             ->createCriteriaSite($uuid, PolygonService::SELF_CRITERIA_ID, $isSimple);
@@ -229,61 +229,15 @@ class TerrafundCreateGeometryController extends Controller
         return response()->json(['selfintersects' => $message, 'geometry_id' => $geometry->id, 'insertion_success' => $insertionSuccess, 'valid' => $isSimple ? true : false], 200);
     }
 
-    public function calculateDistance($point1, $point2)
-    {
-        $lat1 = $point1[1];
-        $lon1 = $point1[0];
-        $lat2 = $point2[1];
-        $lon2 = $point2[0];
-
-        $theta = $lon1 - $lon2;
-        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-        $dist = acos($dist);
-        $dist = rad2deg($dist);
-        $miles = $dist * 60 * 1.1515;
-
-        return $miles * 1.609344;
-    }
-
-    public function detectSpikes($geometry)
-    {
-        $spikes = [];
-
-        if ($geometry['type'] === 'Polygon' || $geometry['type'] === 'MultiPolygon') {
-            $coordinates = $geometry['type'] === 'Polygon' ? $geometry['coordinates'][0] : $geometry['coordinates'][0][0]; // First ring of the polygon or the first polygon in the MultiPolygon
-            $numVertices = count($coordinates);
-            $totalDistance = 0;
-
-            for ($i = 0; $i < $numVertices - 1; $i++) {
-                $totalDistance += $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
-            }
-
-            for ($i = 0; $i < $numVertices - 1; $i++) {
-                $distance1 = $this->calculateDistance($coordinates[$i], $coordinates[($i + 1) % $numVertices]);
-                $distance2 = $this->calculateDistance($coordinates[($i + 1) % $numVertices], $coordinates[($i + 2) % $numVertices]);
-                $combinedDistance = $distance1 + $distance2;
-
-                if ($combinedDistance > 0.6 * $totalDistance) {
-                    // Vertex and its adjacent vertices contribute more than 25% of the total boundary path distance
-                    $spikes[] = $coordinates[($i + 1) % $numVertices];
-                }
-            }
-        }
-
-        return $spikes;
-    }
-
     public function checkBoundarySegments(Request $request)
     {
         $uuid = $request->query('uuid');
-        $geometry = PolygonGeometry::where('uuid', $uuid)->first();
+        $geometry = PolygonGeometry::isUuid($uuid)->first();
 
         if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
-        $geojson = DB::selectOne('SELECT ST_AsGeoJSON(geom) AS geojson FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->geojson;
-        $geojsonArray = json_decode($geojson, true);
-        $spikes = $this->detectSpikes($geojsonArray);
+        $spikes = Spikes::detectSpikes($geometry->geo_json);
         $valid = count($spikes) === 0;
         $insertionSuccess = App::make(PolygonService::class)
             ->createCriteriaSite($uuid, PolygonService::SPIKE_CRITERIA_ID, $valid);
@@ -294,17 +248,14 @@ class TerrafundCreateGeometryController extends Controller
     public function validatePolygonSize(Request $request)
     {
         $uuid = $request->query('uuid');
-        $geometry = PolygonGeometry::where('uuid', $uuid)->first();
+        $geometry = PolygonGeometry::isUuid($uuid)->first();
 
         if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
-        $areaAndLatitude = $geometry->getDbGeometryAttribute();
 
-        $areaSqDegrees = $areaAndLatitude->area;
-        $latitude = $areaAndLatitude->latitude;
-        $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
-        $valid = $areaSqMeters <= 10000000;
+        $areaSqMeters = PolygonSize::calculateSqMeters($geometry->db_geometry);
+        $valid = $areaSqMeters <= PolygonSize::SIZE_LIMIT;
         $insertionSuccess = App::make(PolygonService::class)
             ->createCriteriaSite($uuid, PolygonService::SIZE_CRITERIA_ID, $valid);
 
@@ -325,15 +276,13 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'UUID not provided'], 200);
         }
 
-        $geometry = PolygonGeometry::where('uuid', $polygonUuid)->first();
+        $geometry = PolygonGeometry::isUuid($polygonUuid)->first();
 
         if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
 
-        $totalArea = PolygonGeometry::where('uuid', $polygonUuid)
-            ->selectRaw('ST_Area(geom) AS area')
-            ->first()->area;
+        $totalArea = $geometry->db_geometry->area;
 
         // Find site_polygon_id and project_id using the polygonUuid
         $sitePolygonData = SitePolygon::where('poly_id', $polygonUuid)
@@ -377,13 +326,9 @@ class TerrafundCreateGeometryController extends Controller
     {
         $uuid = $request->input('uuid');
 
-        // Fetch the geometry type based on the UUID using SQL query
-        $query = 'SELECT ST_GeometryType(geom) AS geometry_type FROM polygon_geometry WHERE uuid = ?';
-        $result = DB::selectOne($query, [$uuid]);
-
-        if ($result) {
-            $geometryType = $result->geometry_type;
-            $valid = $geometryType === 'POLYGON';
+        $geometryType = PolygonGeometry::getGeometryType($uuid);
+        if ($geometryType) {
+            $valid = $geometryType === PolygonType::VALID_TYPE;
             $insertionSuccess = App::make(PolygonService::class)
                 ->createCriteriaSite($uuid, PolygonService::GEOMETRY_TYPE_CRITERIA_ID, $valid);
 
@@ -397,11 +342,8 @@ class TerrafundCreateGeometryController extends Controller
     {
         $uuid = $request->input('uuid');
 
-        // Find the ID of the polygon based on the UUID
-        $polygonIdQuery = 'SELECT id FROM polygon_geometry WHERE uuid = ?';
-        $polygonIdResult = DB::selectOne($polygonIdQuery, [$uuid]);
-
-        if (! $polygonIdResult) {
+        $geometry = PolygonGeometry::isUuid($uuid)->first();
+        if ($geometry === null) {
             return response()->json(['error' => 'Polygon not found for the given UUID'], 404);
         }
 
@@ -512,10 +454,7 @@ class TerrafundCreateGeometryController extends Controller
         }
         $lowerBound = 0.75 * $totalHectaresRestoredGoal;
         $upperBound = 1.25 * $totalHectaresRestoredGoal;
-        $valid = false;
-        if ($sumEstArea >= $lowerBound && $sumEstArea <= $upperBound) {
-            $valid = true;
-        }
+        $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;
         $insertionSuccess = App::make(PolygonService::class)
             ->createCriteriaSite($uuid, PolygonService::ESTIMATED_AREA_CRITERIA_ID, $valid);
 
@@ -525,7 +464,7 @@ class TerrafundCreateGeometryController extends Controller
     public function getPolygonsAsGeoJSON()
     {
         $limit = 2;
-        $polygons = PolygonGeometry::select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
+        $polygons = PolygonGeometry::selectRaw('ST_AsGeoJSON(geom) AS geojson')
           ->orderBy('created_at', 'desc')
           ->whereNotNull('geom')
           ->limit($limit)
