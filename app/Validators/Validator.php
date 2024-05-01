@@ -66,7 +66,7 @@ class Validator
         \App\Validators\Extensions\TerrafundDisturbance::class,
         \App\Validators\Extensions\CompletePercentage::class,
         \App\Validators\Extensions\OrganisationFileType::class,
-        \App\Validators\Extensions\FeatureBounds::class,
+        Extensions\Polygons\FeatureBounds::class,
     ];
 
     private function __construct()

@@ -6,8 +6,11 @@ use App\Models\Traits\HasUuid;
 use App\Models\V2\Sites\CriteriaSite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 
+/**
+ * @method static isUuid($uuid)
+ * @property mixed $uuid
+ */
 class PolygonGeometry extends Model
 {
     use HasUuid;
@@ -24,16 +27,43 @@ class PolygonGeometry extends Model
         return $this->hasMany(CriteriaSite::class, 'polygon_id', 'polygon_id');
     }
 
+    public static function getGeoJson(string $uuid): ?array
+    {
+        $geojson = PolygonGeometry::isUuid($uuid)
+            ->selectRaw('ST_AsGeoJSON(geom) as geojson')
+            ->first()
+            ?->geojson;
+
+        return $geojson == null ? null : json_decode($geojson, true);
+    }
+
+    public function getGeoJsonAttribute(): array
+    {
+        return self::getGeoJson($this->uuid);
+    }
+
+    public static function getGeometryType(string $uuid): ?string
+    {
+        return PolygonGeometry::isUuid($uuid)
+            ->selectRaw('ST_GeometryType(geom) as geometry_type')
+            ->first()
+            ?->geometry_type;
+    }
+
+    public function getGeometryTypeAttribute(): string
+    {
+        return self::getGeometryType($this->uuid);
+    }
+
+    public static function getDbGeometry(string $uuid)
+    {
+        return PolygonGeometry::isUuid($uuid)
+            ->selectRaw('ST_Area(geom) AS area, ST_Y(ST_Centroid(geom)) AS latitude')
+            ->first();
+    }
+
     public function getDbGeometryAttribute()
     {
-        $result = DB::selectOne(
-            '
-            SELECT ST_Area(geom) AS area, ST_Y(ST_Centroid(geom)) AS latitude
-            FROM polygon_geometry
-            WHERE uuid = :uuid',
-            ['uuid' => $this->uuid]
-        );
-
-        return $result;
+        return self::getDbGeometry($this->uuid);
     }
 }

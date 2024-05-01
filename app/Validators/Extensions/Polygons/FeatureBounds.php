@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Validators\Extensions;
+namespace App\Validators\Extensions\Polygons;
+
+use App\Validators\Extensions\Extension;
 
 class FeatureBounds extends Extension
 {
-    public static $name = 'feature_bounds';
+    public static $name = 'polygon_feature_bounds';
 
     public static $message = [
         'FEATURE_BOUNDS',
