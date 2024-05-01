@@ -36,6 +36,9 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * @property string project_id
+ */
 class Site extends Model implements MediaModel, AuditableContract, EntityModel
 {
     use HasFactory;
