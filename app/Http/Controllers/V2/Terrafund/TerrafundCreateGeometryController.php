@@ -9,6 +9,7 @@ use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
+use App\Validators\Extensions\Polygons\NotOverlapping;
 use App\Validators\Extensions\Polygons\PolygonSize;
 use App\Validators\Extensions\Polygons\PolygonType;
 use App\Validators\Extensions\Polygons\SelfIntersection;
@@ -292,6 +293,7 @@ class TerrafundCreateGeometryController extends Controller
 
         $response['geometry_id'] = $geometry->id;
         $response['insertion_success'] = $insertionSuccess;
+
         return response()->json($response);
     }
 
@@ -371,31 +373,18 @@ class TerrafundCreateGeometryController extends Controller
     public function validateOverlapping(Request $request)
     {
         $uuid = $request->input('uuid');
-        $sitePolygon = SitePolygon::forPolygonGeometry($uuid)->first();
-
-        if (! $sitePolygon) {
-            return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 200);
+        $response = NotOverlapping::getIntersectionData($uuid);
+        if ($response == null) {
+            return response()->json(['error' => 'Data is missing for overlapping calculation'], 404);
         }
 
-        $projectId = $sitePolygon->project_id;
-        if(! $projectId) {
-            return response()->json(['error' => 'Project ID not found for the given polygon ID'], 200);
-        }
-        $relatedPolyIds = SitePolygon::where('project_id', $projectId)
-          ->where('poly_id', '!=', $uuid)
-          ->pluck('poly_id');
-
-        $intersects = PolygonGeometry::whereIn('uuid', $relatedPolyIds)
-          ->selectRaw('ST_Intersects(geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?)) as intersects', [$uuid])
-          ->get()
-          ->pluck('intersects');
-
-        $intersects = in_array(1, $intersects->toArray());
-        $valid = ! $intersects;
         $insertionSuccess = App::make(PolygonService::class)
-            ->createCriteriaSite($uuid, PolygonService::OVERLAPPING_CRITERIA_ID, $valid);
+            ->createCriteriaSite($uuid, PolygonService::OVERLAPPING_CRITERIA_ID, $response['valid']);
 
-        return response()->json(['intersects' => $intersects, 'project_id' => $projectId, 'uuid' => $uuid, 'valid' => $valid, 'creteria_succes' => $insertionSuccess], 200);
+        $response['uuid'] = $uuid;
+        $response['criteria_success'] = $insertionSuccess;
+
+        return response()->json($response);
     }
 
     public function validateEstimatedArea(Request $request)

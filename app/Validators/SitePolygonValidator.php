@@ -10,7 +10,11 @@ class SitePolygonValidator extends Validator
     ];
 
     public const WITHIN_COUNTRY = [
-        '*' => 'required|string|uuid|has_polygon_site|within_country'
+        '*' => 'required|string|uuid|has_polygon_site|within_country',
+    ];
+
+    public const OVERLAPPING = [
+        '*' => 'required|string|uuid|has_polygon_site|not_overlapping',
     ];
 
     public const SCHEMA = [
