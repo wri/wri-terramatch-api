@@ -218,7 +218,7 @@ class TerrafundCreateGeometryController extends Controller
 
             $sitePolygon = new SitePolygon();
             $sitePolygon->project_id = $properties['project_id'] ?? null;
-            $sitePolygon->country = $properties['country'] ?? null;
+            // $sitePolygon->country = $properties['country'] ?? null;
             $sitePolygon->poly_id = $polygonUuid ?? null;
             $sitePolygon->poly_name = $properties['poly_name'] ?? null;
             $sitePolygon->site_id = $properties['site_id'] ?? null;
