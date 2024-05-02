@@ -9404,7 +9404,7 @@ definitions:
         type: string
       job_role:
         type: string
-      role_id:
+      primary_role:
         type: string
       country:
         type: string

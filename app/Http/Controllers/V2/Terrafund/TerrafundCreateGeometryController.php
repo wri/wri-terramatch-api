@@ -227,7 +227,7 @@ class TerrafundCreateGeometryController extends Controller
             $sitePolygon->target_sys = $properties['target_sys'] ?? null;
             $sitePolygon->distr = $properties['distr'] ?? null;
             $sitePolygon->num_trees = $properties['num_trees'] ?? null;
-            $sitePolygon->est_area = $area ?? null;
+            $sitePolygon->calc_area = $area ?? null;
             $sitePolygon->save();
             if ($sitePolygon->project_id) {
                 $geometryHelper = new GeometryHelper();
@@ -654,7 +654,7 @@ class TerrafundCreateGeometryController extends Controller
         $projectId = $sitePolygon->project_id;
 
         $sumEstArea = SitePolygon::where('project_id', $projectId)
-          ->sum('est_area');
+          ->sum('calc_area');
 
         $project = Project::where('uuid', $projectId)
           ->first();
