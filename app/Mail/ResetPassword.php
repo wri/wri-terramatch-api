@@ -14,7 +14,7 @@ class ResetPassword extends Mail
             'If you have any questions, feel free to message us at info@terramatch.org.';
         $this->link = $callbackUrl ?
             $callbackUrl . urlencode($token) :
-            '/passwordReset?token=' . urlencode($token);
+            '/auth/reset-password?token=' . urlencode($token);
         $this->cta = 'Reset Password';
         $this->transactional = true;
     }
