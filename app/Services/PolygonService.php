@@ -22,13 +22,8 @@ class PolygonService
     public const SCHEMA_CRITERIA_ID = 13;
     public const DATA_CRITERIA_ID = 14;
 
-    /**
-     * @throws ValidationException
-     */
     public function createGeojsonModels($geojson, $sitePolygonProperties = []): array
     {
-        SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson);
-
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
             if ($feature['geometry']['type'] === 'Polygon') {

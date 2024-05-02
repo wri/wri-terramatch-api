@@ -15,6 +15,7 @@ use App\Validators\Extensions\Polygons\PolygonType;
 use App\Validators\Extensions\Polygons\SelfIntersection;
 use App\Validators\Extensions\Polygons\Spikes;
 use App\Validators\Extensions\Polygons\WithinCountry;
+use App\Validators\SitePolygonValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -61,6 +62,8 @@ class TerrafundCreateGeometryController extends Controller
     {
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
         $geojson = json_decode($geojsonData, true);
+
+        SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson);
 
         return App::make(PolygonService::class)->createGeojsonModels($geojson);
     }
