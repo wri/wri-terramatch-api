@@ -170,6 +170,8 @@ use App\Http\Controllers\V2\Stratas\UpdateStrataController;
 use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
+use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
+use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
 use App\Http\Controllers\V2\TreeSpecies\GetTreeSpeciesForEntityController;
 use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
 use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestController;
@@ -186,6 +188,8 @@ use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
+use App\Models\V2\EntityModel;
+use App\Models\V2\MediaModel;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -228,6 +232,7 @@ Route::prefix('imports')->group(function () {
 });
 
 Route::prefix('media')->group(function () {
+    Route::delete('', [MediaController::class, 'bulkDelete']);
     Route::delete('/{uuid}', [MediaController::class, 'delete']);
     Route::delete('/{uuid}/{collection}', [MediaController::class, 'delete']);
 });
@@ -289,13 +294,10 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
 
-    Route::prefix('{modelSlug}')
-        ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
-        ->middleware('modelInterface')
-        ->group(function () {
-            Route::put('/{entity}/{status}', AdminStatusEntityController::class);
-            Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
-        });
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::put('/{entity}/{status}', AdminStatusEntityController::class);
+        Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
+    });
 
     Route::get('nursery-reports', AdminIndexNurseryReportsController::class);
     Route::get('site-reports', AdminIndexSiteReportsController::class);
@@ -402,14 +404,11 @@ Route::prefix('forms')->group(function () {
     Route::get('/', IndexFormController::class);
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
-    Route::prefix('{modelSlug}')
-        ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
-        ->middleware('modelInterface')
-        ->group(function () {
-            Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
-            Route::put('/{entity}', UpdateEntityWithFormController::class);
-            Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
-        });
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
+        Route::put('/{entity}', UpdateEntityWithFormController::class);
+        Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
+    });
 
     Route::prefix('projects')->group(function () {
         Route::post('', CreateProjectWithFormController::class);
@@ -539,12 +538,9 @@ Route::prefix('{modelSlug}')
         Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
     });
 
-Route::prefix('{modelSlug}')
-    ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_PLURAL)
-    ->middleware('modelInterface')
-    ->group(function () {
-        Route::get('/{entity}', ViewEntityController::class);
-    });
+ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+    Route::get('/{entity}', ViewEntityController::class);
+});
 
 Route::prefix('project-reports')->group(function () {
     Route::get('/{projectReport}/files', ViewProjectReportGalleryController::class);
@@ -600,18 +596,50 @@ Route::prefix('update-requests')->group(function () {
     Route::get('/{updateRequest}', AdminViewUpdateRequestController::class);
     Route::delete('/{updateRequest}', AdminSoftDeleteUpdateRequestController::class);
 
-    Route::prefix('/{modelSlug}')
-        ->whereIn('modelSlug', ModelInterfaceBindingMiddleware::ENTITY_TYPES_SINGULAR)
-        ->middleware('modelInterface')
-        ->group(function () {
-            Route::get('/{entity}', EntityUpdateRequestsController::class);
-        });
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::get('/{entity}', EntityUpdateRequestsController::class);
+    });
+});
+
+Route::prefix('terrafund')->group(function () {
+    Route::post('/polygon', [TerrafundCreateGeometryController::class, 'storeGeometry']);
+    Route::post('/upload-geojson', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFile']);
+    Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
+    Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
+    Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
+
+    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonsAsGeoJSON']);
+    Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
+    Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
+    Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
+    Route::get('/validation/within-country', [TerrafundCreateGeometryController::class, 'checkWithinCountry']);
+    Route::get('/validation/geometry-type', [TerrafundCreateGeometryController::class, 'getGeometryType']);
+    Route::get('/country-names', [TerrafundCreateGeometryController::class, 'getAllCountryNames']);
+    Route::get('/validation/criteria-data', [TerrafundCreateGeometryController::class, 'getCriteriaData']);
+    Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
+    Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
+    Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
+
+    Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
+    Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
+    Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
+
+    Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
+    Route::post('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
 Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
 
-Route::post('file/upload/{model}/{collection}/{uuid}', UploadController::class);
+ModelInterfaceBindingMiddleware::with(
+    MediaModel::class,
+    function () {
+        Route::post('/{collection}/{mediaModel}', UploadController::class);
+        Route::post('/{collection}/{mediaModel}/bulk_url', [UploadController::class, 'bulkUrlUpload']);
+    },
+    prefix: 'file/upload',
+    modelParameter: 'mediaModel'
+);
 
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);

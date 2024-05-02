@@ -14,6 +14,7 @@ use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Disturbance;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Invasive;
+use App\Models\V2\MediaModel;
 use App\Models\V2\Polygon;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Seeding;
@@ -32,11 +33,13 @@ use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Site extends Model implements HasMedia, AuditableContract, EntityModel
+/**
+ * @property string project_id
+ */
+class Site extends Model implements MediaModel, AuditableContract, EntityModel
 {
     use HasFactory;
     use HasUuid;
