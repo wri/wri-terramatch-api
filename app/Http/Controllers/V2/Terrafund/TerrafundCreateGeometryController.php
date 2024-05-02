@@ -4,11 +4,11 @@ namespace App\Http\Controllers\V2\Terrafund;
 
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
+use App\Validators\Extensions\Polygons\EstimatedArea;
 use App\Validators\Extensions\Polygons\NotOverlapping;
 use App\Validators\Extensions\Polygons\PolygonSize;
 use App\Validators\Extensions\Polygons\PolygonType;
@@ -390,35 +390,18 @@ class TerrafundCreateGeometryController extends Controller
     public function validateEstimatedArea(Request $request)
     {
         $uuid = $request->input('uuid');
-        $sitePolygon = SitePolygon::forPolygonGeometry($uuid)->first();
+        $response = EstimatedArea::getAreaData($uuid);
+        if ($response['error'] != null) {
+            unset($response['valid']);
 
-        if (! $sitePolygon) {
-            return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 200);
+            return response()->json($response);
         }
 
-        $projectId = $sitePolygon->project_id;
-
-        $sumEstArea = SitePolygon::where('project_id', $projectId)
-          ->sum('est_area');
-
-        $project = Project::where('uuid', $projectId)
-          ->first();
-
-        if (! $project) {
-            return response()->json(['error' => 'Project not found for the given project ID', 'projectId' => $projectId], 200);
-        }
-
-        $totalHectaresRestoredGoal = $project->total_hectares_restored_goal;
-        if ($totalHectaresRestoredGoal === null || $totalHectaresRestoredGoal === 0) {
-            return response()->json(['error' => 'Total hectares restored goal not set for the project'], 400);
-        }
-        $lowerBound = 0.75 * $totalHectaresRestoredGoal;
-        $upperBound = 1.25 * $totalHectaresRestoredGoal;
-        $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;
         $insertionSuccess = App::make(PolygonService::class)
-            ->createCriteriaSite($uuid, PolygonService::ESTIMATED_AREA_CRITERIA_ID, $valid);
+            ->createCriteriaSite($uuid, PolygonService::ESTIMATED_AREA_CRITERIA_ID, $response['valid']);
+        $response['insertion_success'] = $insertionSuccess;
 
-        return response()->json(['valid' => $valid, 'sum_area_project' => $sumEstArea, 'total_area_project' => $totalHectaresRestoredGoal, 'insertionSuccess' => $insertionSuccess], 200);
+        return response()->json($response);
     }
 
     public function getPolygonsAsGeoJSON()
