@@ -25,6 +25,7 @@ class ProjectPipelineResource extends JsonResource
             'Cohort' => $this->Cohort,
             'PublishFor' => $this->PublishFor,
             'URL' => $this->URL,
+            'created_at' => $this->created_at,
             'CreatedDate' => $this->created_at ? $this->created_at->format('j F Y') : "",
             'ModifiedDate' => $this->updated_at ? $this->updated_at->format('j F Y') : "",
         ];
