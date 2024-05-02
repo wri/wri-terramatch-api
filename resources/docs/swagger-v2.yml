@@ -44134,8 +44134,6 @@ definitions:
         type: string
       site_name:
         type: string
-      poly_label:
-        type: string
       plantstart:
         type: string
         format: date
@@ -44153,9 +44151,6 @@ definitions:
       calc_area:
         type: number
         format: float
-      date_modified:
-        type: string
-        format: date-time
       created_by:
         type: string
       last_modified_by:

@@ -222,7 +222,7 @@ class TerrafundCreateGeometryController extends Controller
             $sitePolygon->poly_id = $polygonUuid ?? null;
             $sitePolygon->poly_name = $properties['poly_name'] ?? null;
             $sitePolygon->site_id = $properties['site_id'] ?? null;
-            $sitePolygon->poly_label = $properties['poly_label'] ?? null;
+            // $sitePolygon->poly_label = $properties['poly_label'] ?? null;
             $sitePolygon->plantstart = ! empty($properties['plantstart']) ? $properties['plantstart'] : null;
             $sitePolygon->plantend = ! empty($properties['plantend']) ? $properties['plantend'] : null;
             $sitePolygon->practice = $properties['practice'] ?? null;
@@ -699,7 +699,17 @@ class TerrafundCreateGeometryController extends Controller
             }
 
             $properties = [];
-            $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
+            $fieldsToValidate = [
+              'poly_name',
+              'plantstart',
+              'plantend',
+              'practice',
+              'target_sys',
+              'distr',
+              'num_trees',
+              'uuid',
+              'site_id'
+            ];
             foreach ($fieldsToValidate as $field) {
                 $properties[$field] = $sitePolygon->$field;
             }

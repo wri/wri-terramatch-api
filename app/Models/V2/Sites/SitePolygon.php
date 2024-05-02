@@ -16,14 +16,10 @@ class SitePolygon extends Model
     protected $table = 'site_polygon';
 
     protected $fillable = [
-      'proj_name',
-      'org_name',
       'poly_id',
       'poly_name',
       'site_id',
-      'site_name',
       'project_id',
-      'poly_label',
       'plantstart',
       'plantend',
       'practice',
@@ -31,7 +27,6 @@ class SitePolygon extends Model
       'distr',
       'num_trees',
       'calc_area',
-      'country',
     ];
 
     public function polygonGeometry()

@@ -21,7 +21,6 @@ class CreateSitesPolygons extends Migration
             $table->string('site_id')->nullable();
             $table->string('poly_id')->nullable();
             $table->string('poly_name')->nullable();
-            $table->string('poly_label')->nullable();
             $table->date('plantstart')->nullable();
             $table->date('plantend')->nullable();
             $table->string('practice')->nullable();
@@ -29,7 +28,6 @@ class CreateSitesPolygons extends Migration
             $table->string('distr')->nullable();
             $table->integer('num_trees')->nullable();
             $table->decimal('calc_area', 15, 2)->nullable();
-            $table->date('date_modified')->nullable();
             $table->string('status')->nullable();
             $table->string('created_by')->nullable();
             $table->string('last_modified_by')->nullable();
