@@ -3,116 +3,81 @@
 namespace App\Http\Controllers\V2\Files;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V2\File\BulkUploadRequest;
 use App\Http\Requests\V2\File\UploadRequest;
 use App\Http\Resources\V2\Files\FileResource;
-use App\Models\V2\Forms\Form;
-use App\Models\V2\Forms\FormQuestionOption;
-use App\Models\V2\FundingProgramme;
-use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Nurseries\NurseryReport;
-use App\Models\V2\Organisation;
-use App\Models\V2\ProjectPitch;
-use App\Models\V2\Projects\Project;
-use App\Models\V2\Projects\ProjectMonitoring;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\Site;
-use App\Models\V2\Sites\SiteMonitoring;
-use App\Models\V2\Sites\SiteReport;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\V2\MediaModel;
+use Exception;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use mysql_xdevapi\Exception;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UploadController extends Controller
 {
-    public function __invoke(UploadRequest $request, $model, $collection, $uuid)
+    public function __invoke(UploadRequest $request, string $collection, MediaModel $mediaModel)
     {
-        $entity = $this->getEntity($model, $uuid);
-        $this->authorize('uploadFiles', $entity);
-        $config = $this->getConfiguration($entity, $collection);
+        $this->authorize('uploadFiles', $mediaModel);
+        $config = $this->getConfiguration($mediaModel, $collection);
         $this->validateFile($request, $config);
 
-        $qry = $entity->addMediaFromRequest('upload_file');
-        $this->prepHandler($qry, $request->all(), $entity, $config, $collection);
+        $qry = $mediaModel->addMediaFromRequest('upload_file');
+        $this->prepHandler($qry, $request->all(), $mediaModel, $config, $collection);
         $details = $this->executeHandler($qry, $collection);
 
-        if (Arr::has($request->all(), ['lat', 'lng'])) {
-            $this->saveFileCoordinates($details, $request);
-        }
-
-        $this->saveAdditionalFileProperties($details, $request, $config);
+        $this->saveFileCoordinates($details, $request->all());
+        $this->saveAdditionalFileProperties($details, $request->all(), $config);
 
         return new FileResource($details);
     }
 
-    private function getEntity($model, $uuid): Model
+    public function bulkUrlUpload(BulkUploadRequest $request, string $collection, MediaModel $mediaModel)
     {
-        switch ($model) {
-            case 'organisation':
-                $entity = Organisation::isUuid($uuid)->first();
+        $this->authorize('uploadFiles', $mediaModel);
 
-                break;
-            case 'project-pitch':
-                $entity = ProjectPitch::isUuid($uuid)->first();
-
-                break;
-            case 'funding-programme':
-                $entity = FundingProgramme::isUuid($uuid)->first();
-
-                break;
-            case 'form':
-                $entity = Form::isUuid($uuid)->first();
-
-                break;
-            case 'form-question-option':
-                $entity = FormQuestionOption::isUuid($uuid)->first();
-
-                break;
-            case 'project':
-                $entity = Project::isUuid($uuid)->first();
-
-                break;
-            case 'site':
-                $entity = Site::isUuid($uuid)->first();
-
-                break;
-            case 'nursery':
-                $entity = Nursery::isUuid($uuid)->first();
-
-                break;
-            case 'project-report':
-                $entity = ProjectReport::isUuid($uuid)->first();
-
-                break;
-            case 'site-report':
-                $entity = SiteReport::isUuid($uuid)->first();
-
-                break;
-            case 'nursery-report':
-                $entity = NurseryReport::isUuid($uuid)->first();
-
-                break;
-            case 'project-monitoring':
-                $entity = ProjectMonitoring::isUuid($uuid)->first();
-
-                break;
-            case 'site-monitoring':
-                $entity = SiteMonitoring::isUuid($uuid)->first();
-
-                break;
+        if ($collection != 'photos') {
+            // Only the photos collection is allowed for bulk upload
+            throw new NotFoundHttpException();
         }
 
-        if (empty($entity)) {
-            throw new ModelNotFoundException();
+        $config = $this->getConfiguration($mediaModel, $collection);
+        $files = [];
+
+        try {
+            foreach ($request->getPayload() as $data) {
+                // The downloadable file gets shuttled through the internals of Spatie without a chance for us to run
+                // our own validations on them. png/jpg are the only mimes allowed for the photos collection according
+                // to config/file-handling.php, and we disallow other collections than 'photos' above.
+                $handler = $mediaModel->addMediaFromUrl(
+                    $data['download_url'],
+                    'image/png',
+                    'image/jpg',
+                    'image/jpeg'
+                );
+
+                $this->prepHandler($handler, $data, $mediaModel, $config, $collection);
+                $details = $this->executeHandler($handler, $collection);
+
+                $this->saveFileCoordinates($details, $data);
+                $this->saveAdditionalFileProperties($details, $data, $config);
+
+                $files[] = $details;
+            }
+        } catch (Exception $exception) {
+            // if we get an error in the bulk upload, remove any media that did successfully get saved.
+            foreach ($files as $file) {
+                $file->delete();
+            }
+
+            throw $exception;
         }
 
-        return $entity;
+        return FileResource::collection($files);
     }
 
-    private function getConfiguration($entity, $collection): array
+    private function getConfiguration(MediaModel $mediaModel, $collection): array
     {
-        $config = $entity->fileConfiguration[$collection];
+        $config = $mediaModel->fileConfiguration[$collection];
 
         if (empty($config)) {
             throw new Exception('Collection is unknown to this model.');
@@ -136,14 +101,14 @@ class UploadController extends Controller
         $validator->validate();
     }
 
-    private function prepHandler($qry, $data, $entity, $config, $collection): void
+    private function prepHandler($qry, $data, MediaModel $mediaModel, $config, $collection): void
     {
         if (data_get($data, 'title', false)) {
             $qry->usingName(data_get($data, 'title'));
         }
 
         if (! data_get($config, 'multiple', true)) {
-            $entity->clearMediaCollection($collection);
+            $mediaModel->clearMediaCollection($collection);
         }
     }
 
@@ -155,17 +120,20 @@ class UploadController extends Controller
         ->toMediaCollection($collection);
     }
 
-    private function saveFileCoordinates($media, $request)
+    private function saveFileCoordinates($media, $data)
     {
-        $media->lat = $request->lat;
-        $media->lng = $request->lng;
-        $media->save();
+        if (Arr::has($data, ['lat', 'lng'])) {
+            $media->lat = $data['lat'];
+            $media->lng = $data['lng'];
+            $media->save();
+        }
     }
 
-    private function saveAdditionalFileProperties($media, $request, $config)
+    private function saveAdditionalFileProperties($media, $data, $config)
     {
         $media->file_type = $this->getType($media, $config);
-        $media->is_public = $request->is_public ?? true;
+        $media->is_public = $data['is_public'] ?? true;
+        $media->created_by = Auth::user()->id;
         $media->save();
     }
 

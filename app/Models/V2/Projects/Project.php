@@ -15,6 +15,7 @@ use App\Models\Traits\UsesLinkedFields;
 use App\Models\User;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Forms\Application;
+use App\Models\V2\MediaModel;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Polygon;
@@ -36,11 +37,10 @@ use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Project extends Model implements HasMedia, AuditableContract, EntityModel
+class Project extends Model implements MediaModel, AuditableContract, EntityModel
 {
     use HasFactory;
     use HasUuid;

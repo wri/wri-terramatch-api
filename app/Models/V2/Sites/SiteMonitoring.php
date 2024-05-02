@@ -7,15 +7,15 @@ use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\V2\MediaModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class SiteMonitoring extends Model implements HasMedia
+class SiteMonitoring extends Model implements MediaModel
 {
     use HasFactory;
     use HasUuid;
