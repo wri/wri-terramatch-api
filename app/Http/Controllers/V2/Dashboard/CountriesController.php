@@ -7,19 +7,20 @@ use App\Http\Resources\V2\Dashboard\CountriesResource;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Projects\Project;
+use Illuminate\Http\Request;
 
 class CountriesController extends Controller
 {
-    public function __invoke(): CountriesResource
+    public function __invoke(Request $request): CountriesResource
     {
         $response = (object) [
-            'data' => $this->getAllCountries(),
+            'data' => $this->getAllCountries($request),
         ];
 
         return new CountriesResource($response);
     }
 
-    public function getAllCountries()
+    public function getAllCountries($request)
     {
         $projectsCountrieslug = Project::where('framework_key', 'terrafund')
             ->whereHas('organisation', function ($query) {
@@ -32,7 +33,17 @@ class CountriesController extends Controller
             ->get();
         $countriesResponse = [];
         foreach ($countries as $country) {
-            if ($this->hasProjectsInCountry($country->slug, $projectsCountrieslug)) {
+            if ($request->input('country')) {
+                $countriesResponse[] = [
+                    'country_slug' => $country->slug,
+                    'id' => $country->id,
+                    'data' => (object) [
+                        'label' => $country->label,
+                        'icon' => '/flags/' . strtolower($country->slug) . '.svg',
+                    ],
+                ];
+            } else 
+                if ($this->hasProjectsInCountry($country->slug, $projectsCountrieslug)) {
                 $countriesResponse[] = [
                     'country_slug' => $country->slug,
                     'id' => $country->id,
