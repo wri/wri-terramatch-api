@@ -19,16 +19,14 @@ class NotOverlapping extends Extension
 
     public static function passes($attribute, $value, $parameters, $validator): bool
     {
-        $result = self::getIntersectionData($value);
-
-        return $result != null && $result['valid'];
+        return self::getIntersectionData($value)['valid'];
     }
 
-    public static function getIntersectionData(string $polygonUuid): ?array
+    public static function getIntersectionData(string $polygonUuid): array
     {
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
         if ($sitePolygon == null) {
-            return null;
+            return ['valid' => false, 'error' => 'Site polygon not found for the given polygon ID', 'status' => 404];
         }
 
         $relatedPolyIds = SitePolygon::where('project_id', $sitePolygon->project_id)
@@ -48,6 +46,7 @@ class NotOverlapping extends Extension
 
         return [
             'valid' => ! in_array(1, $intersects->toArray()),
+            'uuid' => $polygonUuid,
             'project_id' => $sitePolygon->project_id,
         ];
     }

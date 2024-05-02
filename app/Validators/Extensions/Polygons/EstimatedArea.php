@@ -25,11 +25,11 @@ class EstimatedArea extends Extension
     public const LOWER_BOUND_MULTIPLIER = 0.75;
     public const UPPER_BOUND_MULTIPLIER = 1.25;
 
-    public static function getAreaData(string $polygonUuid): ?array
+    public static function getAreaData(string $polygonUuid): array
     {
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
         if ($sitePolygon == null) {
-            return ['valid' => false, 'error' => 'Site polygon not found for the given polygon ID'];
+            return ['valid' => false, 'error' => 'Site polygon not found for the given polygon ID', 'status' => 404];
         }
 
         $project = Project::isUuid($sitePolygon->project_uuid)->first();
@@ -37,11 +37,12 @@ class EstimatedArea extends Extension
             return [
                 'valid' => false,
                 'error' => 'Project not found for the given Project ID', 'projectId' => $sitePolygon->project_id,
+                'status' => 404,
             ];
         }
 
         if (empty($project->total_hectares_restored_goal)) {
-            return ['valid' => false, 'error' => 'Total hectares restored goal not set for the project'];
+            return ['valid' => false, 'error' => 'Total hectares restored goal not set for the project', 'status' => 500];
         }
 
         $sumEstArea = SitePolygon::where('project_id', $sitePolygon->project_id)->sum('est_area');

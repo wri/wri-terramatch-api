@@ -22,22 +22,28 @@ class WithinCountry extends Extension
 
     public static function passes($attribute, $value, $parameters, $validator): bool
     {
-        $result = self::getIntersectionData($value);
-
-        return $result != null && $result['valid'];
+        return self::getIntersectionData($value)['valid'];
     }
 
-    public static function getIntersectionData(string $polygonUuid): ?array
+    public static function getIntersectionData(string $polygonUuid): array
     {
+        if (empty($polygonUuid)) {
+            return ['valid' => false, 'status' => 404, 'error' => 'UUID not provided'];
+        }
+
         $geometry = PolygonGeometry::isUuid($polygonUuid)->first();
+        if ($geometry === null) {
+            return ['valid' => false, 'status' => 404, 'error' => 'Geometry not found'];
+        }
+
         $sitePolygonData = SitePolygon::forPolygonGeometry($polygonUuid)->select('id', 'project_id')->first();
-        if ($geometry == null || $sitePolygonData == null) {
-            return null;
+        if ($sitePolygonData == null) {
+            return ['valid' => false, 'status' => 404, 'error' => 'Site polygon data not found for the specified polygonUuid'];
         }
 
         $countryIso = $sitePolygonData->project->country;
         if ($countryIso == null) {
-            return null;
+            return ['valid' => false, 'status' => 404, 'error' => 'Country ISO not found for the specified project_id'];
         }
 
         $intersectionData = WorldCountryGeneralized::forIso($countryIso)
@@ -58,6 +64,7 @@ class WithinCountry extends Extension
 
         return [
             'valid' => $insidePercentage >= self::THRESHOLD_PERCENTAGE,
+            'geometry_id' => $geometry->id,
             'inside_percentage' => $insidePercentage,
             'country_name' => $intersectionData->country,
         ];

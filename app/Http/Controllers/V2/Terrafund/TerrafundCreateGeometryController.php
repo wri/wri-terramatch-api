@@ -15,6 +15,7 @@ use App\Validators\Extensions\Polygons\PolygonType;
 use App\Validators\Extensions\Polygons\SelfIntersection;
 use App\Validators\Extensions\Polygons\Spikes;
 use App\Validators\Extensions\Polygons\WithinCountry;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -273,28 +274,11 @@ class TerrafundCreateGeometryController extends Controller
     {
         $polygonUuid = $request->input('uuid');
 
-        if ($polygonUuid === null || $polygonUuid === '') {
-            return response()->json(['error' => 'UUID not provided'], 200);
-        }
-
-        $geometry = PolygonGeometry::isUuid($polygonUuid)->first();
-
-        if (! $geometry) {
-            return response()->json(['error' => 'Geometry not found'], 404);
-        }
-
-        $response = WithinCountry::getIntersectionData($polygonUuid);
-        if ($response == null) {
-            return response()->json(['error' => 'Data is missing for within country calculation'], 404);
-        }
-
-        $insertionSuccess = App::make(PolygonService::class)
-            ->createCriteraSite($polygonUuid, PolygonService::WITHIN_COUNTRY_CRITERIA_ID, $response['valid']);
-
-        $response['geometry_id'] = $geometry->id;
-        $response['insertion_success'] = $insertionSuccess;
-
-        return response()->json($response);
+        return $this->handlePolygonValidation(
+            $polygonUuid,
+            WithinCountry::getIntersectionData($polygonUuid),
+            PolygonService::WITHIN_COUNTRY_CRITERIA_ID
+        );
     }
 
     public function getGeometryType(Request $request)
@@ -373,35 +357,23 @@ class TerrafundCreateGeometryController extends Controller
     public function validateOverlapping(Request $request)
     {
         $uuid = $request->input('uuid');
-        $response = NotOverlapping::getIntersectionData($uuid);
-        if ($response == null) {
-            return response()->json(['error' => 'Data is missing for overlapping calculation'], 404);
-        }
 
-        $insertionSuccess = App::make(PolygonService::class)
-            ->createCriteriaSite($uuid, PolygonService::OVERLAPPING_CRITERIA_ID, $response['valid']);
-
-        $response['uuid'] = $uuid;
-        $response['criteria_success'] = $insertionSuccess;
-
-        return response()->json($response);
+        return $this->handlePolygonValidation(
+            $uuid,
+            NotOverlapping::getIntersectionData($uuid),
+            PolygonService::OVERLAPPING_CRITERIA_ID
+        );
     }
 
     public function validateEstimatedArea(Request $request)
     {
         $uuid = $request->input('uuid');
-        $response = EstimatedArea::getAreaData($uuid);
-        if ($response['error'] != null) {
-            unset($response['valid']);
 
-            return response()->json($response);
-        }
-
-        $insertionSuccess = App::make(PolygonService::class)
-            ->createCriteriaSite($uuid, PolygonService::ESTIMATED_AREA_CRITERIA_ID, $response['valid']);
-        $response['insertion_success'] = $insertionSuccess;
-
-        return response()->json($response);
+        return $this->handlePolygonValidation(
+            $uuid,
+            EstimatedArea::getAreaData($uuid),
+            PolygonService::ESTIMATED_AREA_CRITERIA_ID
+        );
     }
 
     public function getPolygonsAsGeoJSON()
@@ -443,5 +415,21 @@ class TerrafundCreateGeometryController extends Controller
           ->pluck('country');
 
         return response()->json(['countries' => $countries]);
+    }
+
+    private function handlePolygonValidation($polygonUuid, $response, $criteriaId): JsonResponse
+    {
+        if ($response['error'] != null) {
+            $status = $response['status'];
+            unset($response['valid']);
+            unset($response['status']);
+
+            return response()->json($response, $status);
+        }
+
+        $response['insertion_success'] = App::make(PolygonService::class)
+            ->createCriteraSite($polygonUuid, $criteriaId, $response['valid']);
+
+        return response()->json($response);
     }
 }
