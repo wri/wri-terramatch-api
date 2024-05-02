@@ -118,6 +118,8 @@ class TerrafundCreateGeometryController extends Controller
                     Log::info($returnSite)  ;
                 }
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+                $generalProperties = $feature['properties'];
+                Log::info("general properties multipolygon", $generalProperties);
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
                     $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
                     if (! $this->validatePolygonBounds($singlePolygon)) {
@@ -125,7 +127,7 @@ class TerrafundCreateGeometryController extends Controller
                     }
                     $data = $this->insertSinglePolygon($singlePolygon, $srid);
                     $uuids[] = $data['uuid'];
-                    $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
+                    $returnSite = $this->insertSitePolygon($data['uuid'], $generalProperties, $data['area']);
                     if ($returnSite) {
                         Log::info($returnSite)  ;
                     }
