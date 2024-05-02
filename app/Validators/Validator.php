@@ -66,6 +66,7 @@ class Validator
         \App\Validators\Extensions\TerrafundDisturbance::class,
         \App\Validators\Extensions\CompletePercentage::class,
         \App\Validators\Extensions\OrganisationFileType::class,
+        \App\validators\Extensions\Polygons\EstimatedArea::class,
         \App\validators\Extensions\Polygons\FeatureBounds::class,
         \App\validators\Extensions\Polygons\HasPolygonSite::class,
         \App\validators\Extensions\Polygons\NotOverlapping::class,

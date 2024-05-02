@@ -11,7 +11,7 @@ class NotOverlapping extends Extension
     public static $name = 'not_overlapping';
 
     public static $message = [
-        'HAS_POLYGON_SITE',
+        'NOT_OVERLAPPING',
         'The {{attribute}} field must represent a polygon that does not overlap with other site polygons',
         ['attribute' => ':attribute'],
         'The :attribute field must represent a polygon that does not overlap with other site polygons',
