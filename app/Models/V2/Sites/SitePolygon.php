@@ -30,7 +30,7 @@ class SitePolygon extends Model
       'target_sys',
       'distr',
       'num_trees',
-      'est_area',
+      'calc_area',
       'country',
     ];
 

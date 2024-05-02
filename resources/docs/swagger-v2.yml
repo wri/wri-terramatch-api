@@ -44150,7 +44150,7 @@ definitions:
         type: string
       num_trees:
         type: integer
-      est_area:
+      calc_area:
         type: number
         format: float
       date_modified:
@@ -44238,7 +44238,7 @@ definitions:
         type: string
       num_trees:
         type: integer
-      est_area:
+      calc_area:
         type: number
         format: float
   GeometryData:

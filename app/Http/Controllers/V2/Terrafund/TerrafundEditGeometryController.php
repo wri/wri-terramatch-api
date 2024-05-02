@@ -42,7 +42,7 @@ class TerrafundEditGeometryController extends Controller
                 $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
                 $areaHectares = $areaSqMeters / 10000;
 
-                $sitePolygon->est_area = $areaHectares;
+                $sitePolygon->calc_area = $areaHectares;
                 $sitePolygon->save();
 
                 Log::info("Updated area for site polygon with UUID: $sitePolygon->uuid");
@@ -160,7 +160,7 @@ class TerrafundEditGeometryController extends Controller
               'practice' => 'nullable|string',
               'distr' => 'nullable|string',
               'num_trees' => 'nullable|integer',
-              'est_area' => 'nullable|numeric',
+              'calc_area' => 'nullable|numeric',
               'target_sys' => 'nullable|string',
             ]);
 
@@ -201,7 +201,7 @@ class TerrafundEditGeometryController extends Controller
               'practice' => $validatedData['practice'],
               'distr' => $validatedData['distr'],
               'num_trees' => $validatedData['num_trees'],
-              'est_area' => $areaHectares, // Assign the calculated area
+              'calc_area' => $areaHectares, // Assign the calculated area
               'target_sys' => $validatedData['target_sys'],
             ]);
             $sitePolygon->poly_id = $uuid;
