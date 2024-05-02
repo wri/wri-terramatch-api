@@ -9,6 +9,7 @@ use App\Http\Resources\V2\Files\FileResource;
 use App\Models\V2\MediaModel;
 use Exception;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -47,7 +48,12 @@ class UploadController extends Controller
                 // The downloadable file gets shuttled through the internals of Spatie without a chance for us to run
                 // our own validations on them. png/jpg are the only mimes allowed for the photos collection according
                 // to config/file-handling.php, and we disallow other collections than 'photos' above.
-                $handler = $mediaModel->addMediaFromUrl($data['download_url'], 'image/png', 'image/jpg');
+                $handler = $mediaModel->addMediaFromUrl(
+                    $data['download_url'],
+                    'image/png',
+                    'image/jpg',
+                    'image/jpeg'
+                );
 
                 $this->prepHandler($handler, $data, $mediaModel, $config, $collection);
                 $details = $this->executeHandler($handler, $collection);
@@ -127,6 +133,7 @@ class UploadController extends Controller
     {
         $media->file_type = $this->getType($media, $config);
         $media->is_public = $data['is_public'] ?? true;
+        $media->created_by = Auth::user()->id;
         $media->save();
     }
 
