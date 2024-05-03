@@ -44246,6 +44246,11 @@ definitions:
             type: array
           type:
             type: string
+  GeometryString:
+    type: object
+    properties:
+      geometry:
+        type: string
   GeojsonData: 
     type: object
     properties:
@@ -94088,7 +94093,7 @@ paths:
           name: geometry
           required: true
           schema:
-            $ref: '#/definitions/GeometryData'
+            $ref: '#/definitions/GeometryString'
           description: The new geometry data
       responses:
         '200':
