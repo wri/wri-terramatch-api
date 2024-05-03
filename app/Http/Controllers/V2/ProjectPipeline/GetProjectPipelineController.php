@@ -15,7 +15,9 @@ class GetProjectPipelineController extends Controller
             $projectsPipeline = ProjectPipeline::where('id', $id)->first();
             return new ProjectPipelineResource($projectsPipeline);
         } else {
-            $projectsPipeline = ProjectPipeline::all();
+            $projectsPipeline = ProjectPipeline::orderBy('updated_at', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->get();
             return ProjectPipelineResource::collection($projectsPipeline);
         }
     }
