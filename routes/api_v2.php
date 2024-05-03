@@ -156,6 +156,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringContro
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
+use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
 use App\Http\Controllers\V2\Stages\IndexStageController;
@@ -554,6 +555,8 @@ Route::prefix('sites')->group(function () {
     Route::get('/{site}/image/locations', SiteImageLocationsController::class);
     Route::delete('/{site}', SoftDeleteSiteController::class);
     Route::get('/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
+    Route::get('/{site}/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
+    Route::get('/{site}/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
 });
 
 Route::prefix('project-monitorings')->group(function () {
