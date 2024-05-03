@@ -14,7 +14,6 @@ class GetWorkdaysForEntityController extends Controller
 {
     public function __invoke(Request $request, EntityModel $entity)
     {
-        $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
         $this->authorize('update', $entity);
 
         $qry = QueryBuilder::for(Workday::class)
@@ -24,11 +23,6 @@ class GetWorkdaysForEntityController extends Controller
                 AllowedFilter::exact('collection'),
             ]);
 
-        $totalAmount = $qry->sum('amount');
-
-        $collection = $qry->paginate($perPage)
-            ->appends(request()->query());
-
-        return (new WorkdaysCollection($collection))->params(['count_total' => $totalAmount ]);
+        return new WorkdaysCollection($qry->get());
     }
 }

@@ -9266,53 +9266,6 @@ definitions:
         type: string
       indigeneity:
         type: string
-  V2WorkdaysPaginated:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          title: V2WorkdayRead
-          type: object
-          properties:
-            uuid:
-              type: string
-            amount:
-              type: integer
-            collection:
-              type: string
-            gender:
-              type: string
-            age:
-              type: string
-            ethnicity:
-              type: string
-            indigeneity:
-              type: string
-      links:
-        type: object
-        properties:
-          first:
-            type: string
-          last:
-            type: string
-          prev:
-            type: string
-          next:
-            type: string
-      meta:
-        type: object
-        properties:
-          current_page:
-            type: integer
-          from:
-            type: integer
-          last_page:
-            type: integer
-          next:
-            type: integer
-          unfiltered_total:
-            type: integer
   V2DisturbanceRead:
     title: V2DisturbanceRead
     type: object
@@ -57577,7 +57530,7 @@ paths:
           name: ENTITY
           in: path
           required: true
-          description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+          description: allowed values project-report/site-report
         - type: string
           name: UUID
           in: path
@@ -57608,30 +57561,6 @@ paths:
                       type: string
                     indigeneity:
                       type: string
-              links:
-                type: object
-                properties:
-                  first:
-                    type: string
-                  last:
-                    type: string
-                  prev:
-                    type: string
-                  next:
-                    type: string
-              meta:
-                type: object
-                properties:
-                  current_page:
-                    type: integer
-                  from:
-                    type: integer
-                  last_page:
-                    type: integer
-                  next:
-                    type: integer
-                  unfiltered_total:
-                    type: integer
   /v2/stratas:
     post:
       operationId: post-v2-stratas
