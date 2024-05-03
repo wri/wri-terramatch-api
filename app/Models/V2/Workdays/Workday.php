@@ -2,8 +2,11 @@
 
 namespace App\Models\V2\Workdays;
 
+use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
+use App\Models\V2\EntityModel;
+use http\Exception\InvalidArgumentException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +16,7 @@ use Illuminate\Support\Collection;
 /**
  * @property Collection $demographics
  */
-class Workday extends Model
+class Workday extends Model implements HandlesLinkedFieldSync
 {
     use HasFactory;
     use SoftDeletes;
@@ -78,6 +81,46 @@ class Workday extends Model
         self::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING => 'Volunteer Site Monitoring',
         self::COLLECTION_SITE_VOLUNTEER_OTHER => 'Volunteer Other Activities',
     ];
+
+    public static function syncRelation(EntityModel $entity, string $property, $data): void
+    {
+        // Workdays only have one instance per collection
+        $workday = $entity->$property()->first();
+        if ($workday != null && $workday->collection != $data['collection']) {
+            throw new InvalidArgumentException(
+                'Workday collection does not match entity property [' .
+                'property collection: ' . $workday->collection . ', ' .
+                'submitted collection: ' . $data['collection'] . ']'
+            );
+        }
+
+        if ($workday == null) {
+            $workday = Workday::create([
+                'workdayable_type' => get_class($entity),
+                'workdayable_id' => $entity->id,
+                'collection' => $data['collection'],
+            ]);
+        }
+
+        foreach ($data['demographics'] as $demographicData) {
+            $demographic = $workday->demographics()->where([
+                'type' => $demographicData['type'],
+                'subtype' => $demographicData['subtype'],
+                'name' => $demographicData['name'],
+            ]);
+
+            if ($demographic == null) {
+                $workday->demographics()->create([
+                    'type' => $demographicData['type'],
+                    'subtype' => $demographicData['subtype'],
+                    'name' => $demographicData['name'],
+                    'amount' => $demographicData['amount'],
+                ]);
+            } else {
+                $demographic->update(['amount' => $demographicData['amount']]);
+            }
+        }
+    }
 
     public function workdayable()
     {
