@@ -44309,6 +44309,52 @@ definitions:
       ModifiedDate:
         type: string
         format: date
+  FeatureCollection:
+    type: object
+    properties:
+      type:
+        type: string
+  Feature:
+    type: object
+    properties:
+      type:
+        type: string
+      geometry:
+        $ref: '#/definitions/Geometry'
+      properties:
+        $ref: '#/definitions/FeatureProperties'
+  Geometry:
+    type: object
+    properties:
+      type:
+        type: string
+      coordinates:
+        type: array
+        items:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+  FeatureProperties:
+    type: object
+    properties:
+      poly_name:
+        type: string
+      plantstart:
+        type: string
+        format: date
+      plantend:
+        type: string
+        format: date
+      practice:
+        type: string
+      target_sys:
+        type: string
+      distr:
+        type: string
+      num_trees:
+        type: integer
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93958,6 +94004,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/definitions/GeoJSONResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/geojson/site':
+    get:
+      summary: Get collection Feature as GeoJSON for a site
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          required: true
+          description: UUID of the aite.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/FeatureCollection'
         '400':
           description: Bad request
         '500':
