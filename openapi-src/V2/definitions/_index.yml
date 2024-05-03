@@ -270,3 +270,5 @@ V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
 V2ProjectInviteCreate:
   $ref: './V2ProjectInviteCreate.yml'
+WorkdayDemographic:
+  $ref: './WorkdayDemographic.yml'

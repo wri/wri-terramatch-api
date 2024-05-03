@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
+/**
+ * @property Collection $demographics
+ */
 class Workday extends Model
 {
     use HasFactory;
@@ -85,22 +89,9 @@ class Workday extends Model
         return 'uuid';
     }
 
-    public function genderDemographics(): HasMany
+    public function demographics(): HasMany
     {
-        return $this->hasMany(WorkdayDemographic::class)
-            ->where('type', WorkdayDemographic::GENDER);
-    }
-
-    public function ageDemographics(): HasMany
-    {
-        return $this->hasMany(WorkdayDemographic::class)
-            ->where('type', WorkdayDemographic::AGE);
-    }
-
-    public function ethnicityDemographics(): HasMany
-    {
-        return $this->hasMany(WorkdayDemographic::class)
-            ->where('type', WorkdayDemographic::ETHNICITY);
+        return $this->hasMany(WorkdayDemographic::class);
     }
 
     public function getReadableCollectionAttribute(): ?string

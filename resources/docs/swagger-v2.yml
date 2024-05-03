@@ -9254,18 +9254,26 @@ definitions:
     properties:
       uuid:
         type: string
-      amount:
-        type: integer
       collection:
         type: string
-      gender:
-        type: string
-      age:
-        type: string
-      ethnicity:
-        type: string
-      indigeneity:
-        type: string
+      demographics:
+        type: array
+        items:
+          title: WorkdayDemographic
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - gender
+                - age
+                - ethnicity
+            subtype:
+              type: string
+            name:
+              type: string
+            amount:
+              type: integer
   V2DisturbanceRead:
     title: V2DisturbanceRead
     type: object
@@ -43950,6 +43958,22 @@ definitions:
     properties:
       email_address:
         type: string
+  WorkdayDemographic:
+    title: WorkdayDemographic
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - gender
+          - age
+          - ethnicity
+      subtype:
+        type: string
+      name:
+        type: string
+      amount:
+        type: integer
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -57549,18 +57573,26 @@ paths:
                   properties:
                     uuid:
                       type: string
-                    amount:
-                      type: integer
                     collection:
                       type: string
-                    gender:
-                      type: string
-                    age:
-                      type: string
-                    ethnicity:
-                      type: string
-                    indigeneity:
-                      type: string
+                    demographics:
+                      type: array
+                      items:
+                        title: WorkdayDemographic
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - gender
+                              - age
+                              - ethnicity
+                          subtype:
+                            type: string
+                          name:
+                            type: string
+                          amount:
+                            type: integer
   /v2/stratas:
     post:
       operationId: post-v2-stratas
