@@ -531,12 +531,9 @@ Route::prefix('tasks')->group(function () {
     Route::put('/{task}/submit', SubmitProjectTasksController::class);
 });
 
-Route::prefix('{modelSlug}')
-    ->whereIn('modelSlug', ['site-reports', 'nursery-reports'])
-    ->middleware('modelInterface')
-    ->group(function () {
-        Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
-    });
+ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], function () {
+    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
+});
 
 ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
     Route::get('/{entity}', ViewEntityController::class);
