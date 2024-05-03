@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
@@ -117,6 +118,8 @@ class TerrafundCreateGeometryController extends Controller
                     Log::info($returnSite)  ;
                 }
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+                $generalProperties = $feature['properties'];
+                Log::info("general properties multipolygon", $generalProperties);
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
                     $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
                     if (! $this->validatePolygonBounds($singlePolygon)) {
@@ -124,7 +127,7 @@ class TerrafundCreateGeometryController extends Controller
                     }
                     $data = $this->insertSinglePolygon($singlePolygon, $srid);
                     $uuids[] = $data['uuid'];
-                    $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
+                    $returnSite = $this->insertSitePolygon($data['uuid'], $generalProperties, $data['area']);
                     if ($returnSite) {
                         Log::info($returnSite)  ;
                     }
@@ -198,6 +201,7 @@ class TerrafundCreateGeometryController extends Controller
     private function insertSitePolygon(string $polygonUuid, array $properties, float $area)
     {
         try {
+            Log::info('Inserting site polygon', ['properties' => $properties, 'polygonUuid' => $polygonUuid]);
             $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
             $SCHEMA_CRITERIA_ID = 13;
             $validSchema = true;
@@ -214,22 +218,23 @@ class TerrafundCreateGeometryController extends Controller
 
             $sitePolygon = new SitePolygon();
             $sitePolygon->project_id = $properties['project_id'] ?? null;
-            $sitePolygon->proj_name = $properties['proj_name'] ?? null;
-            $sitePolygon->org_name = $properties['org_name'] ?? null;
-            $sitePolygon->country = $properties['country'] ?? null;
+            // $sitePolygon->country = $properties['country'] ?? null;
             $sitePolygon->poly_id = $polygonUuid ?? null;
             $sitePolygon->poly_name = $properties['poly_name'] ?? null;
             $sitePolygon->site_id = $properties['site_id'] ?? null;
-            $sitePolygon->site_name = $properties['site_name'] ?? null;
-            $sitePolygon->poly_label = $properties['poly_label'] ?? null;
+            // $sitePolygon->poly_label = $properties['poly_label'] ?? null;
             $sitePolygon->plantstart = ! empty($properties['plantstart']) ? $properties['plantstart'] : null;
             $sitePolygon->plantend = ! empty($properties['plantend']) ? $properties['plantend'] : null;
             $sitePolygon->practice = $properties['practice'] ?? null;
             $sitePolygon->target_sys = $properties['target_sys'] ?? null;
             $sitePolygon->distr = $properties['distr'] ?? null;
             $sitePolygon->num_trees = $properties['num_trees'] ?? null;
-            $sitePolygon->est_area = $area ?? null;
+            $sitePolygon->calc_area = $area ?? null;
             $sitePolygon->save();
+            if ($sitePolygon->project_id) {
+                $geometryHelper = new GeometryHelper();
+                $geometryHelper -> updateProjectCentroid($sitePolygon->project_id);
+            }
 
             return null;
         } catch (\Exception $e) {
@@ -651,7 +656,7 @@ class TerrafundCreateGeometryController extends Controller
         $projectId = $sitePolygon->project_id;
 
         $sumEstArea = SitePolygon::where('project_id', $projectId)
-          ->sum('est_area');
+          ->sum('calc_area');
 
         $project = Project::where('uuid', $projectId)
           ->first();
@@ -676,35 +681,102 @@ class TerrafundCreateGeometryController extends Controller
         return response()->json(['valid' => $valid, 'sum_area_project' => $sumEstArea, 'total_area_project' => $totalHectaresRestoredGoal, 'insertionSuccess' => $insertionSuccess], 200);
     }
 
-    public function getPolygonsAsGeoJSON()
+    public function getPolygonAsGeoJSON(Request $request)
     {
-        $limit = 2;
-        $polygons = PolygonGeometry::select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
-          ->orderBy('created_at', 'desc')
-          ->whereNotNull('geom')
-          ->limit($limit)
-          ->get();
-        $features = [];
+        try {
+            $uuid = $request->query('uuid');
 
-        foreach ($polygons as $polygon) {
-            $coordinates = json_decode($polygon->geojson)->coordinates;
-            $feature = [
-              'type' => 'Feature',
-              'geometry' => [
-                'type' => 'Polygon',
-                'coordinates' => $coordinates,
-              ],
-              'properties' => [],
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)
+            ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
+            ->first();
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+
+            $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
+            if (! $sitePolygon) {
+                return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
+            }
+
+            $properties = [];
+            $fieldsToValidate = [
+              'poly_name',
+              'plantstart',
+              'plantend',
+              'practice',
+              'target_sys',
+              'distr',
+              'num_trees',
+              'uuid',
+              'site_id'
             ];
-            $features[] = $feature;
-        }
-        $geojson = [
-          'type' => 'FeatureCollection',
-          'features' => $features,
-        ];
+            foreach ($fieldsToValidate as $field) {
+                $properties[$field] = $sitePolygon->$field;
+            }
 
-        // Return the GeoJSON data
-        return response()->json($geojson);
+            $propertiesJson = json_encode($properties);
+
+            $feature = [
+                'type' => 'Feature',
+                'geometry' => json_decode($polygonGeometry->geojson),
+                'properties' => json_decode($propertiesJson),
+            ];
+
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => [$feature],
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getAllPolygonsAsGeoJSON(Request $request)
+    {
+        try {
+            $siteUuid = $request->query('uuid');
+            $polygonsUuids = SitePolygon::where('site_id', $siteUuid)->pluck('poly_id');
+            $features = [];
+            foreach ($polygonsUuids as $polygonUuid) {
+                $feature = [];
+                $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
+                ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
+                ->first();
+                if (! $polygonGeometry) {
+                    return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+                }
+    
+                $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
+                if (! $sitePolygon) {
+                    return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
+                }
+    
+                $properties = [];
+                $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
+                foreach ($fieldsToValidate as $field) {
+                    $properties[$field] = $sitePolygon->$field;
+                }
+    
+                $propertiesJson = json_encode($properties);
+    
+                $feature = [
+                    'type' => 'Feature',
+                    'geometry' => json_decode($polygonGeometry->geojson),
+                    'properties' => json_decode($propertiesJson),
+                ];
+                $features[] = $feature;
+            } 
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => $features,
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function getAllCountryNames()
