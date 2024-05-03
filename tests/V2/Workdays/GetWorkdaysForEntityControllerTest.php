@@ -43,7 +43,7 @@ class GetWorkdaysForEntityControllerTest extends TestCase
             'status' => EntityStatusStateMachine::STARTED,
         ]);
 
-        $workday = Workday::factory()->create([
+        Workday::factory()->create([
             'workdayable_type' => SiteReport::class,
             'workdayable_id' => $report->id,
         ]);
