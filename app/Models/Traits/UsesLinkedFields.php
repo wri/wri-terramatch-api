@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits;
 
+use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\V2\Forms\Form;
 
 trait UsesLinkedFields
@@ -247,6 +248,13 @@ trait UsesLinkedFields
     {
         // This will expand as we complete more tickets in TM-747, until eventually we support all form relations.
         if (! in_array($inputType, ['treeSpecies', 'workdays'])) {
+            return;
+        }
+
+        $class = $this->$property()->getMorphClass();
+        if (is_a($class, HandlesLinkedFieldSync::class, true)) {
+            $class::syncRelation($this, $property, $data);
+
             return;
         }
 
