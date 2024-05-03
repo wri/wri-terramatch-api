@@ -451,13 +451,13 @@ Route::prefix('project-pitches')->group(function () {
     Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
-Route::prefix('tree-species')->group(function () {
-    Route::get('/{entity}/{uuid}', GetTreeSpeciesForEntityController::class);
-});
+ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+    Route::get('/{entity}', GetTreeSpeciesForEntityController::class);
+}, prefix: 'tree-species');
 
-Route::prefix('workdays')->group(function () {
-    Route::get('/{entity}/{uuid}', GetWorkdaysForEntityController::class);
-});
+ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
+    Route::get('/{entity}', GetWorkdaysForEntityController::class);
+}, prefix: 'workdays');
 
 Route::prefix('stratas')->group(function () {
     Route::post('/', StoreStrataController::class);
