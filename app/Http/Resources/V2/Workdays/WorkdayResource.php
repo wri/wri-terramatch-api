@@ -12,7 +12,7 @@ class WorkdayResource extends JsonResource
             'uuid' => $this->uuid,
             'collection' => $this->collection,
             'readable_collection' => $this->readable_collection,
-            'demographics' => WorkdayDemographicResource::collection($this->demographics),
+            'demographics' => empty($this->demographics) ? [] : WorkdayDemographicResource::collection($this->demographics),
         ];
     }
 }
