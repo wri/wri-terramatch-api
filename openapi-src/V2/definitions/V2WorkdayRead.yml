@@ -5,6 +5,8 @@ properties:
     type: string
   collection:
     type: string
+  readable_collection:
+    type: string
   demographics:
     type: array
     items:
