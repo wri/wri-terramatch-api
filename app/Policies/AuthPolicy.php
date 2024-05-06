@@ -54,6 +54,6 @@ class AuthPolicy extends Policy
 
     public function me(?UserModel $user, $model = null): bool
     {
-        return $this->isUser($user) || $this->isAdmin($user) || $this->isTerrafundAdmin($user);
+        return $this->isUser($user) || $this->isAdmin($user) || $this->isTerrafundAdmin($user) || $this->isNewRoleUser($user);
     }
 }
