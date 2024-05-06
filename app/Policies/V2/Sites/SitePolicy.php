@@ -25,7 +25,7 @@ class SitePolicy extends Policy
 
     public function readAll(?User $user, ?Site $site = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']);
+        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']) || $this->isAdmin($user);
     }
 
     public function update(?User $user, ?Site $site = null): bool

@@ -25,7 +25,7 @@ class NurseryPolicy extends Policy
 
     public function readAll(?User $user, ?Nursery $nursey = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']);
+        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']) || $this->isAdmin($user);
     }
 
     public function update(?User $user, ?Nursery $nursey = null): bool
