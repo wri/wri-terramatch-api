@@ -251,7 +251,7 @@ trait UsesLinkedFields
             return;
         }
 
-        $class = $this->$property()->getMorphClass();
+        $class = get_class($this->$property()->make());
         if (is_a($class, HandlesLinkedFieldSync::class, true)) {
             $class::syncRelation($this, $property, $data);
 

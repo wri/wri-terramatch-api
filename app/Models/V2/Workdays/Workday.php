@@ -86,13 +86,19 @@ class Workday extends Model implements HandlesLinkedFieldSync
      */
     public static function syncRelation(EntityModel $entity, string $property, $data): void
     {
+        if (count($data) == 0) {
+            $entity->$property()->delete();
+            return;
+        }
+
         // Workdays only have one instance per collection
+        $workdayData = $data[0];
         $workday = $entity->$property()->first();
-        if ($workday != null && $workday->collection != $data['collection']) {
+        if ($workday != null && $workday->collection != $workdayData['collection']) {
             throw new \Exception(
                 'Workday collection does not match entity property [' .
                 'property collection: ' . $workday->collection . ', ' .
-                'submitted collection: ' . $data['collection'] . ']'
+                'submitted collection: ' . $workdayData['collection'] . ']'
             );
         }
 
@@ -100,24 +106,24 @@ class Workday extends Model implements HandlesLinkedFieldSync
             $workday = Workday::create([
                 'workdayable_type' => get_class($entity),
                 'workdayable_id' => $entity->id,
-                'collection' => $data['collection'],
+                'collection' => $workdayData['collection'],
             ]);
         }
 
         $demographics = $workday->demographics;
         $represented = collect();
-        foreach ($data['demographics'] as $demographicData) {
+        foreach ($workdayData['demographics'] as $demographicData) {
             $demographic = $demographics->firstWhere([
-                'type' => $demographicData['type'],
-                'subtype' => $demographicData['subtype'],
-                'name' => $demographicData['name'],
+                'type' => data_get($demographicData,'type'),
+                'subtype' => data_get($demographicData, 'subtype'),
+                'name' => data_get($demographicData, 'name'),
             ]);
 
             if ($demographic == null) {
                 $workday->demographics()->create($demographicData);
             } else {
                 $represented->push($demographic->id);
-                $demographic->update(['amount' => $demographicData['amount']]);
+                $demographic->update(['amount' => data_get($demographicData, 'amount')]);
             }
         }
         // Remove any existing demographic that wasn't in the submitted set.
