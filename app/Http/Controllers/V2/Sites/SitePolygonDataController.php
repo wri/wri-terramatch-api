@@ -26,12 +26,12 @@ class SitePolygonDataController extends Controller
                 return response()->json(['error' => 'No polygon IDs found for the site'], 404);
             }
             $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsIds);
+
             return response()->json(['bbox' => $bboxCoordinates]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-    
+
             return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
         }
     }
-    
 };

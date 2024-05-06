@@ -18,7 +18,7 @@ class ProjectPipelineResource extends JsonResource
                 'name' => $this->Name,
                 'description' => $this->Description,
             ],
-            'date' => $this->updated_at ? $this->updated_at->format('j F Y') : "", 
+            'date' => $this->updated_at ? $this->updated_at->format('j F Y') : '',
             'id' => $this->id,
             'SubmittedBy' => $this->SubmittedBy,
             'Program' => $this->Program,
@@ -26,8 +26,8 @@ class ProjectPipelineResource extends JsonResource
             'PublishFor' => $this->PublishFor,
             'URL' => $this->URL,
             'created_at' => $this->created_at,
-            'CreatedDate' => $this->created_at ? $this->created_at->format('j F Y') : "",
-            'ModifiedDate' => $this->updated_at ? $this->updated_at->format('j F Y') : "",
+            'CreatedDate' => $this->created_at ? $this->created_at->format('j F Y') : '',
+            'ModifiedDate' => $this->updated_at ? $this->updated_at->format('j F Y') : '',
         ];
     }
 }

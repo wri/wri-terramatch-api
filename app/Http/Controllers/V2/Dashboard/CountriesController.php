@@ -42,8 +42,7 @@ class CountriesController extends Controller
                         'icon' => '/flags/' . strtolower($country->slug) . '.svg',
                     ],
                 ];
-            } else 
-                if ($this->hasProjectsInCountry($country->slug, $projectsCountrieslug)) {
+            } elseif ($this->hasProjectsInCountry($country->slug, $projectsCountrieslug)) {
                 $countriesResponse[] = [
                     'country_slug' => $country->slug,
                     'id' => $country->id,

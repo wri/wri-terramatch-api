@@ -40,6 +40,7 @@ abstract class Policy
     protected function isNewRoleUser(?UserModel $user): bool
     {
         $newRoles = ['project_developer', 'funder', 'government'];
+
         return in_array($user->role, $newRoles);
     }
 

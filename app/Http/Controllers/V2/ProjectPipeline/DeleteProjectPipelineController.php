@@ -11,6 +11,7 @@ class DeleteProjectPipelineController extends Controller
     public function __invoke(ProjectPipeline $projectPipeline, String $id): ProjectPipelineResource
     {
         ProjectPipeline::where('id', $id)->delete();
+
         return new ProjectPipelineResource($projectPipeline);
     }
 }

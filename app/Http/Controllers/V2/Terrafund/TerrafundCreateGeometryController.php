@@ -119,7 +119,7 @@ class TerrafundCreateGeometryController extends Controller
                 }
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
                 $generalProperties = $feature['properties'];
-                Log::info("general properties multipolygon", $generalProperties);
+                Log::info('general properties multipolygon', $generalProperties);
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
                     $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
                     if (! $this->validatePolygonBounds($singlePolygon)) {
@@ -708,7 +708,7 @@ class TerrafundCreateGeometryController extends Controller
               'distr',
               'num_trees',
               'uuid',
-              'site_id'
+              'site_id',
             ];
             foreach ($fieldsToValidate as $field) {
                 $properties[$field] = $sitePolygon->$field;
@@ -747,27 +747,27 @@ class TerrafundCreateGeometryController extends Controller
                 if (! $polygonGeometry) {
                     return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
                 }
-    
+
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
                 if (! $sitePolygon) {
                     return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
                 }
-    
+
                 $properties = [];
                 $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
                 foreach ($fieldsToValidate as $field) {
                     $properties[$field] = $sitePolygon->$field;
                 }
-    
+
                 $propertiesJson = json_encode($properties);
-    
+
                 $feature = [
                     'type' => 'Feature',
                     'geometry' => json_decode($polygonGeometry->geojson),
                     'properties' => json_decode($propertiesJson),
                 ];
                 $features[] = $feature;
-            } 
+            }
             $featureCollection = [
                 'type' => 'FeatureCollection',
                 'features' => $features,

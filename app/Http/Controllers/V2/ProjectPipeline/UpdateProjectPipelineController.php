@@ -14,6 +14,7 @@ class UpdateProjectPipelineController extends Controller
         $validatedData = $updateProjectPipelineRequest->validated();
         $projectPipeline = ProjectPipeline::findOrFail($id);
         $projectPipeline->update($validatedData);
+
         return new ProjectPipelineResource($projectPipeline);
     }
 }
