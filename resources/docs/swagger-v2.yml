@@ -94131,6 +94131,17 @@ paths:
                   error:
                     type: string
                     example: Internal Server Error
+    delete:
+      summary: Delete polygon records
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon geometry to delete
+      responses:
+        '204':
+          description: No Content
   '/v2/terrafund/polygon/geojson/{uuid}':
     get:
       summary: Retrieve polygon GeoJSON by UUID
