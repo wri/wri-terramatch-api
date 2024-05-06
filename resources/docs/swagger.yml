@@ -19892,3 +19892,30 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/ProjectPipeline'
+  /auth/change-pwd:
+    patch:
+      operationId: patch-auth-change
+      summary: Reset a user's or admin's password
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+              password:
+                type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
