@@ -12,6 +12,10 @@ class SiteReportPolicy extends Policy
 {
     public function read(?User $user, ?SiteReport $report = null): bool
     {
+        if ($this->isAdmin($user)) {
+            return true;
+        }
+
         if ($user->can('framework-' . $report->framework_key)) {
             return true;
         }

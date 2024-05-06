@@ -12,6 +12,10 @@ class ProjectReportPolicy extends Policy
 {
     public function read(?User $user, ?ProjectReport $report = null): bool
     {
+        if ($this->isAdmin($user)) {
+            return true;
+        }
+
         if ($user->can('framework-' . $report->framework_key)) {
             return true;
         }

@@ -12,6 +12,10 @@ class ProjectPolicy extends Policy
 {
     public function read(?User $user, ?Project $project = null): bool
     {
+        if ($this->isAdmin($user)) {
+            return true;
+        }
+
         if ($user->can('framework-' . $project->framework_key)) {
             return true;
         }

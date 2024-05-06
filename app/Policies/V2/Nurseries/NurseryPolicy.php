@@ -12,6 +12,10 @@ class NurseryPolicy extends Policy
 {
     public function read(?User $user, ?Nursery $nursey = null): bool
     {
+        if ($this->isAdmin($user)) {
+            return true;
+        }
+
         if ($user->can('framework-' . $nursey->framework_key)) {
             return true;
         }

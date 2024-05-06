@@ -11,6 +11,10 @@ class TaskPolicy extends Policy
 {
     public function read(?User $user, ?Task $task = null): bool
     {
+        if ($this->isAdmin($user)) {
+            return true;
+        }
+
         if ($user->can('framework-' . $task->project->framework_key)) {
             return true;
         }
@@ -24,7 +28,7 @@ class TaskPolicy extends Policy
 
     public function readAll(?User $user, ?Task $task = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']);
+        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']) || $this->isAdmin($user);
     }
 
     public function update(?User $user, ?Task $task = null): bool
