@@ -651,7 +651,7 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/polygon/bbox/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonBbox']);
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
-    Route::post('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
+    Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
 
     Route::get('/centroids/{uuid}', [TerrafundPointsController::class, 'calculateCentroidOfCentroids']);
     Route::get('/centroids-update', [TerrafundPointsController::class, 'updateProjectCentroids']);
