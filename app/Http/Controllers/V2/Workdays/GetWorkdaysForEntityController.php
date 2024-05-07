@@ -25,13 +25,14 @@ class GetWorkdaysForEntityController extends Controller
             'workdayable_id' => $entity->id,
         ])->get();
 
-        $collections = match ($entity->shortName) {
+        $expectedCollections = match ($entity->shortName) {
             'site-report' => array_keys(Workday::$siteCollections),
             'project-report' => array_keys(Workday::$projectCollections),
             default => throw new NotFoundHttpException(),
         };
-        foreach ($collections as $collection) {
-            if (!$workdays->keys()->contains($collection)) {
+        $collections = $workdays->pluck('collection');
+        foreach ($expectedCollections as $collection) {
+            if (! $collections->contains($collection)) {
                 $workday = new Workday();
                 // Allows the resource to return an API response with no demographics, but still containing
                 // the collection and readable collection name.
