@@ -21,7 +21,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
             'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
             'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
             'total_entries' => $this->getTotalJobsCreatedSum($projects),
-            'total_hectares_restored' => $this->getTotalHectaresSum($projects),
+            'total_hectares_restored' => round($this->getTotalHectaresSum($projects)),
             'total_hectares_restored_goal' => $this->getTotalHectaresRestoredGoalSum($projects),
             'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
             'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($projects),
