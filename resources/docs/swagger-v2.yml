@@ -94267,15 +94267,21 @@ paths:
   '/v2/terrafund/upload-geojson':
     post:
       summary: Upload GeoJSON File
-      operationId: uploadGeoJSONFile
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: file
-          type: file
-          required: true
-          description: The GeoJSON file to upload
+      description: Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The GeoJSON file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the GeoJSON file
       responses:
         '200':
           description: GeoJSON file processed and inserted successfully
@@ -94292,16 +94298,22 @@ paths:
           description: Internal server error
   '/v2/terrafund/upload-shapefile':
     post:
-      summary: Upload Shapefile
-      operationId: uploadShapefile
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: file
-          type: file
-          required: true
-          description: The Shapefile (ZIP) to upload
+      summary: Upload shapfile File
+      description: Uploads a shapefile file, converts it to GeoJSON, and inserts it into the database.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The shapefile file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the shapefile file
       responses:
         '200':
           description: Shapefile processed and inserted successfully
@@ -94319,8 +94331,7 @@ paths:
   '/v2/terrafund/upload-kml':
     post:
       summary: Upload KML File
-      description: |
-        Uploads a KML file, converts it to GeoJSON, and inserts it into the database.
+      description: Uploads a KML file, converts it to GeoJSON, and inserts it into the database.
       requestBody:
         required: true
         content:
@@ -94331,6 +94342,7 @@ paths:
                 file:
                   type: string
                   format: binary
+                  description: The KML file to upload
                 uuid:
                   type: string
                   description: The UUID of the site associated with the KML file
@@ -94344,10 +94356,8 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: A success message
                   uuid:
                     type: string
-                    description: The UUID generated for the inserted GeoJSON
         '400':
           description: Bad request
         '500':
