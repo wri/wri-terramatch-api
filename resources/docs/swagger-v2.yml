@@ -44233,9 +44233,6 @@ definitions:
         type: string
       num_trees:
         type: integer
-      calc_area:
-        type: number
-        format: float
   GeometryData:
     type: object
     properties:
@@ -94267,3 +94264,91 @@ paths:
       responses:
         '204':
           description: No Content
+  '/v2/terrafund/upload-geojson':
+    post:
+      summary: Upload GeoJSON File
+      operationId: uploadGeoJSONFile
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: file
+          type: file
+          required: true
+          description: The GeoJSON file to upload
+      responses:
+        '200':
+          description: GeoJSON file processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/upload-shapefile':
+    post:
+      summary: Upload Shapefile
+      operationId: uploadShapefile
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: file
+          type: file
+          required: true
+          description: The Shapefile (ZIP) to upload
+      responses:
+        '200':
+          description: Shapefile processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/upload-kml':
+    post:
+      summary: Upload KML File
+      description: |
+        Uploads a KML file, converts it to GeoJSON, and inserts it into the database.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the KML file
+      responses:
+        '200':
+          description: KML file processed and inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A success message
+                  uuid:
+                    type: string
+                    description: The UUID generated for the inserted GeoJSON
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error

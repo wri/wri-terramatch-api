@@ -97,7 +97,7 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
-    public function insertGeojsonToDB(string $geojsonFilename)
+    public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = null)
     {
         $srid = 4326;
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
@@ -107,6 +107,10 @@ class TerrafundCreateGeometryController extends Controller
         }
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
+            if ($site_id !== null){
+                $feature['properties']['site_id'] = $site_id;
+            }
+            Log::info('Feature properties', $feature['properties']);
             if ($feature['geometry']['type'] === 'Polygon') {
                 if (! $this->validatePolygonBounds($feature['geometry'])) {
                     return ['error' => 'Invalid polygon bounds'];
@@ -266,6 +270,7 @@ class TerrafundCreateGeometryController extends Controller
     public function uploadKMLFile(Request $request)
     {
         if ($request->hasFile('file')) {
+            $site_id = $request->input('uuid');
             $kmlfile = $request->file('file');
             $directory = storage_path('app/public/kml_files');
             if (! file_exists($directory)) {
@@ -283,7 +288,7 @@ class TerrafundCreateGeometryController extends Controller
 
                 return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
             }
-            $uuid = $this->insertGeojsonToDB($geojsonFilename);
+            $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
             if (isset($uuid['error'])) {
                 return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
             }
