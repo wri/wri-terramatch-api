@@ -88,6 +88,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
     {
         if (count($data) == 0) {
             $entity->$property()->delete();
+
             return;
         }
 
@@ -114,7 +115,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
         $represented = collect();
         foreach ($workdayData['demographics'] as $demographicData) {
             $demographic = $demographics->firstWhere([
-                'type' => data_get($demographicData,'type'),
+                'type' => data_get($demographicData, 'type'),
                 'subtype' => data_get($demographicData, 'subtype'),
                 'name' => data_get($demographicData, 'name'),
             ]);
@@ -128,7 +129,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
         }
         // Remove any existing demographic that wasn't in the submitted set.
         foreach ($demographics as $demographic) {
-            if (!$represented->contains($demographic->id)) {
+            if (! $represented->contains($demographic->id)) {
                 $demographic->delete();
             }
         }
