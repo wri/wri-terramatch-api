@@ -546,10 +546,8 @@ final class UploadControllerTest extends TestCase
         $service = User::factory()->serviceAccount()->create();
         Artisan::call('v2migration:roles');
         $site = Site::factory()->create();
-        // It's not ideal for the testing suite to use a real hosted image, but I haven't found a way to fake a
-        // http download URL in phpunit/spatie.
-        $url = 'https://new-wri-prod.wri-restoration-marketplace-api.com/images/V2/land-tenures/national-protected-area.png';
-        $badMimeUrl = 'https://www.terramatch.org/images/landing-page-hero-banner.webp';
+        $url = 'http://localhost/images/V2/land-tenures/national-protected-area.png';
+        $badMimeUrl = 'http://localhost/images/email_logo.gif';
 
         // Check a valid upload
         $this->actingAs($service)

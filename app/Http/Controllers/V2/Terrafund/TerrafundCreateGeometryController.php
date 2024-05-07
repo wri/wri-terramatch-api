@@ -5,29 +5,36 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
+use App\Services\PolygonService;
+use App\Validators\Extensions\Polygons\EstimatedArea;
+use App\Validators\Extensions\Polygons\NotOverlapping;
+use App\Validators\Extensions\Polygons\PolygonSize;
+use App\Validators\Extensions\Polygons\PolygonType;
+use App\Validators\Extensions\Polygons\SelfIntersection;
+use App\Validators\Extensions\Polygons\Spikes;
+use App\Validators\Extensions\Polygons\WithinCountry;
+use App\Validators\SitePolygonValidator;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\Process\Process;
 
 class TerrafundCreateGeometryController extends Controller
 {
     public function processGeometry(string $uuid)
     {
-        $geometry = PolygonGeometry::where('uuid', $uuid)
-          ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
-          ->first();
+        $geometry = PolygonGeometry::isUuid($uuid)->first();
 
-        $geojson = $geometry->geojson;
-
-        if ($geojson) {
-            return response()->json(['geometry' => $geojson], 200);
+        if ($geometry) {
+            return response()->json(['geometry' => $geometry->geo_json], 200);
         } else {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
@@ -36,7 +43,7 @@ class TerrafundCreateGeometryController extends Controller
     public function storeGeometry(Request $request)
     {
         $request->validate([
-          'geometry' => 'required|json',
+          'geometry' => 'required|json|geo_json',
         ]);
 
         $geometry = json_decode($request->input('geometry'));
@@ -49,114 +56,25 @@ class TerrafundCreateGeometryController extends Controller
         return response()->json(['uuid' => $polygonGeometry->uuid], 200);
     }
 
-    private function validatePolygonBounds(array $geometry): bool
-    {
-        if ($geometry['type'] !== 'Polygon') {
-            return false;
-        }
-        $coordinates = $geometry['coordinates'][0];
-        foreach ($coordinates as $coordinate) {
-            $latitude = $coordinate[1];
-            $longitude = $coordinate[0];
-            if ($latitude < -90 || $latitude > 90) {
-                return false;
-            }
-            if ($longitude < -180 || $longitude > 180) {
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    private function insertSinglePolygon(array $geometry, int $srid)
-    {
-        try {
-            // Convert geometry to GeoJSON string with specified SRID
-            $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => "EPSG:$srid"]]]);
-
-            // Insert GeoJSON data into the database
-            $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
-            $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
-            $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
-            // 111320 is the length of one degree of latitude in meters at the equator
-            $unitLatitude = 111320;
-            $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
-
-            $areaHectares = $areaSqMeters / 10000;
-
-            $polygonGeometry = PolygonGeometry::create([
-              'geom' => $geom,
-            ]);
-
-            return ['uuid' => $polygonGeometry->uuid, 'id' => $polygonGeometry->id, 'area' => $areaHectares];
-        } catch (\Exception $e) {
-            echo $e;
-
-            return $e->getMessage();
-        }
-    }
-
+    /**
+     * @throws ValidationException
+     */
     public function insertGeojsonToDB(string $geojsonFilename)
     {
-        $srid = 4326;
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
         $geojson = json_decode($geojsonData, true);
-        if (! isset($geojson['features'])) {
-            return ['error' => 'GeoJSON file does not contain features'];
-        }
-        $uuids = [];
-        foreach ($geojson['features'] as $feature) {
-            if ($feature['geometry']['type'] === 'Polygon') {
-                if (! $this->validatePolygonBounds($feature['geometry'])) {
-                    return ['error' => 'Invalid polygon bounds'];
-                }
-                $data = $this->insertSinglePolygon($feature['geometry'], $srid);
-                $uuids[] = $data['uuid'];
-                $returnSite = $this->insertSitePolygon($data['uuid'], $feature['properties'], $data['area']);
-                if ($returnSite) {
-                    Log::info($returnSite)  ;
-                }
-            } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
-                $generalProperties = $feature['properties'];
-                Log::info('general properties multipolygon', $generalProperties);
-                foreach ($feature['geometry']['coordinates'] as $polygon) {
-                    $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
-                    if (! $this->validatePolygonBounds($singlePolygon)) {
-                        return ['error' => 'Invalid polygon bounds'];
-                    }
-                    $data = $this->insertSinglePolygon($singlePolygon, $srid);
-                    $uuids[] = $data['uuid'];
-                    $returnSite = $this->insertSitePolygon($data['uuid'], $generalProperties, $data['area']);
-                    if ($returnSite) {
-                        Log::info($returnSite)  ;
-                    }
-                }
-            }
-        }
 
-        return $uuids;
-    }
+        SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson);
 
-    private function validateSchema(array $properties, array $fields): bool
-    {
-        foreach ($fields as $field) {
-            if (! array_key_exists($field, $properties)) {
-                return false;
-            }
-        }
-
-        return true;
+        return App::make(PolygonService::class)->createGeojsonModels($geojson);
     }
 
     public function validateDataInDB(Request $request)
     {
         $polygonUuid = $request->input('uuid');
         $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
-        $DATA_CRITERIA_ID = 14;
         // Check if the polygon with the specified poly_id exists
-        $polygonExists = SitePolygon::where('poly_id', $polygonUuid)
-            ->exists();
+        $polygonExists = SitePolygon::forPolygonGeometry($polygonUuid)->exists();
 
         if (! $polygonExists) {
             return response()->json(['valid' => false, 'message' => 'No site polygon found with the specified poly_id.']);
@@ -168,78 +86,23 @@ class TerrafundCreateGeometryController extends Controller
             $whereConditions[] = "(IFNULL($field, '') = '' OR $field IS NULL)";
         }
 
-        $sitePolygonData = SitePolygon::where('poly_id', $polygonUuid)
+        $sitePolygonData = SitePolygon::forPolygonGeometry($polygonUuid)
             ->where(function ($query) use ($whereConditions) {
                 foreach ($whereConditions as $condition) {
                     $query->orWhereRaw($condition);
                 }
             })
             ->first();
-        $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, false);
-        if ($sitePolygonData) {
-            return response()->json(['valid' => false, 'message' => 'Some attributes of the site polygon are invalid.']);
+        $valid = $sitePolygonData == null;
+        $responseData = ['valid' => $valid];
+        if (! $valid) {
+            $responseData['message'] = 'Some attributes of the site polygon are invalid.';
         }
 
-        $valid = true;
-        $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $valid);
+        App::make(PolygonService::class)
+            ->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $valid);
 
-        return response()->json(['valid' => true]);
-    }
-
-    private function validateData(array $properties, array $fields): bool
-    {
-        foreach ($fields as $field) {
-            $value = $properties[$field];
-            if ($value === null || strtoupper($value) === 'NULL' || $value === '') {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function insertSitePolygon(string $polygonUuid, array $properties, float $area)
-    {
-        try {
-            Log::info('Inserting site polygon', ['properties' => $properties, 'polygonUuid' => $polygonUuid]);
-            $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
-            $SCHEMA_CRITERIA_ID = 13;
-            $validSchema = true;
-            $DATA_CRITERIA_ID = 14;
-            $validData = true;
-            if (! $this->validateSchema($properties, $fieldsToValidate)) {
-                $validSchema = false;
-                $validData = false;
-            } elseif (! $this->validateData($properties, $fieldsToValidate)) {
-                $validData = false;
-            }
-            $insertionSchemaSuccess = $this->insertCriteriaSite($polygonUuid, $SCHEMA_CRITERIA_ID, $validSchema);
-            $insertionDataSuccess = $this->insertCriteriaSite($polygonUuid, $DATA_CRITERIA_ID, $validData);
-
-            $sitePolygon = new SitePolygon();
-            $sitePolygon->project_id = $properties['project_id'] ?? null;
-            // $sitePolygon->country = $properties['country'] ?? null;
-            $sitePolygon->poly_id = $polygonUuid ?? null;
-            $sitePolygon->poly_name = $properties['poly_name'] ?? null;
-            $sitePolygon->site_id = $properties['site_id'] ?? null;
-            // $sitePolygon->poly_label = $properties['poly_label'] ?? null;
-            $sitePolygon->plantstart = ! empty($properties['plantstart']) ? $properties['plantstart'] : null;
-            $sitePolygon->plantend = ! empty($properties['plantend']) ? $properties['plantend'] : null;
-            $sitePolygon->practice = $properties['practice'] ?? null;
-            $sitePolygon->target_sys = $properties['target_sys'] ?? null;
-            $sitePolygon->distr = $properties['distr'] ?? null;
-            $sitePolygon->num_trees = $properties['num_trees'] ?? null;
-            $sitePolygon->calc_area = $area ?? null;
-            $sitePolygon->save();
-            if ($sitePolygon->project_id) {
-                $geometryHelper = new GeometryHelper();
-                $geometryHelper -> updateProjectCentroid($sitePolygon->project_id);
-            }
-
-            return null;
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
+        return response()->json($responseData);
     }
 
     public function getGeometryProperties(string $geojsonFilename)
@@ -364,88 +227,26 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Geometry not found'], 404);
         }
 
-        $isSimple = DB::selectOne('SELECT ST_IsSimple(geom) AS is_simple FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->is_simple;
-        $SELF_CRITERIA_ID = 4;
+        $isSimple = SelfIntersection::uuidValid($uuid);
         $message = $isSimple ? 'The geometry is valid' : 'The geometry has self-intersections';
-        $insertionSuccess = $this->insertCriteriaSite($uuid, $SELF_CRITERIA_ID, $isSimple);
+        $insertionSuccess = App::make(PolygonService::class)
+            ->createCriteriaSite($uuid, PolygonService::SELF_CRITERIA_ID, $isSimple);
 
         return response()->json(['selfintersects' => $message, 'geometry_id' => $geometry->id, 'insertion_success' => $insertionSuccess, 'valid' => $isSimple ? true : false], 200);
-    }
-
-    public function calculateDistance($point1, $point2)
-    {
-        $lat1 = $point1[1];
-        $lon1 = $point1[0];
-        $lat2 = $point2[1];
-        $lon2 = $point2[0];
-
-        $theta = $lon1 - $lon2;
-        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-        $dist = acos($dist);
-        $dist = rad2deg($dist);
-        $miles = $dist * 60 * 1.1515;
-
-        return $miles * 1.609344;
-    }
-
-    public function detectSpikes($geometry)
-    {
-        $spikes = [];
-
-        if ($geometry['type'] === 'Polygon' || $geometry['type'] === 'MultiPolygon') {
-            $coordinates = $geometry['type'] === 'Polygon' ? $geometry['coordinates'][0] : $geometry['coordinates'][0][0]; // First ring of the polygon or the first polygon in the MultiPolygon
-            $numVertices = count($coordinates);
-            $totalDistance = 0;
-
-            for ($i = 0; $i < $numVertices - 1; $i++) {
-                $totalDistance += $this->calculateDistance($coordinates[$i], $coordinates[$i + 1]);
-            }
-
-            for ($i = 0; $i < $numVertices - 1; $i++) {
-                $distance1 = $this->calculateDistance($coordinates[$i], $coordinates[($i + 1) % $numVertices]);
-                $distance2 = $this->calculateDistance($coordinates[($i + 1) % $numVertices], $coordinates[($i + 2) % $numVertices]);
-                $combinedDistance = $distance1 + $distance2;
-
-                if ($combinedDistance > 0.6 * $totalDistance) {
-                    // Vertex and its adjacent vertices contribute more than 25% of the total boundary path distance
-                    $spikes[] = $coordinates[($i + 1) % $numVertices];
-                }
-            }
-        }
-
-        return $spikes;
-    }
-
-    public function insertCriteriaSite($polygonId, $criteriaId, $valid)
-    {
-        $criteriaSite = new CriteriaSite();
-        $criteriaSite->polygon_id = $polygonId;
-        $criteriaSite->criteria_id = $criteriaId;
-        $criteriaSite->valid = $valid;
-
-        try {
-            $criteriaSite->save();
-
-            return true;
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
     }
 
     public function checkBoundarySegments(Request $request)
     {
         $uuid = $request->query('uuid');
-        $geometry = PolygonGeometry::where('uuid', $uuid)->first();
+        $geometry = PolygonGeometry::isUuid($uuid)->first();
 
         if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
-        $geojson = DB::selectOne('SELECT ST_AsGeoJSON(geom) AS geojson FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->geojson;
-        $geojsonArray = json_decode($geojson, true);
-        $spikes = $this->detectSpikes($geojsonArray);
-        $SPIKE_CRITERIA_ID = 8;
+        $spikes = Spikes::detectSpikes($geometry->geo_json);
         $valid = count($spikes) === 0;
-        $insertionSuccess = $this->insertCriteriaSite($uuid, $SPIKE_CRITERIA_ID, $valid);
+        $insertionSuccess = App::make(PolygonService::class)
+            ->createCriteriaSite($uuid, PolygonService::SPIKE_CRITERIA_ID, $valid);
 
         return response()->json(['spikes' => $spikes, 'geometry_id' => $uuid, 'insertion_success' => $insertionSuccess, 'valid' => $valid], 200);
     }
@@ -453,19 +254,16 @@ class TerrafundCreateGeometryController extends Controller
     public function validatePolygonSize(Request $request)
     {
         $uuid = $request->query('uuid');
-        $geometry = PolygonGeometry::where('uuid', $uuid)->first();
+        $geometry = PolygonGeometry::isUuid($uuid)->first();
 
         if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
-        $areaAndLatitude = $geometry->getDbGeometryAttribute();
 
-        $areaSqDegrees = $areaAndLatitude->area;
-        $latitude = $areaAndLatitude->latitude;
-        $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
-        $SIZE_CRITERIA_ID = 6;
-        $valid = $areaSqMeters <= 10000000;
-        $insertionSuccess = $this->insertCriteriaSite($uuid, $SIZE_CRITERIA_ID, $valid);
+        $areaSqMeters = PolygonSize::calculateSqMeters($geometry->db_geometry);
+        $valid = $areaSqMeters <= PolygonSize::SIZE_LIMIT;
+        $insertionSuccess = App::make(PolygonService::class)
+            ->createCriteriaSite($uuid, PolygonService::SIZE_CRITERIA_ID, $valid);
 
         return response()->json([
           'area_hectares' => $areaSqMeters / 10000, // Convert to hectares
@@ -480,71 +278,22 @@ class TerrafundCreateGeometryController extends Controller
     {
         $polygonUuid = $request->input('uuid');
 
-        if ($polygonUuid === null || $polygonUuid === '') {
-            return response()->json(['error' => 'UUID not provided'], 200);
-        }
-
-        $geometry = PolygonGeometry::where('uuid', $polygonUuid)->first();
-
-        if (! $geometry) {
-            return response()->json(['error' => 'Geometry not found'], 404);
-        }
-
-        $totalArea = PolygonGeometry::where('uuid', $polygonUuid)
-            ->selectRaw('ST_Area(geom) AS area')
-            ->first()->area;
-
-        // Find site_polygon_id and project_id using the polygonUuid
-        $sitePolygonData = SitePolygon::where('poly_id', $polygonUuid)
-            ->select('id', 'project_id')
-            ->first();
-
-        if (! $sitePolygonData) {
-            return response()->json(['error' => 'Site polygon data not found for the specified polygonUuid'], 404);
-        }
-
-        $countryIso = $sitePolygonData->project->country;
-        if (! $countryIso) {
-            return response()->json(['error' => 'Country ISO not found for the specified project_id'], 404);
-        }
-
-        $intersectionData = WorldCountryGeneralized::where('iso', $countryIso)
-          ->selectRaw('world_countries_generalized.country AS country, ST_Area(ST_Intersection(world_countries_generalized.geometry, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) AS area', [$polygonUuid])
-          ->first();
-
-        $intersectionArea = $intersectionData->area;
-        $countryName = $intersectionData->country;
-
-        $insidePercentage = $intersectionArea / $totalArea * 100;
-
-        $insideThreshold = 75;
-        $insideViolation = $insidePercentage < $insideThreshold;
-        $WITHIN_COUNTRY_CRITERIA_ID = 7;
-        $insertionSuccess = $this->insertCriteriaSite($polygonUuid, $WITHIN_COUNTRY_CRITERIA_ID, ! $insideViolation);
-
-        return response()->json([
-            'country_name' => $countryName,
-            'inside_percentage' => $insidePercentage,
-            'valid' => ! $insideViolation,
-            'geometry_id' => $geometry->id,
-            'insertion_success' => $insertionSuccess,
-        ]);
-
+        return $this->handlePolygonValidation(
+            $polygonUuid,
+            WithinCountry::getIntersectionData($polygonUuid),
+            PolygonService::WITHIN_COUNTRY_CRITERIA_ID
+        );
     }
 
     public function getGeometryType(Request $request)
     {
         $uuid = $request->input('uuid');
 
-        // Fetch the geometry type based on the UUID using SQL query
-        $query = 'SELECT ST_GeometryType(geom) AS geometry_type FROM polygon_geometry WHERE uuid = ?';
-        $result = DB::selectOne($query, [$uuid]);
-
-        if ($result) {
-            $geometryType = $result->geometry_type;
-            $valid = $geometryType === 'POLYGON';
-            $GEOMETRY_TYPE_CRITERIA_ID = 10;
-            $insertionSuccess = $this->insertCriteriaSite($uuid, $GEOMETRY_TYPE_CRITERIA_ID, $valid);
+        $geometryType = PolygonGeometry::getGeometryType($uuid);
+        if ($geometryType) {
+            $valid = $geometryType === PolygonType::VALID_TYPE;
+            $insertionSuccess = App::make(PolygonService::class)
+                ->createCriteriaSite($uuid, PolygonService::GEOMETRY_TYPE_CRITERIA_ID, $valid);
 
             return response()->json(['uuid' => $uuid, 'geometry_type' => $geometryType, 'valid' => $valid, 'insertion_success' => $insertionSuccess]);
         } else {
@@ -556,11 +305,8 @@ class TerrafundCreateGeometryController extends Controller
     {
         $uuid = $request->input('uuid');
 
-        // Find the ID of the polygon based on the UUID
-        $polygonIdQuery = 'SELECT id FROM polygon_geometry WHERE uuid = ?';
-        $polygonIdResult = DB::selectOne($polygonIdQuery, [$uuid]);
-
-        if (! $polygonIdResult) {
+        $geometry = PolygonGeometry::isUuid($uuid)->first();
+        if ($geometry === null) {
             return response()->json(['error' => 'Polygon not found for the given UUID'], 404);
         }
 
@@ -615,122 +361,54 @@ class TerrafundCreateGeometryController extends Controller
     public function validateOverlapping(Request $request)
     {
         $uuid = $request->input('uuid');
-        $sitePolygon = SitePolygon::where('poly_id', $uuid)
-          ->first();
 
-        if (! $sitePolygon) {
-            return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 200);
-        }
-
-        $projectId = $sitePolygon->project_id;
-        if(! $projectId) {
-            return response()->json(['error' => 'Project ID not found for the given polygon ID'], 200);
-        }
-        $relatedPolyIds = SitePolygon::where('project_id', $projectId)
-          ->where('poly_id', '!=', $uuid)
-          ->pluck('poly_id');
-
-        $intersects = PolygonGeometry::whereIn('uuid', $relatedPolyIds)
-          ->selectRaw('ST_Intersects(geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?)) as intersects', [$uuid])
-          ->get()
-          ->pluck('intersects');
-
-        $intersects = in_array(1, $intersects->toArray());
-        $valid = ! $intersects;
-        $OVERLAPPING_CRITERIA_ID = 3;
-        $insertionSuccess = $this->insertCriteriaSite($uuid, $OVERLAPPING_CRITERIA_ID, $valid);
-
-        return response()->json(['intersects' => $intersects, 'project_id' => $projectId, 'uuid' => $uuid, 'valid' => $valid, 'creteria_succes' => $insertionSuccess], 200);
+        return $this->handlePolygonValidation(
+            $uuid,
+            NotOverlapping::getIntersectionData($uuid),
+            PolygonService::OVERLAPPING_CRITERIA_ID
+        );
     }
 
     public function validateEstimatedArea(Request $request)
     {
         $uuid = $request->input('uuid');
-        $sitePolygon = SitePolygon::where('poly_id', $uuid)
-          ->first();
 
-        if (! $sitePolygon) {
-            return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 200);
-        }
-
-        $projectId = $sitePolygon->project_id;
-
-        $sumEstArea = SitePolygon::where('project_id', $projectId)
-          ->sum('calc_area');
-
-        $project = Project::where('uuid', $projectId)
-          ->first();
-
-        if (! $project) {
-            return response()->json(['error' => 'Project not found for the given project ID', 'projectId' => $projectId], 200);
-        }
-
-        $totalHectaresRestoredGoal = $project->total_hectares_restored_goal;
-        if ($totalHectaresRestoredGoal === null || $totalHectaresRestoredGoal === 0) {
-            return response()->json(['error' => 'Total hectares restored goal not set for the project'], 400);
-        }
-        $lowerBound = 0.75 * $totalHectaresRestoredGoal;
-        $upperBound = 1.25 * $totalHectaresRestoredGoal;
-        $valid = false;
-        if ($sumEstArea >= $lowerBound && $sumEstArea <= $upperBound) {
-            $valid = true;
-        }
-        $ESTIMATED_AREA_CRITERIA_ID = 12;
-        $insertionSuccess = $this->insertCriteriaSite($uuid, $ESTIMATED_AREA_CRITERIA_ID, $valid);
-
-        return response()->json(['valid' => $valid, 'sum_area_project' => $sumEstArea, 'total_area_project' => $totalHectaresRestoredGoal, 'insertionSuccess' => $insertionSuccess], 200);
+        return $this->handlePolygonValidation(
+            $uuid,
+            EstimatedArea::getAreaData($uuid),
+            PolygonService::ESTIMATED_AREA_CRITERIA_ID
+        );
     }
 
-    public function getPolygonAsGeoJSON(Request $request)
+    public function getPolygonsAsGeoJSON()
     {
-        try {
-            $uuid = $request->query('uuid');
+        $limit = 2;
+        $polygons = PolygonGeometry::selectRaw('ST_AsGeoJSON(geom) AS geojson')
+          ->orderBy('created_at', 'desc')
+          ->whereNotNull('geom')
+          ->limit($limit)
+          ->get();
+        $features = [];
 
-            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)
-            ->select(DB::raw('ST_AsGeoJSON(geom) AS geojson'))
-            ->first();
-            if (! $polygonGeometry) {
-                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
-            }
-
-            $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
-            if (! $sitePolygon) {
-                return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
-            }
-
-            $properties = [];
-            $fieldsToValidate = [
-              'poly_name',
-              'plantstart',
-              'plantend',
-              'practice',
-              'target_sys',
-              'distr',
-              'num_trees',
-              'uuid',
-              'site_id',
-            ];
-            foreach ($fieldsToValidate as $field) {
-                $properties[$field] = $sitePolygon->$field;
-            }
-
-            $propertiesJson = json_encode($properties);
-
+        foreach ($polygons as $polygon) {
+            $coordinates = json_decode($polygon->geojson)->coordinates;
             $feature = [
-                'type' => 'Feature',
-                'geometry' => json_decode($polygonGeometry->geojson),
-                'properties' => json_decode($propertiesJson),
+              'type' => 'Feature',
+              'geometry' => [
+                'type' => 'Polygon',
+                'coordinates' => $coordinates,
+              ],
+              'properties' => [],
             ];
-
-            $featureCollection = [
-                'type' => 'FeatureCollection',
-                'features' => [$feature],
-            ];
-
-            return response()->json($featureCollection);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+            $features[] = $feature;
         }
+        $geojson = [
+          'type' => 'FeatureCollection',
+          'features' => $features,
+        ];
+
+        // Return the GeoJSON data
+        return response()->json($geojson);
     }
 
     public function getAllPolygonsAsGeoJSON(Request $request)
@@ -787,5 +465,21 @@ class TerrafundCreateGeometryController extends Controller
           ->pluck('country');
 
         return response()->json(['countries' => $countries]);
+    }
+
+    private function handlePolygonValidation($polygonUuid, $response, $criteriaId): JsonResponse
+    {
+        if ($response['error'] != null) {
+            $status = $response['status'];
+            unset($response['valid']);
+            unset($response['status']);
+
+            return response()->json($response, $status);
+        }
+
+        $response['insertion_success'] = App::make(PolygonService::class)
+            ->createCriteraSite($polygonUuid, $criteriaId, $response['valid']);
+
+        return response()->json($response);
     }
 }
