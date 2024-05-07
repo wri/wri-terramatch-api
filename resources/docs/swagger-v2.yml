@@ -44236,6 +44236,19 @@ definitions:
       calc_area:
         type: number
         format: float
+  SitePolygonCreateResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Site polygon created successfully
+      uuid:
+        type: string
+        description: UUID of the created site polygon
+      area:
+        type: number
+        format: double
+        description: Calculated area in hectares
   GeometryData:
     type: object
     properties:
@@ -44246,6 +44259,11 @@ definitions:
             type: array
           type:
             type: string
+  DashboardPolygonResponse: 
+    type: object
+    properties:
+      uuid:
+        type: string
   GeometryString:
     type: object
     properties:
@@ -94080,6 +94098,78 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+    post: 
+      operationId: post-v2-site-polygon-uuid
+      summary: create site polygon for polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The uuid of the polygon 
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SitePolygonResponse'
+      responses:
+        '200':
+          description: site polygon successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygonCreateResponse'
+        '404':
+          description: No polygon geometry found for the given UUID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No polygon geometry found for the given UUID.
+        '500':
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+  '/v2/terrafund/site-polygon/{uuid}/{siteUuid}':
+    post:
+      operationId: post-v2-site-polygon-siteUuid
+      summary: Create site polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon related
+        - in: path
+          name: siteUuid
+          required: true
+          type: string
+          description: The UUID of the site
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SitePolygonResponse'
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygonCreateResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   '/v2/terrafund/polygon/{uuid}':
     put:
       summary: Update geometry for a polygon
@@ -94267,3 +94357,21 @@ paths:
       responses:
         '204':
           description: No Content
+  '/v2/terrafund/polygon':
+    post:
+      summary: Create a new polygon
+      operationId: post-v2-polygon
+      tags:
+        - V2 Terrafund
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/GeometryString'
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/DashboardPolygonResponse'

@@ -27,6 +27,7 @@ class SitePolygon extends Model
       'distr',
       'num_trees',
       'calc_area',
+      'status',
     ];
 
     public function polygonGeometry()
