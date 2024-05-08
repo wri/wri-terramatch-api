@@ -2,14 +2,20 @@
 
 namespace App\Models\V2\Workdays;
 
+use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
+use App\Models\V2\EntityModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
-class Workday extends Model
+/**
+ * @property Collection $demographics
+ */
+class Workday extends Model implements HandlesLinkedFieldSync
 {
     use HasFactory;
     use SoftDeletes;
@@ -75,6 +81,60 @@ class Workday extends Model
         self::COLLECTION_SITE_VOLUNTEER_OTHER => 'Volunteer Other Activities',
     ];
 
+    /**
+     * @throws \Exception
+     */
+    public static function syncRelation(EntityModel $entity, string $property, $data): void
+    {
+        if (count($data) == 0) {
+            $entity->$property()->delete();
+
+            return;
+        }
+
+        // Workdays only have one instance per collection
+        $workdayData = $data[0];
+        $workday = $entity->$property()->first();
+        if ($workday != null && $workday->collection != $workdayData['collection']) {
+            throw new \Exception(
+                'Workday collection does not match entity property [' .
+                'property collection: ' . $workday->collection . ', ' .
+                'submitted collection: ' . $workdayData['collection'] . ']'
+            );
+        }
+
+        if ($workday == null) {
+            $workday = Workday::create([
+                'workdayable_type' => get_class($entity),
+                'workdayable_id' => $entity->id,
+                'collection' => $workdayData['collection'],
+            ]);
+        }
+
+        $demographics = $workday->demographics;
+        $represented = collect();
+        foreach ($workdayData['demographics'] as $demographicData) {
+            $demographic = $demographics->firstWhere([
+                'type' => data_get($demographicData, 'type'),
+                'subtype' => data_get($demographicData, 'subtype'),
+                'name' => data_get($demographicData, 'name'),
+            ]);
+
+            if ($demographic == null) {
+                $workday->demographics()->create($demographicData);
+            } else {
+                $represented->push($demographic->id);
+                $demographic->update(['amount' => data_get($demographicData, 'amount')]);
+            }
+        }
+        // Remove any existing demographic that wasn't in the submitted set.
+        foreach ($demographics as $demographic) {
+            if (! $represented->contains($demographic->id)) {
+                $demographic->delete();
+            }
+        }
+    }
+
     public function workdayable()
     {
         return $this->morphTo();
@@ -85,22 +145,9 @@ class Workday extends Model
         return 'uuid';
     }
 
-    public function genderDemographics(): HasMany
+    public function demographics(): HasMany
     {
-        return $this->hasMany(WorkdayDemographic::class)
-            ->where('type', WorkdayDemographic::GENDER);
-    }
-
-    public function ageDemographics(): HasMany
-    {
-        return $this->hasMany(WorkdayDemographic::class)
-            ->where('type', WorkdayDemographic::AGE);
-    }
-
-    public function ethnicityDemographics(): HasMany
-    {
-        return $this->hasMany(WorkdayDemographic::class)
-            ->where('type', WorkdayDemographic::ETHNICITY);
+        return $this->hasMany(WorkdayDemographic::class);
     }
 
     public function getReadableCollectionAttribute(): ?string

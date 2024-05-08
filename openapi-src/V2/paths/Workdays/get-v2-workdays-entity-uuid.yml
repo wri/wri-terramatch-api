@@ -7,7 +7,7 @@ parameters:
     name: ENTITY
     in: path
     required: true
-    description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+    description: allowed values project-report/site-report
   - type: string
     name: UUID
     in: path
@@ -16,4 +16,9 @@ responses:
   '200':
     description: OK
     schema:
-      $ref: '../../definitions/_index.yml#/V2WorkdaysPaginated'
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/V2WorkdayRead'
