@@ -110,7 +110,6 @@ class TerrafundCreateGeometryController extends Controller
             if ($site_id !== null){
                 $feature['properties']['site_id'] = $site_id;
             }
-            Log::info('Feature properties', $feature['properties']);
             if ($feature['geometry']['type'] === 'Polygon') {
                 if (! $this->validatePolygonBounds($feature['geometry'])) {
                     return ['error' => 'Invalid polygon bounds'];
