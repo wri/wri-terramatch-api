@@ -19,7 +19,7 @@ class FeatureBounds extends Extension
     {
         $type = data_get($value, 'geometry.type');
         if ($type === 'Polygon') {
-            return self::hasValidPolygonBounds(data_get($value, 'geometry.coordinates'));
+            return self::hasValidPolygonBounds(data_get($value, 'geometry.coordinates.0'));
         } elseif ($type === 'MultiPolygon') {
             foreach (data_get($value, 'geometry.coordinates') as $coordinates) {
                 if (! self::hasValidPolygonBounds($coordinates)) {

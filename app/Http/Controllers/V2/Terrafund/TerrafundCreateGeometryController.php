@@ -63,7 +63,7 @@ class TerrafundCreateGeometryController extends Controller
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
         $geojson = json_decode($geojsonData, true);
 
-        SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson);
+        SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
         return App::make(PolygonService::class)->createGeojsonModels($geojson);
     }
