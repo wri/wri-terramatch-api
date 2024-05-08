@@ -233,6 +233,7 @@ class TerrafundCreateGeometryController extends Controller
             $sitePolygon->distr = $properties['distr'] ?? null;
             $sitePolygon->num_trees = $properties['num_trees'] ?? null;
             $sitePolygon->calc_area = $area ?? null;
+            $sitePolygon->status = "Submitted";
             $sitePolygon->save();
             if ($sitePolygon->project_id) {
                 $geometryHelper = new GeometryHelper();
