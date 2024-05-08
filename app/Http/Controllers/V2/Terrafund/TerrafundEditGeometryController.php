@@ -169,6 +169,7 @@ class TerrafundEditGeometryController extends Controller
             $sitePolygon->poly_id = $uuid;
             $sitePolygon->uuid = Str::uuid();
             $sitePolygon->save();
+
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);
         } catch (\Exception $e) {
             // Handle other exceptions

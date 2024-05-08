@@ -101,7 +101,7 @@ class TerrafundCreateGeometryController extends Controller
         $srid = 4326;
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
         $geojson = json_decode($geojsonData, true);
-        if (!isset($geojson['features'])) {
+        if (! isset($geojson['features'])) {
             return ['error' => 'GeoJSON file does not contain features'];
         }
         $uuids = [];
@@ -110,7 +110,7 @@ class TerrafundCreateGeometryController extends Controller
                 $feature['properties']['site_id'] = $site_id;
             }
             if ($feature['geometry']['type'] === 'Polygon') {
-                if (!$this->validatePolygonBounds($feature['geometry'])) {
+                if (! $this->validatePolygonBounds($feature['geometry'])) {
                     return ['error' => 'Invalid polygon bounds'];
                 }
                 $data = $this->insertSinglePolygon($feature['geometry'], $srid);
@@ -122,7 +122,7 @@ class TerrafundCreateGeometryController extends Controller
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
                     $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
-                    if (!$this->validatePolygonBounds($singlePolygon)) {
+                    if (! $this->validatePolygonBounds($singlePolygon)) {
                         return ['error' => 'Invalid polygon bounds'];
                     }
                     $data = $this->insertSinglePolygon($singlePolygon, $srid);
@@ -141,7 +141,7 @@ class TerrafundCreateGeometryController extends Controller
     private function validateSchema(array $properties, array $fields): bool
     {
         foreach ($fields as $field) {
-            if (!array_key_exists($field, $properties)) {
+            if (! array_key_exists($field, $properties)) {
                 return false;
             }
         }
@@ -158,7 +158,7 @@ class TerrafundCreateGeometryController extends Controller
         $polygonExists = SitePolygon::where('poly_id', $polygonUuid)
             ->exists();
 
-        if (!$polygonExists) {
+        if (! $polygonExists) {
             return response()->json(['valid' => false, 'message' => 'No site polygon found with the specified poly_id.']);
         }
 
@@ -206,10 +206,10 @@ class TerrafundCreateGeometryController extends Controller
             $validSchema = true;
             $DATA_CRITERIA_ID = 14;
             $validData = true;
-            if (!$this->validateSchema($properties, $fieldsToValidate)) {
+            if (! $this->validateSchema($properties, $fieldsToValidate)) {
                 $validSchema = false;
                 $validData = false;
-            } elseif (!$this->validateData($properties, $fieldsToValidate)) {
+            } elseif (! $this->validateData($properties, $fieldsToValidate)) {
                 $validData = false;
             }
             $insertionSchemaSuccess = $this->insertCriteriaSite($polygonUuid, $SCHEMA_CRITERIA_ID, $validSchema);
@@ -225,8 +225,8 @@ class TerrafundCreateGeometryController extends Controller
             $sitePolygon->site_id = $properties['site_id'] ?? null;
             $sitePolygon->site_name = $properties['site_name'] ?? null;
             $sitePolygon->poly_label = $properties['poly_label'] ?? null;
-            $sitePolygon->plantstart = !empty($properties['plantstart']) ? $properties['plantstart'] : null;
-            $sitePolygon->plantend = !empty($properties['plantend']) ? $properties['plantend'] : null;
+            $sitePolygon->plantstart = ! empty($properties['plantstart']) ? $properties['plantstart'] : null;
+            $sitePolygon->plantend = ! empty($properties['plantend']) ? $properties['plantend'] : null;
             $sitePolygon->practice = $properties['practice'] ?? null;
             $sitePolygon->target_sys = $properties['target_sys'] ?? null;
             $sitePolygon->distr = $properties['distr'] ?? null;
@@ -244,7 +244,7 @@ class TerrafundCreateGeometryController extends Controller
     {
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
         $geojson = json_decode($geojsonData, true);
-        if (!isset($geojson['features'])) {
+        if (! isset($geojson['features'])) {
             return ['error' => 'GeoJSON file does not contain features'];
         }
 
@@ -267,7 +267,7 @@ class TerrafundCreateGeometryController extends Controller
             $site_id = $request->input('uuid');
             $kmlfile = $request->file('file');
             $directory = storage_path('app/public/kml_files');
-            if (!file_exists($directory)) {
+            if (! file_exists($directory)) {
                 mkdir($directory, 0755, true);
             }
             $filename = uniqid('kml_file_') . '.' . $kmlfile->getClientOriginalExtension();
@@ -277,7 +277,7 @@ class TerrafundCreateGeometryController extends Controller
             $kmlPath = storage_path("app/public/kml_files/{$filename}");
             $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $kmlPath]);
             $process->run();
-            if (!$process->isSuccessful()) {
+            if (! $process->isSuccessful()) {
                 Log::error('Error converting KML to GeoJSON: ' . $process->getErrorOutput());
 
                 return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
@@ -328,14 +328,14 @@ class TerrafundCreateGeometryController extends Controller
                 $zip->extractTo($directory);
                 $zip->close();
                 $shpFile = $this->findShpFile($directory);
-                if (!$shpFile) {
+                if (! $shpFile) {
                     return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
                 }
                 $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
                 $geojsonPath = storage_path("app/public/geojson_files/{$geojsonFilename}");
                 $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
                 $process->run();
-                if (!$process->isSuccessful()) {
+                if (! $process->isSuccessful()) {
                     Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
 
                     return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
@@ -360,7 +360,7 @@ class TerrafundCreateGeometryController extends Controller
         $uuid = $request->query('uuid');
         $geometry = PolygonGeometry::where('uuid', $uuid)->first();
 
-        if (!$geometry) {
+        if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
 
@@ -437,7 +437,7 @@ class TerrafundCreateGeometryController extends Controller
         $uuid = $request->query('uuid');
         $geometry = PolygonGeometry::where('uuid', $uuid)->first();
 
-        if (!$geometry) {
+        if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
         $geojson = DB::selectOne('SELECT ST_AsGeoJSON(geom) AS geojson FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->geojson;
@@ -455,7 +455,7 @@ class TerrafundCreateGeometryController extends Controller
         $uuid = $request->query('uuid');
         $geometry = PolygonGeometry::where('uuid', $uuid)->first();
 
-        if (!$geometry) {
+        if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
         $areaAndLatitude = $geometry->getDbGeometryAttribute();
@@ -486,7 +486,7 @@ class TerrafundCreateGeometryController extends Controller
 
         $geometry = PolygonGeometry::where('uuid', $polygonUuid)->first();
 
-        if (!$geometry) {
+        if (! $geometry) {
             return response()->json(['error' => 'Geometry not found'], 404);
         }
 
@@ -499,12 +499,12 @@ class TerrafundCreateGeometryController extends Controller
             ->select('id', 'project_id')
             ->first();
 
-        if (!$sitePolygonData) {
+        if (! $sitePolygonData) {
             return response()->json(['error' => 'Site polygon data not found for the specified polygonUuid'], 404);
         }
 
         $countryIso = $sitePolygonData->project->country;
-        if (!$countryIso) {
+        if (! $countryIso) {
             return response()->json(['error' => 'Country ISO not found for the specified project_id'], 404);
         }
 
@@ -520,12 +520,12 @@ class TerrafundCreateGeometryController extends Controller
         $insideThreshold = 75;
         $insideViolation = $insidePercentage < $insideThreshold;
         $WITHIN_COUNTRY_CRITERIA_ID = 7;
-        $insertionSuccess = $this->insertCriteriaSite($polygonUuid, $WITHIN_COUNTRY_CRITERIA_ID, !$insideViolation);
+        $insertionSuccess = $this->insertCriteriaSite($polygonUuid, $WITHIN_COUNTRY_CRITERIA_ID, ! $insideViolation);
 
         return response()->json([
             'country_name' => $countryName,
             'inside_percentage' => $insidePercentage,
-            'valid' => !$insideViolation,
+            'valid' => ! $insideViolation,
             'geometry_id' => $geometry->id,
             'insertion_success' => $insertionSuccess,
         ]);
@@ -560,7 +560,7 @@ class TerrafundCreateGeometryController extends Controller
         $polygonIdQuery = 'SELECT id FROM polygon_geometry WHERE uuid = ?';
         $polygonIdResult = DB::selectOne($polygonIdQuery, [$uuid]);
 
-        if (!$polygonIdResult) {
+        if (! $polygonIdResult) {
             return response()->json(['error' => 'Polygon not found for the given UUID'], 404);
         }
 
@@ -597,7 +597,7 @@ class TerrafundCreateGeometryController extends Controller
             $site_id = $request->input('uuid');
             $file = $request->file('file');
             $directory = storage_path('app/public/geojson_files');
-            if (!file_exists($directory)) {
+            if (! file_exists($directory)) {
                 mkdir($directory, 0755, true);
             }
             $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
@@ -619,12 +619,12 @@ class TerrafundCreateGeometryController extends Controller
         $sitePolygon = SitePolygon::where('poly_id', $uuid)
             ->first();
 
-        if (!$sitePolygon) {
+        if (! $sitePolygon) {
             return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 200);
         }
 
         $projectId = $sitePolygon->project_id;
-        if (!$projectId) {
+        if (! $projectId) {
             return response()->json(['error' => 'Project ID not found for the given polygon ID'], 200);
         }
         $relatedPolyIds = SitePolygon::where('project_id', $projectId)
@@ -637,7 +637,7 @@ class TerrafundCreateGeometryController extends Controller
             ->pluck('intersects');
 
         $intersects = in_array(1, $intersects->toArray());
-        $valid = !$intersects;
+        $valid = ! $intersects;
         $OVERLAPPING_CRITERIA_ID = 3;
         $insertionSuccess = $this->insertCriteriaSite($uuid, $OVERLAPPING_CRITERIA_ID, $valid);
 
@@ -650,7 +650,7 @@ class TerrafundCreateGeometryController extends Controller
         $sitePolygon = SitePolygon::where('poly_id', $uuid)
             ->first();
 
-        if (!$sitePolygon) {
+        if (! $sitePolygon) {
             return response()->json(['error' => 'Site polygon not found for the given polygon ID'], 200);
         }
 
@@ -662,7 +662,7 @@ class TerrafundCreateGeometryController extends Controller
         $project = Project::where('uuid', $projectId)
             ->first();
 
-        if (!$project) {
+        if (! $project) {
             return response()->json(['error' => 'Project not found for the given project ID', 'projectId' => $projectId], 200);
         }
 
