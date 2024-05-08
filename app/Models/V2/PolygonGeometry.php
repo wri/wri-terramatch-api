@@ -29,12 +29,12 @@ class PolygonGeometry extends Model
 
     public static function getGeoJson(string $uuid): ?array
     {
-        $geojson = PolygonGeometry::isUuid($uuid)
-            ->selectRaw('ST_AsGeoJSON(geom) as geojson')
+        $geojson_string = PolygonGeometry::isUuid($uuid)
+            ->selectRaw('ST_AsGeoJSON(geom) as geojson_string')
             ->first()
-            ?->geojson;
+            ?->geojson_string;
 
-        return $geojson == null ? null : json_decode($geojson, true);
+        return $geojson_string == null ? null : json_decode($geojson_string, true);
     }
 
     public function getGeoJsonAttribute(): array
