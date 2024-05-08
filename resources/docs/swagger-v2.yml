@@ -43997,6 +43997,51 @@ definitions:
     properties:
       email_address:
         type: string
+  SitePolygonCreateResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Site polygon created successfully
+      uuid:
+        type: string
+        description: UUID of the created site polygon
+      area:
+        type: number
+        format: double
+        description: Calculated area in hectares
+  DashboardPolygonResponse:
+    type: object
+    properties:
+      uuid:
+        type: string
+  SitePolygonResponse:
+    type: object
+    properties:
+      poly_name:
+        type: string
+      plantstart:
+        type: string
+        format: date
+      plantend:
+        type: string
+        format: date
+      practice:
+        type: string
+      target_sys:
+        type: string
+      distr:
+        type: string
+      num_trees:
+        type: integer
+      calc_area:
+        type: number
+        format: float
+  GeometryString:
+    type: object
+    properties:
+      geometry:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93560,3 +93605,217 @@ paths:
           description: OK
           schema:
             type: file
+  '/v2/terrafund/site-polygon/{uuid}/{siteUuid}':
+    post:
+      operationId: post-v2-site-polygon-siteUuid
+      summary: Create site polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon related
+        - in: path
+          name: siteUuid
+          required: true
+          type: string
+          description: The UUID of the site
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SitePolygonResponse'
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygonCreateResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/site-polygon/{uuid}':
+    put:
+      operationId: put-v2-site-polygon-uuid
+      summary: Update site polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the site polygon
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SitePolygonResponse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygonResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+    post: 
+      operationId: post-v2-site-polygon-uuid
+      summary: create site polygon for polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The uuid of the polygon 
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SitePolygonResponse'
+      responses:
+        '200':
+          description: site polygon successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SitePolygonCreateResponse'
+        '404':
+          description: No polygon geometry found for the given UUID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No polygon geometry found for the given UUID.
+        '500':
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+  '/v2/terrafund/polygon':
+    post:
+      summary: Create a new polygon
+      operationId: post-v2-polygon
+      tags:
+        - V2 Terrafund
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/GeometryString'
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/DashboardPolygonResponse'
+  '/v2/terrafund/upload-geojson':
+    post:
+      summary: Upload GeoJSON File
+      description: Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The GeoJSON file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the GeoJSON file
+      responses:
+        '200':
+          description: GeoJSON file processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/upload-shapefile':
+    post:
+      summary: Upload shapfile File
+      description: Uploads a shapefile file, converts it to GeoJSON, and inserts it into the database.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The shapefile file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the shapefile file
+      responses:
+        '200':
+          description: Shapefile processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/upload-kml':
+    post:
+      summary: Upload KML File
+      description: Uploads a KML file, converts it to GeoJSON, and inserts it into the database.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The KML file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the KML file
+      responses:
+        '200':
+          description: KML file processed and inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  uuid:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error

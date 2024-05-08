@@ -67,7 +67,7 @@ class TerrafundEditGeometryController extends Controller
               'practice' => 'nullable|string',
               'distr' => 'nullable|string',
               'num_trees' => 'nullable|integer',
-              'est_area' => 'nullable|numeric',
+              'calc_area' => 'nullable|numeric',
               'target_sys' => 'nullable|string',
             ]);
 
@@ -108,13 +108,67 @@ class TerrafundEditGeometryController extends Controller
                 'practice' => $validatedData['practice'],
                 'distr' => $validatedData['distr'],
                 'num_trees' => $validatedData['num_trees'],
-                'est_area' => $areaHectares, // Assign the calculated area
+                'calc_area' => $areaHectares, // Assign the calculated area
                 'target_sys' => $validatedData['target_sys'],
             ]);
             $sitePolygon->poly_id = $uuid;
             $sitePolygon->uuid = Str::uuid();
             $sitePolygon->save();
 
+            return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);
+        } catch (\Exception $e) {
+            // Handle other exceptions
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function createSiteForPolygon(string $uuid, string $siteUuid, Request $request)
+    {
+        try {
+            if ($request->getContent() === '{}') {
+                $validatedData = [
+                  'poly_name' => null,
+                  'plantstart' => null,
+                  'plantend' => null,
+                  'practice' => null,
+                  'distr' => null,
+                  'num_trees' => null,
+                  'target_sys' => null,
+                ];
+            } else {
+                $validatedData = $request->validate([
+                  'poly_name' => 'nullable|string',
+                  'plantstart' => 'nullable|date',
+                  'plantend' => 'nullable|date',
+                  'practice' => 'nullable|string',
+                  'distr' => 'nullable|string',
+                  'num_trees' => 'nullable|integer',
+                  'target_sys' => 'nullable|string',
+                ]);
+            }
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+            $areaSqDegrees = DB::selectOne('SELECT ST_Area(geom) AS area FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->area;
+            $latitude = DB::selectOne('SELECT ST_Y(ST_Centroid(geom)) AS latitude FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->latitude;
+            $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
+            $areaHectares = $areaSqMeters / 10000;
+            $sitePolygon = new SitePolygon([
+              'poly_name' => $validatedData['poly_name'],
+              'plantstart' => $validatedData['plantstart'],
+              'plantend' => $validatedData['plantend'],
+              'practice' => $validatedData['practice'],
+              'distr' => $validatedData['distr'],
+              'num_trees' => $validatedData['num_trees'],
+              'calc_area' => $areaHectares,
+              'target_sys' => $validatedData['target_sys'],
+              'status' => 'Submitted',
+              'site_id' => $siteUuid,
+            ]);
+            $sitePolygon->poly_id = $uuid;
+            $sitePolygon->uuid = Str::uuid();
+            $sitePolygon->save();
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);
         } catch (\Exception $e) {
             // Handle other exceptions
