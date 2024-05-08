@@ -44378,6 +44378,47 @@ definitions:
         type: string
       num_trees:
         type: integer
+  AuditStatusResponse: 
+    type: object
+    properties:
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+  AuditStatusPost:
+    properties:
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+  AttachmentResponse: 
+    type: object
+    properties:
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94473,3 +94514,98 @@ paths:
             application/json:
               schema:
                 $ref: '#/definitions/DashboardPolygonResponse'
+  '/v2/audit-status':
+    get:
+      operationId: get-v2-audits-status
+      summary: Get all audits status
+      tags: 
+        - V2 Audits Status
+      parameters:
+        - in: query
+          name: id
+          type: string
+          description: Optional.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/definitions/AuditStatusResponse'
+    post:
+      operationId: post-v2-audit-status
+      summary: Create a new audit status
+      tags: 
+        - V2 Audits Status
+      parameters:
+        - in: query
+          name: id
+          type: string
+          description: Optional.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/AuditStatusPost'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/AuditStatusResponse'
+  '/v2/audit-status/{id}':
+    get:
+      operationId: get-v2-audit-status
+      summary: Get a audit from the status by ID
+      tags: 
+        - V2 Audits Status
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: show a specific audit status.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/AuditStatusResponse'
+    put:
+      operationId: update-v2-audit-status
+      summary: Update a audit in the status by ID
+      tags: 
+        - V2 Audits Status
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: edit a specific audit status.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/AuditStatusPost'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/AuditStatusResponse'
+    delete:
+      summary: Delete a audit from the status by ID
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: delete a specific audit status.
+      responses:
+        '204':
+          description: No Content

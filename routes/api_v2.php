@@ -130,6 +130,10 @@ use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
+use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\UpdateAuditStatusController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
@@ -701,4 +705,12 @@ Route::prefix('project-pipeline')->group(function () {
     Route::post('/', StoreProjectPipelineController::class);
     Route::put('/{id}', UpdateProjectPipelineController::class);
     Route::delete('/{id}', DeleteProjectPipelineController::class);
+});
+
+Route::prefix('audit-status')->group(function () {
+    Route::get('/', GetAuditStatusController::class);
+    Route::get('/{id}', GetAuditStatusController::class);
+    Route::post('/', StoreAuditStatusController::class);
+    Route::put('/{id}', UpdateAuditStatusController::class);
+    Route::delete('/{id}', DeleteAuditStatusController::class);
 });
