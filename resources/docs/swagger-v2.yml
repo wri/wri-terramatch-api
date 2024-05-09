@@ -94522,7 +94522,7 @@ paths:
         - V2 Audits Status
       parameters:
         - in: query
-          name: id
+          name: entity
           type: string
           description: Optional.
       responses:

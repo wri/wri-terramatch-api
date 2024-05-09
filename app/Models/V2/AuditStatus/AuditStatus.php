@@ -5,8 +5,7 @@ namespace App\Models\V2\AuditStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// use App\Models\V2\Audits\AuditAttachment;
-// use App\Models\V2\AuditStatus\AuditAttachment;
+use App\Models\V2\AuditAttachment\AuditAttachment;
 
 class AuditStatus extends Model
 {
@@ -24,4 +23,9 @@ class AuditStatus extends Model
         'date_created',
         'created_by',
     ];
+
+    public function auditAttachment()
+    {
+        return $this->hasMany(AuditAttachment::class, 'id', 'id');
+    }
 }
