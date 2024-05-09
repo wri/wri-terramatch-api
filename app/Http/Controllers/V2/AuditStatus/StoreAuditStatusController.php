@@ -6,14 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\StoreAuditStatusRequest;
 use App\Http\Resources\V2\AuditStatusResource;
 use App\Models\V2\AuditStatus\AuditStatus;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class StoreAuditStatusController extends Controller
 {
     public function __invoke(StoreAuditStatusRequest $storeAuditStatusRequest): AuditStatusResource
     {
+        $user = JWTAuth::parseToken()->authenticate();
+
         $auditStatus = new AuditStatus($storeAuditStatusRequest->all());
+        $auditStatus->created_by = $user->email_address;
         $auditStatus->date_created = now();
         $auditStatus->save();
 
