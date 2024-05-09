@@ -15,8 +15,9 @@ class GetAuditStatusController extends Controller
             $auditStatus = AuditStatus::where('id', $id)->first();
 
             return new AuditStatusResource($auditStatus);
-        } else if ($request->has('entity')) {
+        } else if ($request->has('entity') && $request->has('uuid')) {
             $auditStatus = AuditStatus::where('entity_uuid', $request->input('entity'))
+                ->where('uuid', $request->input('uuid'))
                 ->orderBy('updated_at', 'desc')
                 ->orderBy('created_at', 'desc')
                 ->get();

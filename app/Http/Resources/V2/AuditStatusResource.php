@@ -14,6 +14,7 @@ class AuditStatusResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'entity' => $this->entity,
             'entity_uuid' => $this->entity_uuid,
             'status' => $this->status,
             'comment' => $this->comment,

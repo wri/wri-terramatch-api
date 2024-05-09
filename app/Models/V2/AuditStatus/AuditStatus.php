@@ -16,6 +16,7 @@ class AuditStatus extends Model
 
     protected $fillable = [
         'id',
+        'entity',
         'entity_uuid',
         'status',
         'comment',

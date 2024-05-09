@@ -94524,7 +94524,13 @@ paths:
         - in: query
           name: entity
           type: string
-          description: Optional.
+          required: true
+          description: required.
+        - in: query
+          name: uuid
+          type: string
+          required: true
+          description: required.
       responses:
         '200':
           description: OK

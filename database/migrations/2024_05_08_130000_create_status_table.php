@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::dropIfExists('status');
         Schema::create('status', function (Blueprint $table) {
             $table->id();
+            $table->string('entity')->nullable();
             $table->string('entity_uuid')->nullable();
             $table->string('status')->nullable();
             $table->string('comment')->nullable();
