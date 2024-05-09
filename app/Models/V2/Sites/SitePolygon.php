@@ -8,6 +8,8 @@ use App\Models\V2\Projects\Project;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Znck\Eloquent\Relations\BelongsToThrough;
+use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 /**
  * @method static forPolygonGeometry($value):  Builder
@@ -16,6 +18,7 @@ class SitePolygon extends Model
 {
     use HasUuid;
     use SoftDeletes;
+    use BelongsToThroughTrait;
 
     protected $table = 'site_polygon';
 
@@ -48,8 +51,13 @@ class SitePolygon extends Model
         return $query->where('poly_id', $uuid);
     }
 
-    public function project()
+    public function project(): BelongsToThrough
     {
-        return $this->belongsTo(Project::class, 'project_id', 'uuid');
+        return $this->belongsToThrough(
+            Project::class,
+            Site::class,
+            foreignKeyLookup: [Project::class => 'project_id', Site::class => 'site_id'],
+            localKeyLookup: [Site::class => 'uuid']
+        );
     }
 }

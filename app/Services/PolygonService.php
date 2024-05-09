@@ -99,7 +99,7 @@ class PolygonService
     {
         try {
             $validationGeojson = ['features' => [
-                'feature' => ['properties' => $properties]
+                'feature' => ['properties' => $properties],
             ]];
             $validSchema = SitePolygonValidator::isValid('SCHEMA', $validationGeojson);
             $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);

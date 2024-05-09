@@ -36,7 +36,7 @@ class WithinCountry extends Extension
             return ['valid' => false, 'status' => 404, 'error' => 'Geometry not found'];
         }
 
-        $sitePolygonData = SitePolygon::forPolygonGeometry($polygonUuid)->select('id', 'project_id')->first();
+        $sitePolygonData = SitePolygon::forPolygonGeometry($polygonUuid)->select('site_id')->first();
         if ($sitePolygonData == null) {
             return ['valid' => false, 'status' => 404, 'error' => 'Site polygon data not found for the specified polygonUuid'];
         }
