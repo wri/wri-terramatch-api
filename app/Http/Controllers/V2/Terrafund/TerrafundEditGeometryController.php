@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
+use App\Models\V2\Sites\Site;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -60,7 +61,8 @@ class TerrafundEditGeometryController extends Controller
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
 
             if ($sitePolygon) {
-                $project = Project::where('uuid', $sitePolygon->project_id)->first();
+                $relatedSite = Site::where('uuid', $sitePolygon->site_id)->first();
+                $project = Project::where('id', $relatedSite->project_id)->first();
 
                 if ($project) {
                     $geometryHelper = new GeometryHelper();
@@ -70,7 +72,7 @@ class TerrafundEditGeometryController extends Controller
                         Log::warning("Invalid centroid for project UUID: $project->uuid");
                     }
                 } else {
-                    Log::warning("Project with UUID $sitePolygon->project_id not found.");
+                    Log::warning("Project with UUID $relatedSite->project_id not found.");
                 }
             } else {
                 Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
@@ -88,7 +90,8 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
-            $projectUuid = $sitePolygon->project_id;
+            $relatedSite = Site::where('uuid', $sitePolygon->site_id)->first();
+            $projectUuid = Project::where('id', $relatedSite->project_id)->pluck('uuid')->first();
             if (! $projectUuid) {
                 return response()->json(['message' => 'No project found for the given UUID.'], 404);
             }
