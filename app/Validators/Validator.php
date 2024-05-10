@@ -66,15 +66,15 @@ class Validator
         \App\Validators\Extensions\TerrafundDisturbance::class,
         \App\Validators\Extensions\CompletePercentage::class,
         \App\Validators\Extensions\OrganisationFileType::class,
-        \App\validators\Extensions\Polygons\EstimatedArea::class,
-        \App\validators\Extensions\Polygons\FeatureBounds::class,
-        \App\validators\Extensions\Polygons\HasPolygonSite::class,
-        \App\validators\Extensions\Polygons\NotOverlapping::class,
-        \App\validators\Extensions\Polygons\PolygonSize::class,
-        \App\validators\Extensions\Polygons\GeometryType::class,
-        \App\validators\Extensions\Polygons\SelfIntersection::class,
-        \App\validators\Extensions\Polygons\Spikes::class,
-        \App\validators\Extensions\Polygons\WithinCountry::class,
+        \App\Validators\Extensions\Polygons\EstimatedArea::class,
+        \App\Validators\Extensions\Polygons\FeatureBounds::class,
+        \App\Validators\Extensions\Polygons\HasPolygonSite::class,
+        \App\Validators\Extensions\Polygons\NotOverlapping::class,
+        \App\Validators\Extensions\Polygons\PolygonSize::class,
+        \App\Validators\Extensions\Polygons\GeometryType::class,
+        \App\Validators\Extensions\Polygons\SelfIntersection::class,
+        \App\Validators\Extensions\Polygons\Spikes::class,
+        \App\Validators\Extensions\Polygons\WithinCountry::class
     ];
 
     private function __construct()

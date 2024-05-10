@@ -21,10 +21,13 @@ class PolygonService
     public const SCHEMA_CRITERIA_ID = 13;
     public const DATA_CRITERIA_ID = 14;
 
-    public function createGeojsonModels($geojson, $sitePolygonProperties = []): array
+    public function createGeojsonModels($geojson, $sitePolygonProperties = [], ?string $site_id = null): array
     {
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
+            if ($site_id !== null){
+                $feature['properties']['site_id'] = $site_id;
+            }
             if ($feature['geometry']['type'] === 'Polygon') {
                 $data = $this->insertSinglePolygon($feature['geometry']);
                 $uuids[] = $data['uuid'];
@@ -107,15 +110,15 @@ class PolygonService
             $this->createCriteriaSite($polygonUuid, self::DATA_CRITERIA_ID, $validData);
 
             $sitePolygon = new SitePolygon();
-            $sitePolygon->project_id = $properties['project_id'] ?? null;
-            $sitePolygon->proj_name = $properties['proj_name'] ?? null;
-            $sitePolygon->org_name = $properties['org_name'] ?? null;
-            $sitePolygon->country = $properties['country'] ?? null;
+            // $sitePolygon->project_id = $properties['project_id'] ?? null;
+            // $sitePolygon->proj_name = $properties['proj_name'] ?? null;
+            // $sitePolygon->org_name = $properties['org_name'] ?? null;
+            // $sitePolygon->country = $properties['country'] ?? null;
             $sitePolygon->poly_id = $polygonUuid ?? null;
             $sitePolygon->poly_name = $properties['poly_name'] ?? null;
             $sitePolygon->site_id = $properties['site_id'] ?? null;
-            $sitePolygon->site_name = $properties['site_name'] ?? null;
-            $sitePolygon->poly_label = $properties['poly_label'] ?? null;
+            // $sitePolygon->site_name = $properties['site_name'] ?? null;
+            // $sitePolygon->poly_label = $properties['poly_label'] ?? null;
             $sitePolygon->plantstart = ! empty($properties['plantstart']) ? $properties['plantstart'] : null;
             $sitePolygon->plantend = ! empty($properties['plantend']) ? $properties['plantend'] : null;
             $sitePolygon->practice = $properties['practice'] ?? null;
@@ -123,6 +126,7 @@ class PolygonService
             $sitePolygon->distr = $properties['distr'] ?? null;
             $sitePolygon->num_trees = $properties['num_trees'] ?? null;
             $sitePolygon->calc_area = $area ?? null;
+            $sitePolygon->status = "Submitted";
             $sitePolygon->save();
 
             return null;
