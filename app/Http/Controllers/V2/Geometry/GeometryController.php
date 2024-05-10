@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\V2\Sites;
+namespace App\Http\Controllers\V2\Geometry;
 
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
@@ -10,12 +10,11 @@ use App\Validators\SitePolygonValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
-class StoreBulkSiteGeometryController extends Controller
+class GeometryController extends Controller
 {
-    public const VALIDATIONS = [
+    public const STORE_GEOMETRY_VALIDATIONS = [
         PolygonService::OVERLAPPING_CRITERIA_ID => 'NOT_OVERLAPPING',
         PolygonService::SELF_CRITERIA_ID => 'SELF_INTERSECTION_UUID',
         PolygonService::COORDINATE_SYSTEM_CRITERIA_ID => 'FEATURE_BOUNDS_UUID',
@@ -26,7 +25,17 @@ class StoreBulkSiteGeometryController extends Controller
         PolygonService::ESTIMATED_AREA_CRITERIA_ID => 'ESTIMATED_AREA',
     ];
 
-    public function __invoke(Request $request, Site $site): JsonResponse
+    public const NON_PERSISTED_VALIDATIONS = [
+        'SELF_INTERSECTION',
+        'FEATURE_BOUNDS',
+        'POLYGON_SIZE',
+        'SPIKES',
+        'GEOMETRY_TYPE',
+        'SCHEMA',
+        'DATA',
+    ];
+
+    public function storeSiteGeometry(Request $request, Site $site): JsonResponse
     {
         $this->authorize('uploadPolygons', $site);
 
@@ -47,14 +56,13 @@ class StoreBulkSiteGeometryController extends Controller
         $polygonErrors = [];
         foreach ($polygonUuids as $polygonUuid) {
             $data = ['geometry' => $polygonUuid];
-            foreach (self::VALIDATIONS as $criteriaId => $validation) {
+            foreach (self::STORE_GEOMETRY_VALIDATIONS as $criteriaId => $validation) {
                 $valid = true;
 
                 try {
                     SitePolygonValidator::validate($validation, $data);
                 } catch (ValidationException $exception) {
                     $valid = false;
-                    Log::info('ValidationException: ' . $validation . ', ' . $exception->getMessage());
                     $polygonErrors[$polygonUuid][] = json_decode($exception->errors()['geometry'][0]);
                 }
 
@@ -84,5 +92,50 @@ class StoreBulkSiteGeometryController extends Controller
         }
 
         return response()->json(['polygon_uuids' => $polygonUuids, 'errors' => $polygonErrors], 201);
+    }
+
+    public function validateGeometries(Request $request): JsonResponse
+    {
+        $request->validate([
+            'geometries' => 'required|array',
+        ]);
+
+        $geometryErrors = collect();
+        foreach ($request->input('geometries') as $geometry) {
+            $errors = collect();
+            foreach (self::NON_PERSISTED_VALIDATIONS as $validation) {
+                try {
+                    SitePolygonValidator::validate($validation, $geometry, false);
+                } catch (ValidationException $exception) {
+                    $errors = $errors->merge(collect($exception->errors())->map(
+                        function (array $errorItems, $field) use ($validation) {
+                            return collect($errorItems)->map(function ($errorItemString) use ($validation, $field) {
+                                $errorItem = json_decode($errorItemString, true);
+                                if (array_key_exists('key', $errorItem)) {
+                                    // This is an error that came from one of our geometry validations
+                                    $errorItem['field'] = $field;
+                                    return $errorItem;
+                                } else {
+                                    // This is an error that came from the schema or data validations. The last item in the
+                                    // array contains a descriptive message, so we can simply return that one.
+                                    return [
+                                        'field' => $field,
+                                        'key' => $validation,
+                                        'message' => array_pop($errorItem),
+                                    ];
+                                }
+                            });
+                        }
+                    ));
+                }
+            }
+            $geometryErrors->push($errors->values()->flatten(1));
+        }
+
+        if (collect($geometryErrors)->flatten()->isEmpty()) {
+            return response()->json(['errors' => []]);
+        } else {
+            return response()->json(['errors' => $geometryErrors], 422);
+        }
     }
 }
