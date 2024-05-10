@@ -52,7 +52,7 @@ class PolygonSize extends Extension
         return $areaSqMeters <= self::SIZE_LIMIT;
     }
 
-    public static function calculateSqMeters($dbGeometry): bool
+    public static function calculateSqMeters($dbGeometry): float
     {
         $areaSqDegrees = $dbGeometry->area;
         $latitude = $dbGeometry->latitude;

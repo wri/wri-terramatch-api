@@ -4,6 +4,7 @@ namespace App\Models\V2;
 
 use App\Models\Traits\HasUuid;
 use App\Models\V2\Sites\CriteriaSite;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,6 +16,7 @@ class PolygonGeometry extends Model
 {
     use HasUuid;
     use SoftDeletes;
+    use HasFactory;
 
     protected $table = 'polygon_geometry';
 
@@ -24,17 +26,17 @@ class PolygonGeometry extends Model
 
     public function criteriaSite()
     {
-        return $this->hasMany(CriteriaSite::class, 'polygon_id', 'polygon_id');
+        return $this->hasMany(CriteriaSite::class, 'polygon_id', 'uuid');
     }
 
     public static function getGeoJson(string $uuid): ?array
     {
-        $geojson = PolygonGeometry::isUuid($uuid)
-            ->selectRaw('ST_AsGeoJSON(geom) as geojson')
+        $geojson_string = PolygonGeometry::isUuid($uuid)
+            ->selectRaw('ST_AsGeoJSON(geom) as geojson_string')
             ->first()
-            ?->geojson;
+            ?->geojson_string;
 
-        return $geojson == null ? null : json_decode($geojson, true);
+        return $geojson_string == null ? null : json_decode($geojson_string, true);
     }
 
     public function getGeoJsonAttribute(): array

@@ -8,7 +8,6 @@ use App\Models\V2\Sites\SitePolygon;
 use App\Validators\SitePolygonValidator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class PolygonService
 {
@@ -99,8 +98,11 @@ class PolygonService
     private function insertSitePolygon(string $polygonUuid, array $properties, float $area)
     {
         try {
-            $validSchema = SitePolygonValidator::isValid('SCHEMA', $properties);
-            $validData = SitePolygonValidator::isValid('DATA', $properties);
+            $validationGeojson = ['features' => [
+                'feature' => ['properties' => $properties],
+            ]];
+            $validSchema = SitePolygonValidator::isValid('SCHEMA', $validationGeojson);
+            $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
             $this->createCriteriaSite($polygonUuid, self::SCHEMA_CRITERIA_ID, $validSchema);
             $this->createCriteriaSite($polygonUuid, self::DATA_CRITERIA_ID, $validData);
 

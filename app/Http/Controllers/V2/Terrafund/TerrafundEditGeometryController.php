@@ -142,10 +142,9 @@ class TerrafundEditGeometryController extends Controller
         if (! $geometryQuery->exists()) {
             return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
         }
-        $geojsonData = json_decode($geometryQuery->select(DB::raw('ST_AsGeoJSON(geom) as geojson'))->first()->geojson, true);
 
         return response()->json([
-          'geojson' => $geojsonData,
+            'geojson' => $geometryQuery->first()->geojson,
         ]);
     }
 

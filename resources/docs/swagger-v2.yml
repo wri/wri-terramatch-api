@@ -44442,6 +44442,65 @@ definitions:
         format: date
       created_by:
         type: string
+  GeoJSON:
+    title: GeoJSON
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - FeatureCollection
+      features:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - Feature
+            properties:
+              type: object
+              properties:
+                poly_name:
+                  type: string
+                plantstart:
+                  type: string
+                  format: date
+                plantend:
+                  type: string
+                  format: date
+                practice:
+                  type: string
+                target_sys:
+                  type: string
+                distr:
+                  type: string
+                num_trees:
+                  type: number
+                site_id:
+                  type: string
+            geometry:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - Polygon
+                coordinates:
+                  type: array
+                  items:
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        type: number
+  SitePolygonPost:
+    title: SitePolygonPost
+    type: object
+    properties:
+      uuid:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93518,6 +93577,86 @@ paths:
                           description: 'this is a list of key value pairs eg slug: name '
                           items:
                             type: string
+  '/v2/sites/{UUID}/polygons':
+    post:
+      summary: Upload bulk polygons to a specific site.
+      operationId: post-v2-sites-uuid-polygons
+      tags:
+        - V2 Sites
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              geometries:
+                type: array
+                items:
+                  title: GeoJSON
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - FeatureCollection
+                    features:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - Feature
+                          properties:
+                            type: object
+                            properties:
+                              poly_name:
+                                type: string
+                              plantstart:
+                                type: string
+                                format: date
+                              plantend:
+                                type: string
+                                format: date
+                              practice:
+                                type: string
+                              target_sys:
+                                type: string
+                              distr:
+                                type: string
+                              num_trees:
+                                type: number
+                              site_id:
+                                type: string
+                          geometry:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - Polygon
+                              coordinates:
+                                type: array
+                                items:
+                                  type: array
+                                  items:
+                                    type: array
+                                    items:
+                                      type: number
+      responses:
+        '200':
+          description: Created
+          schema:
+            title: SitePolygonPost
+            type: object
+            properties:
+              uuid:
+                type: string
   '/v2/site-monitorings/{UUID}':
     get:
       summary: View a specific site monitoring

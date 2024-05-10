@@ -1,0 +1,5 @@
+title: SitePolygonPost
+type: object
+properties:
+  uuid:
+    type: string
