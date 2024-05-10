@@ -6,15 +6,15 @@ use App\Models\V2\PolygonGeometry;
 use App\Validators\Extensions\Extension;
 use Illuminate\Support\Facades\DB;
 
-class PolygonType extends Extension
+class GeometryType extends Extension
 {
-    public static $name = 'polygon_type';
+    public static $name = 'geometry_type';
 
     public static $message = [
-        'POLYGON_TYPE',
-        'The {{attribute}} field must not represent geojson that is not polygon geometry',
+        'GEOMETRY_TYPE',
+        'The {{attribute}} field must represent geojson that is polygon geometry',
         ['attribute' => ':attribute'],
-        'The :attribute field must not represent geojson that is not polygon geometry',
+        'The :attribute field must represent geojson that is polygon geometry',
     ];
 
     public const VALID_TYPE = 'POLYGON';

@@ -52,6 +52,11 @@ class PolygonValidatorsTest extends TestCase
         $this->runValidationImportTest('ESTIMATED_AREA');
     }
 
+    public function test_geometry_type()
+    {
+        $this->runValidationTest('GEOMETRY_TYPE');
+    }
+
     public function test_schema()
     {
         $this->runValidationTest('SCHEMA');

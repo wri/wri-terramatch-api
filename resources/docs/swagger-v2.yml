@@ -44495,8 +44495,8 @@ definitions:
                       type: array
                       items:
                         type: number
-  SitePolygonPost:
-    title: SitePolygonPost
+  SiteGeometryPost:
+    title: SiteGeometryPost
     type: object
     properties:
       uuid:
@@ -93577,10 +93577,10 @@ paths:
                           description: 'this is a list of key value pairs eg slug: name '
                           items:
                             type: string
-  '/v2/sites/{UUID}/polygons':
+  '/v2/sites/{UUID}/geometry':
     post:
-      summary: Upload bulk polygons to a specific site.
-      operationId: post-v2-sites-uuid-polygons
+      summary: Upload bulk geometry to a specific site.
+      operationId: post-v2-sites-uuid-geometry
       tags:
         - V2 Sites
       parameters:
@@ -93652,7 +93652,7 @@ paths:
         '200':
           description: Created
           schema:
-            title: SitePolygonPost
+            title: SiteGeometryPost
             type: object
             properties:
               uuid:

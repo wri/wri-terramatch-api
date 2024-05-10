@@ -29,10 +29,7 @@ class NotOverlapping extends Extension
             return ['valid' => false, 'error' => 'Site polygon not found for the given polygon ID', 'status' => 404];
         }
 
-        $relatedPolyIds = SitePolygon::where('project_id', $sitePolygon->project_id)
-            ->where('poly_id', '!=', $polygonUuid)
-            ->pluck('poly_id');
-
+        $relatedPolyIds = $sitePolygon->project->sitePolygons()->whereNot('poly_id', $polygonUuid)->pluck('poly_id');
         $intersects = PolygonGeometry::whereIn('uuid', $relatedPolyIds)
             ->selectRaw(
                 'ST_Intersects(
@@ -47,7 +44,7 @@ class NotOverlapping extends Extension
         return [
             'valid' => ! in_array(1, $intersects->toArray()),
             'uuid' => $polygonUuid,
-            'project_id' => $sitePolygon->project_id,
+            'project_id' => $sitePolygon->project->id,
         ];
     }
 }

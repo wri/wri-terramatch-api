@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V2\Sites;
 
 use App\Http\Controllers\Controller;
 use App\Models\V2\Sites\Site;
-use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
 use App\Validators\SitePolygonValidator;
 use Illuminate\Http\JsonResponse;
@@ -12,16 +11,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
 
-class StoreBulkSitePolygonsController extends Controller
+class StoreBulkSiteGeometryController extends Controller
 {
-    const VALIDATIONS = [
+    public const VALIDATIONS = [
         PolygonService::OVERLAPPING_CRITERIA_ID => 'NOT_OVERLAPPING',
         PolygonService::SELF_CRITERIA_ID => 'SELF_INTERSECTION_UUID',
         PolygonService::SIZE_CRITERIA_ID => 'POLYGON_SIZE_UUID',
         PolygonService::WITHIN_COUNTRY_CRITERIA_ID => 'WITHIN_COUNTRY',
         PolygonService::SPIKE_CRITERIA_ID => 'SPIKES_UUID',
-        // TODO
-//        PolygonService::GEOMETRY_TYPE_CRITERIA_ID =>
+        PolygonService::GEOMETRY_TYPE_CRITERIA_ID => 'GEOMETRY_TYPE_UUID',
         PolygonService::ESTIMATED_AREA_CRITERIA_ID => 'ESTIMATED_AREA',
     ];
 
@@ -47,6 +45,7 @@ class StoreBulkSitePolygonsController extends Controller
             $data = ['polygon_uuid' => $polygonUuid];
             foreach (self::VALIDATIONS as $criteriaId => $validation) {
                 $valid = true;
+
                 try {
                     SitePolygonValidator::validate($validation, $data);
                 } catch (ValidationException $exception) {

@@ -274,5 +274,5 @@ V2ProjectInviteCreate:
   $ref: './V2ProjectInviteCreate.yml'
 GeoJSON:
   $ref: './GeoJSON.yml'
-SitePolygonPost:
-  $ref: './SitePolygonPost.yml'
+SiteGeometryPost:
+  $ref: './SiteGeometryPost.yml'
