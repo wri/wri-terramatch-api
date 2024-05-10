@@ -2,13 +2,14 @@
 
 namespace Tests\Unit\Validators\Extensions;
 
+use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
 use App\Validators\SitePolygonValidator;
 use Database\Seeders\PolygonValidationSeeder;
 use Database\Seeders\WorldCountriesGeneralizedTableSeeder;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -46,6 +47,11 @@ class PolygonValidatorsTest extends TestCase
         $this->runValidationTest('SPIKES');
     }
 
+    public function test_estimated_area()
+    {
+        $this->runValidationImportTest('ESTIMATED_AREA');
+    }
+
     public function test_schema()
     {
         $this->runValidationTest('SCHEMA');
@@ -59,7 +65,8 @@ class PolygonValidatorsTest extends TestCase
     protected function runValidationTest(string $validationName): void
     {
         $this->readGeojsons($validationName, function ($passGeojson, $failGeojson) use ($validationName) {
-            $this->assertValidation($validationName, $passGeojson, $failGeojson);
+            $this->assertTrue(SitePolygonValidator::isValid($validationName, $passGeojson, false));
+            $this->assertFalse(SitePolygonValidator::isValid($validationName, $failGeojson, false));
         });
     }
 
@@ -74,9 +81,12 @@ class PolygonValidatorsTest extends TestCase
             /** @var PolygonService $service */
             $service = App::make(PolygonService::class);
             $passUuids = $service->createGeojsonModels($passGeojson);
-            $failUuids = $service->createGeojsonModels($failGeojson);
+            $this->assertTrue(SitePolygonValidator::isValid($validationName, $passUuids, false));
 
-            $this->assertValidation($validationName, $passUuids, $failUuids);
+            SitePolygon::whereIn('poly_id', $passUuids)->delete();
+            PolygonGeometry::whereIn('uuid', $passUuids)->delete();
+            $failUuids = $service->createGeojsonModels($failGeojson);
+            $this->assertFalse(SitePolygonValidator::isValid($validationName, $failUuids, false));
         });
     }
 
@@ -87,11 +97,5 @@ class PolygonValidatorsTest extends TestCase
         $failFile = self::FILES_DIR . Str::lower($validationName) . '_fail.geojson';
         $failGeojson = json_decode(file_get_contents($failFile), true);
         $callback($passGeojson, $failGeojson);
-    }
-
-    protected function assertValidation(string $validationName, $passData, $failData): void
-    {
-        $this->assertTrue(SitePolygonValidator::isValid($validationName, $passData, false));
-        $this->assertFalse(SitePolygonValidator::isValid($validationName, $failData, false));
     }
 }

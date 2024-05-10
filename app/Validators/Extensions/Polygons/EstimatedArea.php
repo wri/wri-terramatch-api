@@ -2,7 +2,6 @@
 
 namespace App\Validators\Extensions\Polygons;
 
-use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Extension;
 
@@ -32,7 +31,7 @@ class EstimatedArea extends Extension
             return ['valid' => false, 'error' => 'Site polygon not found for the given polygon ID', 'status' => 404];
         }
 
-        $project = Project::isUuid($sitePolygon->project_uuid)->first();
+        $project = $sitePolygon->project;
         if ($project == null) {
             return [
                 'valid' => false,
@@ -45,7 +44,7 @@ class EstimatedArea extends Extension
             return ['valid' => false, 'error' => 'Total hectares restored goal not set for the project', 'status' => 500];
         }
 
-        $sumEstArea = SitePolygon::where('project_id', $sitePolygon->project_id)->sum('est_area');
+        $sumEstArea = $project->sitePolygons()->sum('est_area');
         $lowerBound = self::LOWER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
         $upperBound = self::UPPER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
         $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;

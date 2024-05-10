@@ -6,6 +6,7 @@ use App\Models\Traits\HasUuid;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -19,6 +20,7 @@ class SitePolygon extends Model
     use HasUuid;
     use SoftDeletes;
     use BelongsToThroughTrait;
+    use HasFactory;
 
     protected $table = 'site_polygon';
 
