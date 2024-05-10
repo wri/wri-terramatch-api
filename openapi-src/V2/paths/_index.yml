@@ -2517,3 +2517,6 @@
 /v2/geometry/validate:
   post:
     $ref: './Geometry/post-v2-geometry-validate.yml'
+/v2/geometry:
+  delete:
+    $ref: './Geometry/delete-v2-geometry.yml'

@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
+use Spatie\FlareClient\Http\Exceptions\NotFound;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GeometryController extends Controller
 {
@@ -137,5 +139,29 @@ class GeometryController extends Controller
         } else {
             return response()->json(['errors' => $geometryErrors], 422);
         }
+    }
+
+    public function deleteGeometries(Request $request): JsonResponse
+    {
+        $uuids = $request->input('uuids');
+        if (empty($uuids)) {
+            throw new NotFoundHttpException();
+        }
+
+        $polygons = PolygonGeometry::whereIn('uuid', $uuids)->get();
+        if (count($polygons) != count($uuids)) {
+            throw new NotFoundHttpException();
+        }
+
+        foreach ($polygons as $polygon) {
+            $this->authorize('delete', $polygon);
+        }
+
+        foreach ($polygons as $polygon) {
+            $polygon->sitePolygon()->delete();
+            $polygon->delete();
+        }
+
+        return response()->json(['success' => 'geometries have been deleted'], 202);
     }
 }
