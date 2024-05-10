@@ -35,7 +35,8 @@ class EstimatedArea extends Extension
         if ($project == null) {
             return [
                 'valid' => false,
-                'error' => 'Project not found for the given Project ID', 'projectId' => $sitePolygon->project_id,
+                'error' => 'Project not found for the given SitePolygon',
+                'sitePolygonId' => $sitePolygon->uuid,
                 'status' => 404,
             ];
         }
