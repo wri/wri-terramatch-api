@@ -78,6 +78,7 @@ use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusControl
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
+use App\Http\Controllers\V2\Geometry\GeometryController;
 use App\Http\Controllers\V2\Invasives\DeleteInvasiveController;
 use App\Http\Controllers\V2\Invasives\GetInvasivesForEntityController;
 use App\Http\Controllers\V2\Invasives\StoreInvasiveController;
@@ -156,7 +157,6 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringContro
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
-use App\Http\Controllers\V2\Sites\StoreBulkSiteGeometryController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
 use App\Http\Controllers\V2\Stages\IndexStageController;
@@ -555,7 +555,11 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::delete('/', SoftDeleteSiteController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
-    Route::post('/geometry', StoreBulkSiteGeometryController::class);
+    Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
+});
+
+Route::prefix('geometry')->group(function () {
+    Route::post('/validate', [GeometryController::class, 'validateGeometries']);
 });
 
 Route::prefix('project-monitorings')->group(function () {
