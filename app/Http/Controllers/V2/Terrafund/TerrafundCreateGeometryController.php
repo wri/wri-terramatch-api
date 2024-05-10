@@ -460,6 +460,106 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
+    public function getPolygonAsGeoJSONDownload(Request $request)
+    {
+        try {
+            $uuid = $request->query('uuid');
+
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)
+            ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+            ->first();
+
+            Log::info('Polygon Geometry', ['polygonGeometry' => $polygonGeometry]);
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+
+            $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
+            if (! $sitePolygon) {
+                return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
+            }
+
+            $properties = [];
+            $fieldsToValidate = [
+              'poly_name',
+              'plantstart',
+              'plantend',
+              'practice',
+              'target_sys',
+              'distr',
+              'num_trees',
+              'uuid',
+              'site_id',
+            ];
+            foreach ($fieldsToValidate as $field) {
+                $properties[$field] = $sitePolygon->$field;
+            }
+
+            $propertiesJson = json_encode($properties);
+
+            $feature = [
+                'type' => 'Feature',
+                'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                'properties' => json_decode($propertiesJson),
+            ];
+
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => [$feature],
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getAllPolygonsAsGeoJSONDownload(Request $request)
+    {
+        try {
+            $siteUuid = $request->query('uuid');
+            $polygonsUuids = SitePolygon::where('site_id', $siteUuid)->pluck('poly_id');
+            $features = [];
+            foreach ($polygonsUuids as $polygonUuid) {
+                $feature = [];
+                $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
+                ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+                ->first();
+                if (! $polygonGeometry) {
+                    return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+                }
+
+                $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
+                if (! $sitePolygon) {
+                    return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
+                }
+
+                $properties = [];
+                $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id'];
+                foreach ($fieldsToValidate as $field) {
+                    $properties[$field] = $sitePolygon->$field;
+                }
+
+                $propertiesJson = json_encode($properties);
+
+                $feature = [
+                    'type' => 'Feature',
+                    'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                    'properties' => json_decode($propertiesJson),
+                ];
+                $features[] = $feature;
+            }
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => $features,
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
     public function getAllCountryNames()
     {
         $countries = WorldCountryGeneralized::select('country')
