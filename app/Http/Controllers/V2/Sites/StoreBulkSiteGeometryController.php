@@ -19,8 +19,7 @@ class StoreBulkSiteGeometryController extends Controller
         PolygonService::SIZE_CRITERIA_ID => 'POLYGON_SIZE_UUID',
         PolygonService::WITHIN_COUNTRY_CRITERIA_ID => 'WITHIN_COUNTRY',
         PolygonService::SPIKE_CRITERIA_ID => 'SPIKES_UUID',
-        // TODO
-//        PolygonService::GEOMETRY_TYPE_CRITERIA_ID =>
+        PolygonService::GEOMETRY_TYPE_CRITERIA_ID => 'GEOMETRY_TYPE_UUID',
         PolygonService::ESTIMATED_AREA_CRITERIA_ID => 'ESTIMATED_AREA',
     ];
 

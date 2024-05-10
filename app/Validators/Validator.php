@@ -71,7 +71,7 @@ class Validator
         \App\validators\Extensions\Polygons\HasPolygonSite::class,
         \App\validators\Extensions\Polygons\NotOverlapping::class,
         \App\validators\Extensions\Polygons\PolygonSize::class,
-        \App\validators\Extensions\Polygons\PolygonType::class,
+        \App\validators\Extensions\Polygons\GeometryType::class,
         \App\validators\Extensions\Polygons\SelfIntersection::class,
         \App\validators\Extensions\Polygons\Spikes::class,
         \App\validators\Extensions\Polygons\WithinCountry::class,

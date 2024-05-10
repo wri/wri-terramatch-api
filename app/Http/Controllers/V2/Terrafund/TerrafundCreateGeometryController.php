@@ -11,7 +11,7 @@ use App\Services\PolygonService;
 use App\Validators\Extensions\Polygons\EstimatedArea;
 use App\Validators\Extensions\Polygons\NotOverlapping;
 use App\Validators\Extensions\Polygons\PolygonSize;
-use App\Validators\Extensions\Polygons\PolygonType;
+use App\Validators\Extensions\Polygons\GeometryType;
 use App\Validators\Extensions\Polygons\SelfIntersection;
 use App\Validators\Extensions\Polygons\Spikes;
 use App\Validators\Extensions\Polygons\WithinCountry;
@@ -290,7 +290,7 @@ class TerrafundCreateGeometryController extends Controller
 
         $geometryType = PolygonGeometry::getGeometryType($uuid);
         if ($geometryType) {
-            $valid = $geometryType === PolygonType::VALID_TYPE;
+            $valid = $geometryType === GeometryType::VALID_TYPE;
             $insertionSuccess = App::make(PolygonService::class)
                 ->createCriteriaSite($uuid, PolygonService::GEOMETRY_TYPE_CRITERIA_ID, $valid);
 
