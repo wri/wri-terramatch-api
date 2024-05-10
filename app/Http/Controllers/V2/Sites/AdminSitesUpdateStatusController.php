@@ -21,7 +21,7 @@ class AdminSitesUpdateStatusController extends Controller
         $site->update();
 
         AuditStatus::create([
-            'entity' => $this->getModel($site),
+            'entity' => 'Site',
             'entity_uuid' => $site->uuid,
             'status' => $body['status'],
             'comment' => $body['comment'],
