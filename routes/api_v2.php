@@ -130,6 +130,10 @@ use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
+// use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
+// use App\Http\Controllers\V2\AuditStatus\UpdateAuditStatusController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
@@ -169,6 +173,7 @@ use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
+use App\Http\Controllers\V2\Sites\AdminSitesUpdateStatusController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
@@ -300,6 +305,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('sites')->group(function () {
         Route::get('/', AdminIndexSitesController::class);
+        Route::put('/{site}', AdminSitesUpdateStatusController::class);
         Route::get('/multi', AdminSitesMultiController::class);
     });
 
@@ -704,4 +710,12 @@ Route::prefix('project-pipeline')->group(function () {
     Route::post('/', StoreProjectPipelineController::class);
     Route::put('/{id}', UpdateProjectPipelineController::class);
     Route::delete('/{id}', DeleteProjectPipelineController::class);
+});
+
+Route::prefix('audit-status')->group(function () {
+    Route::get('/', GetAuditStatusController::class);
+    Route::post('/', StoreAuditStatusController::class);
+    // Route::get('/{id}', GetAuditStatusController::class);
+    // Route::put('/{id}', UpdateAuditStatusController::class);
+    // Route::delete('/{id}', DeleteAuditStatusController::class);
 });

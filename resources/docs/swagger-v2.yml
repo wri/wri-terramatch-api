@@ -44378,6 +44378,70 @@ definitions:
         type: string
       num_trees:
         type: integer
+  SiteStatusRequestPost:
+    type: object
+    properties:
+      status:
+        type: string
+      comment:
+        type: string
+  SiteStatusResponse:
+    type: object
+    properties:
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+  AuditStatusResponse: 
+    type: object
+    properties:
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+  AuditStatusPost:
+    properties:
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+  AttachmentResponse: 
+    type: object
+    properties:
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -90537,6 +90601,33 @@ paths:
         '200':
           description: OK
   '/v2/admin/sites/{UUID}':
+    put:
+      operationId: put-v2-admin-sites-uuid
+      summary: update site status
+      tags:
+        - V2 Sites
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the site
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/SiteStatusRequestPost'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SiteStatusResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
     delete:
       summary: Delete a site
       operationId: delete-v2-admin-site-UUID
@@ -94373,6 +94464,104 @@ paths:
       responses:
         '204':
           description: No Content
+  '/v2/terrafund/upload-geojson':
+    post:
+      summary: Upload GeoJSON File
+      description: Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The GeoJSON file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the GeoJSON file
+      responses:
+        '200':
+          description: GeoJSON file processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/upload-shapefile':
+    post:
+      summary: Upload shapfile File
+      description: Uploads a shapefile file, converts it to GeoJSON, and inserts it into the database.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The shapefile file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the shapefile file
+      responses:
+        '200':
+          description: Shapefile processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/upload-kml':
+    post:
+      summary: Upload KML File
+      description: Uploads a KML file, converts it to GeoJSON, and inserts it into the database.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The KML file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the KML file
+      responses:
+        '200':
+          description: KML file processed and inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  uuid:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   '/v2/terrafund/polygon':
     post:
       summary: Create a new polygon
@@ -94391,3 +94580,104 @@ paths:
             application/json:
               schema:
                 $ref: '#/definitions/DashboardPolygonResponse'
+  '/v2/audit-status':
+    get:
+      operationId: get-v2-audits-status
+      summary: Get all audits status
+      tags: 
+        - V2 Audits Status
+      parameters:
+        - in: query
+          name: entity
+          type: string
+          required: true
+          description: required.
+        - in: query
+          name: uuid
+          type: string
+          required: true
+          description: required.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/definitions/AuditStatusResponse'
+    post:
+      operationId: post-v2-audit-status
+      summary: Create a new audit status
+      tags: 
+        - V2 Audits Status
+      parameters:
+        - in: query
+          name: id
+          type: string
+          description: Optional.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/AuditStatusPost'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/AuditStatusResponse'
+  '/v2/audit-status/{id}':
+    get:
+      operationId: get-v2-audit-status
+      summary: Get a audit from the status by ID
+      tags: 
+        - V2 Audits Status
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: show a specific audit status.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/AuditStatusResponse'
+    put:
+      operationId: update-v2-audit-status
+      summary: Update a audit in the status by ID
+      tags: 
+        - V2 Audits Status
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: edit a specific audit status.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/AuditStatusPost'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/AuditStatusResponse'
+    delete:
+      summary: Delete a audit from the status by ID
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: delete a specific audit status.
+      responses:
+        '204':
+          description: No Content
