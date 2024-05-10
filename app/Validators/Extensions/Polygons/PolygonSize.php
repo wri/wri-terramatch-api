@@ -11,10 +11,8 @@ class PolygonSize extends Extension
     public static $name = 'polygon_size';
 
     public static $message = [
-        'POLYGON_SIZE',
-        'The {{attribute}} field must not represent a polygon that is too large.',
-        ['attribute' => ':attribute'],
-        'The :attribute field must not represent a polygon that is too large.',
+        'key' => 'SIZE_LIMIT',
+        'message' => 'The geometry must not be larger than ' . self::SIZE_LIMIT . 'square kilometers',
     ];
 
     public const SIZE_LIMIT = 10000000;

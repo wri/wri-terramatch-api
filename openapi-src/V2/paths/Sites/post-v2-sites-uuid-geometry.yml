@@ -17,7 +17,7 @@ parameters:
           items:
             $ref: '../../definitions/_index.yml#/GeoJSON'
 responses:
-  '200':
+  '201':
     description: Created
     schema:
       $ref: '../../definitions/_index.yml#/SiteGeometryPost'

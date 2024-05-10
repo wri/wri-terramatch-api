@@ -12,10 +12,8 @@ class WithinCountry extends Extension
     public static $name = 'within_country';
 
     public static $message = [
-        'WITHIN_COUNTRY',
-        'The {{attribute}} field must represent a polygon that is within its assigned country',
-        ['attribute' => ':attribute'],
-        'The :attribute field must represent a polygon that is within its assigned country',
+        'key' => 'WITHIN_COUNTRY',
+        'message' => 'The geometry must be within the project\'s assigned country',
     ];
 
     public const THRESHOLD_PERCENTAGE = 75;
