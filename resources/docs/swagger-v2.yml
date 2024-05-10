@@ -93878,3 +93878,103 @@ paths:
           description: This account does not have permission to delete some of the geometries. Nothing was deleted.
         '404':
           description: Some of the UUIDs were not found. Nothing was deleted
+  '/v2/geometry/{UUID}':
+    put:
+      summary: Update a geometry
+      operationId: put-v2-geometry
+      tags:
+        - V2 Geometry
+      parameters:
+        - in: path
+          type: string
+          name: UUID
+          required: true
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              geometry:
+                title: GeoJSON
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - FeatureCollection
+                  features:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                            - Feature
+                        properties:
+                          type: object
+                          properties:
+                            poly_name:
+                              type: string
+                            plantstart:
+                              type: string
+                              format: date
+                            plantend:
+                              type: string
+                              format: date
+                            practice:
+                              type: string
+                            target_sys:
+                              type: string
+                            distr:
+                              type: string
+                            num_trees:
+                              type: number
+                            site_id:
+                              type: string
+                        geometry:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                                - Polygon
+                            coordinates:
+                              type: array
+                              items:
+                                type: array
+                                items:
+                                  type: array
+                                  items:
+                                    type: number
+      responses:
+        '200':
+          description: 'OK: Update was applied.'
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                      enum:
+                        - OVERLAPPING_POLYGON
+                        - SELF_INTERSECTION
+                        - COORDINATE_SYSTEM
+                        - SIZE_LIMIT
+                        - WITHIN_COUNTRY
+                        - SPIKE
+                        - GEOMETRY_TYPE
+                        - TOTAL_AREA_EXPECTED
+                        - TABLE_SCHEMA
+                        - DATA_COMPLETED
+                    message:
+                      type: string
+                      description: Human readable string in English to describe the error.
+        '403':
+          description: This account does not have permission to update the polygon.
+        '404':
+          description: Geometry was not found.

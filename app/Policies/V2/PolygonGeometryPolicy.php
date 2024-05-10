@@ -17,6 +17,15 @@ class PolygonGeometryPolicy extends Policy
         return $this->isTheirs($user, $polygon);
     }
 
+    public function update(User $user, PolygonGeometry $polygon): bool
+    {
+        if (!$user->hasAnyPermission(['manage-own', 'polygons-manage'])) {
+            return false;
+        }
+
+        return $this->isTheirs($user, $polygon);
+    }
+
     protected function isTheirs(User $user, PolygonGeometry $polygon): bool
     {
         return $user->id == $polygon->created_by;
