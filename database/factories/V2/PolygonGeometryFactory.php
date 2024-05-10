@@ -17,10 +17,11 @@ class PolygonGeometryFactory extends Factory
     public function geojson(string|array $geojson)
     {
         $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
+
         return $this->state(function (array $attributes) use ($geom) {
-           return [
-               'geom' => $geom
-           ];
+            return [
+                'geom' => $geom,
+            ];
         });
     }
 }
