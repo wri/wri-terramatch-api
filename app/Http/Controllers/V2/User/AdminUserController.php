@@ -47,7 +47,6 @@ class AdminUserController extends Controller
                 AllowedFilter::scope('verified'),
                 AllowedFilter::exact('organisation_id'),
                 AllowedFilter::scope('organisation_uuid'),
-                AllowedFilter::exact('email_address')
             ]);
 
         if (in_array($request->query('sort'), $sortableColumns)) {
@@ -55,13 +54,21 @@ class AdminUserController extends Controller
         }
 
         if ($request->query('search')) {
-            $ids = User::search(trim($request->query('search')))->get()->pluck('id')->toArray();
-
-            if (empty($ids)) {
-                return new UsersCollection([]);
-            }
-            $qry->whereIn('id', $ids);
+            $searchTerm = $request->query('search');
+            $qry->where(function ($query) use ($searchTerm) {
+                $query->where('first_name', 'like', "%$searchTerm%")
+                    ->orWhere('last_name', 'like', "%$searchTerm%")
+                    ->orWhere('email_address', 'like', "%$searchTerm%");
+            });
         }
+        // if ($request->query('search')) {
+        //     $ids = User::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+
+        //     if (empty($ids)) {
+        //         return new UsersCollection([]);
+        //     }
+        //     $qry->whereIn('id', $ids);
+        // }
 
         $collection = $qry->paginate($perPage)
             ->appends(request()->query());
