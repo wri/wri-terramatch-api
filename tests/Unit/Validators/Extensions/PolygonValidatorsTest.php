@@ -8,6 +8,7 @@ use App\Validators\SitePolygonValidator;
 use Database\Seeders\PolygonValidationSeeder;
 use Database\Seeders\WorldCountriesGeneralizedTableSeeder;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -18,6 +19,11 @@ class PolygonValidatorsTest extends TestCase
     public function test_coordinate_system()
     {
         $this->runValidationTest('FEATURE_BOUNDS');
+    }
+
+    public function test_not_overlapping()
+    {
+        $this->runValidationImportTest('NOT_OVERLAPPING');
     }
 
     public function test_self_intersection()

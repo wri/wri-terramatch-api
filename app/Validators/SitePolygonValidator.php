@@ -28,7 +28,7 @@ class SitePolygonValidator extends Validator
         '*' => 'string|uuid|has_polygon_site|within_country',
     ];
 
-    public const OVERLAPPING = [
+    public const NOT_OVERLAPPING = [
         '*' => 'string|uuid|has_polygon_site|not_overlapping',
     ];
 
