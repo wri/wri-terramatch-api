@@ -32,6 +32,10 @@ class SitePolygonValidator extends Validator
         '*' => 'string|uuid|has_polygon_site|not_overlapping',
     ];
 
+    public const ESTIMATED_AREA = [
+        '*' => 'string|uuid|has_polygon_site|estimated_area',
+    ];
+
     public const SCHEMA = [
         'features' => 'required|array',
         'features.*.properties.poly_name' => 'required',

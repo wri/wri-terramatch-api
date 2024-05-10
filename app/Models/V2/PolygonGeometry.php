@@ -4,6 +4,7 @@ namespace App\Models\V2;
 
 use App\Models\Traits\HasUuid;
 use App\Models\V2\Sites\CriteriaSite;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,6 +16,7 @@ class PolygonGeometry extends Model
 {
     use HasUuid;
     use SoftDeletes;
+    use HasFactory;
 
     protected $table = 'polygon_geometry';
 

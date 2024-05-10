@@ -13,6 +13,7 @@ class SitePolygonFactory extends Factory
         return [
             'poly_id' => PolygonGeometry::factory()->create()->uuid,
             'site_id' => Site::factory()->create()->uuid,
+            'est_area' => $this->faker->numberBetween(2.0, 50.0),
         ];
     }
 
