@@ -42,7 +42,7 @@ class TerrafundCreateGeometryController extends Controller
     public function storeGeometry(Request $request)
     {
         $request->validate([
-          'geometry' => 'required|json|geo_json',
+          'geometry' => 'required|json',
         ]);
 
         $geometry = json_decode($request->input('geometry'));

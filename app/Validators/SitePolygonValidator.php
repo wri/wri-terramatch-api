@@ -14,14 +14,26 @@ class SitePolygonValidator extends Validator
         'features.*.geometry' => 'polygon_spikes',
     ];
 
+    public const SPIKES_UUID = [
+        '*' => 'string|uuid|has_polygon_site|polygon_spikes',
+    ];
+
     public const POLYGON_SIZE = [
         'features' => 'required|array',
         'features.*' => 'polygon_size',
     ];
 
+    public const POLYGON_SIZE_UUID = [
+        '*' => 'string|uuid|has_polygon_site|polygon_size',
+    ];
+
     public const SELF_INTERSECTION = [
         'features' => 'required|array',
         'features.*' => 'polygon_self_intersection',
+    ];
+
+    public const SELF_INTERSECTION_UUID = [
+        '*' => 'string|uuid|has_polygon_site|polygon_self_intersection',
     ];
 
     public const WITHIN_COUNTRY = [

@@ -1,0 +1,52 @@
+title: GeoJSON
+type: object
+properties:
+  type:
+    type: string
+    enum: [FeatureCollection]
+  features:
+    type: array
+    items:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Feature]
+        properties:
+          type: object
+          properties:
+            poly_name:
+              type: string
+            plantstart:
+              type: string
+              format: date
+            plantend:
+              type: string
+              format: date
+            practice:
+              type: string
+            target_sys:
+              type: string
+            distr:
+              type: string
+            num_trees:
+              type: number
+            site_id:
+              type: string
+        geometry:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [Polygon]
+            coordinates:
+              type: array
+              items:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+
+
+
