@@ -30,6 +30,11 @@ class PolygonGeometry extends Model
         'created_by',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
     public function criteriaSite(): HasMany
     {
         return $this->hasMany(CriteriaSite::class, 'polygon_id', 'uuid');
