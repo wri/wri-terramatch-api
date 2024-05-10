@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
 
-class StoreBulkSitePolygonsController extends Controller
+class StoreBulkSiteGeometryController extends Controller
 {
     public const VALIDATIONS = [
         PolygonService::OVERLAPPING_CRITERIA_ID => 'NOT_OVERLAPPING',

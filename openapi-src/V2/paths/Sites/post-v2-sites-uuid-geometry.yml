@@ -1,5 +1,5 @@
-summary: Upload bulk polygons to a specific site.
-operationId: post-v2-sites-uuid-polygons
+summary: Upload bulk geometry to a specific site.
+operationId: post-v2-sites-uuid-geometry
 tags:
   - V2 Sites
 parameters:
@@ -20,4 +20,4 @@ responses:
   '200':
     description: Created
     schema:
-      $ref: '../../definitions/_index.yml#/SitePolygonPost'
+      $ref: '../../definitions/_index.yml#/SiteGeometryPost'
