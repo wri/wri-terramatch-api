@@ -44,7 +44,7 @@ class NotOverlapping extends Extension
         return [
             'valid' => ! in_array(1, $intersects->toArray()),
             'uuid' => $polygonUuid,
-            'project_id' => $sitePolygon->project_id,
+            'project_id' => $sitePolygon->project->id,
         ];
     }
 }

@@ -43,7 +43,7 @@ class WithinCountry extends Extension
 
         $countryIso = $sitePolygonData->project->country;
         if ($countryIso == null) {
-            return ['valid' => false, 'status' => 404, 'error' => 'Country ISO not found for the specified project_id'];
+            return ['valid' => false, 'status' => 404, 'error' => 'Country ISO not found for the specified project'];
         }
 
         $intersectionData = WorldCountryGeneralized::forIso($countryIso)
