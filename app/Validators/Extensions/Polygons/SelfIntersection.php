@@ -10,10 +10,8 @@ class SelfIntersection extends Extension
     public static $name = 'polygon_self_intersection';
 
     public static $message = [
-        'SELF_INTERSECTION',
-        'The {{attribute}} geometry field must not self intersect.',
-        ['attribute' => ':attribute'],
-        'The :attribute geometry field must not self intersect.',
+        'key' => 'SELF_INTERSECTION',
+        'message' => 'The geometry must not self intersect.',
     ];
 
     public static function passes($attribute, $value, $parameters, $validator): bool

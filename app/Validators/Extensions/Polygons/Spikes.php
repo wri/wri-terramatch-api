@@ -10,10 +10,8 @@ class Spikes extends Extension
     public static $name = 'polygon_spikes';
 
     public static $message = [
-        'POLYGON_SPIKES',
-        'The {{attribute}} field must not represent a polygon with spikes',
-        ['attribute' => ':attribute'],
-        'The :attribute field must not represent a polygon with spikes',
+        'key' => 'SPIKE',
+        'message' => 'The geometry must not have spikes',
     ];
 
     public static function passes($attribute, $value, $parameters, $validator): bool
