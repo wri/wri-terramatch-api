@@ -47,6 +47,7 @@ class AdminUserController extends Controller
                 AllowedFilter::scope('verified'),
                 AllowedFilter::exact('organisation_id'),
                 AllowedFilter::scope('organisation_uuid'),
+                AllowedFilter::exact('email_address')
             ]);
 
         if (in_array($request->query('sort'), $sortableColumns)) {
