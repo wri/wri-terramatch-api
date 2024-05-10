@@ -26,7 +26,7 @@ class PolygonGeometry extends Model
 
     public function criteriaSite()
     {
-        return $this->hasMany(CriteriaSite::class, 'polygon_id', 'polygon_id');
+        return $this->hasMany(CriteriaSite::class, 'polygon_id', 'uuid');
     }
 
     public static function getGeoJson(string $uuid): ?array

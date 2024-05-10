@@ -8,6 +8,7 @@ use App\Models\V2\Projects\Project;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
@@ -43,7 +44,7 @@ class SitePolygon extends Model
       'country',
     ];
 
-    public function polygonGeometry()
+    public function polygonGeometry(): BelongsTo
     {
         return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'uuid');
     }
