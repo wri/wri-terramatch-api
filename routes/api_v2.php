@@ -173,6 +173,7 @@ use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
+use App\Http\Controllers\V2\Sites\AdminSitesUpdateStatusController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
@@ -302,6 +303,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('sites')->group(function () {
         Route::get('/', AdminIndexSitesController::class);
+        Route::put('/{site}', AdminSitesUpdateStatusController::class);
         Route::get('/multi', AdminSitesMultiController::class);
     });
 

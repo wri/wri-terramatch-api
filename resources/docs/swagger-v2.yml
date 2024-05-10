@@ -44378,6 +44378,29 @@ definitions:
         type: string
       num_trees:
         type: integer
+  SiteStatusRequestPost:
+    type: object
+    properties:
+      status:
+        type: string
+      comment:
+        type: string
+  SiteStatusResponse:
+    type: object
+    properties:
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
   AuditStatusResponse: 
     type: object
     properties:
@@ -90562,6 +90585,33 @@ paths:
         '200':
           description: OK
   '/v2/admin/sites/{UUID}':
+    put:
+      operationId: put-v2-admin-sites-uuid
+      summary: update site status
+      tags:
+        - V2 Sites
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the site
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/SiteStatusRequestPost'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/SiteStatusResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
     delete:
       summary: Delete a site
       operationId: delete-v2-admin-site-UUID
