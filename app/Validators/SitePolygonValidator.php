@@ -48,6 +48,15 @@ class SitePolygonValidator extends Validator
         '*' => 'string|uuid|has_polygon_site|estimated_area',
     ];
 
+    public const GEOMETRY_TYPE = [
+        'features' => 'required|array',
+        'features.*' => 'geometry_type',
+    ];
+
+    public const GEOMETRY_TYPE_UUID = [
+        '*' => 'string|uuid|geometry_type',
+    ];
+
     public const SCHEMA = [
         'features' => 'required|array',
         'features.*.properties.poly_name' => 'required',
