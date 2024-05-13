@@ -208,9 +208,15 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
         return $this->morphMany(Strata::class, 'stratasable');
     }
 
+    // @deprecated
     public function polygons()
     {
         return $this->morphMany(Polygon::class, 'polygonable');
+    }
+
+    public function sitePolygons()
+    {
+        return $this->hasMany(SitePolygon::class, 'site_id', 'uuid');
     }
 
     public function treeSpecies()
