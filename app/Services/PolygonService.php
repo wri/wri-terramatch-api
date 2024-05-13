@@ -136,7 +136,8 @@ class PolygonService
         }
     }
 
-    protected function validateSitePolygonProperties(string $polygonUuid, array $properties) {
+    protected function validateSitePolygonProperties(string $polygonUuid, array $properties)
+    {
         // Avoid trying to store an invalid date string or int in the DB, as that will throw an exception and prevent
         // the site polygon from storing. With an invalid date, this will end up reporting schema invalid and data
         // invalid, which isn't necessarily correct for the payload given, but it does reflect the status in the DB
