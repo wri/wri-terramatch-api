@@ -264,9 +264,22 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             ->isStatus(ProjectMonitoring::STATUS_ARCHIVED);
     }
 
+    // @deprecated
     public function polygons()
     {
         return $this->morphMany(Polygon::class, 'polygonable');
+    }
+
+    public function sitePolygons(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            SitePolygon::class,
+            Site::class,
+            'project_id',
+            'site_id',
+            'id',
+            'uuid'
+        );
     }
 
     public function treeSpecies()
@@ -456,11 +469,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     private function submittedSiteReportIds(): array
     {
         return $this->submittedSiteReports()->pluck('v2_site_reports.id')->toArray();
-    }
-
-    public function sitePolygons()
-    {
-        return $this->hasMany(SitePolygon::class, 'project_id', 'uuid');
     }
 
     public function getTotalSitePolygons()

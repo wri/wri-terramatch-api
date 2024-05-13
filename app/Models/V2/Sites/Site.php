@@ -37,6 +37,9 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * @property string project_id
+ */
 class Site extends Model implements MediaModel, AuditableContract, EntityModel
 {
     use HasFactory;
@@ -211,9 +214,15 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
         return $this->morphMany(Strata::class, 'stratasable');
     }
 
+    // @deprecated
     public function polygons()
     {
         return $this->morphMany(Polygon::class, 'polygonable');
+    }
+
+    public function sitePolygons()
+    {
+        return $this->hasMany(SitePolygon::class, 'site_id', 'uuid');
     }
 
     public function treeSpecies()

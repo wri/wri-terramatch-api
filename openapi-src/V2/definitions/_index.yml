@@ -272,4 +272,7 @@ V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
 V2ProjectInviteCreate:
   $ref: './V2ProjectInviteCreate.yml'
-
+GeoJSON:
+  $ref: './GeoJSON.yml'
+SiteGeometryPost:
+  $ref: './SiteGeometryPost.yml'

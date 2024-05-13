@@ -931,6 +931,22 @@
           type: array
           items:
             $ref: '../definitions/_index.yml#/V2FileRead'
+/v2/media:
+  delete:
+    summary: Bulk delete a set of media by UUID
+    operationId: v2-bulk-delete-media
+    tags:
+      - Media
+    parameters:
+      - type: array
+        name: uuids[]
+        in: query
+        required: true
+        items:
+          type: string
+    responses:
+      '200':
+        description: OK
 /v2/files/{UUID}:
   put:
     summary: Update properties of a specific file
@@ -2465,6 +2481,9 @@
     $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
+/v2/sites/{UUID}/geometry:
+  post:
+    $ref: './Sites/post-v2-sites-uuid-geometry.yml'
 /v2/site-monitorings/{UUID}:
   get:
     $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
