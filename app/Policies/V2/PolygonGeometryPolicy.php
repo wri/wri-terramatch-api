@@ -10,7 +10,7 @@ class PolygonGeometryPolicy extends Policy
 {
     public function delete(User $user, PolygonGeometry $polygon): bool
     {
-        if (!$user->hasAnyPermission(['manage-own', 'polygons-manage'])) {
+        if (! $user->hasAnyPermission(['manage-own', 'polygons-manage'])) {
             return false;
         }
 
@@ -19,7 +19,7 @@ class PolygonGeometryPolicy extends Policy
 
     public function update(User $user, PolygonGeometry $polygon): bool
     {
-        if (!$user->hasAnyPermission(['manage-own', 'polygons-manage'])) {
+        if (! $user->hasAnyPermission(['manage-own', 'polygons-manage'])) {
             return false;
         }
 

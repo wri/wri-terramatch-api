@@ -11,7 +11,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
-use Spatie\FlareClient\Http\Exceptions\NotFound;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GeometryController extends Controller
@@ -58,7 +57,7 @@ class GeometryController extends Controller
         $polygonErrors = [];
         foreach ($polygonUuids as $polygonUuid) {
             $errors = $this->runStoredGeometryValidations($polygonUuid);
-            if (!empty($errors)) {
+            if (! empty($errors)) {
                 $polygonErrors[$polygonUuid] = $errors;
             }
         }
@@ -86,6 +85,7 @@ class GeometryController extends Controller
                                 if (array_key_exists('key', $errorItem)) {
                                     // This is an error that came from one of our geometry validations
                                     $errorItem['field'] = $field;
+
                                     return $errorItem;
                                 } else {
                                     // This is an error that came from the schema or data validations. The last item in the
