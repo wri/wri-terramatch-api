@@ -7,6 +7,7 @@ use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\SitePolygonValidator;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -92,6 +93,7 @@ class PolygonService
 
         $polygonGeometry = PolygonGeometry::create([
             'geom' => $geom,
+            'created_by' => Auth::user()?->id,
         ]);
 
         return ['uuid' => $polygonGeometry->uuid, 'area' => $areaHectares];
@@ -141,6 +143,7 @@ class PolygonService
             $sitePolygon->distr = $properties['distr'] ?? null;
             $sitePolygon->num_trees = $properties['num_trees'];
             $sitePolygon->est_area = $area ?? null;
+            $sitePolygon->created_by = Auth::user()?->id;
             $sitePolygon->save();
 
             return null;
