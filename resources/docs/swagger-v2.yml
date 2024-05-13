@@ -44082,7 +44082,7 @@ definitions:
                   - DATA_COMPLETED
               message:
                 type: string
-                description: Human readable string in english to describe the error.
+                description: Human readable string in English to describe the error.
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93238,7 +93238,7 @@ paths:
                           - DATA_COMPLETED
                       message:
                         type: string
-                        description: Human readable string in english to describe the error.
+                        description: Human readable string in English to describe the error.
   '/v2/site-monitorings/{UUID}':
     get:
       summary: View a specific site monitoring
@@ -93753,3 +93753,108 @@ paths:
           description: OK
           schema:
             type: file
+  /v2/geometry/validate:
+    post:
+      summary: Test a set of geometries for validity
+      operationId: post-v2-geometry-validate
+      tags:
+        - V2 Geometry
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              geometries:
+                type: array
+                items:
+                  title: GeoJSON
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - FeatureCollection
+                    features:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - Feature
+                          properties:
+                            type: object
+                            properties:
+                              poly_name:
+                                type: string
+                              plantstart:
+                                type: string
+                                format: date
+                              plantend:
+                                type: string
+                                format: date
+                              practice:
+                                type: string
+                              target_sys:
+                                type: string
+                              distr:
+                                type: string
+                              num_trees:
+                                type: number
+                              site_id:
+                                type: string
+                          geometry:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - Polygon
+                              coordinates:
+                                type: array
+                                items:
+                                  type: array
+                                  items:
+                                    type: array
+                                    items:
+                                      type: number
+      responses:
+        '200':
+          description: 'OK: No validation errors occurred with the supplied geometries'
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                description: An empty array on the OK response is included for ease of parsing on the client side.
+        '422':
+          description: One or more errors was found with the supplied geometries
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                description: 'This array is ordered in the same order as the original geometries. If a given geometry had no errors, an empty array is included in its spot.'
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        enum:
+                          - SELF_INTERSECTION
+                          - COORDINATE_SYSTEM
+                          - SIZE_LIMIT
+                          - SPIKE
+                          - GEOMETRY_TYPE
+                          - TABLE_SCHEMA
+                          - DATA_COMPLETED
+                      message:
+                        type: string
+                        description: Human readable string in English to describe the error.
+                      field:
+                        type: string
+                        description: A path string indicating where the error occurred.

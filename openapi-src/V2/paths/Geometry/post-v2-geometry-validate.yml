@@ -1,0 +1,55 @@
+summary: Test a set of geometries for validity
+operationId: post-v2-geometry-validate
+tags:
+  - V2 Geometry
+parameters:
+  - in: body
+    name: body
+    schema:
+      type: object
+      properties:
+        geometries:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/GeoJSON'
+responses:
+  '200':
+    description: 'OK: No validation errors occurred with the supplied geometries'
+    schema:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: An empty array on the OK response is included for ease of parsing on the client side.
+  '422':
+    description: One or more errors was found with the supplied geometries
+    schema:
+      type: object
+      properties:
+        errors:
+          type: array
+          description:
+            This array is ordered in the same order as the original geometries. If a given geometry had no errors, an 
+            empty array is included in its spot.
+          items:
+            type: array
+            items:
+              type: object
+              properties:
+                key:
+                  type: string
+                  enum:
+                    - SELF_INTERSECTION
+                    - COORDINATE_SYSTEM
+                    - SIZE_LIMIT
+                    - SPIKE
+                    - GEOMETRY_TYPE
+                    - TABLE_SCHEMA
+                    - DATA_COMPLETED
+                message:
+                  type: string
+                  description: Human readable string in English to describe the error.
+                field:
+                  type: string
+                  description: A path string indicating where the error occurred.
+
