@@ -560,6 +560,7 @@ Route::prefix('sites/{site}')->group(function () {
 
 Route::prefix('geometry')->group(function () {
     Route::post('/validate', [GeometryController::class, 'validateGeometries']);
+    Route::delete('', [GeometryController::class, 'deleteGeometries']);
 });
 
 Route::prefix('project-monitorings')->group(function () {
