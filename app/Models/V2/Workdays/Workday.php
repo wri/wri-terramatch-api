@@ -39,6 +39,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
         'ethnicity',
         'indigeneity',
         'migrated_to_demographics',
+        'description',
     ];
 
     public const COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS = 'paid-nursery-operations';
@@ -108,7 +109,10 @@ class Workday extends Model implements HandlesLinkedFieldSync
                 'workdayable_type' => get_class($entity),
                 'workdayable_id' => $entity->id,
                 'collection' => $workdayData['collection'],
+                'description' => $workdayData['description'],
             ]);
+        } else {
+            $workday->update(['description' => $workdayData['description']]);
         }
 
         $demographics = $workday->demographics;
