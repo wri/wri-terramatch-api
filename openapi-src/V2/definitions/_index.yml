@@ -272,3 +272,7 @@ V2ProjectInviteCreate:
   $ref: './V2ProjectInviteCreate.yml'
 WorkdayDemographic:
   $ref: './WorkdayDemographic.yml'
+GeoJSON:
+  $ref: './GeoJSON.yml'
+SiteGeometryPost:
+  $ref: './SiteGeometryPost.yml'
