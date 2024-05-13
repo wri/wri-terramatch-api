@@ -57,39 +57,9 @@ class GeometryController extends Controller
         // for things like overlapping and estimated area.
         $polygonErrors = [];
         foreach ($polygonUuids as $polygonUuid) {
-            $data = ['geometry' => $polygonUuid];
-            foreach (self::STORE_GEOMETRY_VALIDATIONS as $criteriaId => $validation) {
-                $valid = true;
-
-                try {
-                    SitePolygonValidator::validate($validation, $data);
-                } catch (ValidationException $exception) {
-                    $valid = false;
-                    $polygonErrors[$polygonUuid][] = json_decode($exception->errors()['geometry'][0]);
-                }
-
-                $service->createCriteriaSite($polygonUuid, $criteriaId, $valid);
-            }
-
-            // For these two, the createGeojsonModels already handled creating the site criteria, so we just need to
-            // report on them if not valid
-            $polygon = PolygonGeometry::isUuid($polygonUuid)->select('uuid')->first();
-            $schemaCriteria = $polygon->criteriaSite()->forCriteria(PolygonService::SCHEMA_CRITERIA_ID)->first();
-            if ($schemaCriteria != null && ! $schemaCriteria->valid) {
-                $polygonErrors[$polygonUuid][] = [
-                    'key' => 'TABLE_SCHEMA',
-                    'message' => 'The properties for the geometry are missing some required values.',
-                ];
-            } else {
-                // only report data validation if the schema was valid. When the schema is invalid, the data is
-                // always invalid as well.
-                $dataCriteria = $polygon->criteriaSite()->forCriteria(PolygonService::DATA_CRITERIA_ID)->first();
-                if ($dataCriteria != null && ! $dataCriteria->valid) {
-                    $polygonErrors[$polygonUuid][] = [
-                        'key' => 'DATA_COMPLETED',
-                        'message' => 'The properties for the geometry have some invalid values.',
-                    ];
-                }
+            $errors = $this->runStoredGeometryValidations($polygonUuid);
+            if (!empty($errors)) {
+                $polygonErrors[$polygonUuid] = $errors;
             }
         }
 
@@ -163,5 +133,62 @@ class GeometryController extends Controller
         }
 
         return response()->json(['success' => 'geometries have been deleted'], 202);
+    }
+
+    public function updateGeometry(Request $request, PolygonGeometry $polygon): JsonResponse
+    {
+        $this->authorize('update', $polygon);
+
+        $geometry = $request->input('geometry');
+        /** @var PolygonService $service */
+        $service = App::make(PolygonService::class);
+        $service->updateGeojsonModels($polygon, $geometry);
+
+        $errors = $this->runStoredGeometryValidations($polygon->uuid);
+
+        return response()->json(['errors' => $errors], 200);
+    }
+
+    protected function runStoredGeometryValidations(string $polygonUuid): array
+    {
+        /** @var PolygonService $service */
+        $service = App::make(PolygonService::class);
+        $data = ['geometry' => $polygonUuid];
+        $errors = [];
+        foreach (self::STORE_GEOMETRY_VALIDATIONS as $criteriaId => $validation) {
+            $valid = true;
+
+            try {
+                SitePolygonValidator::validate($validation, $data);
+            } catch (ValidationException $exception) {
+                $valid = false;
+                $errors[] = json_decode($exception->errors()['geometry'][0]);
+            }
+
+            $service->createCriteriaSite($polygonUuid, $criteriaId, $valid);
+        }
+
+        // For these two, the polygon service already handled creating the site criteria, so we just need to
+        // report on them if not valid
+        $polygon = PolygonGeometry::isUuid($polygonUuid)->select('uuid')->first();
+        $schemaCriteria = $polygon->criteriaSite()->forCriteria(PolygonService::SCHEMA_CRITERIA_ID)->first();
+        if ($schemaCriteria != null && ! $schemaCriteria->valid) {
+            $errors[] = [
+                'key' => 'TABLE_SCHEMA',
+                'message' => 'The properties for the geometry are missing some required values.',
+            ];
+        } else {
+            // only report data validation if the schema was valid. When the schema is invalid, the data is
+            // always invalid as well.
+            $dataCriteria = $polygon->criteriaSite()->forCriteria(PolygonService::DATA_CRITERIA_ID)->first();
+            if ($dataCriteria != null && ! $dataCriteria->valid) {
+                $errors[] = [
+                    'key' => 'DATA_COMPLETED',
+                    'message' => 'The properties for the geometry have some invalid values.',
+                ];
+            }
+        }
+
+        return $errors;
     }
 }
