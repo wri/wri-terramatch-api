@@ -2514,3 +2514,6 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
+/v2/geometry/validate:
+  post:
+    $ref: './Geometry/post-v2-geometry-validate.yml'
