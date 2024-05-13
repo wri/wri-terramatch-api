@@ -78,6 +78,7 @@ use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusControl
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
+use App\Http\Controllers\V2\Geometry\GeometryController;
 use App\Http\Controllers\V2\Invasives\DeleteInvasiveController;
 use App\Http\Controllers\V2\Invasives\GetInvasivesForEntityController;
 use App\Http\Controllers\V2\Invasives\StoreInvasiveController;
@@ -544,13 +545,20 @@ Route::prefix('project-reports')->group(function () {
     Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
 });
 
-Route::prefix('sites')->group(function () {
-    Route::get('/{site}/files', ViewSiteGalleryController::class);
-    Route::get('/{site}/reports', SiteReportsViaSiteController::class);
-    Route::get('/{site}/monitorings', ViewASitesMonitoringsController::class);
-    Route::get('/{site}/image/locations', SiteImageLocationsController::class);
-    Route::delete('/{site}', SoftDeleteSiteController::class);
-    Route::get('/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
+Route::prefix('sites/{site}')->group(function () {
+    Route::get('/files', ViewSiteGalleryController::class);
+    Route::get('/reports', SiteReportsViaSiteController::class);
+    Route::get('/monitorings', ViewASitesMonitoringsController::class);
+    Route::get('/image/locations', SiteImageLocationsController::class);
+    Route::delete('/', SoftDeleteSiteController::class);
+    Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
+    Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
+});
+
+Route::prefix('geometry')->group(function () {
+    Route::post('/validate', [GeometryController::class, 'validateGeometries']);
+    Route::delete('', [GeometryController::class, 'deleteGeometries']);
+    Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
 });
 
 Route::prefix('project-monitorings')->group(function () {

@@ -21,6 +21,7 @@ use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Polygon;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
@@ -261,9 +262,22 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             ->isStatus(ProjectMonitoring::STATUS_ARCHIVED);
     }
 
+    // @deprecated
     public function polygons()
     {
         return $this->morphMany(Polygon::class, 'polygonable');
+    }
+
+    public function sitePolygons(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            SitePolygon::class,
+            Site::class,
+            'project_id',
+            'site_id',
+            'id',
+            'uuid'
+        );
     }
 
     public function treeSpecies()

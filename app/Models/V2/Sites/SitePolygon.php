@@ -5,13 +5,25 @@ namespace App\Models\V2\Sites;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Znck\Eloquent\Relations\BelongsToThrough;
+use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
+/**
+ * @method static forPolygonGeometry($value):  Builder
+ */
 class SitePolygon extends Model
 {
     use HasUuid;
     use SoftDeletes;
+    use BelongsToThroughTrait;
+    use HasFactory;
 
     protected $table = 'site_polygon';
 
@@ -32,15 +44,31 @@ class SitePolygon extends Model
       'num_trees',
       'est_area',
       'country',
+      'created_by',
     ];
 
-    public function polygonGeometry()
+    public function polygonGeometry(): BelongsTo
     {
         return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'uuid');
     }
 
-    public function project()
+    public function scopeForPolygonGeometry($query, $uuid): Builder
     {
-        return $this->belongsTo(Project::class, 'project_id', 'uuid');
+        return $query->where('poly_id', $uuid);
+    }
+
+    public function project(): BelongsToThrough
+    {
+        return $this->belongsToThrough(
+            Project::class,
+            Site::class,
+            foreignKeyLookup: [Project::class => 'project_id', Site::class => 'site_id'],
+            localKeyLookup: [Site::class => 'uuid']
+        );
+    }
+
+    public function createdBy(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'created_by');
     }
 }
