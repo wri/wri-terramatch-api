@@ -10,10 +10,8 @@ class EstimatedArea extends Extension
     public static $name = 'calc_area';
 
     public static $message = [
-        'ESTIMATED_AREA',
-        'The {{attribute}} field must represent a polygon that matches the site\'s estimated area',
-        ['attribute' => ':attribute'],
-        'The :attribute field must represent a polygon that matches the site\'s estimated area',
+        'key' => 'TOTAL_AREA_EXPECTED',
+        'message' => 'The project\'s total geometry must match the project\'s estimated area.',
     ];
 
     public static function passes($attribute, $value, $parameters, $validator): bool

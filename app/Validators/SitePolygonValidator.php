@@ -9,6 +9,10 @@ class SitePolygonValidator extends Validator
         'features.*' => 'polygon_feature_bounds',
     ];
 
+    public const FEATURE_BOUNDS_UUID = [
+        '*' => 'string|uuid||polygon_feature_bounds',
+    ];
+
     public const SPIKES = [
         'features' => 'required|array',
         'features.*.geometry' => 'polygon_spikes',

@@ -6,6 +6,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\SitePolygonValidator;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -13,6 +14,7 @@ class PolygonService
 {
     public const OVERLAPPING_CRITERIA_ID = 3;
     public const SELF_CRITERIA_ID = 4;
+    public const COORDINATE_SYSTEM_CRITERIA_ID = 5;
     public const SIZE_CRITERIA_ID = 6;
     public const WITHIN_COUNTRY_CRITERIA_ID = 7;
     public const SPIKE_CRITERIA_ID = 8;
@@ -101,6 +103,22 @@ class PolygonService
     private function insertSitePolygon(string $polygonUuid, array $properties, float $area)
     {
         try {
+            // Avoid trying to store an invalid date string or int in the DB, as that will throw an exception and prevent
+            // the site polygon from storing. With an invalid date, this will end up reporting schema invalid and data
+            // invalid, which isn't necessarily correct for the payload given, but it does reflect the status in the DB
+            try {
+                $properties['plantstart'] = empty($properties['plantstart']) ? null : Carbon::parse($properties['plantstart']);
+            } catch (\Exception $e) {
+                $properties['plantstart'] = null;
+            }
+
+            try {
+                $properties['plantend'] = empty($properties['plantend']) ? null : Carbon::parse($properties['plantend']);
+            } catch (\Exception $e) {
+                $properties['plantend'] = null;
+            }
+            $properties['num_trees'] = is_int($properties['num_trees'] ?? null) ? $properties['num_trees'] : null;
+
             $validationGeojson = ['features' => [
                 'feature' => ['properties' => $properties],
             ]];

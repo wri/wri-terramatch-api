@@ -4,8 +4,11 @@ namespace App\Models\V2;
 
 use App\Models\Traits\HasUuid;
 use App\Models\V2\Sites\CriteriaSite;
+use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -24,9 +27,14 @@ class PolygonGeometry extends Model
         'polygon_id', 'geom',
     ];
 
-    public function criteriaSite()
+    public function criteriaSite(): HasMany
     {
         return $this->hasMany(CriteriaSite::class, 'polygon_id', 'uuid');
+    }
+
+    public function sitePolygon(): BelongsTo
+    {
+        return $this->belongsTo(SitePolygon::class, 'uuid', 'poly_id');
     }
 
     public static function getGeoJson(string $uuid): ?array
@@ -47,9 +55,9 @@ class PolygonGeometry extends Model
     public static function getGeometryType(string $uuid): ?string
     {
         return PolygonGeometry::isUuid($uuid)
-            ->selectRaw('ST_GeometryType(geom) as geometry_type')
+            ->selectRaw('ST_GeometryType(geom) as geometry_type_string')
             ->first()
-            ?->geometry_type;
+            ?->geometry_type_string;
     }
 
     public function getGeometryTypeAttribute(): string

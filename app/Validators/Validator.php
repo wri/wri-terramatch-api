@@ -74,7 +74,7 @@ class Validator
         \App\Validators\Extensions\Polygons\GeometryType::class,
         \App\Validators\Extensions\Polygons\SelfIntersection::class,
         \App\Validators\Extensions\Polygons\Spikes::class,
-        \App\Validators\Extensions\Polygons\WithinCountry::class
+        \App\Validators\Extensions\Polygons\WithinCountry::class,
     ];
 
     private function __construct()

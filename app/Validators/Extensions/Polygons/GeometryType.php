@@ -11,10 +11,8 @@ class GeometryType extends Extension
     public static $name = 'geometry_type';
 
     public static $message = [
-        'GEOMETRY_TYPE',
-        'The {{attribute}} field must represent geojson that is polygon geometry',
-        ['attribute' => ':attribute'],
-        'The :attribute field must represent geojson that is polygon geometry',
+        'key' => 'GEOMETRY_TYPE',
+        'message' => 'The geometry must by of polygon type',
     ];
 
     public const VALID_TYPE = 'POLYGON';
