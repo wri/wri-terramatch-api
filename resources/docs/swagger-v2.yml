@@ -93793,6 +93793,7 @@ paths:
             properties:
               errors:
                 type: array
+                items: null
                 description: An empty array on the OK response is included for ease of parsing on the client side.
         '422':
           description: One or more errors was found with the supplied geometries
