@@ -32,7 +32,8 @@
         "swaggest/json-diff": "^3.7",
         "symfony/intl": "^6.2",
         "symfony/yaml": "^6.2",
-        "tymon/jwt-auth": "^2.0"
+        "tymon/jwt-auth": "^2.0",
+        "znck/belongs-to-through": "^2.2"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class RolesMigrationCommand extends Command
+class AddNewRolesMigrationCommand extends Command
 {
     /**
      * The name and signature of the console command.
