@@ -2520,3 +2520,6 @@
 /v2/geometry:
   delete:
     $ref: './Geometry/delete-v2-geometry.yml'
+/v2/geometry/{UUID}:
+  put:
+    $ref: './Geometry/put-v2-geometry-uuid.yml'
