@@ -54,7 +54,7 @@ class GetWorkdaysForEntityControllerTest extends TestCase
         $response = $this->actingAs($owner)
             ->getJson($uri)
             ->assertSuccessful()
-            ->assertJsonCount(count(Workday::$siteCollections), 'data')
+            ->assertJsonCount(count(Workday::SITE_COLLECTIONS), 'data')
             ->decodeResponseJson();
         foreach ($response['data'] as $workday) {
             $this->assertCount(0, $workday['demographics']);
@@ -115,7 +115,7 @@ class GetWorkdaysForEntityControllerTest extends TestCase
         $response = $this->actingAs($owner)
             ->getJson($uri)
             ->assertSuccessful()
-            ->assertJsonCount(count(Workday::$siteCollections), 'data')
+            ->assertJsonCount(count(Workday::SITE_COLLECTIONS), 'data')
             ->decodeResponseJson();
         $foundCollection = false;
         foreach ($response['data'] as $workdayData) {
