@@ -147,7 +147,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
         return 'uuid';
     }
 
-    public function scopeCollection (Builder $query, string $collection): Builder
+    public function scopeCollection(Builder $query, string $collection): Builder
     {
         return $query->where('collection', $collection);
     }

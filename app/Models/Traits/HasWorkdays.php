@@ -19,7 +19,7 @@ trait HasWorkdays
         }
     }
 
-    public function workdays ()
+    public function workdays()
     {
         return $this->morphMany(Workday::class, 'workdayable');
     }
