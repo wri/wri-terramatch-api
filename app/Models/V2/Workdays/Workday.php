@@ -109,10 +109,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
                 'workdayable_type' => get_class($entity),
                 'workdayable_id' => $entity->id,
                 'collection' => $workdayData['collection'],
-                'description' => $workdayData['description'],
             ]);
-        } else {
-            $workday->update(['description' => $workdayData['description']]);
         }
 
         $demographics = $workday->demographics;
