@@ -8,6 +8,7 @@ use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Projects\Project;
 use Illuminate\Http\Request;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
 
 class GetAuditStatusController extends Controller
 {
@@ -37,11 +38,12 @@ class GetAuditStatusController extends Controller
         switch ($entity) {
             case 'Site':
                 return Site::where('uuid', $entity_uuid)->first();
-                break;
 
             case 'Project':
                 return Project::where('uuid', $entity_uuid)->first();
-                break;
+
+            case 'SitePolygon':
+                return SitePolygon::where('uuid', $entity_uuid)->first();
 
             default:
                 # code...

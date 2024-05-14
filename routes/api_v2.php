@@ -146,6 +146,7 @@ use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController
 use App\Http\Controllers\V2\ProjectReports\AdminIndexProjectReportsController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
 use App\Http\Controllers\V2\Projects\AdminIndexProjectsController;
+use App\Http\Controllers\V2\Projects\AdminProjectsUpdateStatusController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\CreateBlankProjectWithFormController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
@@ -218,6 +219,8 @@ use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\V2\Sites\AdminSiteIndexSitePolygonsController;
+use App\Http\Controllers\V2\Sites\AdminSitePolygonsUpdateStatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -294,7 +297,12 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('projects')->group(function () {
         Route::get('', AdminIndexProjectsController::class);
+        Route::put('/{project}', AdminProjectsUpdateStatusController::class);
         Route::get('/multi', AdminProjectMultiController::class);
+    });
+    Route::prefix('site-polygon')->group(function () {
+        Route::get('/{uuid}', AdminSiteIndexSitePolygonsController::class);
+        Route::put('/{uuid}', AdminSitePolygonsUpdateStatusController::class);
     });
 
     Route::prefix('project-monitorings')->group(function () {
@@ -386,6 +394,10 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('project-pitches')->group(function () {
         Route::get('/', AdminIndexProjectPitchController::class);
         Route::get('/export', ExportProjectPitchController::class);
+    });
+
+    Route::prefix('polygon')->group(function () {
+        Route::get('/{uuid}', ViewSitesPolygonsForProjectController::class);
     });
 });
 
