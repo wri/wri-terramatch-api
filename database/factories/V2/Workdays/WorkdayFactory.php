@@ -19,7 +19,7 @@ class WorkdayFactory extends Factory
             'uuid' => $this->faker->uuid(),
             'workdayable_type' => SiteReport::class,
             'workdayable_id' => SiteReport::factory()->create(),
-            'collection' => $this->faker->randomElement(array_keys(Workday::$siteCollections)),
+            'collection' => $this->faker->randomElement(array_keys(Workday::SITE_COLLECTIONS)),
         ];
     }
 }
