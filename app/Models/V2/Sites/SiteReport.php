@@ -11,6 +11,7 @@ use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
@@ -56,6 +57,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     use HasUpdateRequests;
     use HasEntityResources;
     use BelongsToThroughTrait;
+    use HasWorkdays;
 
     protected $auditInclude = [
         'status',
@@ -92,7 +94,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'answers',
         'paid_other_activity_description',
 
-        // virtual (see get/set accessor)
+        // virtual (see HasWorkdays trait)
         'other_workdays_description',
     ];
 
@@ -140,6 +142,13 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'submitted_at' => 'datetime',
         'nothing_to_report' => 'boolean',
         'answers' => 'array',
+    ];
+
+    // Required by the HasWorkdays trait
+    public const WORKDAY_COLLECTIONS = Workday::SITE_COLLECTIONS;
+    public const OTHER_WORKDAY_COLLECTIONS = [
+        Workday::COLLECTION_SITE_PAID_OTHER,
+        Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -219,56 +228,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         return $this->morphMany(Invasive::class, 'invasiveable');
     }
 
-    public function workdaysPaidSiteEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT);
-    }
-
-    public function workdaysPaidPlanting()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_PLANTING);
-    }
-
-    public function workdaysPaidSiteMaintenance()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_SITE_MAINTENANCE);
-    }
-
-    public function workdaysPaidSiteMonitoring()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_SITE_MONITORING);
-    }
-
-    public function workdaysPaidOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_OTHER);
-    }
-
-    public function workdaysVolunteerSiteEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT);
-    }
-
-    public function workdaysVolunteerPlanting()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_PLANTING);
-    }
-
-    public function workdaysVolunteerSiteMaintenance()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE);
-    }
-
-    public function workdaysVolunteerSiteMonitoring()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING);
-    }
-
-    public function workdaysVolunteerOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_OTHER);
-    }
-
     public function approvedBy(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'approved_by');
@@ -317,38 +276,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function getTaskUuidAttribute(): ?string
     {
         return $this->task?->uuid ?? null;
-    }
-
-    public function getOtherWorkdaysDescriptionAttribute(): ?string
-    {
-        $paid = $this->workdaysPaidOtherActivities()->first();
-        $volunteer = $this->workdaysVolunteerOtherActivities()->first();
-
-        if ($paid == null || $volunteer == null || $paid->description == $volunteer->description) {
-            return $paid?->description ?? $volunteer?->description;
-        } else {
-            // They're both not null, but their description doesn't match. This is unexpected, but we'll
-            // return the most recently updated record's value
-            return $paid->updated_at->greatedthan($volunteer->updated_at) ? $paid->description : $volunteer->description;
-        }
-    }
-
-    public function setOtherWorkdaysDescriptionAttribute(?string $value)
-    {
-        $collections = [Workday::COLLECTION_SITE_PAID_OTHER, Workday::COLLECTION_SITE_VOLUNTEER_OTHER];
-        $workdaysQuery = $this->morphMany(Workday::class, 'workdayable');
-        if (! empty($value)) {
-            foreach ($collections as $collection) {
-                if (! (clone $workdaysQuery)->where('collection', $collection)->exists()) {
-                    Workday::create([
-                        'workdayable_type' => get_class($this),
-                        'workdayable_id' => $this->id,
-                        'collection' => $collection,
-                    ]);
-                }
-            }
-        }
-        $workdaysQuery->whereIn('collection', $collections)->update(['description' => $value]);
     }
 
     public function toSearchableArray()
