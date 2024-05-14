@@ -128,10 +128,13 @@ trait UsesLinkedFields
                 continue;
             }
 
-            if (! empty($answer['conditionalOn']) &&
-                ! $answers[$answer['conditionalOn']]['value']) {
-                // don't count it if the question wasn't shown to the user because the parent conditional is false.
-                continue;
+            if (! empty($answers['conditionalOn'])) {
+                $conditional = $answers['conditional'];
+                if (empty($conditional) || ! $conditional['value']) {
+                    // don't count it if the question wasn't shown to the user because the parent conditional is false
+                    // or missing
+                    continue;
+                }
             }
 
             $questionCount++;

@@ -91,6 +91,9 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'polygon_status',
         'answers',
         'paid_other_activity_description',
+
+        // virtual (see get/set accessor)
+        'other_workdays_description',
     ];
 
     public $fileConfiguration = [
@@ -314,6 +317,38 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function getTaskUuidAttribute(): ?string
     {
         return $this->task?->uuid ?? null;
+    }
+
+    public function getOtherWorkdaysDescriptionAttribute(): ?string
+    {
+        $paid = $this->workdaysPaidOtherActivities()->first();
+        $volunteer = $this->workdaysVolunteerOtherActivities()->first();
+
+        if ($paid == null || $volunteer == null || $paid->description == $volunteer->description) {
+            return $paid?->description ?? $volunteer?->description;
+        } else {
+            // They're both not null, but their description doesn't match. This is unexpected, but we'll
+            // return the most recently updated record's value
+            return $paid->updated_at->greatedthan($volunteer->updated_at) ? $paid->description : $volunteer->description;
+        }
+    }
+
+    public function setOtherWorkdaysDescriptionAttribute(?string $value)
+    {
+        $collections = [Workday::COLLECTION_SITE_PAID_OTHER, Workday::COLLECTION_SITE_VOLUNTEER_OTHER];
+        $workdaysQuery = $this->morphMany(Workday::class, 'workdayable');
+        if (! empty($value)) {
+            foreach ($collections as $collection) {
+                if (! (clone $workdaysQuery)->where('collection', $collection)->exists()) {
+                    Workday::create([
+                        'workdayable_type' => get_class($this),
+                        'workdayable_id' => $this->id,
+                        'collection' => $collection,
+                    ]);
+                }
+            }
+        }
+        $workdaysQuery->whereIn('collection', $collections)->update(['description' => $value]);
     }
 
     public function toSearchableArray()
