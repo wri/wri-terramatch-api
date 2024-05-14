@@ -414,7 +414,9 @@ return [
                 'pro-rep-equitable-opportunities' => ['property' => 'equitable_opportunities', 'label' => 'Equitable Opportunities for Women + Youth', 'input_type' => 'long-text'],
                 'pro-rep-local-engagement' => ['property' => 'local_engagement', 'label' => 'Community Engagement Approach', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'local-engagement'],
                 'pro-rep-site-addition' => ['property' => 'site_addition', 'label' => 'Site Addition', 'input_type' => 'boolean'],
+                // TODO (TM-912) Deprecated, to be removed.
                 'pro-rep-paid-other-activity-description' => ['property' => 'paid_other_activity_description', 'label' => 'Paid Other Activities Description', 'input_type' => 'long-text'],
+                'pro-rep-other-workdays-description' => ['property' => 'other_workdays_description', 'label' => 'Other Activities Description', 'input_type' => 'long-text'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [

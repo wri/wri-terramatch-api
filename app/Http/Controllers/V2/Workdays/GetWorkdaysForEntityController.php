@@ -26,8 +26,8 @@ class GetWorkdaysForEntityController extends Controller
         ])->get();
 
         $expectedCollections = match ($entity->shortName) {
-            'site-report' => array_keys(Workday::$siteCollections),
-            'project-report' => array_keys(Workday::$projectCollections),
+            'site-report' => array_keys(Workday::SITE_COLLECTIONS),
+            'project-report' => array_keys(Workday::PROJECT_COLLECTION),
             default => throw new NotFoundHttpException(),
         };
         $collections = $workdays->pluck('collection');
