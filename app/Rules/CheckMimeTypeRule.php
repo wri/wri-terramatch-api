@@ -25,7 +25,7 @@ class CheckMimeTypeRule implements Rule
     public function passes($attribute, $value)
     {
         $file = request()->file('upload_file');
-        $allowedMimeTypes = ['image/jpeg', 'image/gif', 'image/png', 'application/pdf', 'image/tiff', 'image/svg+xml'];
+        $allowedMimeTypes = ['image/jpeg', 'image/gif', 'image/png', 'application/pdf', 'image/tiff', 'image/svg+xml', 'application/zip'];
 
         return $file && in_array($file->getClientMimeType(), $allowedMimeTypes);
     }

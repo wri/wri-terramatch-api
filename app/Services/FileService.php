@@ -28,6 +28,7 @@ class FileService
         'application/vnd.ms-excel' => 'xls',
         'text/plain' => 'csv',
         'text/csv' => 'csv',
+        'application/zip' => 'zip',
     ];
     public const MIME_TYPES = [
         'jpg' => 'image/jpeg',
@@ -44,6 +45,7 @@ class FileService
         'xls' => 'application/vnd.ms-excel',
         'csv' => 'text/plain',
         'csv-2' => 'text/csv',
+        'zip' => 'application/zip',
     ];
 
     private $s3Client = null;

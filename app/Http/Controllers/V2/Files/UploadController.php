@@ -12,11 +12,14 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Support\Facades\Log;
 
 class UploadController extends Controller
 {
     public function __invoke(UploadRequest $request, string $collection, MediaModel $mediaModel)
     {
+        Log::info("file");
+        ini_set('upload_max_filesize', '30M');
         $this->authorize('uploadFiles', $mediaModel);
         $config = $this->getConfiguration($mediaModel, $collection);
         $this->validateFile($request, $config);
