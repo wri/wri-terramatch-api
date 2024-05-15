@@ -12,10 +12,10 @@ return new class extends Migration {
     public function up(): void
     {
         DB::table('v2_sites')
-            ->where('old_model', 'App\Models\Terrafund\TerrafundSite')
+            ->whereNot('framework_key', 'ppc')
             ->update(['old_id' => null]);
         DB::table('v2_projects')
-            ->where('old_model', 'App\Models\Terrafund\TerrafundProgramme')
+            ->whereNot('framework_key', 'ppc')
             ->update(['old_id' => null]);
 
         Schema::table('v2_sites', function (Blueprint $table) {
@@ -30,7 +30,7 @@ return new class extends Migration {
                 CREATE TRIGGER before_insert_v2_sites BEFORE INSERT ON v2_sites 
                 FOR EACH ROW 
                 BEGIN
-                    IF (NEW.framework_key = \'ppc\') THEN
+                    IF (NEW.framework_key = \'ppc\' and NEW.ppc_external_id IS NULL) THEN
                         SET NEW.ppc_external_id = (SELECT max(ppc_external_id) + 1 FROM v2_sites);
                     END IF;
                 END;
@@ -58,7 +58,7 @@ return new class extends Migration {
                 CREATE TRIGGER before_insert_v2_projects BEFORE INSERT ON v2_projects 
                 FOR EACH ROW 
                 BEGIN
-                    IF (NEW.framework_key = \'ppc\') THEN
+                    IF (NEW.framework_key = \'ppc\' and NEW.ppc_external_id IS NULL) THEN
                         SET NEW.ppc_external_id = (SELECT max(ppc_external_id) + 1 FROM v2_projects);
                     END IF;
                 END;
