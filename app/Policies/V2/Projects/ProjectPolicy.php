@@ -30,7 +30,7 @@ class ProjectPolicy extends Policy
 
     public function readAll(?User $user, ?Project $project = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']);
+        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc', 'framework-hbf']);
     }
 
     public function update(?User $user, ?Project $project = null): bool
