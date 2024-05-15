@@ -6,6 +6,7 @@ use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\EntityModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -39,20 +40,21 @@ class Workday extends Model implements HandlesLinkedFieldSync
         'ethnicity',
         'indigeneity',
         'migrated_to_demographics',
+        'description',
     ];
 
-    public const COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS = 'paid-nursery-operations';
+    public const COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS = 'paid-nursery-operations';
     public const COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT = 'paid-project-management';
     public const COLLECTION_PROJECT_PAID_OTHER = 'paid-other-activities';
-    public const COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPRERATIONS = 'volunteer-nursery-operations';
+    public const COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS = 'volunteer-nursery-operations';
     public const COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT = 'volunteer-project-management';
     public const COLLECTION_PROJECT_VOLUNTEER_OTHER = 'volunteer-other-activities';
 
-    public static $projectCollections = [
-        self::COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS => 'Paid Nursery Operations',
+    public const PROJECT_COLLECTION = [
+        self::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS => 'Paid Nursery Operations',
         self::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT => 'Paid Project Management',
         self::COLLECTION_PROJECT_PAID_OTHER => 'Paid Other Activities',
-        self::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPRERATIONS => 'Volunteer Nursery Operations',
+        self::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS => 'Volunteer Nursery Operations',
         self::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT => 'Volunteer Project Management',
         self::COLLECTION_PROJECT_VOLUNTEER_OTHER => 'Volunteer Other Activities',
     ];
@@ -68,7 +70,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
     public const COLLECTION_SITE_VOLUNTEER_SITE_MONITORING = 'volunteer-site-monitoring';
     public const COLLECTION_SITE_VOLUNTEER_OTHER = 'volunteer-other-activities';
 
-    public static $siteCollections = [
+    public const SITE_COLLECTIONS = [
         self::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT => 'Paid Site Establishment',
         self::COLLECTION_SITE_PAID_PLANTING => 'Paid Planting',
         self::COLLECTION_SITE_PAID_SITE_MAINTENANCE => 'Paid Site Maintenance',
@@ -145,6 +147,11 @@ class Workday extends Model implements HandlesLinkedFieldSync
         return 'uuid';
     }
 
+    public function scopeCollection(Builder $query, string $collection): Builder
+    {
+        return $query->where('collection', $collection);
+    }
+
     public function demographics(): HasMany
     {
         return $this->hasMany(WorkdayDemographic::class);
@@ -156,6 +163,6 @@ class Workday extends Model implements HandlesLinkedFieldSync
             return null;
         }
 
-        return data_get(array_merge(static::$projectCollections, static::$siteCollections), $this->collection, 'Unknown');
+        return data_get(array_merge(static::PROJECT_COLLECTION, static::SITE_COLLECTIONS), $this->collection, 'Unknown');
     }
 }
