@@ -26,12 +26,12 @@ class ReportWorkdayDiscrepancies extends Command
     private const PROPERTIES = [
         ProjectReport::class => [
             'paid' => [
-                Workday::COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS,
+                Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
                 Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT,
                 Workday::COLLECTION_PROJECT_PAID_OTHER,
             ],
             'volunteer' => [
-                Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPRERATIONS,
+                Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
                 Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT,
                 Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
             ],
