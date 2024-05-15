@@ -424,7 +424,7 @@ class TerrafundCreateGeometryController extends Controller
 
     private function handlePolygonValidation($polygonUuid, $response, $criteriaId): JsonResponse
     {
-        if ($response['error'] != null) {
+        if (isset($response['error']) && $response['error'] != null) {
             $status = $response['status'];
             unset($response['valid']);
             unset($response['status']);
@@ -433,7 +433,7 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         $response['insertion_success'] = App::make(PolygonService::class)
-            ->createCriteraSite($polygonUuid, $criteriaId, $response['valid']);
+            ->createCriteriaSite($polygonUuid, $criteriaId, $response['valid']);
 
         return response()->json($response);
     }
