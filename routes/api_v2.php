@@ -452,13 +452,13 @@ Route::prefix('project-pitches')->group(function () {
     Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
-Route::prefix('tree-species')->group(function () {
-    Route::get('/{entity}/{uuid}', GetTreeSpeciesForEntityController::class);
-});
+ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+    Route::get('/{entity}', GetTreeSpeciesForEntityController::class);
+}, prefix: 'tree-species');
 
-Route::prefix('workdays')->group(function () {
-    Route::get('/{entity}/{uuid}', GetWorkdaysForEntityController::class);
-});
+ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
+    Route::get('/{entity}', GetWorkdaysForEntityController::class);
+}, prefix: 'workdays');
 
 Route::prefix('stratas')->group(function () {
     Route::post('/', StoreStrataController::class);
@@ -532,12 +532,9 @@ Route::prefix('tasks')->group(function () {
     Route::put('/{task}/submit', SubmitProjectTasksController::class);
 });
 
-Route::prefix('{modelSlug}')
-    ->whereIn('modelSlug', ['site-reports', 'nursery-reports'])
-    ->middleware('modelInterface')
-    ->group(function () {
-        Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
-    });
+ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], function () {
+    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
+});
 
 ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
     Route::get('/{entity}', ViewEntityController::class);
