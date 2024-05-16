@@ -152,6 +152,11 @@ class Workday extends Model implements HandlesLinkedFieldSync
         return $query->where('collection', $collection);
     }
 
+    public function scopeCollections(Builder $query, array $collections): Builder
+    {
+        return $query->whereIn('collection', $collections);
+    }
+
     public function demographics(): HasMany
     {
         return $this->hasMany(WorkdayDemographic::class);
