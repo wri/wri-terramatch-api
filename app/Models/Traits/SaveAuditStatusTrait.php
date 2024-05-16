@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 trait SaveAuditStatusTrait
 {
-    public function saveAuditStatus($entity, $entity_uuid, $status, $comment, $attachment_url = null)
+    public function saveAuditStatus($entity, $entity_uuid, $status, $comment, $type = null, $is_active = null, $is_submitted = null, $attachment_url = null)
     {
         return AuditStatus::create([
             'entity' => $entity,
@@ -17,6 +17,9 @@ trait SaveAuditStatusTrait
             'attachment_url' => $attachment_url,
             'date_created' => now(),
             'created_by' => Auth::user()->email_address,
+            'type' => $type,
+            'is_submitted' => $is_submitted,
+            'is_active' => $is_active,
         ]);
     }
 }

@@ -15,10 +15,16 @@ class AdminSitePolygonsUpdateStatusController extends Controller
     {
         $site = SitePolygon::where('uuid', $uuid)->first();
         $body = $request->all();
-        $site['status']= $body['status'];
-        $site->update();
+        if (isset($body['status'])) {
+            $site['status'] = $body['status'];
+            $this->saveAuditStatus('SitePolygon', $site->uuid, $body['status'], $body['comment'], $body['type']);
+        } else if (isset($body['is_active'])) {
+            $this->saveAuditStatus('SitePolygon', $site->uuid, $site->status, $body['comment'], $body['type'], $body['is_active']);
+        } else {
+            $this->saveAuditStatus('SitePolygon', $site->uuid, $site->status, $body['comment'], $body['type']);
+        }
 
-        $this->saveAuditStatus('SitePolygon', $site->uuid, $body['status'], $body['comment']);
+        $site->update();
 
         return $site;
     }

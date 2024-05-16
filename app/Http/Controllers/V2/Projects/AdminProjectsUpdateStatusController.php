@@ -15,9 +15,15 @@ class AdminProjectsUpdateStatusController extends Controller
     {
         $project = Project::where('uuid', $uuid)->first();
         $body = $request->all();
-        $project['status']= $body['status'];
+        if (isset($body['status'])) {
+            $project['status'] = $body['status'];
+            $this->saveAuditStatus('Project', $project->uuid, $body['status'], $body['comment'], $body['type']);
+        } else if (isset($body['is_active'])) {
+            $this->saveAuditStatus('Project', $project->uuid, $project->status, $body['comment'], $body['type'], $body['is_active']);
+        } else {
+            $this->saveAuditStatus('Project', $project->uuid, $project->status, $body['comment'], $body['type']);
+        }
         $project->update();
-        $this->saveAuditStatus('Project', $project->uuid, $body['status'], $body['comment']);
         return $project;
     }
 }

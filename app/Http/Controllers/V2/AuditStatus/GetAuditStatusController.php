@@ -26,8 +26,11 @@ class GetAuditStatusController extends Controller
             $audit_with_entity['status'] = $audit->status;
             $audit_with_entity['comment'] = $audit->comment;
             $audit_with_entity['attachment_url'] = $audit->attachment_url;
-            $audit_with_entity['date_created'] = $audit->date_created;
+            $audit_with_entity['date_created'] = $audit->created_at->format('M j, Y g:ia');
             $audit_with_entity['created_by'] = $audit->created_by;
+            $audit_with_entity['type'] = $audit->type;
+            $audit_with_entity['is_submitted'] = $audit->is_submitted;
+            $audit_with_entity['is_active'] = $audit->is_active;
             return $audit_with_entity;
         });
         return AuditStatusResource::collection($audit_statuses_with_entity);
