@@ -133,7 +133,7 @@ use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 // use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
-// use App\Http\Controllers\V2\AuditStatus\UpdateAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\UpdateAuditStatusController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
@@ -728,6 +728,6 @@ Route::prefix('audit-status')->group(function () {
     Route::get('/', GetAuditStatusController::class);
     Route::post('/', StoreAuditStatusController::class);
     // Route::get('/{id}', GetAuditStatusController::class);
-    // Route::put('/{id}', UpdateAuditStatusController::class);
+    Route::put('/{id}', UpdateAuditStatusController::class);
     // Route::delete('/{id}', DeleteAuditStatusController::class);
 });

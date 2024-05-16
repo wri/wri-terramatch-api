@@ -20,8 +20,10 @@ class StoreAuditStatusRequest extends FormRequest
             'comment' => ['sometimes', 'string', 'nullable', 'max:500'],
             'attachment_url' => ['sometimes', 'string', 'nullable', 'max:256'],
             'type' => ['sometimes', 'string', 'nullable', 'max:256'],
-            'is_submitted' => ['sometimes', 'string', 'nullable', 'max:256'],
-            'is_active' => ['sometimes', 'string', 'nullable', 'max:256'],
+            'is_submitted' => ['sometimes', 'boolean', 'nullable', 'max:256'],
+            'is_active' => ['sometimes', 'boolean', 'nullable', 'max:256'],
+            'first_name' => ['sometimes', 'string', 'nullable', 'max:256'],
+            'last_name' => ['sometimes', 'string', 'nullable', 'max:256'],
         ];
     }
 }

@@ -26,6 +26,8 @@ class AuditStatus extends Model
         'type',
         'is_submitted',
         'is_active',
+        'first_name',
+        'last_name',
     ];
 
     public function auditAttachment()

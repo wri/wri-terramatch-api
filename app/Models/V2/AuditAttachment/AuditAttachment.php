@@ -16,6 +16,7 @@ class AuditAttachment extends Model
 
     protected $fillable = [
         'id',
+        'entity_id',
         'attachment',
         'date_created',
         'created_by',

@@ -31,6 +31,8 @@ class GetAuditStatusController extends Controller
             $audit_with_entity['type'] = $audit->type;
             $audit_with_entity['is_submitted'] = $audit->is_submitted;
             $audit_with_entity['is_active'] = $audit->is_active;
+            $audit_with_entity['first_name'] = $audit->first_name;
+            $audit_with_entity['last_name'] = $audit->last_name;
             return $audit_with_entity;
         });
         return AuditStatusResource::collection($audit_statuses_with_entity);

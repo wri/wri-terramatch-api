@@ -18,6 +18,8 @@ class StoreAuditStatusController extends Controller
 
         $auditStatus = new AuditStatus($storeAuditStatusRequest->all());
         $auditStatus->created_by = $user->email_address;
+        $auditStatus->first_name = $user->first_name;
+        $auditStatus->last_name = $user->last_name;
         $auditStatus->date_created = now();
         $auditStatus->save();
 
