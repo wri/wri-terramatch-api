@@ -364,7 +364,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         // Assume that the types are balanced and just return the value from 'gender'
         $sumTotals = fn ($collectionType) => WorkdayDemographic::whereIn('workday_id',
             Workday::where('workdayable_type', SiteReport::class)
-                ->whereIn('workdayable_id', $this->task->siteReports()->select('id'))
+                ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
                 ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
                 ->select('id')
         )->gender()->sum('amount');
