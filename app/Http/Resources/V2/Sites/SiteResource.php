@@ -13,6 +13,7 @@ class SiteResource extends JsonResource
     {
         $data = [
             'uuid' => $this->uuid,
+            'ppc_external_id' => $this->ppc_external_id ?? $this->id,
             'name' => $this->name,
             'framework_key' => $this->framework_key,
             'framework_uuid' => $this->framework_uuid,
