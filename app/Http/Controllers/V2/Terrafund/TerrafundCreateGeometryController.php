@@ -328,7 +328,7 @@ class TerrafundCreateGeometryController extends Controller
         $criteriaList = [];
         foreach ($criteriaData as $criteria) {
             $criteriaId = $criteria->criteria_id;
-            $valid = CriteriaSite::where(['polygon_id' => $uuid, 'criteria_id' => $criteriaId])->select('valid')->first()?->valid;
+            $valid = CriteriaSite::where(['polygon_id' => $uuid, 'criteria_id' => $criteriaId])->orderBy('created_at', 'desc')->select('valid')->first()?->valid;
             $criteriaList[] = [
               'criteria_id' => $criteriaId,
               'latest_created_at' => $criteria->latest_created_at,
@@ -584,5 +584,29 @@ class TerrafundCreateGeometryController extends Controller
             ->createCriteriaSite($polygonUuid, $criteriaId, $response['valid']);
 
         return response()->json($response);
+    }
+
+    public function runValidationPolygon(string $uuid)
+    {
+        $request = new Request(['uuid' => $uuid]);
+
+        $this->validateOverlapping($request);
+        $this->checkSelfIntersection($request);
+        $this->validatePolygonSize($request);
+        $this->checkWithinCountry($request);
+        $this->checkBoundarySegments($request);
+        $this->getGeometryType($request);
+        $this->validateEstimatedArea($request);
+        $this->validateDataInDB($request);
+    }
+
+    public function getValidationPolygon(Request $request)
+    {
+
+        $uuid = $request->input('uuid');
+        $this->runValidationPolygon($uuid);
+        $criteriaData = $this->getCriteriaData($request);
+
+        return $criteriaData;
     }
 }

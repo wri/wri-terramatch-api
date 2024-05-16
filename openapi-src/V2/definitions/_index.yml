@@ -276,3 +276,5 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 SiteGeometryPost:
   $ref: './SiteGeometryPost.yml'
+V2TerrafundCriteriaData:
+  $ref: './V2TerrafundCriteriaData.yml'
