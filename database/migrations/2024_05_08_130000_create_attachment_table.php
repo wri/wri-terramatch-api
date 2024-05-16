@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::dropIfExists('attachment');
         Schema::create('attachment', function (Blueprint $table) {
             $table->id();
+            $table->string('entity_id')->nullable();
             $table->string('attachment')->nullable();
             $table->date('date_created')->nullable();
             $table->string('created_by')->nullable();

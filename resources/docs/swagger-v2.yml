@@ -44469,6 +44469,16 @@ definitions:
         format: date
       created_by:
         type: string
+      is_active:
+        type: boolean
+      is_submitted:
+        type: boolean
+      type:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
   AuditStatusPost:
     properties:
       entity_uuid:
@@ -44483,6 +44493,16 @@ definitions:
         type: string
         format: date
       created_by:
+        type: string
+      is_active:
+        type: boolean
+      is_submitted:
+        type: boolean
+      type:
+        type: string
+      first_name:
+        type: string
+      last_name:
         type: string
   AttachmentResponse: 
     type: object

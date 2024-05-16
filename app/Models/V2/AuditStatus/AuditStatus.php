@@ -23,6 +23,11 @@ class AuditStatus extends Model
         'attachment_url',
         'date_created',
         'created_by',
+        'type',
+        'is_submitted',
+        'is_active',
+        'first_name',
+        'last_name',
     ];
 
     public function auditAttachment()
