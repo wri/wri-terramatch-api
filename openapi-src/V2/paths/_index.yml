@@ -2514,3 +2514,9 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
+'/v2/terrafund/validation/polygon':
+  get:
+    $ref: './Terrafund/get-v2-terrafund-validation-polygon.yml'
+'/v2/terrafund/validation/criteria-data':
+  get:
+    $ref: './Terrafund/get-v2-terrafund-validation-criteria-data.yml'
