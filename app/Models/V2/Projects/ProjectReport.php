@@ -362,20 +362,14 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         }
 
         // Assume that the types are balanced and just return the value from 'gender'
-        $sitePaid = WorkdayDemographic::whereIn('workday_id',
+        $sumTotals = fn ($collectionType) => WorkdayDemographic::whereIn('workday_id',
             Workday::where('workdayable_type', SiteReport::class)
                 ->whereIn('workdayable_id', $this->task->siteReports()->select('id'))
-                ->collections(SiteReport::WORKDAY_COLLECTIONS['paid'])
-                ->select('id')
-        )->gender()->sum('amount');
-        $siteVolunteer = WorkdayDemographic::whereIn('workday_id',
-            Workday::where('workdayable_type', SiteReport::class)
-                ->whereIn('workdayable_id', $this->task->siteReports()->select('id'))
-                ->collections(SiteReport::WORKDAY_COLLECTIONS['volunteer'])
+                ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
                 ->select('id')
         )->gender()->sum('amount');
 
-        return $projectReportTotal + $sitePaid + $siteVolunteer;
+        return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
     }
 
     public function getSiteReportsCountAttribute(): int
