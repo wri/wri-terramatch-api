@@ -44240,6 +44240,8 @@ definitions:
       calc_area:
         type: number
         format: float
+      status:
+        type: string
   SitePolygonCreateResponse:
     type: object
     properties:
