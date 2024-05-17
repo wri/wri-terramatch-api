@@ -89,11 +89,10 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
         'siting_strategy',
         'description_siting_strategy',
         'framework_key',
-        'old_id',
-        'old_model',
         'feedback',
         'feedback_fields',
         'answers',
+        'ppc_external_id',
     ];
 
     public $fileConfiguration = [
@@ -208,9 +207,15 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
         return $this->morphMany(Strata::class, 'stratasable');
     }
 
+    // @deprecated
     public function polygons()
     {
         return $this->morphMany(Polygon::class, 'polygonable');
+    }
+
+    public function sitePolygons()
+    {
+        return $this->hasMany(SitePolygon::class, 'site_id', 'uuid');
     }
 
     public function treeSpecies()

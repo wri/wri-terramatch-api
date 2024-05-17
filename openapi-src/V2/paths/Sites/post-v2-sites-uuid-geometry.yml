@@ -1,0 +1,23 @@
+summary: Upload bulk geometry to a specific site.
+operationId: post-v2-sites-uuid-geometry
+tags:
+  - V2 Sites
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - in: body
+    name: body
+    schema:
+      type: object
+      properties:
+        geometries:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/GeoJSON'
+responses:
+  '201':
+    description: Created
+    schema:
+      $ref: '../../definitions/_index.yml#/SiteGeometryPost'

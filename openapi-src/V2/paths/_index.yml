@@ -2481,6 +2481,9 @@
     $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
+/v2/sites/{UUID}/geometry:
+  post:
+    $ref: './Sites/post-v2-sites-uuid-geometry.yml'
 /v2/site-monitorings/{UUID}:
   get:
     $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
@@ -2511,3 +2514,12 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
+/v2/geometry/validate:
+  post:
+    $ref: './Geometry/post-v2-geometry-validate.yml'
+/v2/geometry:
+  delete:
+    $ref: './Geometry/delete-v2-geometry.yml'
+/v2/geometry/{UUID}:
+  put:
+    $ref: './Geometry/put-v2-geometry-uuid.yml'

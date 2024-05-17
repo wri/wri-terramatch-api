@@ -78,6 +78,7 @@ use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusControl
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
+use App\Http\Controllers\V2\Geometry\GeometryController;
 use App\Http\Controllers\V2\Invasives\DeleteInvasiveController;
 use App\Http\Controllers\V2\Invasives\GetInvasivesForEntityController;
 use App\Http\Controllers\V2\Invasives\StoreInvasiveController;
@@ -451,13 +452,13 @@ Route::prefix('project-pitches')->group(function () {
     Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
-Route::prefix('tree-species')->group(function () {
-    Route::get('/{entity}/{uuid}', GetTreeSpeciesForEntityController::class);
-});
+ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+    Route::get('/{entity}', GetTreeSpeciesForEntityController::class);
+}, prefix: 'tree-species');
 
-Route::prefix('workdays')->group(function () {
-    Route::get('/{entity}/{uuid}', GetWorkdaysForEntityController::class);
-});
+ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
+    Route::get('/{entity}', GetWorkdaysForEntityController::class);
+}, prefix: 'workdays');
 
 Route::prefix('stratas')->group(function () {
     Route::post('/', StoreStrataController::class);
@@ -531,12 +532,9 @@ Route::prefix('tasks')->group(function () {
     Route::put('/{task}/submit', SubmitProjectTasksController::class);
 });
 
-Route::prefix('{modelSlug}')
-    ->whereIn('modelSlug', ['site-reports', 'nursery-reports'])
-    ->middleware('modelInterface')
-    ->group(function () {
-        Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
-    });
+ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], function () {
+    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
+});
 
 ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
     Route::get('/{entity}', ViewEntityController::class);
@@ -547,13 +545,20 @@ Route::prefix('project-reports')->group(function () {
     Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
 });
 
-Route::prefix('sites')->group(function () {
-    Route::get('/{site}/files', ViewSiteGalleryController::class);
-    Route::get('/{site}/reports', SiteReportsViaSiteController::class);
-    Route::get('/{site}/monitorings', ViewASitesMonitoringsController::class);
-    Route::get('/{site}/image/locations', SiteImageLocationsController::class);
-    Route::delete('/{site}', SoftDeleteSiteController::class);
-    Route::get('/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
+Route::prefix('sites/{site}')->group(function () {
+    Route::get('/files', ViewSiteGalleryController::class);
+    Route::get('/reports', SiteReportsViaSiteController::class);
+    Route::get('/monitorings', ViewASitesMonitoringsController::class);
+    Route::get('/image/locations', SiteImageLocationsController::class);
+    Route::delete('/', SoftDeleteSiteController::class);
+    Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
+    Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
+});
+
+Route::prefix('geometry')->group(function () {
+    Route::post('/validate', [GeometryController::class, 'validateGeometries']);
+    Route::delete('', [GeometryController::class, 'deleteGeometries']);
+    Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
 });
 
 Route::prefix('project-monitorings')->group(function () {

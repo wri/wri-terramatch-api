@@ -25,7 +25,7 @@ class ProjectReportPolicy extends Policy
 
     public function readAll(?User $user, ?ProjectReport $report = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']);
+        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc', 'framework-hbf']);
     }
 
     public function update(?User $user, ?ProjectReport $report = null): bool
