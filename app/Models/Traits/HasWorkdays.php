@@ -3,20 +3,28 @@
 namespace App\Models\Traits;
 
 use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Workdays\WorkdayDemographic;
 use Illuminate\Support\Str;
 
+/**
+ * @property int workdays_paid
+ * @property int workdays_volunteer
+ * @property string other_workdays_description
+ */
 trait HasWorkdays
 {
     public static function bootHasWorkdays()
     {
-        foreach (array_keys(static::WORKDAY_COLLECTIONS) as $collection) {
-            self::resolveRelationUsing(
-                'workdays' . Str::studly($collection),
-                function ($entity) use ($collection) {
-                    return $entity->workdays()->collection($collection);
-                }
-            );
-        }
+        collect([static::WORKDAY_COLLECTIONS['paid'], static::WORKDAY_COLLECTIONS['volunteer']])
+            ->flatten()
+            ->each(function ($collection) {
+                self::resolveRelationUsing(
+                    'workdays' . Str::studly($collection),
+                    function ($entity) use ($collection) {
+                        return $entity->workdays()->collection($collection);
+                    }
+                );
+            });
     }
 
     public function workdays()
@@ -24,11 +32,21 @@ trait HasWorkdays
         return $this->morphMany(Workday::class, 'workdayable');
     }
 
+    public function getWorkdaysPaidAttribute(): int
+    {
+        return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['paid']);
+    }
+
+    public function getWorkdaysVolunteerAttribute(): int
+    {
+        return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['volunteer']);
+    }
+
     public function getOtherWorkdaysDescriptionAttribute(): ?string
     {
         return $this
             ->workdays()
-            ->whereIn('collection', self::OTHER_WORKDAY_COLLECTIONS)
+            ->collections(self::WORKDAY_COLLECTIONS['other'])
             ->orderBy('updated_at', 'desc')
             ->select('description')
             ->first()
@@ -37,10 +55,9 @@ trait HasWorkdays
 
     public function setOtherWorkdaysDescriptionAttribute(?string $value): void
     {
-        $workdaysQuery = $this->morphMany(Workday::class, 'workdayable');
         if (! empty($value)) {
-            foreach (self::OTHER_WORKDAY_COLLECTIONS as $collection) {
-                if (! (clone $workdaysQuery)->where('collection', $collection)->exists()) {
+            foreach (self::WORKDAY_COLLECTIONS['other'] as $collection) {
+                if (! $this->workdays()->collection($collection)->exists()) {
                     Workday::create([
                         'workdayable_type' => get_class($this),
                         'workdayable_id' => $this->id,
@@ -49,8 +66,14 @@ trait HasWorkdays
                 }
             }
         }
-        $workdaysQuery
-            ->whereIn('collection', self::OTHER_WORKDAY_COLLECTIONS)
-            ->update(['description' => $value]);
+
+        $this->workdays()->collections(self::WORKDAY_COLLECTIONS['other'])->update(['description' => $value]);
+    }
+
+    protected function sumTotalWorkdaysAmounts(array $collections): int
+    {
+        // Assume that the types are balanced, and just return the value from `gender`
+        return WorkdayDemographic::whereIn('workday_id', $this->workdays()->collections($collections)->select('id'))
+            ->gender()->sum('amount');
     }
 }
