@@ -39,20 +39,23 @@ class AdminCreateReportingFrameworkController extends Controller
             'updated_at' => now(),
         ]);
 
-        $PermissionAdded = Permission::create([
-         'name' => 'framework-' . Str::slug($frameworkRequest->name),
-         'guard_name' => 'api',
-         'created_at' => now(),
-         'updated_at' => now(),
-        ]);
+        $permissionName = 'framework-' . Str::slug($frameworkRequest->name);
+        if (! Permission::where('name', $permissionName)->exists()) {
+            $PermissionAdded = Permission::create([
+                'name' => 'framework-' . Str::slug($frameworkRequest->name),
+                'guard_name' => 'api',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        $adminSuperRoleId = 1;
-        $adminTerrafund = 3;
+            $adminSuperRoleId = 1;
+            $adminTerrafund = 3;
 
-        DB::table('role_has_permissions')->insert([
-         ['permission_id' => $PermissionAdded->id, 'role_id' => $adminSuperRoleId],
-         ['permission_id' => $PermissionAdded->id, 'role_id' => $adminTerrafund],
-        ]);
+            DB::table('role_has_permissions')->insert([
+                ['permission_id' => $PermissionAdded->id, 'role_id' => $adminSuperRoleId],
+                ['permission_id' => $PermissionAdded->id, 'role_id' => $adminTerrafund],
+            ]);
+        }
 
         Form::isUuid($frameworkRequest->project_form_uuid)->update([
             'framework_key' => $framework->slug,

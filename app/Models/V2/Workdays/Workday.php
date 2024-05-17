@@ -115,7 +115,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
 
         $demographics = $workday->demographics;
         $represented = collect();
-        foreach ($workdayData['demographics'] as $demographicData) {
+        foreach (($workdayData['demographics'] ?? []) as $demographicData) {
             $demographic = $demographics->firstWhere([
                 'type' => data_get($demographicData, 'type'),
                 'subtype' => data_get($demographicData, 'subtype'),
@@ -150,6 +150,11 @@ class Workday extends Model implements HandlesLinkedFieldSync
     public function scopeCollection(Builder $query, string $collection): Builder
     {
         return $query->where('collection', $collection);
+    }
+
+    public function scopeCollections(Builder $query, array $collections): Builder
+    {
+        return $query->whereIn('collection', $collections);
     }
 
     public function demographics(): HasMany
