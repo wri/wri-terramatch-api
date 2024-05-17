@@ -122,10 +122,10 @@ class PolygonService
             $validationGeojson = ['features' => [
                 'feature' => ['properties' => $properties],
             ]];
-            $validSchema = SitePolygonValidator::isValid('SCHEMA', $validationGeojson);
-            $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
-            $this->createCriteriaSite($polygonUuid, self::SCHEMA_CRITERIA_ID, $validSchema);
-            $this->createCriteriaSite($polygonUuid, self::DATA_CRITERIA_ID, $validData);
+            // $validSchema = SitePolygonValidator::isValid('SCHEMA', $validationGeojson);
+            // $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
+            // $this->createCriteriaSite($polygonUuid, self::SCHEMA_CRITERIA_ID, $validSchema);
+            // $this->createCriteriaSite($polygonUuid, self::DATA_CRITERIA_ID, $validData);
 
             $sitePolygon = new SitePolygon();
             // $sitePolygon->project_id = $properties['project_id'] ?? null;
