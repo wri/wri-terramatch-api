@@ -192,7 +192,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'other' => [
             Workday::COLLECTION_PROJECT_PAID_OTHER,
             Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
-        ]
+        ],
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -362,7 +362,8 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         }
 
         // Assume that the types are balanced and just return the value from 'gender'
-        $sumTotals = fn ($collectionType) => WorkdayDemographic::whereIn('workday_id',
+        $sumTotals = fn ($collectionType) => WorkdayDemographic::whereIn(
+            'workday_id',
             Workday::where('workdayable_type', SiteReport::class)
                 ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
                 ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
