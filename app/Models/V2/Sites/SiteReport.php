@@ -11,6 +11,7 @@ use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
@@ -56,6 +57,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     use HasUpdateRequests;
     use HasEntityResources;
     use BelongsToThroughTrait;
+    use HasWorkdays;
 
     protected $auditInclude = [
         'status',
@@ -71,8 +73,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'approved_by',
         'created_by',
         'submitted_at',
-        'workdays_paid',
-        'workdays_volunteer',
         'technical_narrative',
         'public_narrative',
         'disturbance_details',
@@ -91,6 +91,9 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'polygon_status',
         'answers',
         'paid_other_activity_description',
+
+        // virtual (see HasWorkdays trait)
+        'other_workdays_description',
     ];
 
     public $fileConfiguration = [
@@ -137,6 +140,28 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'submitted_at' => 'datetime',
         'nothing_to_report' => 'boolean',
         'answers' => 'array',
+    ];
+
+    // Required by the HasWorkdays trait
+    public const WORKDAY_COLLECTIONS = [
+        'paid' => [
+            Workday::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT,
+            WORKDAY::COLLECTION_SITE_PAID_PLANTING,
+            Workday::COLLECTION_SITE_PAID_SITE_MAINTENANCE,
+            Workday::COLLECTION_SITE_PAID_SITE_MONITORING,
+            Workday::COLLECTION_SITE_PAID_OTHER,
+        ],
+        'volunteer' => [
+            Workday::COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT,
+            WORKDAY::COLLECTION_SITE_VOLUNTEER_PLANTING,
+            Workday::COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE,
+            Workday::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING,
+            Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
+        ],
+        'other' => [
+            Workday::COLLECTION_SITE_PAID_OTHER,
+            Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
+        ],
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -214,56 +239,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function invasive()
     {
         return $this->morphMany(Invasive::class, 'invasiveable');
-    }
-
-    public function workdaysPaidSiteEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT);
-    }
-
-    public function workdaysPaidPlanting()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_PLANTING);
-    }
-
-    public function workdaysPaidSiteMaintenance()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_SITE_MAINTENANCE);
-    }
-
-    public function workdaysPaidSiteMonitoring()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_SITE_MONITORING);
-    }
-
-    public function workdaysPaidOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_OTHER);
-    }
-
-    public function workdaysVolunteerSiteEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT);
-    }
-
-    public function workdaysVolunteerPlanting()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_PLANTING);
-    }
-
-    public function workdaysVolunteerSiteMaintenance()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE);
-    }
-
-    public function workdaysVolunteerSiteMonitoring()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING);
-    }
-
-    public function workdaysVolunteerOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_OTHER);
     }
 
     public function approvedBy(): HasOne

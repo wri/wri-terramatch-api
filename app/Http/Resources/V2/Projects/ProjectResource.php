@@ -12,6 +12,7 @@ class ProjectResource extends JsonResource
     {
         $data = [
             'uuid' => $this->uuid,
+            'ppc_external_id' => $this->ppc_external_id ?? $this->id,
             'name' => $this->name,
             'status' => $this->status,
             'readable_status' => $this->readable_status,

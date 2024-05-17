@@ -152,8 +152,6 @@ V2SeedingPaginated:
   $ref: './V2SeedingPaginated.yml'
 V2WorkdayRead:
   $ref: './V2WorkdayRead.yml'
-V2WorkdaysPaginated:
-  $ref: './V2WorkdaysPaginated.yml'
 V2DisturbanceRead:
   $ref: './V2DisturbanceRead.yml'
 V2DisturbanceCreate:
@@ -272,3 +270,9 @@ V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
 V2ProjectInviteCreate:
   $ref: './V2ProjectInviteCreate.yml'
+WorkdayDemographic:
+  $ref: './WorkdayDemographic.yml'
+GeoJSON:
+  $ref: './GeoJSON.yml'
+SiteGeometryPost:
+  $ref: './SiteGeometryPost.yml'

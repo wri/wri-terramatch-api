@@ -39,4 +39,9 @@ class CriteriaSite extends Model
         'deleted_at',
         'date_created',
     ];
+
+    public function scopeForCriteria($query, $criteriaId)
+    {
+        return $query->where('criteria_id', $criteriaId)->latest();
+    }
 }

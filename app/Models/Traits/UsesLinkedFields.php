@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits;
 
+use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\V2\Forms\Form;
 
 trait UsesLinkedFields
@@ -127,10 +128,13 @@ trait UsesLinkedFields
                 continue;
             }
 
-            if (! empty($answer['conditionalOn']) &&
-                ! $answers[$answer['conditionalOn']]['value']) {
-                // don't count it if the question wasn't shown to the user because the parent conditional is false.
-                continue;
+            if (! empty($answers['conditionalOn'])) {
+                $conditional = $answers['conditional'];
+                if (empty($conditional) || ! $conditional['value']) {
+                    // don't count it if the question wasn't shown to the user because the parent conditional is false
+                    // or missing
+                    continue;
+                }
             }
 
             $questionCount++;
@@ -247,6 +251,13 @@ trait UsesLinkedFields
     {
         // This will expand as we complete more tickets in TM-747, until eventually we support all form relations.
         if (! in_array($inputType, ['treeSpecies', 'workdays'])) {
+            return;
+        }
+
+        $class = get_class($this->$property()->make());
+        if (is_a($class, HandlesLinkedFieldSync::class, true)) {
+            $class::syncRelation($this, $property, $data);
+
             return;
         }
 

@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class TerrafundEditGeometryController extends Controller
 {
@@ -46,10 +46,9 @@ class TerrafundEditGeometryController extends Controller
         if (! $geometryQuery->exists()) {
             return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
         }
-        $geojsonData = json_decode($geometryQuery->select(DB::raw('ST_AsGeoJSON(geom) as geojson'))->first()->geojson, true);
 
         return response()->json([
-            'geojson' => $geojsonData,
+            'geojson' => $geometryQuery->first()->geojson,
         ]);
     }
 
@@ -110,9 +109,9 @@ class TerrafundEditGeometryController extends Controller
                 'num_trees' => $validatedData['num_trees'],
                 'est_area' => $areaHectares, // Assign the calculated area
                 'target_sys' => $validatedData['target_sys'],
+                'poly_id' => $uuid,
+                'created_by' => Auth::user()?->id,
             ]);
-            $sitePolygon->poly_id = $uuid;
-            $sitePolygon->uuid = Str::uuid();
             $sitePolygon->save();
 
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);

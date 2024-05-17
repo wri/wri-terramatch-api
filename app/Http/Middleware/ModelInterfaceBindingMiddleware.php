@@ -53,8 +53,12 @@ class ModelInterfaceBindingMiddleware
 
     private static array $typeSlugsCache = [];
 
-    public static function with(string $interface, callable $routeGroup, string $prefix = null, string $modelParameter = null): RouteRegistrar
-    {
+    public static function with(
+        string $interface,
+        callable $routeGroup,
+        string $prefix = null,
+        string $modelParameter = null,
+    ): RouteRegistrar {
         $typeSlugs = self::$typeSlugsCache[$interface] ?? [];
         if (empty($typeSlugs)) {
             foreach (self::CONCRETE_MODELS as $slug => $concrete) {
@@ -66,11 +70,22 @@ class ModelInterfaceBindingMiddleware
             self::$typeSlugsCache[$interface] = $typeSlugs;
         }
 
-        $middleware = $modelParameter == null ? 'modelInterface' : "modelInterface:$modelParameter";
+        return self::forSlugs($typeSlugs, $routeGroup, $prefix, $modelParameter);
+    }
 
+    /**
+     * @param array $typeSlugs The type slugs in use must be defined in CONCRETE_MODELS for the middleware
+     *   to function.
+     */
+    public static function forSlugs(
+        array $typeSlugs,
+        callable $routeGroup,
+        string $prefix = null,
+        string $modelParameter = null,
+    ): RouteRegistrar {
         return Route::prefix("$prefix/{modelSlug}")
             ->whereIn('modelSlug', $typeSlugs)
-            ->middleware($middleware)
+            ->middleware($modelParameter == null ? 'modelInterface' : "modelInterface:$modelParameter")
             ->group($routeGroup);
     }
 

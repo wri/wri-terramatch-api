@@ -3,15 +3,11 @@ type: object
 properties:
   uuid:
     type: string
-  amount:
-    type: integer
   collection:
     type: string
-  gender:
+  readable_collection:
     type: string
-  age:
-    type: string
-  ethnicity:
-    type: string
-  indigeneity:
-    type: string
+  demographics:
+    type: array
+    items:
+      $ref: './_index.yml#/WorkdayDemographic'
