@@ -7,6 +7,7 @@ use App\Models\V2\Sites\Site;
 use Illuminate\Http\Request;
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\AuditStatus\AuditStatus;
+use Illuminate\Support\Facades\Log;
 
 class AdminSitesUpdateStatusController extends Controller
 {
@@ -19,10 +20,11 @@ class AdminSitesUpdateStatusController extends Controller
             $site['status'] = $body['status'];
             $this->saveAuditStatus('Site', $site->uuid, $body['status'], $body['comment'], $body['type']);
         } else if (isset($body['is_active'])) {
+            Log::info($body);
             AuditStatus::where('entity_uuid', $site->uuid)
                 ->where('type', $body['type'])
                 ->update(['is_active' => false]);
-            $this->saveAuditStatus('Site', $site->uuid, $site->status, $body['comment'], $body['type'], $body['is_active']);
+            $this->saveAuditStatus('Site', $site->uuid, $site->status, $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
         }
         $site->update();
 

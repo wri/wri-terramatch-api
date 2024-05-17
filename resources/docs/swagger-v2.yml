@@ -44481,6 +44481,8 @@ definitions:
         type: string
       last_name:
         type: string
+      request_removed:
+        type: boolean
   AuditStatusPost:
     properties:
       entity_uuid:
@@ -44506,6 +44508,8 @@ definitions:
         type: string
       last_name:
         type: string
+      request_removed:
+        type: boolean
   GeoJSON:
     title: GeoJSON
     type: object

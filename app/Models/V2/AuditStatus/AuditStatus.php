@@ -28,6 +28,7 @@ class AuditStatus extends Model
         'is_active',
         'first_name',
         'last_name',
+        'request_removed',
     ];
 
     public function auditAttachment()

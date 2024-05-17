@@ -23,7 +23,7 @@ class AdminProjectsUpdateStatusController extends Controller
             AuditStatus::where('entity_uuid', $project->uuid)
                 ->where('type', $body['type'])
                 ->update(['is_active' => false]);
-            $this->saveAuditStatus('Project', $project->uuid, $project->status, $body['comment'], $body['type'], $body['is_active']);
+            $this->saveAuditStatus('Project', $project->uuid, $project->status, $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
         }
         $project->update();
         return $project;

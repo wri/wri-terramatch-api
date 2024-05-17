@@ -19,6 +19,7 @@ class UpdateAuditStatusRequest extends FormRequest
             'is_active' => ['sometimes', 'boolean', 'nullable', 'max:256'],
             'first_name' => ['sometimes', 'string', 'nullable', 'max:256'],
             'last_name' => ['sometimes', 'string', 'nullable', 'max:256'],
+            'request_removed' => ['sometimes', 'boolean', 'nullable', 'max:256'],
         ];
     }
 }

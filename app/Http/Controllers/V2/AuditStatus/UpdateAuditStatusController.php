@@ -13,7 +13,7 @@ class UpdateAuditStatusController extends Controller
     {
         $validatedData = $updateAuditStatusRequest->validated();
         $auditStatus = AuditStatus::findOrFail($id);
-
+        $auditStatus->request_removed = true;
         AuditStatus::where('entity_uuid', $auditStatus->entity_uuid)
             ->where('type', $auditStatus->type)
             ->update(['is_active' => false]);
