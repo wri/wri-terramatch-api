@@ -98,8 +98,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'monitored_tree_cover',
         'land_use_types',
         'restoration_strategy',
-        'old_model',
-        'old_id',
         'feedback',
         'feedback_fields',
         'organization_name',
@@ -123,6 +121,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'pct_beneficiaries_youth',
         'land_tenure_project_area',
         'answers',
+        'ppc_external_id',
     ];
 
     public $fileConfiguration = [

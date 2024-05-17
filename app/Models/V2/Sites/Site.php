@@ -89,11 +89,10 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
         'siting_strategy',
         'description_siting_strategy',
         'framework_key',
-        'old_id',
-        'old_model',
         'feedback',
         'feedback_fields',
         'answers',
+        'ppc_external_id',
     ];
 
     public $fileConfiguration = [

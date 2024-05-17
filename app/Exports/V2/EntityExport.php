@@ -67,7 +67,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         $organisation = $entity->organisation;
 
         $mapped = [
-            $entity->old_id ?? ($entity->id ?? null),
+            $entity->ppc_external_id ?? $entity->old_id ?? $entity->id ?? null,
             $entity->uuid,
             $organisation->readable_type ?? null,
             $organisation->name ?? null,
@@ -77,7 +77,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         ];
 
         if (in_array($this->form->type, ['nursery', 'nursery-report','site', 'site-report', 'project-report'])) {
-            $mapped[] = $entity->project->old_id ?? ($entity->project->id ?? null);
+            $mapped[] = $entity->project->ppc_external_id ?? $entity->project->id ?? null;
         }
 
         if ($this->form->type === 'project-report') {
@@ -92,7 +92,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         }
 
         if ($this->form->type === 'site-report') {
-            $mapped[] = $entity->site->old_id ?? ($entity->site->id ?? null);
+            $mapped[] = $entity->site->ppc_external_id ?? $entity->site->id ?? null;
             $mapped[] = $entity->site->name ?? null;
             $sumTreeSPecies = $entity->treeSpecies()->sum('amount');
             $mapped[] = $sumTreeSPecies > 0 ? $sumTreeSPecies : null;
