@@ -44,7 +44,7 @@ class UpdateProjectReportWithFormControllerTest extends TestCase
             'status' => EntityStatusStateMachine::STARTED,
         ]);
 
-        $form = CustomFormHelper::generateFakeForm('project-report', 'ppc');
+        $form = CustomFormHelper::generateFakeForm('project-report', 'ppc', true);
 
         $answers = [];
 
@@ -59,8 +59,24 @@ class UpdateProjectReportWithFormControllerTest extends TestCase
             if ($question->linked_field_key == 'pro-rep-title') {
                 $answers[$question->uuid] = '* testing title updated *';
             }
-            if ($question->linked_field_key == 'pro-rep-workdays-paid') {
-                $answers[$question->uuid] = 24;
+            if ($question->linked_field_key == 'pro-rep-rel-paid-project-management') {
+                $answers[$question->uuid] = [[
+                    'collection' => 'paid-project-management',
+                    'demographics' => [[
+                        'type' => 'gender',
+                        'name' => 'male',
+                        'amount' => 24,
+                    ], [
+                        'type' => 'age',
+                        'name' => 'youth',
+                        'amount' => 24,
+                    ], [
+                        'type' => 'ethnicity',
+                        'subtype' => 'indigenous',
+                        'name' => 'Ohlone',
+                        'amount' => 24,
+                    ]],
+                ]];
             }
         }
 
