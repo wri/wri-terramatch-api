@@ -85,6 +85,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     $list[] = 'gender:(' . implode(')(', $types['gender']) . ')';
                     $list[] = 'age:(' . implode(')(', $types['age']) . ')';
                     $list[] = 'ethnicity:(' . implode(')(', $types['ethnicity']) . ')';
+
                     return implode('|', $list);
 
                 case 'leadershipTeam':
