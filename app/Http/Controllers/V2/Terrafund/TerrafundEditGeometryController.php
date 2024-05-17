@@ -217,7 +217,7 @@ class TerrafundEditGeometryController extends Controller
               'num_trees' => $validatedData['num_trees'],
               'calc_area' => $areaHectares,
               'target_sys' => $validatedData['target_sys'],
-              'status' => 'Submitted',
+              'status' => 'submitted',
               'site_id' => $siteUuid,
             ]);
             $sitePolygon->poly_id = $uuid;
