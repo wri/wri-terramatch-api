@@ -24,8 +24,6 @@ class AdminSitePolygonsUpdateStatusController extends Controller
                 ->where('type', $body['type'])
                 ->update(['is_active' => false]);
             $this->saveAuditStatus('SitePolygon', $site->uuid, $site->status, $body['comment'], $body['type'], $body['is_active']);
-        } else {
-            $this->saveAuditStatus('SitePolygon', $site->uuid, $site->status, $body['comment'], $body['type']);
         }
 
         $site->update();

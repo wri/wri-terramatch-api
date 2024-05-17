@@ -3,26 +3,17 @@
 namespace App\Http\Controllers\V2\AuditStatus;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V2\StoreAuditStatusRequest;
 use App\Http\Resources\V2\AuditStatusResource;
-use App\Models\V2\AuditStatus\AuditStatus;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Traits\SaveAuditStatusTrait;
+use Illuminate\Http\Request;
 
 class StoreAuditStatusController extends Controller
 {
     use SaveAuditStatusTrait;
-    public function __invoke(StoreAuditStatusRequest $storeAuditStatusRequest): AuditStatusResource
+    public function __invoke(Request $request) : AuditStatusResource
     {
-        $user = JWTAuth::parseToken()->authenticate();
-
-        $auditStatus = new AuditStatus($storeAuditStatusRequest->all());
-        $auditStatus->created_by = $user->email_address;
-        $auditStatus->first_name = $user->first_name;
-        $auditStatus->last_name = $user->last_name;
-        $auditStatus->date_created = now();
-        $auditStatus->save();
-
-        return new AuditStatusResource($auditStatus);
+        $body = $request->all();
+        $auditStatusresponse = $this->saveAuditStatus($body['entity'], $body['entity_uuid'], $body['status'], $body['comment'], $body['type']);
+        return new AuditStatusResource($auditStatusresponse);
     }
 }
