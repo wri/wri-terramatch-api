@@ -44506,16 +44506,6 @@ definitions:
         type: string
       last_name:
         type: string
-  AttachmentResponse: 
-    type: object
-    properties:
-      attachment_url:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
   GeoJSON:
     title: GeoJSON
     type: object
@@ -44624,6 +44614,15 @@ definitions:
             valid:
               type: integer
               description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
+  AttachmentResponse: 
+    type: object
+    properties:
+      entity_id:
+        type: string
+      attachment:
+        type: string
+      created_by:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95131,3 +95130,23 @@ paths:
                         valid:
                           type: integer
                           description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
+  '/v2/attachment':
+    get:
+      operationId: get-v2-attachments
+      summary: Get all attachments
+      tags: 
+        - V2 attachment
+      parameters:
+        - in: query
+          name: entity_uuid
+          type: string
+          description: required.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/definitions/AuditStatusResponse'

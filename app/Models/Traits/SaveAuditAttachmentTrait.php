@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Auth;
 
 trait SaveAuditAttachmentTrait
 {
-    public function saveAuditAttachment($comment_id = null, $attachment = null)
+    public function saveAuditAttachment($entity_uuid = null, $attachment = null)
     {
         return AuditAttachment::create([
-            'comment_id' => $comment_id,
+            'entity_id' => $entity_uuid,
             'attachment' => $attachment,
             'date_created' => now(),
             'created_by' => Auth::user()->email_address,

@@ -12,7 +12,7 @@ class AuditAttachment extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public $table = 'status';
+    public $table = 'attachment';
 
     protected $fillable = [
         'id',
