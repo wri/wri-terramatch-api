@@ -144,7 +144,7 @@ class PolygonService
             $sitePolygon->distr = $properties['distr'] ?? null;
             $sitePolygon->num_trees = $properties['num_trees'] ?? null;
             $sitePolygon->calc_area = $area ?? null;
-            $sitePolygon->status = "Submitted";
+            $sitePolygon->status = "submitted";
             $sitePolygon->save();
 
             return null;
