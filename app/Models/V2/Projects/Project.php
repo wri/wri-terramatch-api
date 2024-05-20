@@ -122,6 +122,14 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'land_tenure_project_area',
         'answers',
         'ppc_external_id',
+        'detailed_intervention_types',
+        'proj_impact_foodsec',
+        'pct_employees_marginalised',
+        'pct_beneficiaries_marginalised',
+        'pct_beneficiaries_men',
+        'proposed_gov_partners',
+        'proposed_num_nurseries',
+        'proj_boundary',
     ];
 
     public $fileConfiguration = [
@@ -170,6 +178,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'restoration_strategy' => 'array',
         'sdgs_impacted' => 'array',
         'answers' => 'array',
+        'detailed_intervention_types' => 'array',
     ];
 
     public const PROJECT_STATUS_NEW = 'new_project';
