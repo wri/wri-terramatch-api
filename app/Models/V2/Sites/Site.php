@@ -93,6 +93,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
         'feedback_fields',
         'answers',
         'ppc_external_id',
+        'detailed_intervention_types',
     ];
 
     public $fileConfiguration = [
@@ -140,6 +141,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
         'restoration_strategy' => 'array',
         'answers' => 'array',
         'control_site' => 'boolean',
+        'detailed_intervention_types' => 'array',
     ];
 
     public function registerMediaConversions(Media $media = null): void

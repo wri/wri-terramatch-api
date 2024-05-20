@@ -79,7 +79,14 @@ class CreateProjectWithFormController extends Controller
             'land_tenure_project_area' => $projectPitch->land_tenure_project_area,
             'detailed_project_budget' => $projectPitch->detailed_project_budget,
             'proof_of_land_tenure_mou' => $projectPitch->proof_of_land_tenure_mou,
-
+            'detailed_intervention_types' => $projectPitch->detailed_intervention_types,
+            'proj_impact_foodsec' => $projectPitch->proj_impact_foodsec,
+            'pct_employees_marginalised' => $projectPitch->pct_employees_marginalised,
+            'pct_beneficiaries_marginalised' => $projectPitch->pct_beneficiaries_marginalised,
+            'pct_beneficiaries_men' => $projectPitch->pct_beneficiaries_men,
+            'proposed_gov_partners' => $projectPitch->proposed_gov_partners,
+            'proposed_num_nurseries' => $projectPitch->proposed_num_nurseries,
+            'proj_boundary' => $projectPitch->proj_boundary,
         ]);
 
         $request->user()->projects()->sync([$project->id => ['is_monitoring' => false]], false);
