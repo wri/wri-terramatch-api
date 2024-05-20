@@ -69,8 +69,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'approved_by',
         'created_by',
         'submitted_at',
-        'workdays_paid',
-        'workdays_volunteer',
         'technical_narrative',
         'public_narrative',
         'disturbance_details',
@@ -141,10 +139,25 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     ];
 
     // Required by the HasWorkdays trait
-    public const WORKDAY_COLLECTIONS = Workday::SITE_COLLECTIONS;
-    public const OTHER_WORKDAY_COLLECTIONS = [
-        Workday::COLLECTION_SITE_PAID_OTHER,
-        Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
+    public const WORKDAY_COLLECTIONS = [
+        'paid' => [
+            Workday::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT,
+            WORKDAY::COLLECTION_SITE_PAID_PLANTING,
+            Workday::COLLECTION_SITE_PAID_SITE_MAINTENANCE,
+            Workday::COLLECTION_SITE_PAID_SITE_MONITORING,
+            Workday::COLLECTION_SITE_PAID_OTHER,
+        ],
+        'volunteer' => [
+            Workday::COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT,
+            WORKDAY::COLLECTION_SITE_VOLUNTEER_PLANTING,
+            Workday::COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE,
+            Workday::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING,
+            Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
+        ],
+        'other' => [
+            Workday::COLLECTION_SITE_PAID_OTHER,
+            Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
+        ],
     ];
 
     public function registerMediaConversions(Media $media = null): void

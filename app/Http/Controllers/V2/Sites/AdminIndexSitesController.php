@@ -51,8 +51,13 @@ class AdminIndexSitesController extends Controller
         ]);
 
         if (! empty($request->query('search'))) {
-            $ids = Site::search(trim($request->query('search')))->get()->pluck('id')->toArray();
-            $query->whereIn('v2_sites.id', $ids);
+            $search = trim($request->query('search'));
+            if (is_numeric($search)) {
+                $query->where('v2_sites.ppc_external_id', $search);
+            } else {
+                $ids = Site::search($search)->get()->pluck('id')->toArray();
+                $query->whereIn('v2_sites.id', $ids);
+            }
         }
 
         $this->isolateAuthorizedFrameworks($query, 'v2_sites');
