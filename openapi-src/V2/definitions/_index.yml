@@ -278,3 +278,5 @@ SiteGeometryPost:
   $ref: './SiteGeometryPost.yml'
 V2TerrafundCriteriaData:
   $ref: './V2TerrafundCriteriaData.yml'
+V2TerrafundCriteriaSite:
+  $ref: './V2TerrafundCriteriaSite.yml'

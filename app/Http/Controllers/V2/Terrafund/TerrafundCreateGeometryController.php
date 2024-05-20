@@ -611,4 +611,56 @@ class TerrafundCreateGeometryController extends Controller
 
         return $criteriaData;
     }
+
+    public function getSiteValidationPolygon(Request $request)
+    {
+        $uuid = $request->input('uuid');
+        $sitePolygonsUuids = SitePolygon::where('site_id', $uuid)->get()->pluck('poly_id');
+        foreach ($sitePolygonsUuids as $polygonUuid) {
+            $this->runValidationPolygon($polygonUuid);
+        }
+
+        return response()->json(['message' => 'Validation completed for all site polygons']);
+    }
+
+    public function getCurrentSiteValidation(Request $request)
+    {
+        $uuid = $request->input('uuid');
+    
+        $sitePolygonsUuids = SitePolygon::where('site_id', $uuid)->get()->pluck('poly_id');
+        $checkedPolygons = [];
+    
+        foreach ($sitePolygonsUuids as $polygonUuid) {
+
+            $polygonRequest = new Request(['uuid' => $polygonUuid]);
+    
+            $criteriaDataResponse = $this->getCriteriaData($polygonRequest);
+    
+            $criteriaData = json_decode($criteriaDataResponse->getContent(), true);
+    
+            $isValid = true;
+            $isChecked = true;
+    
+            if (isset($criteriaData['error'])) {
+                Log::error('Error fetching criteria data', ['polygon_uuid' => $polygonUuid, 'error' => $criteriaData['error']]);
+                $isValid = false;
+                $isChecked = false;
+            } else {
+                foreach ($criteriaData['criteria_list'] as $criteria) {
+                    if ($criteria['valid'] == 0) {
+                        $isValid = false;
+                        break;
+                    }
+                }
+            }
+    
+            $checkedPolygons[] = [
+                'uuid' => $polygonUuid,
+                'valid' => $isValid,
+                'checked' => $isChecked,
+            ];
+        }
+    
+        return $checkedPolygons;
+    }
 }
