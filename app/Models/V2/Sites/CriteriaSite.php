@@ -42,6 +42,6 @@ class CriteriaSite extends Model
 
     public function scopeForCriteria($query, $criteriaId)
     {
-        return $query->where('criteria_id', $criteriaId);
+        return $query->where('criteria_id', $criteriaId)->latest();
     }
 }

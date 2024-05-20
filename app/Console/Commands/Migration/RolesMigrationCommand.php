@@ -52,7 +52,7 @@ class RolesMigrationCommand extends Command
 
         if (Role::where('name', 'admin-super')->count() === 0) {
             $role = Role::create(['name' => 'admin-super']);
-            $role->givePermissionTo(['framework-terrafund', 'framework-ppc', 'framework-terrafund-enterprises', 'custom-forms-manage', 'users-manage', 'monitoring-manage', 'reports-manage']);
+            $role->givePermissionTo(['framework-terrafund', 'framework-ppc', 'framework-terrafund-enterprises', 'framework-hbf', 'custom-forms-manage', 'users-manage', 'monitoring-manage', 'reports-manage']);
         }
 
         if (Role::where('name', 'admin-ppc')->count() === 0) {
@@ -63,6 +63,16 @@ class RolesMigrationCommand extends Command
         if (Role::where('name', 'admin-terrafund')->count() === 0) {
             $role = Role::create(['name' => 'admin-terrafund']);
             $role->givePermissionTo(['framework-terrafund', 'framework-terrafund-enterprises', 'custom-forms-manage', 'users-manage', 'monitoring-manage', 'reports-manage']);
+        }
+
+        if (Role::where('name', 'admin-hbf')->count() === 0) {
+            $role = Role::create(['name' => 'admin-hbf']);
+            $role->givePermissionTo(['framework-hbf', 'custom-forms-manage', 'users-manage', 'monitoring-manage', 'reports-manage']);
+        }
+
+        if (Role::where('name', 'project-developer')->count() === 0) {
+            $role = Role::create(['name' => 'project-developer']);
+            $role->givePermissionTo(['manage-own']);
         }
 
         if (Role::where('name', 'greenhouse-service-account')->count() === 0) {

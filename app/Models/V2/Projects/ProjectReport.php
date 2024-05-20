@@ -10,6 +10,7 @@ use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Nurseries\Nursery;
@@ -48,6 +49,8 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use Auditable;
     use HasUpdateRequests;
     use HasEntityResources;
+    use BelongsToThroughTrait;
+    use HasWorkdays;
 
     protected $auditInclude = [
         'status',
@@ -137,6 +140,9 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'local_engagement',
         'site_addition',
         'paid_other_activity_description',
+
+        // virtual (see HasWorkdays trait)
+        'other_workdays_description',
     ];
 
     public $casts = [
@@ -167,6 +173,13 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             'validation' => 'photos',
             'multiple' => true,
         ],
+    ];
+
+    // Required by the HasWorkdays trait
+    public const WORKDAY_COLLECTIONS = Workday::PROJECT_COLLECTION;
+    public const OTHER_WORKDAY_COLLECTIONS = [
+        Workday::COLLECTION_PROJECT_PAID_OTHER,
+        Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -229,36 +242,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function treeSpecies()
     {
         return $this->morphMany(TreeSpecies::class, 'speciesable');
-    }
-
-    public function workdaysPaidNurseryOperations()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS);
-    }
-
-    public function workdaysPaidProjectManagement()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT);
-    }
-
-    public function workdaysPaidOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_OTHER);
-    }
-
-    public function workdaysVolunteerNurseryOperations()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPRERATIONS);
-    }
-
-    public function workdaysVolunteerProjectManagement()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT);
-    }
-
-    public function workdaysVolunteerOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER);
     }
 
     /** Calculated Values */

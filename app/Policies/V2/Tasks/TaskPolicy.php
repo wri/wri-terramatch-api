@@ -28,7 +28,7 @@ class TaskPolicy extends Policy
 
     public function readAll(?User $user, ?Task $task = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']) || $this->isAdmin($user);
+        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc', 'framework-hbf']) || $this->isAdmin($user);
     }
 
     public function update(?User $user, ?Task $task = null): bool

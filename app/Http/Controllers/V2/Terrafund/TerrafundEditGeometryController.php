@@ -9,9 +9,9 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\Site;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class TerrafundEditGeometryController extends Controller
 {
@@ -209,19 +209,19 @@ class TerrafundEditGeometryController extends Controller
             $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
             $areaHectares = $areaSqMeters / 10000;
             $sitePolygon = new SitePolygon([
-              'poly_name' => $validatedData['poly_name'],
-              'plantstart' => $validatedData['plantstart'],
-              'plantend' => $validatedData['plantend'],
-              'practice' => $validatedData['practice'],
-              'distr' => $validatedData['distr'],
-              'num_trees' => $validatedData['num_trees'],
-              'calc_area' => $areaHectares,
-              'target_sys' => $validatedData['target_sys'],
-              'status' => 'submitted',
-              'site_id' => $siteUuid,
+                'poly_name' => $validatedData['poly_name'],
+                'plantstart' => $validatedData['plantstart'],
+                'plantend' => $validatedData['plantend'],
+                'practice' => $validatedData['practice'],
+                'distr' => $validatedData['distr'],
+                'num_trees' => $validatedData['num_trees'],
+                'calc_area' => $areaHectares,
+                'target_sys' => $validatedData['target_sys'],
+                'poly_id' => $uuid,
+                'created_by' => Auth::user()?->id,
+                'status' => 'submitted',
+                'site_id' => $siteUuid,
             ]);
-            $sitePolygon->poly_id = $uuid;
-            $sitePolygon->uuid = Str::uuid();
             $sitePolygon->save();
 
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);

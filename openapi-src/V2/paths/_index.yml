@@ -2514,6 +2514,15 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
+/v2/geometry/validate:
+  post:
+    $ref: './Geometry/post-v2-geometry-validate.yml'
+/v2/geometry:
+  delete:
+    $ref: './Geometry/delete-v2-geometry.yml'
+/v2/geometry/{UUID}:
+  put:
+    $ref: './Geometry/put-v2-geometry-uuid.yml'
 '/v2/terrafund/validation/polygon':
   get:
     $ref: './Terrafund/get-v2-terrafund-validation-polygon.yml'
