@@ -27,8 +27,8 @@ class LinkedFieldsHelper
             foreach ($includes as $section) {
                 foreach (data_get($model, $section, []) as $fieldKey => $value) {
                     throw_if(
-                        self::fields()->where('field_key', $fieldKey)->count() > 0, "
-                        Repeated field [$fieldKey]"
+                        self::fields()->where('field_key', $fieldKey)->count() > 0,
+                        "Repeated field [$fieldKey]"
                     );
 
                     self::$fields->add(array_merge(['field_key' => $fieldKey], $value));
