@@ -65,11 +65,6 @@ class RolesMigrationCommand extends Command
             $role->givePermissionTo(['framework-terrafund', 'framework-terrafund-enterprises', 'custom-forms-manage', 'users-manage', 'monitoring-manage', 'reports-manage']);
         }
 
-        if (Role::where('name', 'project_developer')->count() === 0) {
-            $role = Role::create(['name' => 'project_developer']);
-            $role->givePermissionTo(['manage-own']);
-        }
-
         if (Role::where('name', 'greenhouse-service-account')->count() === 0) {
             $role = Role::create(['name' => 'greenhouse-service-account']);
             $role->givePermissionTo(['projects-read', 'polygons-manage', 'media-manage']);
