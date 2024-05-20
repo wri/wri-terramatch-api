@@ -215,7 +215,7 @@ class TerrafundEditGeometryController extends Controller
                 'practice' => $validatedData['practice'],
                 'distr' => $validatedData['distr'],
                 'num_trees' => $validatedData['num_trees'],
-                'est_area' => $areaHectares, // Assign the calculated area
+                'calc_area' => $areaHectares, // Assign the calculated area
                 'target_sys' => $validatedData['target_sys'],
                 'poly_id' => $uuid,
                 'created_by' => Auth::user()?->id,

@@ -180,7 +180,7 @@ class PolygonService
             'target_sys' => $properties['target_sys'] ?? null,
             'distr' => $properties['distr'] ?? null,
             'num_trees' => $properties['num_trees'],
-            'est_area' => $properties['area'] ?? null,
+            'calc_area' => $properties['area'] ?? null,
         ];
     }
 }

@@ -40,7 +40,7 @@ class SitePolygon extends Model
       'num_trees',
       'calc_area',
       'status',
-      'est_area',
+      'calc_area',
       'country',
       'created_by',
     ];
