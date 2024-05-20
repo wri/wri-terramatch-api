@@ -13,8 +13,6 @@ use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\MediaModel;
-use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
 use App\Models\V2\ReportModel;
@@ -290,30 +288,32 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function getSeedlingsGrownAttribute(): int
     {
         if ($this->framework_key == 'ppc') {
-            return $this->treeSpecies()
-                ->sum('amount');
+            return $this->treeSpecies()->sum('amount');
         }
 
         if ($this->framework_key == 'terrafund') {
-            if (empty($this->due_at)) {
+            if (empty($this->task_id)) {
                 return 0;
             }
 
-            $month = $this->due_at->month;
-            $year = $this->due_at->year;
-            $nurseryIds = Nursery::where('project_id', data_get($this->project, 'id'))
-                ->isApproved()
-                ->pluck('id')
-                ->toArray();
-
-            if (count($nurseryIds) > 0) {
-                return NurseryReport::whereIn('nursery_id', $nurseryIds)
-                    ->whereMonth('due_at', $month)
-                    ->whereYear('due_at', $year)
-                    ->sum('seedlings_young_trees');
-            }
+            return $this->task->nurseryReports()->sum('seedlings_young_trees');
         }
 
+        return 0;
+    }
+
+    public function getSeedlingsGrownToDateAttribute(): int
+    {
+        if ($this->framework_key == 'ppc') {
+            return TreeSpecies::where('speciesable_type', ProjectReport::class)
+                ->whereIn(
+                    'speciesable_id',
+                    $this->project->reports()->where('created_at', '<=', $this->created_at)->select('id')
+                )
+                ->sum('amount');
+        }
+
+        // this attribute is currently only used for PPC report exports.
         return 0;
     }
 
