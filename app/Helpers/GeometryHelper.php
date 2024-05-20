@@ -11,7 +11,13 @@ class GeometryHelper
 {
     public function centroidOfProject($projectUuid)
     {
-        $sitePolygons = SitePolygon::where('project_id', $projectUuid)->get();
+        $project = Project::where('uuid', $projectUuid)->first();
+
+        if (!$project) {
+            return null;
+        }
+
+        $sitePolygons = $project->sitePolygons;
 
         if ($sitePolygons->isEmpty()) {
             return null; // Return null if no polygons are found for the given projectUuid
