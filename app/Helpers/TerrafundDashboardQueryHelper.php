@@ -28,7 +28,9 @@ class TerrafundDashboardQueryHelper
     {
         $projectIds = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
         ->pluck('uuid');
-        $polygonsIds = SitePolygon::whereIn('project_id', $projectIds)->pluck('poly_id');
+        $polygonsIds = SitePolygon::whereHas('site.project', function ($query) use ($projectIds) {
+            $query->whereIn('uuid', $projectIds);
+        })->pluck('poly_id');
 
         return $polygonsIds;
     }
@@ -44,9 +46,11 @@ class TerrafundDashboardQueryHelper
 
         foreach ($statuses as $status) {
             // Get polygons of the project filtered by status
-            $polygonsOfProject = SitePolygon::whereIn('project_id', $projectIds)
-                ->where('status', $status)
-                ->pluck('poly_id');
+            $polygonsOfProject = SitePolygon::whereHas('site.project', function ($query) use ($projectIds) {
+                $query->whereIn('uuid', $projectIds);
+            })
+            ->where('status', $status)
+            ->pluck('poly_id');
 
             $polygons[$status] = $polygonsOfProject;
         }
