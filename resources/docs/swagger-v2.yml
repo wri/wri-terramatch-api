@@ -9255,65 +9255,28 @@ definitions:
     properties:
       uuid:
         type: string
-      amount:
-        type: integer
       collection:
         type: string
-      gender:
+      readable_collection:
         type: string
-      age:
-        type: string
-      ethnicity:
-        type: string
-      indigeneity:
-        type: string
-  V2WorkdaysPaginated:
-    type: object
-    properties:
-      data:
+      demographics:
         type: array
         items:
-          title: V2WorkdayRead
+          title: WorkdayDemographic
           type: object
           properties:
-            uuid:
+            type:
+              type: string
+              enum:
+                - gender
+                - age
+                - ethnicity
+            subtype:
+              type: string
+            name:
               type: string
             amount:
               type: integer
-            collection:
-              type: string
-            gender:
-              type: string
-            age:
-              type: string
-            ethnicity:
-              type: string
-            indigeneity:
-              type: string
-      links:
-        type: object
-        properties:
-          first:
-            type: string
-          last:
-            type: string
-          prev:
-            type: string
-          next:
-            type: string
-      meta:
-        type: object
-        properties:
-          current_page:
-            type: integer
-          from:
-            type: integer
-          last_page:
-            type: integer
-          next:
-            type: integer
-          unfiltered_total:
-            type: integer
   V2DisturbanceRead:
     title: V2DisturbanceRead
     type: object
@@ -44174,342 +44137,22 @@ definitions:
       bbox:
         type: array
   GeoJSONResponse:
+  WorkdayDemographic:
+    title: WorkdayDemographic
     type: object
     properties:
       type:
         type: string
-      features:
-        type: array
-        items:
-          type: object
-          properties:
-            type:
-              type: string
-            geometry:
-              type: object
-              properties:
-                type:
-                  type: string
-                coordinates:
-                  type: array
-            "properties":
-              type: object
-              properties:
-                poly_name:
-                  type: string
-                plantstart:
-                  type: string
-                plantend:
-                  type: string
-                practice:
-                  type: string
-                target_sys:
-                  type: string
-                distr:
-                  type: string
-                num_trees:
-                  type: integer
-  PolygonBboxResponse:
-    type: object
-    properties:
-      bbox:
-        type: array
-  SitePolygonResponse:
-    type: object
-    properties:
-      id:
+        enum:
+          - gender
+          - age
+          - ethnicity
+      subtype:
+        type: string
+      name:
+        type: string
+      amount:
         type: integer
-      uuid:
-        type: string
-      poly_name:
-        type: string
-      plantstart:
-        type: string
-        format: date
-      plantend:
-        type: string
-        format: date
-      practice:
-        type: string
-      target_sys:
-        type: string
-      distr:
-        type: string
-      num_trees:
-        type: integer
-      calc_area:
-        type: number
-        format: float
-      status:
-        type: string
-  SitePolygonCreateResponse:
-    type: object
-    properties:
-      message:
-        type: string
-        example: Site polygon created successfully
-      uuid:
-        type: string
-        description: UUID of the created site polygon
-      area:
-        type: number
-        format: double
-        description: Calculated area in hectares
-  GeometryData:
-    type: object
-    properties:
-      geometry:
-        type: object
-        properties:
-          coordinates:
-            type: array
-          type:
-            type: string
-  DashboardPolygonResponse: 
-    type: object
-    properties:
-      uuid:
-        type: string
-  GeometryString:
-    type: object
-    properties:
-      geometry:
-        type: string
-  GeojsonData: 
-    type: object
-    properties:
-      geojson:
-        type: object
-        description: The GeoJSON representation of the polygon geometry.
-  ProjectPipeline:
-    type: object
-    properties:
-      data:
-        type: object
-        properties:
-          name:
-            type: object
-            properties:
-              name:
-                type: string
-              description:
-                type: string
-          date:
-            type: string
-            format: date
-          id:
-            type: integer
-          SubmittedBy:
-            type: string
-          Program:
-            type: string
-          Cohort:
-            type: string
-          PublishFor:
-            type: string
-          URL:
-            type: string
-          CreatedDate:
-            type: string
-            format: date
-          ModifiedDate:
-            type: string
-            format: date
-  ProjectPipelinePost:
-    properties:
-      date:
-        type: string
-        format: date
-      id:
-        type: integer
-      SubmittedBy:
-        type: string
-      Program:
-        type: string
-      Cohort:
-        type: string
-      PublishFor:
-        type: string
-      URL:
-        type: string
-      CreatedDate:
-        type: string
-        format: date
-      ModifiedDate:
-        type: string
-        format: date
-  FeatureCollection:
-    type: object
-    properties:
-      type:
-        type: string
-  Feature:
-    type: object
-    properties:
-      type:
-        type: string
-      geometry:
-        $ref: '#/definitions/Geometry'
-      properties:
-        $ref: '#/definitions/FeatureProperties'
-  Geometry:
-    type: object
-    properties:
-      type:
-        type: string
-      coordinates:
-        type: array
-        items:
-          type: array
-          items:
-            type: array
-            items:
-              type: number
-  FeatureProperties:
-    type: object
-    properties:
-      poly_name:
-        type: string
-      plantstart:
-        type: string
-        format: date
-      plantend:
-        type: string
-        format: date
-      practice:
-        type: string
-      target_sys:
-        type: string
-      distr:
-        type: string
-      num_trees:
-        type: integer
-  SiteStatusRequestPost:
-    type: object
-    properties:
-      status:
-        type: string
-      comment:
-        type: string
-  PolygonSiteStatusRequestPost:
-    type: object
-    properties:
-      status:
-        type: string
-      comment:
-        type: string
-  ProjectStatusRequestPost:
-    type: object
-    properties:
-      status:
-        type: string
-      comment:
-        type: string
-  SiteStatusResponse:
-    type: object
-    properties:
-      entity_uuid:
-        type: string
-      status:
-        type: string
-      comment:
-        type: string
-      attachment_url:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-  PolygonSiteStatusResponse:
-    type: object
-    properties:
-      entity_uuid:
-        type: string
-      status:
-        type: string
-      comment:
-        type: string
-      attachment_url:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-  ProjectStatusResponse:
-    type: object
-    properties:
-      entity_uuid:
-        type: string
-      status:
-        type: string
-      comment:
-        type: string
-      attachment_url:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-  AuditStatusResponse: 
-    type: object
-    properties:
-      entity_uuid:
-        type: string
-      entity:
-        type: string
-      status:
-        type: string
-      comment:
-        type: string
-      attachment_url:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-      is_active:
-        type: boolean
-      is_submitted:
-        type: boolean
-      type:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      request_removed:
-        type: boolean
-  AuditStatusPost:
-    properties:
-      entity_uuid:
-        type: string
-      status:
-        type: string
-      comment:
-        type: string
-      attachment_url:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-      is_active:
-        type: boolean
-      is_submitted:
-        type: boolean
-      type:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      request_removed:
-        type: boolean
   GeoJSON:
     title: GeoJSON
     type: object
@@ -44627,6 +44270,7 @@ definitions:
         type: string
       created_by:
         type: string
+                description: Human readable string in English to describe the error.
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -58207,7 +57851,7 @@ paths:
           name: ENTITY
           in: path
           required: true
-          description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+          description: allowed values project-report/site-report
         - type: string
           name: UUID
           in: path
@@ -58226,42 +57870,28 @@ paths:
                   properties:
                     uuid:
                       type: string
-                    amount:
-                      type: integer
                     collection:
                       type: string
-                    gender:
+                    readable_collection:
                       type: string
-                    age:
-                      type: string
-                    ethnicity:
-                      type: string
-                    indigeneity:
-                      type: string
-              links:
-                type: object
-                properties:
-                  first:
-                    type: string
-                  last:
-                    type: string
-                  prev:
-                    type: string
-                  next:
-                    type: string
-              meta:
-                type: object
-                properties:
-                  current_page:
-                    type: integer
-                  from:
-                    type: integer
-                  last_page:
-                    type: integer
-                  next:
-                    type: integer
-                  unfiltered_total:
-                    type: integer
+                    demographics:
+                      type: array
+                      items:
+                        title: WorkdayDemographic
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - gender
+                              - age
+                              - ethnicity
+                          subtype:
+                            type: string
+                          name:
+                            type: string
+                          amount:
+                            type: integer
   /v2/stratas:
     post:
       operationId: post-v2-stratas
@@ -93837,7 +93467,7 @@ paths:
                           - DATA_COMPLETED
                       message:
                         type: string
-                        description: Human readable string in english to describe the error.
+                        description: Human readable string in English to describe the error.
   '/v2/site-monitorings/{UUID}':
     get:
       summary: View a specific site monitoring
@@ -94671,6 +94301,124 @@ paths:
           required: true
           description: The UUID of the polygon geometry to retrieve.
           schema:
+  /v2/geometry/validate:
+    post:
+      summary: Test a set of geometries for validity
+      operationId: post-v2-geometry-validate
+      tags:
+        - V2 Geometry
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              geometries:
+                type: array
+                items:
+                  title: GeoJSON
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - FeatureCollection
+                    features:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - Feature
+                          properties:
+                            type: object
+                            properties:
+                              poly_name:
+                                type: string
+                              plantstart:
+                                type: string
+                                format: date
+                              plantend:
+                                type: string
+                                format: date
+                              practice:
+                                type: string
+                              target_sys:
+                                type: string
+                              distr:
+                                type: string
+                              num_trees:
+                                type: number
+                              site_id:
+                                type: string
+                          geometry:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - Polygon
+                              coordinates:
+                                type: array
+                                items:
+                                  type: array
+                                  items:
+                                    type: array
+                                    items:
+                                      type: number
+      responses:
+        '200':
+          description: 'OK: No validation errors occurred with the supplied geometries'
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items: null
+                description: An empty array on the OK response is included for ease of parsing on the client side.
+        '422':
+          description: One or more errors was found with the supplied geometries
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                description: 'This array is ordered in the same order as the original geometries. If a given geometry had no errors, an empty array is included in its spot.'
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        enum:
+                          - SELF_INTERSECTION
+                          - COORDINATE_SYSTEM
+                          - SIZE_LIMIT
+                          - SPIKE
+                          - GEOMETRY_TYPE
+                          - TABLE_SCHEMA
+                          - DATA_COMPLETED
+                      message:
+                        type: string
+                        description: Human readable string in English to describe the error.
+                      field:
+                        type: string
+                        description: A path string indicating where the error occurred.
+  /v2/geometry:
+    delete:
+      summary: Bulk delete geometries
+      operationId: delete-v2-geometry
+      tags:
+        - V2 Geometry
+      parameters:
+        - type: array
+          name: 'uuids[]'
+          in: query
+          required: true
+          items:
             type: string
       responses:
         '200':
@@ -95154,3 +94902,107 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/AuditStatusResponse'
+        '403':
+          description: This account does not have permission to delete some of the geometries. Nothing was deleted.
+        '404':
+          description: Some of the UUIDs were not found. Nothing was deleted
+  '/v2/geometry/{UUID}':
+    put:
+      summary: Update a geometry
+      operationId: put-v2-geometry
+      tags:
+        - V2 Geometry
+      parameters:
+        - in: path
+          type: string
+          name: UUID
+          required: true
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              geometry:
+                title: GeoJSON
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - FeatureCollection
+                  features:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                            - Feature
+                        properties:
+                          type: object
+                          properties:
+                            poly_name:
+                              type: string
+                            plantstart:
+                              type: string
+                              format: date
+                            plantend:
+                              type: string
+                              format: date
+                            practice:
+                              type: string
+                            target_sys:
+                              type: string
+                            distr:
+                              type: string
+                            num_trees:
+                              type: number
+                            site_id:
+                              type: string
+                        geometry:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                                - Polygon
+                            coordinates:
+                              type: array
+                              items:
+                                type: array
+                                items:
+                                  type: array
+                                  items:
+                                    type: number
+      responses:
+        '200':
+          description: 'OK: Update was applied.'
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                      enum:
+                        - OVERLAPPING_POLYGON
+                        - SELF_INTERSECTION
+                        - COORDINATE_SYSTEM
+                        - SIZE_LIMIT
+                        - WITHIN_COUNTRY
+                        - SPIKE
+                        - GEOMETRY_TYPE
+                        - TOTAL_AREA_EXPECTED
+                        - TABLE_SCHEMA
+                        - DATA_COMPLETED
+                    message:
+                      type: string
+                      description: Human readable string in English to describe the error.
+        '403':
+          description: This account does not have permission to update the polygon.
+        '404':
+          description: Geometry was not found.

@@ -5,10 +5,12 @@ namespace App\Models\V2\Sites;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
@@ -38,6 +40,9 @@ class SitePolygon extends Model
       'num_trees',
       'calc_area',
       'status',
+      'est_area',
+      'country',
+      'created_by',
     ];
 
     public function polygonGeometry(): BelongsTo
@@ -60,8 +65,8 @@ class SitePolygon extends Model
         );
     }
 
-    public function site()
+    public function createdBy(): HasOne
     {
-        return $this->belongsTo(Site::class, 'site_id', 'uuid');
+        return $this->hasOne(User::class, 'id', 'created_by');
     }
 }

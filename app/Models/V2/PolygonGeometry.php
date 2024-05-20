@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -24,8 +25,15 @@ class PolygonGeometry extends Model
     protected $table = 'polygon_geometry';
 
     protected $fillable = [
-        'polygon_id', 'geom',
+        'polygon_id',
+        'geom',
+        'created_by',
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 
     public function criteriaSite(): HasMany
     {
@@ -35,6 +43,11 @@ class PolygonGeometry extends Model
     public function sitePolygon(): BelongsTo
     {
         return $this->belongsTo(SitePolygon::class, 'uuid', 'poly_id');
+    }
+
+    public function createdBy(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'created_by');
     }
 
     public static function getGeoJson(string $uuid): ?array

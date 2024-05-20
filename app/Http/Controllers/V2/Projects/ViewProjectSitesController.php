@@ -48,15 +48,20 @@ class ViewProjectSitesController extends Controller
         }
 
         if (! empty($request->query('search'))) {
-            $ids = Site::search(trim($request->query('search')))
-                ->get()
-                ->pluck('id')
-                ->toArray();
+            $search = trim($request->query('search'));
+            if (is_numeric($search)) {
+                $qry->where('v2_sites.ppc_external_id', $search);
+            } else {
+                $ids = Site::search(trim($request->query('search')))
+                    ->get()
+                    ->pluck('id')
+                    ->toArray();
 
-            if (empty($ids)) {
-                return V2SitesCollection::collection(collect());
+                if (empty($ids)) {
+                    return V2SitesCollection::collection(collect());
+                }
+                $qry->whereIn('id', $ids);
             }
-            $qry->whereIn('id', $ids);
         }
 
         $collection = $qry->paginate($perPage)

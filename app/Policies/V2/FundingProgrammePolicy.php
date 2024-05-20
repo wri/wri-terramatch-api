@@ -10,6 +10,6 @@ class FundingProgrammePolicy extends Policy
 {
     public function uploadFiles(?User $user, ?FundingProgramme $model = null): bool
     {
-        return $this->isVerifiedAdmin($user) || $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']);
+        return $this->isVerifiedAdmin($user) || $user->hasAnyPermission(['framework-terrafund', 'framework-ppc', 'framework-hbf']);
     }
 }

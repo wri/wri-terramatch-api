@@ -33,7 +33,7 @@ properties:
               - DATA_COMPLETED
           message:
             type: string
-            description: Human readable string in english to describe the error.
+            description: Human readable string in English to describe the error.
 
 
 

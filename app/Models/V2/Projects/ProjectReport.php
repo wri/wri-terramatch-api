@@ -10,6 +10,7 @@ use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Nurseries\Nursery;
@@ -22,6 +23,7 @@ use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Workdays\WorkdayDemographic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +50,8 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use Auditable;
     use HasUpdateRequests;
     use HasEntityResources;
+    use BelongsToThroughTrait;
+    use HasWorkdays;
 
     protected $auditInclude = [
         'status',
@@ -73,8 +77,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'completion',
         'planted_trees',
         'title',
-        'workdays_paid',
-        'workdays_volunteer',
         'technical_narrative',
         'public_narrative',
         'landscape_community_contribution',
@@ -137,6 +139,9 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'local_engagement',
         'site_addition',
         'paid_other_activity_description',
+
+        // virtual (see HasWorkdays trait)
+        'other_workdays_description',
     ];
 
     public $casts = [
@@ -166,6 +171,24 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'photos' => [
             'validation' => 'photos',
             'multiple' => true,
+        ],
+    ];
+
+    // Required by the HasWorkdays trait
+    public const WORKDAY_COLLECTIONS = [
+        'paid' => [
+            Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
+            Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT,
+            Workday::COLLECTION_PROJECT_PAID_OTHER,
+        ],
+        'volunteer' => [
+            Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
+            Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT,
+            Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
+        ],
+        'other' => [
+            Workday::COLLECTION_PROJECT_PAID_OTHER,
+            Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
         ],
     ];
 
@@ -229,36 +252,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function treeSpecies()
     {
         return $this->morphMany(TreeSpecies::class, 'speciesable');
-    }
-
-    public function workdaysPaidNurseryOperations()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS);
-    }
-
-    public function workdaysPaidProjectManagement()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT);
-    }
-
-    public function workdaysPaidOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_OTHER);
-    }
-
-    public function workdaysVolunteerNurseryOperations()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPRERATIONS);
-    }
-
-    public function workdaysVolunteerProjectManagement()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT);
-    }
-
-    public function workdaysVolunteerOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER);
     }
 
     /** Calculated Values */
@@ -355,32 +348,22 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
 
     public function getWorkdaysTotalAttribute(): int
     {
-        $paid = $this->workdays_paid ?? 0;
-        $volunteer = $this->workdays_volunteer ?? 0;
+        $projectReportTotal = $this->workdays_paid + $this->workdays_volunteer;
 
-        if (empty($this->due_at)) {
-            return $paid + $volunteer;
-        } else {
-            $siteIds = $this->project->sites()->pluck('project_id')->toArray();
-            $month = $this->due_at->month;
-            $year = $this->due_at->year;
-
-            $sitePaid = SiteReport::whereIn('id', $siteIds)
-                ->where('due_at', '<', now())
-                ->hasBeenSubmitted()
-                ->whereMonth('due_at', $month)
-                ->whereYear('due_at', $year)
-                ->sum('workdays_paid');
-
-            $siteVolunteer = SiteReport::whereIn('id', $siteIds)
-                ->where('due_at', '<', now())
-                ->hasBeenSubmitted()
-                ->whereMonth('due_at', $month)
-                ->whereYear('due_at', $year)
-                ->sum('workdays_volunteer');
-
-            return $paid + $volunteer + $sitePaid + $siteVolunteer;
+        if (empty($this->task_id)) {
+            return $projectReportTotal;
         }
+
+        // Assume that the types are balanced and just return the value from 'gender'
+        $sumTotals = fn ($collectionType) => WorkdayDemographic::whereIn(
+            'workday_id',
+            Workday::where('workdayable_type', SiteReport::class)
+                ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
+                ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
+                ->select('id')
+        )->gender()->sum('amount');
+
+        return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
     }
 
     public function getSiteReportsCountAttribute(): int

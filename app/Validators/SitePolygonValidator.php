@@ -74,12 +74,12 @@ class SitePolygonValidator extends Validator
 
     public const DATA = [
         'features' => 'required|array',
-        'features.*.properties.poly_name' => 'required|string|not_in:null,NULL',
-        'features.*.properties.plantstart' => 'required|date|',
-        'features.*.properties.plantend' => 'required|date|',
-        'features.*.properties.practice' => 'required|string|not_in:null,NULL',
-        'features.*.properties.target_sys' => 'required|string|not_in:null,NULL',
-        'features.*.properties.distr' => 'required|string|not_in:null,NULL',
-        'features.*.properties.num_trees' => 'required|integer|',
+        'features.*.properties.poly_name' => 'string|not_in:null,NULL',
+        'features.*.properties.plantstart' => 'date',
+        'features.*.properties.plantend' => 'date',
+        'features.*.properties.practice' => 'string|not_in:null,NULL',
+        'features.*.properties.target_sys' => 'string|not_in:null,NULL',
+        'features.*.properties.distr' => 'string|not_in:null,NULL',
+        'features.*.properties.num_trees' => 'integer',
     ];
 }
