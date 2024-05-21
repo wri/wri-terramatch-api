@@ -87,6 +87,8 @@ class CreateProjectWithFormController extends Controller
             'proposed_gov_partners' => $projectPitch->proposed_gov_partners,
             'proposed_num_nurseries' => $projectPitch->proposed_num_nurseries,
             'proj_boundary' => $projectPitch->proj_boundary,
+            'states' => $projectPitch->states,
+            'proj_impact_biodiv' => $projectPitch->proj_impact_biodiv,
         ]);
 
         $request->user()->projects()->sync([$project->id => ['is_monitoring' => false]], false);

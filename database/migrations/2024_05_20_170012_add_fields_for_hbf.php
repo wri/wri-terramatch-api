@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->tinyInteger('pct_employees_marginalised')->nullable();
             $table->tinyInteger('pct_beneficiaries_marginalised')->nullable();
             $table->tinyInteger('pct_beneficiaries_men')->nullable();
+            $table->text('proj_impact_biodiv')->nullable();
         });
         Schema::table('v2_projects', function (Blueprint $table) {
             $table->text('detailed_intervention_types')->nullable();
@@ -29,6 +30,8 @@ return new class extends Migration {
             $table->text('proposed_gov_partners')->nullable();
             $table->unsignedInteger('proposed_num_nurseries')->nullable();
             $table->text('proj_boundary')->nullable();
+            $table->text('states')->nullable();
+            $table->text('proj_impact_biodiv')->nullable();
         });
         Schema::table('v2_sites', function (Blueprint $table) {
             $table->text('detailed_intervention_types')->nullable();
@@ -51,6 +54,7 @@ return new class extends Migration {
             $table->dropColumn('pct_employees_marginalised');
             $table->dropColumn('pct_beneficiaries_marginalised');
             $table->dropColumn('pct_beneficiaries_men');
+            $table->dropColumn('proj_impact_biodiv');
         });
         Schema::table('v2_projects', function (Blueprint $table) {
             $table->dropColumn('detailed_intervention_types');
@@ -61,6 +65,8 @@ return new class extends Migration {
             $table->dropColumn('proposed_gov_partners');
             $table->dropColumn('proposed_num_nurseries');
             $table->dropColumn('proj_boundary');
+            $table->dropColumn('states');
+            $table->dropColumn('proj_impact_biodiv');
         });
         Schema::table('v2_sites', function (Blueprint $table) {
             $table->dropColumn('detailed_intervention_types');
