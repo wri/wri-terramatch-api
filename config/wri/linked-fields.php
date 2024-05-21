@@ -258,6 +258,7 @@ return [
                 'pro-soil-health' => ['property' => 'soil_health', 'label' => 'Soil Health (project)', 'input_type' => 'long-text'],
                 'pro-pit-land-use-types' => ['property' => 'land_use_types', 'label' => 'Land use types', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-systems'],
                 'pro-pit-restoration_strategy' => ['property' => 'restoration_strategy', 'label' => 'Restoration strategy', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-practices'],
+                'pro-pit-impact-biodiv' => ['property' => 'proj_impact_biodiv', 'label' => 'Biodiversity Impact (project)', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'pro-pit-fcol-cover' => ['property' =>  'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],
@@ -331,6 +332,8 @@ return [
                 'project-proposed-gov-partners' => ['property' => 'proposed_gov_partners', 'label' => 'Proposed government partners', 'input_type' => 'long-text'],
                 'pro-proposed-num-nurseries' => ['property' => 'proposed_num_nurseries', 'label' => 'Proposed Number of Nurseries', 'input_type' => 'number'],
                 'pro-proj-boundary' => ['property' => 'proj_boundary', 'label' => 'Project Boundary', 'input_type' => 'mapInput'],
+                'pro-states' => ['property' => 'states', 'label' => 'States', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'states'],
+                'pro-impact-biodiv' => ['property' => 'proj_impact_biodiv', 'label' => 'Biodiversity Impact (project)', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'pro-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],

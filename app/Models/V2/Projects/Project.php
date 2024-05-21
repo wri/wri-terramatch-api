@@ -130,6 +130,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'proposed_gov_partners',
         'proposed_num_nurseries',
         'proj_boundary',
+        'states',
+        'proj_impact_biodiv',
     ];
 
     public $fileConfiguration = [
@@ -179,6 +181,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'sdgs_impacted' => 'array',
         'answers' => 'array',
         'detailed_intervention_types' => 'array',
+        'states' => 'array',
     ];
 
     public const PROJECT_STATUS_NEW = 'new_project';
