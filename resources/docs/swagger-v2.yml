@@ -95099,6 +95099,58 @@ paths:
                         valid:
                           type: integer
                           description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
+  '/v2/terrafund/validation/sitePolygons':
+    get:
+      summary: Run validation for all polygons in a site
+      parameters:
+        - in: query
+          name: uuid
+          required: true
+          description: The UUID of the polygon
+          type: string
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the completion of validation for all site polygons.
+  '/v2/terrafund/validation/site':
+    get:
+      summary: Get criteria data validation results for all polygons in a site
+      parameters:
+        - in: query
+          name: uuid
+          required: true
+          description: The UUID of the polygon
+          type: string
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      description: The UUID of the polygon.
+                    valid:
+                      type: boolean
+                      description: Indicates if the polygon is valid or not.
+                    checked:
+                      type: boolean
+                      description: Indicates if the polygon has been checked before or not.
   '/v2/attachment':
     get:
       operationId: get-v2-attachments

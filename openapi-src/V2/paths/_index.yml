@@ -2520,6 +2520,12 @@
 '/v2/terrafund/validation/criteria-data':
   get:
     $ref: './Terrafund/get-v2-terrafund-validation-criteria-data.yml'
+'/v2/terrafund/validation/sitePolygons':
+  get:
+    $ref: './Terrafund/get-v2-terrafund-validation-sitepolygons.yml'
+'/v2/terrafund/validation/site':
+  get:
+    $ref: './Terrafund/get-v2-terrafund-validation-criteria-site.yml'
 /v2/geometry/validate:
   post:
     $ref: './Geometry/post-v2-geometry-validate.yml'

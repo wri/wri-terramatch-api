@@ -611,4 +611,75 @@ class TerrafundCreateGeometryController extends Controller
 
         return $criteriaData;
     }
+
+    public function getSiteValidationPolygon(Request $request)
+    {
+        try {
+            $uuid = $request->input('uuid');
+
+            $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
+
+            foreach ($sitePolygonsUuids as $polygonUuid) {
+                $this->runValidationPolygon($polygonUuid);
+            }
+
+            return response()->json(['message' => 'Validation completed for all site polygons']);
+        } catch (\Exception $e) {
+            Log::error('Error during site validation polygon: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred during site validation'], 500);
+        }
+    }
+    
+    public function getCurrentSiteValidation(Request $request)
+    {
+        try {
+            $uuid = $request->input('uuid');
+    
+            $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
+            $checkedPolygons = [];
+    
+            foreach ($sitePolygonsUuids as $polygonUuid) {
+                $isValid = true;
+                $isChecked = true;
+    
+                $criteriaData = $this->fetchCriteriaData($polygonUuid);
+
+                if (isset($criteriaData['error'])) {
+                    Log::error('Error fetching criteria data', ['polygon_uuid' => $polygonUuid, 'error' => $criteriaData['error']]);
+                    $isValid = false;
+                    $isChecked = false;
+                } else {
+                    foreach ($criteriaData['criteria_list'] as $criteria) {
+                        if ($criteria['valid'] == 0) {
+                            $isValid = false;
+                            break;
+                        }
+                    }
+                }
+                
+                $checkedPolygons[] = [
+                    'uuid' => $polygonUuid,
+                    'valid' => $isValid,
+                    'checked' => $isChecked,
+                ];
+            }
+            
+            return $checkedPolygons;
+        } catch (\Exception $e) {
+            Log::error('Error during current site validation: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred during current site validation'], 500);
+        }
+    }
+    
+    private function getSitePolygonsUuids($uuid)
+    {
+        return SitePolygon::where('site_id', $uuid)->get()->pluck('poly_id');
+    }
+    
+    private function fetchCriteriaData($polygonUuid)
+    {
+        $polygonRequest = new Request(['uuid' => $polygonUuid]);
+        $criteriaDataResponse = $this->getCriteriaData($polygonRequest);
+        return json_decode($criteriaDataResponse->getContent(), true);
+    }    
 }
