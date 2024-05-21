@@ -76,7 +76,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $entity->due_at ?? null,
         ];
 
-        if (in_array($this->form->type, ['nursery', 'nursery-report','site', 'site-report', 'project-report'])) {
+        if (in_array($this->form->type, ['nursery', 'nursery-report', 'site', 'site-report', 'project-report'])) {
             $mapped[] = $entity->project->ppc_external_id ?? $entity->project->id ?? null;
         }
 
@@ -84,6 +84,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $mapped[] = $entity->project->uuid ?? null;
             if($this->form->framework_key === 'ppc') {
                 $mapped[] = $entity->seedlings_grown ?? null;
+                $mapped[] = $entity->seedlings_grown_to_date ?? null;
             }
         }
         if ($this->form->type === 'nursery-report') {
@@ -94,8 +95,8 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         if ($this->form->type === 'site-report') {
             $mapped[] = $entity->site->ppc_external_id ?? $entity->site->id ?? null;
             $mapped[] = $entity->site->name ?? null;
-            $sumTreeSPecies = $entity->treeSpecies()->sum('amount');
-            $mapped[] = $sumTreeSPecies > 0 ? $sumTreeSPecies : null;
+            $sumTreeSpecies = $entity->treeSpecies()->sum('amount');
+            $mapped[] = $sumTreeSpecies > 0 ? $sumTreeSpecies : null;
             $mapped[] = $entity->site->trees_planted_count ?? null;
             if($this->form->framework_key === 'ppc') {
                 $sumSeeding = $entity->seedings()->sum('amount');
@@ -126,6 +127,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         if ($this->form->type === 'project-report') {
             $initialHeadings[] = 'project_uuid';
             if($this->form->framework_key === 'ppc') {
+                $initialHeadings[] = 'total_seedlings_grown_report';
                 $initialHeadings[] = 'total_seedlings_grown';
             }
         }
