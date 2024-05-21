@@ -215,10 +215,12 @@ class TerrafundEditGeometryController extends Controller
                 'practice' => $validatedData['practice'],
                 'distr' => $validatedData['distr'],
                 'num_trees' => $validatedData['num_trees'],
-                'calc_area' => $areaHectares, // Assign the calculated area
+                'calc_area' => $areaHectares,
                 'target_sys' => $validatedData['target_sys'],
                 'poly_id' => $uuid,
                 'created_by' => Auth::user()?->id,
+                'status' => 'submitted',
+                'site_id' => $siteUuid,
             ]);
             $sitePolygon->save();
 

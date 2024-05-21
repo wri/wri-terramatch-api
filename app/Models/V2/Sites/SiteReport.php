@@ -16,7 +16,9 @@ use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
 use App\Models\V2\MediaModel;
+use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
+use App\Models\V2\Projects\Project;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Seeding;
 use App\Models\V2\Tasks\Task;
@@ -36,6 +38,7 @@ use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class SiteReport extends Model implements MediaModel, AuditableContract, ReportModel
@@ -185,9 +188,13 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         return $this->belongsTo(Site::class);
     }
 
-    public function project(): BelongsTo
+    public function project(): BelongsToThrough
     {
-        return empty($this->site) ? $this->site : $this->site->project();
+        return $this->belongsToThrough(
+            Project::class,
+            Site::class,
+            foreignKeyLookup: [Project::class => 'project_id', Site::class => 'site_id']
+        );
     }
 
     public function task(): BelongsTo
@@ -195,9 +202,13 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         return $this->belongsTo(Task::class);
     }
 
-    public function organisation(): BelongsTo
+    public function organisation(): BelongsToThrough
     {
-        return  empty($this->project) ? $this->project : $this->project->organisation();
+        return $this->belongsToThrough(
+            Organisation::class,
+            [Project::class, Site::class],
+            foreignKeyLookup: [Project::class => 'project_id', Site::class => 'site_id']
+        );
     }
 
     public function polygons(): MorphMany
@@ -283,8 +294,8 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function toSearchableArray()
     {
         return [
-            'project_name' => $this->site->project->name,
-            'organisation_name' => $this->organisation->name,
+            'project_name' => $this->project?->name,
+            'organisation_name' => $this->organisation?->name,
         ];
     }
 
@@ -326,6 +337,11 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function createResource(): JsonResource
     {
         return new SiteReportResource($this);
+    }
+
+    public function supportsNothingToReport(): bool
+    {
+        return true;
     }
 
     public function parentEntity(): BelongsTo
