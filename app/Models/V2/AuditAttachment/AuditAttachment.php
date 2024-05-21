@@ -18,6 +18,7 @@ class AuditAttachment extends Model
         'id',
         'entity_id',
         'attachment',
+        'url_file',
         'date_created',
         'created_by',
     ];
