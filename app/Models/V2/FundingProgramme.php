@@ -110,7 +110,6 @@ class FundingProgramme extends Model implements MediaModel
             Application::class,
             'funding_programme_uuid',
             'uuid',
-            'uuid',
             'organisation_uuid'
         );
     }
