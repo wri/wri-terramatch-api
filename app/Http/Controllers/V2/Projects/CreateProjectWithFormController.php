@@ -7,6 +7,7 @@ use App\Http\Resources\V2\Entities\EntityWithSchemaResource;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\Request;
 
@@ -38,23 +39,23 @@ class CreateProjectWithFormController extends Controller
             'name' => $projectPitch->project_name,
             'boundary_geojson' => $projectPitch->proj_boundary,
             'land_use_types' => $projectPitch->land_use_types,
-            'restoration_strategy' => null,
+            'restoration_strategy' => $projectPitch->restoration_strategy,
             'country' => $projectPitch->project_country,
             'continent' => null,
             'planting_start_date' => $projectPitch->expected_active_restoration_start_date,
             'planting_end_date' => $projectPitch->expected_active_restoration_end_date,
-            'description' => $projectPitch->expected_active_restoration_end_date,
-            'history' => $projectPitch->description_of_project_timeline,
+            'description' => $projectPitch->description_of_project_timeline,
+            'history' => $projectPitch->curr_land_degradation,
             'objectives' => $projectPitch->project_objectives,
             'environmental_goals' => $projectPitch->environmental_goals,
-            'socioeconomic_goals' => $projectPitch->socioeconomic_goals,
+            'socioeconomic_goals' => $projectPitch->proj_impact_socieconom,
             'sdgs_impacted' => null,
             'long_term_growth' => null,
             'community_incentives' => null,
             'budget' => $projectPitch->project_budget,
-            'jobs_created_goal' => null,
-            'total_hectares_restored_goal' => null,
-            'trees_grown_goal' => null,
+            'jobs_created_goal' => $projectPitch->num_jobs_created,
+            'total_hectares_restored_goal' => $projectPitch->total_hectares,
+            'trees_grown_goal' => $projectPitch->total_trees,
             'survival_rate' => null,
             'year_five_crown_cover' => null,
             'monitored_tree_cover' => null,
@@ -88,8 +89,15 @@ class CreateProjectWithFormController extends Controller
             'proposed_num_nurseries' => $projectPitch->proposed_num_nurseries,
             'proj_boundary' => $projectPitch->proj_boundary,
             'states' => $projectPitch->states,
-            'proj_impact_biodiv' => $projectPitch->proj_impact_biodiv,
+            'proj_impact_biodiv' => $projectPitch->biodiversity_impact,
         ]);
+
+        foreach ($projectPitch->treeSpecies()->get() as $treeSpecies) {
+            $project->treeSpecies()->create([
+                'collection' => $treeSpecies->collection ?? TreeSpecies::COLLECTION_PRIMARY,
+                'amount' => $treeSpecies->amount,
+            ]);
+        }
 
         $request->user()->projects()->sync([$project->id => ['is_monitoring' => false]], false);
         $project->dispatchStatusChangeEvent($request->user());

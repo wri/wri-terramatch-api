@@ -258,7 +258,6 @@ return [
                 'pro-soil-health' => ['property' => 'soil_health', 'label' => 'Soil Health (project)', 'input_type' => 'long-text'],
                 'pro-pit-land-use-types' => ['property' => 'land_use_types', 'label' => 'Land use types', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-systems'],
                 'pro-pit-restoration_strategy' => ['property' => 'restoration_strategy', 'label' => 'Restoration strategy', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-practices'],
-                'pro-pit-impact-biodiv' => ['property' => 'proj_impact_biodiv', 'label' => 'Biodiversity Impact (project)', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'pro-pit-fcol-cover' => ['property' =>  'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],

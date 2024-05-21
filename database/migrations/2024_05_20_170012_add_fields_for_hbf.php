@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->tinyInteger('pct_employees_marginalised')->nullable();
             $table->tinyInteger('pct_beneficiaries_marginalised')->nullable();
             $table->tinyInteger('pct_beneficiaries_men')->nullable();
-            $table->text('proj_impact_biodiv')->nullable();
         });
         Schema::table('v2_projects', function (Blueprint $table) {
             $table->text('detailed_intervention_types')->nullable();
@@ -54,7 +53,6 @@ return new class extends Migration {
             $table->dropColumn('pct_employees_marginalised');
             $table->dropColumn('pct_beneficiaries_marginalised');
             $table->dropColumn('pct_beneficiaries_men');
-            $table->dropColumn('proj_impact_biodiv');
         });
         Schema::table('v2_projects', function (Blueprint $table) {
             $table->dropColumn('detailed_intervention_types');
