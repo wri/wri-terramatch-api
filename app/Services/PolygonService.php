@@ -38,6 +38,7 @@ class PolygonService
                 $returnSite = $this->insertSitePolygon(
                     $data['uuid'],
                     array_merge($sitePolygonProperties, $feature['properties']),
+                    $data['area']
                 );
                 if ($returnSite) {
                     Log::info($returnSite);
@@ -50,6 +51,7 @@ class PolygonService
                     $returnSite = $this->insertSitePolygon(
                         $data['uuid'],
                         array_merge($sitePolygonProperties, $feature['properties']),
+                        $data['area']
                     );
                     if ($returnSite) {
                         Log::info($returnSite);
@@ -160,20 +162,20 @@ class PolygonService
         $validationGeojson = ['features' => [
             'feature' => ['properties' => $properties],
         ]];
-        $validSchema = SitePolygonValidator::isValid('SCHEMA', $validationGeojson);
-        $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
-        $this->createCriteriaSite($polygonUuid, self::SCHEMA_CRITERIA_ID, $validSchema);
-        $this->createCriteriaSite($polygonUuid, self::DATA_CRITERIA_ID, $validData);
+        // $validSchema = SitePolygonValidator::isValid('SCHEMA', $validationGeojson);
+        // $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
+        // $this->createCriteriaSite($polygonUuid, self::SCHEMA_CRITERIA_ID, $validSchema);
+        // $this->createCriteriaSite($polygonUuid, self::DATA_CRITERIA_ID, $validData);
 
         return [
-            'project_id' => $properties['project_id'] ?? null,
-            'proj_name' => $properties['proj_name'] ?? null,
-            'org_name' => $properties['org_name'] ?? null,
-            'country' => $properties['country'] ?? null,
+            // 'project_id' => $properties['project_id'] ?? null,
+            // 'proj_name' => $properties['proj_name'] ?? null,
+            // 'org_name' => $properties['org_name'] ?? null,
+            // 'country' => $properties['country'] ?? null,
             'poly_name' => $properties['poly_name'] ?? null,
             'site_id' => $properties['site_id'] ?? null,
-            'site_name' => $properties['site_name'] ?? null,
-            'poly_label' => $properties['poly_label'] ?? null,
+            // 'site_name' => $properties['site_name'] ?? null,
+            // 'poly_label' => $properties['poly_label'] ?? null,
             'plantstart' => $properties['plantstart'],
             'plantend' => $properties['plantend'],
             'practice' => $properties['practice'] ?? null,
@@ -181,6 +183,7 @@ class PolygonService
             'distr' => $properties['distr'] ?? null,
             'num_trees' => $properties['num_trees'],
             'calc_area' => $properties['area'] ?? null,
+            'status' => "submitted",
         ];
     }
 }
