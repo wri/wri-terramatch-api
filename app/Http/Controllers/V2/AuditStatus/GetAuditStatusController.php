@@ -14,11 +14,29 @@ class GetAuditStatusController extends Controller
 {
     public function __invoke(Request $request, string $id = null)
     {
-        $auditStatus = AuditStatus::where('entity', $request->input('entity'))
-            ->where('entity_uuid', $request->input('uuid'))
-            ->orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->get();
+
+        $auditStatus = [];
+        $total = null;
+        $perPage = null;
+        $page = null;
+        if ($request->input('per_page') && $request->input('page')) {
+            $perPage = $request->input('per_page');
+            $page = $request->input('page');
+            $auditStatus = AuditStatus::where('entity', $request->input('entity'))
+                ->where('entity_uuid', $request->input('uuid'))
+                ->where('type', 'comment')
+                ->orderBy('updated_at', 'desc')
+                ->orderBy('created_at', 'desc');
+            $total = $auditStatus->count();
+            $auditStatus = $auditStatus->skip(($page - 1) * $perPage)->take($perPage)->get();
+        } else {
+            $auditStatus = AuditStatus::where('entity', $request->input('entity'))
+                ->where('entity_uuid', $request->input('uuid'))
+                ->orderBy('updated_at', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+
         $audit_statuses_with_entity = $auditStatus->map(function ($audit) {
             $audit_with_entity = [];
             $audit_with_entity['id'] = $audit->id;
@@ -36,7 +54,12 @@ class GetAuditStatusController extends Controller
             $audit_with_entity['request_removed'] = $audit->request_removed;
             return $audit_with_entity;
         });
-        return AuditStatusResource::collection($audit_statuses_with_entity);
+        return response()->json([
+            'data' => AuditStatusResource::collection($audit_statuses_with_entity),
+            'total' => $total,
+            'per_page' => $perPage,
+            'current_page' => $page,
+        ]);
     }
 
     private function getEntity($entity, $entity_uuid)

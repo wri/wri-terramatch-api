@@ -94884,6 +94884,16 @@ paths:
           type: string
           required: true
           description: required.
+        - in: query
+          name: page
+          type: string
+          required: false
+          description: required.
+        - in: query
+          name: per_page
+          type: string
+          required: false
+          description: required.
       responses:
         '200':
           description: OK
