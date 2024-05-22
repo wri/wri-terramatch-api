@@ -38,7 +38,7 @@ class CreateProjectWithFormController extends Controller
             'project_status' => null,
             'name' => $projectPitch->project_name,
             'boundary_geojson' => $projectPitch->proj_boundary,
-            'land_use_types' => $projectPitch->land_use_types,
+            'land_use_types' => $projectPitch->land_use_types ?? $projectPitch->land_systems,
             'restoration_strategy' => $projectPitch->restoration_strategy,
             'country' => $projectPitch->project_country,
             'continent' => null,
