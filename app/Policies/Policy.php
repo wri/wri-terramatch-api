@@ -51,7 +51,7 @@ abstract class Policy
 
     protected function isVerifiedUser(?UserModel $user): bool
     {
-        return $this->isUser($user) && (bool) $user->email_address_verified_at;
+        return ($this->isUser($user) || $this->isNewRoleUser($user)) && (bool) $user->email_address_verified_at;
     }
 
     protected function isVerifiedAdmin(?UserModel $user): bool

@@ -16,6 +16,10 @@ class ProjectPolicy extends Policy
             return true;
         }
 
+        if ($this->isNewRoleUser($user)) {
+            return true;
+        }
+
         if ($user->can('framework-' . $project->framework_key)) {
             return true;
         }
