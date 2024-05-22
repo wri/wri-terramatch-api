@@ -44448,6 +44448,8 @@ definitions:
         type: boolean
   AuditStatusPost:
     properties:
+      entity:
+        type: string
       entity_uuid:
         type: string
       status:

@@ -9,7 +9,7 @@ use App\Models\Traits\SaveAuditStatusTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\V2\AuditStatus\AuditStatus;
 
 class StoreAuditStatusController extends Controller
 {
@@ -18,7 +18,16 @@ class StoreAuditStatusController extends Controller
     public function __invoke(Request $request): AuditStatusResource
     {
         $body = $request->all();
-        $auditStatusresponse = $this->saveAuditStatus($body['entity'], $body['entity_uuid'], $body['status'], $body['comment'], $body['type']);
+        if ($body['type'] === "change-request") {
+            AuditStatus::where([
+                ['entity_uuid', $body['entity_uuid']],
+                ['type', "change-request"],
+                ['is_active', true],
+            ])->update(['is_active' => false]);
+            $auditStatusresponse = $this->saveAuditStatus($body['entity'], $body['entity_uuid'], $body['status'], $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
+        } else {
+            $auditStatusresponse = $this->saveAuditStatus($body['entity'], $body['entity_uuid'], $body['status'], $body['comment'], $body['type']);
+        }
 
         if ($request->file('file')) {
             foreach ($request->file('file') as $file) {
