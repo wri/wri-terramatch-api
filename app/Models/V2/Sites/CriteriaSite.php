@@ -5,6 +5,8 @@ namespace App\Models\V2\Sites;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\V2\User;
 
 class CriteriaSite extends Model
 {
@@ -27,7 +29,7 @@ class CriteriaSite extends Model
         'criteria_id',
         'polygon_id',
         'valid',
-        'date_created',
+        'created_by',
     ];
 
     /**
@@ -43,5 +45,10 @@ class CriteriaSite extends Model
     public function scopeForCriteria($query, $criteriaId)
     {
         return $query->where('criteria_id', $criteriaId)->latest();
+    }
+
+    public function createdBy(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'created_by');
     }
 }
