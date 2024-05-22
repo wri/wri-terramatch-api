@@ -20,9 +20,9 @@ class AdminSitesUpdateStatusController extends Controller
             $site['status'] = $body['status'];
             $this->saveAuditStatus('Site', $site->uuid, $body['status'], $body['comment'], $body['type']);
         } else if (isset($body['is_active'])) {
-            Log::info($body);
             AuditStatus::where('entity_uuid', $site->uuid)
                 ->where('type', $body['type'])
+                ->where('is_active', true)
                 ->update(['is_active' => false]);
             $this->saveAuditStatus('Site', $site->uuid, $site->status, $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
         }
