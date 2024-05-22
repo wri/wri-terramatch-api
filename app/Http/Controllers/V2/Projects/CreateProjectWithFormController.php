@@ -77,7 +77,7 @@ class CreateProjectWithFormController extends Controller
             'pct_beneficiaries_small' => $projectPitch->pct_beneficiaries_small,
             'pct_beneficiaries_large' => $projectPitch->pct_beneficiaries_large,
             'pct_beneficiaries_youth' => $projectPitch->pct_beneficiaries_youth,
-            'land_tenure_project_area' => $projectPitch->land_tenure_project_area,
+            'land_tenure_project_area' => $projectPitch->land_tenure_proj_area,
             'detailed_project_budget' => $projectPitch->detailed_project_budget,
             'proof_of_land_tenure_mou' => $projectPitch->proof_of_land_tenure_mou,
             'detailed_intervention_types' => $projectPitch->detailed_intervention_types,
