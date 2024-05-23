@@ -5,8 +5,8 @@ namespace App\Http\Controllers\V2\Sites;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Sites\SitePolygon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class SitePolygonDataController extends Controller
 {
@@ -14,9 +14,11 @@ class SitePolygonDataController extends Controller
     {
         try {
             $sitePolygons = SitePolygon::where('site_id', $site)->get();
+
             return response()->json($sitePolygons);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
+
             return response()->json(['error' => 'An error occurred while fetching site polygons'], 500);
         }
     }
@@ -35,6 +37,7 @@ class SitePolygonDataController extends Controller
             return response()->json(['bbox' => $bboxCoordinates]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
+
             return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 500);
         }
     }
