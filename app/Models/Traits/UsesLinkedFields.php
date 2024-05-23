@@ -244,29 +244,34 @@ trait UsesLinkedFields
         if ($linkedFieldInfo['link-type'] == 'fields') {
             $model->$property = $answer;
             $model->save();
+        } elseif ($linkedFieldInfo['link-type'] == 'relations') {
+            $inputType = data_get($linkedFieldInfo, 'input_type');
+            $this->syncRelation($property, $inputType, collect($answer), $model);
         }
     }
 
-    private function syncRelation(string $property, string $inputType, $data): void
+    private function syncRelation(string $property, string $inputType, $data, $entity = null): void
     {
+        $entity ??= $this;
+
         // This will expand as we complete more tickets in TM-747, until eventually we support all form relations.
         if (! in_array($inputType, ['treeSpecies', 'workdays'])) {
             return;
         }
 
-        $class = get_class($this->$property()->make());
+        $class = get_class($entity->$property()->make());
         if (is_a($class, HandlesLinkedFieldSync::class, true)) {
-            $class::syncRelation($this, $property, $data);
+            $class::syncRelation($entity, $property, $data);
 
             return;
         }
 
-        $this->$property()->whereNotIn('uuid', $data->pluck('uuid')->filter())->delete();
+        $entity->$property()->whereNotIn('uuid', $data->pluck('uuid')->filter())->delete();
 
         // This would be better as a bulk operation, but too much processing is required to make that feasible
         // in Eloquent (upsert isn't supported on MorphMany, for instance), and these sets will always be small
         // so doing them one at a time is OK.
-        $entries = $this->$property()->get();
+        $entries = $entity->$property()->get();
         foreach ($data as $entry) {
             $model = null;
             if (! empty($entry['uuid'])) {
@@ -277,7 +282,7 @@ trait UsesLinkedFields
             } else {
                 // protection against updating a deleted entry
                 unset($entry['uuid']);
-                $this->$property()->create($entry);
+                $entity->$property()->create($entry);
             }
         }
     }
