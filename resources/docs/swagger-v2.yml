@@ -94923,7 +94923,7 @@ paths:
         - V2 Audits Status
       parameters:
         - type: string
-          name: uuid
+          name: id
           in: path
           required: true
           description: show a specific audit status.
