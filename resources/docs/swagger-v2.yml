@@ -94923,7 +94923,7 @@ paths:
         - V2 Audits Status
       parameters:
         - type: string
-          name: id
+          name: uuid
           in: path
           required: true
           description: show a specific audit status.
@@ -94933,7 +94933,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/definitions/AuditStatusResponse'
+                $ref: '#/definitions/SitePolygonResponse'
     put:
       operationId: update-v2-audit-status
       summary: Update a audit in the status by ID

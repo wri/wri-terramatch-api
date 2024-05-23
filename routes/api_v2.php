@@ -133,6 +133,7 @@ use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 // use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\GetAuditStatusProjectPolygonsController;
 use App\Http\Controllers\V2\Attachment\GetAttachmentController;
 use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\UpdateAuditStatusController;
@@ -733,8 +734,8 @@ Route::prefix('project-pipeline')->group(function () {
 
 Route::prefix('audit-status')->group(function () {
     Route::get('/', GetAuditStatusController::class);
+    Route::get('/{uuid}', GetAuditStatusProjectPolygonsController::class);
     Route::post('/', StoreAuditStatusController::class);
-    // Route::get('/{id}', GetAuditStatusController::class);
     Route::put('/{id}', UpdateAuditStatusController::class);
     // Route::delete('/{id}', DeleteAuditStatusController::class);
 });
