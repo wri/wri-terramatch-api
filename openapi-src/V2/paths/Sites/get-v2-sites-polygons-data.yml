@@ -1,0 +1,18 @@
+summary: Get polygons for a specific site
+parameters:
+  - in: path
+    name: site
+    required: true
+    type: string
+    description: The ID of the site
+responses:
+  '200':
+    description: Successful response
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/SitePolygonsDataResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

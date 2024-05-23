@@ -2523,3 +2523,9 @@
 /v2/geometry/{UUID}:
   put:
     $ref: './Geometry/put-v2-geometry-uuid.yml'
+/v2/sites/{site}/polygon:
+  get:
+    $ref: './Sites/get-v2-sites-polygons-data.yml'
+/v2/sites/{site}/bbox:
+  get:
+    $ref: './Sites/get-v2-sites-polygon-bbox.yml'

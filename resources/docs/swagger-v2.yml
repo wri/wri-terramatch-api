@@ -44062,6 +44062,127 @@ definitions:
               message:
                 type: string
                 description: Human readable string in English to describe the error.
+  SitePolygon:
+    title: SitePolygon
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      project_id:
+        type: string
+      proj_name:
+        type: string
+      org_name:
+        type: string
+      poly_id:
+        type: string
+      poly_name:
+        type: string
+      site_id:
+        type: string
+      site_name:
+        type: string
+      plantstart:
+        type: string
+        format: date
+      plantend:
+        type: string
+        format: date
+      practice:
+        type: string
+      target_sys:
+        type: string
+      distr:
+        type: string
+      num_trees:
+        type: integer
+      calc_area:
+        type: number
+        format: float
+      created_by:
+        type: string
+      last_modified_by:
+        type: string
+      deleted_at:
+        type: string
+        format: date-time
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+      status:
+        type: string
+      country:
+        type: string
+  SitePolygonsDataResponse:
+    title: SitePolygonsDataResponse
+    type: array
+    items:
+      title: SitePolygon
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+        project_id:
+          type: string
+        proj_name:
+          type: string
+        org_name:
+          type: string
+        poly_id:
+          type: string
+        poly_name:
+          type: string
+        site_id:
+          type: string
+        site_name:
+          type: string
+        plantstart:
+          type: string
+          format: date
+        plantend:
+          type: string
+          format: date
+        practice:
+          type: string
+        target_sys:
+          type: string
+        distr:
+          type: string
+        num_trees:
+          type: integer
+        calc_area:
+          type: number
+          format: float
+        created_by:
+          type: string
+        last_modified_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+        country:
+          type: string
+  SitePolygonsBboxResponse:
+    title: SitePolygonsBboxResponse
+    type: object
+    properties:
+      bbox:
+        type: array
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93944,3 +94065,104 @@ paths:
           description: This account does not have permission to update the polygon.
         '404':
           description: Geometry was not found.
+  '/v2/sites/{site}/polygon':
+    get:
+      summary: Get polygons for a specific site
+      parameters:
+        - in: path
+          name: site
+          required: true
+          type: string
+          description: The ID of the site
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                title: SitePolygonsDataResponse
+                type: array
+                items:
+                  title: SitePolygon
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    uuid:
+                      type: string
+                    project_id:
+                      type: string
+                    proj_name:
+                      type: string
+                    org_name:
+                      type: string
+                    poly_id:
+                      type: string
+                    poly_name:
+                      type: string
+                    site_id:
+                      type: string
+                    site_name:
+                      type: string
+                    plantstart:
+                      type: string
+                      format: date
+                    plantend:
+                      type: string
+                      format: date
+                    practice:
+                      type: string
+                    target_sys:
+                      type: string
+                    distr:
+                      type: string
+                    num_trees:
+                      type: integer
+                    calc_area:
+                      type: number
+                      format: float
+                    created_by:
+                      type: string
+                    last_modified_by:
+                      type: string
+                    deleted_at:
+                      type: string
+                      format: date-time
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    status:
+                      type: string
+                    country:
+                      type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/sites/{site}/bbox':
+    get:
+      summary: Get bbox for a specific site
+      parameters:
+        - in: path
+          name: site
+          required: true
+          type: string
+          description: The ID of the site
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                title: SitePolygonsBboxResponse
+                type: object
+                properties:
+                  bbox:
+                    type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
