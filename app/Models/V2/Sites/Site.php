@@ -20,6 +20,8 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Seeding;
 use App\Models\V2\Stratas\Strata;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Workdays\WorkdayDemographic;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,7 +31,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -302,12 +303,12 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
 
     public function getWorkdayCountAttribute(): int
     {
-        $totals = $this->reports()->hasBeenSubmitted()->get([
-            DB::raw('sum(`workdays_volunteer`) as volunteer'),
-            DB::raw('sum(`workdays_paid`) as paid'),
-        ])->first();
-
-        return $totals?->paid + $totals?->volunteer;
+        return WorkdayDemographic::whereIn(
+            'workday_id',
+            Workday::where('workdayable_type', SiteReport::class)
+                ->whereIn('workdayable_id', $this->reports()->hasBeenSubmitted()->select('id'))
+                ->select('id')
+        )->gender()->sum('amount') ?? 0;
     }
 
     public function getFrameworkUuidAttribute(): ?string
