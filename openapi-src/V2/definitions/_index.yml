@@ -282,3 +282,7 @@ SitePolygonsDataResponse:
   $ref: './SitePolygonsDataResponse.yml'
 SitePolygonsBboxResponse:
   $ref: './SitePolygonsBboxResponse.yml'
+SitePolygonResponse:
+  $ref: './SitePolygonResponse.yml'
+SitePolygonCreateResponse:
+  $ref: './SitePolygonCreateResponse.yml'

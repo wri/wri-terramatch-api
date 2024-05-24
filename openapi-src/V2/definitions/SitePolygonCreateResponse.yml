@@ -1,0 +1,12 @@
+type: object
+properties:
+  message:
+    type: string
+    example: Site polygon created successfully
+  uuid:
+    type: string
+    description: UUID of the created site polygon
+  area:
+    type: number
+    format: double
+    description: Calculated area in hectares
