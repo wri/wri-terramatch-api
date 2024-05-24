@@ -33,7 +33,7 @@ class SiteResource extends JsonResource
             'survival_rate_planted' => $this->survival_rate_planted,
             'direct_seeding_survival_rate' => $this->direct_seeding_survival_rate,
             'a_nat_regeneration_trees_per_hectare' => $this->a_nat_regeneration_trees_per_hectare,
-            'a_nat_regeneration' => $this->a_nat_regeneration,
+            'a_nat_regeneration' => $this->a_nat_regeneration > 1 ? intval(round($this->a_nat_regeneration)) : $this->a_nat_regeneration,
             'hectares_to_restore_goal' => $this->hectares_to_restore_goal,
             'landscape_community_contribution' => $this->landscape_community_contribution,
             'planting_pattern' => $this->planting_pattern,
