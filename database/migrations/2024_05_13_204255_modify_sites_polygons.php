@@ -4,13 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        if (!Schema::hasTable('site_polygon')) {
+        if (! Schema::hasTable('site_polygon')) {
             return;
         }
 
@@ -28,7 +28,7 @@ return new class extends Migration {
                 $table->renameColumn('est_area', 'calc_area');
             }
 
-            if (!Schema::hasColumn('site_polygon', 'point_id')) {
+            if (! Schema::hasColumn('site_polygon', 'point_id')) {
                 $table->string('point_id', 255)->nullable()->after('site_id');
             }
         });
@@ -39,7 +39,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        if (!Schema::hasTable('site_polygon')) {
+        if (! Schema::hasTable('site_polygon')) {
             return;
         }
 
