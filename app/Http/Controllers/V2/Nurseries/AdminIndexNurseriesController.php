@@ -29,7 +29,7 @@ class AdminIndexNurseriesController extends Controller
                 AllowedFilter::scope('country'),
                 AllowedFilter::scope('organisation_uuid', 'organisationUuid'),
                 AllowedFilter::scope('project_uuid', 'projectUuid'),
-                AllowedFilter::exact('framework', 'framework_key'),
+                AllowedFilter::exact('framework_key'),
                 AllowedFilter::exact('status'),
                 AllowedFilter::exact('update_request_status'),
             ]);
