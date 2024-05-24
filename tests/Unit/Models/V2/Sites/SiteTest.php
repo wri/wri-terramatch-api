@@ -5,6 +5,9 @@ namespace Tests\Unit\Models\V2\Sites;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteMonitoring;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Workdays\WorkdayDemographic;
+use App\StateMachines\EntityStatusStateMachine;
 use Tests\TestCase;
 
 class SiteTest extends TestCase
@@ -55,6 +58,26 @@ class SiteTest extends TestCase
             $monitoring->refresh();
             $this->assertTrue($monitoring->trashed());
         }
+    }
+
+    public function test_workday_count()
+    {
+        $site = Site::factory()->ppc()->create();
+
+        $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::APPROVED]);
+        $workday = Workday::factory()->create(['workdayable_id' => $report->id]);
+        WorkdayDemographic::factory()->create(['workday_id' => $workday->id, 'amount' => 3]);
+
+        $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::AWAITING_APPROVAL]);
+        $workday = Workday::factory()->create(['workdayable_id' => $report->id]);
+        WorkdayDemographic::factory()->create(['workday_id' => $workday->id, 'amount' => 5]);
+
+        // Unsubmitted report (doesn't count toward workday count)
+        $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::STARTED]);
+        $workday = Workday::factory()->create(['workdayable_id' => $report->id]);
+        WorkdayDemographic::factory()->create(['workday_id' => $workday->id, 'amount' => 7]);
+
+        $this->assertEquals(8, $site->workday_count);
     }
 
     public static function permissionsDataProvider()
