@@ -66,7 +66,7 @@ class TerrafundEditGeometryController extends Controller
               'practice' => 'nullable|string',
               'distr' => 'nullable|string',
               'num_trees' => 'nullable|integer',
-              'est_area' => 'nullable|numeric',
+              'calc_area' => 'nullable|numeric',
               'target_sys' => 'nullable|string',
             ]);
 
@@ -79,18 +79,30 @@ class TerrafundEditGeometryController extends Controller
         }
     }
 
-    public function createSitePolygon(string $uuid, Request $request)
+    public function createSitePolygon(string $uuid, string $siteUuid, Request $request)
     {
         try {
-            $validatedData = $request->validate([
-                'poly_name' => 'nullable|string',
-                'plantstart' => 'nullable|date',
-                'plantend' => 'nullable|date',
-                'practice' => 'nullable|string',
-                'distr' => 'nullable|string',
-                'num_trees' => 'nullable|integer',
-                'target_sys' => 'nullable|string',
-            ]);
+            if ($request->getContent() === '{}') {
+                $validatedData = [
+                  'poly_name' => null,
+                  'plantstart' => null,
+                  'plantend' => null,
+                  'practice' => null,
+                  'distr' => null,
+                  'num_trees' => null,
+                  'target_sys' => null,
+                ];
+            } else {
+                $validatedData = $request->validate([
+                  'poly_name' => 'nullable|string',
+                  'plantstart' => 'nullable|date',
+                  'plantend' => 'nullable|date',
+                  'practice' => 'nullable|string',
+                  'distr' => 'nullable|string',
+                  'num_trees' => 'nullable|integer',
+                  'target_sys' => 'nullable|string',
+                ]);
+            }
 
             $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
             if (! $polygonGeometry) {
@@ -107,10 +119,12 @@ class TerrafundEditGeometryController extends Controller
                 'practice' => $validatedData['practice'],
                 'distr' => $validatedData['distr'],
                 'num_trees' => $validatedData['num_trees'],
-                'est_area' => $areaHectares, // Assign the calculated area
+                'calc_area' => $areaHectares,
                 'target_sys' => $validatedData['target_sys'],
                 'poly_id' => $uuid,
                 'created_by' => Auth::user()?->id,
+                'status' => 'submitted',
+                'site_id' => $siteUuid,
             ]);
             $sitePolygon->save();
 
