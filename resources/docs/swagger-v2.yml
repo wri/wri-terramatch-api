@@ -44183,6 +44183,47 @@ definitions:
     properties:
       bbox:
         type: array
+  SitePolygonResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      poly_name:
+        type: string
+      plantstart:
+        type: string
+        format: date
+      plantend:
+        type: string
+        format: date
+      practice:
+        type: string
+      target_sys:
+        type: string
+      distr:
+        type: string
+      num_trees:
+        type: integer
+      calc_area:
+        type: number
+        format: float
+      status:
+        type: string
+  SitePolygonCreateResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Site polygon created successfully
+      uuid:
+        type: string
+        description: UUID of the created site polygon
+      area:
+        type: number
+        format: double
+        description: Calculated area in hectares
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94162,6 +94203,73 @@ paths:
                 properties:
                   bbox:
                     type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/site-polygon/{uuid}/{siteUuid}':
+    post:
+      summary: Create site polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon related
+        - in: path
+          name: siteUuid
+          required: true
+          type: string
+          description: The UUID of the site
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              uuid:
+                type: string
+              poly_name:
+                type: string
+              plantstart:
+                type: string
+                format: date
+              plantend:
+                type: string
+                format: date
+              practice:
+                type: string
+              target_sys:
+                type: string
+              distr:
+                type: string
+              num_trees:
+                type: integer
+              calc_area:
+                type: number
+                format: float
+              status:
+                type: string
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Site polygon created successfully
+                  uuid:
+                    type: string
+                    description: UUID of the created site polygon
+                  area:
+                    type: number
+                    format: double
+                    description: Calculated area in hectares
         '400':
           description: Bad request
         '500':
