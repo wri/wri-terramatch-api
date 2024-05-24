@@ -25,6 +25,8 @@ use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Workdays\WorkdayDemographic;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,7 +36,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -358,16 +359,17 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
 
     public function getWorkdayCountAttribute(): int
     {
-        $sumQueries = [
-            DB::raw('sum(`workdays_paid`) as paid'),
-            DB::raw('sum(`workdays_volunteer`) as volunteer'),
-        ];
-        $projectTotals = $this->reports()->hasBeenSubmitted()->get($sumQueries)->first();
-        // The groupBy is superfluous, but required because Laravel adds "v2_sites.project_id as laravel_through_key" to
-        // the SQL select.
-        $siteTotals = $this->submittedSiteReports()->groupBy('v2_sites.project_id')->get($sumQueries)->first();
-
-        return $projectTotals?->paid + $projectTotals?->volunteer + $siteTotals?->paid + $siteTotals?->volunteer;
+        return WorkdayDemographic::whereIn(
+            'workday_id',
+            Workday::where('workdayable_type', SiteReport::class)
+                ->whereIn('workdayable_id', $this->submittedSiteReports()->select('v2_site_reports.id'))
+                ->select('id')
+        )->orWhereIn(
+            'workday_id',
+            Workday::where('workdayable_type', ProjectReport::class)
+                ->whereIn('workdayable_id', $this->reports()->hasBeenSubmitted()->select('id'))
+                ->select('id')
+        )->gender()->sum('amount') ?? 0;
     }
 
     public function getTotalJobsCreatedAttribute(): int
