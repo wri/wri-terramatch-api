@@ -6,6 +6,8 @@ use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
+use App\Models\V2\Sites\Site;
+use App\Models\V2\Projects\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +27,64 @@ class TerrafundEditGeometryController extends Controller
             return response()->json(['site_polygon' => $sitePolygon]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+    
+    public function updateProjectCentroid($polygonGeometry)
+    {
+        try {
+            $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
+
+            if ($sitePolygon) {
+                $relatedSite = Site::where('uuid', $sitePolygon->site_id)->first();
+                $project = Project::where('id', $relatedSite->project_id)->first();
+
+                if ($project) {
+                    $geometryHelper = new GeometryHelper();
+                    $centroid = $geometryHelper->centroidOfProject($project->uuid);
+
+                    if ($centroid === null) {
+                        Log::warning("Invalid centroid for project UUID: $project->uuid");
+                    }
+                } else {
+                    Log::warning("Project with UUID $relatedSite->project_id not found.");
+                }
+            } else {
+                Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
+            }
+        } catch (\Exception $e) {
+            Log::error('Error updating project centroid: ' . $e->getMessage());
+        }
+    }
+
+    public function deletePolygonAndSitePolygon(string $uuid)
+    {
+        try {
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+            $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
+            $relatedSite = Site::where('uuid', $sitePolygon->site_id)->first();
+            $projectUuid = Project::where('id', $relatedSite->project_id)->pluck('uuid')->first();
+            if (! $projectUuid) {
+                return response()->json(['message' => 'No project found for the given UUID.'], 404);
+            }
+            if ($sitePolygon) {
+                Log::info("Deleting associated site polygon for UUID: $uuid");
+                $sitePolygon->delete();
+            }
+            $geometryHelper = new GeometryHelper();
+            $geometryHelper->updateProjectCentroid($projectUuid);
+            $polygonGeometry->delete();
+            Log::info("Polygon geometry and associated site polygon deleted successfully for UUID: $uuid");
+
+            return response()->json(['message' => 'Polygon geometry and associated site polygon deleted successfully.', 'uuid' => $uuid]);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+
+            // Return error response if an exception occurs
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
 

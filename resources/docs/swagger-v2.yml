@@ -94554,3 +94554,15 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  '/v2/terrafund/polygon/{uuid}':
+    delete:
+      summary: Delete polygon records
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon geometry to delete
+      responses:
+        '204':
+          description: No Content
