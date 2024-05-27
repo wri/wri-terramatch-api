@@ -5,9 +5,9 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Sites\SitePolygon;
-use App\Models\V2\Sites\Site;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +29,7 @@ class TerrafundEditGeometryController extends Controller
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
-    
+
     public function updateProjectCentroid($polygonGeometry)
     {
         try {
