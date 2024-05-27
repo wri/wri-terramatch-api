@@ -327,7 +327,7 @@ class TerrafundCreateGeometryController extends Controller
         $criteriaList = [];
         foreach ($criteriaData as $criteria) {
             $criteriaId = $criteria->criteria_id;
-            $valid = CriteriaSite::where(['polygon_id' => $uuid, 'criteria_id' => $criteriaId])->select('valid')->first()?->valid;
+            $valid = CriteriaSite::where(['polygon_id' => $uuid, 'criteria_id' => $criteriaId])->orderBy('created_at', 'desc')->select('valid')->first()?->valid;
             $criteriaList[] = [
               'criteria_id' => $criteriaId,
               'latest_created_at' => $criteria->latest_created_at,
@@ -437,4 +437,99 @@ class TerrafundCreateGeometryController extends Controller
 
         return response()->json($response);
     }
+
+    public function runValidationPolygon(string $uuid)
+    {
+        $request = new Request(['uuid' => $uuid]);
+
+        $this->validateOverlapping($request);
+        $this->checkSelfIntersection($request);
+        $this->validatePolygonSize($request);
+        $this->checkWithinCountry($request);
+        $this->checkBoundarySegments($request);
+        $this->getGeometryType($request);
+        $this->validateEstimatedArea($request);
+        $this->validateDataInDB($request);
+    }
+
+    public function getValidationPolygon(Request $request)
+    {
+
+        $uuid = $request->input('uuid');
+        $this->runValidationPolygon($uuid);
+        $criteriaData = $this->getCriteriaData($request);
+
+        return $criteriaData;
+    }
+
+    public function getSiteValidationPolygon(Request $request)
+    {
+        try {
+            $uuid = $request->input('uuid');
+
+            $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
+
+            foreach ($sitePolygonsUuids as $polygonUuid) {
+                $this->runValidationPolygon($polygonUuid);
+            }
+
+            return response()->json(['message' => 'Validation completed for all site polygons']);
+        } catch (\Exception $e) {
+            Log::error('Error during site validation polygon: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred during site validation'], 500);
+        }
+    }
+    
+    public function getCurrentSiteValidation(Request $request)
+    {
+        try {
+            $uuid = $request->input('uuid');
+    
+            $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
+            $checkedPolygons = [];
+    
+            foreach ($sitePolygonsUuids as $polygonUuid) {
+                $isValid = true;
+                $isChecked = true;
+    
+                $criteriaData = $this->fetchCriteriaData($polygonUuid);
+
+                if (isset($criteriaData['error'])) {
+                    Log::error('Error fetching criteria data', ['polygon_uuid' => $polygonUuid, 'error' => $criteriaData['error']]);
+                    $isValid = false;
+                    $isChecked = false;
+                } else {
+                    foreach ($criteriaData['criteria_list'] as $criteria) {
+                        if ($criteria['valid'] == 0) {
+                            $isValid = false;
+                            break;
+                        }
+                    }
+                }
+                
+                $checkedPolygons[] = [
+                    'uuid' => $polygonUuid,
+                    'valid' => $isValid,
+                    'checked' => $isChecked,
+                ];
+            }
+            
+            return $checkedPolygons;
+        } catch (\Exception $e) {
+            Log::error('Error during current site validation: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred during current site validation'], 500);
+        }
+    }
+    
+    private function getSitePolygonsUuids($uuid)
+    {
+        return SitePolygon::where('site_id', $uuid)->get()->pluck('poly_id');
+    }
+    
+    private function fetchCriteriaData($polygonUuid)
+    {
+        $polygonRequest = new Request(['uuid' => $polygonUuid]);
+        $criteriaDataResponse = $this->getCriteriaData($polygonRequest);
+        return json_decode($criteriaDataResponse->getContent(), true);
+    }    
 }
