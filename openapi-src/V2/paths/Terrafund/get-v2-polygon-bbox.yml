@@ -1,0 +1,18 @@
+summary: Get bbox for a polygon
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    type: string
+    description: The UUID of the polygon
+responses:
+  '200':
+    description: Successful response
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/SitePolygonsBboxResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

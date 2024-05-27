@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TerrafundEditGeometryController extends Controller
 {
@@ -132,6 +134,18 @@ class TerrafundEditGeometryController extends Controller
         } catch (\Exception $e) {
             // Handle other exceptions
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+    public function getPolygonBbox(string $uuid)
+    {
+        try {
+            $bboxCoordinates = GeometryHelper::getPolygonsBbox([$uuid]);
+
+            return response()->json(['bbox' => $bboxCoordinates]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
         }
     }
 }
