@@ -136,6 +136,7 @@ class TerrafundEditGeometryController extends Controller
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
+
     public function getPolygonBbox(string $uuid)
     {
         try {
