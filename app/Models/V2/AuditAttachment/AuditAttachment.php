@@ -25,6 +25,6 @@ class AuditAttachment extends Model
 
     public function auditStatus()
     {
-        return $this->belongsTo(AuditStatus::class, 'id', 'id');
+        return $this->belongsTo(AuditStatus::class, 'entity_id', 'id');
     }
 }

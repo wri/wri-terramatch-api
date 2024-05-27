@@ -18,7 +18,6 @@ class StoreAuditStatusRequest extends FormRequest
             'entity_uuid' => ['sometimes', 'string', 'nullable', 'max:256'],
             'status' => ['sometimes', 'string', 'nullable', 'max:256'],
             'comment' => ['sometimes', 'string', 'nullable', 'max:500'],
-            'attachment_url' => ['sometimes', 'string', 'nullable', 'max:256'],
             'type' => ['sometimes', 'string', 'nullable', 'max:256'],
             'is_submitted' => ['sometimes', 'boolean', 'nullable', 'max:256'],
             'is_active' => ['sometimes', 'boolean', 'nullable', 'max:256'],
