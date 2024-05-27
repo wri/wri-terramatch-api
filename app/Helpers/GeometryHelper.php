@@ -35,6 +35,7 @@ class GeometryHelper
 
         return $bboxCoordinates;
     }
+
     public function updateProjectCentroid(string $projectUuid)
     {
         try {
@@ -70,11 +71,12 @@ class GeometryHelper
         }
 
     }
+
     public function centroidOfProject($projectUuid)
     {
         $project = Project::where('uuid', $projectUuid)->first();
 
-        if (!$project) {
+        if (! $project) {
             return null;
         }
 
