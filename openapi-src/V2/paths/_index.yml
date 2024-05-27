@@ -2550,3 +2550,6 @@
 /v2/terrafund/geojson/complete:
   get:
     $ref: './Terrafund/get-v2-geojson-complete-download.yml'
+/v2/terrafund/polygon/{uuid}:
+  delete:
+    $ref: './Terrafund/delete-v2-polygon-uuid.yml'
