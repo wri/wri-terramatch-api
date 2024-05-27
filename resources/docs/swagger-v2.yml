@@ -44427,8 +44427,6 @@ definitions:
         type: string
       comment:
         type: string
-      attachment_url:
-        type: string
       date_created:
         type: string
         format: date
@@ -44455,8 +44453,6 @@ definitions:
       status:
         type: string
       comment:
-        type: string
-      attachment_url:
         type: string
       date_created:
         type: string

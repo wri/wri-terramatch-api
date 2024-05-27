@@ -18,6 +18,7 @@ class GetAuditStatusController extends Controller
             ->where('entity_uuid', $request->input('uuid'))
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc')
+            ->with('auditAttachments')
             ->get();
         $audit_statuses_with_entity = $auditStatus->map(function ($audit) {
             $audit_with_entity = [];
@@ -25,7 +26,6 @@ class GetAuditStatusController extends Controller
             $audit_with_entity['entity'] = $this->getEntity($audit->entity, $audit->entity_uuid)->name;
             $audit_with_entity['status'] = $audit->status;
             $audit_with_entity['comment'] = $audit->comment;
-            $audit_with_entity['attachment_url'] = $audit->attachment_url;
             $audit_with_entity['date_created'] = $audit->date_created;
             $audit_with_entity['created_by'] = $audit->created_by;
             $audit_with_entity['type'] = $audit->type;
@@ -34,6 +34,16 @@ class GetAuditStatusController extends Controller
             $audit_with_entity['first_name'] = $audit->first_name;
             $audit_with_entity['last_name'] = $audit->last_name;
             $audit_with_entity['request_removed'] = $audit->request_removed;
+            $audit_with_entity['attachments'] = $audit->auditAttachments->map(function ($attachment) {
+                return [
+                    'id' => $attachment->id,
+                    'entity_id' => $attachment->entity_id,
+                    'attachment' => $attachment->attachment,
+                    'url_file' => $attachment->url_file,
+                    'date_created' => $attachment->date_created,
+                    'created_by' => $attachment->created_by,
+                ];
+            });
             return $audit_with_entity;
         });
         return AuditStatusResource::collection($audit_statuses_with_entity);

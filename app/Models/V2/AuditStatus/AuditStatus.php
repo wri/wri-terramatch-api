@@ -20,7 +20,6 @@ class AuditStatus extends Model
         'entity_uuid',
         'status',
         'comment',
-        'attachment_url',
         'date_created',
         'created_by',
         'type',
@@ -31,8 +30,8 @@ class AuditStatus extends Model
         'request_removed',
     ];
 
-    public function auditAttachment()
+    public function auditAttachments()
     {
-        return $this->hasMany(AuditAttachment::class, 'id', 'id');
+        return $this->hasMany(AuditAttachment::class, 'entity_id', 'id');
     }
 }
