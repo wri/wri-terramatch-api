@@ -615,8 +615,10 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
+    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
+    Route::get('/geojson/site', [TerrafundCreateGeometryController::class, 'getAllPolygonsAsGeoJSONDownload']);
+    
 
-    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonsAsGeoJSON']);
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
     Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
