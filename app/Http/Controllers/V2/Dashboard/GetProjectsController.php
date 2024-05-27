@@ -12,6 +12,8 @@ class GetProjectsController extends Controller
     public function __invoke(Request $request): GetProjectsResource
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+            ->whereNotNull('long')
+            ->whereNotNull('lat')
             ->select('uuid', 'long', 'lat', 'name')
             ->get();
 
