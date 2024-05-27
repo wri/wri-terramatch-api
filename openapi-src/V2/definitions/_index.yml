@@ -290,3 +290,5 @@ SitePolygonResponse:
   $ref: './SitePolygonResponse.yml'
 SitePolygonCreateResponse:
   $ref: './SitePolygonCreateResponse.yml'
+GeoJSONResponse:
+  $ref: './GeoJSONResponse.yml'
