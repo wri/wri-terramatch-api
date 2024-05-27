@@ -94207,7 +94207,7 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  '/site-polygon/{uuid}/{siteUuid}':
+  '/v2/terrafund/site-polygon/{uuid}/{siteUuid}':
     post:
       summary: Create site polygon
       parameters:
@@ -94270,6 +94270,30 @@ paths:
                     type: number
                     format: double
                     description: Calculated area in hectares
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/polygon/bbox/{uuid}':
+    get:
+      summary: Get bbox for a polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                title: SitePolygonsBboxResponse
+                type: object
+                properties:
+                  bbox:
+                    type: array
         '400':
           description: Bad request
         '500':
