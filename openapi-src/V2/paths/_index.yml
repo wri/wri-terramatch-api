@@ -2526,3 +2526,6 @@
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
+'/v2/dashboard/restoration-strategy':
+  get:
+    $ref: './Dashboard/get-v2-dashboard-restoration-strategy.yml'

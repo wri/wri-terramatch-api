@@ -44139,6 +44139,54 @@ definitions:
         type: integer
       total_ft_non_youth:
         type: integer
+  DashboardRestorationStrategyResponse:
+    type: object
+    properties:
+      restorationStrategies:
+        type: object
+        properties:
+          direct-seeding:
+            type: integer
+          tree-planting:
+            type: integer
+          assisted-natural-regeneration:
+            type: integer
+      landUseTypes:
+        type: object
+        properties:
+          agroforest:
+            type: integer
+          open-natural-ecosystem:
+            type: integer
+          mangrove:
+            type: integer
+          natural-forest:
+            type: integer
+          peatland:
+            type: integer
+          riparian-area-or-wetland:
+            type: integer
+          silvopasture:
+            type: integer
+          urban-forest:
+            type: integer
+          woodlot-or-plantation:
+            type: integer
+      landTenures:
+        type: object
+        properties:
+          communal:
+            type: integer
+          indigenous:
+            type: integer
+          national_protected_area:
+            type: integer
+          other:
+            type: integer
+          private:
+            type: integer
+          public:
+            type: integer
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94078,6 +94126,75 @@ paths:
                       total_pt_non_youth:
                         type: integer
                       total_ft_non_youth:
+                        type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/restoration-strategy:
+    get:
+      summary: View Restoration Strategy for dashboard
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter restoration strategy by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter restoration strategy by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  restorationStrategies:
+                    type: object
+                    properties:
+                      direct-seeding:
+                        type: integer
+                      tree-planting:
+                        type: integer
+                      assisted-natural-regeneration:
+                        type: integer
+                  landUseTypes:
+                    type: object
+                    properties:
+                      agroforest:
+                        type: integer
+                      open-natural-ecosystem:
+                        type: integer
+                      mangrove:
+                        type: integer
+                      natural-forest:
+                        type: integer
+                      peatland:
+                        type: integer
+                      riparian-area-or-wetland:
+                        type: integer
+                      silvopasture:
+                        type: integer
+                      urban-forest:
+                        type: integer
+                      woodlot-or-plantation:
+                        type: integer
+                  landTenures:
+                    type: object
+                    properties:
+                      communal:
+                        type: integer
+                      indigenous:
+                        type: integer
+                      national_protected_area:
+                        type: integer
+                      other:
+                        type: integer
+                      private:
+                        type: integer
+                      public:
                         type: integer
         '400':
           description: Bad request
