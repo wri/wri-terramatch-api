@@ -2523,3 +2523,6 @@
 /v2/geometry/{UUID}:
   put:
     $ref: './Geometry/put-v2-geometry-uuid.yml'
+/v2/dashboard/jobs-created:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'

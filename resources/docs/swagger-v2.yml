@@ -44062,6 +44062,83 @@ definitions:
               message:
                 type: string
                 description: Human readable string in English to describe the error.
+  DashboardJobsCreatedResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          totalJobsCreated:
+            type: integer
+          forProfitJobsCreated:
+            type: integer
+          nonProfitJobsCreated:
+            type: integer
+          total_ft:
+            type: integer
+          total_pt:
+            type: integer
+          total_men:
+            type: integer
+          total_pt_men:
+            type: integer
+          total_ft_men:
+            type: integer
+          total_women:
+            type: integer
+          total_pt_women:
+            type: integer
+          total_ft_women:
+            type: integer
+          total_youth:
+            type: integer
+          total_pt_youth:
+            type: integer
+          total_ft_youth:
+            type: integer
+          total_non_youth:
+            type: integer
+          total_pt_non_youth:
+            type: integer
+          total_ft_non_youth:
+            type: integer
+  DashboardJobsCreatedData:
+    type: object
+    properties:
+      totalJobsCreated:
+        type: integer
+      forProfitJobsCreated:
+        type: integer
+      nonProfitJobsCreated:
+        type: integer
+      total_ft:
+        type: integer
+      total_pt:
+        type: integer
+      total_men:
+        type: integer
+      total_pt_men:
+        type: integer
+      total_ft_men:
+        type: integer
+      total_women:
+        type: integer
+      total_pt_women:
+        type: integer
+      total_ft_women:
+        type: integer
+      total_youth:
+        type: integer
+      total_pt_youth:
+        type: integer
+      total_ft_youth:
+        type: integer
+      total_non_youth:
+        type: integer
+      total_pt_non_youth:
+        type: integer
+      total_ft_non_youth:
+        type: integer
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -93944,3 +94021,65 @@ paths:
           description: This account does not have permission to update the polygon.
         '404':
           description: Geometry was not found.
+  /v2/dashboard/jobs-created:
+    get:
+      operationId: get-v2-jobs-created.yml
+      summary: view Jobs created for dashboard
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter counts and metrics by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      totalJobsCreated:
+                        type: integer
+                      forProfitJobsCreated:
+                        type: integer
+                      nonProfitJobsCreated:
+                        type: integer
+                      total_ft:
+                        type: integer
+                      total_pt:
+                        type: integer
+                      total_men:
+                        type: integer
+                      total_pt_men:
+                        type: integer
+                      total_ft_men:
+                        type: integer
+                      total_women:
+                        type: integer
+                      total_pt_women:
+                        type: integer
+                      total_ft_women:
+                        type: integer
+                      total_youth:
+                        type: integer
+                      total_pt_youth:
+                        type: integer
+                      total_ft_youth:
+                        type: integer
+                      total_non_youth:
+                        type: integer
+                      total_pt_non_youth:
+                        type: integer
+                      total_ft_non_youth:
+                        type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error

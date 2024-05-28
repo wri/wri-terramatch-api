@@ -276,3 +276,7 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 SiteGeometryPost:
   $ref: './SiteGeometryPost.yml'
+DashboardJobsCreatedResponse:
+  $ref: './DashboardJobsCreatedResponse.yml'
+DashboardJobsCreatedData:
+  $ref: './DashboardJobsCreatedData.yml'
