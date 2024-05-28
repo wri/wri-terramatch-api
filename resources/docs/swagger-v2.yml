@@ -44416,6 +44416,13 @@ definitions:
         format: date
       created_by:
         type: string
+  AuditStatusResponseWithData:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/components/schemas/AuditStatusResponse'
   AuditStatusResponse: 
     type: object
     properties:
@@ -44444,6 +44451,10 @@ definitions:
         type: string
       request_removed:
         type: boolean
+      attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachmentResponse'
   AuditStatusPost:
     properties:
       entity:
@@ -44598,11 +44609,15 @@ definitions:
   AttachmentResponse: 
     type: object
     properties:
+      id:
+        type: number
       entity_id:
         type: string
       attachment:
         type: string
       created_by:
+        type: string
+      url_file:
         type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
