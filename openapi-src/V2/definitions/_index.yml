@@ -282,3 +282,7 @@ DashboardJobsCreatedData:
   $ref: './DashboardJobsCreatedData.yml'
 DashboardRestorationStrategyResponse:
   $ref: './DashboardRestorationStrategyResponse.yml'
+DashboardTreeRestorationGoalResponse:
+  $ref: './DashboardTreeRestorationGoalResponse.yml'
+DashboardTreesUnderRestorationActual:
+  $ref: './DashboardTreesUnderRestorationActual.yml'

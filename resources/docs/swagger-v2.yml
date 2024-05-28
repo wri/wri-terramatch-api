@@ -44187,6 +44187,67 @@ definitions:
             type: integer
           public:
             type: integer
+  DashboardTreeRestorationGoalResponse:
+    type: object
+    properties:
+      forProfitTreeCount:
+        type: integer
+      nonProfitTreeCount:
+        type: integer
+      totalTreesGrownGoal:
+        type: integer
+      treesUnderRestorationActualTotal:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date
+            treeSpeciesAmount:
+              type: integer
+            treeSpeciesPercentage:
+              type: number
+      treesUnderRestorationActualForProfit:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date
+            treeSpeciesAmount:
+              type: integer
+            treeSpeciesPercentage:
+              type: number
+      treesUnderRestorationActualNonProfit:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date
+            treeSpeciesAmount:
+              type: integer
+            treeSpeciesPercentage:
+              type: number
+      averageSurvivalRateTotal:
+        type: number
+      averageSurvivalRateForProfit:
+        type: number
+      averageSurvivalRateNonProfit:
+        type: number
+  DashboardTreesUnderRestorationActual:
+    type: object
+    properties:
+      dueDate:
+        type: string
+        format: date
+      treeSpeciesAmount:
+        type: integer
+      treeSpeciesPercentage:
+        type: number
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94196,6 +94257,78 @@ paths:
                         type: integer
                       public:
                         type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/tree-restoration-goal:
+    get:
+      summary: View Tree Restoration Goal for dashboard
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter tree restoration goal by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter tree restoration goal by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  forProfitTreeCount:
+                    type: integer
+                  nonProfitTreeCount:
+                    type: integer
+                  totalTreesGrownGoal:
+                    type: integer
+                  treesUnderRestorationActualTotal:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dueDate:
+                          type: string
+                          format: date
+                        treeSpeciesAmount:
+                          type: integer
+                        treeSpeciesPercentage:
+                          type: number
+                  treesUnderRestorationActualForProfit:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dueDate:
+                          type: string
+                          format: date
+                        treeSpeciesAmount:
+                          type: integer
+                        treeSpeciesPercentage:
+                          type: number
+                  treesUnderRestorationActualNonProfit:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dueDate:
+                          type: string
+                          format: date
+                        treeSpeciesAmount:
+                          type: integer
+                        treeSpeciesPercentage:
+                          type: number
+                  averageSurvivalRateTotal:
+                    type: number
+                  averageSurvivalRateForProfit:
+                    type: number
+                  averageSurvivalRateNonProfit:
+                    type: number
         '400':
           description: Bad request
         '500':

@@ -2529,3 +2529,6 @@
 '/v2/dashboard/restoration-strategy':
   get:
     $ref: './Dashboard/get-v2-dashboard-restoration-strategy.yml'
+'/v2/dashboard/tree-restoration-goal':
+  get:
+    $ref: './Dashboard/get-v2-dashboard-tree-restoration-goal.yml'
