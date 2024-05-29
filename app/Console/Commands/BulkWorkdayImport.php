@@ -8,6 +8,7 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Workdays\Workday;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -75,6 +76,7 @@ class BulkWorkdayImport extends Command
         'non-binary' => ['type' => 'gender', 'subtype' => null, 'name' => 'non-binary'],
         'nonbinary' => ['type' => 'gender', 'subtype' => null, 'name' => 'non-binary'],
         'gender-unknown' => ['type' => 'gender', 'subtype' => null, 'name' => 'unknown'],
+        'no-gender' => ['type' => 'gender', 'subtype' => null, 'name' => 'unknown'],
 
         'youth_15-24' => ['type' => 'age', 'subtype' => null, 'name' => 'youth'],
         'adult_24-64' => ['type' => 'age', 'subtype' => null, 'name' => 'adult'],
@@ -87,78 +89,38 @@ class BulkWorkdayImport extends Command
         'ethnicity-unknown' => ['type' => 'ethnicity', 'subtype' => 'unknown', 'name' => null],
     ];
 
+    protected array $modelConfig;
+    protected Collection $collections;
+    protected array $columns = [];
+    protected array $indices = [];
+
     /**
      * Execute the console command.
      */
     public function handle()
     {
         $type = $this->argument('type');
+
         $this->assert(!empty(self::COLLECTIONS[$type]), "Unknown type: $type");
+        $this->modelConfig = self::MODEL_CONFIGS[$type];
+        $this->collections = collect(self::COLLECTIONS[$type]);
 
-        $file_handle = fopen($this->argument('file'), 'r');
+        $fileHandle = fopen($this->argument('file'), 'r');
+        $this->parseHeaders(fgetcsv($fileHandle));
 
-        $columns = [];
-        $indices = [];
-        $csvRow = fgetcsv($file_handle);
-        $modelConfig = self::MODEL_CONFIGS[$type];
-        foreach ($csvRow as $index => $header) {
-            $columns[] = $columnDescription = $this->getColumnDescription($type, $header, $indices);
-
-            if ($columnDescription == null) {
-                if ($header == $modelConfig['id']) {
-                    $indices['id'] = $index;
-                } elseif ($header == $modelConfig['submission_id']) {
-                    $indices['submission_id'] = $index;
-                } elseif (Str::startsWith($header, ['indigenous-', 'other-ethnicity-'])) {
-                    $indices[$header] = $index;
-                }
-            }
+        $rows = collect();
+        while ($csvRow = fgetcsv($fileHandle)) {
+            $rows->push($this->parseRow($csvRow));
         }
-
-        $this->assert(!empty($indices['id']), 'No ' . $modelConfig['id'] . ' column found');
-        $this->assert(!empty($indices['submission_id']), 'No '. $modelConfig['submission_id'] . ' column found');
-
-        $rows = [];
-        while ($csvRow = fgetcsv($file_handle)) {
-            $row = [];
-            foreach ($csvRow as $index => $cell) {
-                $column = $columns[$index];
-                if (empty($column)) {
-                    continue;
-                }
-
-                $data = $this->getData($column['collection'], $column['demographic'], $cell, $csvRow);
-                if (! empty($data)) {
-                    $row[$column['collection']][] = $data;
-                }
-            }
-
-            if (empty($row)) {
-                continue;
-            }
-
-            $parentId = (int)$csvRow[$indices['id']];
-            $submissionId = (int)$csvRow[$indices['submission_id']];
-
-            $report = $modelConfig['model']::where(
-                ['old_id' => $submissionId, 'old_model' => $modelConfig['old_model']]
-            )->first();
-            $this->assert(
-                $report != null && $report->{$modelConfig['parent']}?->ppc_external_id == $parentId,
-                "Parent / Report ID mismatch: [Parent ID: $parentId, Submission ID: $submissionId]"
-            );
-
-            $row['report_uuid'] = $report->uuid;
-            $rows[] = $row;
-        }
-        fclose($file_handle);
+        $rows = $rows->filter();
+        fclose($fileHandle);
 
         if ($this->option('dry-run')) {
             echo json_encode($rows, JSON_PRETTY_PRINT) . "\n\n";
         } else {
             // A separate loop so we can validate as much input as possible before we start persisting any records
             foreach ($rows as $reportData) {
-                $report = $modelConfig['model']::isUuid($reportData['report_uuid'])->first();
+                $report = $this->modelConfig['model']::isUuid($reportData['report_uuid'])->first();
                 $this->persistWorkdays($report, $reportData);
             }
 
@@ -180,17 +142,38 @@ class BulkWorkdayImport extends Command
         }
     }
 
-    protected function getColumnDescription($type, $header, $indices): ?array
+    protected function parseHeaders($headerRow): void
+    {
+        $idHeader = $this->modelConfig['id'];
+        $submissionIdHeader = $this->modelConfig['submission_id'];
+
+        foreach ($headerRow as $index => $header) {
+            $this->columns[] = $columnDescription = $this->getColumnDescription($header);
+
+            if ($columnDescription == null) {
+                if ($header == $idHeader) {
+                    $this->indices['id'] = $index;
+                } elseif ($header == $submissionIdHeader) {
+                    $this->indices['submission_id'] = $index;
+                } elseif (Str::startsWith($header, ['indigenous-', 'other-ethnicity-'])) {
+                    $this->indices[$header] = $index;
+                }
+            }
+        }
+
+        $this->assert(!empty($this->indices['id']), "No $idHeader column found");
+        $this->assert(!empty($this->indices['submission_id']), "No $submissionIdHeader column found");
+    }
+
+    protected function getColumnDescription($header): ?array
     {
         if (! Str::startsWith($header, ['Paid_', 'Vol_'])) {
             return null;
         }
 
         /** @var string $columnTitlePrefix */
-        $columnTitlePrefix = collect(self::COLLECTIONS[$type])
-            ->keys()
-            ->first(fn ($key) => Str::startsWith($header, $key));
-        $collection = data_get(self::COLLECTIONS, "$type.$columnTitlePrefix");
+        $columnTitlePrefix = $this->collections->keys()->first(fn ($key) => Str::startsWith($header, $key));
+        $collection = $this->collections[$columnTitlePrefix] ?? null;
         $this->assert(!empty($collection), 'Unknown collection: ' . $header);
 
         $demographicName = Str::substr($header, Str::length($columnTitlePrefix) + 1);
@@ -198,12 +181,12 @@ class BulkWorkdayImport extends Command
         if (empty($demographic)) {
             if (Str::startsWith($demographicName, 'indigenous')) {
                 $demographic = data_get(self::DEMOGRAPHICS, 'indigenous');
-                $this->assert(!empty($indices[$demographicName]), 'Unknown demographic: ' . $header);
-                $demographic['name'] = $indices[$demographicName];
+                $this->assert(!empty($this->indices[$demographicName]), 'Unknown demographic: ' . $header);
+                $demographic['name'] = $this->indices[$demographicName];
             } elseif (Str::startsWith($demographicName, ['other-ethnicity', 'ethnicity-other'])) {
                 $demographic = data_get(self::DEMOGRAPHICS, 'ethnicity-other');
-                $this->assert(!empty($indices[$demographicName]), 'Unknown demographic: ' . $header);
-                $demographic['name'] = $indices[$demographicName];
+                $this->assert(!empty($this->indices[$demographicName]), 'Unknown demographic: ' . $header);
+                $demographic['name'] = $this->indices[$demographicName];
             } elseif (Str::startsWith($demographicName, ['ethnicity-unknown', 'ethnicity-decline'])) {
                 $demographic = data_get(self::DEMOGRAPHICS, 'ethnicity-unknown');
             }
@@ -212,6 +195,40 @@ class BulkWorkdayImport extends Command
         }
 
         return ['collection' => $collection, 'demographic' => $demographic];
+    }
+
+    protected function parseRow($csvRow): ?array
+    {
+        $row = [];
+        foreach ($csvRow as $index => $cell) {
+            $column = $this->columns[$index];
+            if (empty($column)) {
+                continue;
+            }
+
+            $data = $this->getData($column['collection'], $column['demographic'], $cell, $csvRow);
+            if (! empty($data)) {
+                $row[$column['collection']][] = $data;
+            }
+        }
+
+        if (empty($row)) {
+            return null;
+        }
+
+        $parentId = (int)$csvRow[$this->indices['id']];
+        $submissionId = (int)$csvRow[$this->indices['submission_id']];
+
+        $report = $this->modelConfig['model']::where(
+            ['old_id' => $submissionId, 'old_model' => $this->modelConfig['old_model']]
+        )->first();
+        $this->assert(
+            $report != null && $report->{$this->modelConfig['parent']}?->ppc_external_id == $parentId,
+            "Parent / Report ID mismatch: [Parent ID: $parentId, Submission ID: $submissionId]"
+        );
+
+        $row['report_uuid'] = $report->uuid;
+        return $row;
     }
 
     protected function getData($collection, $demographic, $cell, $row): array
