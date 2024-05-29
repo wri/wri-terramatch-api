@@ -722,7 +722,8 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
-    Route::get('/view-project/{uuid}', ViewProjectController::class);
+    Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
+    Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
 });
 Route::prefix('project-pipeline')->group(function () {
     Route::get('/', GetProjectPipelineController::class);
