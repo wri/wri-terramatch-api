@@ -18,7 +18,7 @@ class BulkWorkdayImport extends Command
      *
      * @var string
      */
-    protected $signature = 'bulk-workday-import {type} {file}';
+    protected $signature = 'bulk-workday-import {type} {file} {--dry-run}';
 
     /**
      * The console command description.
@@ -155,10 +155,16 @@ class BulkWorkdayImport extends Command
         }
         fclose($file_handle);
 
-        // A separate loop so we can validate as much input as possible before we start persisting any records
-        foreach ($rows as $reportData) {
-            $report = $modelConfig['model']::isUuid($reportData['report_uuid'])->first();
-            $this->persistWorkdays($report, $reportData);
+        if ($this->option('dry-run')) {
+            echo 'Data for persistence' . json_encode($rows, JSON_PRETTY_PRINT) . "\n\n";
+        } else {
+            // A separate loop so we can validate as much input as possible before we start persisting any records
+            foreach ($rows as $reportData) {
+                $report = $modelConfig['model']::isUuid($reportData['report_uuid'])->first();
+                $this->persistWorkdays($report, $reportData);
+            }
+
+            echo "Workday import complete!\n\n";
         }
     }
 
