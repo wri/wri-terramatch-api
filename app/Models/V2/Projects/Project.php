@@ -25,8 +25,6 @@ use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use App\Models\V2\Workdays\Workday;
-use App\Models\V2\Workdays\WorkdayDemographic;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -121,18 +120,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'pct_beneficiaries_large',
         'pct_beneficiaries_youth',
         'land_tenure_project_area',
+        'lat',
+        'long',
         'answers',
         'ppc_external_id',
-        'detailed_intervention_types',
-        'proj_impact_foodsec',
-        'pct_employees_marginalised',
-        'pct_beneficiaries_marginalised',
-        'pct_beneficiaries_men',
-        'proposed_gov_partners',
-        'proposed_num_nurseries',
-        'proj_boundary',
-        'states',
-        'proj_impact_biodiv',
     ];
 
     public $fileConfiguration = [
@@ -181,8 +172,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'restoration_strategy' => 'array',
         'sdgs_impacted' => 'array',
         'answers' => 'array',
-        'detailed_intervention_types' => 'array',
-        'states' => 'array',
     ];
 
     public const PROJECT_STATUS_NEW = 'new_project';
@@ -359,17 +348,16 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
 
     public function getWorkdayCountAttribute(): int
     {
-        return WorkdayDemographic::whereIn(
-            'workday_id',
-            Workday::where('workdayable_type', SiteReport::class)
-                ->whereIn('workdayable_id', $this->submittedSiteReports()->select('v2_site_reports.id'))
-                ->select('id')
-        )->orWhereIn(
-            'workday_id',
-            Workday::where('workdayable_type', ProjectReport::class)
-                ->whereIn('workdayable_id', $this->reports()->hasBeenSubmitted()->select('id'))
-                ->select('id')
-        )->gender()->sum('amount') ?? 0;
+        $sumQueries = [
+            DB::raw('sum(`workdays_paid`) as paid'),
+            DB::raw('sum(`workdays_volunteer`) as volunteer'),
+        ];
+        $projectTotals = $this->reports()->hasBeenSubmitted()->get($sumQueries)->first();
+        // The groupBy is superfluous, but required because Laravel adds "v2_sites.project_id as laravel_through_key" to
+        // the SQL select.
+        $siteTotals = $this->submittedSiteReports()->groupBy('v2_sites.project_id')->get($sumQueries)->first();
+
+        return $projectTotals?->paid + $projectTotals?->volunteer + $siteTotals?->paid + $siteTotals?->volunteer;
     }
 
     public function getTotalJobsCreatedAttribute(): int
@@ -480,5 +468,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     private function submittedSiteReportIds(): array
     {
         return $this->submittedSiteReports()->pluck('v2_site_reports.id')->toArray();
+    }
+
+    public function getTotalSitePolygons()
+    {
+        return $this->sitePolygons()->count();
     }
 }
