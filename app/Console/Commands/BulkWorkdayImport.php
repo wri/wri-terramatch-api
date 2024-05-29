@@ -73,12 +73,14 @@ class BulkWorkdayImport extends Command
         'women' => ['type' => 'gender', 'subtype' => null, 'name' => 'female'],
         'men' => ['type' => 'gender', 'subtype' => null, 'name' => 'male'],
         'non-binary' => ['type' => 'gender', 'subtype' => null, 'name' => 'non-binary'],
+        'nonbinary' => ['type' => 'gender', 'subtype' => null, 'name' => 'non-binary'],
         'gender-unknown' => ['type' => 'gender', 'subtype' => null, 'name' => 'unknown'],
 
         'youth_15-24' => ['type' => 'age', 'subtype' => null, 'name' => 'youth'],
         'adult_24-64' => ['type' => 'age', 'subtype' => null, 'name' => 'adult'],
         'elder_65+' => ['type' => 'age', 'subtype' => null, 'name' => 'elder'],
         'age-unknown' => ['type' => 'age', 'subtype' => null, 'name' => 'unknown'],
+        'age_unknown' => ['type' => 'age', 'subtype' => null, 'name' => 'unknown'],
 
         'indigenous' => ['type' => 'ethnicity', 'subtype' => 'indigenous', 'name' => null],
         'ethnicity-other' => ['type' => 'ethnicity', 'subtype' => 'other', 'name' => null],
@@ -91,35 +93,30 @@ class BulkWorkdayImport extends Command
     public function handle()
     {
         $type = $this->argument('type');
-        if (empty(self::COLLECTIONS[$type])) {
-            $this->abort("Unknown type: $type");
-        }
+        $this->assert(!empty(self::COLLECTIONS[$type]), "Unknown type: $type");
 
         $file_handle = fopen($this->argument('file'), 'r');
 
         $columns = [];
+        $indices = [];
         $csvRow = fgetcsv($file_handle);
-        $idIndex = -1;
-        $submissionIdIndex = -1;
         $modelConfig = self::MODEL_CONFIGS[$type];
         foreach ($csvRow as $index => $header) {
-            if ($header == $modelConfig['id']) {
-                $idIndex = $index;
-                $columns[] = null;
-            } elseif ($header == $modelConfig['submission_id']) {
-                $submissionIdIndex = $index;
-                $columns[] = null;
-            } else {
-                $columns[] = $this->getColumnDescription($type, $header);
+            $columns[] = $columnDescription = $this->getColumnDescription($type, $header, $indices);
+
+            if ($columnDescription == null) {
+                if ($header == $modelConfig['id']) {
+                    $indices['id'] = $index;
+                } elseif ($header == $modelConfig['submission_id']) {
+                    $indices['submission_id'] = $index;
+                } elseif (Str::startsWith($header, ['indigenous-', 'other-ethnicity-'])) {
+                    $indices[$header] = $index;
+                }
             }
         }
 
-        if ($idIndex < 0) {
-            $this->abort('No ' . $modelConfig['id'] . ' column found');
-        }
-        if ($submissionIdIndex < 0) {
-            $this->abort('No '. $modelConfig['submission_id'] . ' column found');
-        }
+        $this->assert(!empty($indices['id']), 'No ' . $modelConfig['id'] . ' column found');
+        $this->assert(!empty($indices['submission_id']), 'No '. $modelConfig['submission_id'] . ' column found');
 
         $rows = [];
         while ($csvRow = fgetcsv($file_handle)) {
@@ -130,9 +127,9 @@ class BulkWorkdayImport extends Command
                     continue;
                 }
 
-                $data = $this->getData($column['collection'], $column['demographic'], $cell);
+                $data = $this->getData($column['collection'], $column['demographic'], $cell, $csvRow);
                 if (! empty($data)) {
-                    $row[$column['collection']] = array_merge($row[$column['collection']] ?? [], $data);
+                    $row[$column['collection']][] = $data;
                 }
             }
 
@@ -140,15 +137,16 @@ class BulkWorkdayImport extends Command
                 continue;
             }
 
-            $parentId = (int)$csvRow[$idIndex];
-            $submissionId = (int)$csvRow[$submissionIdIndex];
+            $parentId = (int)$csvRow[$indices['id']];
+            $submissionId = (int)$csvRow[$indices['submission_id']];
 
             $report = $modelConfig['model']::where(
                 ['old_id' => $submissionId, 'old_model' => $modelConfig['old_model']]
             )->first();
-            if ($report == null || $report->{$modelConfig['parent']}?->ppc_external_id != $parentId) {
-                $this->abort("Parent / Report ID mismatch: [Parent ID: $parentId, Submission ID: $submissionId]");
-            }
+            $this->assert(
+                $report != null && $report->{$modelConfig['parent']}?->ppc_external_id == $parentId,
+                "Parent / Report ID mismatch: [Parent ID: $parentId, Submission ID: $submissionId]"
+            );
 
             $row['report_uuid'] = $report->uuid;
             $rows[] = $row;
@@ -156,7 +154,7 @@ class BulkWorkdayImport extends Command
         fclose($file_handle);
 
         if ($this->option('dry-run')) {
-            echo 'Data for persistence' . json_encode($rows, JSON_PRETTY_PRINT) . "\n\n";
+            echo json_encode($rows, JSON_PRETTY_PRINT) . "\n\n";
         } else {
             // A separate loop so we can validate as much input as possible before we start persisting any records
             foreach ($rows as $reportData) {
@@ -175,7 +173,14 @@ class BulkWorkdayImport extends Command
         exit($exitCode);
     }
 
-    protected function getColumnDescription($type, $header): ?array
+    protected function assert(bool $condition, string $message, int $exitCode = 1): void
+    {
+        if (!$condition) {
+            $this->abort($message, $exitCode);
+        }
+    }
+
+    protected function getColumnDescription($type, $header, $indices): ?array
     {
         if (! Str::startsWith($header, ['Paid_', 'Vol_'])) {
             return null;
@@ -186,56 +191,56 @@ class BulkWorkdayImport extends Command
             ->keys()
             ->first(fn ($key) => Str::startsWith($header, $key));
         $collection = data_get(self::COLLECTIONS, "$type.$columnTitlePrefix");
-        if (empty($collection)) {
-            $this->abort('Unknown collection: ' . $header);
-        }
+        $this->assert(!empty($collection), 'Unknown collection: ' . $header);
 
-        $demographic = data_get(self::DEMOGRAPHICS, Str::substr($header, Str::length($columnTitlePrefix) + 1));
+        $demographicName = Str::substr($header, Str::length($columnTitlePrefix) + 1);
+        $demographic = data_get(self::DEMOGRAPHICS, $demographicName);
         if (empty($demographic)) {
-            $this->abort('Unknown demographic: ' . $header);
+            if (Str::startsWith($demographicName, 'indigenous')) {
+                $demographic = data_get(self::DEMOGRAPHICS, 'indigenous');
+                $this->assert(!empty($indices[$demographicName]), 'Unknown demographic: ' . $header);
+                $demographic['name'] = $indices[$demographicName];
+            } elseif (Str::startsWith($demographicName, ['other-ethnicity', 'ethnicity-other'])) {
+                $demographic = data_get(self::DEMOGRAPHICS, 'ethnicity-other');
+                $this->assert(!empty($indices[$demographicName]), 'Unknown demographic: ' . $header);
+                $demographic['name'] = $indices[$demographicName];
+            } elseif (Str::startsWith($demographicName, ['ethnicity-unknown', 'ethnicity-decline'])) {
+                $demographic = data_get(self::DEMOGRAPHICS, 'ethnicity-unknown');
+            }
+
+            $this->assert($demographic != null, 'Unknown demographic: ' . $header);
         }
 
         return ['collection' => $collection, 'demographic' => $demographic];
     }
 
-    protected function getData($collection, $demographic, $cell): array
+    protected function getData($collection, $demographic, $cell, $row): array
     {
         if (empty($cell)) {
             return [];
         }
 
-        if (empty($demographic['subtype'])) {
-            if (! is_numeric($cell) || ('' . (int)$cell) != trim($cell)) {
-                $this->abort('Invalid value: ' .
-                    json_encode([
-                        'collection' => $collection,
-                        'demographic' => $demographic,
-                        'cell' => $cell,
-                    ]));
-            }
-
-            $demographic['amount'] = (int)$cell;
-
-            return [$demographic];
+        if (! is_numeric($cell) || ('' . (int)$cell) != trim($cell)) {
+            $this->abort('Invalid value: ' .
+                json_encode([
+                    'collection' => $collection,
+                    'demographic' => $demographic,
+                    'cell' => $cell,
+                ]));
         }
 
-        return collect(explode('|', $cell))->map(function ($subCell) use ($demographic, $collection, $cell) {
-            $parts = explode(':', $subCell);
-            if (count($parts) != 2 || ! is_numeric($parts[1]) || ('' . (int)$parts[1]) != trim($parts[1])) {
-                $this->abort('Invalid value: ' .
-                    json_encode([
-                        'collection' => $collection,
-                        'demographic' => $demographic,
-                        'cell' => $cell,
-                        'parts' => $parts,
-                    ]));
+        $demographic['amount'] = (int)$cell;
+        if (is_int($demographic['name'])) {
+            // In this case, the "name" member is an index pointer to the column that holds the ethnicity
+            // name.
+            $name = $row[$demographic['name']];
+            if (empty($name)) {
+                $name = null;
             }
+            $demographic['name'] = $name;
+        }
 
-            $demographic['name'] = trim($parts[0]);
-            $demographic['amount'] = (int)$parts[1];
-
-            return $demographic;
-        })->toArray();
+        return $demographic;
     }
 
     protected function persistWorkdays($report, $data): void
