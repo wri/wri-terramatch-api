@@ -1,0 +1,21 @@
+summary: view Jobs created for dashboard
+parameters:
+  - in: query
+    name: country
+    type: string
+    description: Optional. Filter counts and metrics by country.
+  - in: query
+    name: uuid
+    type: string
+    description: Optional. Filter counts and metrics by UUID.
+responses:
+  '200':
+    description: Successful response
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/DashboardJobsCreatedResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error 

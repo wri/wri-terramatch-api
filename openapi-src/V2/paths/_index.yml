@@ -2535,3 +2535,48 @@
 /v2/geometry/{UUID}:
   put:
     $ref: './Geometry/put-v2-geometry-uuid.yml'
+/v2/dashboard/volunteers-survival-rate:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-volunteers-survival-rate.yml'
+/v2/dashboard/total-section-header:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-total-section-header.yml'
+/v2/dashboard/top-trees-planted:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-top-trees-planted.yml'
+/v2/dashboard/active-countries:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-active-countries.yml'
+/v2/dashboard/active-projects:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-active-projects.yml'
+/v2/dashboard/view-project-list:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-view-project-list.yml'
+/v2/dashboard/countries:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-countries.yml'
+/v2/dashboard/project-details:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-project-details.yml'
+/v2/dashboard/jobs-created:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
+/v2/dashboard/restoration-strategy:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-restoration-strategy.yml'
+/v2/dashboard/tree-restoration-goal:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-tree-restoration-goal.yml'
+/v2/dashboard/project-list-export:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-project-list-export.yml'
+/v2/dashboard/get-projects:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-projects.yml'
+/v2/dashboard/get-polygons:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-polygons.yml'
+/v2/dashboard/get-polygons/statuses:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-polygons-statuses.yml'
