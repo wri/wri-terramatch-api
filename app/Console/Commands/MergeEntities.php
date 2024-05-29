@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Traits\Abortable;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use App\Models\V2\ReportModel;
@@ -14,11 +15,12 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use JetBrains\PhpStorm\NoReturn;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MergeEntities extends Command
 {
+    use Abortable;
+
     /**
      * The name and signature of the console command.
      *
@@ -59,26 +61,18 @@ class MergeEntities extends Command
     {
         $mergedUuid = $this->argument('merged');
         $merged = $modelClass::isUuid($mergedUuid)->first();
-        if ($merged == null) {
-            $this->abort("Base model not found: $mergedUuid");
-        }
+        $this->assert($merged != null, "Base model not found: $mergedUuid");
 
         $feederUuids = $this->argument('feeders');
         // This would be faster as a whereIn, but we want to keep the order intact; matching it with the
         // order that was passed into the command
         $feeders = collect($feederUuids)->map(fn ($uuid) => $modelClass::isUuid($uuid)->first());
-        if (count($feeders) != count($feederUuids)) {
-            $this->abort('Some feeders not found: ' . json_encode($feederUuids));
-        }
+        $this->assert(
+            count($feeders) == count($feederUuids),
+            'Some feeders not found: ' . json_encode($feederUuids)
+        );
 
         return collect([$merged])->push($feeders)->flatten();
-    }
-
-    #[NoReturn]
-    private function abort(string $message, int $exitCode = 1): void
-    {
-        echo $message;
-        exit($exitCode);
     }
 
     private function confirmMerge(string $mergeName, Collection $feederNames): void
@@ -88,9 +82,7 @@ class MergeEntities extends Command
             "  Feeder Entity Names: \n    " .
             $feederNames->join("\n    ")
             . "\n\n";
-        if (! $this->confirm($mergeMessage)) {
-            $this->abort('Merge aborted', 0);
-        }
+        $this->assert($this->confirm($mergeMessage), 'Merge aborted', 0);
     }
 
     // Note for future expansion, the code to merge nurseries would be basically the same as this, but this pattern
@@ -99,14 +91,10 @@ class MergeEntities extends Command
     private function mergeSites(Site $mergeSite, Collection $feederSites): void
     {
         $frameworks = $feederSites->map(fn (Site $site) => $site->framework_key)->push($mergeSite->framework_key)->unique();
-        if ($frameworks->count() > 1) {
-            $this->abort('Multiple frameworks detected in sites: ' . json_encode($frameworks));
-        }
+        $this->assert($frameworks->count() <= 1, 'Multiple frameworks detected in sites: ' . json_encode($frameworks));
 
         $projectIds = $feederSites->map(fn (Site $site) => $site->project_id)->push($mergeSite->project_id)->unique();
-        if ($projectIds->count() > 1) {
-            $this->abort('Multiple project_ids detected in sites: ' . json_encode($projectIds));
-        }
+        $this->assert($projectIds->count() <= 1, 'Multiple project_ids detected in sites: ' . json_encode($projectIds));
 
         $this->confirmMerge($mergeSite->name, $feederSites->map(fn ($site) => $site->name));
 
