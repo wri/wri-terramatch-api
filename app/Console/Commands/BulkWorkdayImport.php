@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Traits\Abortable;
 use App\Models\SiteSubmission;
 use App\Models\Submission;
 use App\Models\V2\Projects\ProjectReport;
@@ -10,10 +11,11 @@ use App\Models\V2\Workdays\Workday;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use JetBrains\PhpStorm\NoReturn;
 
 class BulkWorkdayImport extends Command
 {
+    use Abortable;
+
     /**
      * The name and signature of the console command.
      *
@@ -90,8 +92,11 @@ class BulkWorkdayImport extends Command
     ];
 
     protected array $modelConfig;
+
     protected Collection $collections;
+
     protected array $columns = [];
+
     protected array $indices = [];
 
     /**
@@ -101,7 +106,7 @@ class BulkWorkdayImport extends Command
     {
         $type = $this->argument('type');
 
-        $this->assert(!empty(self::COLLECTIONS[$type]), "Unknown type: $type");
+        $this->assert(! empty(self::COLLECTIONS[$type]), "Unknown type: $type");
         $this->modelConfig = self::MODEL_CONFIGS[$type];
         $this->collections = collect(self::COLLECTIONS[$type]);
 
@@ -125,20 +130,6 @@ class BulkWorkdayImport extends Command
             }
 
             echo "Workday import complete!\n\n";
-        }
-    }
-
-    #[NoReturn]
-    protected function abort(string $message, int $exitCode = 1): void
-    {
-        echo $message;
-        exit($exitCode);
-    }
-
-    protected function assert(bool $condition, string $message, int $exitCode = 1): void
-    {
-        if (!$condition) {
-            $this->abort($message, $exitCode);
         }
     }
 
@@ -176,18 +167,18 @@ class BulkWorkdayImport extends Command
         /** @var string $columnTitlePrefix */
         $columnTitlePrefix = $this->collections->keys()->first(fn ($key) => Str::startsWith($header, $key));
         $collection = $this->collections[$columnTitlePrefix] ?? null;
-        $this->assert(!empty($collection), 'Unknown collection: ' . $header);
+        $this->assert(! empty($collection), 'Unknown collection: ' . $header);
 
         $demographicName = Str::substr($header, Str::length($columnTitlePrefix) + 1);
         $demographic = data_get(self::DEMOGRAPHICS, $demographicName);
         if (empty($demographic)) {
             if (Str::startsWith($demographicName, 'indigenous')) {
                 $demographic = data_get(self::DEMOGRAPHICS, 'indigenous');
-                $this->assert(!empty($this->indices[$demographicName]), 'Unknown demographic: ' . $header);
+                $this->assert(! empty($this->indices[$demographicName]), 'Unknown demographic: ' . $header);
                 $demographic['name'] = $this->indices[$demographicName];
             } elseif (Str::startsWith($demographicName, ['other-ethnicity', 'ethnicity-other'])) {
                 $demographic = data_get(self::DEMOGRAPHICS, 'ethnicity-other');
-                $this->assert(!empty($this->indices[$demographicName]), 'Unknown demographic: ' . $header);
+                $this->assert(! empty($this->indices[$demographicName]), 'Unknown demographic: ' . $header);
                 $demographic['name'] = $this->indices[$demographicName];
             } elseif (Str::startsWith($demographicName, ['ethnicity-unknown', 'ethnicity-decline'])) {
                 $demographic = data_get(self::DEMOGRAPHICS, 'ethnicity-unknown');
@@ -230,6 +221,7 @@ class BulkWorkdayImport extends Command
         );
 
         $row['report_uuid'] = $report->uuid;
+
         return $row;
     }
 
