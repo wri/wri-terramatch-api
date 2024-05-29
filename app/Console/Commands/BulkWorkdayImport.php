@@ -148,6 +148,8 @@ class BulkWorkdayImport extends Command
         $submissionIdHeader = $this->modelConfig['submission_id'];
 
         foreach ($headerRow as $index => $header) {
+            // Excel puts some garbage at the beginning of the file that we need to filter out.
+            $header = trim($header, "\xEF\xBB\xBF");
             $this->columns[] = $columnDescription = $this->getColumnDescription($header);
 
             if ($columnDescription == null) {
@@ -161,8 +163,8 @@ class BulkWorkdayImport extends Command
             }
         }
 
-        $this->assert(!empty($this->indices['id']), "No $idHeader column found");
-        $this->assert(!empty($this->indices['submission_id']), "No $submissionIdHeader column found");
+        $this->assert(array_key_exists('id', $this->indices), "No $idHeader column found");
+        $this->assert(array_key_exists('submission_id', $this->indices), "No $submissionIdHeader column found");
     }
 
     protected function getColumnDescription($header): ?array
