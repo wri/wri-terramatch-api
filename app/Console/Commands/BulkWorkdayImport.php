@@ -70,8 +70,8 @@ class BulkWorkdayImport extends Command
     ];
 
     protected const DEMOGRAPHICS = [
-        'women' => ['type' => 'gender', 'subtype' => null, 'name' => 'male'],
-        'men' => ['type' => 'gender', 'subtype' => null, 'name' => 'female'],
+        'women' => ['type' => 'gender', 'subtype' => null, 'name' => 'female'],
+        'men' => ['type' => 'gender', 'subtype' => null, 'name' => 'male'],
         'non-binary' => ['type' => 'gender', 'subtype' => null, 'name' => 'non-binary'],
         'gender-unknown' => ['type' => 'gender', 'subtype' => null, 'name' => 'unknown'],
 
