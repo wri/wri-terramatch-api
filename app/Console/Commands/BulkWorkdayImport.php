@@ -280,7 +280,7 @@ class BulkWorkdayImport extends Command
             if ($report->workdays()->collection($collection)->count() > 0) {
                 echo "WARNING!! Report already has demographics recorded for this collection, skipping!\n";
                 echo "  collection: $collection\n";
-                echo '  demographics: ' . json_encode($data[$collection]) . "\n";
+                echo '  demographics: ' . json_encode($data[$collection], JSON_PRETTY_PRINT) . "\n";
 
                 continue;
             }
