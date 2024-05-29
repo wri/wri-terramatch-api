@@ -286,3 +286,15 @@ DashboardTreeRestorationGoalResponse:
   $ref: './DashboardTreeRestorationGoalResponse.yml'
 DashboardTreesUnderRestorationActual:
   $ref: './DashboardTreesUnderRestorationActual.yml'
+DashboardGetProjectsResponse:
+  $ref: './DashboardGetProjectsResponse.yml'
+DashboardGetProjectsData: 
+  $ref: './DashboardGetProjectsData.yml'
+DashboardGetPolygonStatusResponse:
+  $ref: './DashboardGetPolygonStatusResponse.yml'
+DashboardBBOXProject:
+  $ref: './DashboardBBOXProject.yml'
+DashboardBBOXCountry:
+  $ref: './DashboardBBOXCountry.yml'
+DashboardPolygonData:
+  $ref: './DashboardPolygonData.yml'

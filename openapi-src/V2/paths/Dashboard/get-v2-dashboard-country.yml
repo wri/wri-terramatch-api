@@ -1,0 +1,16 @@
+summary: Get the bounding box of a country
+tags:
+  - Country
+parameters:
+  - in: path
+    name: country
+    type: string
+    description: ISO code of the country
+    required: true
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardBBOXCountry'
+  '404':
+    description: Country not found
