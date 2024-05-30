@@ -2598,3 +2598,9 @@
 /v2/terrafund/polygon/{uuid}:
   get:
     $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'
+/users-register:
+  post:
+    $ref: './Users/post-users-register.yml'
+/v2/project-pipeline:
+  get:
+    $ref: './ProjectPipeline/get-v2-project-pipeline.yml'

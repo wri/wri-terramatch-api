@@ -1,0 +1,19 @@
+summary: Create a user role
+tags:
+  - Users Roles
+security: []
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - name: Body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/RoleUserCreate'
+responses:
+  '201':
+    description: Created
+    schema:
+      $ref: '../../definitions/_index.yml#/RoleUserRead'
