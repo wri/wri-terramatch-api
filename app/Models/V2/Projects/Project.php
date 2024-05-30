@@ -25,6 +25,8 @@ use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Workdays\WorkdayDemographic;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -357,6 +359,21 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     }
 
     public function getWorkdayCountAttribute(): int
+    {
+        return WorkdayDemographic::whereIn(
+            'workday_id',
+            Workday::where('workdayable_type', SiteReport::class)
+                ->whereIn('workdayable_id', $this->submittedSiteReports()->select('v2_site_reports.id'))
+                ->select('id')
+        )->orWhereIn(
+            'workday_id',
+            Workday::where('workdayable_type', ProjectReport::class)
+                ->whereIn('workdayable_id', $this->reports()->hasBeenSubmitted()->select('id'))
+                ->select('id')
+        )->gender()->sum('amount') ?? 0;
+    }
+
+    public function getSelfReportedWorkdayCountAttribute(): int
     {
         $sumQueries = [
             DB::raw('sum(`workdays_paid`) as paid'),
