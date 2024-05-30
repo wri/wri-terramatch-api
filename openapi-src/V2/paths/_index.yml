@@ -2595,3 +2595,6 @@
 /v2/dashboard/view-project/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-view-project-uuid.yml'
+/v2/terrafund/polygon/{uuid}:
+  get:
+    $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'
