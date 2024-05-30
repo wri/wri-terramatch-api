@@ -44757,6 +44757,57 @@ definitions:
           ModifiedDate:
             type: string
             format: date
+  PolygonSiteStatusRequestPost:
+    type: object
+    properties:
+      status:
+        type: string
+      comment:
+        type: string
+  SiteStatusResponse:
+    type: object
+    properties:
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+  SitePolygonResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      poly_name:
+        type: string
+      plantstart:
+        type: string
+        format: date
+      plantend:
+        type: string
+        format: date
+      practice:
+        type: string
+      target_sys:
+        type: string
+      distr:
+        type: string
+      num_trees:
+        type: integer
+      calc_area:
+        type: number
+        format: float
+      status:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95836,3 +95887,105 @@ paths:
                         ModifiedDate:
                           type: string
                           format: date
+  '/v2/admin/site-polygon/{UUID}':
+    get:
+      operationId: get-v2-admin-site-polygon-by-site-uuid
+      summary: Get site site-polygon by site UUID
+      tags:
+        - V2 Sites
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  uuid:
+                    type: string
+                  poly_name:
+                    type: string
+                  plantstart:
+                    type: string
+                    format: date
+                  plantend:
+                    type: string
+                    format: date
+                  practice:
+                    type: string
+                  target_sys:
+                    type: string
+                  distr:
+                    type: string
+                  num_trees:
+                    type: integer
+                  calc_area:
+                    type: number
+                    format: float
+                  status:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Site polygon not found
+        '500':
+          description: Internal Server Error
+    put:
+      operationId: put-v2-admin-polygon-sites-uuid
+      summary: update polygon site status
+      tags:
+        - V2 Sites
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the polygon site
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity_uuid:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  attachment_url:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error

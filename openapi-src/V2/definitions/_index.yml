@@ -336,3 +336,9 @@ RoleUserRead:
   $ref: './RoleUserRead.yml'
 ProjectPipeline:
   $ref: './ProjectPipeline.yml'
+PolygonSiteStatusRequestPost:
+  $ref: './PolygonSiteStatusRequestPost.yml'
+SiteStatusResponse:
+  $ref: './SiteStatusResponse.yml'
+SitePolygonResponse:
+  $ref: './SitePolygonResponse.yml'

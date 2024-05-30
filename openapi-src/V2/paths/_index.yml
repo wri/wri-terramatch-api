@@ -2604,3 +2604,8 @@
 /v2/project-pipeline:
   get:
     $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
+/v2/admin/site-polygon/{UUID}:
+  get:
+    $ref: './Sites/get-v2-admin-site-polygon-uuid.yml'
+  put:
+    $ref: './Sites/put-v2-admin-site-polygon-uuid.yml'
