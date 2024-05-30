@@ -4,6 +4,7 @@ description: Retrieve site polygon data for the given UUID.
 parameters:
   - in: path
     name: uuid
+    type: string
     required: true
     schema:
       type: string
