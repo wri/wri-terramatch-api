@@ -7,10 +7,11 @@ use App\Http\Resources\V2\Dashboard\ViewProjectResource;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ViewProjectController extends Controller
 {
-    public function __invoke(String $uuid): ViewProjectResource
+    public function getIfUserIsAllowedToProject(String $uuid): ViewProjectResource
     {
         $user = Auth::user();
         $role = $user->role;
@@ -48,5 +49,28 @@ class ViewProjectController extends Controller
         }
 
         return new ViewProjectResource($response);
+    }
+
+    public function getAllProjectsAllowedToUser()
+    {
+        $user = Auth::user();
+        $role = $user->role;
+        Log::info($role);
+        if ($role === 'government') {
+            $projectUuids = Project::where('country', $user->country)->pluck('uuid');
+        } elseif ($role === 'funder') {
+            $projectUuids = Project::where('framework_key', $user->program)->pluck('uuid');
+        } elseif ($role === 'project_developer') {
+            $projectIds = ProjectInvite::where('email_address', $user->email_address)
+                ->pluck('project_id');
+            $projectUuids = Project::whereIn('id', $projectIds)->pluck('uuid');
+        } elseif ($role === 'admin' || $role === 'terrafund_admin') {
+            $projectUuids = null;
+        } else {
+            $projectUuids = null;
+        }
+        Log::info('Returning this value'. $projectUuids);
+
+        return new ViewProjectResource($projectUuids);
     }
 };

@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\AuditStatusResource;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Projects\Project;
-use Illuminate\Http\Request;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use Illuminate\Http\Request;
 
 class GetAuditStatusController extends Controller
 {
@@ -44,8 +44,10 @@ class GetAuditStatusController extends Controller
                     'created_by' => $attachment->created_by,
                 ];
             });
+
             return $audit_with_entity;
         });
+
         return AuditStatusResource::collection($audit_statuses_with_entity);
     }
 
@@ -65,6 +67,7 @@ class GetAuditStatusController extends Controller
                 # code...
                 break;
         }
+
         return $entity::where('uuid', $entity_uuid)->first();
     }
 }

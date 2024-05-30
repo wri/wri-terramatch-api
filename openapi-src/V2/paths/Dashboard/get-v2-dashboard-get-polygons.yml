@@ -1,0 +1,19 @@
+summary: Retrieve all polygons.
+description: |
+  This endpoint returns all polygons by project uuid.
+parameters:
+  - in: query
+    name: uuid
+    type: string
+    description: uuid for the given project
+responses:
+  '200':
+    description: Successful response
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/DashboardGetProjectsResponse'
+  '400':  
+    description: Bad request
+  '500':
+    description: Internal server error

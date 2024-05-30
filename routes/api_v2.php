@@ -8,7 +8,12 @@ use App\Http\Controllers\V2\Applications\AdminViewApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
+use App\Http\Controllers\V2\Attachment\GetAttachmentController;
 use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
+use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\GetAuditStatusProjectPolygonsController;
+use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\UpdateAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
@@ -126,17 +131,12 @@ use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
+// use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
-// use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
-use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
-use App\Http\Controllers\V2\AuditStatus\GetAuditStatusProjectPolygonsController;
-use App\Http\Controllers\V2\Attachment\GetAttachmentController;
-use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
-use App\Http\Controllers\V2\AuditStatus\UpdateAuditStatusController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
@@ -149,8 +149,8 @@ use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController
 use App\Http\Controllers\V2\ProjectReports\AdminIndexProjectReportsController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
 use App\Http\Controllers\V2\Projects\AdminIndexProjectsController;
-use App\Http\Controllers\V2\Projects\AdminProjectsUpdateStatusController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
+use App\Http\Controllers\V2\Projects\AdminProjectsUpdateStatusController;
 use App\Http\Controllers\V2\Projects\CreateBlankProjectWithFormController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\CreateProjectWithFormController;
@@ -176,6 +176,8 @@ use App\Http\Controllers\V2\Reports\NothingToReportReportController;
 use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
+use App\Http\Controllers\V2\Sites\AdminSiteIndexSitePolygonsController;
+use App\Http\Controllers\V2\Sites\AdminSitePolygonsUpdateStatusController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
 use App\Http\Controllers\V2\Sites\AdminSitesUpdateStatusController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
@@ -221,8 +223,6 @@ use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\V2\Sites\AdminSiteIndexSitePolygonsController;
-use App\Http\Controllers\V2\Sites\AdminSitePolygonsUpdateStatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -722,7 +722,8 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
-    Route::get('/view-project/{uuid}', ViewProjectController::class);
+    Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
+    Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
 });
 Route::prefix('project-pipeline')->group(function () {
     Route::get('/', GetProjectPipelineController::class);
@@ -743,4 +744,3 @@ Route::prefix('audit-status')->group(function () {
 Route::prefix('attachment')->group(function () {
     Route::get('/', GetAttachmentController::class);
 });
-

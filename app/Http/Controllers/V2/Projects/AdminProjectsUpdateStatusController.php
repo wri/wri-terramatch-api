@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\V2\Projects;
 
 use App\Http\Controllers\Controller;
-use App\Models\V2\Projects\Project;
-use Illuminate\Http\Request;
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\Projects\Project;
+use Illuminate\Http\Request;
 
 class AdminProjectsUpdateStatusController extends Controller
 {
@@ -19,7 +19,7 @@ class AdminProjectsUpdateStatusController extends Controller
         if (isset($body['status'])) {
             $project['status'] = $body['status'];
             $this->saveAuditStatus('Project', $project->uuid, $body['status'], $body['comment'], $body['type']);
-        } else if (isset($body['is_active'])) {
+        } elseif (isset($body['is_active'])) {
             AuditStatus::where('entity_uuid', $project->uuid)
                 ->where('type', $body['type'])
                 ->where('is_active', true)
@@ -27,6 +27,7 @@ class AdminProjectsUpdateStatusController extends Controller
             $this->saveAuditStatus('Project', $project->uuid, $project->status, $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
         }
         $project->update();
+
         return $project;
     }
 }

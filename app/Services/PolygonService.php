@@ -28,7 +28,7 @@ class PolygonService
     {
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
-            if ($site_id !== null){
+            if ($site_id !== null) {
                 $feature['properties']['site_id'] = $site_id;
             }
             if ($feature['geometry']['type'] === 'Polygon') {
@@ -184,7 +184,7 @@ class PolygonService
             'distr' => $properties['distr'] ?? null,
             'num_trees' => $properties['num_trees'],
             'calc_area' => $properties['area'] ?? null,
-            'status' => "submitted",
+            'status' => 'submitted',
         ];
     }
 }

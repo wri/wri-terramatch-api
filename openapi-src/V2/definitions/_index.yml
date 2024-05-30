@@ -280,3 +280,53 @@ V2TerrafundCriteriaData:
   $ref: './V2TerrafundCriteriaData.yml'
 V2TerrafundCriteriaSite:
   $ref: './V2TerrafundCriteriaSite.yml'
+DashboardProjectAvailableResponse:
+  $ref: './DashboardProjectAvailableResponse.yml'
+DashboardVolunteersSurvivalRateResponse:
+  $ref: './DashboardVolunteersSurvivalRateResponse.yml'
+DashboardVolundteersSurvivalRateData:
+  $ref: './DashboardVolundteersSurvivalRateData.yml'
+DashboardTotalSectionHeaderResponse:
+  $ref: './DashboardTotalSectionHeaderResponse.yml'
+DashboardTopProjectsResponse:
+  $ref: './DashboardTopProjectsResponse.yml'
+DashboardTopPlantedTree:
+  $ref: './DashboardTopPlantedTree.yml'
+DashboardTopTreeSpecies:
+  $ref: './DashboardTopTreeSpecies.yml'
+DashboardActiveCountriesResponse:
+  $ref: './DashboardActiveCountriesResponse.yml'
+DashboardActiveProjectsListViewResponse:
+  $ref: './DashboardActiveProjectsListViewResponse.yml'
+DashboardCountriesResponse:
+  $ref: './DashboardCountriesResponse.yml'
+DashboardCountryData:
+  $ref: './DashboardCountryData.yml'
+DashboardCountryInfo:
+  $ref: './DashboardCountryInfo.yml'
+DashboardProjectProfileResponse:
+  $ref: './DashboardProjectProfileResponse.yml'
+DashboardProjectProfileData:
+  $ref: './DashboardProjectProfileData.yml'
+DashboardJobsCreatedResponse:
+  $ref: './DashboardJobsCreatedResponse.yml'
+DashboardRestorationStrategyResponse:
+  $ref: './DashboardRestorationStrategyResponse.yml'
+DashboardTreeRestorationGoalResponse:
+  $ref: './DashboardTreeRestorationGoalResponse.yml'
+DashboardTreesUnderRestorationActual:
+  $ref: './DashboardTreesUnderRestorationActual.yml'
+DashboardGetProjectsResponse:
+  $ref: './DashboardGetProjectsResponse.yml'
+DashboardGetProjectsData:
+  $ref: './DashboardGetProjectsData.yml'
+DashboardGetPolygonStatusResponse:
+  $ref: './DashboardGetPolygonStatusResponse.yml'
+DashboardBBOXCountry:
+  $ref: './DashboardBBOXCountry.yml'
+DashboardPolygonData:
+  $ref: './DashboardPolygonData.yml'
+DashboardBBOXProject:
+  $ref: './DashboardBBOXProject.yml'
+DashboardProjectViewResponse:
+  $ref: './DashboardProjectViewResponse.yml'

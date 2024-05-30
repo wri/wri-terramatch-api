@@ -36,7 +36,6 @@ tags:
   - name: V2 Tasks
   - name: V2 Users
   - name: V2 Workdays
-  - name: V2 Project Pipeline
 definitions:
   TreeSpeciesPaginated:
     type: object
@@ -43961,527 +43960,6 @@ definitions:
     properties:
       email_address:
         type: string
-  RoleUserCreate:
-    title: RoleUserCreate
-    type: object
-    properties:
-      first_name:
-        type: string
-      last_name:
-        type: string
-      email_address:
-        type: string
-      password:
-        type: string
-      job_role:
-        type: string
-      primary_role:
-        type: string
-      country:
-        type: string
-      program:
-        type: string
-      facebook:
-        type: string
-      twitter:
-        type: string
-      instagram:
-        type: string
-      linkedin:
-        type: string
-      phone_number:
-        type: string
-      whatsapp_phone:
-        type: string
-      callback_url:
-        type: string
-  RoleUserRead:
-    title: RoleUserRead
-    type: object
-    properties:
-      id:
-        type: integer
-      organisation_id:
-        type: integer
-      organisation_name:
-        type: string
-      my_organisation:
-        $ref: '#/definitions/V2AdminOrganisationRead'
-      my_monitoring_organisations:
-        type: array
-        items:
-          $ref: '#/definitions/V2MonitoringOrganisationRead'
-      first_name:
-        type: string
-      last_name:
-        type: string
-      email_address:
-        type: string
-      email_address_verified_at:
-        type: string
-        format: date-time
-      primary_role:
-        type: string
-      country:
-        type: string
-      program:
-        type: string
-      last_logged_in_at:
-        type: string
-        format: date-time
-      job_role:
-        type: string
-      facebook:
-        type: string
-      twitter:
-        type: string
-      instagram:
-        type: string
-      linkedin:
-        type: string
-      avatar:
-        type: string
-      phone_number:
-        type: string
-      whatsapp_phone:
-        type: string
-      has_ppc_projects:
-        type: boolean
-      has_terrafund_projects:
-        type: boolean
-  DashboardCountriesResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/DashboardCountryData'
-  DashboardCountryData:
-    type: object
-    properties:
-      id:
-        type: integer
-      country_slug:
-        type: string
-      data:
-        $ref: '#/definitions/DashboardCountryInfo'
-  DashboardCountryInfo:
-    type: object
-    properties:
-      label:
-        type: string
-      icon:
-        type: string
-  SitePolygonsDataResponse:
-    type: array
-    items:
-      $ref: '#/definitions/SitePolygon'
-  SitePolygon:
-    type: object
-    properties:
-      id:
-        type: integer
-      uuid:
-        type: string
-      project_id:
-        type: string
-      proj_name:
-        type: string
-      org_name:
-        type: string
-      poly_id:
-        type: string
-      poly_name:
-        type: string
-      site_id:
-        type: string
-      site_name:
-        type: string
-      plantstart:
-        type: string
-        format: date
-      plantend:
-        type: string
-        format: date
-      practice:
-        type: string
-      target_sys:
-        type: string
-      distr:
-        type: string
-      num_trees:
-        type: integer
-      calc_area:
-        type: number
-        format: float
-      created_by:
-        type: string
-      last_modified_by:
-        type: string
-      deleted_at:
-        type: string
-        format: date-time
-      created_at:
-        type: string
-        format: date-time
-      updated_at:
-        type: string
-        format: date-time
-      status:
-        type: string
-      country:
-        type: string
-  SitePolygonsBboxResponse:
-    type: object
-    properties:
-      bbox:
-        type: array
-  GeoJSONResponse:
-    type: object
-    properties:
-      type:
-        type: string
-      features:
-        type: array
-        items:
-          type: object
-          properties:
-            type:
-              type: string
-            geometry:
-              type: object
-              properties:
-                type:
-                  type: string
-                coordinates:
-                  type: array
-            "properties":
-              type: object
-              properties:
-                poly_name:
-                  type: string
-                plantstart:
-                  type: string
-                plantend:
-                  type: string
-                practice:
-                  type: string
-                target_sys:
-                  type: string
-                distr:
-                  type: string
-                num_trees:
-                  type: integer
-  PolygonBboxResponse:
-    type: object
-    properties:
-      bbox:
-        type: array
-  SitePolygonResponse:
-    type: object
-    properties:
-      id:
-        type: integer
-      uuid:
-        type: string
-      poly_name:
-        type: string
-      plantstart:
-        type: string
-        format: date
-      plantend:
-        type: string
-        format: date
-      practice:
-        type: string
-      target_sys:
-        type: string
-      distr:
-        type: string
-      num_trees:
-        type: integer
-      calc_area:
-        type: number
-        format: float
-      status:
-        type: string
-  SitePolygonCreateResponse:
-    type: object
-    properties:
-      message:
-        type: string
-        example: Site polygon created successfully
-      uuid:
-        type: string
-        description: UUID of the created site polygon
-      area:
-        type: number
-        format: double
-        description: Calculated area in hectares
-  GeometryData:
-    type: object
-    properties:
-      geometry:
-        type: object
-        properties:
-          coordinates:
-            type: array
-          type:
-            type: string
-  DashboardPolygonResponse: 
-    type: object
-    properties:
-      uuid:
-        type: string
-  GeometryString:
-    type: object
-    properties:
-      geometry:
-        type: string
-  GeojsonData: 
-    type: object
-    properties:
-      geojson:
-        type: object
-        description: The GeoJSON representation of the polygon geometry.
-  ProjectPipeline:
-    type: object
-    properties:
-      data:
-        type: object
-        properties:
-          name:
-            type: object
-            properties:
-              name:
-                type: string
-              description:
-                type: string
-          date:
-            type: string
-            format: date
-          id:
-            type: integer
-          SubmittedBy:
-            type: string
-          Program:
-            type: string
-          Cohort:
-            type: string
-          PublishFor:
-            type: string
-          URL:
-            type: string
-          CreatedDate:
-            type: string
-            format: date
-          ModifiedDate:
-            type: string
-            format: date
-  ProjectPipelinePost:
-    properties:
-      date:
-        type: string
-        format: date
-      id:
-        type: integer
-      SubmittedBy:
-        type: string
-      Program:
-        type: string
-      Cohort:
-        type: string
-      PublishFor:
-        type: string
-      URL:
-        type: string
-      CreatedDate:
-        type: string
-        format: date
-      ModifiedDate:
-        type: string
-        format: date
-  FeatureCollection:
-    type: object
-    properties:
-      type:
-        type: string
-  Feature:
-    type: object
-    properties:
-      type:
-        type: string
-      geometry:
-        $ref: '#/definitions/Geometry'
-      properties:
-        $ref: '#/definitions/FeatureProperties'
-  Geometry:
-    type: object
-    properties:
-      type:
-        type: string
-      coordinates:
-        type: array
-        items:
-          type: array
-          items:
-            type: array
-            items:
-              type: number
-  FeatureProperties:
-    type: object
-    properties:
-      poly_name:
-        type: string
-      plantstart:
-        type: string
-        format: date
-      plantend:
-        type: string
-        format: date
-      practice:
-        type: string
-      target_sys:
-        type: string
-      distr:
-        type: string
-      num_trees:
-        type: integer
-  SiteStatusRequestPost:
-    type: object
-    properties:
-      status:
-        type: string
-      comment:
-        type: string
-  PolygonSiteStatusRequestPost:
-    type: object
-    properties:
-      status:
-        type: string
-      comment:
-        type: string
-  ProjectStatusRequestPost:
-    type: object
-    properties:
-      status:
-        type: string
-      comment:
-        type: string
-  SiteStatusResponse:
-    type: object
-    properties:
-      entity_uuid:
-        type: string
-      status:
-        type: string
-      comment:
-        type: string
-      attachment_url:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-  PolygonSiteStatusResponse:
-    type: object
-    properties:
-      entity_uuid:
-        type: string
-      status:
-        type: string
-      comment:
-        type: string
-      attachment_url:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-  ProjectStatusResponse:
-    type: object
-    properties:
-      entity_uuid:
-        type: string
-      status:
-        type: string
-      comment:
-        type: string
-      attachment_url:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-  AuditStatusResponseWithData:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/components/schemas/AuditStatusResponse'
-  AuditStatusResponse: 
-    type: object
-    properties:
-      entity_uuid:
-        type: string
-      entity:
-        type: string
-      status:
-        type: string
-      comment:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-      is_active:
-        type: boolean
-      is_submitted:
-        type: boolean
-      type:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      request_removed:
-        type: boolean
-      attachments:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttachmentResponse'
-  AuditStatusPost:
-    properties:
-      entity:
-        type: string
-      entity_uuid:
-        type: string
-      status:
-        type: string
-      comment:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-      is_active:
-        type: boolean
-      is_submitted:
-        type: boolean
-      type:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      request_removed:
-        type: boolean
   WorkdayDemographic:
     title: WorkdayDemographic
     type: object
@@ -44606,19 +44084,6 @@ definitions:
             valid:
               type: integer
               description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
-  AttachmentResponse: 
-    type: object
-    properties:
-      id:
-        type: number
-      entity_id:
-        type: string
-      attachment:
-        type: string
-      created_by:
-        type: string
-      url_file:
-        type: string
   V2TerrafundCriteriaSite:
     type: array
     items:
@@ -44633,6 +44098,547 @@ definitions:
         checked:
           type: boolean
           description: Indicates if the polygon has been checked before or not.
+  DashboardProjectAvailableResponse:
+    type: array
+  DashboardVolunteersSurvivalRateResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          total_volunteers:
+            type: integer
+            description: Total number of volunteers.
+          men_volunteers:
+            type: integer
+            description: Total number of male volunteers.
+          women_volunteers:
+            type: integer
+            description: Total number of female volunteers.
+          youth_volunteers:
+            type: integer
+            description: Total number of youth volunteers.
+          non_youth_volunteers:
+            type: integer
+            description: Total number of non-youth volunteers.
+          non_profit_survival_rate:
+            type: number
+            description: Survival rate for non-profit entities.
+          enterprise_survival_rate:
+            type: number
+            description: Survival rate for enterprise entities.
+          number_of_sites:
+            type: number
+            description: number of sites.
+          number_of_nurseries:
+            type: number
+            description: number of nurseries.
+  DashboardVolundteersSurvivalRateData:
+    type: object
+    properties:
+      total_volunteers:
+        type: integer
+        description: Total number of volunteers.
+      men_volunteers:
+        type: integer
+        description: Total number of male volunteers.
+      women_volunteers:
+        type: integer
+        description: Total number of female volunteers.
+      youth_volunteers:
+        type: integer
+        description: Total number of youth volunteers.
+      non_youth_volunteers:
+        type: integer
+        description: Total number of non-youth volunteers.
+      non_profit_survival_rate:
+        type: number
+        description: Survival rate for non-profit entities.
+      enterprise_survival_rate:
+        type: number
+        description: Survival rate for enterprise entities.
+      number_of_sites:
+        type: number
+        description: number of sites.
+      number_of_nurseries:
+        type: number
+        description: number of nurseries.
+  DashboardTotalSectionHeaderResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          total_non_profit_count:
+            type: integer
+            description: Total number of non profit projects.
+          total_enterprise_count:
+            type: integer
+            description: Total number of enterprise projects.
+          total_entries:
+            type: integer
+            description: Total number of jobs created.
+          total_hectares_restored:
+            type: integer
+            description: Total number of hectares restored.
+          total_hectares_restored_goal:
+            type: integer
+            description: Total number of hectares restored goal.
+          total_trees_restored:
+            type: integer
+            description: Total number of trees restored.
+          total_trees_restored_goal:
+            type: integer
+            description: Total number of trees restored goal.
+  DashboardTopProjectsResponse:
+    properties:
+      data:
+        type: object
+        properties:
+          top_projects_most_planted_trees:
+            type: array
+            items:
+              type: object
+              properties:
+                project:
+                  type: string
+                uuid:
+                  type: string
+                trees_planted:
+                  type: integer
+          top_tree_species_planted:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                amount:
+                  type: integer
+  DashboardTopPlantedTree:
+    type: object
+    properties:
+      project:
+        type: string
+      uuid:
+        type: string
+      trees_planted:
+        type: integer
+  DashboardTopTreeSpecies:
+    type: object
+    properties:
+      name:
+        type: string
+      amount:
+        type: integer
+  DashboardActiveCountriesResponse:
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            country_slug:
+              type: string
+            country:
+              type: string
+            number_of_projects:
+              type: integer
+            total_trees_planted:
+              type: integer
+            total_jobs_created:
+              type: integer
+            number_of_sites:
+              type: integer
+            number_of_nurseries:
+              type: integer
+  DashboardActiveProjectsListViewResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+            name:
+              type: string
+            organisation:
+              type: string
+            trees_under_restoration:
+              type: integer
+            jobs_created:
+              type: integer
+            volunteers:
+              type: integer
+            beneficiaries:
+              type: integer
+            survival_rate:
+              type: integer
+            number_of_sites:
+              type: integer
+            number_of_nurseries:
+              type: integer
+            project_country:
+              type: string
+            country_slug:
+              type: string
+            number_of_trees_goal:
+              type: integer
+            date_added:
+              type: string
+      current_page:
+        type: integer
+      per_page:
+        type: integer
+      total:
+        type: integer
+      last_page:
+        type: integer
+  DashboardCountriesResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            country_slug:
+              type: string
+            data:
+              type: object
+              properties:
+                label:
+                  type: string
+                icon:
+                  type: string
+  DashboardCountryData:
+    type: object
+    properties:
+      id:
+        type: integer
+      country_slug:
+        type: string
+      data:
+        type: object
+        properties:
+          label:
+            type: string
+          icon:
+            type: string
+  DashboardCountryInfo:
+    type: object
+    properties:
+      label:
+        type: string
+      icon:
+        type: string
+  DashboardProjectProfileResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+          descriptionObjetive:
+            type: string
+          country:
+            type: string
+          organisation:
+            type: string
+          survivalRate:
+            type: integer
+          countrySlug:
+            type: string
+          restorationStrategy:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+          targetLandUse:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+          landTenure:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+  DashboardProjectProfileData:
+    type: object
+    properties:
+      name:
+        type: string
+      descriptionObjetive:
+        type: string
+      country:
+        type: string
+      organisation:
+        type: string
+      survivalRate:
+        type: integer
+      countrySlug:
+        type: string
+      restorationStrategy:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
+      targetLandUse:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
+      landTenure:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
+  DashboardJobsCreatedResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          totalJobsCreated:
+            type: integer
+          forProfitJobsCreated:
+            type: integer
+          nonProfitJobsCreated:
+            type: integer
+          total_ft:
+            type: integer
+          total_pt:
+            type: integer
+          total_men:
+            type: integer
+          total_pt_men:
+            type: integer
+          total_ft_men:
+            type: integer
+          total_women:
+            type: integer
+          total_pt_women:
+            type: integer
+          total_ft_women:
+            type: integer
+          total_youth:
+            type: integer
+          total_pt_youth:
+            type: integer
+          total_ft_youth:
+            type: integer
+          total_non_youth:
+            type: integer
+          total_pt_non_youth:
+            type: integer
+          total_ft_non_youth:
+            type: integer
+  DashboardRestorationStrategyResponse:
+    type: object
+    properties:
+      restorationStrategies:
+        type: object
+        properties:
+          direct-seeding:
+            type: integer
+          tree-planting:
+            type: integer
+          assisted-natural-regeneration:
+            type: integer
+      landUseTypes:
+        type: object
+        properties:
+          agroforest:
+            type: integer
+          open-natural-ecosystem:
+            type: integer
+          mangrove:
+            type: integer
+          natural-forest:
+            type: integer
+          peatland:
+            type: integer
+          riparian-area-or-wetland:
+            type: integer
+          silvopasture:
+            type: integer
+          urban-forest:
+            type: integer
+          woodlot-or-plantation:
+            type: integer
+      landTenures:
+        type: object
+        properties:
+          communal:
+            type: integer
+          indigenous:
+            type: integer
+          national_protected_area:
+            type: integer
+          other:
+            type: integer
+          private:
+            type: integer
+          public:
+            type: integer
+  DashboardTreeRestorationGoalResponse:
+    type: object
+    properties:
+      forProfitTreeCount:
+        type: integer
+      nonProfitTreeCount:
+        type: integer
+      totalTreesGrownGoal:
+        type: integer
+      treesUnderRestorationActualTotal:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date
+            treeSpeciesAmount:
+              type: integer
+            treeSpeciesPercentage:
+              type: number
+      treesUnderRestorationActualForProfit:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date
+            treeSpeciesAmount:
+              type: integer
+            treeSpeciesPercentage:
+              type: number
+      treesUnderRestorationActualNonProfit:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date
+            treeSpeciesAmount:
+              type: integer
+            treeSpeciesPercentage:
+              type: number
+      averageSurvivalRateTotal:
+        type: number
+      averageSurvivalRateForProfit:
+        type: number
+      averageSurvivalRateNonProfit:
+        type: number
+  DashboardTreesUnderRestorationActual:
+    type: object
+    properties:
+      dueDate:
+        type: string
+        format: date
+      treeSpeciesAmount:
+        type: integer
+      treeSpeciesPercentage:
+        type: number
+  DashboardGetProjectsResponse:
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+            name:
+              type: string
+            lat:
+              type: number
+              format: double
+            long:
+              type: number
+              format: double
+  DashboardGetProjectsData:
+    type: object
+    properties:
+      uuid:
+        type: string
+      name:
+        type: string
+      lat:
+        type: number
+        format: double
+      long:
+        type: number
+        format: double
+  DashboardGetPolygonStatusResponse:
+    properties:
+      data:
+        type: array
+        properties:
+          NeedsMoreInfo:
+            type: array
+            description: Ids of polygons that need more information
+          Submitted:
+            type: array
+            description: Ids of submitted polygons
+          Approved:
+            type: array
+            description: Ids of approved polygons
+  DashboardBBOXCountry:
+    type: object
+    properties:
+      bbox:
+        type: array
+  DashboardPolygonData:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+              description: Title of the data field
+            value:
+              type: string
+              description: Value of the data field
+            key:
+              type: string
+              description: Key of the data field
+  DashboardBBOXProject:
+    type: object
+    properties:
+      bbox:
+        type: array
+  DashboardProjectViewResponse:
+    type: object
+    properties:
+      data:
+        object: object
+        properties:
+          allowed:
+            type: boolean
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -71489,7 +71495,6 @@ paths:
       operationId: get-v2-admin-project-pitches
       description: ''
   /v2/admin/projects:
-
     get:
       summary: View projects as an admin
       tags:
@@ -90779,33 +90784,6 @@ paths:
         '200':
           description: OK
   '/v2/admin/sites/{UUID}':
-    put:
-      operationId: put-v2-admin-sites-uuid
-      summary: update site status
-      tags:
-        - V2 Sites
-      parameters:
-        - in: path
-          name: UUID
-          required: true
-          type: string
-          description: The UUID of the site
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/SiteStatusRequestPost'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/SiteStatusResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
     delete:
       summary: Delete a site
       operationId: delete-v2-admin-site-UUID
@@ -90969,33 +90947,6 @@ paths:
         '200':
           description: OK
   '/v2/admin/projects/{UUID}':
-    put:
-      operationId: put-v2-admin-projects-uuid
-      summary: update project status
-      tags:
-        - V2 Projects
-      parameters:
-        - in: path
-          name: UUID
-          required: true
-          type: string
-          description: The UUID of the project
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/ProjectStatusRequestPost'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/ProjectStatusResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
     delete:
       summary: Delete a project
       operationId: delete-v2-admin-projects-UUID
@@ -94344,808 +94295,7 @@ paths:
           description: OK
           schema:
             type: file
-  /users-register:
-    post:
-      summary: Create a user role
-      tags:
-        - Users Roles
-      security: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: Body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/RoleUserCreate'
-      responses:
-        '201':
-          description: Created
-          schema:
-            $ref: '#/definitions/RoleUserRead'
-  '/v2/sites/{site}/polygon':
-    get:
-      operationId: get-v2-site-polygons
-      summary: Get polygons for a specific site
-      parameters:
-        - in: path
-          name: site
-          required: true
-          type: string
-          description: The ID of the site
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/SitePolygonsDataResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/dashboard/countries':
-    get:
-      summary: Retrieve all countries list view.
-      description: |
-        This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
-      parameters:
-        - in: query
-          name: country
-          type: string
-          description: Optional. Filter counts and metrics by country.
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/DashboardCountriesResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: 'Internal server error'
-  '/v2/sites/{site}/bbox':
-    get:
-      operationId: get-v2-site-polygons-bbox
-      summary: Get bbox for a specific site
-      parameters:
-        - in: path
-          name: site
-          required: true
-          type: string
-          description: The ID of the site
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/SitePolygonsBboxResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/geojson/complete':
-    get:
-      summary: Get Polygon as GeoJSON
-      description: |
-        Retrieve polygon geometry and properties as GeoJSON.
-      parameters:
-        - in: query
-          name: uuid
-          type: string
-          required: true
-          description: UUID of the polygon geometry.
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/GeoJSONResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/geojson/site':
-    get:
-      summary: Get collection Feature as GeoJSON for a site
-      parameters:
-        - in: query
-          name: uuid
-          type: string
-          required: true
-          description: UUID of the aite.
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/FeatureCollection'
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/polygon/bbox/{uuid}':
-    get:
-      operationId: get-v2-polygon-bbox
-      summary: Get bbox for a polygon
-      parameters:
-        - in: path
-          name: uuid
-          required: true
-          type: string
-          description: The UUID of the polygon
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/PolygonBboxResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/site-polygon/{uuid}':
-    put:
-      operationId: put-v2-site-polygon-uuid
-      summary: Update site polygon
-      parameters:
-        - in: path
-          name: uuid
-          required: true
-          type: string
-          description: The UUID of the site polygon
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/SitePolygonResponse'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/SitePolygonResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-    post: 
-      operationId: post-v2-site-polygon-uuid
-      summary: create site polygon for polygon
-      parameters:
-        - in: path
-          name: uuid
-          required: true
-          type: string
-          description: The uuid of the polygon 
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/SitePolygonResponse'
-      responses:
-        '200':
-          description: site polygon successfully created
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/SitePolygonCreateResponse'
-        '404':
-          description: No polygon geometry found for the given UUID
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: No polygon geometry found for the given UUID.
-        '500':
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Internal Server Error
-  '/v2/terrafund/site-polygon/{uuid}/{siteUuid}':
-    post:
-      operationId: post-v2-site-polygon-siteUuid
-      summary: Create site polygon
-      parameters:
-        - in: path
-          name: uuid
-          required: true
-          type: string
-          description: The UUID of the polygon related
-        - in: path
-          name: siteUuid
-          required: true
-          type: string
-          description: The UUID of the site
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/SitePolygonResponse'
-      responses:
-        '201':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/SitePolygonCreateResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/polygon/{uuid}':
-    get:
-      summary: Get Site Polygon Data
-      description: Retrieve site polygon data for the given UUID.
-      parameters:
-        - in: path
-          name: uuid
-          type: string
-          required: true
-          schema:
-            type: string
-          description: The UUID of the site polygon.
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  site_polygon:
-                    type: object
-                    properties:
-                      calc_area:
-                        type: number
-                      created_at:
-                        type: string
-                        format: date-time
-                      created_by:
-                        type: string
-                        nullable: true
-                      deleted_at:
-                        type: string
-                        format: date-time
-                        nullable: true
-                      distr:
-                        type: string
-                        nullable: true
-                      id:
-                        type: integer
-                      last_modified_by:
-                        type: string
-                        nullable: true
-                      num_trees:
-                        type: integer
-                        nullable: true
-                      plantend:
-                        type: string
-                        format: date
-                        nullable: true
-                      plantstart:
-                        type: string
-                        format: date
-                      point_id:
-                        type: string
-                        nullable: true
-                      poly_id:
-                        type: string
-                      poly_name:
-                        type: string
-                      practice:
-                        type: string
-                        nullable: true
-                      site_id:
-                        type: string
-                        nullable: true
-                      status:
-                        type: string
-                      target_sys:
-                        type: string
-                        nullable: true
-                      updated_at:
-                        type: string
-                        format: date-time
-                      uuid:
-                        type: string
-        '404':
-          description: No site polygons found for the given UUID
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: No site polygons found for the given UUID.
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: An error message describing the issue.
-    put:
-      summary: Update geometry for a polygon
-      parameters:
-        - in: path
-          name: uuid
-          required: true
-          type: string
-          description: The UUID of the polygon geometry to update
-        - in: body
-          name: geometry
-          required: true
-          schema:
-            $ref: '#/definitions/GeometryString'
-          description: The new geometry data
-      responses:
-        '200':
-          description: Geometry updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Geometry updated successfully.
-                  geometry:
-                    type: object
-                    description: The updated geometry data
-                  uuid:
-                    type: string
-        '404':
-          description: No polygon geometry found for the given UUID
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: No polygon geometry found for the given UUID.
-        '500':
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Internal Server Error
-    delete:
-      summary: Delete polygon records
-      parameters:
-        - in: path
-          name: uuid
-          required: true
-          type: string
-          description: The UUID of the polygon geometry to delete
-      responses:
-        '204':
-          description: No Content
-  '/v2/terrafund/polygon/geojson/{uuid}':
-    get:
-      summary: Retrieve polygon GeoJSON by UUID
-      description: |
-        Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
-      parameters:
-        - in: path
-          name: uuid
-          type: string
-          required: true
-          description: The UUID of the polygon geometry to retrieve.
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/GeojsonData'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: Error message indicating that no polygon geometry was found for the provided UUID.
-  '/v2/project-pipeline':
-    get:
-      operationId: get-v2-fproject-pipeline
-      summary: Get all projects from the pipeline
-      tags: 
-        - V2 Project Pipeline
-      parameters:
-        - in: query
-          name: country
-          type: string
-          description: Optional. Filter counts and metrics by country.
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/definitions/ProjectPipeline'
-    post:
-      operationId: post-v2-fproject-pipeline
-      summary: Create a new project in the pipeline
-      tags: 
-        - V2 Project Pipeline
-      parameters:
-        - in: query
-          name: country
-          type: string
-          description: Optional. Filter counts and metrics by country.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/ProjectPipelinePost'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/ProjectPipelinePost'
-  '/v2/project-pipeline/{id}':
-    get:
-      operationId: get-v2-project-pipeline
-      summary: Get a project from the pipeline by ID
-      tags: 
-        - V2 Project Pipeline
-      parameters:
-        - type: string
-          name: id
-          in: path
-          required: true
-          description: show a specific project pipeline.
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/ProjectPipeline'
-    put:
-      operationId: update-v2-project-pipeline
-      summary: Update a project in the pipeline by ID
-      tags: 
-        - V2 Project Pipeline
-      parameters:
-        - type: string
-          name: id
-          in: path
-          required: true
-          description: edit a specific project pipeline.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/ProjectPipelinePost'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/ProjectPipelinePost'
-    delete:
-      summary: Delete a project from the pipeline by ID
-      parameters:
-        - type: string
-          name: id
-          in: path
-          required: true
-          description: delete a specific project pipeline.
-      responses:
-        '204':
-          description: No Content
-  '/v2/terrafund/upload-geojson':
-    post:
-      summary: Upload GeoJSON File
-      description: Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-                  description: The GeoJSON file to upload
-                uuid:
-                  type: string
-                  description: The UUID of the site associated with the GeoJSON file
-      responses:
-        '200':
-          description: GeoJSON file processed and inserted successfully
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-              uuid:
-                type: string
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/upload-shapefile':
-    post:
-      summary: Upload shapfile File
-      description: Uploads a shapefile file, converts it to GeoJSON, and inserts it into the database.
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-                  description: The shapefile file to upload
-                uuid:
-                  type: string
-                  description: The UUID of the site associated with the shapefile file
-      responses:
-        '200':
-          description: Shapefile processed and inserted successfully
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-              uuid:
-                type: string
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/upload-kml':
-    post:
-      summary: Upload KML File
-      description: Uploads a KML file, converts it to GeoJSON, and inserts it into the database.
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-                  description: The KML file to upload
-                uuid:
-                  type: string
-                  description: The UUID of the site associated with the KML file
-      responses:
-        '200':
-          description: KML file processed and inserted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  uuid:
-                    type: string
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/polygon':
-    post:
-      summary: Create a new polygon
-      operationId: post-v2-polygon
-      tags:
-        - V2 Terrafund
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/GeometryString'
-      responses:
-        '200':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/DashboardPolygonResponse'
-  '/v2/audit-status':
-    get:
-      operationId: get-v2-audits-status
-      summary: Get all audits status
-      tags: 
-        - V2 Audits Status
-      parameters:
-        - in: query
-          name: entity
-          type: string
-          required: true
-          description: required.
-        - in: query
-          name: uuid
-          type: string
-          required: true
-          description: required.
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/definitions/AuditStatusResponse'
-    post:
-      operationId: post-v2-audit-status
-      summary: Create a new audit status
-      tags: 
-        - V2 Audits Status
-      parameters:
-        - in: query
-          name: id
-          type: string
-          description: Optional.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/AuditStatusPost'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/AuditStatusResponse'
-  '/v2/audit-status/{id}':
-    get:
-      operationId: get-v2-audit-status
-      summary: Get a audit from the status by ID
-      tags: 
-        - V2 Audits Status
-      parameters:
-        - type: string
-          name: id
-          in: path
-          required: true
-          description: show a specific audit status.
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/SitePolygonResponse'
-    put:
-      operationId: update-v2-audit-status
-      summary: Update a audit in the status by ID
-      tags: 
-        - V2 Audits Status
-      parameters:
-        - type: string
-          name: id
-          in: path
-          required: true
-          description: edit a specific audit status.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/AuditStatusPost'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/AuditStatusResponse'
-    delete:
-      summary: Delete a audit from the status by ID
-      parameters:
-        - type: string
-          name: id
-          in: path
-          required: true
-          description: delete a specific audit status.
-      responses:
-        '204':
-          description: No Content
-  '/v2/admin/site-polygon/{UUID}':
-    get:
-      operationId: get-v2-admin-site-polygon-by-site-uuid
-      summary: Get site site-polygon by site UUID
-      tags:
-        - V2 Sites
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/SitePolygonResponse'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Site polygon not found
-        '500':
-          description: Internal Server Error
-    put:
-      operationId: put-v2-admin-polygon-sites-uuid
-      summary: update polygon site status
-      tags:
-        - V2 Sites
-      parameters:
-        - in: path
-          name: UUID
-          required: true
-          type: string
-          description: The UUID of the polygon site
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/PolygonSiteStatusRequestPost'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/SiteStatusResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/validation/polygon':
+  /v2/terrafund/validation/polygon:
     get:
       summary: Get validation results for a polygon
       parameters:
@@ -95183,7 +94333,7 @@ paths:
                         valid:
                           type: integer
                           description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
-  '/v2/terrafund/validation/criteria-data':
+  /v2/terrafund/validation/criteria-data:
     get:
       summary: Get criteria data validation results for a polygon
       parameters:
@@ -95221,7 +94371,7 @@ paths:
                         valid:
                           type: integer
                           description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
-  '/v2/terrafund/validation/sitePolygons':
+  /v2/terrafund/validation/sitePolygons:
     get:
       summary: Run validation for all polygons in a site
       parameters:
@@ -95243,7 +94393,7 @@ paths:
                   message:
                     type: string
                     description: A message indicating the completion of validation for all site polygons.
-  '/v2/terrafund/validation/site':
+  /v2/terrafund/validation/site:
     get:
       summary: Get criteria data validation results for all polygons in a site
       parameters:
@@ -95273,26 +94423,6 @@ paths:
                     checked:
                       type: boolean
                       description: Indicates if the polygon has been checked before or not.
-  '/v2/attachment':
-    get:
-      operationId: get-v2-attachments
-      summary: Get all attachments
-      tags: 
-        - V2 attachment
-      parameters:
-        - in: query
-          name: entity_uuid
-          type: string
-          description: required.
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/definitions/AuditStatusResponse'
   /v2/geometry/validate:
     post:
       summary: Test a set of geometries for validity
@@ -95519,3 +94649,919 @@ paths:
           description: This account does not have permission to update the polygon.
         '404':
           description: Geometry was not found.
+  /v2/dashboard/volunteers-survival-rate:
+    get:
+      summary: Retrieve counts and metrics for volunteers survival rate
+      description: |
+        This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter counts and metrics by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total_volunteers:
+                        type: integer
+                        description: Total number of volunteers.
+                      men_volunteers:
+                        type: integer
+                        description: Total number of male volunteers.
+                      women_volunteers:
+                        type: integer
+                        description: Total number of female volunteers.
+                      youth_volunteers:
+                        type: integer
+                        description: Total number of youth volunteers.
+                      non_youth_volunteers:
+                        type: integer
+                        description: Total number of non-youth volunteers.
+                      non_profit_survival_rate:
+                        type: number
+                        description: Survival rate for non-profit entities.
+                      enterprise_survival_rate:
+                        type: number
+                        description: Survival rate for enterprise entities.
+                      number_of_sites:
+                        type: number
+                        description: number of sites.
+                      number_of_nurseries:
+                        type: number
+                        description: number of nurseries.
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/total-section-header:
+    get:
+      summary: Retrieve totals and metrics for total section header
+      description: |
+        This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total_non_profit_count:
+                        type: integer
+                        description: Total number of non profit projects.
+                      total_enterprise_count:
+                        type: integer
+                        description: Total number of enterprise projects.
+                      total_entries:
+                        type: integer
+                        description: Total number of jobs created.
+                      total_hectares_restored:
+                        type: integer
+                        description: Total number of hectares restored.
+                      total_hectares_restored_goal:
+                        type: integer
+                        description: Total number of hectares restored goal.
+                      total_trees_restored:
+                        type: integer
+                        description: Total number of trees restored.
+                      total_trees_restored_goal:
+                        type: integer
+                        description: Total number of trees restored goal.
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/top-trees-planted:
+    get:
+      summary: Retrieve top 10 projects and top 20 tree species planted
+      description: |
+        This endpoint returns Tops and metrics related to projects and tree species.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      top_projects_most_planted_trees:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            project:
+                              type: string
+                            uuid:
+                              type: string
+                            trees_planted:
+                              type: integer
+                      top_tree_species_planted:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            amount:
+                              type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/active-countries:
+    get:
+      summary: Retrieve all active countries.
+      description: |
+        This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter restoration strategy by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        country_slug:
+                          type: string
+                        country:
+                          type: string
+                        number_of_projects:
+                          type: integer
+                        total_trees_planted:
+                          type: integer
+                        total_jobs_created:
+                          type: integer
+                        number_of_sites:
+                          type: integer
+                        number_of_nurseries:
+                          type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/active-projects:
+    get:
+      summary: Retrieve all active projects list view.
+      description: |
+        This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: per_page
+          type: string
+          description: Optional. per_page to projects.
+        - in: query
+          name: page
+          type: string
+          description: Optional. page to projects.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        name:
+                          type: string
+                        organisation:
+                          type: string
+                        trees_under_restoration:
+                          type: integer
+                        jobs_created:
+                          type: integer
+                        volunteers:
+                          type: integer
+                        beneficiaries:
+                          type: integer
+                        survival_rate:
+                          type: integer
+                        number_of_sites:
+                          type: integer
+                        number_of_nurseries:
+                          type: integer
+                        project_country:
+                          type: string
+                        country_slug:
+                          type: string
+                        number_of_trees_goal:
+                          type: integer
+                        date_added:
+                          type: string
+                  current_page:
+                    type: integer
+                  per_page:
+                    type: integer
+                  total:
+                    type: integer
+                  last_page:
+                    type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/view-project-list:
+    get:
+      summary: Get allowed to project
+      tags:
+        - Get allowed to project
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
+        '404':
+          description: Polygon not found
+  /v2/dashboard/countries:
+    get:
+      summary: Retrieve all countries list view.
+      description: |
+        This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        country_slug:
+                          type: string
+                        data:
+                          type: object
+                          properties:
+                            label:
+                              type: string
+                            icon:
+                              type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/project-details:
+    get:
+      summary: Retrieve project details view.
+      description: |
+        This endpoint return details to name of project, description objectives, restoration strategy, target land use type, and land tenure.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter counts and metrics by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      descriptionObjetive:
+                        type: string
+                      country:
+                        type: string
+                      organisation:
+                        type: string
+                      survivalRate:
+                        type: integer
+                      countrySlug:
+                        type: string
+                      restorationStrategy:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              type: string
+                      targetLandUse:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              type: string
+                      landTenure:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/jobs-created:
+    get:
+      summary: view Jobs created for dashboard
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter counts and metrics by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      totalJobsCreated:
+                        type: integer
+                      forProfitJobsCreated:
+                        type: integer
+                      nonProfitJobsCreated:
+                        type: integer
+                      total_ft:
+                        type: integer
+                      total_pt:
+                        type: integer
+                      total_men:
+                        type: integer
+                      total_pt_men:
+                        type: integer
+                      total_ft_men:
+                        type: integer
+                      total_women:
+                        type: integer
+                      total_pt_women:
+                        type: integer
+                      total_ft_women:
+                        type: integer
+                      total_youth:
+                        type: integer
+                      total_pt_youth:
+                        type: integer
+                      total_ft_youth:
+                        type: integer
+                      total_non_youth:
+                        type: integer
+                      total_pt_non_youth:
+                        type: integer
+                      total_ft_non_youth:
+                        type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/restoration-strategy:
+    get:
+      summary: View Restoration Strategy for dashboard
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter restoration strategy by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter restoration strategy by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  restorationStrategies:
+                    type: object
+                    properties:
+                      direct-seeding:
+                        type: integer
+                      tree-planting:
+                        type: integer
+                      assisted-natural-regeneration:
+                        type: integer
+                  landUseTypes:
+                    type: object
+                    properties:
+                      agroforest:
+                        type: integer
+                      open-natural-ecosystem:
+                        type: integer
+                      mangrove:
+                        type: integer
+                      natural-forest:
+                        type: integer
+                      peatland:
+                        type: integer
+                      riparian-area-or-wetland:
+                        type: integer
+                      silvopasture:
+                        type: integer
+                      urban-forest:
+                        type: integer
+                      woodlot-or-plantation:
+                        type: integer
+                  landTenures:
+                    type: object
+                    properties:
+                      communal:
+                        type: integer
+                      indigenous:
+                        type: integer
+                      national_protected_area:
+                        type: integer
+                      other:
+                        type: integer
+                      private:
+                        type: integer
+                      public:
+                        type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/tree-restoration-goal:
+    get:
+      summary: View Tree Restoration Goal for dashboard
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter tree restoration goal by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter tree restoration goal by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  forProfitTreeCount:
+                    type: integer
+                  nonProfitTreeCount:
+                    type: integer
+                  totalTreesGrownGoal:
+                    type: integer
+                  treesUnderRestorationActualTotal:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dueDate:
+                          type: string
+                          format: date
+                        treeSpeciesAmount:
+                          type: integer
+                        treeSpeciesPercentage:
+                          type: number
+                  treesUnderRestorationActualForProfit:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dueDate:
+                          type: string
+                          format: date
+                        treeSpeciesAmount:
+                          type: integer
+                        treeSpeciesPercentage:
+                          type: number
+                  treesUnderRestorationActualNonProfit:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dueDate:
+                          type: string
+                          format: date
+                        treeSpeciesAmount:
+                          type: integer
+                        treeSpeciesPercentage:
+                          type: number
+                  averageSurvivalRateTotal:
+                    type: number
+                  averageSurvivalRateForProfit:
+                    type: number
+                  averageSurvivalRateNonProfit:
+                    type: number
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/project-list-export:
+    get:
+      summary: Export CSV document of active projects
+      tags:
+        - Export
+      produces:
+        - text/plain
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: file
+  /v2/dashboard/get-projects:
+    get:
+      summary: Retrieve all project.
+      description: |
+        This endpoint returns all project by country.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        name:
+                          type: string
+                        lat:
+                          type: number
+                          format: double
+                        long:
+                          type: number
+                          format: double
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/get-polygons:
+    get:
+      summary: Retrieve all polygons.
+      description: |
+        This endpoint returns all polygons by project uuid.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: uuid for the given project
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        name:
+                          type: string
+                        lat:
+                          type: number
+                          format: double
+                        long:
+                          type: number
+                          format: double
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/get-polygons/statuses:
+    get:
+      summary: Retrieve all polygons.
+      description: |
+        This endpoint returns all polygons by project uuid.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: uuid for the given project
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    properties:
+                      NeedsMoreInfo:
+                        type: array
+                        description: Ids of polygons that need more information
+                      Submitted:
+                        type: array
+                        description: Ids of submitted polygons
+                      Approved:
+                        type: array
+                        description: Ids of approved polygons
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/dashboard/country/{country}':
+    get:
+      summary: Get the bounding box of a country
+      tags:
+        - Country
+      parameters:
+        - in: path
+          name: country
+          type: string
+          description: ISO code of the country
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              bbox:
+                type: array
+        '404':
+          description: Country not found
+  '/v2/dashboard/polygon-data/{uuid}':
+    get:
+      summary: Get Get allowed to project
+      tags:
+        - Get allowed to project
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          description: UUID of the polygon
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      description: Title of the data field
+                    value:
+                      type: string
+                      description: Value of the data field
+                    key:
+                      type: string
+                      description: Key of the data field
+        '404':
+          description: Polygon not found
+  /v2/dashboard/get-bbox-project:
+    get:
+      summary: Get Bbox of all polygons of project
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: UUID of the project
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              bbox:
+                type: array
+        '404':
+          description: Project not found
+  '/v2/dashboard/project-data/{uuid}':
+    get:
+      summary: Get project point data by UUID
+      tags:
+        - Project point data by UUID
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          description: UUID of the project point
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      description: Title of the data field
+                    value:
+                      type: string
+                      description: Value of the data field
+                    key:
+                      type: string
+                      description: Key of the data field
+        '500':
+          description: Error in queries
+  '/v2/dashboard/view-project/{uuid}':
+    get:
+      summary: Get allowed to project
+      tags:
+        - Get allowed to project
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          description: UUID of the project
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                object: object
+                properties:
+                  allowed:
+                    type: boolean
+        '404':
+          description: Polygon not found
+  '/v2/terrafund/polygon/{uuid}':
+    get:
+      summary: Get Site Polygon Data
+      description: Retrieve site polygon data for the given UUID.
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          required: true
+          schema:
+            type: string
+          description: The UUID of the site polygon.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  site_polygon:
+                    type: object
+                    properties:
+                      calc_area:
+                        type: number
+                      created_at:
+                        type: string
+                        format: date-time
+                      created_by:
+                        type: string
+                        nullable: true
+                      deleted_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      distr:
+                        type: string
+                        nullable: true
+                      id:
+                        type: integer
+                      last_modified_by:
+                        type: string
+                        nullable: true
+                      num_trees:
+                        type: integer
+                        nullable: true
+                      plantend:
+                        type: string
+                        format: date
+                        nullable: true
+                      plantstart:
+                        type: string
+                        format: date
+                      point_id:
+                        type: string
+                        nullable: true
+                      poly_id:
+                        type: string
+                      poly_name:
+                        type: string
+                      practice:
+                        type: string
+                        nullable: true
+                      site_id:
+                        type: string
+                        nullable: true
+                      status:
+                        type: string
+                      target_sys:
+                        type: string
+                        nullable: true
+                      updated_at:
+                        type: string
+                        format: date-time
+                      uuid:
+                        type: string
+        '404':
+          description: No site polygons found for the given UUID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No site polygons found for the given UUID.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: An error message describing the issue.

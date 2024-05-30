@@ -14,6 +14,7 @@ class GetAttachmentController extends Controller
         $attachment = AuditAttachment::orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
+
         return AttachmentResource::collection($attachment);
     }
 }

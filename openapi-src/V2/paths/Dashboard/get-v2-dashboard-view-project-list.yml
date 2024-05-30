@@ -1,0 +1,10 @@
+summary: Get allowed to project
+tags:
+  - Get allowed to project
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardProjectAvailableResponse'
+  '404':
+    description: Polygon not found

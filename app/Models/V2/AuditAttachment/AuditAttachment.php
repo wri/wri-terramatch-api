@@ -2,10 +2,10 @@
 
 namespace App\Models\V2\AuditAttachment;
 
+use App\Models\V2\AuditStatus\AuditStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\V2\AuditStatus\AuditStatus;
 
 class AuditAttachment extends Model
 {

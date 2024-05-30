@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Support\Facades\Log;
 
 class GeometryHelper
@@ -13,7 +12,7 @@ class GeometryHelper
     {
         $project = Project::where('uuid', $projectUuid)->first();
 
-        if (!$project) {
+        if (! $project) {
             return null;
         }
 
