@@ -53,24 +53,50 @@ class ViewProjectController extends Controller
 
     public function getAllProjectsAllowedToUser()
     {
-        $user = Auth::user();
-        $role = $user->role;
-        Log::info($role);
-        if ($role === 'government') {
-            $projectUuids = Project::where('country', $user->country)->pluck('uuid');
-        } elseif ($role === 'funder') {
-            $projectUuids = Project::where('framework_key', $user->program)->pluck('uuid');
-        } elseif ($role === 'project_developer') {
-            $projectIds = ProjectInvite::where('email_address', $user->email_address)
-                ->pluck('project_id');
-            $projectUuids = Project::whereIn('id', $projectIds)->pluck('uuid');
-        } elseif ($role === 'admin' || $role === 'terrafund_admin') {
-            $projectUuids = null;
-        } else {
-            $projectUuids = null;
+        try {
+            $user = Auth::user();
+            $role = $user->role;
+            Log::info($role);
+    
+            if ($role === 'government') {
+                try {
+                    $projectUuids = Project::where('country', $user->country)->pluck('uuid');
+                } catch (\Exception $e) {
+                    $errorMessage = $e->getMessage();
+                    Log::error('Error fetching projects for government: ' . $errorMessage);
+                    return response()->json(['error' => 'An error occurred while fetching government projects', 'message' => $errorMessage], 500);
+                }
+            } elseif ($role === 'funder') {
+                try {
+                    $projectUuids = Project::where('framework_key', $user->program)->pluck('uuid');
+                } catch (\Exception $e) {
+                    $errorMessage = $e->getMessage();
+                    Log::error('Error fetching projects for funder: ' . $errorMessage);
+                    return response()->json(['error' => 'An error occurred while fetching funder projects', 'message' => $errorMessage], 500);
+                }
+            } elseif ($role === 'project_developer') {
+                try {
+                    $projectIds = ProjectInvite::where('email_address', $user->email_address)->pluck('project_id');
+                    $projectUuids = Project::whereIn('id', $projectIds)->pluck('uuid');
+                } catch (\Exception $e) {
+                    $errorMessage = $e->getMessage();
+                    Log::error('Error fetching projects for project developer: ' . $errorMessage);
+                    return response()->json(['error' => 'An error occurred while fetching project developer projects', 'message' => $errorMessage], 500);
+                }
+            } elseif ($role === 'admin' || $role === 'terrafund_admin') {
+                $projectUuids = null;
+            } else {
+                $projectUuids = null;
+            }
+            
+            Log::info('Returning this value: ' . json_encode($projectUuids));
+    
+            return new ViewProjectResource($projectUuids);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error('An error occurred: ' . $errorMessage);
+            return response()->json(['error' => 'An error occurred while fetching the data', 'message' => $errorMessage], 500);
         }
-        Log::info('Returning this value'. $projectUuids);
-
-        return new ViewProjectResource($projectUuids);
     }
+    
 };
