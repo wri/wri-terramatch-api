@@ -1,0 +1,17 @@
+operationId: get-v2-audit-status
+summary: Get a audit from the status by ID
+tags: 
+  - V2 Audits Status
+parameters:
+  - type: string
+    name: id
+    in: path
+    required: true
+    description: show a specific audit status.
+responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/SitePolygonResponse'

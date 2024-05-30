@@ -342,3 +342,11 @@ SiteStatusResponse:
   $ref: './SiteStatusResponse.yml'
 SitePolygonResponse:
   $ref: './SitePolygonResponse.yml'
+AuditStatusResponse:
+  $ref: './AuditStatusResponse.yml'
+AttachmentResponse:
+  $ref: './AttachmentResponse.yml'
+AuditStatusPost:
+  $ref: './AuditStatusPost.yml'
+AuditStatusResponseWithData:
+  $ref: './AuditStatusResponseWithData.yml'

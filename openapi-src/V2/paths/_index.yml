@@ -2609,3 +2609,15 @@
     $ref: './Sites/get-v2-admin-site-polygon-uuid.yml'
   put:
     $ref: './Sites/put-v2-admin-site-polygon-uuid.yml'
+'/v2/audit-status':
+  get:
+    $ref: './AuditStatus/get-v2-audit-status.yml'
+  post:
+    $ref: './AuditStatus/post-v2-audit-status.yml'
+'/v2/audit-status/{id}':
+  get:
+    $ref: './AuditStatus/get-v2-audit-status-id.yml'
+  put:
+    $ref: './AuditStatus/put-v2-audit-status-id.yml'
+  delete:
+    $ref: './AuditStatus/delete-v2-audit-status-id.yml'

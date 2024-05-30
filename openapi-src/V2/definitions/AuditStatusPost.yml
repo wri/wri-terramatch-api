@@ -1,0 +1,27 @@
+type: object
+properties:
+  entity:
+    type: string
+  entity_uuid:
+    type: string
+  status:
+    type: string
+  comment:
+    type: string
+  date_created:
+    type: string
+    format: date
+  created_by:
+    type: string
+  is_active:
+    type: boolean
+  is_submitted:
+    type: boolean
+  type:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  request_removed:
+    type: boolean

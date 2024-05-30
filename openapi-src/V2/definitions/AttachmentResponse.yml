@@ -1,0 +1,12 @@
+type: object
+properties:
+  id:
+    type: number
+  entity_id:
+    type: string
+  attachment:
+    type: string
+  created_by:
+    type: string
+  url_file:
+    type: string

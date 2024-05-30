@@ -44808,6 +44808,138 @@ definitions:
         format: float
       status:
         type: string
+  AuditStatusResponse:
+    type: object
+    properties:
+      entity_uuid:
+        type: string
+      entity:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+      is_active:
+        type: boolean
+      is_submitted:
+        type: boolean
+      type:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      request_removed:
+        type: boolean
+      attachments:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: number
+            entity_id:
+              type: string
+            attachment:
+              type: string
+            created_by:
+              type: string
+            url_file:
+              type: string
+  AttachmentResponse:
+    type: object
+    properties:
+      id:
+        type: number
+      entity_id:
+        type: string
+      attachment:
+        type: string
+      created_by:
+        type: string
+      url_file:
+        type: string
+  AuditStatusPost:
+    type: object
+    properties:
+      entity:
+        type: string
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+      is_active:
+        type: boolean
+      is_submitted:
+        type: boolean
+      type:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      request_removed:
+        type: boolean
+  AuditStatusResponseWithData:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            entity_uuid:
+              type: string
+            entity:
+              type: string
+            status:
+              type: string
+            comment:
+              type: string
+            date_created:
+              type: string
+              format: date
+            created_by:
+              type: string
+            is_active:
+              type: boolean
+            is_submitted:
+              type: boolean
+            type:
+              type: string
+            first_name:
+              type: string
+            last_name:
+              type: string
+            request_removed:
+              type: boolean
+            attachments:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  entity_id:
+                    type: string
+                  attachment:
+                    type: string
+                  created_by:
+                    type: string
+                  url_file:
+                    type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95989,3 +96121,305 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /v2/audit-status:
+    get:
+      operationId: get-v2-audits-status
+      summary: Get all audits status
+      tags:
+        - V2 Audits Status
+      parameters:
+        - in: query
+          name: entity
+          type: string
+          required: true
+          description: required.
+        - in: query
+          name: uuid
+          type: string
+          required: true
+          description: required.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    entity_uuid:
+                      type: string
+                    entity:
+                      type: string
+                    status:
+                      type: string
+                    comment:
+                      type: string
+                    date_created:
+                      type: string
+                      format: date
+                    created_by:
+                      type: string
+                    is_active:
+                      type: boolean
+                    is_submitted:
+                      type: boolean
+                    type:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    request_removed:
+                      type: boolean
+                    attachments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          entity_id:
+                            type: string
+                          attachment:
+                            type: string
+                          created_by:
+                            type: string
+                          url_file:
+                            type: string
+    post:
+      operationId: post-v2-audit-status
+      summary: Create a new audit status
+      tags:
+        - V2 Audits Status
+      parameters:
+        - in: query
+          name: id
+          type: string
+          description: Optional.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entity:
+                  type: string
+                entity_uuid:
+                  type: string
+                status:
+                  type: string
+                comment:
+                  type: string
+                date_created:
+                  type: string
+                  format: date
+                created_by:
+                  type: string
+                is_active:
+                  type: boolean
+                is_submitted:
+                  type: boolean
+                type:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                request_removed:
+                  type: boolean
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity_uuid:
+                    type: string
+                  entity:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+                  is_active:
+                    type: boolean
+                  is_submitted:
+                    type: boolean
+                  type:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  request_removed:
+                    type: boolean
+                  attachments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        entity_id:
+                          type: string
+                        attachment:
+                          type: string
+                        created_by:
+                          type: string
+                        url_file:
+                          type: string
+  '/v2/audit-status/{id}':
+    get:
+      operationId: get-v2-audit-status
+      summary: Get a audit from the status by ID
+      tags:
+        - V2 Audits Status
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: show a specific audit status.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  uuid:
+                    type: string
+                  poly_name:
+                    type: string
+                  plantstart:
+                    type: string
+                    format: date
+                  plantend:
+                    type: string
+                    format: date
+                  practice:
+                    type: string
+                  target_sys:
+                    type: string
+                  distr:
+                    type: string
+                  num_trees:
+                    type: integer
+                  calc_area:
+                    type: number
+                    format: float
+                  status:
+                    type: string
+    put:
+      operationId: update-v2-audit-status
+      summary: Update a audit in the status by ID
+      tags:
+        - V2 Audits Status
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: edit a specific audit status.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entity:
+                  type: string
+                entity_uuid:
+                  type: string
+                status:
+                  type: string
+                comment:
+                  type: string
+                date_created:
+                  type: string
+                  format: date
+                created_by:
+                  type: string
+                is_active:
+                  type: boolean
+                is_submitted:
+                  type: boolean
+                type:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                request_removed:
+                  type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity_uuid:
+                    type: string
+                  entity:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+                  is_active:
+                    type: boolean
+                  is_submitted:
+                    type: boolean
+                  type:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  request_removed:
+                    type: boolean
+                  attachments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        entity_id:
+                          type: string
+                        attachment:
+                          type: string
+                        created_by:
+                          type: string
+                        url_file:
+                          type: string
+    delete:
+      summary: Delete a audit from the status by ID
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: delete a specific audit status.
+      responses:
+        '204':
+          description: No Content
