@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
+use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\ViewProjectResource;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -90,8 +92,30 @@ class ViewProjectController extends Controller
             }
             
             Log::info('Returning this value: ' . json_encode($projectUuids));
-    
-            return new ViewProjectResource($projectUuids);
+            $polygonsData = [
+              'needs-more-info' => [],
+              'submitted' => [],
+              'approved' => []
+            ];
+
+            foreach ($projectUuids as $uuid) {
+              Log::info('Fetching polygons for project UUID ' . $uuid);
+              $request = new Request(['uuid' => $uuid]);
+              try {
+                  $polygonsResource = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProject($request);
+                  foreach ($polygonsResource as $status => $polygons) {
+                    $polygons = $polygons instanceof \Illuminate\Support\Collection ? $polygons->toArray() : $polygons;
+                    $polygonsData[$status] = array_merge($polygonsData[$status], $polygons);
+                  }
+              } catch (\Exception $e) {
+                  Log::error('Error fetching polygons for project UUID ' . $uuid . ': ' . $e->getMessage());
+              }
+            }
+
+            return response()->json([
+              'projectsUuids' => $projectUuids->toArray(),
+              'polygonsUuids' => $polygonsData
+            ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error('An error occurred: ' . $errorMessage);

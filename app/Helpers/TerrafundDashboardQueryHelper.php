@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
+use Illuminate\Support\Facades\Log;
 
 class TerrafundDashboardQueryHelper
 {
@@ -39,24 +40,27 @@ class TerrafundDashboardQueryHelper
 
     public static function getPolygonsByStatusOfProject($request)
     {
-        $projectUuId = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
-        ->pluck('uuid')->first();
-        $project = Project::where('uuid', $projectUuId)->first();
-        $sitePolygons = $project->sitePolygons;
-
-        $statuses = ['needs-more-info', 'submitted', 'approved'];
-
-        $polygons = [];
-
-        foreach ($statuses as $status) {
-            // Get polygons of the project filtered by status
-            $polygonsOfProject = $sitePolygons
-            ->where('status', $status)
-            ->pluck('poly_id');
-
-            $polygons[$status] = $polygonsOfProject;
+        try {
+            $projectUuId = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+                ->pluck('uuid')->first();
+            Log::info('Getting project statuses ' . $request);
+            $project = Project::where('uuid', $projectUuId)->first();
+            $sitePolygons = $project->sitePolygons;
+            $statuses = ['needs-more-info', 'submitted', 'approved'];
+            $polygons = [];
+            foreach ($statuses as $status) {
+                $polygonsOfProject = $sitePolygons
+                    ->where('status', $status)
+                    ->pluck('poly_id');
+    
+                $polygons[$status] = $polygonsOfProject;
+            }
+    
+            return $polygons;
+        } catch (\Exception $e) {
+            Log::error('Error fetching polygons by status of project: ' . $e->getMessage());
+            return [];
         }
-
-        return $polygons;
     }
+    
 }
