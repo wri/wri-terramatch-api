@@ -1,0 +1,94 @@
+
+summary: Get Site Polygon Data
+description: Retrieve site polygon data for the given UUID.
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+    description: The UUID of the site polygon.
+responses:
+  '200':
+    description: Successful response
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            site_polygon:
+              type: object
+              properties:
+                calc_area:
+                  type: number
+                created_at:
+                  type: string
+                  format: date-time
+                created_by:
+                  type: string
+                  nullable: true
+                deleted_at:
+                  type: string
+                  format: date-time
+                  nullable: true
+                distr:
+                  type: string
+                  nullable: true
+                id:
+                  type: integer
+                last_modified_by:
+                  type: string
+                  nullable: true
+                num_trees:
+                  type: integer
+                  nullable: true
+                plantend:
+                  type: string
+                  format: date
+                  nullable: true
+                plantstart:
+                  type: string
+                  format: date
+                point_id:
+                  type: string
+                  nullable: true
+                poly_id:
+                  type: string
+                poly_name:
+                  type: string
+                practice:
+                  type: string
+                  nullable: true
+                site_id:
+                  type: string
+                  nullable: true
+                status:
+                  type: string
+                target_sys:
+                  type: string
+                  nullable: true
+                updated_at:
+                  type: string
+                  format: date-time
+                uuid:
+                  type: string
+  '404':
+    description: No site polygons found for the given UUID
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: No site polygons found for the given UUID.
+  '500':
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: An error message describing the issue.

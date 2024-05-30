@@ -2535,3 +2535,6 @@
 /v2/geometry/{UUID}:
   put:
     $ref: './Geometry/put-v2-geometry-uuid.yml'
+/api/v2/terrafund/polygon/{uuid}:
+  get:
+    $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'

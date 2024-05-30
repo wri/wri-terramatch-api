@@ -44610,15 +44610,29 @@ definitions:
     type: object
     properties:
       id:
-        type: number
-      entity_id:
+      type: number
+    entity_id:
         type: string
-      attachment:
+        attachment:
         type: string
-      created_by:
+    created_by:
         type: string
-      url_file:
-        type: string
+    url_file:
+      type: string
+  V2TerrafundCriteriaSite:
+    type: array
+    items:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: The UUID of the polygon.
+        valid:
+          type: boolean
+          description: Indicates if the polygon is valid or not.
+        checked:
+          type: boolean
+          description: Indicates if the polygon has been checked before or not.
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95410,3 +95424,98 @@ paths:
           description: This account does not have permission to update the polygon.
         '404':
           description: Geometry was not found.
+  '/api/v2/terrafund/polygon/{uuid}':
+    get:
+      summary: Get Site Polygon Data
+      description: Retrieve site polygon data for the given UUID.
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+          description: The UUID of the site polygon.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  site_polygon:
+                    type: object
+                    properties:
+                      calc_area:
+                        type: number
+                      created_at:
+                        type: string
+                        format: date-time
+                      created_by:
+                        type: string
+                        nullable: true
+                      deleted_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      distr:
+                        type: string
+                        nullable: true
+                      id:
+                        type: integer
+                      last_modified_by:
+                        type: string
+                        nullable: true
+                      num_trees:
+                        type: integer
+                        nullable: true
+                      plantend:
+                        type: string
+                        format: date
+                        nullable: true
+                      plantstart:
+                        type: string
+                        format: date
+                      point_id:
+                        type: string
+                        nullable: true
+                      poly_id:
+                        type: string
+                      poly_name:
+                        type: string
+                      practice:
+                        type: string
+                        nullable: true
+                      site_id:
+                        type: string
+                        nullable: true
+                      status:
+                        type: string
+                      target_sys:
+                        type: string
+                        nullable: true
+                      updated_at:
+                        type: string
+                        format: date-time
+                      uuid:
+                        type: string
+        '404':
+          description: No site polygons found for the given UUID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No site polygons found for the given UUID.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: An error message describing the issue.
