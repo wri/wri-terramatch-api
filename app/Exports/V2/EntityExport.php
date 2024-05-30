@@ -4,6 +4,7 @@ namespace App\Exports\V2;
 
 use App\Models\V2\Forms\Form;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -69,14 +70,26 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         $mapped = [
             $entity->ppc_external_id ?? $entity->old_id ?? $entity->id ?? null,
             $entity->uuid,
+        ];
+
+        if (in_array($this->form->type, ['site', 'nursery', 'site-report', 'nursery-report'])) {
+            $frontEndUrl = config('app.front_end');
+            // Our environment variable definitions are inconsistent.
+            if (! Str::endsWith($frontEndUrl, '/')) {
+                $frontEndUrl .= '/';
+            }
+            $mapped[] = $frontEndUrl . 'admin#/' . Str::camel($entity->shortName) . '/' . $entity->uuid . '/show';
+        }
+
+        $mapped = array_merge($mapped, [
             $organisation->readable_type ?? null,
             $organisation->name ?? null,
             $entity->project->name ?? null,
             $entity->status ?? null,
             $entity->due_at ?? null,
-        ];
+        ]);
 
-        if (in_array($this->form->type, ['nursery', 'nursery-report','site', 'site-report', 'project-report'])) {
+        if (in_array($this->form->type, ['nursery', 'nursery-report', 'site', 'site-report', 'project-report'])) {
             $mapped[] = $entity->project->ppc_external_id ?? $entity->project->id ?? null;
         }
 
@@ -84,6 +97,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $mapped[] = $entity->project->uuid ?? null;
             if($this->form->framework_key === 'ppc') {
                 $mapped[] = $entity->seedlings_grown ?? null;
+                $mapped[] = $entity->seedlings_grown_to_date ?? null;
             }
         }
         if ($this->form->type === 'nursery-report') {
@@ -94,8 +108,8 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         if ($this->form->type === 'site-report') {
             $mapped[] = $entity->site->ppc_external_id ?? $entity->site->id ?? null;
             $mapped[] = $entity->site->name ?? null;
-            $sumTreeSPecies = $entity->treeSpecies()->sum('amount');
-            $mapped[] = $sumTreeSPecies > 0 ? $sumTreeSPecies : null;
+            $sumTreeSpecies = $entity->treeSpecies()->sum('amount');
+            $mapped[] = $sumTreeSpecies > 0 ? $sumTreeSpecies : null;
             $mapped[] = $entity->site->trees_planted_count ?? null;
             if($this->form->framework_key === 'ppc') {
                 $sumSeeding = $entity->seedings()->sum('amount');
@@ -109,15 +123,19 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
 
     protected function getAttachedHeadingsForEntity(): array
     {
-        $initialHeadings = [
-            'id',
-            'uuid',
+        $initialHeadings = ['id', 'uuid'];
+
+        if (in_array($this->form->type, ['site', 'nursery', 'site-report', 'nursery-report'])) {
+            $initialHeadings[] = 'link_to_terramatch';
+        }
+
+        $initialHeadings = array_merge($initialHeadings, [
             'organization-readable_type',
             'organization-name',
             'project_name',
             'status',
             'due_date',
-        ];
+        ]);
 
         if (in_array($this->form->type, ['nursery', 'nursery-report','site', 'site-report', 'project-report'])) {
             $initialHeadings[] = 'project-id';
@@ -126,6 +144,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         if ($this->form->type === 'project-report') {
             $initialHeadings[] = 'project_uuid';
             if($this->form->framework_key === 'ppc') {
+                $initialHeadings[] = 'total_seedlings_grown_report';
                 $initialHeadings[] = 'total_seedlings_grown';
             }
         }

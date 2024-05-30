@@ -20,6 +20,8 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Seeding;
 use App\Models\V2\Stratas\Strata;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Workdays\WorkdayDemographic;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -301,6 +303,16 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
     }
 
     public function getWorkdayCountAttribute(): int
+    {
+        return WorkdayDemographic::whereIn(
+            'workday_id',
+            Workday::where('workdayable_type', SiteReport::class)
+                ->whereIn('workdayable_id', $this->reports()->hasBeenSubmitted()->select('id'))
+                ->select('id')
+        )->gender()->sum('amount') ?? 0;
+    }
+
+    public function getSelfReportedWorkdayCountAttribute(): int
     {
         $totals = $this->reports()->hasBeenSubmitted()->get([
             DB::raw('sum(`workdays_volunteer`) as volunteer'),

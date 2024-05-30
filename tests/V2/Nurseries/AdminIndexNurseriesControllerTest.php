@@ -61,7 +61,7 @@ class AdminIndexNurseriesControllerTest extends TestCase
             'country',
             'organisation_uuid',
             'project_uuid',
-            'framework',
+            'framework_key',
         ];
 
         foreach ($filters as $filter) {
