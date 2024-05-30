@@ -13,6 +13,7 @@ class GetAuditStatusProjectPolygonsController extends Controller
     {
         $project = Project::where('uuid', $uuid)->with('sitePolygons')->get();
         $sitePolygons = $project->pluck('sitePolygons')->flatten();
+
         return AuditStatusProjectPolygonsResource::collection($sitePolygons);
     }
 }
