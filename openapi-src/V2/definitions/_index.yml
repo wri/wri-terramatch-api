@@ -330,3 +330,9 @@ DashboardBBOXProject:
   $ref: './DashboardBBOXProject.yml'
 DashboardProjectViewResponse:
   $ref: './DashboardProjectViewResponse.yml'
+RoleUserCreate:
+  $ref: './RoleUserCreate.yml'
+RoleUserRead:
+  $ref: './RoleUserRead.yml'
+ProjectPipeline:
+  $ref: './ProjectPipeline.yml'
