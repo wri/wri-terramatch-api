@@ -322,3 +322,11 @@ DashboardGetProjectsData:
   $ref: './DashboardGetProjectsData.yml'
 DashboardGetPolygonStatusResponse:
   $ref: './DashboardGetPolygonStatusResponse.yml'
+DashboardBBOXCountry:
+  $ref: './DashboardBBOXCountry.yml'
+DashboardPolygonData:
+  $ref: './DashboardPolygonData.yml'
+DashboardBBOXProject:
+  $ref: './DashboardBBOXProject.yml'
+DashboardProjectViewResponse:
+  $ref: './DashboardProjectViewResponse.yml'

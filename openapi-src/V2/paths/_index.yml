@@ -2580,3 +2580,18 @@
 /v2/dashboard/get-polygons/statuses:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-polygons-statuses.yml'
+/v2/dashboard/country/{country}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-country-country.yml'
+/v2/dashboard/polygon-data/{uuid}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-polygon-data-uuid.yml'
+/v2/dashboard/get-bbox-project:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-bbox-project.yml'
+/v2/dashboard/project-data/{uuid}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-project-data-uuid.yml'
+/v2/dashboard/view-project/{uuid}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-view-project-uuid.yml'
