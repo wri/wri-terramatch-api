@@ -61,7 +61,9 @@ class ViewProjectController extends Controller
             Log::info($role);
             if ($role === 'admin' || $role === 'terrafund_admin' || $role === 'terrafund-admin'){
                 $response = TerrafundDashboardQueryHelper::getPolygonsByStatus();
-                return response()->json($response);
+                return response()->json([
+                  'polygonsUuids' => $response
+                ]);
             } else {
                 if ($role === 'government') {
                     try {
