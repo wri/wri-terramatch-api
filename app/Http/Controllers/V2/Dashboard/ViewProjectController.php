@@ -59,13 +59,14 @@ class ViewProjectController extends Controller
             $user = Auth::user();
             $role = $user->role;
             Log::info($role);
-    
+
             if ($role === 'government') {
                 try {
                     $projectUuids = Project::where('country', $user->country)->pluck('uuid');
                 } catch (\Exception $e) {
                     $errorMessage = $e->getMessage();
                     Log::error('Error fetching projects for government: ' . $errorMessage);
+
                     return response()->json(['error' => 'An error occurred while fetching government projects', 'message' => $errorMessage], 500);
                 }
             } elseif ($role === 'funder') {
@@ -74,6 +75,7 @@ class ViewProjectController extends Controller
                 } catch (\Exception $e) {
                     $errorMessage = $e->getMessage();
                     Log::error('Error fetching projects for funder: ' . $errorMessage);
+
                     return response()->json(['error' => 'An error occurred while fetching funder projects', 'message' => $errorMessage], 500);
                 }
             } elseif ($role === 'project_developer') {
@@ -83,44 +85,61 @@ class ViewProjectController extends Controller
                 } catch (\Exception $e) {
                     $errorMessage = $e->getMessage();
                     Log::error('Error fetching projects for project developer: ' . $errorMessage);
+
                     return response()->json(['error' => 'An error occurred while fetching project developer projects', 'message' => $errorMessage], 500);
                 }
             } elseif ($role === 'admin' || $role === 'terrafund_admin') {
-                $projectUuids = null;
+                $projectUuids = Project::pluck('uuid');
             } else {
                 $projectUuids = null;
             }
-            
+
             Log::info('Returning this value: ' . json_encode($projectUuids));
             $polygonsData = [
               'needs-more-info' => [],
               'submitted' => [],
-              'approved' => []
+              'approved' => [],
             ];
 
             foreach ($projectUuids as $uuid) {
-              Log::info('Fetching polygons for project UUID ' . $uuid);
-              $request = new Request(['uuid' => $uuid]);
-              try {
-                  $polygonsResource = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProject($request);
-                  foreach ($polygonsResource as $status => $polygons) {
-                    $polygons = $polygons instanceof \Illuminate\Support\Collection ? $polygons->toArray() : $polygons;
-                    $polygonsData[$status] = array_merge($polygonsData[$status], $polygons);
-                  }
-              } catch (\Exception $e) {
-                  Log::error('Error fetching polygons for project UUID ' . $uuid . ': ' . $e->getMessage());
-              }
+                Log::info('Fetching polygons for project UUID ' . $uuid);
+                $request = new Request(['uuid' => $uuid]);
+
+                try {
+                    $polygonsResource = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProject($request);
+                    foreach ($polygonsResource as $status => $polygons) {
+                        $polygons = $polygons instanceof \Illuminate\Support\Collection ? $polygons->toArray() : $polygons;
+                        $polygonsData[$status] = array_merge($polygonsData[$status], $polygons);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Error fetching polygons for project UUID ' . $uuid . ': ' . $e->getMessage());
+                }
             }
 
             return response()->json([
               'projectsUuids' => $projectUuids->toArray(),
-              'polygonsUuids' => $polygonsData
+              'polygonsUuids' => $polygonsData,
             ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error('An error occurred: ' . $errorMessage);
+
             return response()->json(['error' => 'An error occurred while fetching the data', 'message' => $errorMessage], 500);
         }
     }
-    
+
+    public function getAllProjectAdmin()
+    {
+        $user = Auth::user();
+        $role = $user->role;
+
+        if ($role === 'admin' || $role === 'terrafund_admin') {
+            $response = TerrafundDashboardQueryHelper::getPolygonsByStatus();
+
+            return response()->json($response);
+        } else {
+            return response()->json(['error' => 'You are not allowed to access this resource'], 403);
+        }
+
+    }
 };

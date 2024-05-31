@@ -724,6 +724,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
+    Route::get('/view-project-list-admin', [ViewProjectController::class, 'getAllProjectAdmin']);
 });
 Route::prefix('project-pipeline')->group(function () {
     Route::get('/', GetProjectPipelineController::class);

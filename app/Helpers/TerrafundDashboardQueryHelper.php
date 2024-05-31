@@ -52,15 +52,37 @@ class TerrafundDashboardQueryHelper
                 $polygonsOfProject = $sitePolygons
                     ->where('status', $status)
                     ->pluck('poly_id');
-    
+
                 $polygons[$status] = $polygonsOfProject;
             }
-    
+
             return $polygons;
         } catch (\Exception $e) {
             Log::error('Error fetching polygons by status of project: ' . $e->getMessage());
+
             return [];
         }
     }
-    
+
+    public static function getPolygonsByStatus()
+    {
+        try {
+            $statuses = ['needs-more-info', 'submitted', 'approved'];
+            $polygons = [];
+            foreach ($statuses as $status) {
+                $polygonsOfProject = SitePolygon::where('status', $status)
+                ->whereNotNull('site_id')
+                ->where('site_id', '!=', 'NULL')
+                ->pluck('poly_id');
+
+                $polygons[$status] = $polygonsOfProject;
+            }
+
+            return $polygons;
+        } catch (\Exception $e) {
+            Log::error('Error fetching polygons by status of project: ' . $e->getMessage());
+
+            return [];
+        }
+    }
 }
