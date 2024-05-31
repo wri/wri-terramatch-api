@@ -372,3 +372,9 @@ SitePolygonsBboxResponse:
   $ref: './SitePolygonsBboxResponse.yml'
 FeatureCollection:
   $ref: './FeatureCollection.yml'
+ProjectPipelinePost:
+  $ref: './ProjectPipelinePost.yml'
+GeojsonData:
+  $ref: './GeojsonData.yml'
+DashboardPolygonResponse:
+  $ref: './DashboardPolygonResponse.yml'

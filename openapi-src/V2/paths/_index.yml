@@ -2612,6 +2612,8 @@
 /v2/project-pipeline:
   get:
     $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
+  post:
+    $ref: './ProjectPipeline/post-v2-project-pipeline.yml'
 /v2/admin/site-polygon/{UUID}:
   get:
     $ref: './Sites/get-v2-admin-site-polygon-uuid.yml'
@@ -2662,3 +2664,16 @@
 /v2/terrafund/upload-kml:
   post:
     $ref: './Terrafund/post-v2-terrafund-upload-kml.yml'
+/v2/project-pipeline/{id}:
+  get:
+    $ref: './ProjectPipeline/get-v2-project-pipeline-id.yml'
+  put:
+    $ref: './ProjectPipeline/put-v2-project-pipeline-id.yml'
+  delete:
+    $ref: './ProjectPipeline/delete-v2-project-pipeline-id.yml'
+/v2/terrafund/polygon/geojson/{uuid}:
+  get:
+    $ref: './Terrafund/get-v2-terrafund-polygon-geojson-uuid.yml'
+/v2/terrafund/polygon:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-polygon.yml'
