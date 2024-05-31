@@ -1,0 +1,18 @@
+operationId: get-v2-attachment
+summary: Get all attachments
+tags: 
+  - V2 attachment
+parameters:
+  - in: query
+    name: entity_uuid
+    type: string
+    description: required.
+responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/AuditStatusResponse'

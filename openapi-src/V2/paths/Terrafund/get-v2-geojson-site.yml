@@ -1,0 +1,18 @@
+summary: Get collection Feature as GeoJSON for a site
+parameters:
+  - in: query
+    name: uuid
+    type: string
+    required: true
+    description: UUID of the aite.
+responses:
+  '200':
+    description: Successful response
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/FeatureCollection'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error
