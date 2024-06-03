@@ -36,7 +36,7 @@ class TerrafundDashboardQueryHelper
         return $polygonsIds;
     }
 
-    public static function getPolygonsByStatuses($projectUuid)
+    public static function retrievePolygonUuidsByStatusForProject($projectUuid)
     {
         $project = Project::where('uuid', $projectUuid)->first();
         $sitePolygons = $project->sitePolygons;
@@ -59,13 +59,13 @@ class TerrafundDashboardQueryHelper
         $projectUuid = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->pluck('uuid')->first();
 
-        return self::getPolygonsByStatuses($projectUuid);
+        return self::retrievePolygonUuidsByStatusForProject($projectUuid);
     }
 
     public static function getPolygonsUuidsByStatusForProject($request)
     {
         $projectUuid = $request->input('uuid');
 
-        return self::getPolygonsByStatuses($projectUuid);
+        return self::retrievePolygonUuidsByStatusForProject($projectUuid);
     }
 }
