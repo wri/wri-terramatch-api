@@ -45152,6 +45152,7 @@ definitions:
       type:
         type: string
   ProjectPipelinePost:
+    type: object
     properties:
       date:
         type: string
@@ -45185,6 +45186,73 @@ definitions:
     properties:
       uuid:
         type: string
+  EntityTypeResponse:
+    type: object
+    properties:
+      type:
+        type: string
+        description: 'Type of the entity (''project'', ''site'', ''unknown'')'
+      uuid:
+        type: string
+        format: uuid
+        description: UUID of the entity
+      polygonsData:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            uuid:
+              type: string
+            project_id:
+              type: string
+            proj_name:
+              type: string
+            org_name:
+              type: string
+            poly_id:
+              type: string
+            poly_name:
+              type: string
+            site_id:
+              type: string
+            site_name:
+              type: string
+            plantstart:
+              type: string
+              format: date
+            plantend:
+              type: string
+              format: date
+            practice:
+              type: string
+            target_sys:
+              type: string
+            distr:
+              type: string
+            num_trees:
+              type: integer
+            calc_area:
+              type: number
+              format: float
+            created_by:
+              type: string
+            last_modified_by:
+              type: string
+            deleted_at:
+              type: string
+              format: date-time
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+            status:
+              type: string
+            country:
+              type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -96083,6 +96151,27 @@ paths:
                 type: array
         '404':
           description: Project not found
+  /v2/dashboard/bbox/project:
+    get:
+      summary: Get Bbox of all polygons of project
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: UUID of the project
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              bbox:
+                type: array
+        '404':
+          description: Project not found
   '/v2/dashboard/project-data/{uuid}':
     get:
       summary: Get project point data by UUID
@@ -96464,9 +96553,11 @@ paths:
           type: string
           description: Optional. Filter counts and metrics by country.
       requestBody:
+        required: true
         content:
           application/json:
             schema:
+              type: object
               properties:
                 date:
                   type: string
@@ -96495,6 +96586,7 @@ paths:
           content:
             application/json:
               schema:
+                type: object
                 properties:
                   date:
                     type: string
@@ -97492,6 +97584,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 date:
                   type: string
@@ -97520,6 +97613,7 @@ paths:
           content:
             application/json:
               schema:
+                type: object
                 properties:
                   date:
                     type: string
@@ -97611,3 +97705,100 @@ paths:
                 properties:
                   uuid:
                     type: string
+  /v2/type-entity:
+    get:
+      summary: Get Entity Type
+      description: |
+        Determine the type of entity based on UUID.
+      parameters:
+        - in: query
+          name: uuid
+          required: true
+          description: UUID of the entity
+          type: string
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    description: 'Type of the entity (''project'', ''site'', ''unknown'')'
+                  uuid:
+                    type: string
+                    format: uuid
+                    description: UUID of the entity
+                  polygonsData:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        uuid:
+                          type: string
+                        project_id:
+                          type: string
+                        proj_name:
+                          type: string
+                        org_name:
+                          type: string
+                        poly_id:
+                          type: string
+                        poly_name:
+                          type: string
+                        site_id:
+                          type: string
+                        site_name:
+                          type: string
+                        plantstart:
+                          type: string
+                          format: date
+                        plantend:
+                          type: string
+                          format: date
+                        practice:
+                          type: string
+                        target_sys:
+                          type: string
+                        distr:
+                          type: string
+                        num_trees:
+                          type: integer
+                        calc_area:
+                          type: number
+                          format: float
+                        created_by:
+                          type: string
+                        last_modified_by:
+                          type: string
+                        deleted_at:
+                          type: string
+                          format: date-time
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+                        status:
+                          type: string
+                        country:
+                          type: string
+        '400':
+          description: 'Bad request, UUID parameter is missing'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message

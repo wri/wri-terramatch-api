@@ -1,0 +1,30 @@
+summary: Get Entity Type
+description: |
+  Determine the type of entity based on UUID.
+parameters:
+  - in: query
+    name: uuid
+    required: true
+    description: UUID of the entity
+    type: string
+    schema:
+      type: string
+responses:
+  '200':
+    description: Successful response
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/EntityTypeResponse'
+  '400':
+    description: Bad request, UUID parameter is missing
+  '500':
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              description: Error message

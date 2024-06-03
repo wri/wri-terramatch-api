@@ -25,17 +25,29 @@ class TerrafundDashboardQueryHelper
         return $query;
     }
 
-    public static function getPolygonIdsOfProject($request)
+    public static function retrievePolygonUuidsForProject($projectUuId)
     {
-        $projectUuId = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
-        ->pluck('uuid')->first();
-
         $project = Project::where('uuid', $projectUuId)->first();
         $sitePolygons = $project->sitePolygons;
 
         $polygonsIds = $sitePolygons->pluck('poly_id');
 
         return $polygonsIds;
+    }
+
+    public static function getPolygonIdsOfProject($request)
+    {
+        $projectUuId = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+        ->pluck('uuid')->first();
+
+        return self::retrievePolygonUuidsForProject($projectUuId);
+    }
+
+    public static function getPolygonUuidsOfProject($request)
+    {
+        $projectUuId = $request->input('uuid');
+
+        return self::retrievePolygonUuidsForProject($projectUuId);
     }
 
     public static function retrievePolygonUuidsByStatusForProject($projectUuid)

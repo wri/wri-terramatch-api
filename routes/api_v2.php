@@ -41,6 +41,7 @@ use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\UpdateDisturbanceController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
+use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
@@ -686,6 +687,7 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/centroids-update', [TerrafundPointsController::class, 'updateProjectCentroids']);
 });
 
+Route::get('/type-entity', EntityTypeController::class);
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
 Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
 
@@ -720,6 +722,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsByStatusOfProject']);
     Route::get('/get-polygons/project', [GetPolygonsController::class, 'getPolygonsUuidsByStatusForProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
+    Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);

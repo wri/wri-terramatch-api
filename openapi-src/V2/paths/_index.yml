@@ -2596,6 +2596,9 @@
 /v2/dashboard/get-bbox-project:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-bbox-project.yml'
+/v2/dashboard/bbox/project:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-bbox-project.yml'
 /v2/dashboard/project-data/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-project-data-uuid.yml'
@@ -2680,3 +2683,7 @@
 /v2/terrafund/polygon:
   post:
     $ref: './Terrafund/post-v2-terrafund-polygon.yml'
+/v2/type-entity:
+  get:
+    $ref: './Entity/get-v2-type-entity.yml'
+    
