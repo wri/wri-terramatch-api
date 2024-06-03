@@ -62,7 +62,7 @@ class TerrafundDashboardQueryHelper
         return self::getPolygonsByStatuses($projectUuid);
     }
 
-    public static function getPolygonsByStatus($request)
+    public static function getPolygonsUuidsByStatusForProject($request)
     {
         $projectUuid = $request->input('uuid');
 
