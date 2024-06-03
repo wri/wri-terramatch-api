@@ -91,10 +91,12 @@ class GeometryHelper
 
     public static function getPolygonsBbox($polygonsIds)
     {
+      if (count($polygonsIds) === 0) {
+        return null;
+      }
         $envelopes = PolygonGeometry::whereIn('uuid', $polygonsIds)
           ->selectRaw('ST_ASGEOJSON(ST_Envelope(geom)) as envelope')
           ->get();
-
         $maxX = $maxY = PHP_INT_MIN;
         $minX = $minY = PHP_INT_MAX;
 

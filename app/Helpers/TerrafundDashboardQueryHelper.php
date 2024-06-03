@@ -43,10 +43,10 @@ class TerrafundDashboardQueryHelper
         try {
             $projectUuId = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
                 ->pluck('uuid')->first();
-            Log::info('Getting project statuses ' . $request);
+            Log::info('Getting project statuses ' . $projectUuId);
             $project = Project::where('uuid', $projectUuId)->first();
             $sitePolygons = $project->sitePolygons;
-            $statuses = ['needs-more-info', 'submitted', 'approved'];
+            $statuses = ['needs-more-information', 'submitted', 'approved'];
             $polygons = [];
             foreach ($statuses as $status) {
                 $polygonsOfProject = $sitePolygons
@@ -58,7 +58,7 @@ class TerrafundDashboardQueryHelper
 
             return $polygons;
         } catch (\Exception $e) {
-            Log::error('Error fetching polygons by status of project: ' . $e->getMessage());
+            Log::error($projectUuId.' Error fetching polygons by status of project: ' . $e->getMessage());
 
             return [];
         }
@@ -67,7 +67,7 @@ class TerrafundDashboardQueryHelper
     public static function getPolygonsByStatus()
     {
         try {
-            $statuses = ['needs-more-info', 'submitted', 'approved'];
+            $statuses = ['needs-more-information', 'submitted', 'approved'];
             $polygons = [];
             foreach ($statuses as $status) {
                 $polygonsOfProject = SitePolygon::where('status', $status)
