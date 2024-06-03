@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\V2\Entities;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
-use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EntityTypeController extends Controller
 {
@@ -20,7 +20,7 @@ class EntityTypeController extends Controller
             if ($project) {
                 return response()->json([
                     'type' => 'project',
-                    'uuid' => $uuid
+                    'uuid' => $uuid,
                 ]);
             }
 
@@ -28,20 +28,20 @@ class EntityTypeController extends Controller
             if ($site) {
                 return response()->json([
                     'type' => 'site',
-                    'uuid' => $uuid
+                    'uuid' => $uuid,
                 ]);
             }
 
             return response()->json([
                 'type' => 'unknown',
-                'uuid' => $uuid
+                'uuid' => $uuid,
             ]);
         } catch (Exception $e) {
 
             Log::error($e);
 
             return response()->json([
-                'error' => 'An error occurred while processing your request.'
+                'error' => 'An error occurred while processing your request.',
             ], 500);
         }
     }
