@@ -1,0 +1,9 @@
+type: object
+properties:
+  type:
+    type: string
+    description: Type of the entity ('project', 'site', 'unknown')
+  uuid:
+    type: string
+    format: uuid
+    description: UUID of the entity

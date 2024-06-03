@@ -45185,6 +45185,16 @@ definitions:
     properties:
       uuid:
         type: string
+  EntityTypeResponse:
+    type: object
+    properties:
+      type:
+        type: string
+        description: 'Type of the entity (''project'', ''site'', ''unknown'')'
+      uuid:
+        type: string
+        format: uuid
+        description: UUID of the entity
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -97612,3 +97622,43 @@ paths:
                 properties:
                   uuid:
                     type: string
+  /v2/type-entity:
+    get:
+      summary: Get Entity Type
+      description: |
+        Determine the type of entity based on UUID.
+      parameters:
+        - in: query
+          name: uuid
+          required: true
+          description: UUID of the entity
+          type: string
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    description: 'Type of the entity (''project'', ''site'', ''unknown'')'
+                  uuid:
+                    type: string
+                    format: uuid
+                    description: UUID of the entity
+        '400':
+          description: 'Bad request, UUID parameter is missing'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
