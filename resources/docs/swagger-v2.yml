@@ -45152,6 +45152,7 @@ definitions:
       type:
         type: string
   ProjectPipelinePost:
+    type: object
     properties:
       date:
         type: string
@@ -96506,6 +96507,7 @@ paths:
           content:
             application/json:
               schema:
+                type: object
                 properties:
                   date:
                     type: string
@@ -97503,6 +97505,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 date:
                   type: string
@@ -97531,6 +97534,7 @@ paths:
           content:
             application/json:
               schema:
+                type: object
                 properties:
                   date:
                     type: string
