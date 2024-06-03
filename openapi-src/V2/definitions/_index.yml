@@ -378,3 +378,5 @@ GeojsonData:
   $ref: './GeojsonData.yml'
 DashboardPolygonResponse:
   $ref: './DashboardPolygonResponse.yml'
+EntityTypeResponse:
+  $ref: './EntityTypeResponse.yml'

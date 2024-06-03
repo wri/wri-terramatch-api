@@ -45,6 +45,7 @@ use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
 use App\Http\Controllers\V2\Entities\ViewEntityWithFormController;
+use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
@@ -686,6 +687,7 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/centroids-update', [TerrafundPointsController::class, 'updateProjectCentroids']);
 });
 
+Route::get('/type-entity', EntityTypeController::class);
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
 Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
 
