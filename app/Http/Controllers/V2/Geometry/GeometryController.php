@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V2\Geometry;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V2\Geometry\StoreGeometryRequest;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\Site;
 use App\Services\PolygonService;
@@ -36,6 +37,9 @@ class GeometryController extends Controller
         'DATA',
     ];
 
+    /**
+     * @deprecated Use POST /api/v2/geometry (include site id in the properties of each feature)
+     */
     public function storeSiteGeometry(Request $request, Site $site): JsonResponse
     {
         $this->authorize('uploadPolygons', $site);
@@ -44,12 +48,31 @@ class GeometryController extends Controller
             'geometries' => 'required|array',
         ]);
 
+        $geometries = $request->input('geometries');
+        data_set($geometries, '*.features.*.properties.site_id', $site->uuid);
+
+        return response()->json($this->storePolygons($geometries), 201);
+    }
+
+    public function storeGeometry(StoreGeometryRequest $request): JsonResponse
+    {
+        $geometries = $request->input('geometries');
+        $siteIds = data_get($geometries, '*.features.*.properties.site_id');
+        foreach (Site::whereIn('uuid', $siteIds)->get() as $site) {
+            $this->authorize('uploadPolygons', $site);
+        }
+
+        return response()->json($this->storePolygons($geometries), 201);
+    }
+
+    protected function storePolygons($polygons): array
+    {
         /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
         $polygonUuids = [];
-        foreach ($request->input('geometries') as $geometry) {
+        foreach ($polygons as $polygon) {
             // We expect single polys on this endpoint, so just pull the first uuid returned
-            $polygonUuids[] = $service->createGeojsonModels($geometry, ['site_id' => $site->uuid])[0];
+            $polygonUuids[] = $service->createGeojsonModels($polygon)[0];
         }
 
         // Do the validation in a separate step so that all of the existing polygons are taken into account
@@ -62,7 +85,7 @@ class GeometryController extends Controller
             }
         }
 
-        return response()->json(['polygon_uuids' => $polygonUuids, 'errors' => $polygonErrors], 201);
+        return ['polygon_uuids' => $polygonUuids, 'errors' => $polygonErrors];
     }
 
     public function validateGeometries(Request $request): JsonResponse
