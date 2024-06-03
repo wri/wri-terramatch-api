@@ -96094,6 +96094,27 @@ paths:
                 type: array
         '404':
           description: Project not found
+  /v2/dashboard/bbox/project:
+    get:
+      summary: Get Bbox of all polygons of project
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: UUID of the project
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              bbox:
+                type: array
+        '404':
+          description: Project not found
   '/v2/dashboard/project-data/{uuid}':
     get:
       summary: Get project point data by UUID
@@ -96478,7 +96499,6 @@ paths:
         content:
           application/json:
             schema:
-              type: object
               properties:
                 date:
                   type: string

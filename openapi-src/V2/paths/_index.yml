@@ -2596,6 +2596,9 @@
 /v2/dashboard/get-bbox-project:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-bbox-project.yml'
+/v2/dashboard/bbox/project:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-bbox-project.yml'
 /v2/dashboard/project-data/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-project-data-uuid.yml'
