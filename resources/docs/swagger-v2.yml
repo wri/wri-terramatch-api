@@ -96093,7 +96093,7 @@ paths:
                 type: array
         '404':
           description: Project not found
-  /v2/dashboard/get-bbox/project:
+  /v2/dashboard/bbox/project:
     get:
       summary: Get Bbox of all polygons of project
       tags:
@@ -96498,7 +96498,6 @@ paths:
         content:
           application/json:
             schema:
-              type: object
               properties:
                 date:
                   type: string
