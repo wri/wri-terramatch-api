@@ -2620,11 +2620,11 @@
     $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
   post:
     $ref: './ProjectPipeline/post-v2-project-pipeline.yml'
-/v2/admin/site-polygon/{UUID}:
+/v2/site-polygon/{UUID}:
   get:
-    $ref: './Sites/get-v2-admin-site-polygon-uuid.yml'
+    $ref: './Sites/get-v2-site-polygon-uuid.yml'
   put:
-    $ref: './Sites/put-v2-admin-site-polygon-uuid.yml'
+    $ref: './Sites/put-v2-site-polygon-uuid.yml'
 '/v2/audit-status':
   get:
     $ref: './AuditStatus/get-v2-audit-status.yml'

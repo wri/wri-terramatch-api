@@ -303,10 +303,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::put('/{project}', AdminProjectsUpdateStatusController::class);
         Route::get('/multi', AdminProjectMultiController::class);
     });
-    Route::prefix('site-polygon')->group(function () {
-        Route::get('/{uuid}', AdminSiteIndexSitePolygonsController::class);
-        Route::put('/{uuid}', AdminSitePolygonsUpdateStatusController::class);
-    });
 
     Route::prefix('project-monitorings')->group(function () {
         Route::post('/', AdminCreateProjectMonitoringController::class);
@@ -688,6 +684,11 @@ Route::prefix('terrafund')->group(function () {
 });
 
 Route::get('/type-entity', EntityTypeController::class);
+Route::prefix('site-polygon')->group(function () {
+    Route::get('/{uuid}', AdminSiteIndexSitePolygonsController::class);
+    Route::put('/{uuid}', AdminSitePolygonsUpdateStatusController::class);
+});
+
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
 Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
 

@@ -1,4 +1,4 @@
-operationId: get-v2-admin-site-polygon-by-site-uuid
+operationId: get-v2-site-polygon-by-site-uuid
 summary: Get site site-polygon by site UUID
 tags:
   - V2 Sites

@@ -96609,9 +96609,9 @@ paths:
                   ModifiedDate:
                     type: string
                     format: date
-  '/v2/admin/site-polygon/{UUID}':
+  '/v2/site-polygon/{UUID}':
     get:
-      operationId: get-v2-admin-site-polygon-by-site-uuid
+      operationId: get-v2-site-polygon-by-site-uuid
       summary: Get site site-polygon by site UUID
       tags:
         - V2 Sites
@@ -96666,7 +96666,7 @@ paths:
         '500':
           description: Internal Server Error
     put:
-      operationId: put-v2-admin-polygon-sites-uuid
+      operationId: put-v2-polygon-sites-uuid
       summary: update polygon site status
       tags:
         - V2 Sites

@@ -1,4 +1,4 @@
-operationId: put-v2-admin-polygon-sites-uuid
+operationId: put-v2-polygon-sites-uuid
 summary: update polygon site status
 tags:
   - V2 Sites
