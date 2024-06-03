@@ -1,0 +1,26 @@
+operationId: put-v2-admin-projects-uuid
+summary: update project status
+tags:
+  - V2 Projects
+parameters:
+  - in: path
+    name: UUID
+    required: true
+    type: string
+    description: The UUID of the project
+requestBody:
+  content:
+    application/json:
+      schema:
+        $ref: '../../definitions/_index.yml#/ProjectStatusRequestPost'
+responses:
+  '200':
+    description: Successful response
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/ProjectStatusResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

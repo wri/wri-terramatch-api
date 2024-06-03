@@ -1,0 +1,30 @@
+summary: Upload shapfile File
+description: Uploads a shapefile file, converts it to GeoJSON, and inserts it into the database.
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          file:
+            type: string
+            format: binary
+            description: The shapefile file to upload
+          uuid:
+            type: string
+            description: The UUID of the site associated with the shapefile file
+responses:
+  '200':
+    description: Shapefile processed and inserted successfully
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+        uuid:
+          type: string
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

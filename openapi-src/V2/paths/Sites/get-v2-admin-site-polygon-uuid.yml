@@ -1,0 +1,28 @@
+operationId: get-v2-admin-site-polygon-by-site-uuid
+summary: Get site site-polygon by site UUID
+tags:
+  - V2 Sites
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/SitePolygonResponse'
+  '404':
+    description: Not Found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Site polygon not found
+  '500':
+    description: Internal Server Error

@@ -2375,6 +2375,8 @@
       '200':
         description: OK
 '/v2/admin/sites/{UUID}':
+  put:
+    $ref: './Sites/put-v2-admin-sites-uuid.yml'
   delete:
     summary: Delete a site
     operationId: delete-v2-admin-site-UUID
@@ -2411,6 +2413,8 @@
   delete:
     $ref: './Sites/Monitoring/delete-v2-admin-site-monitorings-uuid.yml'
 '/v2/admin/projects/{UUID}':
+  put:
+    $ref: './Projects/put-v2-admin-projects-uuid.yml'
   delete:
     summary: Delete a project
     operationId: delete-v2-admin-projects-UUID
@@ -2580,6 +2584,9 @@
 /v2/dashboard/get-polygons/statuses:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-polygons-statuses.yml'
+/v2/dashboard/get-polygons/project:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-polygons-statuses.yml'
 /v2/dashboard/country/{country}:
   get:
     $ref: './Dashboard/get-v2-dashboard-country-country.yml'
@@ -2598,3 +2605,78 @@
 /v2/terrafund/polygon/{uuid}:
   get:
     $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'
+  put:
+    $ref: './Terrafund/put-v2-terrafund-polygon-uuid.yml'
+  delete:
+    $ref: './Terrafund/delete-v2-terrafund-polygon-uuid.yml'
+/users-register:
+  post:
+    $ref: './Users/post-users-register.yml'
+/v2/project-pipeline:
+  get:
+    $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
+  post:
+    $ref: './ProjectPipeline/post-v2-project-pipeline.yml'
+/v2/admin/site-polygon/{UUID}:
+  get:
+    $ref: './Sites/get-v2-admin-site-polygon-uuid.yml'
+  put:
+    $ref: './Sites/put-v2-admin-site-polygon-uuid.yml'
+'/v2/audit-status':
+  get:
+    $ref: './AuditStatus/get-v2-audit-status.yml'
+  post:
+    $ref: './AuditStatus/post-v2-audit-status.yml'
+'/v2/audit-status/{id}':
+  get:
+    $ref: './AuditStatus/get-v2-audit-status-id.yml'
+  put:
+    $ref: './AuditStatus/put-v2-audit-status-id.yml'
+  delete:
+    $ref: './AuditStatus/delete-v2-audit-status-id.yml'
+/v2/attachment:
+  get:
+    $ref: './Attachment/get-v2-attachment.yml'
+/v2/terrafund/site-polygon/{uuid}:
+  put:
+    $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
+/v2/terrafund/site-polygon/{uuid}/{siteUuid}:
+  post:
+    $ref: './Terrafund/post-v2-site-polygon-data.yml'
+/v2/terrafund/polygon/bbox/{uuid}:
+  get:
+    $ref: './Terrafund/get-v2-polygon-bbox.yml'
+/v2/terrafund/geojson/complete:
+  get:
+    $ref: './Terrafund/get-v2-geojson-complete-download.yml'
+/v2/sites/{site}/bbox:
+  get:
+    $ref: './Sites/get-v2-sites-site-bbox.yml'
+/v2/sites/{site}/polygon:
+  get:
+    $ref: './Sites/get-v2-sites-site-polygon.yml'
+/v2/terrafund/geojson/site:
+  get:
+    $ref: './Terrafund/get-v2-geojson-site.yml'
+/v2/terrafund/upload-geojson:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-geojson.yml'
+/v2/terrafund/upload-shapefile:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-shapefile.yml'
+/v2/terrafund/upload-kml:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-kml.yml'
+/v2/project-pipeline/{id}:
+  get:
+    $ref: './ProjectPipeline/get-v2-project-pipeline-id.yml'
+  put:
+    $ref: './ProjectPipeline/put-v2-project-pipeline-id.yml'
+  delete:
+    $ref: './ProjectPipeline/delete-v2-project-pipeline-id.yml'
+/v2/terrafund/polygon/geojson/{uuid}:
+  get:
+    $ref: './Terrafund/get-v2-terrafund-polygon-geojson-uuid.yml'
+/v2/terrafund/polygon:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-polygon.yml'

@@ -330,3 +330,51 @@ DashboardBBOXProject:
   $ref: './DashboardBBOXProject.yml'
 DashboardProjectViewResponse:
   $ref: './DashboardProjectViewResponse.yml'
+RoleUserCreate:
+  $ref: './RoleUserCreate.yml'
+RoleUserRead:
+  $ref: './RoleUserRead.yml'
+ProjectPipeline:
+  $ref: './ProjectPipeline.yml'
+PolygonSiteStatusRequestPost:
+  $ref: './PolygonSiteStatusRequestPost.yml'
+SiteStatusResponse:
+  $ref: './SiteStatusResponse.yml'
+SitePolygonResponse:
+  $ref: './SitePolygonResponse.yml'
+AuditStatusResponse:
+  $ref: './AuditStatusResponse.yml'
+AttachmentResponse:
+  $ref: './AttachmentResponse.yml'
+AuditStatusPost:
+  $ref: './AuditStatusPost.yml'
+AuditStatusResponseWithData:
+  $ref: './AuditStatusResponseWithData.yml'
+SiteStatusRequestPost:
+  $ref: './SiteStatusRequestPost.yml'
+ProjectStatusRequestPost:
+  $ref: './ProjectStatusRequestPost.yml'
+ProjectStatusResponse:
+  $ref: './ProjectStatusResponse.yml'
+SitePolygon:
+  $ref: './SitePolygon.yml'
+GeometryString:
+  $ref: './GeometryString.yml'
+SitePolygonCreateResponse:
+  $ref: './SitePolygonCreateResponse.yml'
+PolygonBboxResponse:
+  $ref: './PolygonBboxResponse.yml'
+GeoJSONResponse:
+  $ref: './GeoJSONResponse.yml'
+SitePolygonsDataResponse:
+  $ref: './SitePolygonsDataResponse.yml'
+SitePolygonsBboxResponse:
+  $ref: './SitePolygonsBboxResponse.yml'
+FeatureCollection:
+  $ref: './FeatureCollection.yml'
+ProjectPipelinePost:
+  $ref: './ProjectPipelinePost.yml'
+GeojsonData:
+  $ref: './GeojsonData.yml'
+DashboardPolygonResponse:
+  $ref: './DashboardPolygonResponse.yml'

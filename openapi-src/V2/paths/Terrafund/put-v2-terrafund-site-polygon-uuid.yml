@@ -1,0 +1,23 @@
+summary: Update site polygon
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    type: string
+    description: The UUID of the site polygon
+  - in: body
+    name: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/SitePolygonResponse'
+responses:
+  '200':
+    description: Successful response
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/SitePolygonResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

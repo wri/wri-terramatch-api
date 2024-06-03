@@ -44639,6 +44639,552 @@ definitions:
         properties:
           allowed:
             type: boolean
+  RoleUserCreate:
+    title: RoleUserCreate
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      password:
+        type: string
+      job_role:
+        type: string
+      primary_role:
+        type: string
+      country:
+        type: string
+      program:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      callback_url:
+        type: string
+  RoleUserRead:
+    title: RoleUserRead
+    type: object
+    properties:
+      id:
+        type: integer
+      organisation_id:
+        type: integer
+      organisation_name:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      email_address_verified_at:
+        type: string
+        format: date-time
+      role:
+        type: string
+      role_id:
+        type: string
+      country:
+        type: string
+      program:
+        type: string
+      last_logged_in_at:
+        type: string
+        format: date-time
+      job_role:
+        type: string
+      facebook:
+        type: string
+      twitter:
+        type: string
+      instagram:
+        type: string
+      linkedin:
+        type: string
+      avatar:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      has_ppc_projects:
+        type: boolean
+      has_terrafund_projects:
+        type: boolean
+  ProjectPipeline:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          name:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+          date:
+            type: string
+            format: date
+          id:
+            type: integer
+          SubmittedBy:
+            type: string
+          Program:
+            type: string
+          Cohort:
+            type: string
+          PublishFor:
+            type: string
+          URL:
+            type: string
+          CreatedDate:
+            type: string
+            format: date
+          ModifiedDate:
+            type: string
+            format: date
+  PolygonSiteStatusRequestPost:
+    type: object
+    properties:
+      status:
+        type: string
+      comment:
+        type: string
+  SiteStatusResponse:
+    type: object
+    properties:
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+  SitePolygonResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      poly_name:
+        type: string
+      plantstart:
+        type: string
+        format: date
+      plantend:
+        type: string
+        format: date
+      practice:
+        type: string
+      target_sys:
+        type: string
+      distr:
+        type: string
+      num_trees:
+        type: integer
+      calc_area:
+        type: number
+        format: float
+      status:
+        type: string
+  AuditStatusResponse:
+    type: object
+    properties:
+      entity_uuid:
+        type: string
+      entity:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+      is_active:
+        type: boolean
+      is_submitted:
+        type: boolean
+      type:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      request_removed:
+        type: boolean
+      attachments:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: number
+            entity_id:
+              type: string
+            attachment:
+              type: string
+            created_by:
+              type: string
+            url_file:
+              type: string
+  AttachmentResponse:
+    type: object
+    properties:
+      id:
+        type: number
+      entity_id:
+        type: string
+      attachment:
+        type: string
+      created_by:
+        type: string
+      url_file:
+        type: string
+  AuditStatusPost:
+    type: object
+    properties:
+      entity:
+        type: string
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+      is_active:
+        type: boolean
+      is_submitted:
+        type: boolean
+      type:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      request_removed:
+        type: boolean
+  AuditStatusResponseWithData:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            entity_uuid:
+              type: string
+            entity:
+              type: string
+            status:
+              type: string
+            comment:
+              type: string
+            date_created:
+              type: string
+              format: date
+            created_by:
+              type: string
+            is_active:
+              type: boolean
+            is_submitted:
+              type: boolean
+            type:
+              type: string
+            first_name:
+              type: string
+            last_name:
+              type: string
+            request_removed:
+              type: boolean
+            attachments:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  entity_id:
+                    type: string
+                  attachment:
+                    type: string
+                  created_by:
+                    type: string
+                  url_file:
+                    type: string
+  SiteStatusRequestPost:
+    type: object
+    properties:
+      status:
+        type: string
+      comment:
+        type: string
+  ProjectStatusRequestPost:
+    type: object
+    properties:
+      status:
+        type: string
+      comment:
+        type: string
+  ProjectStatusResponse:
+    type: object
+    properties:
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      attachment_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+  SitePolygon:
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      project_id:
+        type: string
+      proj_name:
+        type: string
+      org_name:
+        type: string
+      poly_id:
+        type: string
+      poly_name:
+        type: string
+      site_id:
+        type: string
+      site_name:
+        type: string
+      plantstart:
+        type: string
+        format: date
+      plantend:
+        type: string
+        format: date
+      practice:
+        type: string
+      target_sys:
+        type: string
+      distr:
+        type: string
+      num_trees:
+        type: integer
+      calc_area:
+        type: number
+        format: float
+      created_by:
+        type: string
+      last_modified_by:
+        type: string
+      deleted_at:
+        type: string
+        format: date-time
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+      status:
+        type: string
+      country:
+        type: string
+  GeometryString:
+    type: object
+    properties:
+      geometry:
+        type: string
+  SitePolygonCreateResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Site polygon created successfully
+      uuid:
+        type: string
+        description: UUID of the created site polygon
+      area:
+        type: number
+        format: double
+        description: Calculated area in hectares
+  PolygonBboxResponse:
+    type: object
+    properties:
+      bbox:
+        type: array
+  GeoJSONResponse:
+    type: object
+    properties:
+      type:
+        type: string
+      features:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+            geometry:
+              type: object
+              properties:
+                type:
+                  type: string
+                coordinates:
+                  type: array
+            properties:
+              type: object
+              properties:
+                poly_name:
+                  type: string
+                plantstart:
+                  type: string
+                plantend:
+                  type: string
+                practice:
+                  type: string
+                target_sys:
+                  type: string
+                distr:
+                  type: string
+                num_trees:
+                  type: integer
+  SitePolygonsDataResponse:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+        project_id:
+          type: string
+        proj_name:
+          type: string
+        org_name:
+          type: string
+        poly_id:
+          type: string
+        poly_name:
+          type: string
+        site_id:
+          type: string
+        site_name:
+          type: string
+        plantstart:
+          type: string
+          format: date
+        plantend:
+          type: string
+          format: date
+        practice:
+          type: string
+        target_sys:
+          type: string
+        distr:
+          type: string
+        num_trees:
+          type: integer
+        calc_area:
+          type: number
+          format: float
+        created_by:
+          type: string
+        last_modified_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+        country:
+          type: string
+  SitePolygonsBboxResponse:
+    type: object
+    properties:
+      bbox:
+        type: array
+  FeatureCollection:
+    type: object
+    properties:
+      type:
+        type: string
+  ProjectPipelinePost:
+    properties:
+      date:
+        type: string
+        format: date
+      id:
+        type: integer
+      SubmittedBy:
+        type: string
+      Program:
+        type: string
+      Cohort:
+        type: string
+      PublishFor:
+        type: string
+      URL:
+        type: string
+      CreatedDate:
+        type: string
+        format: date
+      ModifiedDate:
+        type: string
+        format: date
+  GeojsonData:
+    type: object
+    properties:
+      geojson:
+        type: object
+        description: The GeoJSON representation of the polygon geometry.
+  DashboardPolygonResponse:
+    type: object
+    properties:
+      uuid:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -90784,6 +91330,52 @@ paths:
         '200':
           description: OK
   '/v2/admin/sites/{UUID}':
+    put:
+      operationId: put-v2-admin-sites-uuid
+      summary: update site status
+      tags:
+        - V2 Sites
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the site
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity_uuid:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  attachment_url:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
     delete:
       summary: Delete a site
       operationId: delete-v2-admin-site-UUID
@@ -90947,6 +91539,52 @@ paths:
         '200':
           description: OK
   '/v2/admin/projects/{UUID}':
+    put:
+      operationId: put-v2-admin-projects-uuid
+      summary: update project status
+      tags:
+        - V2 Projects
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity_uuid:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  attachment_url:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
     delete:
       summary: Delete a project
       operationId: delete-v2-admin-projects-UUID
@@ -95337,6 +95975,39 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /v2/dashboard/get-polygons/project:
+    get:
+      summary: Retrieve all polygons.
+      description: |
+        This endpoint returns all polygons by project uuid.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: uuid for the given project
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    properties:
+                      NeedsMoreInfo:
+                        type: array
+                        description: Ids of polygons that need more information
+                      Submitted:
+                        type: array
+                        description: Ids of submitted polygons
+                      Approved:
+                        type: array
+                        description: Ids of approved polygons
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   '/v2/dashboard/country/{country}':
     get:
       summary: Get the bounding box of a country
@@ -95565,3 +96236,1378 @@ paths:
                   message:
                     type: string
                     example: An error message describing the issue.
+    put:
+      summary: Update geometry for a polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon geometry to update
+        - in: body
+          name: geometry
+          required: true
+          schema:
+            type: object
+            properties:
+              geometry:
+                type: string
+          description: The new geometry data
+      responses:
+        '200':
+          description: Geometry updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Geometry updated successfully.
+                  geometry:
+                    type: object
+                    description: The updated geometry data
+                  uuid:
+                    type: string
+        '404':
+          description: No polygon geometry found for the given UUID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No polygon geometry found for the given UUID.
+        '500':
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+    delete:
+      summary: Delete polygon records
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon geometry to delete
+      responses:
+        '204':
+          description: No Content
+  /users-register:
+    post:
+      summary: Create a user role
+      tags:
+        - Users Roles
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            title: RoleUserCreate
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              password:
+                type: string
+              job_role:
+                type: string
+              primary_role:
+                type: string
+              country:
+                type: string
+              program:
+                type: string
+              facebook:
+                type: string
+              twitter:
+                type: string
+              instagram:
+                type: string
+              linkedin:
+                type: string
+              phone_number:
+                type: string
+              whatsapp_phone:
+                type: string
+              callback_url:
+                type: string
+      responses:
+        '201':
+          description: Created
+          schema:
+            title: RoleUserRead
+            type: object
+            properties:
+              id:
+                type: integer
+              organisation_id:
+                type: integer
+              organisation_name:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              email_address_verified_at:
+                type: string
+                format: date-time
+              role:
+                type: string
+              role_id:
+                type: string
+              country:
+                type: string
+              program:
+                type: string
+              last_logged_in_at:
+                type: string
+                format: date-time
+              job_role:
+                type: string
+              facebook:
+                type: string
+              twitter:
+                type: string
+              instagram:
+                type: string
+              linkedin:
+                type: string
+              avatar:
+                type: string
+              phone_number:
+                type: string
+              whatsapp_phone:
+                type: string
+              has_ppc_projects:
+                type: boolean
+              has_terrafund_projects:
+                type: boolean
+  /v2/project-pipeline:
+    get:
+      operationId: get-v2-fproject-pipeline
+      summary: Get all projects from the pipeline
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        name:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+                        date:
+                          type: string
+                          format: date
+                        id:
+                          type: integer
+                        SubmittedBy:
+                          type: string
+                        Program:
+                          type: string
+                        Cohort:
+                          type: string
+                        PublishFor:
+                          type: string
+                        URL:
+                          type: string
+                        CreatedDate:
+                          type: string
+                          format: date
+                        ModifiedDate:
+                          type: string
+                          format: date
+    post:
+      operationId: post-v2-fproject-pipeline
+      summary: Create a new project in the pipeline
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                date:
+                  type: string
+                  format: date
+                id:
+                  type: integer
+                SubmittedBy:
+                  type: string
+                Program:
+                  type: string
+                Cohort:
+                  type: string
+                PublishFor:
+                  type: string
+                URL:
+                  type: string
+                CreatedDate:
+                  type: string
+                  format: date
+                ModifiedDate:
+                  type: string
+                  format: date
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                properties:
+                  date:
+                    type: string
+                    format: date
+                  id:
+                    type: integer
+                  SubmittedBy:
+                    type: string
+                  Program:
+                    type: string
+                  Cohort:
+                    type: string
+                  PublishFor:
+                    type: string
+                  URL:
+                    type: string
+                  CreatedDate:
+                    type: string
+                    format: date
+                  ModifiedDate:
+                    type: string
+                    format: date
+  '/v2/admin/site-polygon/{UUID}':
+    get:
+      operationId: get-v2-admin-site-polygon-by-site-uuid
+      summary: Get site site-polygon by site UUID
+      tags:
+        - V2 Sites
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  uuid:
+                    type: string
+                  poly_name:
+                    type: string
+                  plantstart:
+                    type: string
+                    format: date
+                  plantend:
+                    type: string
+                    format: date
+                  practice:
+                    type: string
+                  target_sys:
+                    type: string
+                  distr:
+                    type: string
+                  num_trees:
+                    type: integer
+                  calc_area:
+                    type: number
+                    format: float
+                  status:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Site polygon not found
+        '500':
+          description: Internal Server Error
+    put:
+      operationId: put-v2-admin-polygon-sites-uuid
+      summary: update polygon site status
+      tags:
+        - V2 Sites
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the polygon site
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity_uuid:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  attachment_url:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/audit-status:
+    get:
+      operationId: get-v2-audits-status
+      summary: Get all audits status
+      tags:
+        - V2 Audits Status
+      parameters:
+        - in: query
+          name: entity
+          type: string
+          required: true
+          description: required.
+        - in: query
+          name: uuid
+          type: string
+          required: true
+          description: required.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    entity_uuid:
+                      type: string
+                    entity:
+                      type: string
+                    status:
+                      type: string
+                    comment:
+                      type: string
+                    date_created:
+                      type: string
+                      format: date
+                    created_by:
+                      type: string
+                    is_active:
+                      type: boolean
+                    is_submitted:
+                      type: boolean
+                    type:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    request_removed:
+                      type: boolean
+                    attachments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          entity_id:
+                            type: string
+                          attachment:
+                            type: string
+                          created_by:
+                            type: string
+                          url_file:
+                            type: string
+    post:
+      operationId: post-v2-audit-status
+      summary: Create a new audit status
+      tags:
+        - V2 Audits Status
+      parameters:
+        - in: query
+          name: id
+          type: string
+          description: Optional.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entity:
+                  type: string
+                entity_uuid:
+                  type: string
+                status:
+                  type: string
+                comment:
+                  type: string
+                date_created:
+                  type: string
+                  format: date
+                created_by:
+                  type: string
+                is_active:
+                  type: boolean
+                is_submitted:
+                  type: boolean
+                type:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                request_removed:
+                  type: boolean
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity_uuid:
+                    type: string
+                  entity:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+                  is_active:
+                    type: boolean
+                  is_submitted:
+                    type: boolean
+                  type:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  request_removed:
+                    type: boolean
+                  attachments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        entity_id:
+                          type: string
+                        attachment:
+                          type: string
+                        created_by:
+                          type: string
+                        url_file:
+                          type: string
+  '/v2/audit-status/{id}':
+    get:
+      operationId: get-v2-audit-status
+      summary: Get a audit from the status by ID
+      tags:
+        - V2 Audits Status
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: show a specific audit status.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  uuid:
+                    type: string
+                  poly_name:
+                    type: string
+                  plantstart:
+                    type: string
+                    format: date
+                  plantend:
+                    type: string
+                    format: date
+                  practice:
+                    type: string
+                  target_sys:
+                    type: string
+                  distr:
+                    type: string
+                  num_trees:
+                    type: integer
+                  calc_area:
+                    type: number
+                    format: float
+                  status:
+                    type: string
+    put:
+      operationId: update-v2-audit-status
+      summary: Update a audit in the status by ID
+      tags:
+        - V2 Audits Status
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: edit a specific audit status.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entity:
+                  type: string
+                entity_uuid:
+                  type: string
+                status:
+                  type: string
+                comment:
+                  type: string
+                date_created:
+                  type: string
+                  format: date
+                created_by:
+                  type: string
+                is_active:
+                  type: boolean
+                is_submitted:
+                  type: boolean
+                type:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                request_removed:
+                  type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity_uuid:
+                    type: string
+                  entity:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+                  is_active:
+                    type: boolean
+                  is_submitted:
+                    type: boolean
+                  type:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  request_removed:
+                    type: boolean
+                  attachments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        entity_id:
+                          type: string
+                        attachment:
+                          type: string
+                        created_by:
+                          type: string
+                        url_file:
+                          type: string
+    delete:
+      summary: Delete a audit from the status by ID
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: delete a specific audit status.
+      responses:
+        '204':
+          description: No Content
+  /v2/attachment:
+    get:
+      operationId: get-v2-attachment
+      summary: Get all attachments
+      tags:
+        - V2 attachment
+      parameters:
+        - in: query
+          name: entity_uuid
+          type: string
+          description: required.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    entity_uuid:
+                      type: string
+                    entity:
+                      type: string
+                    status:
+                      type: string
+                    comment:
+                      type: string
+                    date_created:
+                      type: string
+                      format: date
+                    created_by:
+                      type: string
+                    is_active:
+                      type: boolean
+                    is_submitted:
+                      type: boolean
+                    type:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    request_removed:
+                      type: boolean
+                    attachments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          entity_id:
+                            type: string
+                          attachment:
+                            type: string
+                          created_by:
+                            type: string
+                          url_file:
+                            type: string
+  '/v2/terrafund/site-polygon/{uuid}':
+    put:
+      summary: Update site polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the site polygon
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              uuid:
+                type: string
+              poly_name:
+                type: string
+              plantstart:
+                type: string
+                format: date
+              plantend:
+                type: string
+                format: date
+              practice:
+                type: string
+              target_sys:
+                type: string
+              distr:
+                type: string
+              num_trees:
+                type: integer
+              calc_area:
+                type: number
+                format: float
+              status:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  uuid:
+                    type: string
+                  poly_name:
+                    type: string
+                  plantstart:
+                    type: string
+                    format: date
+                  plantend:
+                    type: string
+                    format: date
+                  practice:
+                    type: string
+                  target_sys:
+                    type: string
+                  distr:
+                    type: string
+                  num_trees:
+                    type: integer
+                  calc_area:
+                    type: number
+                    format: float
+                  status:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/site-polygon/{uuid}/{siteUuid}':
+    post:
+      summary: Create site polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon related
+        - in: path
+          name: siteUuid
+          required: true
+          type: string
+          description: The UUID of the site
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              uuid:
+                type: string
+              poly_name:
+                type: string
+              plantstart:
+                type: string
+                format: date
+              plantend:
+                type: string
+                format: date
+              practice:
+                type: string
+              target_sys:
+                type: string
+              distr:
+                type: string
+              num_trees:
+                type: integer
+              calc_area:
+                type: number
+                format: float
+              status:
+                type: string
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Site polygon created successfully
+                  uuid:
+                    type: string
+                    description: UUID of the created site polygon
+                  area:
+                    type: number
+                    format: double
+                    description: Calculated area in hectares
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/polygon/bbox/{uuid}':
+    get:
+      operationId: get-v2-polygon-bbox
+      summary: Get bbox for a polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bbox:
+                    type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/geojson/complete:
+    get:
+      summary: Get Polygon as GeoJSON
+      description: |
+        Retrieve polygon geometry and properties as GeoJSON.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          required: true
+          description: UUID of the polygon geometry.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  features:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        geometry:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            coordinates:
+                              type: array
+                        properties:
+                          type: object
+                          properties:
+                            poly_name:
+                              type: string
+                            plantstart:
+                              type: string
+                            plantend:
+                              type: string
+                            practice:
+                              type: string
+                            target_sys:
+                              type: string
+                            distr:
+                              type: string
+                            num_trees:
+                              type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/sites/{site}/bbox':
+    get:
+      summary: Get bbox for a specific site
+      parameters:
+        - in: path
+          name: site
+          required: true
+          type: string
+          description: The ID of the site
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bbox:
+                    type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/sites/{site}/polygon':
+    get:
+      operationId: get-v2-site-polygons
+      summary: Get polygons for a specific site
+      parameters:
+        - in: path
+          name: site
+          required: true
+          type: string
+          description: The ID of the site
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    uuid:
+                      type: string
+                    project_id:
+                      type: string
+                    proj_name:
+                      type: string
+                    org_name:
+                      type: string
+                    poly_id:
+                      type: string
+                    poly_name:
+                      type: string
+                    site_id:
+                      type: string
+                    site_name:
+                      type: string
+                    plantstart:
+                      type: string
+                      format: date
+                    plantend:
+                      type: string
+                      format: date
+                    practice:
+                      type: string
+                    target_sys:
+                      type: string
+                    distr:
+                      type: string
+                    num_trees:
+                      type: integer
+                    calc_area:
+                      type: number
+                      format: float
+                    created_by:
+                      type: string
+                    last_modified_by:
+                      type: string
+                    deleted_at:
+                      type: string
+                      format: date-time
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    status:
+                      type: string
+                    country:
+                      type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/geojson/site:
+    get:
+      summary: Get collection Feature as GeoJSON for a site
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          required: true
+          description: UUID of the aite.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/upload-geojson:
+    post:
+      summary: Upload GeoJSON File
+      description: 'Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The GeoJSON file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the GeoJSON file
+      responses:
+        '200':
+          description: GeoJSON file processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/upload-shapefile:
+    post:
+      summary: Upload shapfile File
+      description: 'Uploads a shapefile file, converts it to GeoJSON, and inserts it into the database.'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The shapefile file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the shapefile file
+      responses:
+        '200':
+          description: Shapefile processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/upload-kml:
+    post:
+      summary: Upload KML File
+      description: 'Uploads a KML file, converts it to GeoJSON, and inserts it into the database.'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The KML file to upload
+                uuid:
+                  type: string
+                  description: The UUID of the site associated with the KML file
+      responses:
+        '200':
+          description: KML file processed and inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  uuid:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/project-pipeline/{id}':
+    get:
+      operationId: get-v2-project-pipeline
+      summary: Get a project from the pipeline by ID
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: show a specific project pipeline.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          description:
+                            type: string
+                      date:
+                        type: string
+                        format: date
+                      id:
+                        type: integer
+                      SubmittedBy:
+                        type: string
+                      Program:
+                        type: string
+                      Cohort:
+                        type: string
+                      PublishFor:
+                        type: string
+                      URL:
+                        type: string
+                      CreatedDate:
+                        type: string
+                        format: date
+                      ModifiedDate:
+                        type: string
+                        format: date
+    put:
+      operationId: update-v2-project-pipeline
+      summary: Update a project in the pipeline by ID
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: edit a specific project pipeline.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                date:
+                  type: string
+                  format: date
+                id:
+                  type: integer
+                SubmittedBy:
+                  type: string
+                Program:
+                  type: string
+                Cohort:
+                  type: string
+                PublishFor:
+                  type: string
+                URL:
+                  type: string
+                CreatedDate:
+                  type: string
+                  format: date
+                ModifiedDate:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  date:
+                    type: string
+                    format: date
+                  id:
+                    type: integer
+                  SubmittedBy:
+                    type: string
+                  Program:
+                    type: string
+                  Cohort:
+                    type: string
+                  PublishFor:
+                    type: string
+                  URL:
+                    type: string
+                  CreatedDate:
+                    type: string
+                    format: date
+                  ModifiedDate:
+                    type: string
+                    format: date
+    delete:
+      summary: Delete a project from the pipeline by ID
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: delete a specific project pipeline.
+      responses:
+        '204':
+          description: No Content
+  '/v2/terrafund/polygon/geojson/{uuid}':
+    get:
+      summary: Retrieve polygon GeoJSON by UUID
+      description: |
+        Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          required: true
+          description: The UUID of the polygon geometry to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  geojson:
+                    type: object
+                    description: The GeoJSON representation of the polygon geometry.
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message indicating that no polygon geometry was found for the provided UUID.
+  /v2/terrafund/polygon:
+    post:
+      summary: Create a new polygon
+      operationId: post-v2-polygon
+      tags:
+        - V2 Terrafund
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                geometry:
+                  type: string
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string

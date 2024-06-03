@@ -1,0 +1,22 @@
+operationId: update-v2-audit-status
+summary: Update a audit in the status by ID
+tags: 
+  - V2 Audits Status
+parameters:
+  - type: string
+    name: id
+    in: path
+    required: true
+    description: edit a specific audit status.
+requestBody:
+  content:
+    application/json:
+      schema:
+        $ref: '../../definitions/_index.yml#/AuditStatusPost'
+responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/AuditStatusResponse'

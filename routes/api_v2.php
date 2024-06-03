@@ -718,6 +718,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/get-projects', GetProjectsController::class);
     Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsByStatusOfProject']);
+    Route::get('/get-polygons/project', [GetPolygonsController::class, 'getPolygonsUuidsByStatusForProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);

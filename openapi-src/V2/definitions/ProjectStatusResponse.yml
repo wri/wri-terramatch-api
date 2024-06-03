@@ -1,0 +1,15 @@
+type: object
+properties:
+  entity_uuid:
+    type: string
+  status:
+    type: string
+  comment:
+    type: string
+  attachment_url:
+    type: string
+  date_created:
+    type: string
+    format: date
+  created_by:
+    type: string

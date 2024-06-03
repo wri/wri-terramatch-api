@@ -38,27 +38,17 @@ class TerrafundDashboardQueryHelper
         return $polygonsIds;
     }
 
-    public static function getPolygonsByStatusOfProject($request)
+    public static function retrievePolygonUuidsByStatusForProject($projectUuid)
     {
-        try {
-            $projectUuId = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
-                ->pluck('uuid')->first();
-            Log::info('Getting project statuses ' . $projectUuId);
-            $project = Project::where('uuid', $projectUuId)->first();
-            $sitePolygons = $project->sitePolygons;
-            $statuses = ['needs-more-information', 'submitted', 'approved'];
-            $polygons = [];
-            foreach ($statuses as $status) {
-                $polygonsOfProject = $sitePolygons
-                    ->where('status', $status)
-                    ->pluck('poly_id');
+        $project = Project::where('uuid', $projectUuid)->first();
+        $sitePolygons = $project->sitePolygons;
+        $statuses = ['needs-more-info', 'submitted', 'approved'];
+        $polygons = [];
 
-                $polygons[$status] = $polygonsOfProject;
-            }
-
-            return $polygons;
-        } catch (\Exception $e) {
-            Log::error($projectUuId.' Error fetching polygons by status of project: ' . $e->getMessage());
+        foreach ($statuses as $status) {
+            $polygonsOfProject = $sitePolygons
+                ->where('status', $status)
+                ->pluck('poly_id');
 
             return [];
         }
@@ -84,5 +74,20 @@ class TerrafundDashboardQueryHelper
 
             return [];
         }
+    }
+
+    public static function getPolygonsByStatusOfProject($request)
+    {
+        $projectUuid = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+            ->pluck('uuid')->first();
+
+        return self::retrievePolygonUuidsByStatusForProject($projectUuid);
+    }
+
+    public static function getPolygonsUuidsByStatusForProject($request)
+    {
+        $projectUuid = $request->input('uuid');
+
+        return self::retrievePolygonUuidsByStatusForProject($projectUuid);
     }
 }

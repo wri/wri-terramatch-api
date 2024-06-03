@@ -1,0 +1,26 @@
+operationId: put-v2-admin-polygon-sites-uuid
+summary: update polygon site status
+tags:
+  - V2 Sites
+parameters:
+  - in: path
+    name: UUID
+    required: true
+    type: string
+    description: The UUID of the polygon site
+requestBody:
+  content:
+    application/json:
+      schema:
+        $ref: '../../definitions/_index.yml#/PolygonSiteStatusRequestPost'
+responses:
+  '200':
+    description: Successful response
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/SiteStatusResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error
