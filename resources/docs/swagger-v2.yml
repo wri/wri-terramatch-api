@@ -95975,6 +95975,39 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /v2/dashboard/get-polygons/project:
+    get:
+      summary: Retrieve all polygons.
+      description: |
+        This endpoint returns all polygons by project uuid.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: uuid for the given project
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    properties:
+                      NeedsMoreInfo:
+                        type: array
+                        description: Ids of polygons that need more information
+                      Submitted:
+                        type: array
+                        description: Ids of submitted polygons
+                      Approved:
+                        type: array
+                        description: Ids of approved polygons
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   '/v2/dashboard/country/{country}':
     get:
       summary: Get the bounding box of a country

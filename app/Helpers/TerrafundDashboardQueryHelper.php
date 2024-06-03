@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\SitePolygon;
 
 class TerrafundDashboardQueryHelper
 {
@@ -37,26 +36,36 @@ class TerrafundDashboardQueryHelper
         return $polygonsIds;
     }
 
-    public static function getPolygonsByStatusOfProject($request)
+    public static function retrievePolygonUuidsByStatusForProject($projectUuid)
     {
-        $projectUuId = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
-        ->pluck('uuid')->first();
-        $project = Project::where('uuid', $projectUuId)->first();
+        $project = Project::where('uuid', $projectUuid)->first();
         $sitePolygons = $project->sitePolygons;
-
         $statuses = ['needs-more-info', 'submitted', 'approved'];
-
         $polygons = [];
 
         foreach ($statuses as $status) {
-            // Get polygons of the project filtered by status
             $polygonsOfProject = $sitePolygons
-            ->where('status', $status)
-            ->pluck('poly_id');
+                ->where('status', $status)
+                ->pluck('poly_id');
 
             $polygons[$status] = $polygonsOfProject;
         }
 
         return $polygons;
+    }
+
+    public static function getPolygonsByStatusOfProject($request)
+    {
+        $projectUuid = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+            ->pluck('uuid')->first();
+
+        return self::retrievePolygonUuidsByStatusForProject($projectUuid);
+    }
+
+    public static function getPolygonsUuidsByStatusForProject($request)
+    {
+        $projectUuid = $request->input('uuid');
+
+        return self::retrievePolygonUuidsByStatusForProject($projectUuid);
     }
 }
