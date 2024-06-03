@@ -8,6 +8,7 @@ parameters:
     type: string
     description: Optional. Filter counts and metrics by country.
 requestBody:
+  required: true
   content:
     application/json:
       schema:
