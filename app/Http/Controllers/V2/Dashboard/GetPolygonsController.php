@@ -31,6 +31,15 @@ class GetPolygonsController extends Controller
         ]);
     }
 
+    public function getPolygonsByStatus(Request $request): GetPolygonsResource
+    {
+        $polygonsIds = TerrafundDashboardQueryHelper::getPolygonsByStatus($request);
+
+        return new GetPolygonsResource([
+          'data' => $polygonsIds,
+        ]);
+    }
+
     public function getBboxOfCompleteProject(Request $request)
     {
         try {
