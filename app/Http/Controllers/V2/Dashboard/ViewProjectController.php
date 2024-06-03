@@ -67,7 +67,7 @@ class ViewProjectController extends Controller
             } else {
                 if ($role === 'government') {
                     try {
-                        $projectUuids = Project::where('country', $user->country)->pluck('uuid');
+                        $projectUuids = Project::where('framework_key', 'terrafund')->where('country', $user->country)->pluck('uuid');
                     } catch (\Exception $e) {
                         $errorMessage = $e->getMessage();
                         Log::error('Error fetching projects for government: ' . $errorMessage);
@@ -86,7 +86,7 @@ class ViewProjectController extends Controller
                 } elseif ($role === 'project_developer') {
                     try {
                         $projectIds = ProjectInvite::where('email_address', $user->email_address)->pluck('project_id');
-                        $projectUuids = Project::whereIn('id', $projectIds)->pluck('uuid');
+                        $projectUuids = Project::whereIn('id', $projectIds)->where('framework_key', 'terrafund')->pluck('uuid');
                     } catch (\Exception $e) {
                         $errorMessage = $e->getMessage();
                         Log::error('Error fetching projects for project developer: ' . $errorMessage);
@@ -101,7 +101,7 @@ class ViewProjectController extends Controller
     
                 Log::info('Returning this value: ' . json_encode($projectUuids));
                 $polygonsData = [
-                  'needs-more-info' => [],
+                  'needs-more-information' => [],
                   'submitted' => [],
                   'approved' => [],
                 ];
