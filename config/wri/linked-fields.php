@@ -594,6 +594,8 @@ return [
                 // TODO (TM-912) Deprecated, to be removed.
                 'site-rep-paid-other-activity-description' => ['property' => 'paid_other_activity_description', 'label' => 'Paid Other Activities Description', 'input_type' => 'long-text'],
                 'site-rep-other-workdays-description' => ['property' => 'other_workdays_description', 'label' => 'Other Activities Description', 'input_type' => 'long-text'],
+                'site-rep-num-trees-regenerating' => ['property' => 'num_trees_regenerating', 'label' => 'Number of trees regenerating', 'input_type' => 'number'],
+                'site-rep-regenerating-description' => ['property' => 'regenerating_description', 'label' => 'regenerating description', 'input_type' => 'text']
             ],
             'file-collections' => [
                 'site-rep-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
