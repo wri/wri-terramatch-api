@@ -7,3 +7,7 @@ properties:
     type: string
     format: uuid
     description: UUID of the entity
+  polygonsData:
+    type: array
+    items:
+      $ref: './_index.yml#/SitePolygon'

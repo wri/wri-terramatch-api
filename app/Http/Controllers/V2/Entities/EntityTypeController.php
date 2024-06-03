@@ -18,17 +18,23 @@ class EntityTypeController extends Controller
 
             $project = Project::where('uuid', $uuid)->first();
             if ($project) {
+                $sitePolygons = $project->sitePolygons;
+
                 return response()->json([
                     'type' => 'project',
                     'uuid' => $uuid,
+                    'polygonsData' => $sitePolygons,
                 ]);
             }
 
             $site = Site::where('uuid', $uuid)->first();
             if ($site) {
+                $sitePolygons = $site->sitePolygons;
+
                 return response()->json([
                     'type' => 'site',
                     'uuid' => $uuid,
+                    'polygonsData' => $sitePolygons,
                 ]);
             }
 
