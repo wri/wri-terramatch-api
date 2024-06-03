@@ -71,6 +71,20 @@ class TerrafundEditGeometryController extends Controller
                     if ($centroid === null) {
                         Log::warning("Invalid centroid for project UUID: $project->uuid");
                     }
+                    $centroidData = json_decode($centroid, true);
+
+                    if (isset($centroidData['coordinates']) && is_array($centroidData['coordinates'])) {
+                        $longitude = $centroidData['coordinates'][0];
+                        $latitude = $centroidData['coordinates'][1];
+                        $project->lat = $latitude;
+                        $project->long = $longitude;
+                        $project->save();
+
+                        Log::info("Updated project centroid for project UUID: $project->uuid with lat: $latitude, lng: $longitude");
+                    } else {
+                        Log::warning("Centroid data for project UUID: $project->uuid is malformed.");
+                    }
+                    Log::info("Updated project centroid for project UUID: $project->uuid with lat: {$centroid['lat']}, lng: {$centroid['lng']}");
                 } else {
                     Log::warning("Project with UUID $relatedSite->project_id not found.");
                 }
