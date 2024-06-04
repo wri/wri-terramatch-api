@@ -3,6 +3,8 @@
 namespace App\Helpers;
 
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Sites\SitePolygon;
+use Illuminate\Support\Facades\Log;
 
 class TerrafundDashboardQueryHelper
 {
@@ -46,6 +48,28 @@ class TerrafundDashboardQueryHelper
         $projectUuId = $request->input('uuid');
 
         return self::retrievePolygonUuidsForProject($projectUuId);
+    }
+
+    public static function getPolygonsByStatus()
+    {
+        try {
+            $statuses = ['needs-more-information', 'submitted', 'approved'];
+            $polygons = [];
+            foreach ($statuses as $status) {
+                $polygonsOfProject = SitePolygon::where('status', $status)
+                ->whereNotNull('site_id')
+                ->where('site_id', '!=', 'NULL')
+                ->pluck('poly_id');
+
+                $polygons[$status] = $polygonsOfProject;
+            }
+
+            return $polygons;
+        } catch (\Exception $e) {
+            Log::error('Error fetching polygons by status of project: ' . $e->getMessage());
+
+            return [];
+        }
     }
 
     public static function retrievePolygonUuidsByStatusForProject($projectUuid)
