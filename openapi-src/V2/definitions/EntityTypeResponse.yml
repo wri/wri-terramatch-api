@@ -11,3 +11,6 @@ properties:
     type: array
     items:
       $ref: './_index.yml#/SitePolygon'
+  bbox:
+    type: array
+    description: Bounding box of the entity
