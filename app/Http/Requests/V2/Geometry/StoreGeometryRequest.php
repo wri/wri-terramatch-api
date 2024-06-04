@@ -10,7 +10,9 @@ use Illuminate\Validation\ValidationException;
 class StoreGeometryRequest extends FormRequest
 {
     protected array $geometries;
+
     protected array $siteIds;
+
     protected array $sites;
 
     public function authorize(): bool
@@ -72,7 +74,7 @@ class StoreGeometryRequest extends FormRequest
                     'features.0.properties.site_id' => 'required|string',
                 ])->validate();
 
-            // This is guaranteed to be Point given the rules specified in rules()
+                // This is guaranteed to be Point given the rules specified in rules()
             } else {
                 // Require that all geometries in the collection are valid points, include estimated area, and that the
                 // collection has exactly one unique site id.
@@ -81,14 +83,14 @@ class StoreGeometryRequest extends FormRequest
                     'geometry.features.*.geometry.type' => 'required|string|in:Point',
                     'geometry.features.*.geometry.coordinates' => 'required|array|size:2',
                     'geometry.features.*.properties.est_area' => 'required|numeric|min:1',
-                    'site_ids' => 'required|array|size:1'
+                    'site_ids' => 'required|array|size:1',
                 ])->validate();
             }
         }
 
         // Structure this as a validation exception just to make the return shape of this endpoint consistent.
         Validator::make(['num_sites' => count($this->getSites()), 'num_site_ids' => count($this->getSiteIds())], [
-            'num_sites' => 'same:num_site_ids'
+            'num_sites' => 'same:num_site_ids',
         ])->validate();
     }
 }
