@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -309,6 +310,16 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
                 ->whereIn('workdayable_id', $this->reports()->hasBeenSubmitted()->select('id'))
                 ->select('id')
         )->gender()->sum('amount') ?? 0;
+    }
+
+    public function getSelfReportedWorkdayCountAttribute(): int
+    {
+        $totals = $this->reports()->hasBeenSubmitted()->get([
+            DB::raw('sum(`workdays_volunteer`) as volunteer'),
+            DB::raw('sum(`workdays_paid`) as paid'),
+        ])->first();
+
+        return $totals?->paid + $totals?->volunteer;
     }
 
     public function getFrameworkUuidAttribute(): ?string
