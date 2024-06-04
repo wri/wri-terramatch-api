@@ -46,16 +46,16 @@ class StoreGeometryRequest extends FormRequest
 
         return $this->siteIds = collect(
             data_get($this->getGeometries(), '*.features.*.properties.site_id')
-        )->unique()->flatten()->toArray();
+        )->unique()->filter()->toArray();
     }
 
-    public function getSites()
+    public function getSites(): array
     {
         if (! empty($this->sites)) {
             return $this->sites;
         }
 
-        return $this->sites = Site::whereIn('uuid', $this->getSiteIds())->get();
+        return $this->sites = Site::whereIn('uuid', $this->getSiteIds())->get()->all();
     }
 
     /**
@@ -70,7 +70,7 @@ class StoreGeometryRequest extends FormRequest
             if ($type == 'Polygon') {
                 // Require that we only have one geometry and that it has a site_id specified
                 Validator::make($geometry, [
-                    'features' => 'size:1',
+                    'features' => 'required|array|size:1',
                     'features.0.properties.site_id' => 'required|string',
                 ])->validate();
 
@@ -78,7 +78,8 @@ class StoreGeometryRequest extends FormRequest
             } else {
                 // Require that all geometries in the collection are valid points, include estimated area, and that the
                 // collection has exactly one unique site id.
-                $siteIds = collect(data_get($geometry, 'features.*.properties.site_id'))->unique()->flatten()->toArray();
+                $siteIds = collect(data_get($geometry, 'features.*.properties.site_id'))
+                    ->unique()->filter()->toArray();
                 Validator::make(['geometry' => $geometry, 'site_ids' => $siteIds], [
                     'geometry.features.*.geometry.type' => 'required|string|in:Point',
                     'geometry.features.*.geometry.coordinates' => 'required|array|size:2',
