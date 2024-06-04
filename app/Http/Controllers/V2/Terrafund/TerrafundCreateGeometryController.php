@@ -67,7 +67,7 @@ class TerrafundCreateGeometryController extends Controller
 
         SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-        return App::make(PolygonService::class)->createGeojsonModels($geojson, [], $site_id);
+        return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id]);
     }
 
     public function validateDataInDB(Request $request)
