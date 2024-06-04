@@ -8,9 +8,11 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\Site;
 use App\Services\PolygonService;
 use App\Validators\SitePolygonValidator;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -38,6 +40,7 @@ class GeometryController extends Controller
     ];
 
     /**
+     * @throws AuthorizationException
      * @deprecated Use POST /api/v2/geometry (include site id in the properties of each feature)
      */
     public function storeSiteGeometry(Request $request, Site $site): JsonResponse
@@ -51,28 +54,32 @@ class GeometryController extends Controller
         $geometries = $request->input('geometries');
         data_set($geometries, '*.features.*.properties.site_id', $site->uuid);
 
-        return response()->json($this->storePolygons($geometries), 201);
+        return response()->json($this->storeAndValidateGeometries($geometries), 201);
     }
 
+    /**
+     * @throws AuthorizationException
+     * @throws ValidationException
+     */
     public function storeGeometry(StoreGeometryRequest $request): JsonResponse
     {
-        $geometries = $request->input('geometries');
-        $siteIds = data_get($geometries, '*.features.*.properties.site_id');
-        foreach (Site::whereIn('uuid', $siteIds)->get() as $site) {
+        $request->validateGeometries();
+        foreach ($request->getSites() as $site) {
             $this->authorize('uploadPolygons', $site);
         }
 
-        return response()->json($this->storePolygons($geometries), 201);
+        return response()->json($this->storeAndValidateGeometries($request->getGeometries()), 201);
     }
 
-    protected function storePolygons($polygons): array
+    protected function storeAndValidateGeometries($geometries): array
     {
         /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
         $polygonUuids = [];
-        foreach ($polygons as $polygon) {
-            // We expect single polys on this endpoint, so just pull the first uuid returned
-            $polygonUuids[] = $service->createGeojsonModels($polygon)[0];
+        foreach ($geometries as $geometry) {
+            // In this controller we require either single polys or a collection of Points, which get turned into a
+            // single poly, so just pull the first UUID returned
+            $polygonUuids[] = $service->createGeojsonModels($geometry)[0];
         }
 
         // Do the validation in a separate step so that all of the existing polygons are taken into account
