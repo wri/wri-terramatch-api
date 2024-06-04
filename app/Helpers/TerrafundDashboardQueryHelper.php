@@ -76,7 +76,7 @@ class TerrafundDashboardQueryHelper
     {
         $project = Project::where('uuid', $projectUuid)->first();
         $sitePolygons = $project->sitePolygons;
-        $statuses = ['needs-more-info', 'submitted', 'approved'];
+        $statuses = ['needs-more-information', 'submitted', 'approved'];
         $polygons = [];
 
         foreach ($statuses as $status) {
