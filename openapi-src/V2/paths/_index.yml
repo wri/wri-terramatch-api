@@ -2404,6 +2404,9 @@
     responses:
       '200':
         description: OK
+'/v2/site-site/{UUID}':
+  put:
+    $ref: './Sites/put-v2-admin-sites-uuid.yml'
 '/v2/admin/site-monitorings':
   post:
     $ref: './Sites/Monitoring/post-v2-admin-site-monitorings.yml'
@@ -2412,6 +2415,9 @@
     $ref: './Sites/Monitoring/put-v2-admin-site-monitorings-uuid.yml'
   delete:
     $ref: './Sites/Monitoring/delete-v2-admin-site-monitorings-uuid.yml'
+'/v2/site-project/{UUID}':
+  put:
+    $ref: './Projects/put-v2-admin-projects-uuid.yml'
 '/v2/admin/projects/{UUID}':
   put:
     $ref: './Projects/put-v2-admin-projects-uuid.yml'

@@ -91474,6 +91474,53 @@ paths:
       responses:
         '200':
           description: OK
+  '/v2/site-site/{UUID}':
+    put:
+      operationId: put-v2-admin-sites-uuid
+      summary: update site status
+      tags:
+        - V2 Sites
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the site
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity_uuid:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  attachment_url:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   /v2/admin/site-monitorings:
     post:
       summary: Create a site monitoring as an admin
@@ -91609,6 +91656,53 @@ paths:
       responses:
         '200':
           description: OK
+  '/v2/site-project/{UUID}':
+    put:
+      operationId: put-v2-admin-projects-uuid
+      summary: update project status
+      tags:
+        - V2 Projects
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity_uuid:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  attachment_url:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   '/v2/admin/projects/{UUID}':
     put:
       operationId: put-v2-admin-projects-uuid

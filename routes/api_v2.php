@@ -688,6 +688,12 @@ Route::prefix('site-polygon')->group(function () {
     Route::get('/{uuid}', AdminSiteIndexSitePolygonsController::class);
     Route::put('/{uuid}', AdminSitePolygonsUpdateStatusController::class);
 });
+Route::prefix('site-project')->group(function () {
+    Route::put('/{project}', AdminProjectsUpdateStatusController::class);
+});
+Route::prefix('site-site')->group(function () {
+    Route::put('/{site}', AdminSitesUpdateStatusController::class);
+});
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
 Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
