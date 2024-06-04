@@ -34,23 +34,22 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
+            if (!$sitePolygon) {
+              Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
+              return null;
+            }
+            $relatedSite = Site::where('uuid', $sitePolygon->site_id)->first();
+            $project = Project::where('id', $relatedSite->project_id)->first();
 
-            if ($sitePolygon) {
-                $relatedSite = Site::where('uuid', $sitePolygon->site_id)->first();
-                $project = Project::where('id', $relatedSite->project_id)->first();
+            if ($project) {
+                $geometryHelper = new GeometryHelper();
+                $centroid = $geometryHelper->centroidOfProject($project->uuid);
 
-                if ($project) {
-                    $geometryHelper = new GeometryHelper();
-                    $centroid = $geometryHelper->centroidOfProject($project->uuid);
-
-                    if ($centroid === null) {
-                        Log::warning("Invalid centroid for project UUID: $project->uuid");
-                    }
-                } else {
-                    Log::warning("Project with UUID $relatedSite->project_id not found.");
+                if ($centroid === null) {
+                    Log::warning("Invalid centroid for project UUID: $project->uuid");
                 }
             } else {
-                Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
+                Log::warning("Project with UUID $relatedSite->project_id not found.");
             }
         } catch (\Exception $e) {
             Log::error('Error updating project centroid: ' . $e->getMessage());
