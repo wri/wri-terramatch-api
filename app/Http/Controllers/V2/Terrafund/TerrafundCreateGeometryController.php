@@ -390,8 +390,8 @@ class TerrafundCreateGeometryController extends Controller
             $uuid = $request->query('uuid');
 
             $polygonGeometry = PolygonGeometry::where('uuid', $uuid)
-            ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
-            ->first();
+              ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+              ->first();
 
             Log::info('Polygon Geometry', ['polygonGeometry' => $polygonGeometry]);
             if (! $polygonGeometry) {
@@ -447,8 +447,8 @@ class TerrafundCreateGeometryController extends Controller
             foreach ($polygonsUuids as $polygonUuid) {
                 $feature = [];
                 $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
-                ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
-                ->first();
+                  ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+                  ->first();
                 if (! $polygonGeometry) {
                     return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
                 }
