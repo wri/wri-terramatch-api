@@ -24,13 +24,10 @@ class PolygonService
     public const SCHEMA_CRITERIA_ID = 13;
     public const DATA_CRITERIA_ID = 14;
 
-    public function createGeojsonModels($geojson, $sitePolygonProperties = [], ?string $site_id = null): array
+    public function createGeojsonModels($geojson, $sitePolygonProperties = []): array
     {
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
-            if ($site_id !== null) {
-                $feature['properties']['site_id'] = $site_id;
-            }
             if ($feature['geometry']['type'] === 'Polygon') {
                 $data = $this->insertSinglePolygon($feature['geometry']);
                 $uuids[] = $data['uuid'];
