@@ -12,7 +12,6 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -181,6 +180,11 @@ class GeometryController extends Controller
 
     protected function runStoredGeometryValidations(string $polygonUuid): array
     {
+        // TODO: remove when the point transformation ticket is complete
+        if ($polygonUuid == PolygonService::TEMP_FAKE_POLYGON_UUID) {
+            return [];
+        }
+
         /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
         $data = ['geometry' => $polygonUuid];
