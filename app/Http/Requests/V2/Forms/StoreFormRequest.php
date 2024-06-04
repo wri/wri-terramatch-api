@@ -34,6 +34,7 @@ class StoreFormRequest extends FormRequest
 
             'form_sections.*.form_questions' => ['sometimes', 'array'],
             'form_sections.*.form_questions.*.linked_field_key' => ['sometimes', 'nullable', 'string'],
+            'form_sections.*.form_questions.*.collection' => ['sometimes', 'nullable', 'string'],
             'form_sections.*.form_questions.*.label' => ['required', 'string'],
             'form_sections.*.form_questions.*.input_type' => ['sometimes', 'nullable'],
             'form_sections.*.form_questions.*.name' => ['sometimes', 'nullable'],
@@ -58,6 +59,7 @@ class StoreFormRequest extends FormRequest
 
             'form_sections.*.form_questions.*.child_form_questions' => ['sometimes'],
             'form_sections.*.form_questions.*.child_form_questions.*.linked_field_key' => ['sometimes', 'required', 'string'],
+            'form_sections.*.form_questions.*.child_form_questions.*.collection' => ['sometimes', 'nullable', 'string'],
             'form_sections.*.form_questions.*.child_form_questions.*.label' => ['sometimes', 'required', 'string'],
             'form_sections.*.form_questions.*.child_form_questions.*.name' => ['sometimes', 'nullable'],
             'form_sections.*.form_questions.*.child_form_questions.*.input_type' => ['sometimes', 'nullable'],
