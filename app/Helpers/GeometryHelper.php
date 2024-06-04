@@ -80,13 +80,11 @@ class GeometryHelper
             return null;
         }
 
-        $sitePolygons = $project->sitePolygons;
+        $polyIds = $project->sitePolygons()->pluck('poly_id')->toArray();
 
-        if ($sitePolygons->isEmpty()) {
-            return null; // Return null if no polygons are found for the given projectUuid
+        if (empty($polyIds)) {
+          return null;
         }
-
-        $polyIds = $sitePolygons->pluck('poly_id')->toArray();
 
         $centroids = PolygonGeometry::selectRaw('ST_AsGeoJSON(ST_Centroid(geom)) AS centroid')
           ->whereIn('uuid', $polyIds)
