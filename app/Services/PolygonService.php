@@ -232,14 +232,13 @@ class PolygonService
             $pointUuids[] = $this->insertSinglePoint($feature);
         }
 
-        $properties = [];
+        $properties = $sitePolygonProperties;
         foreach (self::POINT_PROPERTIES as $property) {
             $properties[$property] = collect(data_get($geojson, "features.*.properties.$property"))->flatten()->first();
         }
-        $properties = array_merge($sitePolygonProperties, $properties);
 
         // TODO:
-        //  * transform points from pointUuids into a polygon
+        //  * transform points into a polygon
         //  * Insert the polygon into PolygonGeometry
         //  * Create the SitePolygon using the data in $properties (including $properties['site_id'] to identify the site)
         //  * Return the PolygonGeometry's real UUID instead of this fake return
