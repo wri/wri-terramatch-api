@@ -8,8 +8,7 @@
         "hot": "mix watch --hot",
         "prod": "npm run production",
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-        "doc-v2": "swagger-cli bundle openapi-src/v2.yml --outfile resources/docs/swagger-v2.yml --type yaml --dereference",
-        "doc-main": "swagger-cli bundle openapi-src/v2.yml --outfile resources/docs/swagger-v2.yml --type yaml --dereference"
+        "doc-v2": "swagger-cli bundle openapi-src/v2.yml --outfile resources/docs/swagger-v2.yml --type yaml --dereference"
     },
     "devDependencies": {
         "ajv": "^8.12.0",

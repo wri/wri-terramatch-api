@@ -15,14 +15,11 @@ class GeometryHelper
         if (! $project) {
             return null;
         }
+        $polyIds = $project->sitePolygons()->pluck('poly_id')->toArray();
 
-        $sitePolygons = $project->sitePolygons;
-
-        if ($sitePolygons->isEmpty()) {
-            return null; // Return null if no polygons are found for the given projectUuid
+        if (empty($polyIds)) {
+          return null;
         }
-
-        $polyIds = $sitePolygons->pluck('poly_id')->toArray();
 
         $centroids = PolygonGeometry::selectRaw('ST_AsGeoJSON(ST_Centroid(geom)) AS centroid')
           ->whereIn('uuid', $polyIds)
@@ -77,7 +74,10 @@ class GeometryHelper
 
             Log::info("Centroid updated for projectUuid: $projectUuid");
 
-            return 'Centroids updated successfully!';
+            return response()->json([
+              'message' => 'Centroid updated',
+              'centroid' => $centroid,
+            ], 200);
         } catch (\Exception $e) {
             Log::error("Error updating centroid for projectUuid: $projectUuid");
 
@@ -112,8 +112,6 @@ class GeometryHelper
             }
         }
 
-        $bboxCoordinates = [$minX, $minY, $maxX, $maxY];
-
-        return $bboxCoordinates;
+        return [$minX, $minY, $maxX, $maxY];
     }
 }
