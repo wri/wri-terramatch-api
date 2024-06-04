@@ -234,7 +234,7 @@ class PolygonService
 
         $properties = $sitePolygonProperties;
         foreach (self::POINT_PROPERTIES as $property) {
-            $properties[$property] = collect(data_get($geojson, "features.*.properties.$property"))->flatten()->first();
+            $properties[$property] = collect(data_get($geojson, "features.*.properties.$property"))->filter()->first();
         }
 
         // TODO:
