@@ -52,6 +52,8 @@ class ProjectResource extends JsonResource
             'seeds_planted_count' => $this->seeds_planted_count,
             'regenerated_trees_count' => $this->regenerated_trees_count,
             'workday_count' => $this->workday_count,
+            // Temporary until we have bulk import completed.
+            'self_reported_workday_count' => $this->self_reported_workday_count,
             'total_jobs_created' => $this->total_jobs_created,
             'total_sites' => $this->total_sites,
             'total_nurseries' => $this->total_nurseries,
