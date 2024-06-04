@@ -82,19 +82,19 @@ class CountryDataController extends Controller
                 Log::error("Project not found for project with UUID: $uuid");
                 return response()->json(['error' => 'Project not found'], 404);
             }
-            $countSitePolygons = $project?->getTotalSitePolygons() ?? 0;
+            $countSitePolygons = $project->total_site_polygons;
 
             $organization = $project->organisation()->first();
             if (! $organization) {
                 Log::error("Organization not found for project with ID: $project->id");
             }
 
-            $country = $project ? WorldCountryGeneralized::where('iso', $project->country)->first() : null;
+            $country = WorldCountryGeneralized::where('iso', $project->country)->first();
             $data = [
-              ['key' => 'project_name', 'title' => 'title', 'value' => $project?->name ?? null],
-              ['key' => 'country', 'title' => 'Country', 'value' => $country?->country ?? null],
-              ['key' => 'polygon_counts', 'title' => 'No. of Site - Polygons', 'value' => $countSitePolygons ?? null],
-              ['key' => 'organizations', 'title' => 'Organization', 'value' => $organization->name ?? null],
+              ['key' => 'project_name', 'title' => 'title', 'value' => $project->name],
+              ['key' => 'country', 'title' => 'Country', 'value' => $country?->country],
+              ['key' => 'polygon_counts', 'title' => 'No. of Site - Polygons', 'value' => $countSitePolygons],
+              ['key' => 'organizations', 'title' => 'Organization', 'value' => $organization?->name],
             ];
 
             return response()->json(['data' => $data]);
