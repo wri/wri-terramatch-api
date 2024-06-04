@@ -691,7 +691,7 @@ Route::prefix('site-polygon')->group(function () {
 Route::prefix('site-project')->group(function () {
     Route::put('/{project}', AdminProjectsUpdateStatusController::class);
 });
-Route::prefix('site-site')->group(function () {
+Route::prefix('site-status')->group(function () {
     Route::put('/{site}', AdminSitesUpdateStatusController::class);
 });
 

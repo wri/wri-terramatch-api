@@ -91474,7 +91474,7 @@ paths:
       responses:
         '200':
           description: OK
-  '/v2/site-site/{UUID}':
+  '/v2/site-status/{UUID}':
     put:
       operationId: put-v2-admin-sites-uuid
       summary: update site status

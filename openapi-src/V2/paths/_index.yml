@@ -2404,7 +2404,7 @@
     responses:
       '200':
         description: OK
-'/v2/site-site/{UUID}':
+'/v2/site-status/{UUID}':
   put:
     $ref: './Sites/put-v2-admin-sites-uuid.yml'
 '/v2/admin/site-monitorings':
