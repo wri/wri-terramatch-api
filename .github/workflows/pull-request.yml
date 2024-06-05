@@ -13,3 +13,7 @@ jobs:
         run: make up
       - name: Lint & Test
         run: make test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PHP Logs
+          path: storage/logs/
