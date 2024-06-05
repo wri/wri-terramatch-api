@@ -19,9 +19,9 @@ class EntityTypeController extends Controller
             $uuid = $request->input('uuid');
             $type = $request->input('type');
 
-            if ($type === 'project') {
+            if ($type === 'projects') {
                 return $this->handleProjectEntity($uuid, $request);
-            } elseif ($type === 'site') {
+            } elseif ($type === 'sites') {
                 return $this->handleSiteEntity($uuid, $request);
             }
 
