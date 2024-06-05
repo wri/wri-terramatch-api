@@ -105,11 +105,13 @@ class EntityTypeController extends Controller
 
         $sortFields = $request->input('sort', []);
         foreach ($sortFields as $field => $direction) {
-            if ($field === 'status') {
-                $sitePolygonsQuery->orderByRaw('FIELD(site_polygon.status, "draft", "submitted", "needs-more-information", "approved") ' . $direction);
-            } else {
-                $sitePolygonsQuery->orderBy($field, $direction);
-            }
+          if ($field === 'status') {
+            $sitePolygonsQuery->orderByRaw('FIELD(site_polygon.status, "draft", "submitted", "needs-more-information", "approved") ' . $direction);
+          } elseif ($field === 'poly_name') {
+              $sitePolygonsQuery->orderByRaw('site_polygon.poly_name IS NULL, site_polygon.poly_name ' . $direction);
+          } else {
+              $sitePolygonsQuery->orderBy($field, $direction);
+          }
         }
 
         return $sitePolygonsQuery->get();
