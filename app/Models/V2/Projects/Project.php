@@ -131,7 +131,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'pct_employees_marginalised',
         'pct_beneficiaries_marginalised',
         'pct_beneficiaries_men',
-        'proposed_gov_partners'
+        'proposed_gov_partners',
+        'proposed_num_nurseries',
+        'proj_boundary',
+        'states',
+        'proj_impact_biodiv'
     ];
 
     public $fileConfiguration = [
