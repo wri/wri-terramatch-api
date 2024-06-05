@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -16,7 +17,7 @@ class EntityTypeController extends Controller
     {
         try {
             $uuid = $request->input('uuid');
-            $type = $this->getEntityType($uuid);
+            $type = $request->input('type');
 
             if ($type === 'project') {
                 return $this->handleProjectEntity($uuid, $request);
@@ -37,49 +38,62 @@ class EntityTypeController extends Controller
         }
     }
 
-    private function getEntityType($uuid)
-    {
-        $project = Project::where('uuid', $uuid)->first();
-        if ($project) {
-            return 'project';
-        }
-
-        $site = Site::where('uuid', $uuid)->first();
-        if ($site) {
-            return 'site';
-        }
-
-        return 'unknown';
-    }
-
     private function handleProjectEntity($uuid, Request $request)
     {
-        $project = Project::where('uuid', $uuid)->first();
-        $sitePolygons = $this->getSitePolygonsWithFiltersAndSorts($project->sitePolygons(), $request);
-        $polygonsUuids = $sitePolygons->pluck('poly_id');
-        $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsUuids);
+        try {
+            $project = Project::where('uuid', $uuid)->firstOrFail();
+            $sitePolygons = $this->getSitePolygonsWithFiltersAndSorts($project->sitePolygons(), $request);
+            $polygonsUuids = $sitePolygons->pluck('poly_id');
+            $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsUuids);
 
-        return response()->json([
-            'type' => 'project',
-            'uuid' => $uuid,
-            'polygonsData' => $sitePolygons,
-            'bbox' => $bboxCoordinates,
-        ]);
+            return response()->json([
+                'type' => 'project',
+                'uuid' => $uuid,
+                'polygonsData' => $sitePolygons,
+                'bbox' => $bboxCoordinates,
+            ]);
+        } catch (ModelNotFoundException $e) {
+            Log::error($e);
+
+            return response()->json([
+                'error' => 'The requested project was not found.',
+            ], 404);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'error' => 'An error occurred while retrieving the project.',
+            ], 500);
+        }
     }
 
     private function handleSiteEntity($uuid, Request $request)
     {
-        $site = Site::where('uuid', $uuid)->first();
-        $sitePolygons = $this->getSitePolygonsWithFiltersAndSorts($site->sitePolygons(), $request);
-        $polygonsUuids = $sitePolygons->pluck('poly_id');
-        $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsUuids);
+        try {
+            $site = Site::where('uuid', $uuid)->firstOrFail();
+            $sitePolygons = $this->getSitePolygonsWithFiltersAndSorts($site->sitePolygons, $request);
+            $polygonsUuids = $sitePolygons->pluck('poly_id');
+            $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsUuids);
 
-        return response()->json([
-            'type' => 'site',
-            'uuid' => $uuid,
-            'polygonsData' => $sitePolygons,
-            'bbox' => $bboxCoordinates,
-        ]);
+            return response()->json([
+                'type' => 'site',
+                'uuid' => $uuid,
+                'polygonsData' => $sitePolygons,
+                'bbox' => $bboxCoordinates,
+            ]);
+        } catch (ModelNotFoundException $e) {
+            Log::error($e);
+
+            return response()->json([
+                'error' => 'The requested site was not found.',
+            ], 404);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'error' => 'An error occurred while retrieving the site.',
+            ], 500);
+        }
     }
 
     private function getSitePolygonsWithFiltersAndSorts($sitePolygonsQuery, Request $request)
