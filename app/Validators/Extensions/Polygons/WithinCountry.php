@@ -33,6 +33,9 @@ class WithinCountry extends Extension
         if ($geometry === null) {
             return ['valid' => false, 'status' => 404, 'error' => 'Geometry not found'];
         }
+        if ($geometry->db_geometry->area == 0) {
+            return ['valid' => false, 'status' => 500, 'error' => 'Geometry invalid'];
+        }
 
         $sitePolygonData = SitePolygon::forPolygonGeometry($polygonUuid)->select('site_id')->first();
         if ($sitePolygonData == null) {
