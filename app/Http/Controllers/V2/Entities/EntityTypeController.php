@@ -98,7 +98,7 @@ class EntityTypeController extends Controller
 
     private function getSitePolygonsWithFiltersAndSorts($sitePolygonsQuery, Request $request)
     {
-        if ($request->has('status')) {
+        if ($request->has('status') && $request->input('status')) {
             $statusValues = explode(',', $request->input('status'));
             $sitePolygonsQuery->whereIn('site_polygon.status', $statusValues);
         }
