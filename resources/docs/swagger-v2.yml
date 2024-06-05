@@ -97722,6 +97722,13 @@ paths:
           schema:
             type: string
         - in: query
+          name: type
+          required: true
+          description: type of the entity
+          type: string
+          schema:
+            type: string
+        - in: query
           name: status
           required: false
           description: Comma-separated list of status values to filter by
