@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\V2\Polygons;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\V2\Sites\SitePolygon;
 use App\Http\Resources\V2\PolygonsApprovedResource;
+use App\Models\V2\Sites\SitePolygon;
+use Illuminate\Http\Request;
 
 class GetPolygonsApprovedController extends Controller
 {
@@ -14,6 +14,7 @@ class GetPolygonsApprovedController extends Controller
         $nonApproved = SitePolygon::where('site_id', $uuid)
             ->where('status', '!=', 'approved')
             ->first();
-        return new PolygonsApprovedResource(["check_polygons" => $nonApproved != null]);
+
+        return new PolygonsApprovedResource(['check_polygons' => $nonApproved != null]);
     }
 }

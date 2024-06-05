@@ -62,6 +62,7 @@ class SitePolygon extends Model
             localKeyLookup: [Site::class => 'uuid']
         );
     }
+
     public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class, 'site_id', 'uuid');

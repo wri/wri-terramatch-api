@@ -8,7 +8,9 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Services\SiteService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -237,6 +239,8 @@ class TerrafundEditGeometryController extends Controller
                 'site_id' => $siteUuid,
             ]);
             $sitePolygon->save();
+
+            App::make(SiteService::class)->updateSiteStatus($siteUuid);
 
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);
         } catch (\Exception $e) {

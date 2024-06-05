@@ -4,9 +4,9 @@ namespace App\Models\V2\Sites;
 
 use App\Models\Framework;
 use App\Models\Traits\HasEntityResources;
-use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
+use App\Models\Traits\HasSiteStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
@@ -39,6 +39,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @property string project_id
+ * @property string status
  */
 class Site extends Model implements MediaModel, AuditableContract, EntityModel
 {
@@ -53,7 +54,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
-    use HasEntityStatus;
+    use HasSiteStatus;
     use HasEntityResources;
 
     protected $auditInclude = [
