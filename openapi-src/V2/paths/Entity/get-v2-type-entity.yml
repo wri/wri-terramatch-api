@@ -9,6 +9,27 @@ parameters:
     type: string
     schema:
       type: string
+  - in: query
+    name: type
+    required: true
+    description: type of the entity
+    type: string
+    schema:
+      type: string
+  - in: query
+    name: status
+    required: false
+    description: Comma-separated list of status values to filter by
+    type: string
+    schema:
+      type: string
+  - in: query
+    name: sort
+    required: false
+    description: Sort criteria in the format `sort[field]=direction`, e.g. `sort[poly_name]=asc or sort[status]=desc`
+    type: string
+    schema:
+      type: string
 responses:
   '200':
     description: Successful response
