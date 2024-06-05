@@ -380,3 +380,5 @@ DashboardPolygonResponse:
   $ref: './DashboardPolygonResponse.yml'
 EntityTypeResponse:
   $ref: './EntityTypeResponse.yml'
+CheckPolygonsResponse:
+  $ref: './CheckPolygonsResponse.yml'

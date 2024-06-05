@@ -9,6 +9,7 @@ use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
 use App\Http\Controllers\V2\Attachment\GetAttachmentController;
+use App\Http\Controllers\V2\Polygons\GetPolygonsApprovedController;
 use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
 use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\GetAuditStatusProjectPolygonsController;
@@ -754,4 +755,8 @@ Route::prefix('audit-status')->group(function () {
 
 Route::prefix('attachment')->group(function () {
     Route::get('/', GetAttachmentController::class);
+});
+
+Route::prefix('check-approved-polygons')->group(function () {
+    Route::get('/{uuid}', GetPolygonsApprovedController::class);
 });

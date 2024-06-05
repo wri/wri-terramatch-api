@@ -2692,4 +2692,7 @@
 /v2/type-entity:
   get:
     $ref: './Entity/get-v2-type-entity.yml'
+'/v2/check-approved-polygons/{uuid}':
+  get:
+    $ref: './CheckApprovedPolygons/get-v2-check-approved-polygons-uuid.yml'
     

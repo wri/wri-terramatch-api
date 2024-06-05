@@ -1,0 +1,17 @@
+operationId: get-v2-check-approved-polygons-uuid
+summary: Get a boolean value if the polygons are approved or not
+tags: 
+  - V2 Check Polygons
+parameters:
+  - type: string
+    name: uuid
+    in: path
+    required: true
+    description: show a boolean value.
+responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/CheckPolygonsResponse'
