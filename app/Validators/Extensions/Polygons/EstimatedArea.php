@@ -43,7 +43,7 @@ class EstimatedArea extends Extension
             return ['valid' => false, 'error' => 'Total hectares restored goal not set for the project', 'status' => 500];
         }
 
-        $sumEstArea = $project->sitePolygons()->sum('est_area');
+        $sumEstArea = $project->sitePolygons()->sum('calc_area');
         $lowerBound = self::LOWER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
         $upperBound = self::UPPER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
         $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;

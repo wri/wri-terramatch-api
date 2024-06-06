@@ -17,6 +17,7 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
+use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
 use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
@@ -635,7 +636,7 @@ Route::prefix('terrafund')->group(function () {
     Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
-    Route::post('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
+    Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
@@ -662,4 +663,8 @@ Route::prefix('audit-status')->group(function () {
 
 Route::prefix('site-polygon')->group(function () {
     Route::get('/project/{uuid}', GetPolygonByProjectController::class);
+});
+
+Route::prefix('dashboard')->group(function () {
+    Route::get('/jobs-created', GetJobsCreatedController::class);
 });

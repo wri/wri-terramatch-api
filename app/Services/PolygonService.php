@@ -83,6 +83,7 @@ class PolygonService
         $criteriaSite->polygon_id = $polygonId;
         $criteriaSite->criteria_id = $criteriaId;
         $criteriaSite->valid = $valid;
+        $criteriaSite->created_by = Auth::user()?->id;
 
         try {
             $criteriaSite->save();
@@ -201,21 +202,16 @@ class PolygonService
         $this->createCriteriaSite($polygonUuid, self::DATA_CRITERIA_ID, $validData);
 
         return [
-            'project_id' => $properties['project_id'] ?? null,
-            'proj_name' => $properties['proj_name'] ?? null,
-            'org_name' => $properties['org_name'] ?? null,
-            'country' => $properties['country'] ?? null,
             'poly_name' => $properties['poly_name'] ?? null,
             'site_id' => $properties['site_id'] ?? null,
-            'site_name' => $properties['site_name'] ?? null,
-            'poly_label' => $properties['poly_label'] ?? null,
             'plantstart' => $properties['plantstart'],
             'plantend' => $properties['plantend'],
             'practice' => $properties['practice'] ?? null,
             'target_sys' => $properties['target_sys'] ?? null,
             'distr' => $properties['distr'] ?? null,
             'num_trees' => $properties['num_trees'],
-            'est_area' => $properties['area'] ?? null,
+            'calc_area' => $properties['area'] ?? null,
+            'status' => 'submitted',
         ];
     }
 
