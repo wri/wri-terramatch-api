@@ -18,7 +18,7 @@ class GeometryHelper
         $polyIds = $project->sitePolygons()->pluck('poly_id')->toArray();
 
         if (empty($polyIds)) {
-          return null;
+            return null;
         }
 
         $centroids = PolygonGeometry::selectRaw('ST_AsGeoJSON(ST_Centroid(geom)) AS centroid')

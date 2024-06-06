@@ -80,6 +80,7 @@ class CountryDataController extends Controller
 
             if (! $project) {
                 Log::error("Project not found for project with UUID: $uuid");
+
                 return response()->json(['error' => 'Project not found'], 404);
             }
             $countSitePolygons = $project->total_site_polygons;
