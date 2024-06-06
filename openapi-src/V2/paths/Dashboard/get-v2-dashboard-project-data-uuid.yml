@@ -1,0 +1,16 @@
+summary: Get project point data by UUID
+tags:
+  - Project point data by UUID
+parameters:
+  - in: path
+    name: uuid
+    type: string
+    description: UUID of the project point
+    required: true
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardPolygonData'
+  '500':
+    description: Error in queries

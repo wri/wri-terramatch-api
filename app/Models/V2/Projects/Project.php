@@ -122,6 +122,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'pct_beneficiaries_large',
         'pct_beneficiaries_youth',
         'land_tenure_project_area',
+        'lat',
+        'long',
         'answers',
         'ppc_external_id',
         'detailed_intervention_types',
@@ -495,5 +497,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     private function submittedSiteReportIds(): HasManyThrough
     {
         return $this->submittedSiteReports()->select('v2_site_reports.id');
+    }
+
+    public function getTotalSitePolygonsAttribute()
+    {
+        return $this->sitePolygons()->count();
     }
 }
