@@ -2518,6 +2518,8 @@
   post:
     $ref: './Geometry/post-v2-geometry-validate.yml'
 /v2/geometry:
+  post:
+    $ref: './Geometry/post-v2-geometry.yml'
   delete:
     $ref: './Geometry/delete-v2-geometry.yml'
 /v2/geometry/{UUID}:
