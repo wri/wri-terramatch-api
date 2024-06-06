@@ -9,6 +9,8 @@ use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
 use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
+use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
@@ -111,6 +113,7 @@ use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
+use App\Http\Controllers\V2\Polygons\GetPolygonByProjectController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
@@ -651,3 +654,12 @@ ModelInterfaceBindingMiddleware::with(
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
+
+Route::prefix('audit-status')->group(function () {
+    Route::get('/', GetAuditStatusController::class);
+    Route::post('/', StoreAuditStatusController::class);
+});
+
+Route::prefix('site-polygon')->group(function () {
+    Route::get('/project/{uuid}', GetPolygonByProjectController::class);
+});
