@@ -6,8 +6,7 @@ parameters:
   - in: path
     name: uuid
     required: true
-    schema:
-      type: string
+    type: string
     description: The UUID of the project
 responses:
   '200':
