@@ -63,8 +63,7 @@ class TerrafundEditGeometryController extends Controller
               Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
               return null;
             }
-            $relatedSite = Site::where('uuid', $sitePolygon->site_id)->first();
-            $project = Project::where('id', $relatedSite->project_id)->first();
+            $project = $sitePolygon->project;
 
             if ($project) {
                 $geometryHelper = new GeometryHelper();
@@ -74,7 +73,7 @@ class TerrafundEditGeometryController extends Controller
                     Log::warning("Invalid centroid for project UUID: $project->uuid");
                 }
             } else {
-                Log::warning("Project with UUID $relatedSite->project_id not found.");
+                Log::warning("Project UUID not found.");
             }
         } catch (\Exception $e) {
             Log::error('Error updating project centroid: ' . $e->getMessage());
@@ -89,9 +88,8 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
-            $relatedSite = Site::where('uuid', $sitePolygon->site_id)->first();
-            $projectUuid = Project::where('id', $relatedSite->project_id)->pluck('uuid')->first();
-            if (! $projectUuid) {
+            $project = $sitePolygon->project;
+            if (! $project) {
                 return response()->json(['message' => 'No project found for the given UUID.'], 404);
             }
             if ($sitePolygon) {
@@ -99,7 +97,7 @@ class TerrafundEditGeometryController extends Controller
                 $sitePolygon->delete();
             }
             $geometryHelper = new GeometryHelper();
-            $geometryHelper->updateProjectCentroid($projectUuid);
+            $geometryHelper->updateProjectCentroid($project->uuid);
             $polygonGeometry->delete();
             Log::info("Polygon geometry and associated site polygon deleted successfully for UUID: $uuid");
 
