@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -121,6 +122,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'pct_beneficiaries_large',
         'pct_beneficiaries_youth',
         'land_tenure_project_area',
+        'lat',
+        'long',
         'answers',
         'ppc_external_id',
         'detailed_intervention_types',
@@ -372,6 +375,20 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         )->gender()->sum('amount') ?? 0;
     }
 
+    public function getSelfReportedWorkdayCountAttribute(): int
+    {
+        $sumQueries = [
+            DB::raw('sum(`workdays_paid`) as paid'),
+            DB::raw('sum(`workdays_volunteer`) as volunteer'),
+        ];
+        $projectTotals = $this->reports()->hasBeenSubmitted()->get($sumQueries)->first();
+        // The groupBy is superfluous, but required because Laravel adds "v2_sites.project_id as laravel_through_key" to
+        // the SQL select.
+        $siteTotals = $this->submittedSiteReports()->groupBy('v2_sites.project_id')->get($sumQueries)->first();
+
+        return $projectTotals?->paid + $projectTotals?->volunteer + $siteTotals?->paid + $siteTotals?->volunteer;
+    }
+
     public function getTotalJobsCreatedAttribute(): int
     {
         $ftTotal = ProjectReport::where('project_id', $this->id)
@@ -474,11 +491,16 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     }
 
     /**
-     * @return array The array of site report IDs for all reports associated with sites that have been approved, and
-     *   have a report status not in due or started (reports that have been submitted).
+     * @return HasManyThrough The query of site report IDs for all reports associated with sites that have been
+     * approved, and have a report status not in due or started (reports that have been submitted).
      */
-    private function submittedSiteReportIds(): array
+    private function submittedSiteReportIds(): HasManyThrough
     {
-        return $this->submittedSiteReports()->pluck('v2_site_reports.id')->toArray();
+        return $this->submittedSiteReports()->select('v2_site_reports.id');
+    }
+
+    public function getTotalSitePolygonsAttribute()
+    {
+        return $this->sitePolygons()->count();
     }
 }
