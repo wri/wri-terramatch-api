@@ -61,10 +61,7 @@ class ViewTreeRestorationGoalController extends Controller
 
     private function prepareProjectQuery(Request $request)
     {
-
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
-
-        return $query;
+        return TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
     }
 
     private function getRawProjectIds($query)
@@ -175,8 +172,7 @@ class ViewTreeRestorationGoalController extends Controller
 
     private function getAverageSurvival(array $projectIds)
     {
-        $averageSurvivalRate = ProjectReport::whereIn('project_id', $projectIds)->avg('pct_survival_to_date');
-
-        return $averageSurvivalRate;
+        return ProjectReport::hasBeenSubmittedOrApproved()->whereIn('project_id', $projectIds)->avg('pct_survival_to_date');
     }
+
 }
