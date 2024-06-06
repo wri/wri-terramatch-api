@@ -3,19 +3,13 @@ summary: Create a new audit status
 tags: 
   - V2 Audits Status
 parameters:
-  - in: query
-    name: id
-    type: string
-    description: Optional.
-requestBody:
-  content:
-    application/json:
-      schema:
-        $ref: '../../definitions/_index.yml#/AuditStatusPost'
+  - in: body
+    name: body
+    description: Body to create a new audit status
+    schema:
+      $ref: '../../definitions/_index.yml#/AuditStatusPost'
 responses:
   '201':
     description: Created
-    content:
-      application/json:
-        schema:
-          $ref: '../../definitions/_index.yml#/AuditStatusResponse'
+    schema:
+      $ref: '../../definitions/_index.yml#/AuditStatusResponse'

@@ -4,16 +4,14 @@ tags:
   - V2 Site Polygons
 parameters:
   - in: path
-    name: uuid
+    name: UUID
     required: true
     type: string
     description: The UUID of the project
 responses:
   '200':
     description: OK
-    content:
-      application/json:
-        schema:
-          type: array
-          items:
-            $ref: '../../definitions/_index.yml#/SitePolygon'
+    schema:
+      type: array
+      items:
+        $ref: '../../definitions/_index.yml#/SitePolygon'
