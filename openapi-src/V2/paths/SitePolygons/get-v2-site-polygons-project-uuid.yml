@@ -1,0 +1,20 @@
+operationId: get-v2-site-polygons-project-uuid
+summary: Get Polygons by Project UUID
+tags: 
+  - V2 Site Polygons
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+    description: The UUID of the project
+responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/SitePolygon'

@@ -2525,3 +2525,11 @@
 /v2/geometry/{UUID}:
   put:
     $ref: './Geometry/put-v2-geometry-uuid.yml'
+/v2/audit-status:
+  get:
+    $ref: './AuditStatus/get-v2-audit-status.yml'
+  post:
+    $ref: './AuditStatus/post-v2-audit-status.yml'
+/v2/site-polygons/project/{UUID}:
+  get:
+    $ref: './SitePolygons/get-v2-site-polygons-project-uuid.yml'

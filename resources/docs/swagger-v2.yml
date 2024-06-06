@@ -44058,6 +44058,153 @@ definitions:
               message:
                 type: string
                 description: Human readable string in English to describe the error.
+  AttachmentResponse:
+    type: object
+    properties:
+      id:
+        type: number
+      entity_id:
+        type: string
+      file_name:
+        type: string
+      file_url:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+  AuditStatusPost:
+    type: object
+    properties:
+      entity:
+        type: string
+      entity_uuid:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+      is_active:
+        type: boolean
+      is_submitted:
+        type: boolean
+      type:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      request_removed:
+        type: boolean
+  AuditStatusResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      entity_uuid:
+        type: string
+      entity:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+      is_active:
+        type: boolean
+      is_submitted:
+        type: boolean
+      type:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      request_removed:
+        type: boolean
+      attachments:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: number
+            entity_id:
+              type: string
+            file_name:
+              type: string
+            file_url:
+              type: string
+            date_created:
+              type: string
+              format: date
+            created_by:
+              type: string
+  SitePolygon:
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      project_id:
+        type: string
+      proj_name:
+        type: string
+      org_name:
+        type: string
+      poly_id:
+        type: string
+      poly_name:
+        type: string
+      site_id:
+        type: string
+      site_name:
+        type: string
+      plantstart:
+        type: string
+        format: date
+      plantend:
+        type: string
+        format: date
+      practice:
+        type: string
+      target_sys:
+        type: string
+      distr:
+        type: string
+      num_trees:
+        type: integer
+      calc_area:
+        type: number
+        format: float
+      created_by:
+        type: string
+      last_modified_by:
+        type: string
+      deleted_at:
+        type: string
+        format: date-time
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+      status:
+        type: string
+      country:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94032,3 +94179,244 @@ paths:
           description: This account does not have permission to update the polygon.
         '404':
           description: Geometry was not found.
+  /v2/audit-status:
+    get:
+      operationId: get-v2-audits-status
+      summary: Get all audits status by entity and entity uuid
+      tags:
+        - V2 Audits Status
+      parameters:
+        - in: query
+          name: entity
+          type: string
+          required: true
+          description: required.
+        - in: query
+          name: uuid
+          type: string
+          required: true
+          description: required.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    entity_uuid:
+                      type: string
+                    entity:
+                      type: string
+                    status:
+                      type: string
+                    comment:
+                      type: string
+                    date_created:
+                      type: string
+                      format: date
+                    created_by:
+                      type: string
+                    is_active:
+                      type: boolean
+                    is_submitted:
+                      type: boolean
+                    type:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    request_removed:
+                      type: boolean
+                    attachments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          entity_id:
+                            type: string
+                          file_name:
+                            type: string
+                          file_url:
+                            type: string
+                          date_created:
+                            type: string
+                            format: date
+                          created_by:
+                            type: string
+    post:
+      operationId: post-v2-audit-status
+      summary: Create a new audit status
+      tags:
+        - V2 Audits Status
+      parameters:
+        - in: query
+          name: id
+          type: string
+          description: Optional.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entity:
+                  type: string
+                entity_uuid:
+                  type: string
+                status:
+                  type: string
+                comment:
+                  type: string
+                date_created:
+                  type: string
+                  format: date
+                created_by:
+                  type: string
+                is_active:
+                  type: boolean
+                is_submitted:
+                  type: boolean
+                type:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                request_removed:
+                  type: boolean
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  entity_uuid:
+                    type: string
+                  entity:
+                    type: string
+                  status:
+                    type: string
+                  comment:
+                    type: string
+                  date_created:
+                    type: string
+                    format: date
+                  created_by:
+                    type: string
+                  is_active:
+                    type: boolean
+                  is_submitted:
+                    type: boolean
+                  type:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  request_removed:
+                    type: boolean
+                  attachments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        entity_id:
+                          type: string
+                        file_name:
+                          type: string
+                        file_url:
+                          type: string
+                        date_created:
+                          type: string
+                          format: date
+                        created_by:
+                          type: string
+  '/v2/site-polygons/project/{UUID}':
+    get:
+      operationId: get-v2-site-polygons-project-uuid
+      summary: Get Polygons by Project UUID
+      tags:
+        - V2 Site Polygons
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+          description: The UUID of the project
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    uuid:
+                      type: string
+                    project_id:
+                      type: string
+                    proj_name:
+                      type: string
+                    org_name:
+                      type: string
+                    poly_id:
+                      type: string
+                    poly_name:
+                      type: string
+                    site_id:
+                      type: string
+                    site_name:
+                      type: string
+                    plantstart:
+                      type: string
+                      format: date
+                    plantend:
+                      type: string
+                      format: date
+                    practice:
+                      type: string
+                    target_sys:
+                      type: string
+                    distr:
+                      type: string
+                    num_trees:
+                      type: integer
+                    calc_area:
+                      type: number
+                      format: float
+                    created_by:
+                      type: string
+                    last_modified_by:
+                      type: string
+                    deleted_at:
+                      type: string
+                      format: date-time
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    status:
+                      type: string
+                    country:
+                      type: string

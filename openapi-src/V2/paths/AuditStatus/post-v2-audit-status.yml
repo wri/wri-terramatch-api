@@ -1,0 +1,21 @@
+operationId: post-v2-audit-status
+summary: Create a new audit status
+tags: 
+  - V2 Audits Status
+parameters:
+  - in: query
+    name: id
+    type: string
+    description: Optional.
+requestBody:
+  content:
+    application/json:
+      schema:
+        $ref: '../../definitions/_index.yml#/AuditStatusPost'
+responses:
+  '201':
+    description: Created
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/AuditStatusResponse'

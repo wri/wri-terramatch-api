@@ -1,0 +1,15 @@
+type: object
+properties:
+  id:
+    type: number
+  entity_id:
+    type: string
+  file_name:
+    type: string
+  file_url:
+    type: string
+  date_created:
+    type: string
+    format: date
+  created_by:
+    type: string

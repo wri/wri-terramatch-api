@@ -276,3 +276,11 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
   $ref: './GeometryPost.yml'
+AttachmentResponse:
+  $ref: './AttachmentResponse.yml'
+AuditStatusPost:
+  $ref: './AuditStatusPost.yml'
+AuditStatusResponse:
+  $ref: './AuditStatusResponse.yml'
+SitePolygon:
+  $ref: './SitePolygon.yml'
