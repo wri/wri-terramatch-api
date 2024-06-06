@@ -172,7 +172,6 @@ class ViewTreeRestorationGoalController extends Controller
 
     private function getAverageSurvival(array $projectIds)
     {
-        return ProjectReport::hasBeenSubmittedOrApproved()->whereIn('project_id', $projectIds)->avg('pct_survival_to_date');
+        return ProjectReport::isApproved()->whereIn('project_id', $projectIds)->avg('pct_survival_to_date');
     }
-
 }
