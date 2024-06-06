@@ -44215,6 +44215,8 @@ definitions:
     properties:
       bbox:
         type: array
+        items:
+          type: number
   SitePolygonResponse:
     type: object
     properties:
@@ -93954,35 +93956,31 @@ paths:
           required: true
           description: The UUID of the polygon
           type: string
-          schema:
-            type: string
       responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  polygon_id:
-                    type: string
-                    description: The ID of the polygon
-                  criteria_list:
-                    type: array
-                    description: List of validation criteria
-                    items:
-                      type: object
-                      properties:
-                        criteria_id:
-                          type: integer
-                          description: The ID of the criteria
-                        latest_created_at:
-                          type: string
-                          format: date-time
-                          description: The latest created at timestamp of the criteria
-                        valid:
-                          type: integer
-                          description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
+          schema:
+            type: object
+            properties:
+              polygon_id:
+                type: string
+                description: The ID of the polygon
+              criteria_list:
+                type: array
+                description: List of validation criteria
+                items:
+                  type: object
+                  properties:
+                    criteria_id:
+                      type: integer
+                      description: The ID of the criteria
+                    latest_created_at:
+                      type: string
+                      format: date-time
+                      description: The latest created at timestamp of the criteria
+                    valid:
+                      type: integer
+                      description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
   /v2/terrafund/validation/criteria-data:
     get:
       summary: Get criteria data validation results for a polygon
@@ -93992,35 +93990,31 @@ paths:
           required: true
           description: The UUID of the polygon
           type: string
-          schema:
-            type: string
       responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  polygon_id:
-                    type: string
-                    description: The ID of the polygon
-                  criteria_list:
-                    type: array
-                    description: List of validation criteria
-                    items:
-                      type: object
-                      properties:
-                        criteria_id:
-                          type: integer
-                          description: The ID of the criteria
-                        latest_created_at:
-                          type: string
-                          format: date-time
-                          description: The latest created at timestamp of the criteria
-                        valid:
-                          type: integer
-                          description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
+          schema:
+            type: object
+            properties:
+              polygon_id:
+                type: string
+                description: The ID of the polygon
+              criteria_list:
+                type: array
+                description: List of validation criteria
+                items:
+                  type: object
+                  properties:
+                    criteria_id:
+                      type: integer
+                      description: The ID of the criteria
+                    latest_created_at:
+                      type: string
+                      format: date-time
+                      description: The latest created at timestamp of the criteria
+                    valid:
+                      type: integer
+                      description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
   /v2/terrafund/validation/sitePolygons:
     get:
       summary: Run validation for all polygons in a site
@@ -94030,19 +94024,15 @@ paths:
           required: true
           description: The UUID of the polygon
           type: string
-          schema:
-            type: string
       responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: A message indicating the completion of validation for all site polygons.
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: A message indicating the completion of validation for all site polygons.
   /v2/terrafund/validation/site:
     get:
       summary: Get criteria data validation results for all polygons in a site
@@ -94052,27 +94042,23 @@ paths:
           required: true
           description: The UUID of the polygon
           type: string
-          schema:
-            type: string
       responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                      description: The UUID of the polygon.
-                    valid:
-                      type: boolean
-                      description: Indicates if the polygon is valid or not.
-                    checked:
-                      type: boolean
-                      description: Indicates if the polygon has been checked before or not.
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                uuid:
+                  type: string
+                  description: The UUID of the polygon.
+                valid:
+                  type: boolean
+                  description: Indicates if the polygon is valid or not.
+                checked:
+                  type: boolean
+                  description: Indicates if the polygon has been checked before or not.
   /v2/geometry/validate:
     post:
       summary: Test a set of geometries for validity
@@ -94406,67 +94392,65 @@ paths:
       responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                title: SitePolygonsDataResponse
-                type: array
-                items:
-                  title: SitePolygon
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    uuid:
-                      type: string
-                    project_id:
-                      type: string
-                    proj_name:
-                      type: string
-                    org_name:
-                      type: string
-                    poly_id:
-                      type: string
-                    poly_name:
-                      type: string
-                    site_id:
-                      type: string
-                    site_name:
-                      type: string
-                    plantstart:
-                      type: string
-                      format: date
-                    plantend:
-                      type: string
-                      format: date
-                    practice:
-                      type: string
-                    target_sys:
-                      type: string
-                    distr:
-                      type: string
-                    num_trees:
-                      type: integer
-                    calc_area:
-                      type: number
-                      format: float
-                    created_by:
-                      type: string
-                    last_modified_by:
-                      type: string
-                    deleted_at:
-                      type: string
-                      format: date-time
-                    created_at:
-                      type: string
-                      format: date-time
-                    updated_at:
-                      type: string
-                      format: date-time
-                    status:
-                      type: string
-                    country:
-                      type: string
+          schema:
+            title: SitePolygonsDataResponse
+            type: array
+            items:
+              title: SitePolygon
+              type: object
+              properties:
+                id:
+                  type: integer
+                uuid:
+                  type: string
+                project_id:
+                  type: string
+                proj_name:
+                  type: string
+                org_name:
+                  type: string
+                poly_id:
+                  type: string
+                poly_name:
+                  type: string
+                site_id:
+                  type: string
+                site_name:
+                  type: string
+                plantstart:
+                  type: string
+                  format: date
+                plantend:
+                  type: string
+                  format: date
+                practice:
+                  type: string
+                target_sys:
+                  type: string
+                distr:
+                  type: string
+                num_trees:
+                  type: integer
+                calc_area:
+                  type: number
+                  format: float
+                created_by:
+                  type: string
+                last_modified_by:
+                  type: string
+                deleted_at:
+                  type: string
+                  format: date-time
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+                status:
+                  type: string
+                country:
+                  type: string
         '400':
           description: Bad request
         '500':
@@ -94483,14 +94467,14 @@ paths:
       responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                title: SitePolygonsBboxResponse
-                type: object
-                properties:
-                  bbox:
-                    type: array
+          schema:
+            title: SitePolygonsBboxResponse
+            type: object
+            properties:
+              bbox:
+                type: array
+                items:
+                  type: number
         '400':
           description: Bad request
         '500':
@@ -94543,21 +94527,19 @@ paths:
       responses:
         '201':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Site polygon created successfully
-                  uuid:
-                    type: string
-                    description: UUID of the created site polygon
-                  area:
-                    type: number
-                    format: double
-                    description: Calculated area in hectares
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Site polygon created successfully
+              uuid:
+                type: string
+                description: UUID of the created site polygon
+              area:
+                type: number
+                format: double
+                description: Calculated area in hectares
         '400':
           description: Bad request
         '500':
@@ -94574,14 +94556,14 @@ paths:
       responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                title: SitePolygonsBboxResponse
-                type: object
-                properties:
-                  bbox:
-                    type: array
+          schema:
+            title: SitePolygonsBboxResponse
+            type: object
+            properties:
+              bbox:
+                type: array
+                items:
+                  type: number
         '400':
           description: Bad request
         '500':
@@ -94589,8 +94571,7 @@ paths:
   /v2/terrafund/geojson/complete:
     get:
       summary: Get Polygon as GeoJSON
-      description: |
-        Retrieve polygon geometry and properties as GeoJSON.
+      description: Retrieve polygon geometry and properties as GeoJSON.
       parameters:
         - in: query
           name: uuid
@@ -94600,44 +94581,42 @@ paths:
       responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  features:
-                    type: array
-                    items:
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+              features:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    geometry:
                       type: object
                       properties:
                         type:
                           type: string
-                        geometry:
-                          type: object
-                          properties:
-                            type:
-                              type: string
-                            coordinates:
-                              type: array
-                        properties:
-                          type: object
-                          properties:
-                            poly_name:
-                              type: string
-                            plantstart:
-                              type: string
-                            plantend:
-                              type: string
-                            practice:
-                              type: string
-                            target_sys:
-                              type: string
-                            distr:
-                              type: string
-                            num_trees:
-                              type: integer
+                        coordinates:
+                          type: array
+                    properties:
+                      type: object
+                      properties:
+                        poly_name:
+                          type: string
+                        plantstart:
+                          type: string
+                        plantend:
+                          type: string
+                        practice:
+                          type: string
+                        target_sys:
+                          type: string
+                        distr:
+                          type: string
+                        num_trees:
+                          type: integer
         '400':
           description: Bad request
         '500':

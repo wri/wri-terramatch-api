@@ -8,10 +8,8 @@ parameters:
 responses:
   '200':
     description: Successful response
-    content:
-      application/json:
-        schema:
-          $ref: '../../definitions/_index.yml#/SitePolygonsBboxResponse'
+    schema:
+      $ref: '../../definitions/_index.yml#/SitePolygonsBboxResponse'
   '400':
     description: Bad request
   '500':

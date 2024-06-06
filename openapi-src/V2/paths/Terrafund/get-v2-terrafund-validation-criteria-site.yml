@@ -5,12 +5,8 @@ parameters:
     required: true
     description: The UUID of the polygon
     type: string
-    schema:
-      type: string
 responses:
   '200':
     description: Successful response
-    content:
-      application/json:
-        schema:
-          $ref: '../../definitions/_index.yml#/V2TerrafundCriteriaSite'
+    schema:
+      $ref: '../../definitions/_index.yml#/V2TerrafundCriteriaSite'

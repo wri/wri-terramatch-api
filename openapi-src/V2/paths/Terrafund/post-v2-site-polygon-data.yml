@@ -18,10 +18,8 @@ parameters:
 responses:
   '201':
     description: Successful response
-    content:
-      application/json:
-        schema:
-          $ref: '../../definitions/_index.yml#/SitePolygonCreateResponse'
+    schema:
+      $ref: '../../definitions/_index.yml#/SitePolygonCreateResponse'
   '400':
     description: Bad request
   '500':
