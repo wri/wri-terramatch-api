@@ -47,8 +47,10 @@ class BulkWorkdayImport extends Command
         'projects' => [
             'Paid_project_management' => Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT,
             'Vol_project_management' => Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT,
-            'Paid_nursery_operations' => Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
-            'Vol_nursery_operations' => Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
+            'Paid_nursery_ops' => Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
+            'Vol_nursery_ops' => Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
+            'Paid_seed_collection' => Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
+            'Vol_seed_collection' => Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
             'Paid_other' => Workday::COLLECTION_PROJECT_PAID_OTHER,
             'Vol_other' => Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
         ],
@@ -199,9 +201,22 @@ class BulkWorkdayImport extends Command
                 continue;
             }
 
-            $data = $this->getData($column['collection'], $column['demographic'], $cell, $csvRow);
+            $collection = $column['collection'];
+            $data = $this->getData($collection, $column['demographic'], $cell, $csvRow);
             if (! empty($data)) {
-                $row[$column['collection']][] = $data;
+                $combinedRecords = false;
+                foreach ($row[$collection] ?? [] as &$existingData) {
+                    if ($existingData['type'] == $data['type'] &&
+                        $existingData['subtype'] == $data['subtype'] &&
+                        $existingData['name'] == $data['name']) {
+                        $combinedRecords = true;
+                        $existingData['amount'] += $data['amount'];
+                        break;
+                    }
+                }
+                if (!$combinedRecords) {
+                    $row[$collection][] = $data;
+                }
             }
         }
 
