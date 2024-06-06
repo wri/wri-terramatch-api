@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Dashboard\ViewRestorationStrategyResource;
 use App\Models\V2\Sites\Site;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,6 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class ViewRestorationStrategyController extends Controller
 {
+    protected const RESTORATION_STRATEGIES = ['direct-seeding', 'tree-planting', 'assisted-natural-regeneration'];
+    protected const LAND_USE_TYPES = ['agroforest', 'open-natural-ecosystem', 'mangrove', 'natural-forest', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'urban-forest', 'woodlot-or-plantation'];
+    protected const LAND_TENURES = ['private', 'public', 'indigenous', 'other', 'national_protected_area', 'communal'];
+
     public function __invoke(Request $request): JsonResponse
     {
         $query = $this->buildProjectQuery($request);
@@ -35,19 +38,14 @@ class ViewRestorationStrategyController extends Controller
 
     private function buildProjectQuery(Request $request)
     {
-
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
-
-        return $query;
+        return TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
     }
 
     private function getRestorationStrategy(array $projectIds)
     {
-        $strategies = ['direct-seeding', 'tree-planting', 'assisted-natural-regeneration'];
-
         $conditions = implode(' OR ', array_map(function ($strategy) {
             return "JSON_UNQUOTE(JSON_EXTRACT(restoration_strategy, CONCAT('\$[', numbers.n, ']'))) = '$strategy'";
-        }, $strategies));
+        }, self::RESTORATION_STRATEGIES));
 
         $numbers = implode(' UNION ALL ', array_map(function ($n) {
             return "SELECT $n AS n";
@@ -71,11 +69,9 @@ class ViewRestorationStrategyController extends Controller
 
     private function getLandUseType(array $projectIds)
     {
-        $landUseTypes = ['agroforest', 'open-natural-ecosystem', 'mangrove', 'natural-forest', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'urban-forest', 'woodlot-or-plantation'];
-
         $conditions = implode(' OR ', array_map(function ($type) {
             return "JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT('\$[', numbers.n, ']'))) = '$type'";
-        }, $landUseTypes));
+        }, self::LAND_USE_TYPES));
 
         $numbers = implode(' UNION ALL ', array_map(function ($n) {
             return "SELECT $n AS n";
@@ -99,11 +95,9 @@ class ViewRestorationStrategyController extends Controller
 
     private function getLandTenures(array $projectIds)
     {
-        $landTenures = ['private', 'public', 'indigenous', 'other', 'national_protected_area', 'communal'];
-
         $conditions = implode(' OR ', array_map(function ($type) {
             return "JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_tenures, CONCAT('\$[', numbers.n, ']'))) = '$type'";
-        }, $landTenures));
+        }, self::LAND_TENURES));
 
         $numbers = implode(' UNION ALL ', array_map(function ($n) {
             return "SELECT $n AS n";
