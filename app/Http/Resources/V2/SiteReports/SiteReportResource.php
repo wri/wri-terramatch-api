@@ -42,6 +42,7 @@ class SiteReportResource extends JsonResource
 
             'total_workdays_count' => $this->total_workdays_count,
             'total_trees_planted_count' => $this->total_trees_planted_count,
+            'total_seeds_planted_count' => $this->total_seeds_planted_count,
 
             'due_at' => $this->due_at,
             'approved_at' => $this->approved_at,
