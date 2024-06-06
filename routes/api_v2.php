@@ -552,10 +552,12 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::delete('/', SoftDeleteSiteController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
+    // deprecated, use POST api/v2/geometry instead (include site_id in the geometry's properties
     Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
 });
 
 Route::prefix('geometry')->group(function () {
+    Route::post('', [GeometryController::class, 'storeGeometry']);
     Route::post('/validate', [GeometryController::class, 'validateGeometries']);
     Route::delete('', [GeometryController::class, 'deleteGeometries']);
     Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);

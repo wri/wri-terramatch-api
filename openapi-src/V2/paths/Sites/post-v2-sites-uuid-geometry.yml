@@ -2,6 +2,8 @@ summary: Upload bulk geometry to a specific site.
 operationId: post-v2-sites-uuid-geometry
 tags:
   - V2 Sites
+deprecated: true
+description: Use POST /api/v2/geometry instead (and include the site ID in the polygon properties)
 parameters:
   - type: string
     name: UUID
@@ -20,4 +22,4 @@ responses:
   '201':
     description: Created
     schema:
-      $ref: '../../definitions/_index.yml#/SiteGeometryPost'
+      $ref: '../../definitions/_index.yml#/GeometryPost'
