@@ -15,6 +15,7 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
+use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
 use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
@@ -651,3 +652,7 @@ ModelInterfaceBindingMiddleware::with(
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
+
+Route::prefix('dashboard')->group(function () {
+    Route::get('/jobs-created', GetJobsCreatedController::class);
+});
