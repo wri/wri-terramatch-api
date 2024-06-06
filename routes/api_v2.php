@@ -157,6 +157,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
@@ -555,6 +556,8 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
     // deprecated, use POST api/v2/geometry instead (include site_id in the geometry's properties
     Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
+    Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
+    Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
 });
 
 Route::prefix('geometry')->group(function () {
@@ -615,8 +618,10 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
+    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
+    Route::get('/geojson/site', [TerrafundCreateGeometryController::class, 'getAllPolygonsAsGeoJSONDownload']);
 
-    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonsAsGeoJSON']);
+
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
     Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
@@ -627,10 +632,16 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
     Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
     Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
+    Route::get('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
+    Route::get('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
+    Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
 
     Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
     Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
     Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
+    Route::delete('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndSitePolygon']);
+
+    Route::get('/polygon/bbox/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonBbox']);
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
     Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
