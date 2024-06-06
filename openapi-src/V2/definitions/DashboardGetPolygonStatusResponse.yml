@@ -1,0 +1,13 @@
+properties:
+  data:
+    type: array
+    properties:
+      NeedsMoreInfo:
+        type: array
+        description: Ids of polygons that need more information
+      Submitted:
+        type: array
+        description: Ids of submitted polygons
+      Approved:
+        type: array
+        description: Ids of approved polygons

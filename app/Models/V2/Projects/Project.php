@@ -122,6 +122,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'pct_beneficiaries_large',
         'pct_beneficiaries_youth',
         'land_tenure_project_area',
+        'lat',
+        'long',
         'answers',
         'ppc_external_id',
         'detailed_intervention_types',
@@ -133,7 +135,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'proposed_num_nurseries',
         'proj_boundary',
         'states',
-        'proj_impact_biodiv',
+        'proj_impact_biodiv'
     ];
 
     public $fileConfiguration = [
@@ -495,5 +497,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     private function submittedSiteReportIds(): array
     {
         return $this->submittedSiteReports()->pluck('v2_site_reports.id')->toArray();
+    }
+
+    public function getTotalSitePolygonsAttribute()
+    {
+        return $this->sitePolygons()->count();
     }
 }
