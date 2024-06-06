@@ -2,6 +2,7 @@
 
 namespace App\Models\V2;
 
+use App\Models\Traits\HasGeometry;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
@@ -12,15 +13,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * @method static isUuid($uuid)
- * @property mixed $uuid
- */
 class PolygonGeometry extends Model
 {
     use HasUuid;
     use SoftDeletes;
     use HasFactory;
+    use HasGeometry;
 
     protected $table = 'polygon_geometry';
 
@@ -48,45 +46,5 @@ class PolygonGeometry extends Model
     public function createdBy(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'created_by');
-    }
-
-    public static function getGeoJson(string $uuid): ?array
-    {
-        $geojson_string = PolygonGeometry::isUuid($uuid)
-            ->selectRaw('ST_AsGeoJSON(geom) as geojson_string')
-            ->first()
-            ?->geojson_string;
-
-        return $geojson_string == null ? null : json_decode($geojson_string, true);
-    }
-
-    public function getGeoJsonAttribute(): array
-    {
-        return self::getGeoJson($this->uuid);
-    }
-
-    public static function getGeometryType(string $uuid): ?string
-    {
-        return PolygonGeometry::isUuid($uuid)
-            ->selectRaw('ST_GeometryType(geom) as geometry_type_string')
-            ->first()
-            ?->geometry_type_string;
-    }
-
-    public function getGeometryTypeAttribute(): string
-    {
-        return self::getGeometryType($this->uuid);
-    }
-
-    public static function getDbGeometry(string $uuid)
-    {
-        return PolygonGeometry::isUuid($uuid)
-            ->selectRaw('ST_Area(geom) AS area, ST_Y(ST_Centroid(geom)) AS latitude')
-            ->first();
-    }
-
-    public function getDbGeometryAttribute()
-    {
-        return self::getDbGeometry($this->uuid);
     }
 }
