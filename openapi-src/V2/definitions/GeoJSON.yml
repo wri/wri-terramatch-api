@@ -38,15 +38,9 @@ properties:
           properties:
             type:
               type: string
-              enum: [Polygon]
+              enum: [Polygon, Point]
             coordinates:
               type: array
-              items:
-                type: array
-                items:
-                  type: array
-                  items:
-                    type: number
 
 
 

@@ -23,6 +23,7 @@ tags:
   - name: V2 Admin
   - name: V2 Application
   - name: V2 Disturbance
+  - name: V2 Geometry
   - name: V2 Invasive
   - name: V2 Project Developer
   - name: V2 Projects
@@ -44021,15 +44022,10 @@ definitions:
                   type: string
                   enum:
                     - Polygon
+                    - Point
                 coordinates:
                   type: array
-                  items:
-                    type: array
-                    items:
-                      type: array
-                      items:
-                        type: number
-  SiteGeometryPost:
+  GeometryPost:
     title: SiteGeometryPost
     type: object
     properties:
@@ -93301,6 +93297,8 @@ paths:
       operationId: post-v2-sites-uuid-geometry
       tags:
         - V2 Sites
+      deprecated: true
+      description: Use POST /api/v2/geometry instead (and include the site ID in the polygon properties)
       parameters:
         - type: string
           name: UUID
@@ -93358,14 +93356,9 @@ paths:
                                 type: string
                                 enum:
                                   - Polygon
+                                  - Point
                               coordinates:
                                 type: array
-                                items:
-                                  type: array
-                                  items:
-                                    type: array
-                                    items:
-                                      type: number
       responses:
         '201':
           description: Created
@@ -94103,14 +94096,9 @@ paths:
                                 type: string
                                 enum:
                                   - Polygon
+                                  - Point
                               coordinates:
                                 type: array
-                                items:
-                                  type: array
-                                  items:
-                                    type: array
-                                    items:
-                                      type: number
       responses:
         '200':
           description: 'OK: No validation errors occurred with the supplied geometries'
@@ -94151,6 +94139,111 @@ paths:
                         type: string
                         description: A path string indicating where the error occurred.
   /v2/geometry:
+    post:
+      summary: Upload bulk geometry
+      operationId: post-v2-geometry
+      tags:
+        - V2 Geometry
+      description: |
+        Takes an array of geometries and adds them to the sites indicated. For each geometry, it may either be a 
+        single Polygon (in which case the site_id is required), or it may be a FeatureCollection of Points. If a geometry
+        is a collection of points, then the site_id must be present on at least one of the points. If it is present on
+        multiple points, all points within a given collection must have the same site_id. 
+
+        For additional properties (plantstart, num_trees, etc) on Point geometries, if the properties are present on 
+        multiple Points, the first non-null value for each is used.
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              geometries:
+                type: array
+                items:
+                  title: GeoJSON
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - FeatureCollection
+                    features:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - Feature
+                          properties:
+                            type: object
+                            properties:
+                              poly_name:
+                                type: string
+                              plantstart:
+                                type: string
+                                format: date
+                              plantend:
+                                type: string
+                                format: date
+                              practice:
+                                type: string
+                              target_sys:
+                                type: string
+                              distr:
+                                type: string
+                              num_trees:
+                                type: number
+                              site_id:
+                                type: string
+                          geometry:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - Polygon
+                                  - Point
+                              coordinates:
+                                type: array
+      responses:
+        '201':
+          description: Created
+          schema:
+            title: SiteGeometryPost
+            type: object
+            properties:
+              polygon_uuids:
+                type: array
+                items:
+                  type: string
+                description: The UUIDs generated by the system for the uploaded polygons. They are in the same order as the polygons in the request payload.
+              errors:
+                type: object
+                description: Mapping of geometry UUID to the errors associated with the geometry. The geometry was saved in the DB and must be updated instead of created once the issues are resolved.
+                additionalProperties:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        enum:
+                          - OVERLAPPING_POLYGON
+                          - SELF_INTERSECTION
+                          - COORDINATE_SYSTEM
+                          - SIZE_LIMIT
+                          - WITHIN_COUNTRY
+                          - SPIKE
+                          - GEOMETRY_TYPE
+                          - TOTAL_AREA_EXPECTED
+                          - TABLE_SCHEMA
+                          - DATA_COMPLETED
+                      message:
+                        type: string
+                        description: Human readable string in English to describe the error.
     delete:
       summary: Bulk delete geometries
       operationId: delete-v2-geometry
@@ -94231,14 +94324,9 @@ paths:
                               type: string
                               enum:
                                 - Polygon
+                                - Point
                             coordinates:
                               type: array
-                              items:
-                                type: array
-                                items:
-                                  type: array
-                                  items:
-                                    type: number
       responses:
         '200':
           description: 'OK: Update was applied.'
