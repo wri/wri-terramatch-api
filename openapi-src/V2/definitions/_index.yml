@@ -282,3 +282,41 @@ DashboardVolunteersSurvivalRateResponse:
   $ref: './DashboardVolunteersSurvivalRateResponse.yml'
 DashboardVolundteersSurvivalRateData:
   $ref: './DashboardVolundteersSurvivalRateData.yml'
+V2TerrafundCriteriaData:
+  $ref: './V2TerrafundCriteriaData.yml'
+V2TerrafundCriteriaSite:
+  $ref: './V2TerrafundCriteriaSite.yml'
+SitePolygon:
+  $ref: './SitePolygon.yml'
+SitePolygonsDataResponse:
+  $ref: './SitePolygonsDataResponse.yml'
+SitePolygonsBboxResponse:
+  $ref: './SitePolygonsBboxResponse.yml'
+SitePolygonResponse:
+  $ref: './SitePolygonResponse.yml'
+SitePolygonCreateResponse:
+  $ref: './SitePolygonCreateResponse.yml'
+GeoJSONResponse:
+  $ref: './GeoJSONResponse.yml'
+DashboardJobsCreatedResponse:
+  $ref: './DashboardJobsCreatedResponse.yml'
+DashboardJobsCreatedData:
+  $ref: './DashboardJobsCreatedData.yml'
+DashboardRestorationStrategyResponse:
+  $ref: './DashboardRestorationStrategyResponse.yml'
+DashboardTreeRestorationGoalResponse:
+  $ref: './DashboardTreeRestorationGoalResponse.yml'
+DashboardTreesUnderRestorationActual:
+  $ref: './DashboardTreesUnderRestorationActual.yml'
+DashboardGetProjectsResponse:
+  $ref: './DashboardGetProjectsResponse.yml'
+DashboardGetProjectsData: 
+  $ref: './DashboardGetProjectsData.yml'
+DashboardGetPolygonStatusResponse:
+  $ref: './DashboardGetPolygonStatusResponse.yml'
+DashboardBBOXProject:
+  $ref: './DashboardBBOXProject.yml'
+DashboardBBOXCountry:
+  $ref: './DashboardBBOXCountry.yml'
+DashboardPolygonData:
+  $ref: './DashboardPolygonData.yml'
