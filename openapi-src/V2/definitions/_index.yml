@@ -314,3 +314,9 @@ DashboardBBOXCountry:
   $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
+DashboardTopProjectsResponse:
+  $ref: './DashboardTopProjectsResponse.yml'
+DashboardTopPlantedTree:
+  $ref: './DashboardTopPlantedTree.yml'
+DashboardTopTreeSpecies:
+  $ref: './DashboardTopTreeSpecies.yml'
