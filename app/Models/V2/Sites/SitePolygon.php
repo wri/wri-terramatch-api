@@ -63,6 +63,11 @@ class SitePolygon extends Model
         );
     }
 
+    public function site()
+    {
+        return $this->belongsTo(Site::class, 'site_id', 'id');
+    }
+
     public function createdBy(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'created_by');
