@@ -28,22 +28,18 @@ class SitePolygon extends Model
     protected $table = 'site_polygon';
 
     protected $fillable = [
-      'proj_name',
-      'org_name',
       'poly_id',
       'poly_name',
       'site_id',
-      'site_name',
-      'project_id',
-      'poly_label',
+      'point_id',
       'plantstart',
       'plantend',
       'practice',
       'target_sys',
       'distr',
       'num_trees',
-      'est_area',
-      'country',
+      'calc_area',
+      'status',
       'created_by',
     ];
 
@@ -65,6 +61,11 @@ class SitePolygon extends Model
             foreignKeyLookup: [Project::class => 'project_id', Site::class => 'site_id'],
             localKeyLookup: [Site::class => 'uuid']
         );
+    }
+
+    public function site()
+    {
+        return $this->belongsTo(Site::class, 'site_id', 'id');
     }
 
     public function createdBy(): HasOne
