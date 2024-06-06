@@ -53,11 +53,10 @@ class ProjectListExportController extends Controller
 
         $csvContent = $csv->toString();
 
-        $fileName = 'activeProject.csv';
-
         return response($csvContent, 200, [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
-        ]);
+          'Content-Type' => 'text/csv',
+          'Content-Disposition' => 'attachment; filename=activeProject.csv',
+      ]);
+      
     }
 }
