@@ -12,9 +12,15 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
+class AbortException extends \Exception
+{
+}
+
 class BulkWorkdayImport extends Command
 {
-    use Abortable;
+    use Abortable {
+        abort as _abort;
+    }
 
     /**
      * The name and signature of the console command.
@@ -104,35 +110,61 @@ class BulkWorkdayImport extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        $type = $this->argument('type');
+        try {
+            $type = $this->argument('type');
 
-        $this->assert(! empty(self::COLLECTIONS[$type]), "Unknown type: $type");
-        $this->modelConfig = self::MODEL_CONFIGS[$type];
-        $this->collections = collect(self::COLLECTIONS[$type]);
+            $this->assert(! empty(self::COLLECTIONS[$type]), "Unknown type: $type");
+            $this->modelConfig = self::MODEL_CONFIGS[$type];
+            $this->collections = collect(self::COLLECTIONS[$type]);
 
-        $fileHandle = fopen($this->argument('file'), 'r');
-        $this->parseHeaders(fgetcsv($fileHandle));
+            $fileHandle = fopen($this->argument('file'), 'r');
+            $this->parseHeaders(fgetcsv($fileHandle));
 
-        $rows = collect();
-        while ($csvRow = fgetcsv($fileHandle)) {
-            $rows->push($this->parseRow($csvRow));
-        }
-        $rows = $rows->filter();
-        fclose($fileHandle);
-
-        if ($this->option('dry-run')) {
-            echo json_encode($rows, JSON_PRETTY_PRINT) . "\n\n";
-        } else {
-            // A separate loop so we can validate as much input as possible before we start persisting any records
-            foreach ($rows as $reportData) {
-                $report = $this->modelConfig['model']::isUuid($reportData['report_uuid'])->first();
-                $this->persistWorkdays($report, $reportData);
+            $rows = collect();
+            $parseErrors = [];
+            while ($csvRow = fgetcsv($fileHandle)) {
+                try {
+                    $rows->push($this->parseRow($csvRow));
+                } catch (AbortException $e) {
+                    $parseErrors[] = $e->getMessage();
+                }
             }
 
-            echo "Workday import complete!\n\n";
+            if (! empty($parseErrors)) {
+                echo "Errors encountered during parsing CSV Rows:\n";
+                foreach ($parseErrors as $error) {
+                    echo $error . "\n";
+                }
+                $this->_abort('Parsing aborted');
+            }
+
+            $rows = $rows->filter();
+            fclose($fileHandle);
+
+            if ($this->option('dry-run')) {
+                echo json_encode($rows, JSON_PRETTY_PRINT) . "\n\n";
+            } else {
+                // A separate loop so we can validate as much input as possible before we start persisting any records
+                foreach ($rows as $reportData) {
+                    $report = $this->modelConfig['model']::isUuid($reportData['report_uuid'])->first();
+                    $this->persistWorkdays($report, $reportData);
+                }
+
+                echo "Workday import complete!\n\n";
+            }
+        } catch (AbortException $e) {
+            $this->_abort($e->getMessage());
         }
+    }
+
+    /**
+     * @throws AbortException
+     */
+    protected function abort(string $message, int $exitCode = 1): void
+    {
+        throw new AbortException($message);
     }
 
     protected function parseHeaders($headerRow): void
@@ -211,10 +243,11 @@ class BulkWorkdayImport extends Command
                         $existingData['name'] == $data['name']) {
                         $combinedRecords = true;
                         $existingData['amount'] += $data['amount'];
+
                         break;
                     }
                 }
-                if (!$combinedRecords) {
+                if (! $combinedRecords) {
                     $row[$collection][] = $data;
                 }
             }
@@ -232,7 +265,7 @@ class BulkWorkdayImport extends Command
         )->first();
         $this->assert(
             $report != null && $report->{$this->modelConfig['parent']}?->ppc_external_id == $parentId,
-            "Parent / Report ID mismatch: [Parent ID: $parentId, Submission ID: $submissionId]"
+            "Parent / Report ID mismatch: [Parent ID: $parentId, Submission ID: $submissionId]\n"
         );
 
         $row['report_uuid'] = $report->uuid;
@@ -260,7 +293,6 @@ class BulkWorkdayImport extends Command
                         'submission_id' => $submissionId,
                         'collection' => $collection,
                         'totals' => $totals,
-                        'parsed row data' => $row,
                     ], JSON_PRETTY_PRINT) . "\n"
                 );
             }
@@ -281,7 +313,7 @@ class BulkWorkdayImport extends Command
                     'collection' => $collection,
                     'demographic' => $demographic,
                     'cell' => $cell,
-                ]));
+                ]) . "\n");
         }
 
         $demographic['amount'] = (int)round($cell);
