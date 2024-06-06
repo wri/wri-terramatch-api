@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
@@ -24,13 +25,28 @@ class PolygonService
     public const SCHEMA_CRITERIA_ID = 13;
     public const DATA_CRITERIA_ID = 14;
 
-    public function createGeojsonModels($geojson, $sitePolygonProperties = [], ?string $site_id = null): array
+    // TODO: Remove this const and its usages when the point transformation ticket is complete.
+    public const TEMP_FAKE_POLYGON_UUID = 'temp_fake_polygon_uuid';
+
+    protected const POINT_PROPERTIES = [
+        'site_id',
+        'poly_name',
+        'plantstart',
+        'plantend',
+        'practice',
+        'target_sys',
+        'distr',
+        'num_trees',
+    ];
+
+    public function createGeojsonModels($geojson, $sitePolygonProperties = []): array
     {
+        if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
+            return [$this->transformAndStorePoints($geojson, $sitePolygonProperties)];
+        }
+
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
-            if ($site_id !== null) {
-                $feature['properties']['site_id'] = $site_id;
-            }
             if ($feature['geometry']['type'] === 'Polygon') {
                 $data = $this->insertSinglePolygon($feature['geometry']);
                 $uuids[] = $data['uuid'];
@@ -93,12 +109,21 @@ class PolygonService
         ));
     }
 
+    protected function getGeom(array $geometry)
+    {
+        // Convert geometry to GeoJSON string
+        $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']]]);
+
+        // get GeoJSON data in the database
+        return DB::raw("ST_GeomFromGeoJSON('$geojson')");
+    }
+
     protected function getGeomAndArea(array $geometry): array
     {
         // Convert geometry to GeoJSON string
         $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']]]);
 
-        // Update GeoJSON data in the database
+        // Get GeoJSON data in the database
         $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
         $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
         $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
@@ -121,6 +146,16 @@ class PolygonService
         ]);
 
         return ['uuid' => $polygonGeometry->uuid, 'area' => $dbGeometry['area']];
+    }
+
+    protected function insertSinglePoint(array $feature): string
+    {
+        return PointGeometry::create([
+            'geom' => $this->getGeom($feature['geometry']),
+            'est_area' => data_get($feature, 'properties.est_area'),
+            'created_by' => Auth::user()?->id,
+            'last_modified_by' => Auth::user()?->id,
+        ])->uuid;
     }
 
     protected function insertSitePolygon(string $polygonUuid, array $properties)
@@ -178,5 +213,32 @@ class PolygonService
             'calc_area' => $properties['area'] ?? null,
             'status' => 'submitted',
         ];
+    }
+
+    /**
+     * Each Point must have an est_area property, and at least one of them must have a site_id as well as
+     * all of the properties listed in SitePolygonValidator::SCHEMA for the resulting polygon to pass validation.
+     *
+     * @return string UUID of resulting PolygonGeometry
+     */
+    protected function transformAndStorePoints($geojson, $sitePolygonProperties): string
+    {
+        $pointUuids = [];
+        foreach ($geojson['features'] as $feature) {
+            $pointUuids[] = $this->insertSinglePoint($feature);
+        }
+
+        $properties = $sitePolygonProperties;
+        foreach (self::POINT_PROPERTIES as $property) {
+            $properties[$property] = collect(data_get($geojson, "features.*.properties.$property"))->filter()->first();
+        }
+
+        // TODO:
+        //  * transform points into a polygon
+        //  * Insert the polygon into PolygonGeometry
+        //  * Create the SitePolygon using the data in $properties (including $properties['site_id'] to identify the site)
+        //  * Return the PolygonGeometry's real UUID instead of this fake return
+
+        return self::TEMP_FAKE_POLYGON_UUID;
     }
 }
