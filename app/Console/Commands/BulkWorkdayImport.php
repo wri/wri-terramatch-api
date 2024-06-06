@@ -237,6 +237,35 @@ class BulkWorkdayImport extends Command
 
         $row['report_uuid'] = $report->uuid;
 
+        // Check that all the demographics are balanced
+        $collections = array_merge(
+            $this->modelConfig['model']::WORKDAY_COLLECTIONS['paid'],
+            $this->modelConfig['model']::WORKDAY_COLLECTIONS['volunteer'],
+        );
+        foreach ($collections as $collection) {
+            if (empty($row[$collection])) {
+                continue;
+            }
+
+            $totals = ['gender' => 0, 'age' => 0, 'ethnicity' => 0];
+            foreach ($row[$collection] as $demographic) {
+                $totals[$demographic['type']] += $demographic['amount'];
+            }
+
+            if (collect($totals)->values()->unique()->count() > 1) {
+                $this->assert(
+                    collect($totals)->values()->unique()->count() == 1,
+                    "Demographics for collection are unbalanced\n" .
+                    json_encode([
+                        'submission_id' => $submissionId,
+                        'collection' => $collection,
+                        'totals' => $totals,
+                        'parsed row data' => $row,
+                    ], JSON_PRETTY_PRINT) . "\n"
+                );
+            }
+        }
+
         return $row;
     }
 
