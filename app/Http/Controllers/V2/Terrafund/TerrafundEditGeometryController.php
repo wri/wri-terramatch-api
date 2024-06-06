@@ -5,8 +5,6 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,9 +57,10 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-            if (!$sitePolygon) {
-              Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
-              return null;
+            if (! $sitePolygon) {
+                Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
+
+                return null;
             }
             $project = $sitePolygon->project;
 
@@ -73,7 +72,7 @@ class TerrafundEditGeometryController extends Controller
                     Log::warning("Invalid centroid for project UUID: $project->uuid");
                 }
             } else {
-                Log::warning("Project UUID not found.");
+                Log::warning('Project UUID not found.');
             }
         } catch (\Exception $e) {
             Log::error('Error updating project centroid: ' . $e->getMessage());
