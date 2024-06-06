@@ -617,8 +617,10 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
+    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
+    Route::get('/geojson/site', [TerrafundCreateGeometryController::class, 'getAllPolygonsAsGeoJSONDownload']);
 
-    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonsAsGeoJSON']);
+
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
     Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
@@ -636,6 +638,7 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
     Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
     Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
+    Route::delete('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndSitePolygon']);
 
     Route::get('/polygon/bbox/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonBbox']);
 
