@@ -314,3 +314,5 @@ DashboardBBOXCountry:
   $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
+EntityTypeResponse:
+  $ref: './EntityTypeResponse.yml'
