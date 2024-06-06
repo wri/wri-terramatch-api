@@ -135,7 +135,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'proposed_num_nurseries',
         'proj_boundary',
         'states',
-        'proj_impact_biodiv'
+        'proj_impact_biodiv',
     ];
 
     public $fileConfiguration = [
