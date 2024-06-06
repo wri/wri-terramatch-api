@@ -276,8 +276,6 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
   $ref: './GeometryPost.yml'
-SiteGeometryPost:
-  $ref: './SiteGeometryPost.yml'
 DashboardVolunteersSurvivalRateResponse:
   $ref: './DashboardVolunteersSurvivalRateResponse.yml'
 DashboardVolundteersSurvivalRateData:
