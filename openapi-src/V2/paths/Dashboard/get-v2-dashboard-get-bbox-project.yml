@@ -1,17 +1,16 @@
-get:
-  summary: Get Bbox of all polygons of project
-  tags:
-    - Projects 
-  parameters:
-    - in: query
-      name: uuid
-      type: string
-      description: UUID of the project
-      required: true
-  responses:
-    '200':
-      description: Successful response
-      schema:
-        $ref: ../../definitions/_index.yml#/DashboardBBOXProject
-    '404':
-      description: Project not found
+summary: Get Bbox of all polygons of project
+tags:
+  - Projects 
+parameters:
+  - in: query
+    name: uuid
+    type: string
+    description: UUID of the project
+    required: true
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: ../../definitions/_index.yml#/DashboardBBOXProject
+  '404':
+    description: Project not found

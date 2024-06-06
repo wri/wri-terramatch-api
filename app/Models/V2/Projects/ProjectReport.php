@@ -16,7 +16,7 @@ use App\Models\V2\MediaModel;
 use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
 use App\Models\V2\ReportModel;
-use App\Models\V2\Sites\Site;
+use App\Models\V2\Seeding;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
@@ -320,30 +320,25 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
 
     public function getTreesPlantedCountAttribute(): int
     {
-        $total = 0;
-        if (empty($this->due_at)) {
-            return $total;
+        if (empty($this->task_id)) {
+            return 0;
         }
 
-        $month = $this->due_at->month;
-        $year = $this->due_at->year;
-        $siteIds = Site::where('project_id', data_get($this->project, 'id'))
-            ->isApproved()
-            ->pluck('id')
-            ->toArray();
+        return TreeSpecies::where('speciesable_type', SiteReport::class)
+            ->whereIn('speciesable_id', $this->task->siteReports()->select('id'))
+            ->where('collection', TreeSpecies::COLLECTION_PLANTED)
+            ->sum('amount');
+    }
 
-        if (count($siteIds) > 0) {
-            $reports = SiteReport::whereIn('site_id', $siteIds)
-                ->whereMonth('due_at', $month)
-                ->whereYear('due_at', $year)
-                ->get();
-
-            foreach ($reports as $report) {
-                $total += $report->treeSpecies()->sum('amount');
-            }
+    public function getSeedsPlantedCountAttribute(): int
+    {
+        if (empty($this->task_id)) {
+            return 0;
         }
 
-        return $total;
+        return Seeding::where('seedable_type', SiteReport::class)
+            ->whereIn('seedable_id', $this->task->siteReports()->select('id'))
+            ->sum('amount');
     }
 
     public function getTotalJobsCreatedAttribute(): int
