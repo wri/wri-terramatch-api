@@ -31,7 +31,7 @@ class SitePolygon extends Model
       'poly_id',
       'poly_name',
       'site_id',
-      'project_id',
+      'point_id',
       'plantstart',
       'plantend',
       'practice',

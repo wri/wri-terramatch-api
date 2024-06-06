@@ -1,3 +1,4 @@
+title: SitePolygonsBboxResponse
 type: object
 properties:
   bbox:

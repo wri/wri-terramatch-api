@@ -276,6 +276,22 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
   $ref: './GeometryPost.yml'
+V2TerrafundCriteriaData:
+  $ref: './V2TerrafundCriteriaData.yml'
+V2TerrafundCriteriaSite:
+  $ref: './V2TerrafundCriteriaSite.yml'
+SitePolygon:
+  $ref: './SitePolygon.yml'
+SitePolygonsDataResponse:
+  $ref: './SitePolygonsDataResponse.yml'
+SitePolygonsBboxResponse:
+  $ref: './SitePolygonsBboxResponse.yml'
+SitePolygonResponse:
+  $ref: './SitePolygonResponse.yml'
+SitePolygonCreateResponse:
+  $ref: './SitePolygonCreateResponse.yml'
+GeoJSONResponse:
+  $ref: './GeoJSONResponse.yml'
 DashboardJobsCreatedResponse:
   $ref: './DashboardJobsCreatedResponse.yml'
 DashboardJobsCreatedData:
