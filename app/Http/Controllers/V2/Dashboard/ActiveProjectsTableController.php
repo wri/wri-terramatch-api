@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Dashboard\ActiveProjectsTableResource;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use Illuminate\Http\Request;
@@ -13,7 +12,7 @@ use Illuminate\Support\Collection;
 
 class ActiveProjectsTableController extends Controller
 {
-    public function __invoke(Request $request): ActiveProjectsTableResource
+    public function __invoke(Request $request)
     {
         $perPage = $request->input('per_page', PHP_INT_MAX);
         $page = $request->input('page', 1);
@@ -21,7 +20,7 @@ class ActiveProjectsTableController extends Controller
         $projects = $this->getAllProjects($request, $perPage, $page);
         $count = $this->getQuery($request)->count();
 
-        return new ActiveProjectsTableResource([
+        return response()->json([
             'current_page' => $page,
             'data' => $projects,
             'per_page' => $perPage,
