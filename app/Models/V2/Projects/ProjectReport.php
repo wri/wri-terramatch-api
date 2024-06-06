@@ -406,4 +406,8 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     {
         return $this->project();
     }
+    public function scopeHasBeenSubmittedOrApproved($query)
+    {
+        return $query->whereIn('status', ['submitted', 'approved']);
+    }
 }
