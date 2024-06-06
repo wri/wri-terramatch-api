@@ -60,14 +60,14 @@ class TerrafundCreateGeometryController extends Controller
     /**
      * @throws ValidationException
      */
-    public function insertGeojsonToDB(string $geojsonFilename)
+    public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = null)
     {
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
         $geojson = json_decode($geojsonData, true);
 
         SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-        return App::make(PolygonService::class)->createGeojsonModels($geojson);
+        return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id]);
     }
 
     public function validateDataInDB(Request $request)
@@ -130,6 +130,7 @@ class TerrafundCreateGeometryController extends Controller
     public function uploadKMLFile(Request $request)
     {
         if ($request->hasFile('file')) {
+            $site_id = $request->input('uuid');
             $kmlfile = $request->file('file');
             $directory = storage_path('app/public/kml_files');
             if (! file_exists($directory)) {
@@ -147,7 +148,7 @@ class TerrafundCreateGeometryController extends Controller
 
                 return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
             }
-            $uuid = $this->insertGeojsonToDB($geojsonFilename);
+            $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
             if (isset($uuid['error'])) {
                 return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
             }
@@ -179,6 +180,7 @@ class TerrafundCreateGeometryController extends Controller
     {
         Log::debug('Upload Shape file data', ['request' => $request->all()]);
         if ($request->hasFile('file')) {
+            $site_id = $request->input('uuid');
             $file = $request->file('file');
             if ($file->getClientOriginalExtension() !== 'zip') {
                 return response()->json(['error' => 'Only ZIP files are allowed'], 400);
@@ -204,7 +206,7 @@ class TerrafundCreateGeometryController extends Controller
 
                     return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
                 }
-                $uuid = $this->insertGeojsonToDB($geojsonFilename);
+                $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
                 if (isset($uuid['error'])) {
                     return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
                 }
@@ -341,6 +343,7 @@ class TerrafundCreateGeometryController extends Controller
     public function uploadGeoJSONFile(Request $request)
     {
         if ($request->hasFile('file')) {
+            $site_id = $request->input('uuid');
             $file = $request->file('file');
             $directory = storage_path('app/public/geojson_files');
             if (! file_exists($directory)) {
@@ -348,7 +351,7 @@ class TerrafundCreateGeometryController extends Controller
             }
             $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
             $file->move($directory, $filename);
-            $uuid = $this->insertGeojsonToDB($filename);
+            $uuid = $this->insertGeojsonToDB($filename, $site_id);
             if (is_array($uuid) && isset($uuid['error'])) {
                 return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
             }
@@ -434,6 +437,7 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
         }
     }
+
     public function getAllPolygonsAsGeoJSONDownload(Request $request)
     {
         try {
@@ -479,7 +483,7 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
         }
     }
-    
+
     public function getAllCountryNames()
     {
         $countries = WorldCountryGeneralized::select('country')
