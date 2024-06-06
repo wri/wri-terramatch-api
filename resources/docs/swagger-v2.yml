@@ -44556,6 +44556,33 @@ definitions:
             key:
               type: string
               description: Key of the data field
+  DashboardTotalSectionHeaderResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          total_non_profit_count:
+            type: integer
+            description: Total number of non profit projects.
+          total_enterprise_count:
+            type: integer
+            description: Total number of enterprise projects.
+          total_entries:
+            type: integer
+            description: Total number of jobs created.
+          total_hectares_restored:
+            type: integer
+            description: Total number of hectares restored.
+          total_hectares_restored_goal:
+            type: integer
+            description: Total number of hectares restored goal.
+          total_trees_restored:
+            type: integer
+            description: Total number of trees restored.
+          total_trees_restored_goal:
+            type: integer
+            description: Total number of trees restored goal.
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95281,3 +95308,49 @@ paths:
                       description: Key of the data field
         '500':
           description: Error in queries
+  /v2/dashboard/total-section-header:
+    get:
+      summary: Retrieve totals and metrics for total section header
+      description: |
+        This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total_non_profit_count:
+                        type: integer
+                        description: Total number of non profit projects.
+                      total_enterprise_count:
+                        type: integer
+                        description: Total number of enterprise projects.
+                      total_entries:
+                        type: integer
+                        description: Total number of jobs created.
+                      total_hectares_restored:
+                        type: integer
+                        description: Total number of hectares restored.
+                      total_hectares_restored_goal:
+                        type: integer
+                        description: Total number of hectares restored goal.
+                      total_trees_restored:
+                        type: integer
+                        description: Total number of trees restored.
+                      total_trees_restored_goal:
+                        type: integer
+                        description: Total number of trees restored goal.
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
