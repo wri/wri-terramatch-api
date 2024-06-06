@@ -274,8 +274,8 @@ WorkdayDemographic:
   $ref: './WorkdayDemographic.yml'
 GeoJSON:
   $ref: './GeoJSON.yml'
-SiteGeometryPost:
-  $ref: './SiteGeometryPost.yml'
+GeometryPost:
+  $ref: './GeometryPost.yml'
 DashboardJobsCreatedResponse:
   $ref: './DashboardJobsCreatedResponse.yml'
 DashboardJobsCreatedData:
