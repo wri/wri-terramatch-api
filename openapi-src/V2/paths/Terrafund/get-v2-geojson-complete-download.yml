@@ -1,6 +1,5 @@
 summary: Get Polygon as GeoJSON
-description: |
-  Retrieve polygon geometry and properties as GeoJSON.
+description: Retrieve polygon geometry and properties as GeoJSON.
 parameters:
   - in: query
     name: uuid
@@ -10,10 +9,8 @@ parameters:
 responses:
   '200':
     description: Successful response
-    content:
-      application/json:
-        schema:
-          $ref: '../../definitions/_index.yml#/GeoJSONResponse'
+    schema:
+      $ref: '../../definitions/_index.yml#/GeoJSONResponse'
   '400':
     description: Bad request
   '500':

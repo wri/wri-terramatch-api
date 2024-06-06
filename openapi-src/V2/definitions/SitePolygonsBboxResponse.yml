@@ -3,3 +3,5 @@ type: object
 properties:
   bbox:
     type: array
+    items:
+      type: number
