@@ -30,7 +30,7 @@ class ViewRestorationStrategyController extends Controller
             'landTenures' => $this->getResultArray($landTenures, 'land_tenure'),
         ];
 
-        return new JsonResponse(ViewRestorationStrategyResource::make($result));
+        return response()->json($result);
     }
 
     private function buildProjectQuery(Request $request)
