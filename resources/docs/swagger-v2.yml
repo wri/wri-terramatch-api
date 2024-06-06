@@ -44244,6 +44244,78 @@ definitions:
         type: integer
       treeSpeciesPercentage:
         type: number
+  DashboardGetProjectsResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+            name:
+              type: string
+            lat:
+              type: number
+              format: double
+            long:
+              type: number
+              format: double
+  DashboardGetProjectsData:
+    type: object
+    properties:
+      uuid:
+        type: string
+      name:
+        type: string
+      lat:
+        type: number
+        format: double
+      long:
+        type: number
+        format: double
+  DashboardGetPolygonStatusResponse:
+    properties:
+      data:
+        type: array
+        properties:
+          NeedsMoreInfo:
+            type: array
+            description: Ids of polygons that need more information
+          Submitted:
+            type: array
+            description: Ids of submitted polygons
+          Approved:
+            type: array
+            description: Ids of approved polygons
+  DashboardBBOXProject:
+    type: object
+    properties:
+      bbox:
+        type: array
+  DashboardBBOXCountry:
+    type: object
+    properties:
+      bbox:
+        type: array
+  DashboardPolygonData:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+              description: Title of the data field
+            value:
+              type: string
+              description: Value of the data field
+            key:
+              type: string
+              description: Key of the data field
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94220,7 +94292,6 @@ paths:
           description: Geometry was not found.
   /v2/dashboard/jobs-created:
     get:
-      operationId: get-v2-jobs-created.yml
       summary: view Jobs created for dashboard
       parameters:
         - in: query
@@ -94433,3 +94504,182 @@ paths:
           description: OK
           schema:
             type: file
+  /v2/dashboard/get-polygons:
+    get:
+      summary: Retrieve all polygons.
+      description: |
+        This endpoint returns all polygons by project uuid.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: uuid for the given project
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        name:
+                          type: string
+                        lat:
+                          type: number
+                          format: double
+                        long:
+                          type: number
+                          format: double
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/get-polygons/statuses:
+    get:
+      summary: Retrieve all polygons.
+      description: |
+        This endpoint returns all polygons by project uuid.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: uuid for the given project
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    properties:
+                      NeedsMoreInfo:
+                        type: array
+                        description: Ids of polygons that need more information
+                      Submitted:
+                        type: array
+                        description: Ids of submitted polygons
+                      Approved:
+                        type: array
+                        description: Ids of approved polygons
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/get-bbox-project:
+    get:
+      get:
+        summary: Get Bbox of all polygons of project
+        tags:
+          - Projects
+        parameters:
+          - in: query
+            name: uuid
+            type: string
+            description: UUID of the project
+            required: true
+        responses:
+          '200':
+            description: Successful response
+            schema:
+              type: object
+              properties:
+                bbox:
+                  type: array
+          '404':
+            description: Project not found
+  '/v2/dashboard/country/{country}':
+    get:
+      summary: Get the bounding box of a country
+      tags:
+        - Country
+      parameters:
+        - in: path
+          name: country
+          type: string
+          description: ISO code of the country
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              bbox:
+                type: array
+        '404':
+          description: Country not found
+  '/v2/dashboard/polygon-data/{uuid}':
+    get:
+      summary: Get Get allowed to project
+      tags:
+        - Get allowed to project
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          description: UUID of the polygon
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      description: Title of the data field
+                    value:
+                      type: string
+                      description: Value of the data field
+                    key:
+                      type: string
+                      description: Key of the data field
+        '404':
+          description: Polygon not found
+  '/v2/dashboard/project-data/{uuid}':
+    get:
+      summary: Get project point data by UUID
+      tags:
+        - Project point data by UUID
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          description: UUID of the project point
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      description: Title of the data field
+                    value:
+                      type: string
+                      description: Value of the data field
+                    key:
+                      type: string
+                      description: Key of the data field
+        '500':
+          description: Error in queries

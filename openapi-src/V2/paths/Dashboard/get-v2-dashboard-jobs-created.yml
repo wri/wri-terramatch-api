@@ -1,4 +1,3 @@
-operationId: get-v2-jobs-created.yml
 summary: view Jobs created for dashboard
 parameters:
   - in: query
