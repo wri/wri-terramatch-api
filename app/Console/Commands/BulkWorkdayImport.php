@@ -246,7 +246,7 @@ class BulkWorkdayImport extends Command
             return [];
         }
 
-        if (! is_numeric($cell) || ('' . (int)$cell) != trim($cell)) {
+        if (! is_numeric($cell)) {
             $this->abort('Invalid value: ' .
                 json_encode([
                     'collection' => $collection,
@@ -255,7 +255,7 @@ class BulkWorkdayImport extends Command
                 ]));
         }
 
-        $demographic['amount'] = (int)$cell;
+        $demographic['amount'] = (int)round($cell);
         if (is_int($demographic['name'])) {
             // In this case, the "name" member is an index pointer to the column that holds the ethnicity
             // name.
