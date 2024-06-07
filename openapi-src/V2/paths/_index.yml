@@ -2553,8 +2553,12 @@
   get:
     $ref: './Terrafund/get-v2-geojson-complete-download.yml'
 /v2/terrafund/polygon/{uuid}:
+  get:
+    $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'
+  put:
+    $ref: './Terrafund/put-v2-terrafund-polygon-uuid.yml'
   delete:
-    $ref: './Terrafund/delete-v2-polygon-uuid.yml'
+    $ref: './Terrafund/delete-v2-terrafund-polygon-uuid.yml'
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'

@@ -282,6 +282,8 @@ V2TerrafundCriteriaSite:
   $ref: './V2TerrafundCriteriaSite.yml'
 SitePolygon:
   $ref: './SitePolygon.yml'
+GeometryString:
+  $ref: './GeometryString.yml'
 SitePolygonsDataResponse:
   $ref: './SitePolygonsDataResponse.yml'
 SitePolygonsBboxResponse:
