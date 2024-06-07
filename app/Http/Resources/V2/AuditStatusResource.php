@@ -15,8 +15,7 @@ class AuditStatusResource extends JsonResource
         $data = [
             'id' => $this->id,
             'uuid' => $this->uuid,
-            'auditable_type' => $this->auditable_type,
-            'auditable_id' => $this->auditable_id,
+            'entity_name' => $this->entity_name,
             'status' => $this->status,
             'comment' => $this->comment,
             'first_name' => $this->first_name,

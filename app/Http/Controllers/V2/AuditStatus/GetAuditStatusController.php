@@ -16,6 +16,11 @@ class GetAuditStatusController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $auditStatuses->map(function ($auditStatus) use ($entity) {
+            $auditStatus->entity_name = $entity->name;
+            return $auditStatus;
+        });
+
         return AuditStatusResource::collection($auditStatuses);
     }
 }

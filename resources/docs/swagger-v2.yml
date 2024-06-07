@@ -44087,16 +44087,15 @@ definitions:
       request_removed:
         type: boolean
   AuditStatusResponse:
+    title: AuditStatusResponse
     type: object
     properties:
       id:
         type: string
       uuid:
         type: string
-      auditable_type:
+      entity_name:
         type: string
-      auditable_id:
-        type: integer
       status:
         type: string
       comment:
@@ -94755,16 +94754,15 @@ paths:
           schema:
             type: array
             items:
+              title: AuditStatusResponse
               type: object
               properties:
                 id:
                   type: string
                 uuid:
                   type: string
-                auditable_type:
+                entity_name:
                   type: string
-                auditable_id:
-                  type: integer
                 status:
                   type: string
                 comment:
@@ -94857,16 +94855,15 @@ paths:
         '201':
           description: Created
           schema:
+            title: AuditStatusResponse
             type: object
             properties:
               id:
                 type: string
               uuid:
                 type: string
-              auditable_type:
+              entity_name:
                 type: string
-              auditable_id:
-                type: integer
               status:
                 type: string
               comment:

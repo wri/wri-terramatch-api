@@ -1,13 +1,12 @@
+title: AuditStatusResponse
 type: object
 properties:
   id:
     type: string
   uuid:
     type: string
-  auditable_type:
+  entity_name:
     type: string
-  auditable_id:
-    type: integer
   status:
     type: string
   comment:
