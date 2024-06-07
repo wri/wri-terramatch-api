@@ -2588,6 +2588,6 @@
 /v2/dashboard/active-projects:
   get:
     $ref: './Dashboard/get-v2-dashboard-active-projects.yml'
-/v2/dashboard/project-details:
+/v2/dashboard/project-details/{project}:
   get:
     $ref: './Dashboard/get-v2-dashboard-project-details.yml'
