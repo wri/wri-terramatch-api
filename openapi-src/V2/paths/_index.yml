@@ -2553,8 +2553,12 @@
   get:
     $ref: './Terrafund/get-v2-geojson-complete-download.yml'
 /v2/terrafund/polygon/{uuid}:
+  get:
+    $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'
+  put:
+    $ref: './Terrafund/put-v2-terrafund-polygon-uuid.yml'
   delete:
-    $ref: './Terrafund/delete-v2-polygon-uuid.yml'
+    $ref: './Terrafund/delete-v2-terrafund-polygon-uuid.yml'
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
@@ -2576,6 +2580,9 @@
 /v2/dashboard/get-bbox-project:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-bbox-project.yml'
+/v2/dashboard/bbox/project:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-bbox-project.yml'
 /v2/dashboard/country/{country}:
   get:
     $ref: './Dashboard/get-v2-dashboard-country.yml'
@@ -2585,3 +2592,9 @@
 /v2/dashboard/project-data/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-project-data-uuid.yml'
+/v2/terrafund/polygon/geojson/{uuid}:
+  get:
+    $ref: './Terrafund/get-v2-terrafund-polygon-geojson-uuid.yml'
+/v2/type-entity:
+  get:
+    $ref: './Entity/get-v2-type-entity.yml'
