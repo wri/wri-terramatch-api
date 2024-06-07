@@ -2585,6 +2585,9 @@
 /v2/dashboard/project-data/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-project-data-uuid.yml'
+/v2/dashboard/active-projects:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-active-projects.yml'
 /v2/dashboard/project-details:
   get:
     $ref: './Dashboard/get-v2-dashboard-project-details.yml'
