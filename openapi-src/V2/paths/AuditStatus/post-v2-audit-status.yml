@@ -7,7 +7,7 @@ parameters:
     name: body
     description: Body to create a new audit status
     schema:
-      $ref: '../../definitions/_index.yml#/AuditStatusPost'
+      $ref: '../../definitions/_index.yml#/AuditStatusCreateRequest'
 responses:
   '201':
     description: Created

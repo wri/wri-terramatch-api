@@ -4,7 +4,7 @@ namespace App\Http\Requests\V2\AuditStatus;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AuditStatusRequest extends FormRequest
+class AuditStatusCreateRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.

@@ -44058,31 +44058,18 @@ definitions:
               message:
                 type: string
                 description: Human readable string in English to describe the error.
-  AuditStatusPost:
+  AuditStatusCreateRequest:
     type: object
     properties:
-      entity:
+      auditable_type:
         type: string
-      entity_uuid:
+      auditable_uuid:
         type: string
       status:
         type: string
       comment:
         type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-      is_active:
-        type: boolean
-      is_submitted:
-        type: boolean
       type:
-        type: string
-      first_name:
-        type: string
-      last_name:
         type: string
       request_removed:
         type: boolean
@@ -94826,28 +94813,15 @@ paths:
           schema:
             type: object
             properties:
-              entity:
+              auditable_type:
                 type: string
-              entity_uuid:
+              auditable_uuid:
                 type: string
               status:
                 type: string
               comment:
                 type: string
-              date_created:
-                type: string
-                format: date
-              created_by:
-                type: string
-              is_active:
-                type: boolean
-              is_submitted:
-                type: boolean
               type:
-                type: string
-              first_name:
-                type: string
-              last_name:
                 type: string
               request_removed:
                 type: boolean

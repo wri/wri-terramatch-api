@@ -4,24 +4,23 @@ namespace App\Http\Controllers\V2\AuditStatus;
 
 use App\Exceptions\Terrafund\InvalidMorphableModelException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V2\AuditStatus\AuditStatusRequest;
+use App\Http\Requests\V2\AuditStatus\AuditStatusCreateRequest;
 use App\Http\Resources\V2\AuditStatusResource;
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
-use Illuminate\Http\Request;
 
 class StoreAuditStatusController extends Controller
 {
     use SaveAuditStatusTrait;
 
-    public function __invoke(AuditStatusRequest $auditStatusRequest): AuditStatusResource
+    public function __invoke(AuditStatusCreateRequest $auditStatusCreateRequest): AuditStatusResource
     {
-        $body = $auditStatusRequest->all();
+        $body = $auditStatusCreateRequest->all();
 
-        $model = $this->getEntityFromRequest($auditStatusRequest);
+        $model = $this->getEntityFromRequest($auditStatusCreateRequest);
         if ($body['type'] === 'change-request') {
             AuditStatus::where([
                 ['auditable_id', $model->id],
@@ -37,7 +36,7 @@ class StoreAuditStatusController extends Controller
         return new AuditStatusResource($auditStatusResponse);
     }
 
-    private function getEntityFromRequest(Request $request)
+    private function getEntityFromRequest(AuditStatusCreateRequest $request)
     {
         switch ($request->get('auditable_type')) {
             case 'Site':

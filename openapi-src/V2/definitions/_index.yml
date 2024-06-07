@@ -276,8 +276,8 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
   $ref: './GeometryPost.yml'
-AuditStatusPost:
-  $ref: './AuditStatusPost.yml'
+AuditStatusCreateRequest:
+  $ref: './AuditStatusCreateRequest.yml'
 AuditStatusResponse:
   $ref: './AuditStatusResponse.yml'
 V2TerrafundCriteriaData:

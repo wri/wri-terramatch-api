@@ -1,0 +1,14 @@
+type: object
+properties:
+  auditable_type:
+    type: string
+  auditable_uuid:
+    type: string
+  status:
+    type: string
+  comment:
+    type: string
+  type:
+    type: string
+  request_removed:
+    type: boolean
