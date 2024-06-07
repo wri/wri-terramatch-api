@@ -4,12 +4,11 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Dashboard\VolunteersAndAverageResource;
 use Illuminate\Http\Request;
 
 class VolunteersAndAverageSurvivalRateController extends Controller
 {
-    public function __invoke(Request $request): VolunteersAndAverageResource
+    public function __invoke(Request $request)
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
 
@@ -25,7 +24,7 @@ class VolunteersAndAverageSurvivalRateController extends Controller
             'number_of_nurseries' => $this->numberOfNurseries($projects),
         ];
 
-        return new VolunteersAndAverageResource($response);
+        return response()->json($response);
     }
 
     public function getTotalVolunteerSum($projects)
