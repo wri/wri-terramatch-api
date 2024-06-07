@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Dashboard\ActiveCountriesTableResource;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Nurseries\Nursery;
@@ -12,13 +11,13 @@ use App\Models\V2\Sites\Site;
 
 class ActiveCountriesTableController extends Controller
 {
-    public function __invoke(): ActiveCountriesTableResource
+    public function __invoke()
     {
         $response = (object) [
             'data' => $this->getAllCountries(),
         ];
 
-        return new ActiveCountriesTableResource($response);
+        return response()->json($response);
     }
 
     public function getAllCountries()

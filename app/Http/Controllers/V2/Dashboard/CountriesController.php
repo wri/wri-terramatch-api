@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Dashboard\CountriesResource;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Projects\Project;
@@ -11,13 +10,11 @@ use Illuminate\Http\Request;
 
 class CountriesController extends Controller
 {
-    public function __invoke(Request $request): CountriesResource
+    public function __invoke(Request $request)
     {
-        $response = (object) [
+        return response()->json([
             'data' => $this->getAllCountries($request),
-        ];
-
-        return new CountriesResource($response);
+        ]);
     }
 
     public function getAllCountries($request)
