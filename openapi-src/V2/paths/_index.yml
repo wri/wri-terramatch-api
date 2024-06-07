@@ -2588,3 +2588,6 @@
 /v2/dashboard/active-projects:
   get:
     $ref: './Dashboard/get-v2-dashboard-active-projects.yml'
+/v2/dashboard/volunteers-survival-rate:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-volunteers-survival-rate.yml'

@@ -276,6 +276,10 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
   $ref: './GeometryPost.yml'
+DashboardVolunteersSurvivalRateResponse:
+  $ref: './DashboardVolunteersSurvivalRateResponse.yml'
+DashboardVolundteersSurvivalRateData:
+  $ref: './DashboardVolundteersSurvivalRateData.yml'
 V2TerrafundCriteriaData:
   $ref: './V2TerrafundCriteriaData.yml'
 V2TerrafundCriteriaSite:
