@@ -2,32 +2,34 @@ type: object
 properties:
   id:
     type: string
-  entity_uuid:
+  uuid:
     type: string
-  entity:
+  auditable_type:
     type: string
+  auditable_id:
+    type: integer
   status:
     type: string
   comment:
-    type: string
-  date_created:
-    type: string
-    format: date
-  created_by:
-    type: string
-  is_active:
-    type: boolean
-  is_submitted:
-    type: boolean
-  type:
     type: string
   first_name:
     type: string
   last_name:
     type: string
+  type:
+    type: string
+  is_submitted:
+    type: boolean
+  is_active:
+    type: boolean
   request_removed:
     type: boolean
+  date_created:
+    type: string
+    format: date
+  created_by:
+    type: string
   attachments:
       type: array
       items:
-        $ref: './_index.yml#/AttachmentResponse'
+        $ref: './_index.yml#/V2FileRead'

@@ -44058,22 +44058,6 @@ definitions:
               message:
                 type: string
                 description: Human readable string in English to describe the error.
-  AttachmentResponse:
-    type: object
-    properties:
-      id:
-        type: number
-      entity_id:
-        type: string
-      file_name:
-        type: string
-      file_url:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
   AuditStatusPost:
     type: object
     properties:
@@ -44107,48 +44091,62 @@ definitions:
     properties:
       id:
         type: string
-      entity_uuid:
+      uuid:
         type: string
-      entity:
+      auditable_type:
         type: string
+      auditable_id:
+        type: integer
       status:
         type: string
       comment:
-        type: string
-      date_created:
-        type: string
-        format: date
-      created_by:
-        type: string
-      is_active:
-        type: boolean
-      is_submitted:
-        type: boolean
-      type:
         type: string
       first_name:
         type: string
       last_name:
         type: string
+      type:
+        type: string
+      is_submitted:
+        type: boolean
+      is_active:
+        type: boolean
       request_removed:
         type: boolean
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
       attachments:
         type: array
         items:
+          title: V2FileRead
           type: object
           properties:
-            id:
-              type: number
-            entity_id:
+            uuid:
+              type: string
+            url:
+              type: string
+            thumb_url:
+              type: string
+            collection_name:
+              type: string
+            title:
               type: string
             file_name:
               type: string
-            file_url:
+            mime_type:
               type: string
-            date_created:
-              type: string
-              format: date
-            created_by:
+            size:
+              type: integer
+            lat:
+              type: integer
+            lng:
+              type: integer
+            is_public:
+              type: boolean
+            created_at:
               type: string
   V2TerrafundCriteriaData:
     type: object
@@ -94761,48 +94759,62 @@ paths:
               properties:
                 id:
                   type: string
-                entity_uuid:
+                uuid:
                   type: string
-                entity:
+                auditable_type:
                   type: string
+                auditable_id:
+                  type: integer
                 status:
                   type: string
                 comment:
-                  type: string
-                date_created:
-                  type: string
-                  format: date
-                created_by:
-                  type: string
-                is_active:
-                  type: boolean
-                is_submitted:
-                  type: boolean
-                type:
                   type: string
                 first_name:
                   type: string
                 last_name:
                   type: string
+                type:
+                  type: string
+                is_submitted:
+                  type: boolean
+                is_active:
+                  type: boolean
                 request_removed:
                   type: boolean
+                date_created:
+                  type: string
+                  format: date
+                created_by:
+                  type: string
                 attachments:
                   type: array
                   items:
+                    title: V2FileRead
                     type: object
                     properties:
-                      id:
-                        type: number
-                      entity_id:
+                      uuid:
+                        type: string
+                      url:
+                        type: string
+                      thumb_url:
+                        type: string
+                      collection_name:
+                        type: string
+                      title:
                         type: string
                       file_name:
                         type: string
-                      file_url:
+                      mime_type:
                         type: string
-                      date_created:
-                        type: string
-                        format: date
-                      created_by:
+                      size:
+                        type: integer
+                      lat:
+                        type: integer
+                      lng:
+                        type: integer
+                      is_public:
+                        type: boolean
+                      created_at:
                         type: string
     post:
       operationId: post-v2-audit-status
@@ -94849,48 +94861,62 @@ paths:
             properties:
               id:
                 type: string
-              entity_uuid:
+              uuid:
                 type: string
-              entity:
+              auditable_type:
                 type: string
+              auditable_id:
+                type: integer
               status:
                 type: string
               comment:
-                type: string
-              date_created:
-                type: string
-                format: date
-              created_by:
-                type: string
-              is_active:
-                type: boolean
-              is_submitted:
-                type: boolean
-              type:
                 type: string
               first_name:
                 type: string
               last_name:
                 type: string
+              type:
+                type: string
+              is_submitted:
+                type: boolean
+              is_active:
+                type: boolean
               request_removed:
                 type: boolean
+              date_created:
+                type: string
+                format: date
+              created_by:
+                type: string
               attachments:
                 type: array
                 items:
+                  title: V2FileRead
                   type: object
                   properties:
-                    id:
-                      type: number
-                    entity_id:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
                       type: string
                     file_name:
                       type: string
-                    file_url:
+                    mime_type:
                       type: string
-                    date_created:
-                      type: string
-                      format: date
-                    created_by:
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    created_at:
                       type: string
   '/v2/site-polygons/project/{UUID}':
     get:
