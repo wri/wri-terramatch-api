@@ -15,6 +15,10 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
+use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 use App\Http\Controllers\V2\Dashboard\CountryDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
@@ -680,4 +684,12 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
+});
+
+Route::prefix('project-pipeline')->group(function () {
+    Route::get('/', GetProjectPipelineController::class);
+    Route::get('/{id}', GetProjectPipelineController::class);
+    Route::post('/', StoreProjectPipelineController::class);
+    Route::put('/{id}', UpdateProjectPipelineController::class);
+    Route::delete('/{id}', DeleteProjectPipelineController::class);
 });

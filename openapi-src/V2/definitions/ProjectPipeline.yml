@@ -1,0 +1,33 @@
+type: object
+properties:
+  data:
+    type: object
+    properties:
+      name:
+        type: object
+        properties:
+          name:
+            type: string
+          description:
+            type: string
+      date:
+        type: string
+        format: date
+      id:
+        type: integer
+      SubmittedBy:
+        type: string
+      Program:
+        type: string
+      Cohort:
+        type: string
+      PublishFor:
+        type: string
+      URL:
+        type: string
+      CreatedDate:
+        type: string
+        format: date
+      ModifiedDate:
+        type: string
+        format: date

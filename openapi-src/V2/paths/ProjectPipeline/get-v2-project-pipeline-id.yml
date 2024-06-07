@@ -1,0 +1,17 @@
+operationId: get-v2-project-pipeline
+summary: Get a project from the pipeline by ID
+tags: 
+  - V2 Project Pipeline
+parameters:
+  - type: string
+    name: id
+    in: path
+    required: true
+    description: show a specific project pipeline.
+responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions/_index.yml#/ProjectPipeline'

@@ -2585,3 +2585,15 @@
 /v2/dashboard/project-data/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-project-data-uuid.yml'
+/v2/project-pipeline:
+  get:
+    $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
+  post:
+    $ref: './ProjectPipeline/post-v2-project-pipeline.yml'
+/v2/project-pipeline/{id}:
+  get:
+    $ref: './ProjectPipeline/get-v2-project-pipeline-id.yml'
+  put:
+    $ref: './ProjectPipeline/put-v2-project-pipeline-id.yml'
+  delete:
+    $ref: './ProjectPipeline/delete-v2-project-pipeline-id.yml'
