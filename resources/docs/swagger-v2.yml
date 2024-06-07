@@ -44150,6 +44150,11 @@ definitions:
         type: string
       country:
         type: string
+  GeometryString:
+    type: object
+    properties:
+      geometry:
+        type: string
   SitePolygonsDataResponse:
     title: SitePolygonsDataResponse
     type: array
@@ -44556,6 +44561,85 @@ definitions:
             key:
               type: string
               description: Key of the data field
+  GeojsonData:
+    type: object
+    properties:
+      geojson:
+        type: object
+        description: The GeoJSON representation of the polygon geometry.
+  EntityTypeResponse:
+    type: object
+    properties:
+      type:
+        type: string
+        description: 'Type of the entity (''project'', ''site'', ''unknown'')'
+      uuid:
+        type: string
+        format: uuid
+        description: UUID of the entity
+      polygonsData:
+        type: array
+        items:
+          title: SitePolygon
+          type: object
+          properties:
+            id:
+              type: integer
+            uuid:
+              type: string
+            project_id:
+              type: string
+            proj_name:
+              type: string
+            org_name:
+              type: string
+            poly_id:
+              type: string
+            poly_name:
+              type: string
+            site_id:
+              type: string
+            site_name:
+              type: string
+            plantstart:
+              type: string
+              format: date
+            plantend:
+              type: string
+              format: date
+            practice:
+              type: string
+            target_sys:
+              type: string
+            distr:
+              type: string
+            num_trees:
+              type: integer
+            calc_area:
+              type: number
+              format: float
+            created_by:
+              type: string
+            last_modified_by:
+              type: string
+            deleted_at:
+              type: string
+              format: date-time
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+            status:
+              type: string
+            country:
+              type: string
+      bbox:
+        type: array
+        items:
+          type: number
+        description: Bounding box of the entity
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94884,6 +94968,140 @@ paths:
         '500':
           description: Internal server error
   '/v2/terrafund/polygon/{uuid}':
+    get:
+      summary: Get Site Polygon Data
+      description: Retrieve site polygon data for the given UUID.
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          required: true
+          description: The UUID of the site polygon.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              site_polygon:
+                type: object
+                properties:
+                  calc_area:
+                    type: number
+                  created_at:
+                    type: string
+                    format: date-time
+                  created_by:
+                    type: string
+                    nullable: true
+                  deleted_at:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  distr:
+                    type: string
+                    nullable: true
+                  id:
+                    type: integer
+                  last_modified_by:
+                    type: string
+                    nullable: true
+                  num_trees:
+                    type: integer
+                    nullable: true
+                  plantend:
+                    type: string
+                    format: date
+                    nullable: true
+                  plantstart:
+                    type: string
+                    format: date
+                  point_id:
+                    type: string
+                    nullable: true
+                  poly_id:
+                    type: string
+                  poly_name:
+                    type: string
+                  practice:
+                    type: string
+                    nullable: true
+                  site_id:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                  target_sys:
+                    type: string
+                    nullable: true
+                  updated_at:
+                    type: string
+                    format: date-time
+                  uuid:
+                    type: string
+        '404':
+          description: No site polygons found for the given UUID
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: No site polygons found for the given UUID.
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: An error message describing the issue.
+    put:
+      summary: Update geometry for a polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon geometry to update
+        - in: body
+          name: geometry
+          required: true
+          schema:
+            type: object
+            properties:
+              geometry:
+                type: string
+          description: The new geometry data
+      responses:
+        '200':
+          description: Geometry updated successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Geometry updated successfully.
+              geometry:
+                type: object
+                description: The updated geometry data
+              uuid:
+                type: string
+        '404':
+          description: No polygon geometry found for the given UUID
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: No polygon geometry found for the given UUID.
+        '500':
+          description: An error occurred
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Internal Server Error
     delete:
       summary: Delete polygon records
       parameters:
@@ -95192,6 +95410,29 @@ paths:
                   type: number
         '404':
           description: Project not found
+  /v2/dashboard/bbox/project:
+    get:
+      summary: Get Bbox of all polygons of project
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: UUID of the project
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              bbox:
+                type: array
+                items:
+                  type: number
+        '404':
+          description: Project not found
   '/v2/dashboard/country/{country}':
     get:
       summary: Get the bounding box of a country
@@ -95281,3 +95522,143 @@ paths:
                       description: Key of the data field
         '500':
           description: Error in queries
+  '/v2/terrafund/polygon/geojson/{uuid}':
+    get:
+      summary: Retrieve polygon GeoJSON by UUID
+      description: |
+        Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          required: true
+          description: The UUID of the polygon geometry to retrieve.
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              geojson:
+                type: object
+                description: The GeoJSON representation of the polygon geometry.
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message indicating that no polygon geometry was found for the provided UUID.
+  /v2/type-entity:
+    get:
+      summary: Get Entity Type
+      description: |
+        Determine the type of entity based on UUID.
+      parameters:
+        - in: query
+          name: uuid
+          required: true
+          description: UUID of the entity
+          type: string
+        - in: query
+          name: type
+          required: true
+          description: type of the entity
+          type: string
+        - in: query
+          name: status
+          required: false
+          description: Comma-separated list of status values to filter by
+          type: string
+        - in: query
+          name: sort
+          required: false
+          description: 'Sort criteria in the format `sort[field]=direction`, e.g. `sort[poly_name]=asc or sort[status]=desc`'
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+                description: 'Type of the entity (''project'', ''site'', ''unknown'')'
+              uuid:
+                type: string
+                format: uuid
+                description: UUID of the entity
+              polygonsData:
+                type: array
+                items:
+                  title: SitePolygon
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    uuid:
+                      type: string
+                    project_id:
+                      type: string
+                    proj_name:
+                      type: string
+                    org_name:
+                      type: string
+                    poly_id:
+                      type: string
+                    poly_name:
+                      type: string
+                    site_id:
+                      type: string
+                    site_name:
+                      type: string
+                    plantstart:
+                      type: string
+                      format: date
+                    plantend:
+                      type: string
+                      format: date
+                    practice:
+                      type: string
+                    target_sys:
+                      type: string
+                    distr:
+                      type: string
+                    num_trees:
+                      type: integer
+                    calc_area:
+                      type: number
+                      format: float
+                    created_by:
+                      type: string
+                    last_modified_by:
+                      type: string
+                    deleted_at:
+                      type: string
+                      format: date-time
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    status:
+                      type: string
+                    country:
+                      type: string
+              bbox:
+                type: array
+                items:
+                  type: number
+                description: Bounding box of the entity
+        '400':
+          description: 'Bad request, UUID parameter is missing'
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Error message

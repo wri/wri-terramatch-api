@@ -282,6 +282,8 @@ V2TerrafundCriteriaSite:
   $ref: './V2TerrafundCriteriaSite.yml'
 SitePolygon:
   $ref: './SitePolygon.yml'
+GeometryString:
+  $ref: './GeometryString.yml'
 SitePolygonsDataResponse:
   $ref: './SitePolygonsDataResponse.yml'
 SitePolygonsBboxResponse:
@@ -314,3 +316,7 @@ DashboardBBOXCountry:
   $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
+GeojsonData:
+  $ref: './GeojsonData.yml'
+EntityTypeResponse:
+  $ref: './EntityTypeResponse.yml'
