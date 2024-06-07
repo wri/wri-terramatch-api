@@ -3,16 +3,15 @@ summary: Get all audits status by entity and entity uuid
 tags: 
   - V2 Audits Status
 parameters:
-  - in: query
-    name: entity
-    type: string
+  - type: string
+    name: ENTITY
+    in: path
     required: true
-    description: required.
-  - in: query
-    name: uuid
-    type: string
+    description: allowed values project/site/site-polygons
+  - type: string
+    name: UUID
+    in: path
     required: true
-    description: required.
 responses:
   '200':
     description: OK

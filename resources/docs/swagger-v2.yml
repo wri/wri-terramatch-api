@@ -94718,23 +94718,22 @@ paths:
           description: This account does not have permission to update the polygon.
         '404':
           description: Geometry was not found.
-  /v2/audit-status:
+  '/v2/audit-status/{ENTITY}/{UUID}':
     get:
       operationId: get-v2-audits-status
       summary: Get all audits status by entity and entity uuid
       tags:
         - V2 Audits Status
       parameters:
-        - in: query
-          name: entity
-          type: string
+        - type: string
+          name: ENTITY
+          in: path
           required: true
-          description: required.
-        - in: query
-          name: uuid
-          type: string
+          description: allowed values project/site/site-polygons
+        - type: string
+          name: UUID
+          in: path
           required: true
-          description: required.
       responses:
         '200':
           description: OK
@@ -94801,6 +94800,7 @@ paths:
                         type: boolean
                       created_at:
                         type: string
+  /v2/audit-status:
     post:
       operationId: post-v2-audit-status
       summary: Create a new audit status
