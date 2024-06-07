@@ -1,0 +1,12 @@
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  lat:
+    type: number
+    format: double
+  long:
+    type: number
+    format: double

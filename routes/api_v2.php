@@ -17,7 +17,12 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
+use App\Http\Controllers\V2\Dashboard\CountryDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
+use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
+use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
+use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
+use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
 use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
@@ -160,6 +165,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
@@ -558,6 +564,8 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
     // deprecated, use POST api/v2/geometry instead (include site_id in the geometry's properties
     Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
+    Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
+    Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
 });
 
 Route::prefix('geometry')->group(function () {
@@ -618,8 +626,10 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
+    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
+    Route::get('/geojson/site', [TerrafundCreateGeometryController::class, 'getAllPolygonsAsGeoJSONDownload']);
 
-    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonsAsGeoJSON']);
+
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
     Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
@@ -630,10 +640,16 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
     Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
     Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
+    Route::get('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
+    Route::get('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
+    Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
 
     Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
     Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
     Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
+    Route::delete('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndSitePolygon']);
+
+    Route::get('/polygon/bbox/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonBbox']);
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
     Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
@@ -666,5 +682,14 @@ Route::prefix('site-polygon')->group(function () {
 });
 
 Route::prefix('dashboard')->group(function () {
+    Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
     Route::get('/jobs-created', GetJobsCreatedController::class);
+    Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
+    Route::get('/project-list-export', ProjectListExportController::class);
+    Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
+    Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsByStatusOfProject']);
+    Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
+    Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
+    Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
+    Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
 });

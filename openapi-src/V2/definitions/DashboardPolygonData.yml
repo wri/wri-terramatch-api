@@ -1,0 +1,16 @@
+type: object
+properties:
+  data:
+    type: array
+    items:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the data field
+        value:
+          type: string
+          description: Value of the data field
+        key:
+          type: string
+          description: Key of the data field

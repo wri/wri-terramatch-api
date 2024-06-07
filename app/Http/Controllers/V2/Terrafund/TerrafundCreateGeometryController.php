@@ -60,14 +60,14 @@ class TerrafundCreateGeometryController extends Controller
     /**
      * @throws ValidationException
      */
-    public function insertGeojsonToDB(string $geojsonFilename)
+    public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = null)
     {
         $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
         $geojson = json_decode($geojsonData, true);
 
         SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-        return App::make(PolygonService::class)->createGeojsonModels($geojson);
+        return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id]);
     }
 
     public function validateDataInDB(Request $request)
@@ -130,6 +130,7 @@ class TerrafundCreateGeometryController extends Controller
     public function uploadKMLFile(Request $request)
     {
         if ($request->hasFile('file')) {
+            $site_id = $request->input('uuid');
             $kmlfile = $request->file('file');
             $directory = storage_path('app/public/kml_files');
             if (! file_exists($directory)) {
@@ -147,7 +148,7 @@ class TerrafundCreateGeometryController extends Controller
 
                 return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
             }
-            $uuid = $this->insertGeojsonToDB($geojsonFilename);
+            $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
             if (isset($uuid['error'])) {
                 return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
             }
@@ -179,6 +180,7 @@ class TerrafundCreateGeometryController extends Controller
     {
         Log::debug('Upload Shape file data', ['request' => $request->all()]);
         if ($request->hasFile('file')) {
+            $site_id = $request->input('uuid');
             $file = $request->file('file');
             if ($file->getClientOriginalExtension() !== 'zip') {
                 return response()->json(['error' => 'Only ZIP files are allowed'], 400);
@@ -204,7 +206,7 @@ class TerrafundCreateGeometryController extends Controller
 
                     return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
                 }
-                $uuid = $this->insertGeojsonToDB($geojsonFilename);
+                $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
                 if (isset($uuid['error'])) {
                     return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
                 }
@@ -327,7 +329,7 @@ class TerrafundCreateGeometryController extends Controller
         $criteriaList = [];
         foreach ($criteriaData as $criteria) {
             $criteriaId = $criteria->criteria_id;
-            $valid = CriteriaSite::where(['polygon_id' => $uuid, 'criteria_id' => $criteriaId])->select('valid')->first()?->valid;
+            $valid = CriteriaSite::where(['polygon_id' => $uuid, 'criteria_id' => $criteriaId])->orderBy('created_at', 'desc')->select('valid')->first()?->valid;
             $criteriaList[] = [
               'criteria_id' => $criteriaId,
               'latest_created_at' => $criteria->latest_created_at,
@@ -341,6 +343,7 @@ class TerrafundCreateGeometryController extends Controller
     public function uploadGeoJSONFile(Request $request)
     {
         if ($request->hasFile('file')) {
+            $site_id = $request->input('uuid');
             $file = $request->file('file');
             $directory = storage_path('app/public/geojson_files');
             if (! file_exists($directory)) {
@@ -348,7 +351,7 @@ class TerrafundCreateGeometryController extends Controller
             }
             $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
             $file->move($directory, $filename);
-            $uuid = $this->insertGeojsonToDB($filename);
+            $uuid = $this->insertGeojsonToDB($filename, $site_id);
             if (is_array($uuid) && isset($uuid['error'])) {
                 return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
             }
@@ -381,35 +384,104 @@ class TerrafundCreateGeometryController extends Controller
         );
     }
 
-    public function getPolygonsAsGeoJSON()
+    public function getPolygonAsGeoJSONDownload(Request $request)
     {
-        $limit = 2;
-        $polygons = PolygonGeometry::selectRaw('ST_AsGeoJSON(geom) AS geojson')
-          ->orderBy('created_at', 'desc')
-          ->whereNotNull('geom')
-          ->limit($limit)
-          ->get();
-        $features = [];
+        try {
+            $uuid = $request->query('uuid');
 
-        foreach ($polygons as $polygon) {
-            $coordinates = json_decode($polygon->geojson)->coordinates;
-            $feature = [
-              'type' => 'Feature',
-              'geometry' => [
-                'type' => 'Polygon',
-                'coordinates' => $coordinates,
-              ],
-              'properties' => [],
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)
+              ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+              ->first();
+
+            Log::info('Polygon Geometry', ['polygonGeometry' => $polygonGeometry]);
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+
+            $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
+            if (! $sitePolygon) {
+                return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
+            }
+
+            $properties = [];
+            $fieldsToValidate = [
+              'poly_name',
+              'plantstart',
+              'plantend',
+              'practice',
+              'target_sys',
+              'distr',
+              'num_trees',
+              'uuid',
+              'site_id',
             ];
-            $features[] = $feature;
-        }
-        $geojson = [
-          'type' => 'FeatureCollection',
-          'features' => $features,
-        ];
+            foreach ($fieldsToValidate as $field) {
+                $properties[$field] = $sitePolygon->$field;
+            }
 
-        // Return the GeoJSON data
-        return response()->json($geojson);
+            $propertiesJson = json_encode($properties);
+
+            $feature = [
+                'type' => 'Feature',
+                'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                'properties' => json_decode($propertiesJson),
+            ];
+
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => [$feature],
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getAllPolygonsAsGeoJSONDownload(Request $request)
+    {
+        try {
+            $siteUuid = $request->query('uuid');
+            $polygonsUuids = SitePolygon::where('site_id', $siteUuid)->pluck('poly_id');
+            $features = [];
+            foreach ($polygonsUuids as $polygonUuid) {
+                $feature = [];
+                $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
+                  ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+                  ->first();
+                if (! $polygonGeometry) {
+                    return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+                }
+
+                $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
+                if (! $sitePolygon) {
+                    return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
+                }
+
+                $properties = [];
+                $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id'];
+                foreach ($fieldsToValidate as $field) {
+                    $properties[$field] = $sitePolygon->$field;
+                }
+
+                $propertiesJson = json_encode($properties);
+
+                $feature = [
+                    'type' => 'Feature',
+                    'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                    'properties' => json_decode($propertiesJson),
+                ];
+                $features[] = $feature;
+            }
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => $features,
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function getAllCountryNames()
@@ -436,5 +508,104 @@ class TerrafundCreateGeometryController extends Controller
             ->createCriteriaSite($polygonUuid, $criteriaId, $response['valid']);
 
         return response()->json($response);
+    }
+
+    public function runValidationPolygon(string $uuid)
+    {
+        $request = new Request(['uuid' => $uuid]);
+
+        $this->validateOverlapping($request);
+        $this->checkSelfIntersection($request);
+        $this->validatePolygonSize($request);
+        $this->checkWithinCountry($request);
+        $this->checkBoundarySegments($request);
+        $this->getGeometryType($request);
+        $this->validateEstimatedArea($request);
+        $this->validateDataInDB($request);
+    }
+
+    public function getValidationPolygon(Request $request)
+    {
+
+        $uuid = $request->input('uuid');
+        $this->runValidationPolygon($uuid);
+        $criteriaData = $this->getCriteriaData($request);
+
+        return $criteriaData;
+    }
+
+    public function getSiteValidationPolygon(Request $request)
+    {
+        try {
+            $uuid = $request->input('uuid');
+
+            $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
+
+            foreach ($sitePolygonsUuids as $polygonUuid) {
+                $this->runValidationPolygon($polygonUuid);
+            }
+
+            return response()->json(['message' => 'Validation completed for all site polygons']);
+        } catch (\Exception $e) {
+            Log::error('Error during site validation polygon: ' . $e->getMessage());
+
+            return response()->json(['error' => 'An error occurred during site validation'], 500);
+        }
+    }
+
+    public function getCurrentSiteValidation(Request $request)
+    {
+        try {
+            $uuid = $request->input('uuid');
+
+            $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
+            $checkedPolygons = [];
+
+            foreach ($sitePolygonsUuids as $polygonUuid) {
+                $isValid = true;
+                $isChecked = true;
+
+                $criteriaData = $this->fetchCriteriaData($polygonUuid);
+
+                if (isset($criteriaData['error'])) {
+                    Log::error('Error fetching criteria data', ['polygon_uuid' => $polygonUuid, 'error' => $criteriaData['error']]);
+                    $isValid = false;
+                    $isChecked = false;
+                } else {
+                    foreach ($criteriaData['criteria_list'] as $criteria) {
+                        if ($criteria['valid'] == 0) {
+                            $isValid = false;
+
+                            break;
+                        }
+                    }
+                }
+
+                $checkedPolygons[] = [
+                    'uuid' => $polygonUuid,
+                    'valid' => $isValid,
+                    'checked' => $isChecked,
+                ];
+            }
+
+            return $checkedPolygons;
+        } catch (\Exception $e) {
+            Log::error('Error during current site validation: ' . $e->getMessage());
+
+            return response()->json(['error' => 'An error occurred during current site validation'], 500);
+        }
+    }
+
+    private function getSitePolygonsUuids($uuid)
+    {
+        return SitePolygon::where('site_id', $uuid)->get()->pluck('poly_id');
+    }
+
+    private function fetchCriteriaData($polygonUuid)
+    {
+        $polygonRequest = new Request(['uuid' => $polygonUuid]);
+        $criteriaDataResponse = $this->getCriteriaData($polygonRequest);
+
+        return json_decode($criteriaDataResponse->getContent(), true);
     }
 }
