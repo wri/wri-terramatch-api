@@ -1,3 +1,4 @@
+title: AuditStatusCreateRequest
 type: object
 properties:
   auditable_type:

@@ -44059,6 +44059,7 @@ definitions:
                 type: string
                 description: Human readable string in English to describe the error.
   AuditStatusCreateRequest:
+    title: AuditStatusCreateRequest
     type: object
     properties:
       auditable_type:
@@ -94811,6 +94812,7 @@ paths:
           name: body
           description: Body to create a new audit status
           schema:
+            title: AuditStatusCreateRequest
             type: object
             properties:
               auditable_type:
@@ -94889,79 +94891,6 @@ paths:
                       type: boolean
                     created_at:
                       type: string
-  '/v2/site-polygons/project/{UUID}':
-    get:
-      operationId: get-v2-site-polygons-project-uuid
-      summary: Get Polygons by Project UUID
-      tags:
-        - V2 Site Polygons
-      parameters:
-        - in: path
-          name: UUID
-          required: true
-          type: string
-          description: The UUID of the project
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              title: SitePolygon
-              type: object
-              properties:
-                id:
-                  type: integer
-                uuid:
-                  type: string
-                project_id:
-                  type: string
-                proj_name:
-                  type: string
-                org_name:
-                  type: string
-                poly_id:
-                  type: string
-                poly_name:
-                  type: string
-                site_id:
-                  type: string
-                site_name:
-                  type: string
-                plantstart:
-                  type: string
-                  format: date
-                plantend:
-                  type: string
-                  format: date
-                practice:
-                  type: string
-                target_sys:
-                  type: string
-                distr:
-                  type: string
-                num_trees:
-                  type: integer
-                calc_area:
-                  type: number
-                  format: float
-                created_by:
-                  type: string
-                last_modified_by:
-                  type: string
-                deleted_at:
-                  type: string
-                  format: date-time
-                created_at:
-                  type: string
-                  format: date-time
-                updated_at:
-                  type: string
-                  format: date-time
-                status:
-                  type: string
-                country:
-                  type: string
   '/v2/sites/{site}/polygon':
     get:
       summary: Get polygons for a specific site

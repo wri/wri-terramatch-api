@@ -2543,9 +2543,6 @@
 /v2/audit-status:
   post:
     $ref: './AuditStatus/post-v2-audit-status.yml'
-/v2/site-polygons/project/{UUID}:
-  get:
-    $ref: './SitePolygons/get-v2-site-polygons-project-uuid.yml'
 /v2/sites/{site}/polygon:
   get:
     $ref: './Sites/get-v2-sites-polygons-data.yml'
