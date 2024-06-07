@@ -27,13 +27,13 @@ class StoreAuditStatusController extends Controller
                 ['type', 'change-request'],
                 ['is_active', true],
             ])->update(['is_active' => false]);
-            $auditStatusResponse = $this->saveAuditStatus(get_class($model), $model->id, $body['status'], $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
+            $auditStatus = $this->saveAuditStatus(get_class($model), $model->id, $body['status'], $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
         } else {
-            $auditStatusResponse = $this->saveAuditStatus(get_class($model), $model->id, $body['status'], $body['comment'], $body['type']);
+            $auditStatus = $this->saveAuditStatus(get_class($model), $model->id, $body['status'], $body['comment'], $body['type']);
         }
-        $auditStatusResponse->entity_name = $model->name;
+        $auditStatus->entity_name = $model->name;
 
-        return new AuditStatusResource($auditStatusResponse);
+        return new AuditStatusResource($auditStatus);
     }
 
     private function getEntityFromRequest(AuditStatusCreateRequest $request)
