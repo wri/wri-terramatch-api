@@ -314,5 +314,7 @@ DashboardBBOXCountry:
   $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
+DashboardActiveProjectsListViewResponse:
+  $ref: './DashboardActiveProjectsListViewResponse.yml'
 DashboardTotalSectionHeaderResponse:
   $ref: './DashboardTotalSectionHeaderResponse.yml'
