@@ -44556,50 +44556,6 @@ definitions:
             key:
               type: string
               description: Key of the data field
-  DashboardActiveProjectsListViewResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          type: object
-          properties:
-            uuid:
-              type: string
-            name:
-              type: string
-            organisation:
-              type: string
-            trees_under_restoration:
-              type: integer
-            jobs_created:
-              type: integer
-            volunteers:
-              type: integer
-            beneficiaries:
-              type: integer
-            survival_rate:
-              type: integer
-            number_of_sites:
-              type: integer
-            number_of_nurseries:
-              type: integer
-            project_country:
-              type: string
-            country_slug:
-              type: string
-            number_of_trees_goal:
-              type: integer
-            date_added:
-              type: string
-      current_page:
-        type: integer
-      per_page:
-        type: integer
-      total:
-        type: integer
-      last_page:
-        type: integer
   ProjectPipeline:
     type: object
     properties:
@@ -95383,77 +95339,6 @@ paths:
                       description: Key of the data field
         '500':
           description: Error in queries
-  /v2/dashboard/active-projects:
-    get:
-      summary: Retrieve all active projects list view.
-      description: |
-        This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
-      parameters:
-        - in: query
-          name: country
-          type: string
-          description: Optional. Filter counts and metrics by country.
-        - in: query
-          name: per_page
-          type: string
-          description: Optional. per_page to projects.
-        - in: query
-          name: page
-          type: string
-          description: Optional. page to projects.
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        uuid:
-                          type: string
-                        name:
-                          type: string
-                        organisation:
-                          type: string
-                        trees_under_restoration:
-                          type: integer
-                        jobs_created:
-                          type: integer
-                        volunteers:
-                          type: integer
-                        beneficiaries:
-                          type: integer
-                        survival_rate:
-                          type: integer
-                        number_of_sites:
-                          type: integer
-                        number_of_nurseries:
-                          type: integer
-                        project_country:
-                          type: string
-                        country_slug:
-                          type: string
-                        number_of_trees_goal:
-                          type: integer
-                        date_added:
-                          type: string
-                  current_page:
-                    type: integer
-                  per_page:
-                    type: integer
-                  total:
-                    type: integer
-                  last_page:
-                    type: integer
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   /v2/project-pipeline:
     get:
       operationId: get-v2-fproject-pipeline
