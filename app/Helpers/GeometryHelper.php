@@ -99,7 +99,9 @@ class GeometryHelper
           ->get();
         $maxX = $maxY = PHP_INT_MIN;
         $minX = $minY = PHP_INT_MAX;
-
+        if ($envelopes->isEmpty()) {
+          return null;
+        }
         foreach ($envelopes as $envelope) {
             $geojson = json_decode($envelope->envelope);
             $coordinates = $geojson->coordinates[0];
