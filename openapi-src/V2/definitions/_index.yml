@@ -314,3 +314,7 @@ DashboardBBOXCountry:
   $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
+DashboardProjectProfileResponse:
+  $ref: './DashboardProjectProfileResponse.yml'
+DashboardProjectProfileData:
+  $ref: './DashboardProjectProfileData.yml'

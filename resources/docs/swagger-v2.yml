@@ -44556,6 +44556,81 @@ definitions:
             key:
               type: string
               description: Key of the data field
+  DashboardProjectProfileResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+          descriptionObjetive:
+            type: string
+          country:
+            type: string
+          organisation:
+            type: string
+          survivalRate:
+            type: integer
+          countrySlug:
+            type: string
+          restorationStrategy:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+          targetLandUse:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+          landTenure:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+  DashboardProjectProfileData:
+    type: object
+    properties:
+      name:
+        type: string
+      descriptionObjetive:
+        type: string
+      country:
+        type: string
+      organisation:
+        type: string
+      survivalRate:
+        type: integer
+      countrySlug:
+        type: string
+      restorationStrategy:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
+      targetLandUse:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
+      landTenure:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95281,3 +95356,61 @@ paths:
                       description: Key of the data field
         '500':
           description: Error in queries
+  /v2/dashboard/project-details:
+    get:
+      summary: Retrieve project details view.
+      description: |
+        This endpoint return details to name of project, description objectives, restoration strategy, target land use type, and land tenure.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter counts and metrics by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      descriptionObjetive:
+                        type: string
+                      country:
+                        type: string
+                      organisation:
+                        type: string
+                      survivalRate:
+                        type: integer
+                      countrySlug:
+                        type: string
+                      restorationStrategy:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              type: string
+                      targetLandUse:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              type: string
+                      landTenure:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
