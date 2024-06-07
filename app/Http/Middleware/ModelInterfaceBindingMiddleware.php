@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestionOption;
 use App\Models\V2\FundingProgramme;
@@ -49,6 +50,7 @@ class ModelInterfaceBindingMiddleware
         'form-question-option' => FormQuestionOption::class,
         'project-monitoring' => ProjectMonitoring::class,
         'site-monitoring' => SiteMonitoring::class,
+        'audit-status' => AuditStatus::class,
     ];
 
     private static array $typeSlugsCache = [];
