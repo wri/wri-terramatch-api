@@ -18,6 +18,7 @@ class GetAuditStatusController extends Controller
 
         $auditStatuses->map(function ($auditStatus) use ($entity) {
             $auditStatus->entity_name = $entity->name;
+
             return $auditStatus;
         });
 
