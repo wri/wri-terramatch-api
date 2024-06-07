@@ -37,7 +37,7 @@ class FeatureBounds extends Extension
             return self::hasValidPolygonBounds(data_get($geojson, 'geometry.coordinates.0'));
         } elseif ($type === 'MultiPolygon') {
             foreach (data_get($geojson, 'geometry.coordinates') as $coordinates) {
-                if (! self::hasValidPolygonBounds($coordinates)) {
+                if (! self::hasValidPolygonBounds($coordinates[0])) {
                     return false;
                 }
             }
