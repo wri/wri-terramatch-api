@@ -13,8 +13,7 @@ return new class extends Migration {
         Schema::dropIfExists('status');
         Schema::create('status', function (Blueprint $table) {
             $table->id();
-            $table->string('entity')->nullable();
-            $table->string('entity_uuid')->nullable();
+            $table->uuid('uuid')->unique();
             $table->string('status')->nullable();
             $table->string('comment')->nullable();
             $table->string('first_name')->nullable();
@@ -27,6 +26,8 @@ return new class extends Migration {
             $table->string('created_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
+
+            $table->morphs('auditable');
         });
     }
 

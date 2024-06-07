@@ -119,7 +119,6 @@ use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
-use App\Http\Controllers\V2\Polygons\GetPolygonByProjectController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
@@ -673,12 +672,10 @@ Route::resource('files', FilePropertiesController::class);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
 
 Route::prefix('audit-status')->group(function () {
-    Route::get('/', GetAuditStatusController::class);
     Route::post('/', StoreAuditStatusController::class);
-});
-
-Route::prefix('site-polygon')->group(function () {
-    Route::get('/project/{uuid}', GetPolygonByProjectController::class);
+    ModelInterfaceBindingMiddleware::forSlugs(['site', 'project'], function () {
+        Route::get('/{entity}', GetAuditStatusController::class);
+    });
 });
 
 Route::prefix('dashboard')->group(function () {

@@ -11,6 +11,7 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Disturbance;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Invasive;
@@ -362,5 +363,10 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
         return $hasMonitoringData
             ? $query->has('monitoring')
             : $query->doesntHave('monitoring');
+    }
+
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
     }
 }

@@ -13,6 +13,7 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\User;
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\MediaModel;
@@ -35,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
@@ -474,6 +476,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return [
             'name' => $this->name,
         ];
+    }
+
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
     }
 
     /**

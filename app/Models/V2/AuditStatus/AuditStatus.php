@@ -2,7 +2,7 @@
 
 namespace App\Models\V2\AuditStatus;
 
-use App\Models\V2\AuditAttachment\AuditAttachment;
+use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,13 +10,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class AuditStatus extends Model
 {
     use HasFactory;
+    use HasUuid;
     use SoftDeletes;
 
     public $table = 'status';
 
     protected $fillable = [
-        'entity',
-        'entity_uuid',
+        'auditable_type',
+        'auditable_id',
         'status',
         'comment',
         'first_name',
@@ -29,8 +30,13 @@ class AuditStatus extends Model
         'created_by',
     ];
 
-    public function auditAttachments()
+    public function getRouteKeyName()
     {
-        return $this->hasMany(AuditAttachment::class, 'entity_id', 'id');
+        return 'uuid';
+    }
+
+    public function auditable()
+    {
+        return $this->morphTo();
     }
 }
