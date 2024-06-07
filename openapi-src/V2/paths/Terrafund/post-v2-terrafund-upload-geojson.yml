@@ -1,0 +1,29 @@
+summary: Upload GeoJSON File
+description: Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
+consumes:
+  - multipart/form-data
+parameters:
+  - name: file
+    in: formData
+    description: The GeoJSON file to upload
+    required: true
+    type: file
+  - name: uuid
+    in: formData
+    description: The UUID of the site associated with the GeoJSON file
+    required: true
+    type: string
+responses:
+  '200':
+    description: GeoJSON file processed and inserted successfully
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+        uuid:
+          type: string
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error
