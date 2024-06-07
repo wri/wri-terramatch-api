@@ -349,13 +349,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
 
     public function getRegeneratedTreesCountAttribute(): int
     {
-        $sites = Site::where('project_id', $this->id)->get();
-        $total = 0;
-        foreach ($sites as $site) {
-            $total += $site->regenerated_trees_count;
-        }
-
-        return $total;
+        return $this->submittedSiteReports()->sum('num_trees_regenerating');
     }
 
     public function getWorkdayCountAttribute(): int
