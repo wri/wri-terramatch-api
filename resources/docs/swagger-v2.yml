@@ -44561,6 +44561,12 @@ definitions:
             key:
               type: string
               description: Key of the data field
+  GeojsonData:
+    type: object
+    properties:
+      geojson:
+        type: object
+        description: The GeoJSON representation of the polygon geometry.
   EntityTypeResponse:
     type: object
     properties:
@@ -95530,6 +95536,40 @@ paths:
                       description: Key of the data field
         '500':
           description: Error in queries
+  '/v2/terrafund/polygon/geojson/{uuid}':
+    get:
+      summary: Retrieve polygon GeoJSON by UUID
+      description: |
+        Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          required: true
+          description: The UUID of the polygon geometry to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  geojson:
+                    type: object
+                    description: The GeoJSON representation of the polygon geometry.
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message indicating that no polygon geometry was found for the provided UUID.
   /v2/type-entity:
     get:
       summary: Get Entity Type
