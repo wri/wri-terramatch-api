@@ -314,6 +314,8 @@ DashboardBBOXCountry:
   $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
+DashboardActiveProjectsListViewResponse:
+  $ref: './DashboardActiveProjectsListViewResponse.yml'
 ProjectPipeline:
   $ref: './ProjectPipeline.yml'
 ProjectPipelinePost:
