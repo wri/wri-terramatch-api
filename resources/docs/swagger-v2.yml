@@ -95270,6 +95270,81 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  '/v2/terrafund/site-polygon/{uuid}':
+    put:
+      summary: Update site polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the site polygon
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              uuid:
+                type: string
+              poly_name:
+                type: string
+              plantstart:
+                type: string
+                format: date
+              plantend:
+                type: string
+                format: date
+              practice:
+                type: string
+              target_sys:
+                type: string
+              distr:
+                type: string
+              num_trees:
+                type: integer
+              calc_area:
+                type: number
+                format: float
+              status:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              uuid:
+                type: string
+              poly_name:
+                type: string
+              plantstart:
+                type: string
+                format: date
+              plantend:
+                type: string
+                format: date
+              practice:
+                type: string
+              target_sys:
+                type: string
+              distr:
+                type: string
+              num_trees:
+                type: integer
+              calc_area:
+                type: number
+                format: float
+              status:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   /v2/dashboard/jobs-created:
     get:
       summary: view Jobs created for dashboard

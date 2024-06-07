@@ -2574,6 +2574,9 @@
 /v2/terrafund/upload-kml:
   post:
     $ref: './Terrafund/post-v2-terrafund-upload-kml.yml'
+/v2/terrafund/site-polygon/{uuid}:
+  put:
+    $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
