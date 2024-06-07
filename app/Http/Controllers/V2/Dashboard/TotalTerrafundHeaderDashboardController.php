@@ -4,13 +4,12 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Dashboard\TotalSectionHeaderResource;
 use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
 
 class TotalTerrafundHeaderDashboardController extends Controller
 {
-    public function __invoke(Request $request): TotalSectionHeaderResource
+    public function __invoke(Request $request)
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
         $countryName = '';
@@ -28,7 +27,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
             'country_name' => $countryName,
         ];
 
-        return new TotalSectionHeaderResource($response);
+        return response()->json($response);
     }
 
     public function getTotalNonProfitCount($projects)
