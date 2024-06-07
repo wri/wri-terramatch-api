@@ -44690,6 +44690,67 @@ definitions:
           total_trees_restored_goal:
             type: integer
             description: Total number of trees restored goal.
+  DashboardActiveCountriesResponse:
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            country_slug:
+              type: string
+            country:
+              type: string
+            number_of_projects:
+              type: integer
+            total_trees_planted:
+              type: integer
+            total_jobs_created:
+              type: integer
+            number_of_sites:
+              type: integer
+            number_of_nurseries:
+              type: integer
+  DashboardCountriesResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            country_slug:
+              type: string
+            data:
+              type: object
+              properties:
+                label:
+                  type: string
+                icon:
+                  type: string
+  DashboardCountryData:
+    type: object
+    properties:
+      id:
+        type: integer
+      country_slug:
+        type: string
+      data:
+        type: object
+        properties:
+          label:
+            type: string
+          icon:
+            type: string
+  DashboardCountryInfo:
+    type: object
+    properties:
+      label:
+        type: string
+      icon:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95584,6 +95645,88 @@ paths:
                       total_trees_restored_goal:
                         type: integer
                         description: Total number of trees restored goal.
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/active-countries:
+    get:
+      summary: Retrieve all active countries.
+      description: |
+        This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter restoration strategy by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        country_slug:
+                          type: string
+                        country:
+                          type: string
+                        number_of_projects:
+                          type: integer
+                        total_trees_planted:
+                          type: integer
+                        total_jobs_created:
+                          type: integer
+                        number_of_sites:
+                          type: integer
+                        number_of_nurseries:
+                          type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/countries:
+    get:
+      summary: Retrieve all countries list view.
+      description: |
+        This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        country_slug:
+                          type: string
+                        data:
+                          type: object
+                          properties:
+                            label:
+                              type: string
+                            icon:
+                              type: string
         '400':
           description: Bad request
         '500':

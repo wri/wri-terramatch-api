@@ -322,3 +322,11 @@ DashboardActiveProjectsListViewResponse:
   $ref: './DashboardActiveProjectsListViewResponse.yml'
 DashboardTotalSectionHeaderResponse:
   $ref: './DashboardTotalSectionHeaderResponse.yml'
+DashboardActiveCountriesResponse:
+  $ref: './DashboardActiveCountriesResponse.yml'
+DashboardCountriesResponse:
+  $ref: './DashboardCountriesResponse.yml'
+DashboardCountryData:
+  $ref: './DashboardCountryData.yml'
+DashboardCountryInfo:
+  $ref: './DashboardCountryInfo.yml'

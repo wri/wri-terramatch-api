@@ -18,6 +18,8 @@ use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
 use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
+use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
+use App\Http\Controllers\V2\Dashboard\CountriesController;
 use App\Http\Controllers\V2\Dashboard\CountryDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
@@ -686,4 +688,6 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
+    Route::get('/active-countries', ActiveCountriesTableController::class);
+    Route::get('/countries', CountriesController::class);
 });
