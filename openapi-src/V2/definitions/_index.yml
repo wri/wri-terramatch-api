@@ -282,8 +282,6 @@ AuditStatusPost:
   $ref: './AuditStatusPost.yml'
 AuditStatusResponse:
   $ref: './AuditStatusResponse.yml'
-SitePolygon:
-  $ref: './SitePolygon.yml'
 V2TerrafundCriteriaData:
   $ref: './V2TerrafundCriteriaData.yml'
 V2TerrafundCriteriaSite:

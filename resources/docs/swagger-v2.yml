@@ -44058,7 +44058,6 @@ definitions:
               message:
                 type: string
                 description: Human readable string in English to describe the error.
-<<<<<<< HEAD
   AttachmentResponse:
     type: object
     properties:
@@ -44151,8 +44150,6 @@ definitions:
               format: date
             created_by:
               type: string
-  SitePolygon:
-=======
   V2TerrafundCriteriaData:
     type: object
     properties:
@@ -44191,7 +44188,6 @@ definitions:
           description: Indicates if the polygon has been checked before or not.
   SitePolygon:
     title: SitePolygon
->>>>>>> staging
     type: object
     properties:
       id:
@@ -44246,8 +44242,6 @@ definitions:
         type: string
       country:
         type: string
-<<<<<<< HEAD
-=======
   SitePolygonsDataResponse:
     title: SitePolygonsDataResponse
     type: array
@@ -44654,7 +44648,6 @@ definitions:
             key:
               type: string
               description: Key of the data field
->>>>>>> staging
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94741,7 +94734,6 @@ paths:
           description: This account does not have permission to update the polygon.
         '404':
           description: Geometry was not found.
-<<<<<<< HEAD
   /v2/audit-status:
     get:
       operationId: get-v2-audits-status
@@ -94918,25 +94910,7 @@ paths:
           schema:
             type: array
             items:
-=======
-  '/v2/sites/{site}/polygon':
-    get:
-      summary: Get polygons for a specific site
-      parameters:
-        - in: path
-          name: site
-          required: true
-          type: string
-          description: The ID of the site
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            title: SitePolygonsDataResponse
-            type: array
-            items:
               title: SitePolygon
->>>>>>> staging
               type: object
               properties:
                 id:
@@ -94991,8 +94965,77 @@ paths:
                   type: string
                 country:
                   type: string
-<<<<<<< HEAD
-=======
+  '/v2/sites/{site}/polygon':
+    get:
+      summary: Get polygons for a specific site
+      parameters:
+        - in: path
+          name: site
+          required: true
+          type: string
+          description: The ID of the site
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: SitePolygonsDataResponse
+            type: array
+            items:
+              title: SitePolygon
+              type: object
+              properties:
+                id:
+                  type: integer
+                uuid:
+                  type: string
+                project_id:
+                  type: string
+                proj_name:
+                  type: string
+                org_name:
+                  type: string
+                poly_id:
+                  type: string
+                poly_name:
+                  type: string
+                site_id:
+                  type: string
+                site_name:
+                  type: string
+                plantstart:
+                  type: string
+                  format: date
+                plantend:
+                  type: string
+                  format: date
+                practice:
+                  type: string
+                target_sys:
+                  type: string
+                distr:
+                  type: string
+                num_trees:
+                  type: integer
+                calc_area:
+                  type: number
+                  format: float
+                created_by:
+                  type: string
+                last_modified_by:
+                  type: string
+                deleted_at:
+                  type: string
+                  format: date-time
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+                status:
+                  type: string
+                country:
+                  type: string
         '400':
           description: Bad request
         '500':
@@ -95561,4 +95604,3 @@ paths:
                       description: Key of the data field
         '500':
           description: Error in queries
->>>>>>> staging
