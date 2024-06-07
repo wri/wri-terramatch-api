@@ -320,6 +320,8 @@ DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
 DashboardActiveProjectsListViewResponse:
   $ref: './DashboardActiveProjectsListViewResponse.yml'
+DashboardTotalSectionHeaderResponse:
+  $ref: './DashboardTotalSectionHeaderResponse.yml'
 DashboardActiveCountriesResponse:
   $ref: './DashboardActiveCountriesResponse.yml'
 DashboardCountriesResponse:
