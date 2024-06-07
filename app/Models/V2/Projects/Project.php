@@ -13,6 +13,7 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\User;
+use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Forms\Application;
@@ -45,7 +46,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Project extends Model implements MediaModel, AuditableContract, EntityModel
+class Project extends Model implements MediaModel, AuditableContract, EntityModel, AuditableModel
 {
     use HasFactory;
     use HasUuid;

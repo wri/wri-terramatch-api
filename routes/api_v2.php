@@ -198,6 +198,7 @@ use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
+use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use Illuminate\Support\Facades\Route;
@@ -673,8 +674,8 @@ Route::resource('files', FilePropertiesController::class);
 
 Route::prefix('audit-status')->group(function () {
     Route::post('/', StoreAuditStatusController::class);
-    ModelInterfaceBindingMiddleware::forSlugs(['site', 'project'], function () {
-        Route::get('/{entity}', GetAuditStatusController::class);
+    ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+        Route::get('/{auditable}', GetAuditStatusController::class);
     });
 });
 

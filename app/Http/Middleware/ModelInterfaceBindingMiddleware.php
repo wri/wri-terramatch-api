@@ -15,6 +15,7 @@ use App\Models\V2\Projects\ProjectMonitoring;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteMonitoring;
+use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
 use Closure;
 use Illuminate\Http\Request;
@@ -50,6 +51,7 @@ class ModelInterfaceBindingMiddleware
         'form-question-option' => FormQuestionOption::class,
         'project-monitoring' => ProjectMonitoring::class,
         'site-monitoring' => SiteMonitoring::class,
+        'site-polygon' => SitePolygon::class,
         'audit-status' => AuditStatus::class,
     ];
 
