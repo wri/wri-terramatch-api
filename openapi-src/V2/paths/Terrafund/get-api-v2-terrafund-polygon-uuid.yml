@@ -6,17 +6,13 @@ parameters:
     name: uuid
     type: string
     required: true
-    schema:
-      type: string
     description: The UUID of the site polygon.
 responses:
   '200':
     description: Successful response
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
+    schema:
+      type: object
+      properties:
             site_polygon:
               type: object
               properties:
@@ -75,21 +71,17 @@ responses:
                   type: string
   '404':
     description: No site polygons found for the given UUID
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: No site polygons found for the given UUID.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: No site polygons found for the given UUID.
   '500':
     description: Internal server error
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: An error message describing the issue.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: An error message describing the issue.
