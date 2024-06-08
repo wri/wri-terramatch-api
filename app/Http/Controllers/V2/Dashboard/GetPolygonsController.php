@@ -31,10 +31,33 @@ class GetPolygonsController extends Controller
         ]);
     }
 
+    public function getPolygonsUuidsByStatusForProject(Request $request): GetPolygonsResource
+    {
+        $polygonsIds = TerrafundDashboardQueryHelper::getPolygonsUuidsByStatusForProject($request);
+
+        return new GetPolygonsResource([
+          'data' => $polygonsIds,
+        ]);
+    }
+
     public function getBboxOfCompleteProject(Request $request)
     {
         try {
             $polygonsIds = TerrafundDashboardQueryHelper::getPolygonIdsOfProject($request);
+            $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsIds);
+
+            return response()->json(['bbox' => $bboxCoordinates]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
+        }
+    }
+
+    public function getProjectBbox(Request $request)
+    {
+        try {
+            $polygonsIds = TerrafundDashboardQueryHelper::getPolygonUuidsOfProject($request);
             $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsIds);
 
             return response()->json(['bbox' => $bboxCoordinates]);
