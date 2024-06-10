@@ -31,6 +31,7 @@ use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
+use App\Http\Controllers\V2\Entities\UpdateEntityStatusController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
 use App\Http\Controllers\V2\Entities\ViewEntityWithFormController;
@@ -549,6 +550,7 @@ ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], f
 
 ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
     Route::get('/{entity}', ViewEntityController::class);
+    Route::put('/{entity}/status', UpdateEntityStatusController::class);
 });
 
 Route::prefix('project-reports')->group(function () {

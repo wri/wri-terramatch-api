@@ -44717,6 +44717,20 @@ definitions:
         items:
           type: number
         description: Bounding box of the entity
+  AuditStatusUpdateRequest:
+    title: AuditStatusUpdateRequest
+    type: object
+    properties:
+      type:
+        type: string
+      comment:
+        type: string
+      status:
+        type: string
+      is_active:
+        type: boolean
+      request_removed:
+        type: boolean
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95911,3 +95925,23 @@ paths:
               error:
                 type: string
                 description: Error message
+  '/v2/{ENTITY}/{UUID}/status':
+    put:
+      summary: Update the status of a specific entity
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 SitePolygons
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/site-polygons
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK

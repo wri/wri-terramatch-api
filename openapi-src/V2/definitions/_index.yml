@@ -324,3 +324,5 @@ GeojsonData:
   $ref: './GeojsonData.yml'
 EntityTypeResponse:
   $ref: './EntityTypeResponse.yml'
+AuditStatusUpdateRequest:
+  $ref: './AuditStatusUpdateRequest.yml'
