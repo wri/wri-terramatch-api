@@ -31,17 +31,13 @@ class Kernel extends ConsoleKernel
         $schedule->command('generate-control-site-due-submissions')->weeklyOn(5, '00:00');
 
         // PPC report jobs
-        $schedule->job(new CreateTaskDueJob('ppc', 4))->yearlyOn(1, 7);
-
-        $schedule->job(new CreateTaskDueJob('ppc', 7))->yearlyOn(3, 15);
-
-        $schedule->job(new CreateTaskDueJob('ppc', 10))->yearlyOn(7, 7);
-
-        $schedule->job(new CreateTaskDueJob('ppc', 1))->yearlyOn(10, 6);
+        $schedule->job(new CreateTaskDueJob('ppc', 4))->yearlyOn(3, 14);
+        $schedule->job(new CreateTaskDueJob('ppc', 7))->yearlyOn(6, 14);
+        $schedule->job(new CreateTaskDueJob('ppc', 10))->yearlyOn(9, 13);
+        $schedule->job(new CreateTaskDueJob('ppc', 1))->yearlyOn(12, 13);
 
         // Terrafund report jobs
         $schedule->job(new CreateTaskDueJob('terrafund'))->yearlyOn(12, 31);
-
         $schedule->job(new CreateTaskDueJob('terrafund'))->yearlyOn(6, 30);
 
         $schedule->job(new SendReportRemindersJob('terrafund'))->yearlyOn(5, 30);
