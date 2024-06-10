@@ -10,6 +10,6 @@ class AuditStatusPolicy extends Policy
 {
     public function uploadFiles(?User $user, ?AuditStatus $auditStatus): bool
     {
-        return true;
+        return $user->email_address == $auditStatus->created_by;
     }
 }
