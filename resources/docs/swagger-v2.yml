@@ -44717,6 +44717,12 @@ definitions:
         items:
           type: number
         description: Bounding box of the entity
+  SiteCheckApproveResponse:
+    title: SiteCheckApproveResponse
+    type: object
+    properties:
+      can_approve:
+        type: boolean
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95911,3 +95917,26 @@ paths:
               error:
                 type: string
                 description: Error message
+  '/v2/sites/{site}/check-approve':
+    get:
+      summary: Check if a site can be approved
+      operationId: get-v2-sites-uuid-check-approve
+      tags:
+        - V2 Sites
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                title: SiteCheckApproveResponse
+                type: object
+                properties:
+                  can_approve:
+                    type: boolean

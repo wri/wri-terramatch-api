@@ -2604,3 +2604,6 @@
 /v2/type-entity:
   get:
     $ref: './Entity/get-v2-type-entity.yml'
+/v2/sites/{site}/check-approve:
+  get:
+    $ref: './Sites/get-v2-sites-uuid-check-approve.yml'
