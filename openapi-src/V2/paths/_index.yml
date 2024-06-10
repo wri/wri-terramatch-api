@@ -2604,3 +2604,6 @@
 /v2/type-entity:
   get:
     $ref: './Entity/get-v2-type-entity.yml'
+/v2/projects/{UUID}/site-polygons/all:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-site-polygons-all.yml'
