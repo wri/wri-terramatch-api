@@ -7,7 +7,7 @@ properties:
     type: string
   type:
     type: string
-  is_activate:
+  is_active:
     type: boolean
   request_removed:
     type: boolean
