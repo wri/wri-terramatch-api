@@ -52,7 +52,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('generate-application-export')->twiceDaily(13, 20);
         $schedule->command('generate-admin-all-entity-records-export')->twiceDaily(13, 20);
-        $schedule->command('populate-v2-temporary-sites')->hourly();
     }
 
     protected function commands()
