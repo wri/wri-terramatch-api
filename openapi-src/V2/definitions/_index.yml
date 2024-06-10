@@ -294,6 +294,12 @@ SitePolygonCreateResponse:
   $ref: './SitePolygonCreateResponse.yml'
 GeoJSONResponse:
   $ref: './GeoJSONResponse.yml'
+FeatureCollection:
+  $ref: './FeatureCollection.yml'
+PolygonBboxResponse:
+  $ref: './SitePolygonsBboxResponse.yml'
+DashboardPolygonResponse:
+  $ref: './DashboardPolygonResponse.yml'
 DashboardJobsCreatedResponse:
   $ref: './DashboardJobsCreatedResponse.yml'
 DashboardJobsCreatedData:
