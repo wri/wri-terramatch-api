@@ -553,6 +553,9 @@ ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], f
 
 ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
     Route::get('/{entity}', ViewEntityController::class);
+});
+
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::put('/{entity}/status', UpdateEntityStatusController::class);
 });
 

@@ -5,64 +5,63 @@ namespace App\Http\Controllers\V2\Entities;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\AuditStatus\AuditStatusUpdateRequest;
 use App\Models\Traits\SaveAuditStatusTrait;
+use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
-use App\Models\V2\EntityModel;
 use App\Models\V2\Sites\SitePolygon;
 
 class UpdateEntityStatusController extends Controller
 {
     use SaveAuditStatusTrait;
 
-    public function __invoke(AuditStatusUpdateRequest $request, EntityModel $entity)
+    public function __invoke(AuditStatusUpdateRequest $request, AuditableModel $auditable)
     {
-        $this->authorize('update', $entity);
+        $this->authorize('update', $auditable);
 
-
-        if (! $this->canChangeStatus($entity, $request->status)) {
+        if (! $this->canChangeStatus($auditable, $request->status)) {
             return response()->json(['message' => 'Cannot change status'], 400);
         }
 
         $body = $request->all();
         $status = $body['status'];
 
-        $entity->status = $status;
-        $entity->save();
+        $auditable->status = $status;
+        $auditable->save();
 
         if (isset($body['status'])) {
-            $this->saveAuditStatus(get_class($entity), $entity->id, $status, $body['comment'], $body['type']);
+            $this->saveAuditStatus(get_class($auditable), $auditable->id, $status, $body['comment'], $body['type']);
         } elseif (isset($body['is_active'])) {
-            AuditStatus::where('auditable_id', $entity->id)
+            AuditStatus::where('auditable_id', $auditable->id)
                 ->where('type', $body['type'])
                 ->where('is_active', true)
                 ->update(['is_active' => false]);
-            $this->saveAuditStatus(get_class($entity), $entity->id, $status, $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
+            $this->saveAuditStatus(get_class($auditable), $auditable->id, $status, $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
         }
 
-        return $entity->createResource();
+        return $auditable;
     }
 
-    private function canChangeStatus($entity, $status): bool
+    private function canChangeStatus($auditable, $status): bool
     {
-        switch(get_class($entity)) {
+        switch(get_class($auditable)) {
             case 'App\Models\V2\Sites\Site':
-                return $this->canChangeSiteStatusTo($entity, $status);
+                return $this->canChangeSiteStatusTo($auditable, $status);
             case 'App\Models\V2\Sites\SitePolygon':
-                return $this->canChangeSitePolygonStatusTo($entity, $status);
+                return $this->canChangeSitePolygonStatusTo($auditable, $status);
             default:
                 return true;
         }
     }
 
-    private function canChangeSiteStatusTo($entity, $status)
+    private function canChangeSiteStatusTo($auditable, $status)
     {
         if ($status === 'approved') {
-            return ! SitePolygon::where('site_id', $entity->id)->where('status', 'approved')->exists();
+            return ! SitePolygon::where('site_id', $auditable->id)->where('status', 'approved')->exists();
         }
 
         return true;
     }
 
-    private function canChangeSitePolygonStatusTo($entity, $status)
+    private function canChangeSitePolygonStatusTo($auditable, $status)
     {
         //TODO ask Cesar how to handle this one.
         return true;
