@@ -85,4 +85,9 @@ class SitePolygon extends Model implements AuditableModel
     {
         return $this->morphMany(AuditStatus::class, 'auditable');
     }
+
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->poly_name;
+    }
 }

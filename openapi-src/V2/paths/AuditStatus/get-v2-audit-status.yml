@@ -7,7 +7,7 @@ parameters:
     name: ENTITY
     in: path
     required: true
-    description: allowed values project/site/site-polygons
+    description: allowed values project/site/site-polygon
   - type: string
     name: UUID
     in: path

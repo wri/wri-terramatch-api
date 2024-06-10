@@ -14,11 +14,11 @@ class AuditStatusCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'auditable_type' => 'required|string|in:Site,Project,SitePolygon',
-            'auditable_uuid' => 'required|string',
             'type' => 'sometimes|nullable|string',
             'comment' => 'sometimes|nullable|string',
             'status' => 'sometimes|nullable|string',
+            'is_active' => 'sometimes|nullable|boolean',
+            'request_removed' => 'sometimes|nullable|boolean',
         ];
     }
 }
