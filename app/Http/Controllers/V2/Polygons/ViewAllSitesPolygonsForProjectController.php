@@ -10,9 +10,13 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ViewAllSitesPolygonsForProjectController extends Controller
 {
-    public function __invoke(Request $request, Project $project): ResourceCollection
+    public function __invoke(Request $request, string $project): ResourceCollection
     {
-        $sitePolygons = $project->with('sitePolygons')->get()->pluck('sitePolygons')->flatten();
+        $sitePolygons = Project::where('uuid', $project)
+            ->with('sitePolygons')
+            ->get()
+            ->pluck('sitePolygons')
+            ->flatten();
 
         return SitePolygonResource::collection($sitePolygons);
     }
