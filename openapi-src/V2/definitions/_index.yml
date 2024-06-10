@@ -326,3 +326,5 @@ EntityTypeResponse:
   $ref: './EntityTypeResponse.yml'
 SitePolygonResource:
   $ref: './SitePolygonResource.yml'
+SiteCheckApproveResponse:
+  $ref: './SiteCheckApproveResponse.yml'
