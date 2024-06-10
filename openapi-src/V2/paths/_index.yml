@@ -2564,6 +2564,24 @@
     $ref: './Terrafund/put-v2-terrafund-polygon-uuid.yml'
   delete:
     $ref: './Terrafund/delete-v2-terrafund-polygon-uuid.yml'
+/v2/terrafund/geojson/site:
+  get:
+    $ref: './Terrafund/get-v2-geojson-site.yml'
+/v2/terrafund/polygon:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-polygon.yml'
+/v2/terrafund/upload-geojson:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-geojson.yml'
+/v2/terrafund/upload-shapefile:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-shapefile.yml'
+/v2/terrafund/upload-kml:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-kml.yml'
+/v2/terrafund/site-polygon/{uuid}:
+  put:
+    $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
