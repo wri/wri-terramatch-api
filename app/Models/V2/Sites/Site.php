@@ -370,4 +370,9 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     {
         return $this->morphMany(AuditStatus::class, 'auditable');
     }
+
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->name;
+    }
 }
