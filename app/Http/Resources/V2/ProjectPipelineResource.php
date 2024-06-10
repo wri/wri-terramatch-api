@@ -15,19 +15,18 @@ class ProjectPipelineResource extends JsonResource
         return [
             'name' => [
                 'id' => $this->id,
-                'name' => $this->Name,
-                'description' => $this->Description,
+                'name' => $this->name,
+                'description' => $this->description,
             ],
             'date' => $this->updated_at,
             'id' => $this->id,
-            'SubmittedBy' => $this->SubmittedBy,
-            'Program' => $this->Program,
-            'Cohort' => $this->Cohort,
-            'PublishFor' => $this->PublishFor,
-            'URL' => $this->URL,
+            'submitted_by' => $this->submitted_by,
+            'program' => $this->program,
+            'cohort' => $this->cohort,
+            'publish_for' => $this->publish_for,
+            'url' => $this->url,
             'created_at' => $this->created_at,
-            'CreatedDate' => $this->created_at,
-            'ModifiedDate' => $this->updated_at,
+            'updated_at' => $this->updated_at
         ];
     }
 }

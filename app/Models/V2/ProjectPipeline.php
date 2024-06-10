@@ -14,15 +14,13 @@ class ProjectPipeline extends Model
     public $table = 'project_pipeline';
 
     protected $fillable = [
-        'Name',
-        'SubmittedBy',
-        'Description',
-        'Program',
-        'Cohort',
-        'PublishFor',
-        'URL',
-        'CreatedDate',
-        'ModifiedDate',
+        'name',
+        'submitted_by',
+        'description',
+        'program',
+        'cohort',
+        'publish_for',
+        'url'
     ];
 
     public function getRouteKeyName()
