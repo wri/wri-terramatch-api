@@ -37,7 +37,7 @@ class AuditStatus extends Model implements MediaModel
     ];
 
     public $fileConfiguration = [
-        'attachment' => [
+        'attachments' => [
             'validation' => 'general-documents',
             'multiple' => true,
         ],

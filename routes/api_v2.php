@@ -673,12 +673,10 @@ Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
 
-Route::prefix('audit-status')->group(function () {
-    Route::post('/', StoreAuditStatusController::class);
-    ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
-        Route::get('/{auditable}', GetAuditStatusController::class);
-    });
-});
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::post('/{auditable}', StoreAuditStatusController::class);
+    Route::get('/{auditable}', GetAuditStatusController::class);
+}, prefix: 'audit-status');
 
 Route::prefix('dashboard')->group(function () {
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);

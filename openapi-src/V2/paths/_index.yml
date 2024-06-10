@@ -2540,7 +2540,6 @@
 /v2/audit-status/{ENTITY}/{UUID}:
   get:
     $ref: './AuditStatus/get-v2-audit-status.yml'
-/v2/audit-status:
   post:
     $ref: './AuditStatus/post-v2-audit-status.yml'
 /v2/sites/{site}/polygon:

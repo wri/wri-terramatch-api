@@ -44072,6 +44072,8 @@ definitions:
         type: string
       type:
         type: string
+      is_activate:
+        type: boolean
       request_removed:
         type: boolean
   AuditStatusResponse:
@@ -94814,7 +94816,7 @@ paths:
           name: ENTITY
           in: path
           required: true
-          description: allowed values project/site/site-polygons
+          description: allowed values project/site/site-polygon
         - type: string
           name: UUID
           in: path
@@ -94885,13 +94887,21 @@ paths:
                         type: boolean
                       created_at:
                         type: string
-  /v2/audit-status:
     post:
       operationId: post-v2-audit-status
       summary: Create a new audit status
       tags:
         - V2 Audits Status
       parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/site-polygon
+        - type: string
+          name: UUID
+          in: path
+          required: true
         - in: body
           name: body
           description: Body to create a new audit status
@@ -94909,6 +94919,8 @@ paths:
                 type: string
               type:
                 type: string
+              is_activate:
+                type: boolean
               request_removed:
                 type: boolean
       responses:
