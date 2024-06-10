@@ -328,3 +328,5 @@ SitePolygonResource:
   $ref: './SitePolygonResource.yml'
 SiteCheckApproveResponse:
   $ref: './SiteCheckApproveResponse.yml'
+AuditStatusUpdateRequest:
+  $ref: './AuditStatusUpdateRequest.yml'

@@ -1,0 +1,13 @@
+title: AuditStatusUpdateRequest
+type: object
+properties:
+  type:
+    type: string
+  comment:
+    type: string
+  status:
+    type: string
+  is_active:
+    type: boolean
+  request_removed:
+    type: boolean

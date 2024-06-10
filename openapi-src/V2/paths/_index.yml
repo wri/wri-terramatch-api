@@ -2610,3 +2610,6 @@
 /v2/sites/{site}/check-approve:
   get:
     $ref: './Sites/get-v2-sites-uuid-check-approve.yml'
+/v2/{ENTITY}/{UUID}/status:
+    put:
+      $ref: './Entity/put-v2-entity-uuid-status.yml'
