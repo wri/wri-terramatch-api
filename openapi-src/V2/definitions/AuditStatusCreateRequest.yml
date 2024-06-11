@@ -1,15 +1,13 @@
 title: AuditStatusCreateRequest
 type: object
 properties:
-  auditable_type:
-    type: string
-  auditable_uuid:
-    type: string
   status:
     type: string
   comment:
     type: string
   type:
     type: string
+  is_active:
+    type: boolean
   request_removed:
     type: boolean

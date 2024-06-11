@@ -166,6 +166,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
@@ -569,6 +570,7 @@ Route::prefix('sites/{site}')->group(function () {
     Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
+    Route::get('/check-approve', SiteCheckApproveController::class);
 });
 
 Route::prefix('geometry')->group(function () {
@@ -675,12 +677,10 @@ Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
 
-Route::prefix('audit-status')->group(function () {
-    Route::post('/', StoreAuditStatusController::class);
-    ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
-        Route::get('/{auditable}', GetAuditStatusController::class);
-    });
-});
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::post('/{auditable}', StoreAuditStatusController::class);
+    Route::get('/{auditable}', GetAuditStatusController::class);
+}, prefix: 'audit-status');
 
 Route::prefix('dashboard')->group(function () {
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);

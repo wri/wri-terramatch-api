@@ -44062,16 +44062,14 @@ definitions:
     title: AuditStatusCreateRequest
     type: object
     properties:
-      auditable_type:
-        type: string
-      auditable_uuid:
-        type: string
       status:
         type: string
       comment:
         type: string
       type:
         type: string
+      is_active:
+        type: boolean
       request_removed:
         type: boolean
   AuditStatusResponse:
@@ -44376,6 +44374,24 @@ definitions:
                   type: string
                 num_trees:
                   type: integer
+  FeatureCollection:
+    type: object
+    properties:
+      type:
+        type: string
+  PolygonBboxResponse:
+    title: SitePolygonsBboxResponse
+    type: object
+    properties:
+      bbox:
+        type: array
+        items:
+          type: number
+  DashboardPolygonResponse:
+    type: object
+    properties:
+      uuid:
+        type: string
   DashboardJobsCreatedResponse:
     type: object
     properties:
@@ -44734,6 +44750,12 @@ definitions:
         format: date-time
       created_by:
         type: string
+  SiteCheckApproveResponse:
+    title: SiteCheckApproveResponse
+    type: object
+    properties:
+      can_approve:
+        type: boolean
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94831,7 +94853,7 @@ paths:
           name: ENTITY
           in: path
           required: true
-          description: allowed values project/site/site-polygons
+          description: allowed values project/site/site-polygon
         - type: string
           name: UUID
           in: path
@@ -94902,13 +94924,21 @@ paths:
                         type: boolean
                       created_at:
                         type: string
-  /v2/audit-status:
     post:
       operationId: post-v2-audit-status
       summary: Create a new audit status
       tags:
         - V2 Audits Status
       parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/site-polygon
+        - type: string
+          name: UUID
+          in: path
+          required: true
         - in: body
           name: body
           description: Body to create a new audit status
@@ -94916,16 +94946,14 @@ paths:
             title: AuditStatusCreateRequest
             type: object
             properties:
-              auditable_type:
-                type: string
-              auditable_uuid:
-                type: string
               status:
                 type: string
               comment:
                 type: string
               type:
                 type: string
+              is_active:
+                type: boolean
               request_removed:
                 type: boolean
       responses:
@@ -95379,6 +95407,220 @@ paths:
       responses:
         '204':
           description: No Content
+  /v2/terrafund/geojson/site:
+    get:
+      summary: Get collection Feature as GeoJSON for a site
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          required: true
+          description: UUID of the aite.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/polygon:
+    post:
+      summary: Create a new polygon
+      operationId: post-v2-polygon
+      tags:
+        - V2 Terrafund
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Polygon to create
+          schema:
+            type: object
+            properties:
+              geometry:
+                type: string
+      responses:
+        '200':
+          description: Created
+          schema:
+            type: object
+            properties:
+              uuid:
+                type: string
+  /v2/terrafund/upload-geojson:
+    post:
+      summary: Upload GeoJSON File
+      description: 'Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.'
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: The GeoJSON file to upload
+          required: true
+          type: file
+        - name: uuid
+          in: formData
+          description: The UUID of the site associated with the GeoJSON file
+          required: true
+          type: string
+      responses:
+        '200':
+          description: GeoJSON file processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/upload-shapefile:
+    post:
+      summary: Upload Shapefile
+      description: 'Uploads a shapefile, converts it to GeoJSON, and inserts it into the database.'
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: The shapefile to upload
+          required: true
+          type: file
+        - name: uuid
+          in: formData
+          description: The UUID of the site associated with the shapefile
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Shapefile processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/upload-kml:
+    post:
+      summary: Upload KML File
+      description: 'Uploads a KML file, converts it to GeoJSON, and inserts it into the database.'
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: The KML file to upload
+          required: true
+          type: file
+        - name: uuid
+          in: formData
+          description: The UUID of the site associated with the KML file
+          required: true
+          type: string
+      responses:
+        '200':
+          description: KML file processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/site-polygon/{uuid}':
+    put:
+      summary: Update site polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the site polygon
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              uuid:
+                type: string
+              poly_name:
+                type: string
+              plantstart:
+                type: string
+                format: date
+              plantend:
+                type: string
+                format: date
+              practice:
+                type: string
+              target_sys:
+                type: string
+              distr:
+                type: string
+              num_trees:
+                type: integer
+              calc_area:
+                type: number
+                format: float
+              status:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              uuid:
+                type: string
+              poly_name:
+                type: string
+              plantstart:
+                type: string
+                format: date
+              plantend:
+                type: string
+                format: date
+              practice:
+                type: string
+              target_sys:
+                type: string
+              distr:
+                type: string
+              num_trees:
+                type: integer
+              calc_area:
+                type: number
+                format: float
+              status:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   /v2/dashboard/jobs-created:
     get:
       summary: view Jobs created for dashboard
@@ -95960,3 +96202,26 @@ paths:
                   format: date-time
                 created_by:
                   type: string
+  '/v2/sites/{site}/check-approve':
+    get:
+      summary: Check if a site can be approved
+      operationId: get-v2-sites-uuid-check-approve
+      tags:
+        - V2 Sites
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                title: SiteCheckApproveResponse
+                type: object
+                properties:
+                  can_approve:
+                    type: boolean

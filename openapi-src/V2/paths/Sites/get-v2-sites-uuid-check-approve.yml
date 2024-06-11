@@ -1,0 +1,17 @@
+summary: Check if a site can be approved
+operationId: get-v2-sites-uuid-check-approve
+tags:
+  - V2 Sites
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          $ref: '../../definitions/_index.yml#/SiteCheckApproveResponse'

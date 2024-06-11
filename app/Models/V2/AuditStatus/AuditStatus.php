@@ -19,8 +19,6 @@ class AuditStatus extends Model implements MediaModel
     use InteractsWithMedia;
     use HasV2MediaCollections;
 
-    public $table = 'status';
-
     protected $fillable = [
         'auditable_type',
         'auditable_id',
@@ -37,7 +35,7 @@ class AuditStatus extends Model implements MediaModel
     ];
 
     public $fileConfiguration = [
-        'attachment' => [
+        'attachments' => [
             'validation' => 'general-documents',
             'multiple' => true,
         ],

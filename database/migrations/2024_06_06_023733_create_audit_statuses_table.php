@@ -10,8 +10,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::dropIfExists('status');
-        Schema::create('status', function (Blueprint $table) {
+        Schema::dropIfExists('audit_statuses');
+        Schema::create('audit_statuses', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('status')->nullable();
@@ -36,6 +36,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('status');
+        Schema::dropIfExists('audit_statuses');
     }
 };
