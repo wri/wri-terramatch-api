@@ -120,6 +120,7 @@ use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
+use App\Http\Controllers\V2\Polygons\ViewAllSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
@@ -525,6 +526,7 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
     Route::get('/{project}/sites', ViewProjectSitesController::class);
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
+    Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
     Route::get('/{project}/nurseries', ViewProjectNurseriesController::class);
     Route::get('/{project}/files', ViewProjectGalleryController::class);
     Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);

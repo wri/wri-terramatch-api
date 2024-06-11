@@ -44733,6 +44733,23 @@ definitions:
         items:
           type: number
         description: Bounding box of the entity
+  SitePolygonResource:
+    title: SitePolygonResource
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      poly_name:
+        type: string
+      status:
+        type: string
+      date_created:
+        type: string
+        format: date-time
+      created_by:
+        type: string
   SiteCheckApproveResponse:
     title: SiteCheckApproveResponse
     type: object
@@ -96153,6 +96170,38 @@ paths:
               error:
                 type: string
                 description: Error message
+  '/v2/projects/{UUID}/site-polygons/all':
+    get:
+      summary: Get all the SitePolygons from all sites belonging to a specific project
+      operationId: get-v2-projects-uuid-site-polygons-all
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 SitePolygons
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              title: SitePolygonResource
+              type: object
+              properties:
+                id:
+                  type: integer
+                uuid:
+                  type: string
+                poly_name:
+                  type: string
+                status:
+                  type: string
+                date_created:
+                  type: string
+                  format: date-time
+                created_by:
+                  type: string
   '/v2/sites/{site}/check-approve':
     get:
       summary: Check if a site can be approved
