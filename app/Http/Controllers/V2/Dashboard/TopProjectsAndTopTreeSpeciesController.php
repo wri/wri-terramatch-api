@@ -6,7 +6,9 @@ use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\TopProjectsAndTopTreeSpeciesResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\TreeSpecies\TreeSpecies;
+use Illuminate\Support\Facades\DB;
 
 class TopProjectsAndTopTreeSpeciesController extends Controller
 {
@@ -42,23 +44,15 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
 
     public function getTopTreeSpecies($projects)
     {
-        $topSpecies = [];
+        $speciesCollection = TreeSpecies::where('speciesable_type', Project::class)
+            ->whereIn('speciesable_id', $projects->pluck('id'))
+            ->groupBy(DB::raw('BINARY name'))
+            ->groupBy('name')
+            ->selectRaw('sum(amount) as total, name')
+            ->orderBy('total', 'desc')
+            ->limit(20)
+            ->get();
 
-        $projects->each(function ($project) use (&$topSpecies) {
-            $project->treeSpecies->each(function ($species) use (&$topSpecies) {
-                $topSpecies[] = [
-                    'name' => $species->name,
-                    'amount' => $species->amount,
-                ];
-            });
-        });
-        $speciesCollection = new Collection($topSpecies);
-        $speciesGrouped = $speciesCollection->groupBy('name');
-
-        $sumSpeciesValues = $speciesGrouped->map(function ($species, $name) {
-            return ['name' => $name, 'amount' => $species->sum('amount')];
-        });
-
-        return $sumSpeciesValues->sortByDesc('amount')->take(20)->values()->all();
+        return $speciesCollection;
     }
 }
