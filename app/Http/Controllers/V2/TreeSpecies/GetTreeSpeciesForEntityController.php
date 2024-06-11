@@ -7,8 +7,6 @@ use App\Http\Resources\V2\TreeSpecies\TreeSpeciesCollection;
 use App\Models\V2\EntityModel;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class GetTreeSpeciesForEntityController extends Controller
 {
