@@ -66,7 +66,7 @@ class UpdateEntityStatusController extends Controller
     private function canChangeSitePolygonStatusTo($sitePolygon, $status)
     {
         if ($status === 'approved') {
-            $geometry = $sitePolygon->polygonGeometry()->get();
+            $geometry = $sitePolygon->polygonGeometry()->first();
 
             if ($geometry === null) {
                 return false;
@@ -79,14 +79,12 @@ class UpdateEntityStatusController extends Controller
             }
 
             $criteriaList = array_filter($criteriaList, function ($criteria) {
-                return $criteria->criteria_id == PolygonService::ESTIMATED_AREA_CRITERIA_ID;
+                return $criteria['criteria_id'] !== PolygonService::ESTIMATED_AREA_CRITERIA_ID;
             });
 
             $canApprove = true;
             foreach ($criteriaList as $criteria) {
-                Log::info('criteria->valid');
-                Log::info($criteria->valid);
-                if (! $criteria->valid) {
+                if (! $criteria['valid']) {
                     $canApprove = false;
 
                     break;
@@ -94,7 +92,6 @@ class UpdateEntityStatusController extends Controller
             }
 
             return $canApprove;
-
         }
 
         return true;
