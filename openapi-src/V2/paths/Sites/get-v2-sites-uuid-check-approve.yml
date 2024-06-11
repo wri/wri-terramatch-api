@@ -4,7 +4,7 @@ tags:
   - V2 Sites
 parameters:
   - type: string
-    name: UUID
+    name: site
     in: path
     required: true
 responses:
