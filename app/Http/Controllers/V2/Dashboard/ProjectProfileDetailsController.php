@@ -9,9 +9,8 @@ use Illuminate\Http\Request;
 
 class ProjectProfileDetailsController extends Controller
 {
-    public function __invoke(Request $request, string $project = null)
+    public function __invoke(Request $request, Project $project)
     {
-        $project = Project::where('uuid', $project)->first();
         $response = (object)[
             'name' => $project->name,
             'descriptionObjetive' => $project->objectives,
