@@ -4,6 +4,11 @@ tags:
   - V2 Projects
   - V2 Sites
   - V2 SitePolygons
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
 produces:
   - application/json
 responses:

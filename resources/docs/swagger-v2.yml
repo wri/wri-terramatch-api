@@ -96212,6 +96212,11 @@ paths:
         - V2 Projects
         - V2 Sites
         - V2 SitePolygons
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
       produces:
         - application/json
       responses:
@@ -96244,7 +96249,7 @@ paths:
         - V2 Sites
       parameters:
         - type: string
-          name: UUID
+          name: site
           in: path
           required: true
       responses:
