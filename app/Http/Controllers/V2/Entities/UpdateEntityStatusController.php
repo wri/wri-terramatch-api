@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\V2\Entities;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\AuditStatus\AuditStatusUpdateRequest;
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Sites\SitePolygon;
+use App\Services\PolygonService;
 
 class UpdateEntityStatusController extends Controller
 {
@@ -61,9 +63,40 @@ class UpdateEntityStatusController extends Controller
         return true;
     }
 
-    private function canChangeSitePolygonStatusTo($auditable, $status)
+    private function canChangeSitePolygonStatusTo($sitePolygon, $status)
     {
-        //TODO ask Cesar how to handle this one.
+        if ($status === 'approved') {
+            $geometry = $sitePolygon->polygonGeometry()->get();
+
+            if ($geometry === null) {
+                return false;
+            }
+
+            $criteriaList = GeometryHelper::getCriteriaDataForPolygonGeometry($geometry);
+
+            if (empty($criteriaList)) {
+                return false;
+            }
+
+            $criteriaList = array_filter($criteriaList, function ($criteria) {
+                return $criteria->criteria_id == PolygonService::ESTIMATED_AREA_CRITERIA_ID;
+            });
+
+            $canApprove = true;
+            foreach ($criteriaList as $criteria) {
+                Log::info('criteria->valid');
+                Log::info($criteria->valid);
+                if (! $criteria->valid) {
+                    $canApprove = false;
+
+                    break;
+                }
+            }
+
+            return $canApprove;
+
+        }
+
         return true;
     }
 }
