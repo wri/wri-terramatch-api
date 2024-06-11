@@ -94312,8 +94312,8 @@ paths:
           schema:
             type: file
   /v2/terrafund/validation/polygon:
-    get:
-      summary: Get validation results for a polygon
+    post:
+      summary: Run validation for a polygon
       parameters:
         - in: query
           name: uuid
@@ -94380,7 +94380,7 @@ paths:
                       type: integer
                       description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
   /v2/terrafund/validation/sitePolygons:
-    get:
+    post:
       summary: Run validation for all polygons in a site
       parameters:
         - in: query
