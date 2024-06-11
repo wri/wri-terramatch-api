@@ -15,19 +15,19 @@ properties:
         format: date
       id:
         type: integer
-      SubmittedBy:
+      submitted_by:
         type: string
-      Program:
+      program:
         type: string
-      Cohort:
+      cohort:
         type: string
-      PublishFor:
+      publish_for:
         type: string
-      URL:
+      url:
         type: string
-      CreatedDate:
+      created_at:
         type: string
         format: date
-      ModifiedDate:
+      updated_at:
         type: string
         format: date
