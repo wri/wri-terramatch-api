@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Process\Process;
@@ -58,20 +57,20 @@ class TerrafundCreateGeometryController extends Controller
         return response()->json(['uuid' => $polygonGeometry->uuid], 200);
     }
 
-/**
- * @throws ValidationException
- */
-public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = null)
-{
-    $tempDir = sys_get_temp_dir();
-    $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
-    $geojsonData = file_get_contents($geojsonPath);
-    $geojson = json_decode($geojsonData, true);
+    /**
+     * @throws ValidationException
+     */
+    public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = null)
+    {
+        $tempDir = sys_get_temp_dir();
+        $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+        $geojsonData = file_get_contents($geojsonPath);
+        $geojson = json_decode($geojsonData, true);
 
-    SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
+        SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-    return App::make(PolygonService::class)->createGeojsonModels($geojson, [], $site_id);
-}
+        return App::make(PolygonService::class)->createGeojsonModels($geojson, [], $site_id);
+    }
 
     public function validateDataInDB(Request $request)
     {
@@ -118,19 +117,20 @@ public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = nu
         if (! isset($geojson['features'])) {
             return ['error' => 'GeoJSON file does not contain features'];
         }
-    
+
         $propertiesList = [];
         foreach ($geojson['features'] as $feature) {
             $properties = $feature['properties'];
             $geometryType = $feature['geometry']['type'];
-    
+
             if ($geometryType === 'Polygon' || $geometryType === 'MultiPolygon') {
                 $propertiesList[] = $properties;
             }
         }
-    
+
         return $propertiesList;
     }
+
     public function uploadKMLFile(Request $request)
     {
         if ($request->hasFile('file')) {
@@ -146,7 +146,7 @@ public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = nu
             $process->run();
             if (! $process->isSuccessful()) {
                 Log::error('Error converting KML to GeoJSON: ' . $process->getErrorOutput());
-    
+
                 return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
             }
             $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
@@ -154,28 +154,30 @@ public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = nu
                 return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
             }
             App::make(SiteService::class)->updateSiteStatus($site_id);
-    
+
             return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
             return response()->json(['error' => 'KML file not provided'], 400);
         }
     }
+
     private function findShpFile($directory)
     {
         Log::info('find shp: ' . $directory);
-    
+
         $shpFile = null;
         $files = scandir($directory);
         foreach ($files as $file) {
             if (pathinfo($file, PATHINFO_EXTENSION) === 'shp') {
                 $shpFile = "{$directory}/{$file}";
-    
+
                 break;
             }
         }
-    
+
         return $shpFile;
     }
+
     public function uploadShapefile(Request $request)
     {
         Log::debug('Upload Shape file data', ['request' => $request->all()]);
@@ -188,23 +190,23 @@ public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = nu
             $tempDir = sys_get_temp_dir();
             $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
             mkdir($directory, 0755, true);
-    
+
             // Extract the contents of the ZIP file
             $zip = new \ZipArchive();
             if ($zip->open($file->getPathname()) === true) {
                 $zip->extractTo($directory);
                 $zip->close();
                 $shpFile = $this->findShpFile($directory);
-                if (!$shpFile) {
+                if (! $shpFile) {
                     return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
                 }
                 $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
                 $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
                 $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
                 $process->run();
-                if (!$process->isSuccessful()) {
+                if (! $process->isSuccessful()) {
                     Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
-    
+
                     return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
                 }
                 $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
@@ -212,7 +214,7 @@ public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = nu
                     return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
                 }
                 App::make(SiteService::class)->updateSiteStatus($site_id);
-    
+
                 return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
             } else {
                 return response()->json(['error' => 'Failed to open the ZIP file'], 400);
@@ -355,7 +357,7 @@ public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = nu
                 return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
             }
             App::make(SiteService::class)->updateSiteStatus($site_id);
-    
+
             return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
             return response()->json(['error' => 'GeoJSON file not provided in request'], 400);
