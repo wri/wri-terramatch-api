@@ -7,6 +7,8 @@ use App\Http\Resources\V2\TreeSpecies\TreeSpeciesCollection;
 use App\Models\V2\EntityModel;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class GetTreeSpeciesForEntityController extends Controller
 {
@@ -17,6 +19,11 @@ class GetTreeSpeciesForEntityController extends Controller
         $query = TreeSpecies::query()
             ->where('speciesable_type', get_class($entity))
             ->where('speciesable_id', $entity->id);
+
+        $filter = $request->query('filter');
+        if (! empty($filter['collection'])) {
+            $query->where('collection', $filter['collection']);
+        }
 
         return new TreeSpeciesCollection($query->paginate());
     }
