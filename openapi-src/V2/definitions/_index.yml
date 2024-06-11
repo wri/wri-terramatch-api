@@ -330,3 +330,5 @@ GeojsonData:
   $ref: './GeojsonData.yml'
 EntityTypeResponse:
   $ref: './EntityTypeResponse.yml'
+SiteCheckApproveResponse:
+  $ref: './SiteCheckApproveResponse.yml'
