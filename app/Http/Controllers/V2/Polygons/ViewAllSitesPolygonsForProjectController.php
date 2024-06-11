@@ -12,8 +12,6 @@ class ViewAllSitesPolygonsForProjectController extends Controller
 {
     public function __invoke(Request $request, Project $project): ResourceCollection
     {
-        $sitePolygons = $project->with('sitePolygons')->get()->pluck('sitePolygons')->flatten();
-
-        return SitePolygonResource::collection($sitePolygons);
+        return SitePolygonResource::collection($project->sitePolygons()->get());
     }
 }
