@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\V2\Entities;
+namespace App\Http\Controllers\V2\Auditable;
 
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
@@ -11,7 +11,7 @@ use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
 
-class UpdateEntityStatusController extends Controller
+class UpdateAuditableStatusController extends Controller
 {
     use SaveAuditStatusTrait;
 

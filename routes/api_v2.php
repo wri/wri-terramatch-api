@@ -8,6 +8,7 @@ use App\Http\Controllers\V2\Applications\AdminViewApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
+use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
 use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
@@ -31,7 +32,6 @@ use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
-use App\Http\Controllers\V2\Entities\UpdateEntityStatusController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
 use App\Http\Controllers\V2\Entities\ViewEntityWithFormController;
@@ -555,10 +555,6 @@ ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
     Route::get('/{entity}', ViewEntityController::class);
 });
 
-ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
-    Route::put('/{entity}/status', UpdateEntityStatusController::class);
-});
-
 Route::prefix('project-reports')->group(function () {
     Route::get('/{projectReport}/files', ViewProjectReportGalleryController::class);
     Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
@@ -686,6 +682,10 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::post('/{auditable}', StoreAuditStatusController::class);
     Route::get('/{auditable}', GetAuditStatusController::class);
 }, prefix: 'audit-status');
+
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
+});
 
 Route::prefix('dashboard')->group(function () {
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
