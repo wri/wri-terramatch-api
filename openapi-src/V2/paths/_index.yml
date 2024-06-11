@@ -2515,13 +2515,13 @@
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
 '/v2/terrafund/validation/polygon':
-  get:
+  post:
     $ref: './Terrafund/get-v2-terrafund-validation-polygon.yml'
 '/v2/terrafund/validation/criteria-data':
   get:
     $ref: './Terrafund/get-v2-terrafund-validation-criteria-data.yml'
 '/v2/terrafund/validation/sitePolygons':
-  get:
+  post:
     $ref: './Terrafund/get-v2-terrafund-validation-sitepolygons.yml'
 '/v2/terrafund/validation/site':
   get:
