@@ -2515,13 +2515,13 @@
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
 '/v2/terrafund/validation/polygon':
-  get:
+  post:
     $ref: './Terrafund/get-v2-terrafund-validation-polygon.yml'
 '/v2/terrafund/validation/criteria-data':
   get:
     $ref: './Terrafund/get-v2-terrafund-validation-criteria-data.yml'
 '/v2/terrafund/validation/sitePolygons':
-  get:
+  post:
     $ref: './Terrafund/get-v2-terrafund-validation-sitepolygons.yml'
 '/v2/terrafund/validation/site':
   get:
@@ -2540,7 +2540,6 @@
 /v2/audit-status/{ENTITY}/{UUID}:
   get:
     $ref: './AuditStatus/get-v2-audit-status.yml'
-/v2/audit-status:
   post:
     $ref: './AuditStatus/post-v2-audit-status.yml'
 /v2/sites/{site}/polygon:
@@ -2565,6 +2564,24 @@
     $ref: './Terrafund/put-v2-terrafund-polygon-uuid.yml'
   delete:
     $ref: './Terrafund/delete-v2-terrafund-polygon-uuid.yml'
+/v2/terrafund/geojson/site:
+  get:
+    $ref: './Terrafund/get-v2-geojson-site.yml'
+/v2/terrafund/polygon:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-polygon.yml'
+/v2/terrafund/upload-geojson:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-geojson.yml'
+/v2/terrafund/upload-shapefile:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-shapefile.yml'
+/v2/terrafund/upload-kml:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-kml.yml'
+/v2/terrafund/site-polygon/{uuid}:
+  put:
+    $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
@@ -2607,3 +2624,9 @@
 /v2/{ENTITY}/{UUID}/status:
     put:
       $ref: './Entity/put-v2-entity-uuid-status.yml'
+/v2/projects/{UUID}/site-polygons/all:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-site-polygons-all.yml'
+/v2/sites/{site}/check-approve:
+  get:
+    $ref: './Sites/get-v2-sites-uuid-check-approve.yml'

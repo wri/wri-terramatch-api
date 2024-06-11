@@ -121,6 +121,7 @@ use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
+use App\Http\Controllers\V2\Polygons\ViewAllSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
@@ -166,6 +167,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
@@ -525,6 +527,7 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
     Route::get('/{project}/sites', ViewProjectSitesController::class);
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
+    Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
     Route::get('/{project}/nurseries', ViewProjectNurseriesController::class);
     Route::get('/{project}/files', ViewProjectGalleryController::class);
     Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
@@ -572,6 +575,7 @@ Route::prefix('sites/{site}')->group(function () {
     Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
+    Route::get('/check-approve', SiteCheckApproveController::class);
 });
 
 Route::prefix('geometry')->group(function () {
@@ -646,8 +650,8 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
     Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
     Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
-    Route::get('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
-    Route::get('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
+    Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
+    Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
     Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
 
     Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
@@ -678,12 +682,10 @@ Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
 
-Route::prefix('audit-status')->group(function () {
-    Route::post('/', StoreAuditStatusController::class);
-    ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
-        Route::get('/{auditable}', GetAuditStatusController::class);
-    });
-});
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::post('/{auditable}', StoreAuditStatusController::class);
+    Route::get('/{auditable}', GetAuditStatusController::class);
+}, prefix: 'audit-status');
 
 Route::prefix('dashboard')->group(function () {
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);

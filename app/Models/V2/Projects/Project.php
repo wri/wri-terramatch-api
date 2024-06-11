@@ -484,6 +484,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $this->morphMany(AuditStatus::class, 'auditable');
     }
 
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->name;
+    }
+
     /**
      * @return HasManyThrough A relation for all site reports associated with this project that is for an approved
      *   site, and has a report status past due/started (has been submitted).
