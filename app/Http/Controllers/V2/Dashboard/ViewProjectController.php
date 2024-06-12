@@ -9,7 +9,6 @@ use App\Models\V2\Projects\ProjectInvite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use App\Http\Resources\V2\User\MeResource;
 
 class ViewProjectController extends Controller
 {
