@@ -3,6 +3,8 @@
 namespace App\Models\V2\Sites;
 
 use App\Models\Traits\HasUuid;
+use App\Models\V2\AuditableModel;
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
@@ -18,7 +21,7 @@ use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 /**
  * @method static forPolygonGeometry($value):  Builder
  */
-class SitePolygon extends Model
+class SitePolygon extends Model implements AuditableModel
 {
     use HasUuid;
     use SoftDeletes;
@@ -71,5 +74,20 @@ class SitePolygon extends Model
     public function createdBy(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'created_by');
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
+    }
+
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->poly_name;
     }
 }
