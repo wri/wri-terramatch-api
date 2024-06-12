@@ -12,6 +12,13 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
+/**
+ * Used only in this file to override the default behavior of abort / assert and allow (in some cases) the script
+ * to continue after an assertion failure or abort call so that all the errors for a process can be collected and
+ * reported together. This override of the abort process is only used when parsing and checking the data from the
+ * input CSV in order to provide a report of all errors on the input data without requiring a tedious back and forth
+ * process of fixing one error only to uncover the next one.
+ */
 class AbortException extends \Exception
 {
 }
@@ -237,7 +244,7 @@ class BulkWorkdayImport extends Command
             $data = $this->getData($collection, $column['demographic'], $cell, $csvRow);
             if (! empty($data)) {
                 $existingIndex = collect($row[$collection] ?? [])->search(
-                    fn($demographic) =>
+                    fn ($demographic) =>
                         $demographic['type'] === $data['type'] &&
                         $demographic['subtype'] === $data['subtype'] &&
                         $demographic['name'] === $data['name']
@@ -249,7 +256,7 @@ class BulkWorkdayImport extends Command
                     data_set(
                         $row,
                         "$collection.$existingIndex.amount",
-                        $data["amount"] + data_get($row, "$collection.$existingIndex.amount")
+                        $data['amount'] + data_get($row, "$collection.$existingIndex.amount")
                     );
                 }
             }
@@ -291,11 +298,11 @@ class BulkWorkdayImport extends Command
                 $this->assert(
                     collect($totals)->values()->unique()->count() == 1,
                     "Demographics for collection are unbalanced\n" .
-                    json_encode([
-                        'submission_id' => $submissionId,
-                        'collection' => $collection,
-                        'totals' => $totals,
-                    ], JSON_PRETTY_PRINT) . "\n"
+                        json_encode([
+                            'submission_id' => $submissionId,
+                            'collection' => $collection,
+                            'totals' => $totals,
+                        ], JSON_PRETTY_PRINT) . "\n"
                 );
             }
         }
