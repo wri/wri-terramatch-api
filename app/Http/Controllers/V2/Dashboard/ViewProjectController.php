@@ -9,13 +9,15 @@ use App\Models\V2\Projects\ProjectInvite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Http\Resources\V2\User\MeResource;
 
 class ViewProjectController extends Controller
 {
     public function getIfUserIsAllowedToProject(String $uuid)
     {
         $user = Auth::user();
-        $role = $user->role;
+        assignSpatieRole($user);
+        $role = $user->roles->first()->name;
         if ($role === 'government') {
             $isAllowed = Project::where('uuid', $uuid)
                 ->where('country', $user->country)
@@ -30,7 +32,7 @@ class ViewProjectController extends Controller
             $response = (object)[
                 'allowed' => $isAllowed ? true : false,
             ];
-        } elseif ($role === 'project_developer') {
+        } elseif ($role === 'project-developer') {
             $projectId = Project::where('uuid', $uuid)
                 ->value('id');
             $isInvite = ProjectInvite::where('email_address', $user->email_address)

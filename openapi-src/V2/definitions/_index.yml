@@ -336,3 +336,5 @@ SitePolygonResource:
   $ref: './SitePolygonResource.yml'
 SiteCheckApproveResponse:
   $ref: './SiteCheckApproveResponse.yml'
+DashboardProjectViewResponse:
+  $ref: './DashboardProjectViewResponse.yml'
