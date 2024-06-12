@@ -340,3 +340,7 @@ DashboardTopPlantedTree:
   $ref: './DashboardTopPlantedTree.yml'
 DashboardTopTreeSpecies:
   $ref: './DashboardTopTreeSpecies.yml'
+ProjectPipeline:
+  $ref: './ProjectPipeline.yml'
+ProjectPipelinePost:
+  $ref: './ProjectPipelinePost.yml'

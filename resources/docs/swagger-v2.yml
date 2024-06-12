@@ -44867,6 +44867,58 @@ definitions:
         type: string
       amount:
         type: integer
+  ProjectPipeline:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          name:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+          date:
+            type: string
+            format: date
+          id:
+            type: integer
+          submitted_by:
+            type: string
+          program:
+            type: string
+          cohort:
+            type: string
+          publish_for:
+            type: string
+          url:
+            type: string
+          created_at:
+            type: string
+            format: date
+          updated_at:
+            type: string
+            format: date
+  ProjectPipelinePost:
+    type: object
+    properties:
+      date:
+        type: string
+        format: date
+      id:
+        type: integer
+      submitted_by:
+        type: string
+      program:
+        type: string
+      cohort:
+        type: string
+      publish_for:
+        type: string
+      url:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95987,3 +96039,227 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /v2/project-pipeline:
+    get:
+      operationId: get-v2-fproject-pipeline
+      summary: Get all projects from the pipeline
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        name:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+                        date:
+                          type: string
+                          format: date
+                        id:
+                          type: integer
+                        submitted_by:
+                          type: string
+                        program:
+                          type: string
+                        cohort:
+                          type: string
+                        publish_for:
+                          type: string
+                        url:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date
+                        updated_at:
+                          type: string
+                          format: date
+    post:
+      operationId: post-v2-fproject-pipeline
+      summary: Create a new project in the pipeline
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date
+                id:
+                  type: integer
+                submitted_by:
+                  type: string
+                program:
+                  type: string
+                cohort:
+                  type: string
+                publish_for:
+                  type: string
+                url:
+                  type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                  id:
+                    type: integer
+                  submitted_by:
+                    type: string
+                  program:
+                    type: string
+                  cohort:
+                    type: string
+                  publish_for:
+                    type: string
+                  url:
+                    type: string
+  '/v2/project-pipeline/{id}':
+    get:
+      operationId: get-v2-project-pipeline
+      summary: Get a project from the pipeline by ID
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: show a specific project pipeline.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          description:
+                            type: string
+                      date:
+                        type: string
+                        format: date
+                      id:
+                        type: integer
+                      submitted_by:
+                        type: string
+                      program:
+                        type: string
+                      cohort:
+                        type: string
+                      publish_for:
+                        type: string
+                      url:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date
+                      updated_at:
+                        type: string
+                        format: date
+    put:
+      operationId: update-v2-project-pipeline
+      summary: Update a project in the pipeline by ID
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: edit a specific project pipeline.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date
+                id:
+                  type: integer
+                submitted_by:
+                  type: string
+                program:
+                  type: string
+                cohort:
+                  type: string
+                publish_for:
+                  type: string
+                url:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                  id:
+                    type: integer
+                  submitted_by:
+                    type: string
+                  program:
+                    type: string
+                  cohort:
+                    type: string
+                  publish_for:
+                    type: string
+                  url:
+                    type: string
+    delete:
+      summary: Delete a project from the pipeline by ID
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: delete a specific project pipeline.
+      responses:
+        '204':
+          description: No Content

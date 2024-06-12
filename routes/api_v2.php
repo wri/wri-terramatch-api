@@ -15,6 +15,10 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
+use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
@@ -696,4 +700,12 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/get-projects', GetProjectsController::class);
     Route::get('/project-details/{project}', ProjectProfileDetailsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
+});
+
+Route::prefix('project-pipeline')->group(function () {
+    Route::get('/', GetProjectPipelineController::class);
+    Route::get('/{id}', GetProjectPipelineController::class);
+    Route::post('/', StoreProjectPipelineController::class);
+    Route::put('/{id}', UpdateProjectPipelineController::class);
+    Route::delete('/{id}', DeleteProjectPipelineController::class);
 });
