@@ -46,8 +46,7 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
     {
         $speciesCollection = TreeSpecies::where('speciesable_type', Project::class)
             ->whereIn('speciesable_id', $projects->pluck('id'))
-            ->groupBy(DB::raw('BINARY name'))
-            ->groupBy('name')
+            ->groupBy(DB::raw('BINARY name'), 'name')
             ->selectRaw('sum(amount) as total, name')
             ->orderBy('total', 'desc')
             ->limit(20)
