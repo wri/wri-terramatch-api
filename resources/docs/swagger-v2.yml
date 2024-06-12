@@ -44058,6 +44058,81 @@ definitions:
               message:
                 type: string
                 description: Human readable string in English to describe the error.
+  AuditStatusCreateRequest:
+    title: AuditStatusCreateRequest
+    type: object
+    properties:
+      status:
+        type: string
+      comment:
+        type: string
+      type:
+        type: string
+      is_active:
+        type: boolean
+      request_removed:
+        type: boolean
+  AuditStatusResponse:
+    title: AuditStatusResponse
+    type: object
+    properties:
+      id:
+        type: string
+      uuid:
+        type: string
+      entity_name:
+        type: string
+      status:
+        type: string
+      comment:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      type:
+        type: string
+      is_submitted:
+        type: boolean
+      is_active:
+        type: boolean
+      request_removed:
+        type: boolean
+      date_created:
+        type: string
+        format: date
+      created_by:
+        type: string
+      attachments:
+        type: array
+        items:
+          title: V2FileRead
+          type: object
+          properties:
+            uuid:
+              type: string
+            url:
+              type: string
+            thumb_url:
+              type: string
+            collection_name:
+              type: string
+            title:
+              type: string
+            file_name:
+              type: string
+            mime_type:
+              type: string
+            size:
+              type: integer
+            lat:
+              type: integer
+            lng:
+              type: integer
+            is_public:
+              type: boolean
+            created_at:
+              type: string
   V2TerrafundCriteriaData:
     type: object
     properties:
@@ -44658,6 +44733,43 @@ definitions:
         items:
           type: number
         description: Bounding box of the entity
+  AuditStatusUpdateRequest:
+    title: AuditStatusUpdateRequest
+    type: object
+    properties:
+      type:
+        type: string
+      comment:
+        type: string
+      status:
+        type: string
+      is_active:
+        type: boolean
+      request_removed:
+        type: boolean
+  SitePolygonResource:
+    title: SitePolygonResource
+    type: object
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      poly_name:
+        type: string
+      status:
+        type: string
+      date_created:
+        type: string
+        format: date-time
+      created_by:
+        type: string
+  SiteCheckApproveResponse:
+    title: SiteCheckApproveResponse
+    type: object
+    properties:
+      can_approve:
+        type: boolean
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94744,6 +94856,184 @@ paths:
           description: This account does not have permission to update the polygon.
         '404':
           description: Geometry was not found.
+  '/v2/audit-status/{ENTITY}/{UUID}':
+    get:
+      operationId: get-v2-audits-status
+      summary: Get all audits status by entity and entity uuid
+      tags:
+        - V2 Audits Status
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/site-polygon
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              title: AuditStatusResponse
+              type: object
+              properties:
+                id:
+                  type: string
+                uuid:
+                  type: string
+                entity_name:
+                  type: string
+                status:
+                  type: string
+                comment:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                type:
+                  type: string
+                is_submitted:
+                  type: boolean
+                is_active:
+                  type: boolean
+                request_removed:
+                  type: boolean
+                date_created:
+                  type: string
+                  format: date
+                created_by:
+                  type: string
+                attachments:
+                  type: array
+                  items:
+                    title: V2FileRead
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                      url:
+                        type: string
+                      thumb_url:
+                        type: string
+                      collection_name:
+                        type: string
+                      title:
+                        type: string
+                      file_name:
+                        type: string
+                      mime_type:
+                        type: string
+                      size:
+                        type: integer
+                      lat:
+                        type: integer
+                      lng:
+                        type: integer
+                      is_public:
+                        type: boolean
+                      created_at:
+                        type: string
+    post:
+      operationId: post-v2-audit-status
+      summary: Create a new audit status
+      tags:
+        - V2 Audits Status
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/site-polygon
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          description: Body to create a new audit status
+          schema:
+            title: AuditStatusCreateRequest
+            type: object
+            properties:
+              status:
+                type: string
+              comment:
+                type: string
+              type:
+                type: string
+              is_active:
+                type: boolean
+              request_removed:
+                type: boolean
+      responses:
+        '201':
+          description: Created
+          schema:
+            title: AuditStatusResponse
+            type: object
+            properties:
+              id:
+                type: string
+              uuid:
+                type: string
+              entity_name:
+                type: string
+              status:
+                type: string
+              comment:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              type:
+                type: string
+              is_submitted:
+                type: boolean
+              is_active:
+                type: boolean
+              request_removed:
+                type: boolean
+              date_created:
+                type: string
+                format: date
+              created_by:
+                type: string
+              attachments:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    created_at:
+                      type: string
   '/v2/sites/{site}/polygon':
     get:
       summary: Get polygons for a specific site
@@ -95894,3 +96184,83 @@ paths:
               error:
                 type: string
                 description: Error message
+  '/v2/{ENTITY}/{UUID}/status':
+    put:
+      summary: Update the status of a specific entity
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 SitePolygons
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/site-polygons
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+  '/v2/projects/{UUID}/site-polygons/all':
+    get:
+      summary: Get all the SitePolygons from all sites belonging to a specific project
+      operationId: get-v2-projects-uuid-site-polygons-all
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 SitePolygons
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              title: SitePolygonResource
+              type: object
+              properties:
+                id:
+                  type: integer
+                uuid:
+                  type: string
+                poly_name:
+                  type: string
+                status:
+                  type: string
+                date_created:
+                  type: string
+                  format: date-time
+                created_by:
+                  type: string
+  '/v2/sites/{site}/check-approve':
+    get:
+      summary: Check if a site can be approved
+      operationId: get-v2-sites-uuid-check-approve
+      tags:
+        - V2 Sites
+      parameters:
+        - type: string
+          name: site
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                title: SiteCheckApproveResponse
+                type: object
+                properties:
+                  can_approve:
+                    type: boolean
