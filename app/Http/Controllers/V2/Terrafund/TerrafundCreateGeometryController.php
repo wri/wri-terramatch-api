@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
@@ -313,28 +313,10 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Polygon not found for the given UUID'], 404);
         }
 
-        // Fetch data from criteria_site with distinct criteria_id based on the latest created_at
-        $criteriaDataQuery = 'SELECT criteria_id, MAX(created_at) AS latest_created_at
-                          FROM criteria_site 
-                          WHERE polygon_id = ?
-                          GROUP BY criteria_id';
+        $criteriaList = GeometryHelper::getCriteriaDataForPolygonGeometry($geometry);
 
-        $criteriaData = DB::select($criteriaDataQuery, [$uuid]);
-
-        if (empty($criteriaData)) {
+        if (empty($criteriaList)) {
             return response()->json(['error' => 'Criteria data not found for the given polygon ID'], 404);
-        }
-
-        // Determine the validity of each criteria
-        $criteriaList = [];
-        foreach ($criteriaData as $criteria) {
-            $criteriaId = $criteria->criteria_id;
-            $valid = CriteriaSite::where(['polygon_id' => $uuid, 'criteria_id' => $criteriaId])->orderBy('created_at', 'desc')->select('valid')->first()?->valid;
-            $criteriaList[] = [
-              'criteria_id' => $criteriaId,
-              'latest_created_at' => $criteria->latest_created_at,
-              'valid' => $valid,
-            ];
         }
 
         return response()->json(['polygon_id' => $uuid, 'criteria_list' => $criteriaList]);

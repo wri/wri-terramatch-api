@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Sites\CriteriaSite;
 use Illuminate\Support\Facades\Log;
 
 class GeometryHelper
@@ -116,5 +117,20 @@ class GeometryHelper
         }
 
         return [$minX, $minY, $maxX, $maxY];
+    }
+
+    public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
+    {
+        return CriteriaSite::whereIn(
+            'id',
+            $polygonGeometry
+                ->criteriaSite()
+                ->groupBy('criteria_id')
+                ->selectRaw('max(id) as latest_id')
+        )->get([
+            'criteria_id',
+            'valid',
+            'created_at as latest_created_at',
+        ]);
     }
 }
