@@ -44751,6 +44751,81 @@ definitions:
         type: string
       icon:
         type: string
+  DashboardProjectProfileResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+          descriptionObjetive:
+            type: string
+          country:
+            type: string
+          organisation:
+            type: string
+          survivalRate:
+            type: integer
+          countrySlug:
+            type: string
+          restorationStrategy:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+          targetLandUse:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+          landTenure:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+  DashboardProjectProfileData:
+    type: object
+    properties:
+      name:
+        type: string
+      descriptionObjetive:
+        type: string
+      country:
+        type: string
+      organisation:
+        type: string
+      survivalRate:
+        type: integer
+      countrySlug:
+        type: string
+      restorationStrategy:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
+      targetLandUse:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
+      landTenure:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95764,6 +95839,65 @@ paths:
                         long:
                           type: number
                           format: double
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/dashboard/project-details/{project}':
+    get:
+      summary: Retrieve project details view.
+      description: |
+        This endpoint return details to name of project, description objectives, restoration strategy, target land use type, and land tenure.
+      parameters:
+        - type: string
+          name: project
+          in: path
+          required: true
+          description: Optional. Filter counts and metrics by UUID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      descriptionObjetive:
+                        type: string
+                      country:
+                        type: string
+                      organisation:
+                        type: string
+                      survivalRate:
+                        type: integer
+                      countrySlug:
+                        type: string
+                      restorationStrategy:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              type: string
+                      targetLandUse:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              type: string
+                      landTenure:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              type: string
         '400':
           description: Bad request
         '500':

@@ -330,3 +330,7 @@ DashboardCountryData:
   $ref: './DashboardCountryData.yml'
 DashboardCountryInfo:
   $ref: './DashboardCountryInfo.yml'
+DashboardProjectProfileResponse:
+  $ref: './DashboardProjectProfileResponse.yml'
+DashboardProjectProfileData:
+  $ref: './DashboardProjectProfileData.yml'
