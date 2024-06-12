@@ -95731,3 +95731,40 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /v2/dashboard/get-projects:
+    get:
+      summary: Retrieve all project.
+      description: |
+        This endpoint returns all project location.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        name:
+                          type: string
+                        lat:
+                          type: number
+                          format: double
+                        long:
+                          type: number
+                          format: double
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
