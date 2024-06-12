@@ -276,6 +276,10 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
   $ref: './GeometryPost.yml'
+AuditStatusCreateRequest:
+  $ref: './AuditStatusCreateRequest.yml'
+AuditStatusResponse:
+  $ref: './AuditStatusResponse.yml'
 V2TerrafundCriteriaData:
   $ref: './V2TerrafundCriteriaData.yml'
 V2TerrafundCriteriaSite:
@@ -326,3 +330,9 @@ GeojsonData:
   $ref: './GeojsonData.yml'
 EntityTypeResponse:
   $ref: './EntityTypeResponse.yml'
+AuditStatusUpdateRequest:
+  $ref: './AuditStatusUpdateRequest.yml'
+SitePolygonResource:
+  $ref: './SitePolygonResource.yml'
+SiteCheckApproveResponse:
+  $ref: './SiteCheckApproveResponse.yml'

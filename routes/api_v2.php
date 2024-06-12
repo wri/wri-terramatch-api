@@ -8,7 +8,10 @@ use App\Http\Controllers\V2\Applications\AdminViewApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
+use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
+use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
@@ -118,6 +121,7 @@ use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
+use App\Http\Controllers\V2\Polygons\ViewAllSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
@@ -163,6 +167,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
@@ -197,6 +202,7 @@ use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
+use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use Illuminate\Support\Facades\Route;
@@ -521,6 +527,7 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
     Route::get('/{project}/sites', ViewProjectSitesController::class);
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
+    Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
     Route::get('/{project}/nurseries', ViewProjectNurseriesController::class);
     Route::get('/{project}/files', ViewProjectGalleryController::class);
     Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
@@ -564,6 +571,7 @@ Route::prefix('sites/{site}')->group(function () {
     Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
+    Route::get('/check-approve', SiteCheckApproveController::class);
 });
 
 Route::prefix('geometry')->group(function () {
@@ -669,6 +677,15 @@ ModelInterfaceBindingMiddleware::with(
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
+
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::post('/{auditable}', StoreAuditStatusController::class);
+    Route::get('/{auditable}', GetAuditStatusController::class);
+}, prefix: 'audit-status');
+
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
+});
 
 Route::prefix('dashboard')->group(function () {
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);

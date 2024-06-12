@@ -2537,6 +2537,11 @@
 /v2/geometry/{UUID}:
   put:
     $ref: './Geometry/put-v2-geometry-uuid.yml'
+/v2/audit-status/{ENTITY}/{UUID}:
+  get:
+    $ref: './AuditStatus/get-v2-audit-status.yml'
+  post:
+    $ref: './AuditStatus/post-v2-audit-status.yml'
 /v2/sites/{site}/polygon:
   get:
     $ref: './Sites/get-v2-sites-polygons-data.yml'
@@ -2616,3 +2621,12 @@
 /v2/type-entity:
   get:
     $ref: './Entity/get-v2-type-entity.yml'
+/v2/{ENTITY}/{UUID}/status:
+    put:
+      $ref: './Entity/put-v2-entity-uuid-status.yml'
+/v2/projects/{UUID}/site-polygons/all:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-site-polygons-all.yml'
+/v2/sites/{site}/check-approve:
+  get:
+    $ref: './Sites/get-v2-sites-uuid-check-approve.yml'
