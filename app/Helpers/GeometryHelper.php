@@ -5,7 +5,6 @@ namespace App\Helpers;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\CriteriaSite;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class GeometryHelper
@@ -122,26 +121,16 @@ class GeometryHelper
 
     public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
     {
-        // Fetch data from criteria_site with distinct criteria_id based on the latest created_at
-        $criteriaDataQuery = 'SELECT criteria_id, MAX(created_at) AS latest_created_at
-                            FROM criteria_site 
-                            WHERE polygon_id = ?
-                            GROUP BY criteria_id';
-
-        $criteriaData = DB::select($criteriaDataQuery, [$polygonGeometry->uuid]);
-
-        // Determine the validity of each criteria
-        $criteriaList = [];
-        foreach ($criteriaData as $criteria) {
-            $criteriaId = $criteria->criteria_id;
-            $valid = CriteriaSite::where(['polygon_id' => $polygonGeometry->uuid, 'criteria_id' => $criteriaId])->orderBy('created_at', 'desc')->select('valid')->first()?->valid;
-            $criteriaList[] = [
-                'criteria_id' => $criteriaId,
-                'latest_created_at' => $criteria->latest_created_at,
-                'valid' => $valid,
-            ];
-        }
-
-        return $criteriaList;
+        return CriteriaSite::whereIn(
+            'id',
+            $polygonGeometry
+                ->criteriaSite()
+                ->groupBy('criteria_id')
+                ->selectRaw('max(id) as latest_id')
+        )->get([
+            'criteria_id',
+            'valid',
+            'created_at as latest_created_at',
+        ]);
     }
 }
