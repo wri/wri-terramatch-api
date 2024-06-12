@@ -26,6 +26,7 @@ use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
 use App\Http\Controllers\V2\Dashboard\CountriesController;
 use App\Http\Controllers\V2\Dashboard\GetProjectsController;
 use App\Http\Controllers\V2\Dashboard\ProjectProfileDetailsController;
+use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
 use App\Http\Controllers\V2\Dashboard\CountryDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
@@ -698,6 +699,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/countries', CountriesController::class);
     Route::get('/get-projects', GetProjectsController::class);
     Route::get('/project-details/{project}', ProjectProfileDetailsController::class);
+    Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
 });
 
 Route::prefix('project-pipeline')->group(function () {

@@ -44826,6 +44826,47 @@ definitions:
             type: array
             items:
               type: string
+  DashboardTopProjectsResponse:
+    properties:
+      data:
+        type: object
+        properties:
+          top_projects_most_planted_trees:
+            type: array
+            items:
+              type: object
+              properties:
+                project:
+                  type: string
+                uuid:
+                  type: string
+                trees_planted:
+                  type: integer
+          top_tree_species_planted:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                amount:
+                  type: integer
+  DashboardTopPlantedTree:
+    type: object
+    properties:
+      project:
+        type: string
+      uuid:
+        type: string
+      trees_planted:
+        type: integer
+  DashboardTopTreeSpecies:
+    type: object
+    properties:
+      name:
+        type: string
+      amount:
+        type: integer
   ProjectPipeline:
     type: object
     properties:
@@ -95950,6 +95991,50 @@ paths:
                             type: array
                             items:
                               type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/top-trees-planted:
+    get:
+      summary: Retrieve top 10 projects and top 20 tree species planted
+      description: |
+        This endpoint returns Tops and metrics related to projects and tree species.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      top_projects_most_planted_trees:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            project:
+                              type: string
+                            uuid:
+                              type: string
+                            trees_planted:
+                              type: integer
+                      top_tree_species_planted:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            amount:
+                              type: integer
         '400':
           description: Bad request
         '500':
