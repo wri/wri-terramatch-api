@@ -5,6 +5,7 @@ namespace App\Models\V2;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User;
 
 class ProjectPipeline extends Model
 {
@@ -26,5 +27,10 @@ class ProjectPipeline extends Model
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    public function submittedBy()
+    {
+        return $this->belongsTo(User::class, 'submitted_by');
     }
 }

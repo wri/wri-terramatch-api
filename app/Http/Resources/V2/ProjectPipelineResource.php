@@ -20,7 +20,7 @@ class ProjectPipelineResource extends JsonResource
             ],
             'date' => $this->updated_at,
             'id' => $this->id,
-            'submitted_by' => $this->submitted_by,
+            'submitted_by' => ($this->submittedBy->first_name ?? '') . ' ' . ($this->submittedBy->last_name ?? ''),
             'program' => $this->program,
             'cohort' => $this->cohort,
             'publish_for' => $this->publish_for,

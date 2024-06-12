@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\User;
 
 return new class extends Migration {
     public function up()
@@ -10,7 +11,7 @@ return new class extends Migration {
         Schema::create('project_pipeline', function (Blueprint $table) {
             $table->id();
             $table->string('name', 256)->nullable();
-            $table->string('submitted_by', 256)->nullable();
+            $table->foreignIdFor(User::class, 'submitted_by')->nullable();
             $table->string('description', 500)->nullable();
             $table->string('program', 256)->nullable();
             $table->string('cohort', 256)->nullable();
