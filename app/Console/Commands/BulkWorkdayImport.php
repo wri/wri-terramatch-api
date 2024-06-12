@@ -236,19 +236,21 @@ class BulkWorkdayImport extends Command
             $collection = $column['collection'];
             $data = $this->getData($collection, $column['demographic'], $cell, $csvRow);
             if (! empty($data)) {
-                $combinedRecords = false;
-                foreach ($row[$collection] ?? [] as &$existingData) {
-                    if ($existingData['type'] == $data['type'] &&
-                        $existingData['subtype'] == $data['subtype'] &&
-                        $existingData['name'] == $data['name']) {
-                        $combinedRecords = true;
-                        $existingData['amount'] += $data['amount'];
+                $existingIndex = collect($row[$collection] ?? [])->search(
+                    fn($demographic) =>
+                        $demographic['type'] === $data['type'] &&
+                        $demographic['subtype'] === $data['subtype'] &&
+                        $demographic['name'] === $data['name']
+                );
 
-                        break;
-                    }
-                }
-                if (! $combinedRecords) {
+                if ($existingIndex === false) {
                     $row[$collection][] = $data;
+                } else {
+                    data_set(
+                        $row,
+                        "$collection.$existingIndex.amount",
+                        $data["amount"] + data_get($row, "$collection.$existingIndex.amount")
+                    );
                 }
             }
         }
