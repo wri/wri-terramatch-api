@@ -24,6 +24,7 @@ use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
+use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
 use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
@@ -699,6 +700,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
+    Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
 });
 
 Route::get('/type-entity', EntityTypeController::class);
