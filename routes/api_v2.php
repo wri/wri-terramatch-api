@@ -20,6 +20,8 @@ use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
 use App\Http\Controllers\V2\Dashboard\CountriesController;
+use App\Http\Controllers\V2\Dashboard\GetProjectsController;
+use App\Http\Controllers\V2\Dashboard\ProjectProfileDetailsController;
 use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
 use App\Http\Controllers\V2\Dashboard\CountryDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
@@ -691,5 +693,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/active-countries', ActiveCountriesTableController::class);
     Route::get('/countries', CountriesController::class);
+    Route::get('/get-projects', GetProjectsController::class);
+    Route::get('/project-details/{project}', ProjectProfileDetailsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
 });

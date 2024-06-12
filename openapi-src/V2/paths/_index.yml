@@ -2600,6 +2600,12 @@
 /v2/dashboard/countries:
   get:
     $ref: './Dashboard/get-v2-dashboard-countries.yml'
+/v2/dashboard/get-projects:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-projects.yml'
+/v2/dashboard/project-details/{project}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-project-details.yml'
 /v2/dashboard/top-trees-planted:
   get:
     $ref: './Dashboard/get-v2-dashboard-top-trees-planted.yml'
