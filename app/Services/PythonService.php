@@ -16,6 +16,7 @@ class PythonService
         $outputGeojson = $this->getTemporaryFile('output.geojson');
 
         $writeHandle = fopen($inputGeojson, 'w');
+
         try {
             fwrite($writeHandle, json_encode($geojson));
         } finally {
