@@ -2615,6 +2615,9 @@
 /v2/dashboard/project-data/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-project-data-uuid.yml'
+/v2/dashboard/view-project/{uuid}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-view-project-uuid.yml'
 /v2/terrafund/polygon/geojson/{uuid}:
   get:
     $ref: './Terrafund/get-v2-terrafund-polygon-geojson-uuid.yml'

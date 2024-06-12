@@ -44770,6 +44770,14 @@ definitions:
     properties:
       can_approve:
         type: boolean
+  DashboardProjectViewResponse:
+    type: object
+    properties:
+      data:
+        object: object
+        properties:
+          allowed:
+            type: boolean
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -96044,6 +96052,30 @@ paths:
                       description: Key of the data field
         '500':
           description: Error in queries
+  '/v2/dashboard/view-project/{uuid}':
+    get:
+      summary: Get allowed to project
+      tags:
+        - Get allowed to project
+      parameters:
+        - in: path
+          name: uuid
+          type: string
+          description: UUID of the project
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                object: object
+                properties:
+                  allowed:
+                    type: boolean
+        '404':
+          description: Polygon not found
   '/v2/terrafund/polygon/geojson/{uuid}':
     get:
       summary: Retrieve polygon GeoJSON by UUID
