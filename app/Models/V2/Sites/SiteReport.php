@@ -91,6 +91,8 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'polygon_status',
         'answers',
         'paid_other_activity_description',
+        'num_trees_regenerating',
+        'regeneration_description',
 
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
@@ -279,6 +281,11 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function getTotalTreesPlantedCountAttribute(): int
     {
         return $this->treeSpecies()->sum('amount');
+    }
+
+    public function getTotalSeedsPlantedCountAttribute(): int
+    {
+        return $this->seedings()->sum('amount');
     }
 
     public function getOrganisationAttribute()
