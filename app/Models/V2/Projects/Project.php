@@ -349,13 +349,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
 
     public function getRegeneratedTreesCountAttribute(): int
     {
-        $sites = Site::where('project_id', $this->id)->get();
-        $total = 0;
-        foreach ($sites as $site) {
-            $total += $site->regenerated_trees_count;
-        }
-
-        return $total;
+        return $this->submittedSiteReports()->sum('num_trees_regenerating');
     }
 
     public function getWorkdayCountAttribute(): int
@@ -489,11 +483,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     }
 
     /**
-     * @return array The array of site report IDs for all reports associated with sites that have been approved, and
-     *   have a report status not in due or started (reports that have been submitted).
+     * @return HasManyThrough The query of site report IDs for all reports associated with sites that have been
+     * approved, and have a report status not in due or started (reports that have been submitted).
      */
-    private function submittedSiteReportIds(): array
+    private function submittedSiteReportIds(): HasManyThrough
     {
-        return $this->submittedSiteReports()->pluck('v2_site_reports.id')->toArray();
+        return $this->submittedSiteReports()->select('v2_site_reports.id');
     }
 }
