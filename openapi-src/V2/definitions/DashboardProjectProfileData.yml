@@ -33,7 +33,7 @@ properties:
         type: array
         items:
           type: string
-  cover_images:
+  cover_image:
     type: object
     properties:
       data:
