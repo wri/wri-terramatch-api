@@ -34,7 +34,4 @@ properties:
         items:
           type: string
   cover_image:
-    type: object
-    properties:
-      data:
-        $ref: './_index.yml#/V2FileRead'
+    $ref: './_index.yml#/V2FileRead'
