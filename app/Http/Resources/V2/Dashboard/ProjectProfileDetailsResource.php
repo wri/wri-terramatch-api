@@ -3,6 +3,7 @@
 namespace App\Http\Resources\V2\Dashboard;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\V2\Forms\FormOptionListOption;
 
 class ProjectProfileDetailsResource extends JsonResource
 {
@@ -14,16 +15,23 @@ class ProjectProfileDetailsResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $data = [
             'name' => $this->name,
-            'descriptionObjetive' => $this->descriptionObjetive,
-            'country' => $this->country,
-            'countrySlug' => $this->countrySlug,
-            'organisation' => $this->organisation,
-            'survivalRate' => $this->survivalRate,
-            'restorationStrategy' => $this->restorationStrategy,
-            'targetLandUse' => $this->targetLandUse,
-            'landTenure' => $this->landTenure,
+            'descriptionObjetive' => $this->objectives,
+            'country' => $this->getCountryLabel($this->country),
+            'countrySlug' => $this->country,
+            'organisation' => $this->organisation->type,
+            'survivalRate' => $this->survival_rate,
+            'restorationStrategy' => $this->restoration_strategy,
+            'targetLandUse' => $this->land_use_types,
+            'landTenure' => $this->land_tenure_project_area,
         ];
+
+        return $this->appendFilesToResource($data);
+    }
+
+    public function getCountryLabel($slug)
+    {
+        return FormOptionListOption::where('slug', $slug)->value('label');
     }
 }

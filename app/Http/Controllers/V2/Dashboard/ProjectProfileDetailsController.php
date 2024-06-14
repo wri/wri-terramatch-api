@@ -14,25 +14,8 @@ class ProjectProfileDetailsController extends Controller
     {
         if ($request->has('uuid')) {
             $project = Project::where('uuid', $request->input('uuid'))->first();
-            $response = (object)[
-                'name' => $project->name,
-                'descriptionObjetive' => $project->objectives,
-                'country' => $this->getCountry($project->country),
-                'countrySlug' => $project->country,
-                'organisation' => $project->organisation->type,
-                'survivalRate' => $project->survival_rate,
-                'restorationStrategy' => $project->restoration_strategy,
-                'targetLandUse' => $project->land_use_types,
-                'landTenure' => $project->land_tenure_project_area,
-            ];
-
-            return new ProjectProfileDetailsResource($response);
+            return new ProjectProfileDetailsResource($project);
         }
 
-    }
-
-    public function getCountry($slug)
-    {
-        return FormOptionListOption::where('slug', $slug)->value('label');
     }
 }
