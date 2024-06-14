@@ -163,6 +163,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'cover-images' => [
+            'validation' => 'general-documents',
+            'multiple' => false,
+        ],
     ];
 
     public $casts = [
