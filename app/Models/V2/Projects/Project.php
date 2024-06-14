@@ -163,7 +163,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             'validation' => 'general-documents',
             'multiple' => true,
         ],
-        'cover-images' => [
+        'cover_images' => [
             'validation' => 'general-documents',
             'multiple' => false,
         ],

@@ -44375,6 +44375,37 @@ definitions:
                 type: array
                 items:
                   type: string
+          cover_images:
+            type: object
+            properties:
+              data:
+                title: V2FileRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  url:
+                    type: string
+                  thumb_url:
+                    type: string
+                  collection_name:
+                    type: string
+                  title:
+                    type: string
+                  file_name:
+                    type: string
+                  mime_type:
+                    type: string
+                  size:
+                    type: integer
+                  lat:
+                    type: integer
+                  lng:
+                    type: integer
+                  is_public:
+                    type: boolean
+                  created_at:
+                    type: string
   DashboardProjectProfileData:
     type: object
     properties:
@@ -44411,6 +44442,37 @@ definitions:
             type: array
             items:
               type: string
+      cover_images:
+        type: object
+        properties:
+          data:
+            title: V2FileRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              url:
+                type: string
+              thumb_url:
+                type: string
+              collection_name:
+                type: string
+              title:
+                type: string
+              file_name:
+                type: string
+              mime_type:
+                type: string
+              size:
+                type: integer
+              lat:
+                type: integer
+              lng:
+                type: integer
+              is_public:
+                type: boolean
+              created_at:
+                type: string
   DashboardJobsCreatedResponse:
     type: object
     properties:
@@ -95825,6 +95887,37 @@ paths:
                             type: array
                             items:
                               type: string
+                      cover_images:
+                        type: object
+                        properties:
+                          data:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              created_at:
+                                type: string
         '400':
           description: Bad request
         '500':
