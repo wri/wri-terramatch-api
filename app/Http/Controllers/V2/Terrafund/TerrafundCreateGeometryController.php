@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Process\Process;
@@ -62,7 +61,9 @@ class TerrafundCreateGeometryController extends Controller
      */
     public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = null)
     {
-        $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
+        $tempDir = sys_get_temp_dir();
+        $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+        $geojsonData = file_get_contents($geojsonPath);
         $geojson = json_decode($geojsonData, true);
 
         SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
@@ -108,7 +109,9 @@ class TerrafundCreateGeometryController extends Controller
 
     public function getGeometryProperties(string $geojsonFilename)
     {
-        $geojsonData = Storage::get("public/geojson_files/{$geojsonFilename}");
+        $tempDir = sys_get_temp_dir();
+        $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+        $geojsonData = file_get_contents($geojsonPath);
         $geojson = json_decode($geojsonData, true);
         if (! isset($geojson['features'])) {
             return ['error' => 'GeoJSON file does not contain features'];
@@ -132,15 +135,12 @@ class TerrafundCreateGeometryController extends Controller
         if ($request->hasFile('file')) {
             $site_id = $request->input('uuid');
             $kmlfile = $request->file('file');
-            $directory = storage_path('app/public/kml_files');
-            if (! file_exists($directory)) {
-                mkdir($directory, 0755, true);
-            }
+            $tempDir = sys_get_temp_dir();
             $filename = uniqid('kml_file_') . '.' . $kmlfile->getClientOriginalExtension();
-            $kmlfile->move($directory, $filename);
+            $kmlPath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+            $kmlfile->move($tempDir, $filename);
             $geojsonFilename = Str::replaceLast('.kml', '.geojson', $filename);
-            $geojsonPath = storage_path("app/public/geojson_files/{$geojsonFilename}");
-            $kmlPath = storage_path("app/public/kml_files/{$filename}");
+            $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
             $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $kmlPath]);
             $process->run();
             if (! $process->isSuccessful()) {
@@ -185,7 +185,8 @@ class TerrafundCreateGeometryController extends Controller
             if ($file->getClientOriginalExtension() !== 'zip') {
                 return response()->json(['error' => 'Only ZIP files are allowed'], 400);
             }
-            $directory = storage_path('app/public/shapefiles/' . uniqid('shapefile_'));
+            $tempDir = sys_get_temp_dir();
+            $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
             mkdir($directory, 0755, true);
 
             // Extract the contents of the ZIP file
@@ -198,7 +199,7 @@ class TerrafundCreateGeometryController extends Controller
                     return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
                 }
                 $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
-                $geojsonPath = storage_path("app/public/geojson_files/{$geojsonFilename}");
+                $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
                 $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
                 $process->run();
                 if (! $process->isSuccessful()) {
@@ -216,7 +217,6 @@ class TerrafundCreateGeometryController extends Controller
                 return response()->json(['error' => 'Failed to open the ZIP file'], 400);
             }
         } else {
-
             return response()->json(['error' => 'No file uploaded'], 400);
         }
     }
@@ -313,28 +313,10 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Polygon not found for the given UUID'], 404);
         }
 
-        // Fetch data from criteria_site with distinct criteria_id based on the latest created_at
-        $criteriaDataQuery = 'SELECT criteria_id, MAX(created_at) AS latest_created_at
-                          FROM criteria_site 
-                          WHERE polygon_id = ?
-                          GROUP BY criteria_id';
+        $criteriaList = GeometryHelper::getCriteriaDataForPolygonGeometry($geometry);
 
-        $criteriaData = DB::select($criteriaDataQuery, [$uuid]);
-
-        if (empty($criteriaData)) {
+        if (empty($criteriaList)) {
             return response()->json(['error' => 'Criteria data not found for the given polygon ID'], 404);
-        }
-
-        // Determine the validity of each criteria
-        $criteriaList = [];
-        foreach ($criteriaData as $criteria) {
-            $criteriaId = $criteria->criteria_id;
-            $valid = CriteriaSite::where(['polygon_id' => $uuid, 'criteria_id' => $criteriaId])->orderBy('created_at', 'desc')->select('valid')->first()?->valid;
-            $criteriaList[] = [
-              'criteria_id' => $criteriaId,
-              'latest_created_at' => $criteria->latest_created_at,
-              'valid' => $valid,
-            ];
         }
 
         return response()->json(['polygon_id' => $uuid, 'criteria_list' => $criteriaList]);
@@ -345,12 +327,10 @@ class TerrafundCreateGeometryController extends Controller
         if ($request->hasFile('file')) {
             $site_id = $request->input('uuid');
             $file = $request->file('file');
-            $directory = storage_path('app/public/geojson_files');
-            if (! file_exists($directory)) {
-                mkdir($directory, 0755, true);
-            }
+            $tempDir = sys_get_temp_dir();
             $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
-            $file->move($directory, $filename);
+            $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+            $file->move($tempDir, $filename);
             $uuid = $this->insertGeojsonToDB($filename, $site_id);
             if (is_array($uuid) && isset($uuid['error'])) {
                 return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);

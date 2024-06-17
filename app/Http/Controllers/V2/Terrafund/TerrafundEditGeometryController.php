@@ -5,6 +5,8 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -57,22 +59,42 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-            if (! $sitePolygon) {
-                Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
 
-                return null;
-            }
-            $project = $sitePolygon->project;
+            if ($sitePolygon) {
+                $relatedSite = Site::where('uuid', $sitePolygon->site_id)->first();
+                $project = Project::where('id', $relatedSite->project_id)->first();
 
-            if ($project) {
-                $geometryHelper = new GeometryHelper();
-                $centroid = $geometryHelper->centroidOfProject($project->uuid);
+                if ($project) {
+                    $geometryHelper = new GeometryHelper();
+                    $centroid = $geometryHelper->centroidOfProject($project->uuid);
 
-                if ($centroid === null) {
-                    Log::warning("Invalid centroid for project UUID: $project->uuid");
+                    if ($centroid === null) {
+                        Log::warning("Invalid centroid for project UUID: $project->uuid");
+                    }
+                    $centroidData = json_decode($centroid, true);
+
+                    if (isset($centroidData['coordinates']) && is_array($centroidData['coordinates'])) {
+                        $longitude = $centroidData['coordinates'][0];
+                        $latitude = $centroidData['coordinates'][1];
+                        $project->lat = $latitude;
+                        $project->long = $longitude;
+                        $project->save();
+
+                        Log::info("Updated project centroid for project UUID: $project->uuid with lat: $latitude, lng: $longitude");
+                    } else {
+                        Log::warning("Centroid data for project UUID: $project->uuid is malformed.");
+                    }
+                    if (is_array($centroid) && isset($centroid['lat']) && isset($centroid['lng'])) {
+                        Log::info("Updated project centroid for project UUID: $project->uuid with lat: {$centroid['lat']}, lng: {$centroid['lng']}");
+                    } else {
+                        Log::error('Centroid is not properly defined. Centroid data: ' . print_r($centroid, true));
+                    }
+
+                } else {
+                    Log::warning("Project with UUID $relatedSite->project_id not found.");
                 }
             } else {
-                Log::warning('Project UUID not found.');
+                Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
             }
         } catch (\Exception $e) {
             Log::error('Error updating project centroid: ' . $e->getMessage());
