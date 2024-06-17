@@ -37,6 +37,13 @@ abstract class Policy
         return ! $this->isGuest($user) && $user->role == 'admin';
     }
 
+    protected function isNewRoleUser(?UserModel $user): bool
+    {
+        $newRoles = ['project_developer', 'funder', 'government', 'user'];
+
+        return in_array($user->role, $newRoles);
+    }
+
     protected function isServiceAccount(?UserModel $user): bool
     {
         return ! $this->isGuest($user) && $user->role == 'service';
@@ -49,7 +56,7 @@ abstract class Policy
 
     protected function isVerifiedUser(?UserModel $user): bool
     {
-        return $this->isUser($user) && (bool) $user->email_address_verified_at;
+        return ($this->isUser($user) || $this->isNewRoleUser($user)) && (bool) $user->email_address_verified_at;
     }
 
     protected function isVerifiedAdmin(?UserModel $user): bool
@@ -106,11 +113,11 @@ abstract class Policy
                 $ppcDueSubmissionsForUser = DueSubmission::query()
                     ->where(function ($query) use ($userProgrammeIds) {
                         $query->where('due_submissionable_type', \App\Models\Programme::class)
-                        ->whereIn('due_submissionable_id', $userProgrammeIds);
+                            ->whereIn('due_submissionable_id', $userProgrammeIds);
                     })
                     ->orWhere(function ($query) use ($userSiteIds) {
                         $query->where('due_submissionable_type', \App\Models\Site::class)
-                        ->whereIn('due_submissionable_id', $userSiteIds);
+                            ->whereIn('due_submissionable_id', $userSiteIds);
                     })
                     ->pluck('id');
 
