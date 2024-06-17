@@ -154,7 +154,7 @@ function assignSpatieRole($user)
 {
     switch($user->role) {
         case 'user':
-            $user->assignRole('project-developer');
+            $user->assignRole('project_developer');
 
             break;
         case 'admin':
@@ -167,5 +167,12 @@ function assignSpatieRole($user)
             break;
         case 'service':
             $user->assignRole('greenhouse-service-account');
+
+        case 'project_developer':
+        case 'funder':
+        case 'government':
+            $user->assignRole($user->role);
+
+            break;
     }
 }
