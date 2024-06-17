@@ -31,17 +31,13 @@ class Kernel extends ConsoleKernel
         $schedule->command('generate-control-site-due-submissions')->weeklyOn(5, '00:00');
 
         // PPC report jobs
-        $schedule->job(new CreateTaskDueJob('ppc', 4))->yearlyOn(1, 7);
-
-        $schedule->job(new CreateTaskDueJob('ppc', 7))->yearlyOn(3, 15);
-
-        $schedule->job(new CreateTaskDueJob('ppc', 10))->yearlyOn(7, 7);
-
-        $schedule->job(new CreateTaskDueJob('ppc', 1))->yearlyOn(10, 6);
+        $schedule->job(new CreateTaskDueJob('ppc', 4, 4))->yearlyOn(3, 14);
+        $schedule->job(new CreateTaskDueJob('ppc', 7, 5))->yearlyOn(6, 14);
+        $schedule->job(new CreateTaskDueJob('ppc', 10, 4))->yearlyOn(9, 13);
+        $schedule->job(new CreateTaskDueJob('ppc', 1, 3))->yearlyOn(12, 13);
 
         // Terrafund report jobs
         $schedule->job(new CreateTaskDueJob('terrafund'))->yearlyOn(12, 31);
-
         $schedule->job(new CreateTaskDueJob('terrafund'))->yearlyOn(6, 30);
 
         $schedule->job(new SendReportRemindersJob('terrafund'))->yearlyOn(5, 30);
@@ -52,7 +48,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('generate-application-export')->twiceDaily(13, 20);
         $schedule->command('generate-admin-all-entity-records-export')->twiceDaily(13, 20);
-        $schedule->command('populate-v2-temporary-sites')->hourly();
     }
 
     protected function commands()

@@ -26,12 +26,12 @@ class CreateTaskDueJob implements ShouldQueue
 
     private $frameworkKey;
 
-    public function __construct(string $frameworkKey, int $dueMonth = null)
+    public function __construct(string $frameworkKey, int $dueMonth = null, int $dueDay = null)
     {
         $this->frameworkKey = $frameworkKey;
 
         if ($dueMonth) {
-            $carbonDate = Carbon::createFromFormat('m', $dueMonth)->startOfMonth()->setDay(5);
+            $carbonDate = Carbon::createFromFormat('m', $dueMonth)->startOfMonth()->setDay($dueDay ?? 5);
             $this->dueDate = $carbonDate->isPast() ? $carbonDate->addYear() : $carbonDate;
         } else {
             $this->dueDate = Carbon::now()->addMonth()->startOfDay();
