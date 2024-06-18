@@ -8,7 +8,10 @@ use App\Http\Controllers\V2\Applications\AdminViewApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
+use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
+use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
@@ -19,6 +22,7 @@ use App\Http\Controllers\V2\Dashboard\CountryDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
+use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
@@ -27,6 +31,7 @@ use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\UpdateDisturbanceController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
+use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
@@ -117,6 +122,7 @@ use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
+use App\Http\Controllers\V2\Polygons\ViewAllSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
@@ -162,6 +168,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
@@ -196,6 +203,7 @@ use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
+use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use Illuminate\Support\Facades\Route;
@@ -520,6 +528,7 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
     Route::get('/{project}/sites', ViewProjectSitesController::class);
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
+    Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
     Route::get('/{project}/nurseries', ViewProjectNurseriesController::class);
     Route::get('/{project}/files', ViewProjectGalleryController::class);
     Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
@@ -563,6 +572,7 @@ Route::prefix('sites/{site}')->group(function () {
     Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
+    Route::get('/check-approve', SiteCheckApproveController::class);
 });
 
 Route::prefix('geometry')->group(function () {
@@ -637,8 +647,8 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
     Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
     Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
-    Route::get('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
-    Route::get('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
+    Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
+    Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
     Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
 
     Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
@@ -669,6 +679,15 @@ Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
 
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::post('/{auditable}', StoreAuditStatusController::class);
+    Route::get('/{auditable}', GetAuditStatusController::class);
+}, prefix: 'audit-status');
+
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
+});
+
 Route::prefix('dashboard')->group(function () {
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
     Route::get('/jobs-created', GetJobsCreatedController::class);
@@ -677,7 +696,11 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsByStatusOfProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
+    Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
+    Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
 });
+
+Route::get('/type-entity', EntityTypeController::class);

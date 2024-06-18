@@ -276,12 +276,18 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
   $ref: './GeometryPost.yml'
+AuditStatusCreateRequest:
+  $ref: './AuditStatusCreateRequest.yml'
+AuditStatusResponse:
+  $ref: './AuditStatusResponse.yml'
 V2TerrafundCriteriaData:
   $ref: './V2TerrafundCriteriaData.yml'
 V2TerrafundCriteriaSite:
   $ref: './V2TerrafundCriteriaSite.yml'
 SitePolygon:
   $ref: './SitePolygon.yml'
+GeometryString:
+  $ref: './GeometryString.yml'
 SitePolygonsDataResponse:
   $ref: './SitePolygonsDataResponse.yml'
 SitePolygonsBboxResponse:
@@ -292,6 +298,12 @@ SitePolygonCreateResponse:
   $ref: './SitePolygonCreateResponse.yml'
 GeoJSONResponse:
   $ref: './GeoJSONResponse.yml'
+FeatureCollection:
+  $ref: './FeatureCollection.yml'
+PolygonBboxResponse:
+  $ref: './SitePolygonsBboxResponse.yml'
+DashboardPolygonResponse:
+  $ref: './DashboardPolygonResponse.yml'
 DashboardJobsCreatedResponse:
   $ref: './DashboardJobsCreatedResponse.yml'
 DashboardJobsCreatedData:
@@ -314,3 +326,15 @@ DashboardBBOXCountry:
   $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
+GeojsonData:
+  $ref: './GeojsonData.yml'
+EntityTypeResponse:
+  $ref: './EntityTypeResponse.yml'
+AuditStatusUpdateRequest:
+  $ref: './AuditStatusUpdateRequest.yml'
+SitePolygonResource:
+  $ref: './SitePolygonResource.yml'
+SiteCheckApproveResponse:
+  $ref: './SiteCheckApproveResponse.yml'
+DashboardProjectViewResponse:
+  $ref: './DashboardProjectViewResponse.yml'

@@ -83,7 +83,6 @@ class PolygonService
         $criteriaSite->polygon_id = $polygonId;
         $criteriaSite->criteria_id = $criteriaId;
         $criteriaSite->valid = $valid;
-        $criteriaSite->created_by = Auth::user()?->id;
 
         try {
             $criteriaSite->save();

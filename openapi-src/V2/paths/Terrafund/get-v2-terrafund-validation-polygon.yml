@@ -1,4 +1,4 @@
-summary: Get validation results for a polygon
+summary: Run validation for a polygon
 parameters:
   - in: query
     name: uuid

@@ -1,0 +1,20 @@
+summary: Get all the SitePolygons from all sites belonging to a specific project
+operationId: get-v2-projects-uuid-site-polygons-all
+tags:
+  - V2 Projects
+  - V2 Sites
+  - V2 SitePolygons
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+produces:
+  - application/json
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: '../../definitions/_index.yml#/SitePolygonResource'
