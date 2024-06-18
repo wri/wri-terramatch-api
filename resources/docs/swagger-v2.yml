@@ -96854,26 +96854,27 @@ paths:
           name: country
           type: string
           description: Optional. Filter counts and metrics by country.
-      requestBody:
-        required: true
-        schema:
-          type: object
-          properties:
-            date:
-              type: string
-              format: date
-            id:
-              type: integer
-            submitted_by:
-              type: string
-            program:
-              type: string
-            cohort:
-              type: string
-            publish_for:
-              type: string
-            url:
-              type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              id:
+                type: integer
+              submitted_by:
+                type: string
+              program:
+                type: string
+              cohort:
+                type: string
+              publish_for:
+                type: string
+              url:
+                type: string
       responses:
         '201':
           description: Created
@@ -96955,25 +96956,27 @@ paths:
           in: path
           required: true
           description: edit a specific project pipeline.
-      requestBody:
-        schema:
-          type: object
-          properties:
-            date:
-              type: string
-              format: date
-            id:
-              type: integer
-            submitted_by:
-              type: string
-            program:
-              type: string
-            cohort:
-              type: string
-            publish_for:
-              type: string
-            url:
-              type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              id:
+                type: integer
+              submitted_by:
+                type: string
+              program:
+                type: string
+              cohort:
+                type: string
+              publish_for:
+                type: string
+              url:
+                type: string
       responses:
         '200':
           description: OK

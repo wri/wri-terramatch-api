@@ -8,9 +8,11 @@ parameters:
     in: path
     required: true
     description: edit a specific project pipeline.
-requestBody:
-  schema:
-    $ref: '../../definitions/_index.yml#/ProjectPipelinePost'
+  - name: body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/ProjectPipelinePost'
 responses:
   '200':
     description: OK

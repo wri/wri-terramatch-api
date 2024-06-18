@@ -7,10 +7,11 @@ parameters:
     name: country
     type: string
     description: Optional. Filter counts and metrics by country.
-requestBody:
-  required: true
-  schema:
-    $ref: '../../definitions/_index.yml#/ProjectPipelinePost'
+  - name: body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/ProjectPipelinePost'
 responses:
   '201':
     description: Created
