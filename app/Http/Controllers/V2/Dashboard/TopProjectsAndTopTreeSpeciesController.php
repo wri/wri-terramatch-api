@@ -5,9 +5,9 @@ namespace App\Http\Controllers\V2\Dashboard;
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\TopProjectsAndTopTreeSpeciesResource;
-use Illuminate\Http\Request;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TopProjectsAndTopTreeSpeciesController extends Controller

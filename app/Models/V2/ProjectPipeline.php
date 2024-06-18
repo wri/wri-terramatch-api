@@ -2,17 +2,15 @@
 
 namespace App\Models\V2;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\User;
 
 class ProjectPipeline extends Model
 {
     use HasFactory;
     use SoftDeletes;
-
-    public $table = 'project_pipeline';
 
     protected $fillable = [
         'name',
@@ -21,7 +19,7 @@ class ProjectPipeline extends Model
         'program',
         'cohort',
         'publish_for',
-        'url'
+        'url',
     ];
 
     public function getRouteKeyName()

@@ -8,7 +8,7 @@ use App\Models\User;
 return new class extends Migration {
     public function up()
     {
-        Schema::create('project_pipeline', function (Blueprint $table) {
+        Schema::create('project_pipelines', function (Blueprint $table) {
             $table->id();
             $table->string('name', 256)->nullable();
             $table->foreignIdFor(User::class, 'submitted_by')->nullable();

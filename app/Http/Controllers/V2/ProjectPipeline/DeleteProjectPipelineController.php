@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\V2\ProjectPipeline;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
 use App\Models\V2\ProjectPipeline;
+use Illuminate\Http\JsonResponse;
 
 class DeleteProjectPipelineController extends Controller
 {

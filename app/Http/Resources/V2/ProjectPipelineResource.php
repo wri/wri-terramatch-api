@@ -26,7 +26,7 @@ class ProjectPipelineResource extends JsonResource
             'publish_for' => $this->publish_for,
             'url' => $this->url,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
     }
 }
