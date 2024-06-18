@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Console\Commands\Traits\Abortable;
+use App\Console\Commands\Traits\AbortException;
+use App\Console\Commands\Traits\ExceptionLevel;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use App\Models\V2\ReportModel;
@@ -41,22 +43,27 @@ class MergeEntities extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        $type = $this->argument('type');
-        switch ($type) {
-            case 'sites':
-                $entities = $this->getEntities(Site::class);
-                $merged = $entities->shift();
-                $this->mergeSites($merged, $entities);
+        $this->executeAbortableScript(function () {
+            $type = $this->argument('type');
+            switch ($type) {
+                case 'sites':
+                    $entities = $this->getEntities(Site::class);
+                    $merged = $entities->shift();
+                    $this->mergeSites($merged, $entities);
 
-                break;
+                    break;
 
-            default:
-                $this->abort("Unsupported type: $type");
-        }
+                default:
+                    $this->abort("Unsupported type: $type");
+            }
+        });
     }
 
+    /**
+     * @throws AbortException
+     */
     private function getEntities($modelClass): Collection
     {
         $mergedUuid = $this->argument('merged');
@@ -75,6 +82,9 @@ class MergeEntities extends Command
         return collect([$merged])->push($feeders)->flatten();
     }
 
+    /**
+     * @throws AbortException
+     */
     private function confirmMerge(string $mergeName, Collection $feederNames): void
     {
         $mergeMessage = "Would you like to execute this merge? This operation cannot easily be undone...\n".
@@ -82,12 +92,15 @@ class MergeEntities extends Command
             "  Feeder Entity Names: \n    " .
             $feederNames->join("\n    ")
             . "\n\n";
-        $this->assert($this->confirm($mergeMessage), 'Merge aborted', 0);
+        $this->assert($this->confirm($mergeMessage), 'Merge aborted', ExceptionLevel::Error, 0);
     }
 
     // Note for future expansion, the code to merge nurseries would be basically the same as this, but this pattern
     // wouldn't work for projects because it relies on ensuring that the parent entity (the project for sites/nurseries)
     // is the same, and projects would need to dig into merging their sites and nurseries as well.
+    /**
+     * @throws AbortException
+     */
     private function mergeSites(Site $mergeSite, Collection $feederSites): void
     {
         $frameworks = $feederSites->map(fn (Site $site) => $site->framework_key)->push($mergeSite->framework_key)->unique();

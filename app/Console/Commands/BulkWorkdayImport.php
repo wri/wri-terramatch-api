@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Console\Commands\Traits\Abortable;
+use App\Console\Commands\Traits\AbortException;
+use App\Console\Commands\Traits\ExceptionLevel;
 use App\Models\SiteSubmission;
 use App\Models\Submission;
 use App\Models\V2\Projects\ProjectReport;
@@ -12,22 +14,9 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-/**
- * Used only in this file to override the default behavior of abort / assert and allow (in some cases) the script
- * to continue after an assertion failure or abort call so that all the errors for a process can be collected and
- * reported together. This override of the abort process is only used when parsing and checking the data from the
- * input CSV in order to provide a report of all errors on the input data without requiring a tedious back and forth
- * process of fixing one error only to uncover the next one.
- */
-class AbortException extends \Exception
-{
-}
-
 class BulkWorkdayImport extends Command
 {
-    use Abortable {
-        abort as _abort;
-    }
+    use Abortable;
 
     /**
      * The name and signature of the console command.
@@ -119,7 +108,7 @@ class BulkWorkdayImport extends Command
      */
     public function handle(): void
     {
-        try {
+        $this->executeAbortableScript(function () {
             $type = $this->argument('type');
 
             $this->assert(! empty(self::COLLECTIONS[$type]), "Unknown type: $type");
@@ -135,23 +124,28 @@ class BulkWorkdayImport extends Command
                 try {
                     $rows->push($this->parseRow($csvRow));
                 } catch (AbortException $e) {
-                    $parseErrors[] = $e->getMessage();
+                    $parseErrors[] = $e;
                 }
             }
 
             if (! empty($parseErrors)) {
-                echo "Errors encountered during parsing CSV Rows:\n";
+                $this->warn("Errors encountered during parsing CSV Rows:\n");
                 foreach ($parseErrors as $error) {
-                    echo $error . "\n";
+                    $this->logException($error);
                 }
-                $this->_abort('Parsing aborted');
+
+                $firstError = collect($parseErrors)->first(fn ($e) => $e->level == ExceptionLevel::Error);
+                if (! empty($firstError)) {
+                    $this->error("Parsing aborted\n");
+                    exit(1);
+                }
             }
 
             $rows = $rows->filter();
             fclose($fileHandle);
 
             if ($this->option('dry-run')) {
-                echo json_encode($rows, JSON_PRETTY_PRINT) . "\n\n";
+                $this->info(json_encode($rows, JSON_PRETTY_PRINT) . "\n\n");
             } else {
                 // A separate loop so we can validate as much input as possible before we start persisting any records
                 foreach ($rows as $reportData) {
@@ -159,21 +153,14 @@ class BulkWorkdayImport extends Command
                     $this->persistWorkdays($report, $reportData);
                 }
 
-                echo "Workday import complete!\n\n";
+                $this->info("Workday import complete!\n\n");
             }
-        } catch (AbortException $e) {
-            $this->_abort($e->getMessage());
-        }
+        });
     }
 
     /**
      * @throws AbortException
      */
-    protected function abort(string $message, int $exitCode = 1): void
-    {
-        throw new AbortException($message);
-    }
-
     protected function parseHeaders($headerRow): void
     {
         $idHeader = $this->modelConfig['id'];
@@ -199,6 +186,9 @@ class BulkWorkdayImport extends Command
         $this->assert(array_key_exists('submission_id', $this->indices), "No $submissionIdHeader column found");
     }
 
+    /**
+     * @throws AbortException
+     */
     protected function getColumnDescription($header): ?array
     {
         if (! Str::startsWith($header, ['Paid_', 'Vol_'])) {
@@ -231,6 +221,9 @@ class BulkWorkdayImport extends Command
         return ['collection' => $collection, 'demographic' => $demographic];
     }
 
+    /**
+     * @throws AbortException
+     */
     protected function parseRow($csvRow): ?array
     {
         $row = [];
@@ -273,7 +266,11 @@ class BulkWorkdayImport extends Command
             ['old_id' => $submissionId, 'old_model' => $this->modelConfig['old_model']]
         )->first();
         $this->assert(
-            $report != null && $report->{$this->modelConfig['parent']}?->ppc_external_id == $parentId,
+            $report != null,
+            "No report with submission id $submissionId found\n"
+        );
+        $this->assert(
+            $report->{$this->modelConfig['parent']}?->ppc_external_id == $parentId,
             "Parent / Report ID mismatch: [Parent ID: $parentId, Submission ID: $submissionId]\n"
         );
 
@@ -302,7 +299,8 @@ class BulkWorkdayImport extends Command
                             'submission_id' => $submissionId,
                             'collection' => $collection,
                             'totals' => $totals,
-                        ], JSON_PRETTY_PRINT) . "\n"
+                        ], JSON_PRETTY_PRINT) . "\n",
+                    ExceptionLevel::Warning
                 );
             }
         }
@@ -310,6 +308,9 @@ class BulkWorkdayImport extends Command
         return $row;
     }
 
+    /**
+     * @throws AbortException
+     */
     protected function getData($collection, $demographic, $cell, $row): array
     {
         if (empty($cell)) {
@@ -348,21 +349,23 @@ class BulkWorkdayImport extends Command
 
         $modelDescription = Str::replace('-', ' ', Str::title($report->shortName)) .
             ' (old_id=' . $report->old_id . ', uuid=' . $report->uuid . ')';
-        echo "Persisting data for $modelDescription\n";
+        $this->info("Persisting data for $modelDescription\n");
         foreach ($collections as $collection) {
             if (empty($data[$collection])) {
                 continue;
             }
 
             if ($report->workdays()->collection($collection)->count() > 0) {
-                echo "WARNING!! Report already has demographics recorded for this collection, skipping!\n";
-                echo "  collection: $collection\n";
-                echo '  demographics: ' . json_encode($data[$collection], JSON_PRETTY_PRINT) . "\n";
+                $this->warn(
+                    "WARNING!! Report already has demographics recorded for this collection, skipping!\n" .
+                    "  collection: $collection\n" .
+                    '  demographics: ' . json_encode($data[$collection], JSON_PRETTY_PRINT) . "\n"
+                );
 
                 continue;
             }
 
-            echo "Populating collection $collection\n";
+            $this->info("Populating collection $collection\n");
             $workday = Workday::create([
                 'workdayable_type' => get_class($report),
                 'workdayable_id' => $report->id,
@@ -374,6 +377,6 @@ class BulkWorkdayImport extends Command
             }
         }
 
-        echo "Persistence complete for $modelDescription\n\n";
+        $this->info("Persistence complete for $modelDescription\n\n");
     }
 }
