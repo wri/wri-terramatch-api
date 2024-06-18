@@ -297,11 +297,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
 
     public function getRegeneratedTreesCountAttribute(): int
     {
-        if (empty($this->a_nat_regeneration) || empty($this->a_nat_regeneration_trees_per_hectare)) {
-            return 0;
-        } else {
-            return $this->a_nat_regeneration * $this->a_nat_regeneration_trees_per_hectare;
-        }
+        return $this->reports()->hasBeenSubmitted()->sum('num_trees_regenerating');
     }
 
     public function getWorkdayCountAttribute(): int

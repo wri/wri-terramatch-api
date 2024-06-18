@@ -18,6 +18,11 @@ class GetTreeSpeciesForEntityController extends Controller
             ->where('speciesable_type', get_class($entity))
             ->where('speciesable_id', $entity->id);
 
+        $filter = $request->query('filter');
+        if (! empty($filter['collection'])) {
+            $query->where('collection', $filter['collection']);
+        }
+
         return new TreeSpeciesCollection($query->paginate());
     }
 }
