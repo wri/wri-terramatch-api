@@ -84,7 +84,7 @@ class ViewProjectController extends Controller
 
                         return response()->json(['error' => 'An error occurred while fetching funder projects', 'message' => $errorMessage], 500);
                     }
-                } elseif ($role === 'project_developer') {
+                } elseif ($role === 'project-developer') {
                     try {
                         $projectIds = ProjectInvite::where('email_address', $user->email_address)->pluck('project_id');
                         $projectUuids = Project::whereIn('id', $projectIds)->where('framework_key', 'terrafund')->pluck('uuid');
