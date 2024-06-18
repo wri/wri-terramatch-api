@@ -9,14 +9,10 @@ parameters:
     description: Optional. Filter counts and metrics by country.
 requestBody:
   required: true
-  content:
-    application/json:
-      schema:
-        $ref: '../../definitions/_index.yml#/ProjectPipelinePost'
+  schema:
+    $ref: '../../definitions/_index.yml#/ProjectPipelinePost'
 responses:
   '201':
     description: Created
-    content:
-      application/json:
-        schema:
-          $ref: '../../definitions/_index.yml#/ProjectPipelinePost'
+    schema:
+      $ref: '../../definitions/_index.yml#/ProjectPipelinePost'

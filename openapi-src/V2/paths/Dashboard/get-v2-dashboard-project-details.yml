@@ -10,10 +10,8 @@ parameters:
 responses:
   '200':
     description: Successful response
-    content:
-      application/json:
-        schema:
-          $ref: '../../definitions/_index.yml#/DashboardProjectProfileResponse'
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardProjectProfileResponse'
   '400':
     description: Bad request
   '500':
