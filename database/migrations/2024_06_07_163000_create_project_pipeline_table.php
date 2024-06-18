@@ -24,6 +24,6 @@ return new class extends Migration {
 
     public function down()
     {
-        Schema::dropIfExists('project_pipeline');
+        Schema::dropIfExists('project_pipelines');
     }
 };
