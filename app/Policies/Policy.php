@@ -113,11 +113,11 @@ abstract class Policy
                 $ppcDueSubmissionsForUser = DueSubmission::query()
                     ->where(function ($query) use ($userProgrammeIds) {
                         $query->where('due_submissionable_type', \App\Models\Programme::class)
-                            ->whereIn('due_submissionable_id', $userProgrammeIds);
+                        ->whereIn('due_submissionable_id', $userProgrammeIds);
                     })
                     ->orWhere(function ($query) use ($userSiteIds) {
                         $query->where('due_submissionable_type', \App\Models\Site::class)
-                            ->whereIn('due_submissionable_id', $userSiteIds);
+                        ->whereIn('due_submissionable_id', $userSiteIds);
                     })
                     ->pluck('id');
 
