@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Sites\CriteriaSite;
 use Illuminate\Support\Facades\Log;
 
 class GeometryHelper
@@ -91,6 +92,9 @@ class GeometryHelper
 
     public static function getPolygonsBbox($polygonsIds)
     {
+        if (count($polygonsIds) === 0) {
+            return null;
+        }
         $envelopes = PolygonGeometry::whereIn('uuid', $polygonsIds)
           ->selectRaw('ST_ASGEOJSON(ST_Envelope(geom)) as envelope')
           ->get();
@@ -113,5 +117,20 @@ class GeometryHelper
         }
 
         return [$minX, $minY, $maxX, $maxY];
+    }
+
+    public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
+    {
+        return CriteriaSite::whereIn(
+            'id',
+            $polygonGeometry
+                ->criteriaSite()
+                ->groupBy('criteria_id')
+                ->selectRaw('max(id) as latest_id')
+        )->get([
+            'criteria_id',
+            'valid',
+            'created_at as latest_created_at',
+        ]);
     }
 }

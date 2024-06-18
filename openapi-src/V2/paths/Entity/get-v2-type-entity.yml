@@ -1,0 +1,39 @@
+summary: Get Entity Type
+description: |
+  Determine the type of entity based on UUID.
+parameters:
+  - in: query
+    name: uuid
+    required: true
+    description: UUID of the entity
+    type: string
+  - in: query
+    name: type
+    required: true
+    description: type of the entity
+    type: string
+  - in: query
+    name: status
+    required: false
+    description: Comma-separated list of status values to filter by
+    type: string
+  - in: query
+    name: sort
+    required: false
+    description: Sort criteria in the format `sort[field]=direction`, e.g. `sort[poly_name]=asc or sort[status]=desc`
+    type: string
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/EntityTypeResponse'
+  '400':
+    description: Bad request, UUID parameter is missing
+  '500':
+    description: Internal server error
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message

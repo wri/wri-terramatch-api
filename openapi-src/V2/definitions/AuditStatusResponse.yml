@@ -1,0 +1,34 @@
+title: AuditStatusResponse
+type: object
+properties:
+  id:
+    type: string
+  uuid:
+    type: string
+  entity_name:
+    type: string
+  status:
+    type: string
+  comment:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  type:
+    type: string
+  is_submitted:
+    type: boolean
+  is_active:
+    type: boolean
+  request_removed:
+    type: boolean
+  date_created:
+    type: string
+    format: date
+  created_by:
+    type: string
+  attachments:
+      type: array
+      items:
+        $ref: './_index.yml#/V2FileRead'
