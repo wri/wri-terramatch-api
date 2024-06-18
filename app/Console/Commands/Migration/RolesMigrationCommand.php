@@ -28,7 +28,7 @@ class RolesMigrationCommand extends Command
     public function handle()
     {
         if ($this->option('log')) {
-            echo ('* * * Started * * * ' . $this->description . chr(10));
+            echo('* * * Started * * * ' . $this->description . chr(10));
         }
 
         if ($this->option('fresh')) {
@@ -72,17 +72,12 @@ class RolesMigrationCommand extends Command
 
         if (Role::where('name', 'project-developer')->count() === 0) {
             $role = Role::create(['name' => 'project-developer']);
-            $role->givePermissionTo(['manage-own']);
+            $role->givePermissionTo(['manage-own', 'view-dashboard']);
         }
 
         if (Role::where('name', 'greenhouse-service-account')->count() === 0) {
             $role = Role::create(['name' => 'greenhouse-service-account']);
             $role->givePermissionTo(['projects-read', 'polygons-manage', 'media-manage']);
-        }
-
-        if (Role::where('name', 'project_developer')->count() === 0) {
-            $role = Role::create(['name' => 'project_developer']);
-            $role->givePermissionTo(['view-dashboard']);
         }
 
         if (Role::where('name', 'government')->count() === 0) {
@@ -103,7 +98,7 @@ class RolesMigrationCommand extends Command
             });
 
         if ($this->option('log')) {
-            echo ('- - - Finished - - - ' . chr(10));
+            echo('- - - Finished - - - ' . chr(10));
         }
     }
 }
