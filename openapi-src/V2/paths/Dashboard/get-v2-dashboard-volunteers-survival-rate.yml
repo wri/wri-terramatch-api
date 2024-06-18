@@ -1,0 +1,21 @@
+summary: Retrieve counts and metrics for volunteers survival rate
+description: |
+  This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
+parameters:
+  - in: query
+    name: country
+    type: string
+    description: Optional. Filter counts and metrics by country.
+  - in: query
+    name: uuid
+    type: string
+    description: Optional. Filter counts and metrics by UUID.
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardVolunteersSurvivalRateResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error
