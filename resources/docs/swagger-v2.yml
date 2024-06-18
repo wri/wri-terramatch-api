@@ -44058,6 +44058,69 @@ definitions:
               message:
                 type: string
                 description: Human readable string in English to describe the error.
+  DashboardVolunteersSurvivalRateResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          total_volunteers:
+            type: integer
+            description: Total number of volunteers.
+          men_volunteers:
+            type: integer
+            description: Total number of male volunteers.
+          women_volunteers:
+            type: integer
+            description: Total number of female volunteers.
+          youth_volunteers:
+            type: integer
+            description: Total number of youth volunteers.
+          non_youth_volunteers:
+            type: integer
+            description: Total number of non-youth volunteers.
+          non_profit_survival_rate:
+            type: number
+            description: Survival rate for non-profit entities.
+          enterprise_survival_rate:
+            type: number
+            description: Survival rate for enterprise entities.
+          number_of_sites:
+            type: number
+            description: number of sites.
+          number_of_nurseries:
+            type: number
+            description: number of nurseries.
+  DashboardVolundteersSurvivalRateData:
+    type: object
+    properties:
+      total_volunteers:
+        type: integer
+        description: Total number of volunteers.
+      men_volunteers:
+        type: integer
+        description: Total number of male volunteers.
+      women_volunteers:
+        type: integer
+        description: Total number of female volunteers.
+      youth_volunteers:
+        type: integer
+        description: Total number of youth volunteers.
+      non_youth_volunteers:
+        type: integer
+        description: Total number of non-youth volunteers.
+      non_profit_survival_rate:
+        type: number
+        description: Survival rate for non-profit entities.
+      enterprise_survival_rate:
+        type: number
+        description: Survival rate for enterprise entities.
+      number_of_sites:
+        type: number
+        description: number of sites.
+      number_of_nurseries:
+        type: number
+        description: number of nurseries.
   AuditStatusCreateRequest:
     title: AuditStatusCreateRequest
     type: object
@@ -44654,6 +44717,306 @@ definitions:
             key:
               type: string
               description: Key of the data field
+  DashboardActiveProjectsListViewResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+            name:
+              type: string
+            organisation:
+              type: string
+            trees_under_restoration:
+              type: integer
+            jobs_created:
+              type: integer
+            volunteers:
+              type: integer
+            beneficiaries:
+              type: integer
+            survival_rate:
+              type: integer
+            number_of_sites:
+              type: integer
+            number_of_nurseries:
+              type: integer
+            project_country:
+              type: string
+            country_slug:
+              type: string
+            number_of_trees_goal:
+              type: integer
+            date_added:
+              type: string
+      current_page:
+        type: integer
+      per_page:
+        type: integer
+      total:
+        type: integer
+      last_page:
+        type: integer
+  DashboardTotalSectionHeaderResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          total_non_profit_count:
+            type: integer
+            description: Total number of non profit projects.
+          total_enterprise_count:
+            type: integer
+            description: Total number of enterprise projects.
+          total_entries:
+            type: integer
+            description: Total number of jobs created.
+          total_hectares_restored:
+            type: integer
+            description: Total number of hectares restored.
+          total_hectares_restored_goal:
+            type: integer
+            description: Total number of hectares restored goal.
+          total_trees_restored:
+            type: integer
+            description: Total number of trees restored.
+          total_trees_restored_goal:
+            type: integer
+            description: Total number of trees restored goal.
+  DashboardActiveCountriesResponse:
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            country_slug:
+              type: string
+            country:
+              type: string
+            number_of_projects:
+              type: integer
+            total_trees_planted:
+              type: integer
+            total_jobs_created:
+              type: integer
+            number_of_sites:
+              type: integer
+            number_of_nurseries:
+              type: integer
+  DashboardCountriesResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            country_slug:
+              type: string
+            data:
+              type: object
+              properties:
+                label:
+                  type: string
+                icon:
+                  type: string
+  DashboardCountryData:
+    type: object
+    properties:
+      id:
+        type: integer
+      country_slug:
+        type: string
+      data:
+        type: object
+        properties:
+          label:
+            type: string
+          icon:
+            type: string
+  DashboardCountryInfo:
+    type: object
+    properties:
+      label:
+        type: string
+      icon:
+        type: string
+  DashboardProjectProfileResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+          descriptionObjetive:
+            type: string
+          country:
+            type: string
+          organisation:
+            type: string
+          survivalRate:
+            type: integer
+          countrySlug:
+            type: string
+          restorationStrategy:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+          targetLandUse:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+          landTenure:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+  DashboardProjectProfileData:
+    type: object
+    properties:
+      name:
+        type: string
+      descriptionObjetive:
+        type: string
+      country:
+        type: string
+      organisation:
+        type: string
+      survivalRate:
+        type: integer
+      countrySlug:
+        type: string
+      restorationStrategy:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
+      targetLandUse:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
+      landTenure:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string
+  DashboardTopProjectsResponse:
+    properties:
+      data:
+        type: object
+        properties:
+          top_projects_most_planted_trees:
+            type: array
+            items:
+              type: object
+              properties:
+                project:
+                  type: string
+                uuid:
+                  type: string
+                trees_planted:
+                  type: integer
+          top_tree_species_planted:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                amount:
+                  type: integer
+  DashboardTopPlantedTree:
+    type: object
+    properties:
+      project:
+        type: string
+      uuid:
+        type: string
+      trees_planted:
+        type: integer
+  DashboardTopTreeSpecies:
+    type: object
+    properties:
+      name:
+        type: string
+      amount:
+        type: integer
+  ProjectPipeline:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          name:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+          date:
+            type: string
+            format: date
+          id:
+            type: integer
+          submitted_by:
+            type: string
+          program:
+            type: string
+          cohort:
+            type: string
+          publish_for:
+            type: string
+          url:
+            type: string
+          created_at:
+            type: string
+            format: date
+          updated_at:
+            type: string
+            format: date
+  ProjectPipelinePost:
+    type: object
+    properties:
+      date:
+        type: string
+        format: date
+      id:
+        type: integer
+      submitted_by:
+        type: string
+      program:
+        type: string
+      cohort:
+        type: string
+      publish_for:
+        type: string
+      url:
+        type: string
   GeojsonData:
     type: object
     properties:
@@ -96052,6 +96415,600 @@ paths:
                       description: Key of the data field
         '500':
           description: Error in queries
+  /v2/dashboard/active-projects:
+    get:
+      summary: Retrieve all active projects list view.
+      description: |
+        This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: per_page
+          type: string
+          description: Optional. per_page to projects.
+        - in: query
+          name: page
+          type: string
+          description: Optional. page to projects.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    name:
+                      type: string
+                    organisation:
+                      type: string
+                    trees_under_restoration:
+                      type: integer
+                    jobs_created:
+                      type: integer
+                    volunteers:
+                      type: integer
+                    beneficiaries:
+                      type: integer
+                    survival_rate:
+                      type: integer
+                    number_of_sites:
+                      type: integer
+                    number_of_nurseries:
+                      type: integer
+                    project_country:
+                      type: string
+                    country_slug:
+                      type: string
+                    number_of_trees_goal:
+                      type: integer
+                    date_added:
+                      type: string
+              current_page:
+                type: integer
+              per_page:
+                type: integer
+              total:
+                type: integer
+              last_page:
+                type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/volunteers-survival-rate:
+    get:
+      summary: Retrieve counts and metrics for volunteers survival rate
+      description: |
+        This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter counts and metrics by UUID.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  total_volunteers:
+                    type: integer
+                    description: Total number of volunteers.
+                  men_volunteers:
+                    type: integer
+                    description: Total number of male volunteers.
+                  women_volunteers:
+                    type: integer
+                    description: Total number of female volunteers.
+                  youth_volunteers:
+                    type: integer
+                    description: Total number of youth volunteers.
+                  non_youth_volunteers:
+                    type: integer
+                    description: Total number of non-youth volunteers.
+                  non_profit_survival_rate:
+                    type: number
+                    description: Survival rate for non-profit entities.
+                  enterprise_survival_rate:
+                    type: number
+                    description: Survival rate for enterprise entities.
+                  number_of_sites:
+                    type: number
+                    description: number of sites.
+                  number_of_nurseries:
+                    type: number
+                    description: number of nurseries.
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/total-section-header:
+    get:
+      summary: Retrieve totals and metrics for total section header
+      description: |
+        This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  total_non_profit_count:
+                    type: integer
+                    description: Total number of non profit projects.
+                  total_enterprise_count:
+                    type: integer
+                    description: Total number of enterprise projects.
+                  total_entries:
+                    type: integer
+                    description: Total number of jobs created.
+                  total_hectares_restored:
+                    type: integer
+                    description: Total number of hectares restored.
+                  total_hectares_restored_goal:
+                    type: integer
+                    description: Total number of hectares restored goal.
+                  total_trees_restored:
+                    type: integer
+                    description: Total number of trees restored.
+                  total_trees_restored_goal:
+                    type: integer
+                    description: Total number of trees restored goal.
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/active-countries:
+    get:
+      summary: Retrieve all active countries.
+      description: |
+        This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - in: query
+          name: uuid
+          type: string
+          description: Optional. Filter restoration strategy by UUID.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    country_slug:
+                      type: string
+                    country:
+                      type: string
+                    number_of_projects:
+                      type: integer
+                    total_trees_planted:
+                      type: integer
+                    total_jobs_created:
+                      type: integer
+                    number_of_sites:
+                      type: integer
+                    number_of_nurseries:
+                      type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/countries:
+    get:
+      summary: Retrieve all countries list view.
+      description: |
+        This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    country_slug:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        label:
+                          type: string
+                        icon:
+                          type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/get-projects:
+    get:
+      summary: Retrieve all project.
+      description: |
+        This endpoint returns all project location.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    name:
+                      type: string
+                    lat:
+                      type: number
+                      format: double
+                    long:
+                      type: number
+                      format: double
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/dashboard/project-details/{project}':
+    get:
+      summary: Retrieve project details view.
+      description: |
+        This endpoint return details to name of project, description objectives, restoration strategy, target land use type, and land tenure.
+      parameters:
+        - type: string
+          name: project
+          in: path
+          required: true
+          description: Optional. Filter counts and metrics by UUID.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  descriptionObjetive:
+                    type: string
+                  country:
+                    type: string
+                  organisation:
+                    type: string
+                  survivalRate:
+                    type: integer
+                  countrySlug:
+                    type: string
+                  restorationStrategy:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: string
+                  targetLandUse:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: string
+                  landTenure:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/top-trees-planted:
+    get:
+      summary: Retrieve top 10 projects and top 20 tree species planted
+      description: |
+        This endpoint returns Tops and metrics related to projects and tree species.
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            properties:
+              data:
+                type: object
+                properties:
+                  top_projects_most_planted_trees:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        project:
+                          type: string
+                        uuid:
+                          type: string
+                        trees_planted:
+                          type: integer
+                  top_tree_species_planted:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        amount:
+                          type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/project-pipeline:
+    get:
+      operationId: get-v2-fproject-pipeline
+      summary: Get all projects from the pipeline
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    name:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                    date:
+                      type: string
+                      format: date
+                    id:
+                      type: integer
+                    submitted_by:
+                      type: string
+                    program:
+                      type: string
+                    cohort:
+                      type: string
+                    publish_for:
+                      type: string
+                    url:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date
+                    updated_at:
+                      type: string
+                      format: date
+    post:
+      operationId: post-v2-fproject-pipeline
+      summary: Create a new project in the pipeline
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - in: query
+          name: country
+          type: string
+          description: Optional. Filter counts and metrics by country.
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              id:
+                type: integer
+              submitted_by:
+                type: string
+              program:
+                type: string
+              cohort:
+                type: string
+              publish_for:
+                type: string
+              url:
+                type: string
+      responses:
+        '201':
+          description: Created
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              id:
+                type: integer
+              submitted_by:
+                type: string
+              program:
+                type: string
+              cohort:
+                type: string
+              publish_for:
+                type: string
+              url:
+                type: string
+  '/v2/project-pipeline/{id}':
+    get:
+      operationId: get-v2-project-pipeline
+      summary: Get a project from the pipeline by ID
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: show a specific project pipeline.
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  name:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      description:
+                        type: string
+                  date:
+                    type: string
+                    format: date
+                  id:
+                    type: integer
+                  submitted_by:
+                    type: string
+                  program:
+                    type: string
+                  cohort:
+                    type: string
+                  publish_for:
+                    type: string
+                  url:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date
+                  updated_at:
+                    type: string
+                    format: date
+    put:
+      operationId: update-v2-project-pipeline
+      summary: Update a project in the pipeline by ID
+      tags:
+        - V2 Project Pipeline
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: edit a specific project pipeline.
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              id:
+                type: integer
+              submitted_by:
+                type: string
+              program:
+                type: string
+              cohort:
+                type: string
+              publish_for:
+                type: string
+              url:
+                type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              id:
+                type: integer
+              submitted_by:
+                type: string
+              program:
+                type: string
+              cohort:
+                type: string
+              publish_for:
+                type: string
+              url:
+                type: string
+    delete:
+      summary: Delete a project from the pipeline by ID
+      parameters:
+        - type: string
+          name: id
+          in: path
+          required: true
+          description: delete a specific project pipeline.
+      responses:
+        '204':
+          description: No Content
   '/v2/dashboard/view-project/{uuid}':
     get:
       summary: Get allowed to project

@@ -276,6 +276,10 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
   $ref: './GeometryPost.yml'
+DashboardVolunteersSurvivalRateResponse:
+  $ref: './DashboardVolunteersSurvivalRateResponse.yml'
+DashboardVolundteersSurvivalRateData:
+  $ref: './DashboardVolundteersSurvivalRateData.yml'
 AuditStatusCreateRequest:
   $ref: './AuditStatusCreateRequest.yml'
 AuditStatusResponse:
@@ -326,6 +330,32 @@ DashboardBBOXCountry:
   $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
+DashboardActiveProjectsListViewResponse:
+  $ref: './DashboardActiveProjectsListViewResponse.yml'
+DashboardTotalSectionHeaderResponse:
+  $ref: './DashboardTotalSectionHeaderResponse.yml'
+DashboardActiveCountriesResponse:
+  $ref: './DashboardActiveCountriesResponse.yml'
+DashboardCountriesResponse:
+  $ref: './DashboardCountriesResponse.yml'
+DashboardCountryData:
+  $ref: './DashboardCountryData.yml'
+DashboardCountryInfo:
+  $ref: './DashboardCountryInfo.yml'
+DashboardProjectProfileResponse:
+  $ref: './DashboardProjectProfileResponse.yml'
+DashboardProjectProfileData:
+  $ref: './DashboardProjectProfileData.yml'
+DashboardTopProjectsResponse:
+  $ref: './DashboardTopProjectsResponse.yml'
+DashboardTopPlantedTree:
+  $ref: './DashboardTopPlantedTree.yml'
+DashboardTopTreeSpecies:
+  $ref: './DashboardTopTreeSpecies.yml'
+ProjectPipeline:
+  $ref: './ProjectPipeline.yml'
+ProjectPipelinePost:
+  $ref: './ProjectPipelinePost.yml'
 GeojsonData:
   $ref: './GeojsonData.yml'
 EntityTypeResponse:
