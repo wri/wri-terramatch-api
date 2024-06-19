@@ -183,6 +183,8 @@ final class AdminUserControllerTest extends TestCase
             ['admin-ppc', 'admin'],
             ['admin-terrafund', 'terrafund_admin'],
             ['project-developer', 'user'],
+            ['funder', 'funder'],
+            ['government', 'government'],
         ];
     }
 
