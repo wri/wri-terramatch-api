@@ -120,12 +120,12 @@ class AdminUserController extends Controller
 
         $data = $request->all();
 
-        if (! empty($request->get('user_type')) && (Auth::user()->hasRole('admin-super') || Auth::user()->role === 'admin')) {
+        if (! empty($request->get('primary_role')) && (Auth::user()->hasRole('admin-super') || Auth::user()->role === 'admin')) {
             $v1User = V1User::find($user->id);
-            $v1User->syncRoles([$request->get('user_type')]);
-            $user->syncRoles([$request->get('user_type')]);
+            $v1User->syncRoles([$request->get('primary_role')]);
+            $user->syncRoles([$request->get('primary_role')]);
 
-            switch ($request->get('user_type')) {
+            switch ($request->get('primary_role')) {
                 case 'admin-super':
                 case 'admin-ppc':
                     $data['role'] = 'admin';
