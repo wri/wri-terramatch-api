@@ -720,6 +720,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/get-projects', GetProjectsController::class);
     Route::get('/project-details/{project}', ProjectProfileDetailsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
+    Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
 });
 
 Route::prefix('project-pipeline')->group(function () {
@@ -728,7 +729,6 @@ Route::prefix('project-pipeline')->group(function () {
     Route::post('/', StoreProjectPipelineController::class);
     Route::put('/{id}', UpdateProjectPipelineController::class);
     Route::delete('/{id}', DeleteProjectPipelineController::class);
-    Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
 });
 
 Route::get('/type-entity', EntityTypeController::class);
