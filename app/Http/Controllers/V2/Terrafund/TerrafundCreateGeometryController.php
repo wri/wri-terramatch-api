@@ -132,6 +132,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadKMLFile(Request $request)
     {
+        ini_set('max_execution_time', '-1');
         if ($request->hasFile('file')) {
             $site_id = $request->input('uuid');
             $kmlfile = $request->file('file');
@@ -178,6 +179,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadShapefile(Request $request)
     {
+        ini_set('max_execution_time', '-1');
         Log::debug('Upload Shape file data', ['request' => $request->all()]);
         if ($request->hasFile('file')) {
             $site_id = $request->input('uuid');
@@ -324,6 +326,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadGeoJSONFile(Request $request)
     {
+        ini_set('max_execution_time', '-1');
         if ($request->hasFile('file')) {
             $site_id = $request->input('uuid');
             $file = $request->file('file');
