@@ -43775,6 +43775,12 @@ definitions:
         type: string
       callback_url:
         type: string
+      primary_role:
+        type: string
+      country:
+        type: string
+      program:
+        type: string
   UpdateRequestsPaginated:
     title: UpdateRequestsPaginated
     type: object
@@ -48055,6 +48061,12 @@ paths:
               whatsapp_phone:
                 type: string
               callback_url:
+                type: string
+              primary_role:
+                type: string
+              country:
+                type: string
+              program:
                 type: string
       responses:
         '200':

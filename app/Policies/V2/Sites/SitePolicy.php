@@ -20,6 +20,10 @@ class SitePolicy extends Policy
             return true;
         }
 
+        if ($this->isNewRoleUser($user)) {
+            return true;
+        }
+
         return false;
     }
 
