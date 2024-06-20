@@ -90,6 +90,7 @@ class GeometryHelper
 
     }
 
+
     public static function getPolygonsBbox($polygonsIds)
     {
         if (count($polygonsIds) === 0) {
@@ -98,10 +99,11 @@ class GeometryHelper
         $envelopes = PolygonGeometry::whereIn('uuid', $polygonsIds)
           ->selectRaw('ST_ASGEOJSON(ST_Envelope(geom)) as envelope')
           ->get();
-
         $maxX = $maxY = PHP_INT_MIN;
         $minX = $minY = PHP_INT_MAX;
-
+        if ($envelopes->isEmpty()) {
+          return null;
+        }
         foreach ($envelopes as $envelope) {
             $geojson = json_decode($envelope->envelope);
             $coordinates = $geojson->coordinates[0];
@@ -116,7 +118,9 @@ class GeometryHelper
             }
         }
 
-        return [$minX, $minY, $maxX, $maxY];
+        $bboxCoordinates = [$minX, $minY, $maxX, $maxY];
+
+        return $bboxCoordinates;
     }
 
     public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
