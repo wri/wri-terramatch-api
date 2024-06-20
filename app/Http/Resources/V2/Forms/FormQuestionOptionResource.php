@@ -14,9 +14,9 @@ class FormQuestionOptionResource extends JsonResource
     {
         $imageUrl = null;
 
-        if (!empty($this->image_url)) {
+        if (! empty($this->image_url)) {
             $imageUrl = url($this->image_url);
-        } elseif (!empty($this->getFirstMediaUrl('image'))) {
+        } elseif (! empty($this->getFirstMediaUrl('image'))) {
             $imageUrl = url($this->getFirstMediaUrl('image'));
         }
 

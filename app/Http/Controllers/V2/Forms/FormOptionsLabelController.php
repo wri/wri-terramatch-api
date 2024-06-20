@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\V2\Forms;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V2\Forms\FormQuestionOptionResource;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Forms\FormQuestionOption;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Resources\V2\Forms\FormQuestionOptionResource;
 use Illuminate\Support\Collection;
 
 class FormOptionsLabelController extends Controller
@@ -17,12 +17,12 @@ class FormOptionsLabelController extends Controller
     {
         $this->authorize('listLinkedFields', Form::class);
 
-        if (!empty($request->query('keys'))) {
+        if (! empty($request->query('keys'))) {
             $keys = explode(',', $request->query('keys'));
             $collection = $this->getFormOptionListOptions($keys);
             $missingSlugs = $this->getMissingSlugs($keys, $collection);
 
-            if (!empty($missingSlugs)) {
+            if (! empty($missingSlugs)) {
                 $additionalCollection = $this->getAdditionalFormQuestionOptions($missingSlugs);
                 $collection = $this->mergeCollections($collection, $additionalCollection);
             }
@@ -37,12 +37,13 @@ class FormOptionsLabelController extends Controller
         return new JsonResponse('No keys provided.', 406);
     }
 
-    function getFormOptionListOptions(array $keys): Collection
+    public function getFormOptionListOptions(array $keys): Collection
     {
         $options = FormOptionListOption::whereIn('slug', $keys)->get();
         if ($options->isEmpty()) {
             return collect([]);
         }
+
         return $options->map(function ($item) {
             return [
                 'slug' => $item->slug,
@@ -52,15 +53,17 @@ class FormOptionsLabelController extends Controller
         })->unique('slug');
     }
 
-    function getMissingSlugs(array $keys, Collection $collection): array
+    public function getMissingSlugs(array $keys, Collection $collection): array
     {
         $foundSlugs = $collection->pluck('slug')->toArray();
+
         return array_diff($keys, $foundSlugs);
     }
 
-    function getAdditionalFormQuestionOptions(array $missingSlugs): Collection
+    public function getAdditionalFormQuestionOptions(array $missingSlugs): Collection
     {
         $formQuestionOptions = FormQuestionOption::whereIn('slug', $missingSlugs)->get();
+
         return FormQuestionOptionResource::collection($formQuestionOptions)->map(function ($resource) {
             return [
                 'slug' => $resource->slug,
@@ -70,7 +73,7 @@ class FormOptionsLabelController extends Controller
         });
     }
 
-    function mergeCollections(Collection $collection, Collection $additionalCollection): Collection
+    public function mergeCollections(Collection $collection, Collection $additionalCollection): Collection
     {
         return $collection->merge($additionalCollection)->unique('slug');
     }
