@@ -90,7 +90,6 @@ class GeometryHelper
 
     }
 
-
     public static function getPolygonsBbox($polygonsIds)
     {
         if (count($polygonsIds) === 0) {
@@ -102,7 +101,7 @@ class GeometryHelper
         $maxX = $maxY = PHP_INT_MIN;
         $minX = $minY = PHP_INT_MAX;
         if ($envelopes->isEmpty()) {
-          return null;
+            return null;
         }
         foreach ($envelopes as $envelope) {
             $geojson = json_decode($envelope->envelope);
@@ -118,9 +117,7 @@ class GeometryHelper
             }
         }
 
-        $bboxCoordinates = [$minX, $minY, $maxX, $maxY];
-
-        return $bboxCoordinates;
+        return [$minX, $minY, $maxX, $maxY];
     }
 
     public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
