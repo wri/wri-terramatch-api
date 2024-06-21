@@ -145,7 +145,7 @@ class BulkWorkdayImport extends Command
             fclose($fileHandle);
 
             if ($this->option('dry-run')) {
-                $this->info(json_encode($rows, JSON_PRETTY_PRINT) . "\n\n");
+                $this->info(json_encode($rows->values(), JSON_PRETTY_PRINT) . "\n\n");
             } else {
                 // A separate loop so we can validate as much input as possible before we start persisting any records
                 foreach ($rows as $reportData) {
