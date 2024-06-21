@@ -258,6 +258,10 @@ return [
                 'pro-soil-health' => ['property' => 'soil_health', 'label' => 'Soil Health (project)', 'input_type' => 'long-text'],
                 'pro-pit-land-use-types' => ['property' => 'land_use_types', 'label' => 'Land use types', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-systems'],
                 'pro-pit-restoration_strategy' => ['property' => 'restoration_strategy', 'label' => 'Restoration strategy', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-practices'],
+                'pro-pit-baseline-biodiversity' => ['property' => 'baseline_biodiversity', 'label' => 'Baseline Biodiversity Conditions', 'input_type' => 'long-text'],
+                'pro-pit-goal-trees-restored-planting' => ['property' => 'goal_trees_restored_planting', 'label' => 'Trees Restored Goal - Planting', 'input_type' => 'number'],
+                'pro-pit-goal-trees-restored-anr' => ['property' => 'goal_trees_restored_anr', 'label' => 'Trees Restored Goal - ANR', 'input_type' => 'number'],
+                'pro-pit-goal-trees-restored-direct-seeding' => ['property' => 'goal_trees_restored_direct_seeding', 'label' => 'Trees Restored Goal - Direct Seeding', 'input_type' => 'number'],
             ],
             'file-collections' => [
                 'pro-pit-fcol-cover' => ['property' =>  'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],
@@ -333,6 +337,12 @@ return [
                 'pro-proj-boundary' => ['property' => 'proj_boundary', 'label' => 'Project Boundary', 'input_type' => 'mapInput'],
                 'pro-states' => ['property' => 'states', 'label' => 'States', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'states'],
                 'pro-impact-biodiv' => ['property' => 'proj_impact_biodiv', 'label' => 'Biodiversity Impact (project)', 'input_type' => 'long-text'],
+                // This is breaking convention for linked field keys because project pitch was already using pro-water-source.
+                'project-water-source' => ['property' => 'water_source', 'label' => 'Water Source', 'input_type' => 'long-text'],
+                'pro-baseline-biodiversity' => ['property' => 'baseline_biodiversity', 'label' => 'Baseline Biodiversity Conditions', 'input_type' => 'long-text'],
+                'pro-goal-trees-restored-planting' => ['property' => 'goal_trees_restored_planting', 'label' => 'Trees Restored Goal - Planting', 'input_type' => 'number'],
+                'pro-goal-trees-restored-anr' => ['property' => 'goal_trees_restored_anr', 'label' => 'Trees Restored Goal - ANR', 'input_type' => 'number'],
+                'pro-goal-trees-restored-direct-seeding' => ['property' => 'goal_trees_restored_direct_seeding', 'label' => 'Trees Restored Goal - Direct Seeding', 'input_type' => 'number'],
             ],
             'file-collections' => [
                 'pro-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
