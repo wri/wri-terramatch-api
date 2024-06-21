@@ -431,6 +431,9 @@ return [
                 // TODO (TM-912) Deprecated, to be removed.
                 'pro-rep-paid-other-activity-description' => ['property' => 'paid_other_activity_description', 'label' => 'Paid Other Activities Description', 'input_type' => 'long-text'],
                 'pro-rep-other-workdays-description' => ['property' => 'other_workdays_description', 'label' => 'Other Activities Description', 'input_type' => 'long-text'],
+                'pro-rep-local-engagement-description' => ['property' => 'local_engagement_description', 'label' => 'Response to Local Priorities', 'input_type' => 'long-text'],
+                'pro-rep-indirect-beneficiaries' => ['property' => 'indirect_beneficiaries', 'label' => 'Number of Indirect Beneficiaries', 'input_type' => 'number'],
+                'pro-rep-indirect-beneficiaries-description' => ['property' => 'indirect_beneficiaries_description', 'label' => 'Indirect Beneficiaries Description', 'input_type' => 'long-text'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [
