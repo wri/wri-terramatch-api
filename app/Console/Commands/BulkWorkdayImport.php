@@ -129,13 +129,13 @@ class BulkWorkdayImport extends Command
             }
 
             if (! empty($parseErrors)) {
-                $this->warn("Errors encountered during parsing CSV Rows:\n");
+                $this->warn("Errors and warnings encountered during parsing CSV Rows:\n");
                 foreach ($parseErrors as $error) {
                     $this->logException($error);
                 }
 
-                $firstError = collect($parseErrors)->first(fn ($e) => $e->level == ExceptionLevel::Error);
-                if (! empty($firstError)) {
+                $shouldAbort = ! empty(collect($parseErrors)->first(fn ($e) => $e->level == ExceptionLevel::Error));
+                if ($shouldAbort) {
                     $this->error("Parsing aborted\n");
                     exit(1);
                 }
@@ -292,16 +292,19 @@ class BulkWorkdayImport extends Command
             }
 
             if (collect($totals)->values()->unique()->count() > 1) {
-                $this->assert(
-                    collect($totals)->values()->unique()->count() == 1,
-                    "Demographics for collection are unbalanced\n" .
-                        json_encode([
-                            'submission_id' => $submissionId,
-                            'collection' => $collection,
-                            'totals' => $totals,
-                        ], JSON_PRETTY_PRINT) . "\n",
-                    ExceptionLevel::Warning
-                );
+                $message = "Demographics for collection are unbalanced\n";
+
+                if ($totals['gender'] < $totals['age'] || $totals['gender'] < $totals['ethnicity']) {
+                    $message .= "GENDER IS NOT THE LARGEST VALUE IN THIS COLLECTION\n";
+                }
+
+                $message .= json_encode([
+                    'submission_id' => $submissionId,
+                    'collection' => $collection,
+                    'totals' => $totals,
+                ], JSON_PRETTY_PRINT) . "\n";
+
+                $this->abort($message, ExceptionLevel::Warning);
             }
         }
 
