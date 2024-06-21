@@ -2481,9 +2481,6 @@
     $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
-/v2/sites/{UUID}/geometry:
-  post:
-    $ref: './Sites/post-v2-sites-uuid-geometry.yml'
 /v2/site-monitorings/{UUID}:
   get:
     $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
