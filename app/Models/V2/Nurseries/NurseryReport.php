@@ -3,17 +3,21 @@
 namespace App\Models\V2\Nurseries;
 
 use App\Models\Framework;
+use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasReportStatus;
+use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\MediaModel;
+use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\ReportModel;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use App\Models\V2\UpdateRequests\ApprovalFlow;
-use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,23 +28,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Znck\Eloquent\Relations\BelongsToThrough;
+use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
-class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableContract
+class NurseryReport extends Model implements MediaModel, AuditableContract, ReportModel
 {
     use HasFrameworkKey;
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
     use Searchable;
-    use HasStatus;
+    use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use Auditable;
+    use HasUpdateRequests;
+    use HasEntityResources;
+    use BelongsToThroughTrait;
 
     protected $auditInclude = [
         'status',
@@ -55,13 +63,13 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
     protected $fillable = [
         'framework_key',
         'nursery_id',
+        'task_id',
         'due_at',
         'status',
         'update_request_status',
         'submitted_at',
         'nothing_to_report',
         'completion',
-        'completion_status',
         'title',
         'seedlings_young_trees',
         'interesting_facts',
@@ -102,30 +110,6 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
         ],
     ];
 
-    public const STATUS_DUE = 'due';
-    public const STATUS_STARTED = 'started';
-    public const STATUS_AWAITING_APPROVAL = 'awaiting-approval';
-    public const STATUS_NEEDS_MORE_INFORMATION = 'needs-more-information';
-    public const STATUS_APPROVED = 'approved';
-
-    public static $statuses = [
-        self::STATUS_DUE => 'Due',
-        self::STATUS_STARTED => 'Started',
-        self::STATUS_AWAITING_APPROVAL => 'Awaiting approval',
-        self::STATUS_NEEDS_MORE_INFORMATION => 'Needs more information',
-        self::STATUS_APPROVED => 'Approved',
-    ];
-
-    public const COMPLETION_STATUS_NOT_STARTED = 'not-started';
-    public const COMPLETION_STATUS_STARTED = 'started';
-    public const COMPLETION_STATUS_COMPLETE = 'complete';
-
-    public static $completionStatuses = [
-        self::COMPLETION_STATUS_NOT_STARTED => 'Not started',
-        self::COMPLETION_STATUS_STARTED => 'Started',
-        self::COMPLETION_STATUS_COMPLETE => 'Complete',
-    ];
-
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumbnail')
@@ -145,11 +129,6 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
         return $this->belongsTo(Framework::class, 'framework_key', 'slug');
     }
 
-    public function updateRequests()
-    {
-        return $this->morphMany(UpdateRequest::class, 'updaterequestable');
-    }
-
     public function polygons()
     {
         return $this->morphMany(Polygon::class, 'polygonable');
@@ -165,14 +144,27 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
         return $this->belongsTo(Nursery::class);
     }
 
-    public function project(): BelongsTo
+    public function project(): BelongsToThrough
     {
-        return  empty($this->nursery) ? $this->nursery : $this->nursery->project();
+        return $this->belongsToThrough(
+            Project::class,
+            Nursery::class,
+            foreignKeyLookup: [Project::class => 'project_id', Nursery::class => 'nursery_id']
+        );
     }
 
-    public function organisation(): BelongsTo
+    public function task(): BelongsTo
     {
-        return empty($this->project) ? $this->project : $this->project->organisation();
+        return $this->belongsTo(Task::class);
+    }
+
+    public function organisation(): BelongsToThrough
+    {
+        return $this->belongsToThrough(
+            Organisation::class,
+            [Project::class, Nursery::class],
+            foreignKeyLookup: [Project::class => 'project_id', Nursery::class => 'nurseyr_id']
+        );
     }
 
     public function createdBy(): BelongsTo
@@ -193,8 +185,8 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
     public function toSearchableArray()
     {
         return [
-            'project_name' => $this->nursery->project->name,
-            'organisation_name' => $this->nursery->project->organisation->name,
+            'project_name' => $this->project?->name,
+            'organisation_name' => $this->organisation?->name,
         ];
     }
 
@@ -215,7 +207,7 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
 
     public function getTaskUuidAttribute(): ?string
     {
-        return is_null($this->due_at) ? null : (Task::forProjectAndDate($this->project, $this->due_at)->first()->uuid ?? null);
+        return $this->task?->uuid ?? null;
     }
 
     public function getFrameworkUuidAttribute(): ?string
@@ -258,12 +250,13 @@ class NurseryReport extends Model implements HasMedia, ApprovalFlow, AuditableCo
         });
     }
 
-    public function getReadableCompletionStatusAttribute(): ?string
+    public function supportsNothingToReport(): bool
     {
-        if (empty($this->completion_status)) {
-            return null;
-        }
+        return true;
+    }
 
-        return data_get(static::$completionStatuses, $this->completion_status, 'Unknown');
+    public function parentEntity(): BelongsTo
+    {
+        return $this->nursery();
     }
 }

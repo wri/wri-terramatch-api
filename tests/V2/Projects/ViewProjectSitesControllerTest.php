@@ -10,7 +10,7 @@ use App\Models\V2\Sites\SiteReport;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class ViewProjectSitesControllerTest extends TestCase
@@ -32,7 +32,7 @@ class ViewProjectSitesControllerTest extends TestCase
     {
         parent::setUp();
 
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
 
         $this->ppcAdmin = User::factory()->admin()->create();
         $this->ppcAdmin->givePermissionTo('framework-ppc');

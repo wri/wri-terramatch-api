@@ -22,7 +22,7 @@ class SiteReportFactory extends Factory
             'site_id' => Site::factory()->create(),
             'due_at' => $this->faker->dateTime,
             'title' => $this->faker->text(30),
-            'status' => $this->faker->randomElement(array_keys(SiteReport::$statuses)),
+            'status' => array_keys(SiteReport::$statuses)[0],
             'completion' => $this->faker->numberBetween(0, 100),
         ];
     }

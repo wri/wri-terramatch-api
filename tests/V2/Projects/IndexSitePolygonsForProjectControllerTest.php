@@ -18,7 +18,7 @@ class IndexSitePolygonsForProjectControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 

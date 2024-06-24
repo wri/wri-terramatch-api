@@ -1,6 +1,6 @@
 <?php
 
-namespace TreeSpecies;
+namespace Tests\V2\TreeSpecies;
 
 use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
@@ -10,8 +10,8 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-// use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class GetTreeSpeciesForEntityControllerTest extends TestCase
@@ -23,7 +23,7 @@ class GetTreeSpeciesForEntityControllerTest extends TestCase
      */
     public function test_admin_can_fetch_all_tree_species_for_a_given_entity(string $permission, string $fmKey)
     {
-        // Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $user = User::factory()->admin()->create();
         $user->givePermissionTo($permission);

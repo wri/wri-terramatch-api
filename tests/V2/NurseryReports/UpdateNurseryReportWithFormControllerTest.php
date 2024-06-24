@@ -8,9 +8,10 @@ use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class UpdateNurseryReportWithFormControllerTest extends TestCase
@@ -20,7 +21,7 @@ class UpdateNurseryReportWithFormControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -46,7 +47,7 @@ class UpdateNurseryReportWithFormControllerTest extends TestCase
         $report = NurseryReport::factory()->create([
             'nursery_id' => $nursery->id,
             'framework_key' => 'ppc',
-            'status' => NurseryReport::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('nursery-report', 'ppc');
@@ -92,7 +93,7 @@ class UpdateNurseryReportWithFormControllerTest extends TestCase
 
     public function test_update_request()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
         $owner->givePermissionTo('manage-own');
@@ -110,7 +111,7 @@ class UpdateNurseryReportWithFormControllerTest extends TestCase
         $report = NurseryReport::factory()->create([
             'nursery_id' => $nursery->id,
             'framework_key' => 'ppc',
-            'status' => NurseryReport::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('nursery-report', 'ppc');

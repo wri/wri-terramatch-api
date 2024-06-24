@@ -8,7 +8,7 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class CreateNurseryControllerWithFormTest extends TestCase
@@ -18,7 +18,7 @@ class CreateNurseryControllerWithFormTest extends TestCase
 
     public function test_a_pd_can_create_a_nursery_with_form()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 

@@ -2,11 +2,12 @@
 
 namespace Tests\V2\SiteReports;
 
+use App\Models\Framework;
 use App\Models\User;
 use App\Models\V2\sites\SiteReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-// use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexSiteReportsControllerTest extends TestCase
@@ -16,7 +17,9 @@ class AdminIndexSiteReportsControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        // Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
+        Framework::factory()->create(['slug' => 'terrafund']);
+        Framework::factory()->create(['slug' => 'ppc']);
         $tfAdmin = User::factory()->admin()->create();
         $ppcAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');

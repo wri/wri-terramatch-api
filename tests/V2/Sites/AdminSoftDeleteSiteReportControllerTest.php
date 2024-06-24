@@ -1,6 +1,6 @@
 <?php
 
-namespace Sites;
+namespace Tests\V2\Sites;
 
 use App\Models\User;
 use App\Models\V2\Sites\Site;
@@ -33,7 +33,7 @@ class AdminSoftDeleteSiteReportControllerTest extends TestCase
      */
     public function test_admins_can_soft_delete_site_reports(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $user = User::factory()->admin()->create();
         $user->givePermissionTo($permission);

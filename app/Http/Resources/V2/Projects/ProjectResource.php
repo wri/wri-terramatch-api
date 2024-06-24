@@ -12,11 +12,13 @@ class ProjectResource extends JsonResource
     {
         $data = [
             'uuid' => $this->uuid,
+            'ppc_external_id' => $this->ppc_external_id ?? $this->id,
             'name' => $this->name,
             'status' => $this->status,
             'readable_status' => $this->readable_status,
             'project_status' => $this->project_status,
             'update_request_status' => $this->update_request_status,
+            'readable_update_request_status' => $this->readable_update_request_status,
             'framework_key' => $this->framework_key,
             'framework_uuid' => $this->framework_uuid,
             'organisation_id' => $this->organisation_id,
@@ -50,6 +52,8 @@ class ProjectResource extends JsonResource
             'seeds_planted_count' => $this->seeds_planted_count,
             'regenerated_trees_count' => $this->regenerated_trees_count,
             'workday_count' => $this->workday_count,
+            // Temporary until we have bulk import completed.
+            'self_reported_workday_count' => $this->self_reported_workday_count,
             'total_jobs_created' => $this->total_jobs_created,
             'total_sites' => $this->total_sites,
             'total_nurseries' => $this->total_nurseries,
@@ -78,7 +82,7 @@ class ProjectResource extends JsonResource
             'land_tenure_project_area' => $this->land_tenure_project_area,
             'organisation' => new OrganisationLiteResource($this->organisation),
             'application' => new ApplicationLiteResource($this->application),
-            'migrated' => !empty($this->old_model),
+            'migrated' => ! empty($this->old_model),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

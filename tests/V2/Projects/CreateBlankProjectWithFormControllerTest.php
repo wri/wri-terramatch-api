@@ -1,6 +1,6 @@
 <?php
 
-namespace Projects;
+namespace Tests\V2\Projects;
 
 use App\Helpers\CustomFormHelper;
 use App\Models\User;
@@ -10,6 +10,7 @@ use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
@@ -25,7 +26,7 @@ class CreateBlankProjectWithFormControllerTest extends TestCase
      */
     public function test_a_project_developer_can_create_a_blank_project_from_a_given_form(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
 
         list($fundingProgramme, $application, $organisation, $projectPitch, $formSubmissions, $form) = $this->prepareData($fmKey);
 
@@ -48,7 +49,7 @@ class CreateBlankProjectWithFormControllerTest extends TestCase
             'framework_key' => $form->framework_key,
             'organisation_id' => $organisation->id,
             'application_id' => null,
-            'status' => Project::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
             'project_status' => null,
             'name' => null,
             'boundary_geojson' => null,

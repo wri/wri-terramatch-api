@@ -1,0 +1,5 @@
+type: object
+properties:
+  geojson:
+    type: object
+    description: The GeoJSON representation of the polygon geometry.

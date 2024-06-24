@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
@@ -19,7 +20,7 @@ class UpdateProjectReportWithFormControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -40,10 +41,10 @@ class UpdateProjectReportWithFormControllerTest extends TestCase
         $report = ProjectReport::factory()->create([
             'project_id' => $project->id,
             'framework_key' => 'ppc',
-            'status' => ProjectReport::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
-        $form = CustomFormHelper::generateFakeForm('project-report', 'ppc');
+        $form = CustomFormHelper::generateFakeForm('project-report', 'ppc', true);
 
         $answers = [];
 
@@ -58,8 +59,24 @@ class UpdateProjectReportWithFormControllerTest extends TestCase
             if ($question->linked_field_key == 'pro-rep-title') {
                 $answers[$question->uuid] = '* testing title updated *';
             }
-            if ($question->linked_field_key == 'pro-rep-workdays-paid') {
-                $answers[$question->uuid] = 24;
+            if ($question->linked_field_key == 'pro-rep-rel-paid-project-management') {
+                $answers[$question->uuid] = [[
+                    'collection' => 'paid-project-management',
+                    'demographics' => [[
+                        'type' => 'gender',
+                        'name' => 'male',
+                        'amount' => 24,
+                    ], [
+                        'type' => 'age',
+                        'name' => 'youth',
+                        'amount' => 24,
+                    ], [
+                        'type' => 'ethnicity',
+                        'subtype' => 'indigenous',
+                        'name' => 'Ohlone',
+                        'amount' => 24,
+                    ]],
+                ]];
             }
         }
 
@@ -90,7 +107,7 @@ class UpdateProjectReportWithFormControllerTest extends TestCase
 
     public function test_update_request()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
         $owner->givePermissionTo('manage-own');
@@ -103,7 +120,7 @@ class UpdateProjectReportWithFormControllerTest extends TestCase
         $report = ProjectReport::factory()->create([
             'project_id' => $project->id,
             'framework_key' => 'ppc',
-            'status' => ProjectReport::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('project-report', 'ppc');

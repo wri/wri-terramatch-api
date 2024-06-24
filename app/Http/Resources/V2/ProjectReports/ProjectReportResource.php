@@ -20,11 +20,11 @@ class ProjectReportResource extends JsonResource
             'status' => $this->status,
             'readable_status' => $this->readable_status,
             'update_request_status' => $this->update_request_status,
+            'readable_update_request_status' => $this->readable_update_request_status,
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
             'due_at' => $this->due_at,
             'completion' => $this->completion,
-            'completion_status' => $this->completion_status,
             'readable_completion_status' => $this->readable_completion_status,
             'workdays_paid' => $this->workdays_paid,
             'workdays_volunteer' => $this->workdays_volunteer,
@@ -93,10 +93,12 @@ class ProjectReportResource extends JsonResource
             'created_by' => $this->handleCreatedBy(),
             'seedlings_grown' => $this->seedlings_grown,
             'trees_planted_count' => $this->trees_planted_count,
+            'seeds_planted_count' => $this->seeds_planted_count,
             'community_progress' => $this->community_progress,
             'equitable_opportunities' => $this->equitable_opportunities,
             'local_engagement' => $this->local_engagement,
             'site_addition' => $this->site_addition,
+            'paid_other_activity_description' => $this->paid_other_activity_description,
         ];
 
         return $this->appendFilesToResource($data);

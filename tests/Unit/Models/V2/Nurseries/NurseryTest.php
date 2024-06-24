@@ -1,6 +1,6 @@
 <?php
 
-namespace Models\V2\Nurseries;
+namespace Tests\Unit\Models\V2\Nurseries;
 
 use App\Models\V2\Nurseries\NurseryReport;
 use Tests\TestCase;

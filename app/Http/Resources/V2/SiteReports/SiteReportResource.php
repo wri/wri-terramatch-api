@@ -22,9 +22,9 @@ class SiteReportResource extends JsonResource
 
             'status' => $this->status,
             'readable_status' => $this->readable_status,
-            'completion_status' => $this->completion_status,
             'readable_completion_status' => $this->readable_completion_status,
             'update_request_status' => $this->update_request_status,
+            'readable_update_request_status' => $this->readable_update_request_status,
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
             'nothing_to_report' => $this->nothing_to_report,
@@ -38,9 +38,11 @@ class SiteReportResource extends JsonResource
             'disturbance_details' => $this->disturbance_details,
             'shared_drive_link' => $this->shared_drive_link,
             'polygon_status' => $this->polygon_status,
+            'paid_other_activity_description' => $this->paid_other_activity_description,
 
             'total_workdays_count' => $this->total_workdays_count,
             'total_trees_planted_count' => $this->total_trees_planted_count,
+            'total_seeds_planted_count' => $this->total_seeds_planted_count,
 
             'due_at' => $this->due_at,
             'approved_at' => $this->approved_at,

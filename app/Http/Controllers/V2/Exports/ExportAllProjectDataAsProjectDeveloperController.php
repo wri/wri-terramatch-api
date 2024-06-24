@@ -23,7 +23,7 @@ class ExportAllProjectDataAsProjectDeveloperController extends Controller
         $form = $this->getForm(Project::class, $project->framework_key);
         $this->authorize('export', [Project::class, $form, $project]);
 
-        $filename = public_path('storage/'.Str::of($project->name)->replace(['/', '\\'], '-') . ' full export - ' . now() . '.zip');
+        $filename = storage_path('./'.Str::of($project->name)->replace(['/', '\\'], '-') . ' full export - ' . now() . '.zip');
         $zip = new \ZipArchive();
         $zip->open($filename, \ZipArchive::CREATE);
 
@@ -38,6 +38,9 @@ class ExportAllProjectDataAsProjectDeveloperController extends Controller
         });
         rescue(function () use ($project, $zip) {
             $this->addSiteReportsExports($project, $zip);
+        });
+        rescue(function () use ($project, $zip) {
+            $this->addSiteShapefiles($project, $zip);
         });
         rescue(function () use ($project, $zip) {
             $this->addNurseriesExports($project, $zip);
@@ -63,6 +66,17 @@ class ExportAllProjectDataAsProjectDeveloperController extends Controller
                     $filename,
                     (new EntityExport(SiteReport::parentId($site->id), $form))->raw(Excel::CSV)
                 );
+        }
+    }
+
+    private function addSiteShapefiles(Project $project, \ZipArchive $mainZip): void
+    {
+        $shapefilesFolder = 'Sites Shapefiles/';
+        $mainZip->addEmptyDir($shapefilesFolder);
+
+        foreach ($project->sites as $site) {
+            $filename = $shapefilesFolder . Str::of($site->name)->replace(['/', '\\'], '-') . '.geojson';
+            $mainZip->addFromString($filename, $site->boundary_geojson);
         }
     }
 

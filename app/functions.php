@@ -165,5 +165,15 @@ function assignSpatieRole($user)
             $user->assignRole('admin-terrafund');
 
             break;
+        case 'service':
+            $user->assignRole('greenhouse-service-account');
+
+            break;
+        case 'project-developer':
+        case 'funder':
+        case 'government':
+            $user->assignRole($user->role);
+
+            break;
     }
 }

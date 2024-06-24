@@ -8,7 +8,7 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class ViewProjectControllerTest extends TestCase
@@ -18,7 +18,7 @@ class ViewProjectControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -53,7 +53,7 @@ class ViewProjectControllerTest extends TestCase
 
     public function test_it_does_not_return_soft_deleted_projects()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $user = User::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);

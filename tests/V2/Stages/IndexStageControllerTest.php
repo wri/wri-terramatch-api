@@ -14,12 +14,12 @@ final class IndexStageControllerTest extends TestCase
     public function test_users_can_view_stage_index(): void
     {
         $user = User::factory()->create();
-        $count = Stage::count();
 
         Stage::factory()->count(5)->create();
+        $count = Stage::count();
 
         // it's paginated to 100
-        if ($count + 5 > 100) {
+        if ($count > 100) {
             $count = 100;
         }
 

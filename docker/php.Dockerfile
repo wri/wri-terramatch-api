@@ -9,7 +9,12 @@ RUN apt-get install -y \
     libfreetype6-dev \
     libmagickwand-dev \
     mariadb-client \
-    libzip-dev
+    libzip-dev \
+    gdal-bin \
+    libgdal-dev \
+    python3.11-venv \
+    gdal-bin
+
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install \
     bcmath \
@@ -33,3 +38,10 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 ## APACHE
 RUN a2enmod rewrite
 COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/php.ini /usr/local/etc/php/php.ini
+
+## Python
+RUN python3 -m venv /root/python
+COPY resources/python/polygon-voronoi/requirements.txt /root/voronoi-requirements.txt
+ENV PATH="/root/python/bin:${PATH}"
+RUN pip3 install -r /root/voronoi-requirements.txt

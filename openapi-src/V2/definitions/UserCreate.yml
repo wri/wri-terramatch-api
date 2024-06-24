@@ -24,3 +24,9 @@ properties:
     type: string
   callback_url:
     type: string
+  primary_role:
+    type: string
+  country:
+    type: string
+  program:
+    type: string

@@ -3,23 +3,26 @@
 namespace App\Models\V2\Projects;
 
 use App\Models\Framework;
+use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasReportStatus;
+use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
-use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\MediaModel;
+use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
-use App\Models\V2\Sites\Site;
+use App\Models\V2\ReportModel;
+use App\Models\V2\Seeding;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use App\Models\V2\UpdateRequests\ApprovalFlow;
-use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Workdays\WorkdayDemographic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,23 +31,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Znck\Eloquent\Relations\BelongsToThrough;
+use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
-class ProjectReport extends Model implements HasMedia, AuditableContract, ApprovalFlow
+class ProjectReport extends Model implements MediaModel, AuditableContract, ReportModel
 {
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
     use Searchable;
-    use HasStatus;
+    use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use HasFrameworkKey;
     use Auditable;
+    use HasUpdateRequests;
+    use HasEntityResources;
+    use BelongsToThroughTrait;
+    use HasWorkdays;
 
     protected $auditInclude = [
         'status',
@@ -63,15 +71,13 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         'old_model',
         'old_id',
         'project_id',
+        'task_id',
         'due_at',
         'status',
         'update_request_status',
         'completion',
-        'completion_status',
         'planted_trees',
         'title',
-        'workdays_paid',
-        'workdays_volunteer',
         'technical_narrative',
         'public_narrative',
         'landscape_community_contribution',
@@ -133,6 +139,10 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         'equitable_opportunities',
         'local_engagement',
         'site_addition',
+        'paid_other_activity_description',
+
+        // virtual (see HasWorkdays trait)
+        'other_workdays_description',
     ];
 
     public $casts = [
@@ -165,28 +175,22 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         ],
     ];
 
-    public const STATUS_DUE = 'due';
-    public const STATUS_STARTED = 'started';
-    public const STATUS_AWAITING_APPROVAL = 'awaiting-approval';
-    public const STATUS_NEEDS_MORE_INFORMATION = 'needs-more-information';
-    public const STATUS_APPROVED = 'approved';
-
-    public static $statuses = [
-        self::STATUS_DUE => 'Due',
-        self::STATUS_STARTED => 'Started',
-        self::STATUS_AWAITING_APPROVAL => 'Awaiting approval',
-        self::STATUS_NEEDS_MORE_INFORMATION => 'Needs more information',
-        self::STATUS_APPROVED => 'Approved',
-    ];
-
-    public const COMPLETION_STATUS_NOT_STARTED = 'not-started';
-    public const COMPLETION_STATUS_STARTED = 'started';
-    public const COMPLETION_STATUS_COMPLETE = 'complete';
-
-    public static $completionStatuses = [
-        self::COMPLETION_STATUS_NOT_STARTED => 'Not started',
-        self::COMPLETION_STATUS_STARTED => 'Started',
-        self::COMPLETION_STATUS_COMPLETE => 'Complete',
+    // Required by the HasWorkdays trait
+    public const WORKDAY_COLLECTIONS = [
+        'paid' => [
+            Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
+            Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT,
+            Workday::COLLECTION_PROJECT_PAID_OTHER,
+        ],
+        'volunteer' => [
+            Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
+            Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT,
+            Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
+        ],
+        'other' => [
+            Workday::COLLECTION_PROJECT_PAID_OTHER,
+            Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
+        ],
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -221,9 +225,18 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         return $this->belongsTo(Project::class);
     }
 
-    public function organisation(): BelongsTo
+    public function task(): BelongsTo
     {
-        return empty($this->project) ? $this->project : $this->project->organisation();
+        return $this->belongsTo(Task::class);
+    }
+
+    public function organisation(): BelongsToThrough
+    {
+        return $this->belongsToThrough(
+            Organisation::class,
+            Project::class,
+            foreignKeyLookup: [Project::class => 'project_id']
+        );
     }
 
     public function createdBy(): BelongsTo
@@ -241,70 +254,15 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         return $this->morphMany(Polygon::class, 'polygonable');
     }
 
-    public function updateRequests()
-    {
-        return $this->morphMany(UpdateRequest::class, 'updaterequestable');
-    }
-
     public function treeSpecies()
     {
         return $this->morphMany(TreeSpecies::class, 'speciesable');
     }
 
-    public function workdaysPaidProjectEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_PROJECT_ESTABLISHMENT);
-    }
-
-    public function workdaysPaidNurseryOperations()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_NURSERY_OPRERATIONS);
-    }
-
-    public function workdaysPaidProjectManagement()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT);
-    }
-
-    public function workdaysPaidSeedCollection()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_SEED_COLLECTION);
-    }
-
-    public function workdaysPaidOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_PAID_OTHER);
-    }
-
-    public function workdaysVolunteerProjectEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_ESTABLISHMENT);
-    }
-
-    public function workdaysVolunteerNurseryOperations()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPRERATIONS);
-    }
-
-    public function workdaysVolunteerProjectManagement()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT);
-    }
-
-    public function workdaysVolunteerSeedCollection()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_SEED_COLLECTION);
-    }
-
-    public function workdaysVolunteerOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER);
-    }
-
     /** Calculated Values */
     public function getTaskUuidAttribute(): ?string
     {
-        return is_null($this->due_at) ? null : (Task::forProjectAndDate($this->project, $this->due_at)->first()->uuid ?? null);
+        return $this->task?->uuid ?? null;
     }
 
     public function getFrameworkUuidAttribute(): ?string
@@ -330,59 +288,56 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
     public function getSeedlingsGrownAttribute(): int
     {
         if ($this->framework_key == 'ppc') {
-            return $this->treeSpecies()
-                ->sum('amount');
+            return $this->treeSpecies()->sum('amount');
         }
 
         if ($this->framework_key == 'terrafund') {
-            if (empty($this->due_at)) {
+            if (empty($this->task_id)) {
                 return 0;
             }
 
-            $month = $this->due_at->month;
-            $year = $this->due_at->year;
-            $nurseryIds = Nursery::where('project_id', data_get($this->project, 'id'))
-                ->where('status', Nursery::STATUS_APPROVED)
-                ->pluck('id')
-                ->toArray();
-
-            if (count($nurseryIds) > 0) {
-                return NurseryReport::whereIn('nursery_id', $nurseryIds)
-                    ->whereMonth('due_at', $month)
-                    ->whereYear('due_at', $year)
-                    ->sum('seedlings_young_trees');
-            }
+            return $this->task->nurseryReports()->sum('seedlings_young_trees');
         }
 
         return 0;
     }
 
+    public function getSeedlingsGrownToDateAttribute(): int
+    {
+        if ($this->framework_key == 'ppc') {
+            return TreeSpecies::where('speciesable_type', ProjectReport::class)
+                ->whereIn(
+                    'speciesable_id',
+                    $this->project->reports()->where('created_at', '<=', $this->created_at)->select('id')
+                )
+                ->sum('amount');
+        }
+
+        // this attribute is currently only used for PPC report exports.
+        return 0;
+    }
+
     public function getTreesPlantedCountAttribute(): int
     {
-        $total = 0;
-        if (empty($this->due_at)) {
-            return $total;
+        if (empty($this->task_id)) {
+            return 0;
         }
 
-        $month = $this->due_at->month;
-        $year = $this->due_at->year;
-        $siteIds = Site::where('project_id', data_get($this->project, 'id'))
-            ->where('status', Site::STATUS_APPROVED)
-            ->pluck('id')
-            ->toArray();
+        return TreeSpecies::where('speciesable_type', SiteReport::class)
+            ->whereIn('speciesable_id', $this->task->siteReports()->select('id'))
+            ->where('collection', TreeSpecies::COLLECTION_PLANTED)
+            ->sum('amount');
+    }
 
-        if (count($siteIds) > 0) {
-            $reports = SiteReport::whereIn('site_id', $siteIds)
-                ->whereMonth('due_at', $month)
-                ->whereYear('due_at', $year)
-                ->get();
-
-            foreach ($reports as $report) {
-                $total += $report->treeSpecies()->sum('amount');
-            }
+    public function getSeedsPlantedCountAttribute(): int
+    {
+        if (empty($this->task_id)) {
+            return 0;
         }
 
-        return $total;
+        return Seeding::where('seedable_type', SiteReport::class)
+            ->whereIn('seedable_id', $this->task->siteReports()->select('id'))
+            ->sum('amount');
     }
 
     public function getTotalJobsCreatedAttribute(): int
@@ -395,65 +350,32 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
 
     public function getWorkdaysTotalAttribute(): int
     {
-        $paid = $this->workdays_paid ?? 0;
-        $volunteer = $this->workdays_volunteer ?? 0;
+        $projectReportTotal = $this->workdays_paid + $this->workdays_volunteer;
 
-        if (empty($this->due_at)) {
-            return $paid + $volunteer;
-        } else {
-            $siteIds = $this->project->sites()->pluck('project_id')->toArray();
-            $month = $this->due_at->month;
-            $year = $this->due_at->year;
-
-            $sitePaid = SiteReport::whereIn('id', $siteIds)
-                ->where('due_at', '<', now())
-                ->whereNotIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
-                ->whereMonth('due_at', $month)
-                ->whereYear('due_at', $year)
-                ->sum('workdays_paid');
-
-            $siteVolunteer = SiteReport::whereIn('id', $siteIds)
-                ->where('due_at', '<', now())
-                ->whereNotIn('status', [SiteReport::STATUS_DUE, SiteReport::STATUS_STARTED])
-                ->whereMonth('due_at', $month)
-                ->whereYear('due_at', $year)
-                ->sum('workdays_volunteer');
-
-            return $paid + $volunteer + $sitePaid + $siteVolunteer;
+        if (empty($this->task_id)) {
+            return $projectReportTotal;
         }
+
+        // Assume that the types are balanced and just return the value from 'gender'
+        $sumTotals = fn ($collectionType) => WorkdayDemographic::whereIn(
+            'workday_id',
+            Workday::where('workdayable_type', SiteReport::class)
+                ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
+                ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
+                ->select('id')
+        )->gender()->sum('amount');
+
+        return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
     }
 
     public function getSiteReportsCountAttribute(): int
     {
-        if (empty($this->due_at)) {
-            return 0;
-        }
-
-        $siteIds = $this->project->sites()->pluck('id')->toArray();
-
-        $month = $this->due_at->month;
-        $year = $this->due_at->year;
-
-        return SiteReport::whereIn('site_id', $siteIds)
-            ->whereMonth('due_at', $month)
-            ->whereYear('due_at', $year)
-            ->count();
+        return $this->task?->siteReports()->count() ?? 0;
     }
 
     public function getNurseryReportsCountAttribute(): ?int
     {
-        if (empty($this->due_at)) {
-            return 0;
-        }
-
-        $nurseryIds = $this->project->nurseries()->pluck('id')->toArray();
-        $month = $this->due_at->month;
-        $year = $this->due_at->year;
-
-        return NurseryReport::whereIn('nursery_id', $nurseryIds)
-            ->whereMonth('due_at', $month)
-            ->whereYear('due_at', $year)
-            ->count();
+        return $this->task?->nurseryReports()->count() ?? 0;
     }
 
     public function scopeProjectUuid(Builder $query, string $projectUuid): Builder
@@ -475,12 +397,8 @@ class ProjectReport extends Model implements HasMedia, AuditableContract, Approv
         return $query->where('project_id', $id);
     }
 
-    public function getReadableCompletionStatusAttribute(): ?string
+    public function parentEntity(): BelongsTo
     {
-        if (empty($this->completion_status)) {
-            return null;
-        }
-
-        return data_get(static::$completionStatuses, $this->completion_status, 'Unknown');
+        return $this->project();
     }
 }

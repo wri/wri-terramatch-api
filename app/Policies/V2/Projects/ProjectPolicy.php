@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Policies\Policy;
+use App\StateMachines\EntityStatusStateMachine;
 
 class ProjectPolicy extends Policy
 {
@@ -19,13 +20,21 @@ class ProjectPolicy extends Policy
             return true;
         }
 
+        if ($user->can('projects-read')) {
+            return true;
+        }
+
+        if ($this->isNewRoleUser($user)) {
+            return true;
+        }
+
         return false;
-        
+
     }
 
     public function readAll(?User $user, ?Project $project = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']);
+        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc', 'framework-hbf']);
     }
 
     public function update(?User $user, ?Project $project = null): bool
@@ -82,7 +91,7 @@ class ProjectPolicy extends Policy
         }
 
         if ($user->can('manage-own') && $this->isTheirs($user, $project)) {
-            return $project->status == Project::STATUS_STARTED;
+            return $project->status == EntityStatusStateMachine::STARTED;
         }
 
         return false;

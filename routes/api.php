@@ -112,19 +112,24 @@ use Illuminate\Support\Facades\Route;
 
 Route::pattern('id', '[0-9]+');
 
-Route::middleware('throttle:30,1')->group(function () {
-    Route::post('/auth/login', [AuthController::class, 'loginAction']);
-    Route::get('/auth/resend', [AuthController::class, 'resendAction']);
-    Route::post('/auth/reset', [AuthController::class, 'resetAction']);
-    Route::patch('/auth/change', [AuthController::class, 'changeAction']);
-    Route::patch('/v2/auth/verify', [AuthController::class, 'verifyUnauthorizedAction']);
+Route::withoutMiddleware('auth:service-api-key,api')->group(function () {
+    Route::middleware('throttle:30,1')->group(function () {
+        Route::post('/auth/login', [AuthController::class, 'loginAction']);
+        Route::get('/auth/resend', [AuthController::class, 'resendAction']);
+        Route::post('/auth/reset', [AuthController::class, 'resetAction']);
+        Route::patch('/auth/change', [AuthController::class, 'changeAction']);
+        Route::patch('/v2/auth/verify', [AuthController::class, 'verifyUnauthorizedAction']);
+    });
+
+    Route::get('/auth/logout', [AuthController::class, 'logoutAction']);
+    Route::get('/auth/refresh', [AuthController::class, 'refreshAction']);
+
+    Route::post('/users', [UsersController::class, 'createAction']);
 });
 
-Route::get('/auth/logout', [AuthController::class, 'logoutAction']);
-Route::get('/auth/refresh', [AuthController::class, 'refreshAction']);
 Route::patch('/auth/verify', [AuthController::class, 'verifyAction']);
-Route::get('/auth/me', [AuthController::class, 'meAction']);
 Route::delete('/auth/delete_me', [AuthController::class, 'deleteMeAction']);
+Route::get('/auth/me', [AuthController::class, 'meAction']);
 
 Route::post('/uploads', [UploadsController::class, 'createAction']);
 Route::put('/uploads/{upload}/update', [UploadsController::class, 'updateAction']);
@@ -138,7 +143,6 @@ Route::get('/uploads/stratification/example', [StratificationController::class, 
 Route::post('/uploads/site_programme_media', [MediaUploadController::class, 'createAction']);
 
 Route::get('/organisations/{id}/users', [UsersController::class, 'readAllByOrganisationAction']);
-Route::post('/users', [UsersController::class, 'createAction']);
 Route::get('/users/all', [UsersController::class, 'readAllAction']);
 Route::get('/users/unverified', [UsersController::class, 'readAllUnverifiedAction']);
 Route::post('/users/invite', [UsersController::class, 'inviteAction']);

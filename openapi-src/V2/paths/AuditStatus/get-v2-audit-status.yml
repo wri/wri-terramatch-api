@@ -1,0 +1,21 @@
+operationId: get-v2-audits-status
+summary: Get all audits status by entity and entity uuid
+tags: 
+  - V2 Audits Status
+parameters:
+  - type: string
+    name: ENTITY
+    in: path
+    required: true
+    description: allowed values project/site/site-polygon
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: '../../definitions/_index.yml#/AuditStatusResponse'

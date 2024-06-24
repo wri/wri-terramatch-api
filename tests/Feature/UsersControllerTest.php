@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
-//use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 final class UsersControllerTest extends TestCase
@@ -14,7 +13,7 @@ final class UsersControllerTest extends TestCase
 
     public function testUpdateRoleAction(): void
     {
-        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $admin = User::factory()->admin()->create();
         $user = User::factory()->create();
 

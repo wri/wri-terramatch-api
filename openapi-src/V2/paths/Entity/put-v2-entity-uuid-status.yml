@@ -1,0 +1,19 @@
+
+summary: Update the status of a specific entity
+tags:
+  - V2 Projects
+  - V2 Sites
+  - V2 SitePolygons
+parameters:
+  - type: string
+    name: ENTITY
+    in: path
+    required: true
+    description: allowed values project/site/site-polygons
+  - type: string
+    name: UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK

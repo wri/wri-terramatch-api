@@ -1,9 +1,10 @@
 <?php
 
-namespace Exports;
+namespace Tests\V2\Exports;
 
 use App\Helpers\CustomFormHelper;
 use App\Jobs\V2\GenerateAdminAllEntityRecordsExportJob;
+use App\Models\Framework;
 use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
@@ -26,10 +27,12 @@ class ExportAllMonitoredEntitiesControllerTest extends TestCase
      */
     public function test_an_admin_user_can_export_all_monitored_entities(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $user = User::factory()->admin()->create();
         $user->givePermissionTo($permission);
+
+        Framework::factory()->create(['slug' => $fmKey, 'access_code' => $fmKey]);
 
         $testCases = [
             'projects' => Project::factory()->count(5)->create(['framework_key' => $fmKey]),

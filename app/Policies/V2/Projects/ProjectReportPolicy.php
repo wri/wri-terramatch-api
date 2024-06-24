@@ -20,12 +20,16 @@ class ProjectReportPolicy extends Policy
             return true;
         }
 
+        if ($this->isNewRoleUser($user)) {
+            return true;
+        }
+
         return false;
     }
 
     public function readAll(?User $user, ?ProjectReport $report = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']);
+        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc', 'framework-hbf']);
     }
 
     public function update(?User $user, ?ProjectReport $report = null): bool

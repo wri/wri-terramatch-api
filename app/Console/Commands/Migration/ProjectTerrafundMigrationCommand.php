@@ -4,6 +4,7 @@ namespace App\Console\Commands\Migration;
 
 use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Console\Command;
 
 class ProjectTerrafundMigrationCommand extends Command
@@ -60,7 +61,7 @@ class ProjectTerrafundMigrationCommand extends Command
             'organisation_id' => data_get($programme, 'organisation_id'),
 
             'name' => data_get($programme, 'name'),
-            'status' => Project::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
             'project_status' => data_get($programme, 'status'),
             'boundary_geojson' => data_get($programme, 'boundary_geojson'),
             'country' => data_get($programme, 'project_country'),

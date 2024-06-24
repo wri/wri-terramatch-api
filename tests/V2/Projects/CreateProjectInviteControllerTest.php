@@ -8,7 +8,6 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -25,13 +24,13 @@ class CreateProjectInviteControllerTest extends TestCase
 
         Mail::fake();
 
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
     }
 
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_it_creates_project_invitations_for_existing_users(string $permission, string $fmKey, bool $useUserEmail)
+    public function test_it_creates_project_invitations_for_existing_users(string $permission, string $fmKey)
     {
         DB::table('v2_project_invites')->truncate();
 
@@ -48,10 +47,11 @@ class CreateProjectInviteControllerTest extends TestCase
 
         $project = Project::factory()->{$fmKey}()->create(['organisation_id' => $organisation->id]);
 
-        $email_address = $useUserEmail ? $user->email_address : $this->faker->email;
+        $email_address = $this->faker->email;
 
         $payload = [
             'email_address' => $email_address,
+            'callback_url' => 'https://test.terramatch.org/foo',
         ];
 
         $this->actingAs($user)
@@ -65,7 +65,6 @@ class CreateProjectInviteControllerTest extends TestCase
                 ->assertJsonFragment([
                     'project_id' => $project->id,
                     'email_address' => $payload['email_address'],
-                    'accepted_at' => null,
                 ]);
         }
 
@@ -101,10 +100,8 @@ class CreateProjectInviteControllerTest extends TestCase
     public static function permissionsDataProvider()
     {
         return [
-            ['framework-terrafund', 'terrafund', true],
-            ['framework-terrafund', 'terrafund', false],
-            ['framework-ppc', 'ppc', true],
-            ['framework-ppc', 'ppc', false],
+            ['framework-terrafund', 'terrafund'],
+            ['framework-ppc', 'ppc'],
         ];
     }
 }

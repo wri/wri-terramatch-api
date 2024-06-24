@@ -11,7 +11,7 @@ parameters:
     name: STATUS
     in: path
     required: true
-    description: "allowed values are approve, reject, moreinfo"
+    description: "allowed values are approve, moreinfo"
   - in: body
     name: body
     schema:

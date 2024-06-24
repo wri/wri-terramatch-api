@@ -1,0 +1,16 @@
+type: object
+properties:
+  country_slug:
+    type: string
+  country:
+    type: string
+  number_of_projects:
+    type: integer
+  total_trees_planted:
+    type: integer
+  total_jobs_created:
+    type: integer
+  number_of_sites:
+    type: integer
+  number_of_nurseries:
+    type: integer

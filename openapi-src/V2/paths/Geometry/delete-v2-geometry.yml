@@ -1,0 +1,18 @@
+summary: Bulk delete geometries
+operationId: delete-v2-geometry
+tags:
+  - V2 Geometry
+parameters:
+  - type: array
+    name: uuids[]
+    in: query
+    required: true
+    items:
+      type: string
+responses:
+  '200':
+    description: OK
+  '404':
+    description: Some of the UUIDs were not found. Nothing was deleted
+  '403':
+    description: This account does not have permission to delete some of the geometries. Nothing was deleted.

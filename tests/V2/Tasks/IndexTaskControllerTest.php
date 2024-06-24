@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Tasks\Task;
+use App\StateMachines\TaskStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
@@ -19,7 +20,7 @@ class IndexTaskControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
 
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
@@ -35,7 +36,7 @@ class IndexTaskControllerTest extends TestCase
         Task::factory()->count(3)->create([
             'organisation_id' => $organisation->id,
             'project_id' => $project->id,
-            'status' => Task::STATUS_DUE,
+            'status' => TaskStatusStateMachine::DUE,
         ]);
 
         CustomFormHelper::generateFakeForm('site', 'ppc');

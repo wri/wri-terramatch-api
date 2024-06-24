@@ -28,7 +28,7 @@ class UpdateRequestFactory extends Factory
             'framework_key' => $frameworkKey,
             'organisation_id' => $organisation->id,
             'project_id' => $project->id,
-            'status' => $this->faker->randomElement(array_keys(UpdateRequest::$statuses)),
+            'status' => array_keys(UpdateRequest::$statuses)[0],
             'updaterequestable_type' => Project::class,
             'updaterequestable_id' => $project->id,
             'content' => json_encode(['name' => 'test project']),

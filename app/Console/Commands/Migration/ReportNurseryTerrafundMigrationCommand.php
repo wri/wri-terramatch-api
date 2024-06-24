@@ -6,6 +6,7 @@ use App\Models\Terrafund\TerrafundNursery;
 use App\Models\Terrafund\TerrafundNurserySubmission;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Console\Command;
 
 class ReportNurseryTerrafundMigrationCommand extends Command
@@ -62,7 +63,7 @@ class ReportNurseryTerrafundMigrationCommand extends Command
             'framework_key' => 'terrafund',
 
             'due_at' => $this->handleDueAt($submission),
-            'status' => NurseryReport::STATUS_AWAITING_APPROVAL,
+            'status' => ReportStatusStateMachine::AWAITING_APPROVAL,
             'seedlings_young_trees' => data_get($submission, 'seedlings_young_trees'),
             'interesting_facts' => data_get($submission, 'interesting_facts'),
             'site_prep' => data_get($submission, 'site_prep'),

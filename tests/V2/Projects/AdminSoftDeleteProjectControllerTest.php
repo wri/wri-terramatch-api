@@ -1,12 +1,12 @@
 <?php
 
-namespace Projects;
+namespace Tests\V2\Projects;
 
 use App\Models\User;
 use App\Models\V2\Projects\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminSoftDeleteProjectControllerTest extends TestCase
@@ -36,7 +36,7 @@ class AdminSoftDeleteProjectControllerTest extends TestCase
      */
     public function test_admins_can_soft_delete_projects(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $user = User::factory()->admin()->create();
         $user->givePermissionTo($permission);

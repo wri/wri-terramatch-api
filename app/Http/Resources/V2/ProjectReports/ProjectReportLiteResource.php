@@ -21,7 +21,6 @@ class ProjectReportLiteResource extends JsonResource
             'status' => $this->status,
             'readable_status' => $this->readable_status,
             'update_request_status' => $this->update_request_status,
-            'completion_status' => $this->completion_status,
             'readable_completion_status' => $this->readable_completion_status,
             'due_at' => $this->due_at,
             'submitted_at' => $this->submitted_at,

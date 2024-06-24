@@ -66,13 +66,40 @@ class Validator
         \App\Validators\Extensions\TerrafundDisturbance::class,
         \App\Validators\Extensions\CompletePercentage::class,
         \App\Validators\Extensions\OrganisationFileType::class,
+        \App\Validators\Extensions\Polygons\EstimatedArea::class,
+        \App\Validators\Extensions\Polygons\FeatureBounds::class,
+        \App\Validators\Extensions\Polygons\HasPolygonSite::class,
+        \App\Validators\Extensions\Polygons\NotOverlapping::class,
+        \App\Validators\Extensions\Polygons\PolygonSize::class,
+        \App\Validators\Extensions\Polygons\GeometryType::class,
+        \App\Validators\Extensions\Polygons\SelfIntersection::class,
+        \App\Validators\Extensions\Polygons\Spikes::class,
+        \App\Validators\Extensions\Polygons\WithinCountry::class,
     ];
 
     private function __construct()
     {
     }
 
+    /**
+     * @throws ValidationException
+     */
     public static function validate(string $name, array $data, bool $checkExtraFields = true): void
+    {
+        $validator = self::createValidator($name, $data, $checkExtraFields);
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    public static function isValid(string $name, array $data, bool $checkExtraFields = true): bool
+    {
+        $validator = self::createValidator($name, $data, $checkExtraFields);
+
+        return ! $validator->fails();
+    }
+
+    private static function createValidator(string $name, array $data, bool $checkExtraFields = true): \Illuminate\Validation\Validator
     {
         $target = get_called_class() . '::' . $name;
         if (! defined($target) || ! is_array(constant($target))) {
@@ -109,8 +136,6 @@ class Validator
             });
         }
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
+        return $validator;
     }
 }

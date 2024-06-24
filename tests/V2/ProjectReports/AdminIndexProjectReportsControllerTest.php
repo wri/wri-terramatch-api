@@ -2,12 +2,13 @@
 
 namespace Tests\V2\ProjectReports;
 
+use App\Models\Framework;
 use App\Models\User;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-// use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexProjectReportsControllerTest extends TestCase
@@ -17,9 +18,11 @@ class AdminIndexProjectReportsControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //         Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $ppcAdmin = User::factory()->admin()->create();
+        Framework::factory()->create(['slug' => 'terrafund']);
+        Framework::factory()->create(['slug' => 'ppc']);
         $tfAdmin->givePermissionTo('framework-terrafund');
         $ppcAdmin->givePermissionTo('framework-ppc');
         $user = User::factory()->create();
@@ -55,7 +58,7 @@ class AdminIndexProjectReportsControllerTest extends TestCase
 
     public function test_searching_on_project_name()
     {
-        // Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 

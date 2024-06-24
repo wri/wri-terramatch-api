@@ -11,3 +11,13 @@ properties:
     type: object
   answers:
     type: object
+  form_title:
+    type: string
+  feedback:
+    type: string
+  feedback_fields:
+    type: array
+    items:
+      type: string
+  update_request:
+    $ref: './UpdateRequestRead.yml'

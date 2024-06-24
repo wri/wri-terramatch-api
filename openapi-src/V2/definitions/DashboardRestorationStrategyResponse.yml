@@ -1,0 +1,47 @@
+type: object
+properties:
+  restorationStrategies:
+    type: object
+    properties:
+      direct-seeding:
+        type: integer
+      tree-planting:
+        type: integer
+      assisted-natural-regeneration:
+        type: integer
+  landUseTypes:
+    type: object
+    properties:
+      agroforest:
+        type: integer
+      open-natural-ecosystem:
+        type: integer
+      mangrove:
+        type: integer
+      natural-forest:
+        type: integer
+      peatland:
+        type: integer
+      riparian-area-or-wetland:
+        type: integer
+      silvopasture:
+        type: integer
+      urban-forest:
+        type: integer
+      woodlot-or-plantation:
+        type: integer
+  landTenures:
+    type: object
+    properties:
+      communal:
+        type: integer
+      indigenous:
+        type: integer
+      national_protected_area:
+        type: integer
+      other:
+        type: integer
+      private:
+        type: integer
+      public:
+        type: integer

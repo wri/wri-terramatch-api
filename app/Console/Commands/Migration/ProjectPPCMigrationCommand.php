@@ -4,6 +4,7 @@ namespace App\Console\Commands\Migration;
 
 use App\Models\Programme;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Console\Command;
 
 class ProjectPPCMigrationCommand extends Command
@@ -60,7 +61,7 @@ class ProjectPPCMigrationCommand extends Command
             'framework_key' => 'ppc',
 
             'name' => data_get($programme, 'name'),
-            'status' => Project::STATUS_APPROVED,
+            'status' => EntityStatusStateMachine::APPROVED,
             'organisation_id' => data_get($programme, 'organisation_id'),
             'boundary_geojson' => data_get($programme, 'boundary_geojson'),
             'country' => data_get($programme, 'country'),

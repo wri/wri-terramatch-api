@@ -51,7 +51,7 @@ class CreateTasksMigrationCommand extends Command
                 $map = [
                         'organisation_id' => $project->organisation_id,
                         'project_id' => $project->id,
-                        'status' => Task::STATUS_COMPLETE,
+                        'status' => $report->status,
                         'period_key' => $item['year'] . '-' . ($item['month'] < 10 ? '0'. $item['month'] : $item['month']),
                         'due_at' => $report->due_at,
                 ];
@@ -75,7 +75,7 @@ class CreateTasksMigrationCommand extends Command
                 $map = [
                         'organisation_id' => $project->organisation_id,
                         'project_id' => $project->id,
-                        'status' => Task::STATUS_COMPLETE,
+                        'status' => $report->status,
                         'period_key' => $item['year'] . '-' . ($item['month'] < 10 ? '0' . $item['month'] : $item['month']),
                         'due_at' => $report->created_at,
                 ];

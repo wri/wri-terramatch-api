@@ -8,17 +8,42 @@ use App\Http\Controllers\V2\Applications\AdminViewApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
+use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
+use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
+use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
+use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
+use App\Http\Controllers\V2\Dashboard\CountriesController;
+use App\Http\Controllers\V2\Dashboard\CountryDataController;
+use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
+use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
+use App\Http\Controllers\V2\Dashboard\GetProjectsController;
+use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
+use App\Http\Controllers\V2\Dashboard\ProjectProfileDetailsController;
+use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
+use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
+use App\Http\Controllers\V2\Dashboard\ViewProjectController;
+use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
+use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
+use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
 use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
 use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\UpdateDisturbanceController;
+use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
+use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
+use App\Http\Controllers\V2\Entities\EntityTypeController;
+use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
+use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
+use App\Http\Controllers\V2\Entities\ViewEntityController;
+use App\Http\Controllers\V2\Entities\ViewEntityWithFormController;
 use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
@@ -72,6 +97,7 @@ use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusControl
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
+use App\Http\Controllers\V2\Geometry\GeometryController;
 use App\Http\Controllers\V2\Invasives\DeleteInvasiveController;
 use App\Http\Controllers\V2\Invasives\GetInvasivesForEntityController;
 use App\Http\Controllers\V2\Invasives\StoreInvasiveController;
@@ -82,24 +108,10 @@ use App\Http\Controllers\V2\LeadershipTeam\UpdateLeadershipTeamController;
 use App\Http\Controllers\V2\MediaController;
 use App\Http\Controllers\V2\Nurseries\AdminIndexNurseriesController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
-use App\Http\Controllers\V2\Nurseries\AdminSoftDeleteNurseryController;
-use App\Http\Controllers\V2\Nurseries\AdminStatusNurseryController;
 use App\Http\Controllers\V2\Nurseries\CreateNurseryWithFormController;
 use App\Http\Controllers\V2\Nurseries\SoftDeleteNurseryController;
-use App\Http\Controllers\V2\Nurseries\SubmitNurseryWithFormController;
-use App\Http\Controllers\V2\Nurseries\UpdateNurseryWithFormController;
-use App\Http\Controllers\V2\Nurseries\ViewNurseryController;
-use App\Http\Controllers\V2\Nurseries\ViewNurseryWithFormController;
 use App\Http\Controllers\V2\NurseryReports\AdminIndexNurseryReportsController;
-use App\Http\Controllers\V2\NurseryReports\AdminSoftDeleteNurseryReportController;
-use App\Http\Controllers\V2\NurseryReports\AdminStatusNurseryReportController;
-use App\Http\Controllers\V2\NurseryReports\CreateNurseryReportWithFormController;
-use App\Http\Controllers\V2\NurseryReports\NothingToReportNurseryReportController;
 use App\Http\Controllers\V2\NurseryReports\NurseryReportsViaNurseryController;
-use App\Http\Controllers\V2\NurseryReports\SubmitNurseryReportWithFormController;
-use App\Http\Controllers\V2\NurseryReports\UpdateNurseryReportWithFormController;
-use App\Http\Controllers\V2\NurseryReports\ViewNurseryReportController;
-use App\Http\Controllers\V2\NurseryReports\ViewNurseryReportWithFormController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
 use App\Http\Controllers\V2\Organisations\AdminOrganisationController;
@@ -118,7 +130,12 @@ use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
+use App\Http\Controllers\V2\Polygons\ViewAllSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
+use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
@@ -129,19 +146,9 @@ use App\Http\Controllers\V2\ProjectPitches\UpdateProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController;
 use App\Http\Controllers\V2\ProjectReports\AdminIndexProjectReportsController;
-use App\Http\Controllers\V2\ProjectReports\AdminSoftDeleteProjectReportController;
-use App\Http\Controllers\V2\ProjectReports\AdminStatusProjectReportController;
-use App\Http\Controllers\V2\ProjectReports\CreateProjectReportWithFormController;
-use App\Http\Controllers\V2\ProjectReports\NothingToReportProjectReportController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
-use App\Http\Controllers\V2\ProjectReports\SubmitProjectReportWithFormController;
-use App\Http\Controllers\V2\ProjectReports\UpdateProjectReportWithFormController;
-use App\Http\Controllers\V2\ProjectReports\ViewProjectReportController;
-use App\Http\Controllers\V2\ProjectReports\ViewProjectReportWithFormController;
 use App\Http\Controllers\V2\Projects\AdminIndexProjectsController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
-use App\Http\Controllers\V2\Projects\AdminSoftDeleteProjectController;
-use App\Http\Controllers\V2\Projects\AdminStatusProjectController;
 use App\Http\Controllers\V2\Projects\CreateBlankProjectWithFormController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\CreateProjectWithFormController;
@@ -150,48 +157,33 @@ use App\Http\Controllers\V2\Projects\Monitoring\AdminSoftDeleteProjectMonitoring
 use App\Http\Controllers\V2\Projects\Monitoring\AdminUpdateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\SoftDeleteProjectController;
-use App\Http\Controllers\V2\Projects\SubmitProjectWithFormController;
-use App\Http\Controllers\V2\Projects\UpdateProjectWithFormController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewMyProjectsController;
-use App\Http\Controllers\V2\Projects\ViewProjectController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\ViewProjectNurseriesController;
 use App\Http\Controllers\V2\Projects\ViewProjectSitesController;
 use App\Http\Controllers\V2\Projects\ViewProjectTasksController;
 use App\Http\Controllers\V2\Projects\ViewProjectTasksReportsController;
-use App\Http\Controllers\V2\Projects\ViewProjectWithFormController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminCreateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminDeleteReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminIndexReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
+use App\Http\Controllers\V2\Reports\NothingToReportReportController;
 use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
-use App\Http\Controllers\V2\SiteReports\AdminSoftDeleteSiteReportController;
-use App\Http\Controllers\V2\SiteReports\AdminStatusSiteReportController;
-use App\Http\Controllers\V2\SiteReports\CreateSiteReportWithFormController;
-use App\Http\Controllers\V2\SiteReports\NothingToReportSiteReportController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
-use App\Http\Controllers\V2\SiteReports\SubmitSiteReportWithFormController;
-use App\Http\Controllers\V2\SiteReports\UpdateSiteReportWithFormController;
-use App\Http\Controllers\V2\SiteReports\ViewSiteReportController;
-use App\Http\Controllers\V2\SiteReports\ViewSiteReportWithFormController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
-use App\Http\Controllers\V2\Sites\AdminSoftDeleteSiteController;
-use App\Http\Controllers\V2\Sites\AdminStatusSiteController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
+use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
-use App\Http\Controllers\V2\Sites\SubmitSiteWithFormController;
-use App\Http\Controllers\V2\Sites\UpdateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
-use App\Http\Controllers\V2\Sites\ViewSiteController;
-use App\Http\Controllers\V2\Sites\ViewSiteWithFormController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
 use App\Http\Controllers\V2\Stages\IndexStageController;
 use App\Http\Controllers\V2\Stages\StoreStageController;
@@ -202,12 +194,12 @@ use App\Http\Controllers\V2\Stratas\DeleteStrataController;
 use App\Http\Controllers\V2\Stratas\GetStratasForEntityController;
 use App\Http\Controllers\V2\Stratas\StoreStrataController;
 use App\Http\Controllers\V2\Stratas\UpdateStrataController;
+use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
-use App\Http\Controllers\V2\TreeSpecies\DeleteTreeSpeciesController;
+use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
+use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
 use App\Http\Controllers\V2\TreeSpecies\GetTreeSpeciesForEntityController;
-use App\Http\Controllers\V2\TreeSpecies\StoreTreeSpeciesController;
-use App\Http\Controllers\V2\TreeSpecies\UpdateTreeSpeciesController;
 use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
 use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\AdminStatusUpdateRequestController;
@@ -221,10 +213,11 @@ use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
 use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
-use App\Http\Controllers\V2\Workdays\DeleteWorkdayController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
-use App\Http\Controllers\V2\Workdays\StoreWorkdayController;
-use App\Http\Controllers\V2\Workdays\UpdateWorkdayController;
+use App\Http\Middleware\ModelInterfaceBindingMiddleware;
+use App\Models\V2\AuditableModel;
+use App\Models\V2\EntityModel;
+use App\Models\V2\MediaModel;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -267,6 +260,7 @@ Route::prefix('imports')->group(function () {
 });
 
 Route::prefix('media')->group(function () {
+    Route::delete('', [MediaController::class, 'bulkDelete']);
     Route::delete('/{uuid}', [MediaController::class, 'delete']);
     Route::delete('/{uuid}/{collection}', [MediaController::class, 'delete']);
 });
@@ -295,11 +289,13 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::put('/{updateRequest}/{status}', AdminStatusUpdateRequestController::class);
     });
 
+    Route::prefix('tasks')->group(function () {
+        Route::get('', AdminIndexTasksController::class);
+    });
+
     Route::prefix('projects')->group(function () {
         Route::get('', AdminIndexProjectsController::class);
         Route::get('/multi', AdminProjectMultiController::class);
-        Route::delete('/{project}', AdminSoftDeleteProjectController::class);
-        Route::put('/{project}/{status}', AdminStatusProjectController::class);
     });
 
     Route::prefix('project-monitorings')->group(function () {
@@ -311,8 +307,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('sites')->group(function () {
         Route::get('/', AdminIndexSitesController::class);
         Route::get('/multi', AdminSitesMultiController::class);
-        Route::delete('/{site}', AdminSoftDeleteSiteController::class);
-        Route::put('/{site}/{status}', AdminStatusSiteController::class);
     });
 
     Route::prefix('site-monitorings')->group(function () {
@@ -324,29 +318,18 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('nurseries')->group(function () {
         Route::get('/', AdminIndexNurseriesController::class);
         Route::get('/multi', AdminNurseriesMultiController::class);
-        Route::delete('/{nursery}', AdminSoftDeleteNurseryController::class);
-        Route::put('/{nursery}/{status}', AdminStatusNurseryController::class);
     });
 
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
 
-    Route::prefix('nursery-reports')->group(function () {
-        Route::get('/', AdminIndexNurseryReportsController::class);
-        Route::delete('/{nurseryReport}', AdminSoftDeleteNurseryReportController::class);
-        Route::put('/{nurseryReport}/{status}', AdminStatusNurseryReportController::class);
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::put('/{entity}/{status}', AdminStatusEntityController::class);
+        Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
     });
 
-    Route::prefix('site-reports')->group(function () {
-        Route::get('/', AdminIndexSiteReportsController::class);
-        Route::delete('/{siteReport}', AdminSoftDeleteSiteReportController::class);
-        Route::put('/{siteReport}/{status}', AdminStatusSiteReportController::class);
-    });
-
-    Route::prefix('project-reports')->group(function () {
-        Route::get('/', AdminIndexProjectReportsController::class);
-        Route::delete('/{projectReport}', AdminSoftDeleteProjectReportController::class);
-        Route::put('/{projectReport}/{status}', AdminStatusProjectReportController::class);
-    });
+    Route::get('nursery-reports', AdminIndexNurseryReportsController::class);
+    Route::get('site-reports', AdminIndexSiteReportsController::class);
+    Route::get('project-reports', AdminIndexProjectReportsController::class);
 
     Route::resource('organisations', AdminOrganisationController::class)->except('create');
     Route::prefix('funding-programme/stage')->group(function () {
@@ -379,7 +362,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
             //            Route::get('/export', ExportFormSubmissionController::class);
             Route::get('/{form}/export', ExportFormSubmissionController::class);
             Route::prefix('{formSubmission}')->group(function () {
-                Route::get('/', ViewFormSubmissionController::class);
+                Route::get('/', ViewFormSubmissionController::class)->middleware('i18n');
                 Route::delete('/', AdminDeleteFormSubmissionController::class);
                 Route::patch('/status', UpdateFormSubmissionStatusController::class);
             });
@@ -427,68 +410,45 @@ Route::prefix('my')->group(function () {
         Route::get('/', IndexMyActionsController::class);
         Route::put('/{action}/complete', CompleteActionController::class);
     });
+
+    Route::get('/projects', ViewMyProjectsController::class);
 });
 
-Route::post('/users/resend', [AuthController::class, 'resendByEmail']);
+Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
 
 Route::prefix('forms')->group(function () {
-    Route::get('/my/submissions', ViewMyFormSubmissionsController::class);
+    Route::get('/my/submissions', ViewMyFormSubmissionsController::class)->middleware('i18n');
     Route::prefix('submissions')->group(function () {
         Route::post('/', StoreFormSubmissionController::class);
         Route::patch('/{formSubmission}', UpdateFormSubmissionController::class);
-        Route::get('/{formSubmission}', ViewFormSubmissionController::class);
-        Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class);
+        Route::get('/{formSubmission}', ViewFormSubmissionController::class)->middleware('i18n');
+        Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class)->middleware('i18n');
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
     Route::get('/linked-field-listing', LinkedFieldListingsController::class);
-    Route::get('/option-labels', FormOptionsLabelController::class);
+    Route::get('/option-labels', FormOptionsLabelController::class)->middleware('i18n');
 
     Route::get('/', IndexFormController::class);
-    Route::get('/{form}', ViewFormController::class);
+    Route::get('/{form}', ViewFormController::class)->middleware('i18n');
+
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
+        Route::put('/{entity}', UpdateEntityWithFormController::class);
+        Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
+    });
 
     Route::prefix('projects')->group(function () {
         Route::post('', CreateProjectWithFormController::class);
         Route::post('/{form}', CreateBlankProjectWithFormController::class);
-        Route::get('/{project}', ViewProjectWithFormController::class);
-        Route::put('/{project}', UpdateProjectWithFormController::class);
-        Route::put('/{project}/submit', SubmitProjectWithFormController::class);
-    });
-
-    Route::prefix('project-reports')->group(function () {
-        Route::post('', CreateProjectReportWithFormController::class);
-        Route::get('/{projectReport}', ViewProjectReportWithFormController::class);
-        Route::put('/{projectReport}', UpdateProjectReportWithFormController::class);
-        Route::put('/{projectReport}/submit', SubmitProjectReportWithFormController::class);
     });
 
     Route::prefix('sites')->group(function () {
         Route::post('', CreateSiteWithFormController::class);
-        Route::get('/{site}', ViewSiteWithFormController::class);
-        Route::put('/{site}', UpdateSiteWithFormController::class);
-        Route::put('/{site}/submit', SubmitSiteWithFormController::class);
     });
 
     Route::prefix('nurseries')->group(function () {
         Route::post('', CreateNurseryWithFormController::class);
-        Route::get('/{nursery}', ViewNurseryWithFormController::class);
-        Route::put('/{nursery}', UpdateNurseryWithFormController::class);
-        Route::put('/{nursery}/submit', SubmitNurseryWithFormController::class);
-    });
-
-    Route::prefix('site-reports')->group(function () {
-        Route::post('', CreateSiteReportWithFormController::class);
-        Route::post('/{siteReport}', ViewSiteReportWithFormController::class);
-        Route::get('/{siteReport}', ViewSiteReportWithFormController::class);
-        Route::put('/{siteReport}', UpdateSiteReportWithFormController::class);
-        Route::put('/{siteReport}/submit', SubmitSiteReportWithFormController::class);
-    });
-
-    Route::prefix('nursery-reports')->group(function () {
-        Route::post('', CreateNurseryReportWithFormController::class);
-        Route::get('/{nurseryReport}', ViewNurseryReportWithFormController::class);
-        Route::put('/{nurseryReport}', UpdateNurseryReportWithFormController::class);
-        Route::put('/{nurseryReport}/submit', SubmitNurseryReportWithFormController::class);
     });
 });
 
@@ -519,19 +479,13 @@ Route::prefix('project-pitches')->group(function () {
     Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
-Route::prefix('tree-species')->group(function () {
-    Route::post('/', StoreTreeSpeciesController::class);
-    Route::patch('/{treeSpecies}', UpdateTreeSpeciesController::class);
-    Route::delete('/{treeSpecies}', DeleteTreeSpeciesController::class);
-    Route::get('/{entity}/{uuid}', GetTreeSpeciesForEntityController::class);
-});
+ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+    Route::get('/{entity}', GetTreeSpeciesForEntityController::class);
+}, prefix: 'tree-species');
 
-Route::prefix('workdays')->group(function () {
-    Route::post('/', StoreWorkdayController::class);
-    Route::patch('/{workday}', UpdateWorkdayController::class);
-    Route::delete('/{workday}', DeleteWorkdayController::class);
-    Route::get('/{entity}/{uuid}', GetWorkdaysForEntityController::class);
-});
+ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
+    Route::get('/{entity}', GetWorkdaysForEntityController::class);
+}, prefix: 'workdays');
 
 Route::prefix('stratas')->group(function () {
     Route::post('/', StoreStrataController::class);
@@ -580,14 +534,13 @@ Route::prefix('core-team-leader')->group(function () {
     Route::delete('/{coreTeamLeader}', DeleteCoreTeamLeaderController::class);
 });
 
-Route::get('/my/projects', ViewMyProjectsController::class);
 Route::prefix('projects')->group(function () {
-    Route::get('/{project}', ViewProjectController::class);
     Route::delete('/{project}', SoftDeleteProjectController::class);
     Route::get('/{project}/tasks', ViewProjectTasksController::class);
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
     Route::get('/{project}/sites', ViewProjectSitesController::class);
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
+    Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
     Route::get('/{project}/nurseries', ViewProjectNurseriesController::class);
     Route::get('/{project}/files', ViewProjectGalleryController::class);
     Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
@@ -607,21 +560,38 @@ Route::prefix('tasks')->group(function () {
     Route::put('/{task}/submit', SubmitProjectTasksController::class);
 });
 
-Route::prefix('project-reports')->group(function () {
-    Route::get('/{projectReport}', ViewProjectReportController::class);
-    Route::get('/{projectReport}/files', ViewProjectReportGalleryController::class);
-    Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
-    Route::put('/{projectReport}/nothing-to-report', NothingToReportProjectReportController::class);
+ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], function () {
+    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
 });
 
-Route::prefix('sites')->group(function () {
-    Route::get('/{site}', ViewSiteController::class);
-    Route::get('/{site}/files', ViewSiteGalleryController::class);
-    Route::get('/{site}/reports', SiteReportsViaSiteController::class);
-    Route::get('/{site}/monitorings', ViewASitesMonitoringsController::class);
-    Route::get('/{site}/image/locations', SiteImageLocationsController::class);
-    Route::delete('/{site}', SoftDeleteSiteController::class);
-    Route::get('/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
+ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+    Route::get('/{entity}', ViewEntityController::class);
+});
+
+Route::prefix('project-reports')->group(function () {
+    Route::get('/{projectReport}/files', ViewProjectReportGalleryController::class);
+    Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
+});
+
+Route::prefix('sites/{site}')->group(function () {
+    Route::get('/files', ViewSiteGalleryController::class);
+    Route::get('/reports', SiteReportsViaSiteController::class);
+    Route::get('/monitorings', ViewASitesMonitoringsController::class);
+    Route::get('/image/locations', SiteImageLocationsController::class);
+    Route::delete('/', SoftDeleteSiteController::class);
+    Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
+    // deprecated, use POST api/v2/geometry instead (include site_id in the geometry's properties
+    Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
+    Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
+    Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
+    Route::get('/check-approve', SiteCheckApproveController::class);
+});
+
+Route::prefix('geometry')->group(function () {
+    Route::post('', [GeometryController::class, 'storeGeometry']);
+    Route::post('/validate', [GeometryController::class, 'validateGeometries']);
+    Route::delete('', [GeometryController::class, 'deleteGeometries']);
+    Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
 });
 
 Route::prefix('project-monitorings')->group(function () {
@@ -634,14 +604,11 @@ Route::prefix('site-monitorings')->group(function () {
 });
 
 Route::prefix('site-reports')->group(function () {
-    Route::get('/{siteReport}', ViewSiteReportController::class);
     Route::get('/{siteReport}/files', ViewSiteReportGalleryController::class);
     Route::get('/{siteReport}/image/locations', SiteReportImageLocationsController::class);
-    Route::put('/{siteReport}/nothing-to-report', NothingToReportSiteReportController::class);
 });
 
 Route::prefix('nurseries')->group(function () {
-    Route::get('/{nursery}', ViewNurseryController::class);
     Route::get('/{nursery}/files', ViewNurseryGalleryController::class);
     Route::get('/{nursery}/reports', NurseryReportsViaNurseryController::class);
     Route::get('/{nursery}/image/locations', NurseryImageLocationsController::class);
@@ -650,10 +617,8 @@ Route::prefix('nurseries')->group(function () {
 });
 
 Route::prefix('nursery-reports')->group(function () {
-    Route::get('/{nurseryReport}', ViewNurseryReportController::class);
     Route::get('/{nurseryReport}/files', ViewNurseryReportGalleryController::class);
     Route::get('/{nurseryReport}/image/locations', NurseryReportImageLocationsController::class);
-    Route::put('/{nurseryReport}/nothing-to-report', NothingToReportNurseryReportController::class);
 });
 
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
@@ -667,15 +632,103 @@ Route::prefix('funding-type')->group(function () {
 
 Route::prefix('update-requests')->group(function () {
     Route::get('/{updateRequest}', AdminViewUpdateRequestController::class);
-    Route::get('/{entity}/{uuid}', EntityUpdateRequestsController::class);
     Route::delete('/{updateRequest}', AdminSoftDeleteUpdateRequestController::class);
+
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::get('/{entity}', EntityUpdateRequestsController::class);
+    });
 });
 
-Route::get('/funding-programme', [FundingProgrammeController::class, 'index']);
+Route::prefix('terrafund')->group(function () {
+    Route::post('/polygon', [TerrafundCreateGeometryController::class, 'storeGeometry']);
+    Route::post('/upload-geojson', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFile']);
+    Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
+    Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
+    Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
+    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
+    Route::get('/geojson/site', [TerrafundCreateGeometryController::class, 'getAllPolygonsAsGeoJSONDownload']);
+
+
+    Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
+    Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
+    Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
+    Route::get('/validation/within-country', [TerrafundCreateGeometryController::class, 'checkWithinCountry']);
+    Route::get('/validation/geometry-type', [TerrafundCreateGeometryController::class, 'getGeometryType']);
+    Route::get('/country-names', [TerrafundCreateGeometryController::class, 'getAllCountryNames']);
+    Route::get('/validation/criteria-data', [TerrafundCreateGeometryController::class, 'getCriteriaData']);
+    Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
+    Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
+    Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
+    Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
+    Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
+    Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
+
+    Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
+    Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
+    Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
+    Route::delete('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndSitePolygon']);
+
+    Route::get('/polygon/bbox/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonBbox']);
+
+    Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
+    Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
+});
+
+Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
 Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
 
-Route::post('file/upload/{model}/{collection}/{uuid}', UploadController::class);
+ModelInterfaceBindingMiddleware::with(
+    MediaModel::class,
+    function () {
+        Route::post('/{collection}/{mediaModel}', UploadController::class);
+        Route::post('/{collection}/{mediaModel}/bulk_url', [UploadController::class, 'bulkUrlUpload']);
+    },
+    prefix: 'file/upload',
+    modelParameter: 'mediaModel'
+);
 
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
+
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::post('/{auditable}', StoreAuditStatusController::class);
+    Route::get('/{auditable}', GetAuditStatusController::class);
+}, prefix: 'audit-status');
+
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
+});
+
+Route::prefix('dashboard')->group(function () {
+    Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
+    Route::get('/jobs-created', GetJobsCreatedController::class);
+    Route::get('/volunteers-survival-rate', VolunteersAndAverageSurvivalRateController::class);
+    Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
+    Route::get('/project-list-export', ProjectListExportController::class);
+    Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
+    Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsByStatusOfProject']);
+    Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
+    Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
+    Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
+    Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
+    Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
+    Route::get('/active-projects', ActiveProjectsTableController::class);
+    Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
+    Route::get('/active-countries', ActiveCountriesTableController::class);
+    Route::get('/countries', CountriesController::class);
+    Route::get('/get-projects', GetProjectsController::class);
+    Route::get('/project-details/{project}', ProjectProfileDetailsController::class);
+    Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
+    Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
+});
+
+Route::prefix('project-pipeline')->group(function () {
+    Route::get('/', GetProjectPipelineController::class);
+    Route::get('/{id}', GetProjectPipelineController::class);
+    Route::post('/', StoreProjectPipelineController::class);
+    Route::put('/{id}', UpdateProjectPipelineController::class);
+    Route::delete('/{id}', DeleteProjectPipelineController::class);
+});
+
+Route::get('/type-entity', EntityTypeController::class);

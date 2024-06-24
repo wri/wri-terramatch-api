@@ -16,22 +16,21 @@ class ViewProjectTasksController extends Controller
         $this->authorize('read', $project);
         $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
 
-
         $sortableColumns = [
             'status', '-status',
-            'period_key', '-period_key',
+            'due_at', '-due_at',
         ];
 
-        $qry = QueryBuilder::for(Task::class)
-            ->with(['project'])
-            ->where('status', '!=', Task::STATUS_COMPLETE)
-            ->where('project_id', $project->id);
+        $query = QueryBuilder::for(Task::class)
+            ->with('project')
+            ->where('project_id', $project->id)
+            ->defaultSort('-due_at');
 
         if (in_array($request->query('sort'), $sortableColumns)) {
-            $qry->allowedSorts($sortableColumns);
+            $query->allowedSorts($sortableColumns);
         }
 
-        $collection = $qry->paginate($perPage);
+        $collection = $query->paginate($perPage);
 
         return new TasksCollection($collection);
     }

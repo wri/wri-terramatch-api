@@ -16,7 +16,7 @@ class SeedMoreOptionListsLocalEngagement extends Migration
      */
     public function up()
     {
-        $collections = [            
+        $collections = [
             'local-engagement' => ['Locally implemented','Locally managed','Locally planned'],
         ];
 

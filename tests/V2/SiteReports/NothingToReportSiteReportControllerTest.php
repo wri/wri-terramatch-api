@@ -7,9 +7,10 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-// use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class NothingToReportSiteReportControllerTest extends TestCase
@@ -19,7 +20,7 @@ class NothingToReportSiteReportControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -61,7 +62,7 @@ class NothingToReportSiteReportControllerTest extends TestCase
             ->putJson($uri)
             ->assertSuccessful()
             ->assertJsonFragment([
-                'status' => SiteReport::STATUS_AWAITING_APPROVAL,
+                'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
                 'nothing_to_report' => true,
             ]);
 
@@ -69,7 +70,7 @@ class NothingToReportSiteReportControllerTest extends TestCase
             ->putJson($uri)
             ->assertSuccessful()
             ->assertJsonFragment([
-                'status' => SiteReport::STATUS_AWAITING_APPROVAL,
+                'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
                 'nothing_to_report' => true,
             ]);
     }

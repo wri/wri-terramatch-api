@@ -31,7 +31,7 @@ class ProjectFactory extends Factory
         return [
             'framework_key' => $this->faker->randomElement($frameworks),
             'name' => $this->faker->words(3, true),
-            'status' => $this->faker->randomElement(array_keys(Project::$statuses)),
+            'status' => array_keys(Project::$statuses)[0],
             'project_status' => $this->faker->randomElement($projStatus),
             'organisation_id' => Organisation::factory()->create()->id,
             'boundary_geojson' => $geojson,

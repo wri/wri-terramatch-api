@@ -26,7 +26,7 @@ abstract class Mail extends Mailable implements ShouldQueue
     public $cta = '';
 
     public $monitoring = false;
-    
+
     public $invite = false;
 
     public $transactional = false;
@@ -60,5 +60,23 @@ abstract class Mail extends Mailable implements ShouldQueue
             'unsubscribe' => $unsubscribe,
             'year' => date('Y'),
         ]);
+    }
+
+    protected function buildRecipients($message): Mail
+    {
+        $overrideRecipients = collect(explode(',', getenv('EMAIL_RECIPIENTS')));
+        if ($overrideRecipients->isEmpty() || empty($overrideRecipients->first())) {
+            return parent::buildRecipients($message);
+        }
+
+        $originalRecipients = [];
+        foreach(['to', 'cc', 'bcc'] as $type) {
+            $originalRecipients[$type] = $this->{$type};
+        }
+        $message->getHeaders()->addTextHeader('X-Original-Emails', json_encode($originalRecipients));
+
+        $overrideRecipients->each(function ($email) use ($message) { $message->to($email); });
+
+        return $this;
     }
 }

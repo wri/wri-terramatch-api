@@ -2,12 +2,12 @@ title: V2TaskRead
 type: object
 properties:
   uuid:
-    type: integer
+    type: string
   project:
     type: object
   period_key:
     type: string
   status:
     type: string
-  status_readable:
+  readable_status:
     type: string

@@ -1,0 +1,14 @@
+type: object
+properties:
+  data:
+    type: array
+    items:
+      $ref: './DashboardActiveProjectData.yml'
+  current_page:
+    type: integer
+  per_page:
+    type: integer
+  total:
+    type: integer
+  last_page:
+    type: integer

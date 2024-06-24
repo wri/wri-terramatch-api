@@ -6,9 +6,10 @@ use App\Models\Organisation;
 use App\Models\User;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-// use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class ProjectReportsViaProjectControllerTest extends TestCase
@@ -18,7 +19,7 @@ class ProjectReportsViaProjectControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //         Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -33,7 +34,11 @@ class ProjectReportsViaProjectControllerTest extends TestCase
 
         ProjectReport::query()->delete();
         $project = Project::factory()->create(['organisation_id' => $organisation->id, 'framework_key' => 'ppc']);
-        ProjectReport::factory()->count(4)->create(['project_id' => $project->id, 'framework_key' => 'ppc', 'status' => ProjectReport::STATUS_APPROVED]);
+        ProjectReport::factory()->count(4)->create([
+            'project_id' => $project->id,
+            'framework_key' => 'ppc',
+            'status' => EntityStatusStateMachine::APPROVED,
+        ]);
         ProjectReport::factory()->count(2)->create(['framework_key' => 'ppc']);
 
         $uri = '/api/v2/projects/' . $project->uuid . '/reports';

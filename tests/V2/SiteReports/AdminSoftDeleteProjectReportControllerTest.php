@@ -1,6 +1,6 @@
 <?php
 
-namespace SiteReports;
+namespace Tests\V2\SiteReports;
 
 use App\Models\User;
 use App\Models\V2\Projects\Project;
@@ -35,7 +35,7 @@ class AdminSoftDeleteProjectReportControllerTest extends TestCase
      */
     public function test_admins_can_soft_delete_project_reports(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migraton:roles');
+        Artisan::call('v2migration:roles');
 
         $user = User::factory()->admin()->create();
         $user->givePermissionTo($permission);

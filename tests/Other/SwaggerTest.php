@@ -102,7 +102,6 @@ final class SwaggerTest extends TestCase
         }
         if (property_exists($results, 'messages')) {
             dd($results->messages);
-            $this->assertEmpty($results->messages);
         }
         File::delete('swagger-v2.json');
     }

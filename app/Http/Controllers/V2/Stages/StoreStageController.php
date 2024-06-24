@@ -28,7 +28,7 @@ class StoreStageController extends Controller
             $form = Form::isUuid($storeStageRequest->get('form_id'))->first();
             $form->update([
                 'stage_id' => $stage->uuid,
-                'framework_key' => $frameworkKey
+                'framework_key' => $frameworkKey,
             ]);
         }
 

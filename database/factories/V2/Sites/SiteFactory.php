@@ -52,7 +52,7 @@ class SiteFactory extends Factory
             'framework_key' => $this->faker->randomElement($frameworks),
             'project_id' => Project::factory()->create()->id,
             'name' => $this->faker->words(3, true),
-            'status' => $this->faker->randomElement(array_keys(Site::$statuses)),
+            'status' => array_keys(Site::$statuses)[0],
             'control_site' => $this->faker->boolean(15),
             'boundary_geojson' => '{"type":"Polygon","coordinates":[[[-1.864006519317627,50.7219083651253],[-1.8627190589904783,50.7219083651253],[-1.8627190589904783,50.72276418262861],[-1.864006519317627,50.72276418262861],[-1.864006519317627,50.7219083651253]]]}',
             'land_use_types' => $this->faker->randomElements(

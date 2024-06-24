@@ -8,14 +8,18 @@ use App\Exceptions\Terrafund\NoProgrammeFilesException;
 use App\Helpers\ErrorHelper;
 use App\Helpers\JsonResponseHelper;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\MimeTypeNotAllowed;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\UnreachableUrl;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -160,9 +164,7 @@ class Handler extends ExceptionHandler
                 return;
             default:
                 if (config('app.env') != 'local') {
-                    if (config('app.env') == 'production') {
-                        App::make('sentry')->captureException($exception);
-                    }
+                    App::make('sentry')->captureException($exception);
                     Log::error($exception);
                 }
 
@@ -173,13 +175,14 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         switch (get_class($exception)) {
+            case AuthenticationException::class:
             case AuthorizationException::class:
                 return JsonResponseHelper::error([], 403);
             case FailedLoginException::class:
                 return JsonResponseHelper::error([], 401);
             case NotFoundHttpException::class:
             case ModelNotFoundException::class:
-                return JsonResponseHelper::error([], 404);
+                return new JsonResponse($exception->getMessage(), 404);
             case MethodNotAllowedHttpException::class:
                 return JsonResponseHelper::error([], 405);
             case ValidationException::class:
@@ -342,6 +345,11 @@ class Handler extends ExceptionHandler
                 return JsonResponseHelper::error($errors, 422);
             case ProgrammeHasNoAimsException::class:
                 return JsonResponseHelper::error([], 404);
+            case InvalidStatusException::class:
+                return JsonResponseHelper::error($exception->getMessage(), 422);
+            case MimeTypeNotAllowed::class:
+            case UnreachableUrl::class:
+                return JsonResponseHelper::error([[$exception->getMessage()]], 422);
             default:
                 if (config('app.env') == 'local') {
                     return new Response($this->renderExceptionContent($exception), 500, ['Content-Type' => 'text/html']);

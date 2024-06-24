@@ -47,12 +47,9 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
         if (is_array($answer)) {
             $list = [];
             foreach ($answer as $item) {
-                if (is_array($item)) {
-                    $list[] = $item['amount'].':'.$item['gender'].':'.$item['age'].':'.$item['ethnicity'];
-                } else {
-                    $list[] = $item;
-                }
+                $list[] = data_get($field, 'input_type') . '??' . $item;
             }
+
             return implode('|', $list);
         }
 
@@ -71,7 +68,25 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     return $this->stringifyModel($answer, ['name', 'amount']);
 
                 case 'workdays':
-                    return $this->stringifyModel($answer, ['amount', 'gender', 'age', 'ethnicity']);
+                    $list = [];
+                    $workday = $answer->first();
+                    if ($workday == null) {
+                        return '';
+                    }
+
+                    $types = ['gender' => [], 'age' => [], 'ethnicity' => []];
+                    foreach ($workday->demographics as $demographic) {
+                        $value = match ($demographic->type) {
+                            'ethnicity' => [$demographic->amount, $demographic->subtype, $demographic->name],
+                            default => [$demographic->amount, $demographic->name],
+                        };
+                        $types[$demographic['type']][] = implode(':', $value);
+                    }
+                    $list[] = 'gender:(' . implode(')(', $types['gender']) . ')';
+                    $list[] = 'age:(' . implode(')(', $types['age']) . ')';
+                    $list[] = 'ethnicity:(' . implode(')(', $types['ethnicity']) . ')';
+
+                    return implode('|', $list);
 
                 case 'leadershipTeam':
                     return $this->stringifyModel($answer, ['first_name', 'last_name', 'position', 'gender', 'age',]);
@@ -80,7 +95,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     return $this->stringifyModel($answer, ['first_name', 'last_name', 'position', 'gender', 'age', 'role']);
 
                 case 'fundingType':
-                    return $this->stringifyModel($answer, ['source', 'amount', 'year']);
+                    return $this->stringifyModel($answer, ['type', 'source', 'amount', 'year']);
 
                 case 'ownershipStake':
                     return $this->stringifyModel($answer, ['first_name', 'last_name', 'title', 'gender', 'percent_ownership', 'year_of_birth',]);

@@ -7,7 +7,7 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteMonitoring;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -26,7 +26,7 @@ class AdminSoftDeleteSiteMonitoringControllerTest extends TestCase
 
         $organisation = Organisation::factory()->create();
 
-//        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $this->owner = User::factory()->admin()->create(['organisation_id' => $organisation->id]);
         $this->owner->givePermissionTo('manage-own');
 

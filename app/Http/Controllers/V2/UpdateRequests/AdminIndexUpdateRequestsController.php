@@ -4,12 +4,12 @@ namespace App\Http\Controllers\V2\UpdateRequests;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\UpdateRequests\UpdateRequestsCollection;
+use App\Models\Framework;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-use App\Models\Framework;
 
 class AdminIndexUpdateRequestsController extends Controller
 {
@@ -59,7 +59,7 @@ class AdminIndexUpdateRequestsController extends Controller
             $query->where(function ($query) use ($frameworkNames, $user) {
                 foreach ($frameworkNames as $framework) {
                     $frameworkPermission = 'framework-' . $framework;
-                    if ($user->hasPermissionTo($frameworkPermission)) {
+                    if ($user->can($frameworkPermission)) {
                         $query->orWhere('framework_key', $framework);
                     }
                 }

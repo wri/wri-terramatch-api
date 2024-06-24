@@ -7,6 +7,7 @@ use App\Models\V2\Sites\SiteReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -27,7 +28,7 @@ class ViewSiteReportGalleryControllerTest extends TestCase
     {
         parent::setUp();
 
-        //      Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $this->admin = User::factory()->admin()->create();
         $this->admin->givePermissionTo('framework-ppc');
 

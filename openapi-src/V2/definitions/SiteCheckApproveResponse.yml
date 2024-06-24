@@ -1,0 +1,5 @@
+title: SiteCheckApproveResponse
+type: object
+properties:
+  can_approve:
+    type: boolean

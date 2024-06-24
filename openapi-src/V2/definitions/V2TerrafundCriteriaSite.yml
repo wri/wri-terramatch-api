@@ -1,0 +1,13 @@
+type: array
+items:
+  type: object
+  properties:
+    uuid:
+      type: string
+      description: The UUID of the polygon.
+    valid:
+      type: boolean
+      description: Indicates if the polygon is valid or not.
+    checked:
+      type: boolean
+      description: Indicates if the polygon has been checked before or not.

@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\V2\Action;
+use Illuminate\Console\Command;
 
 class UpdateTextForActionsBasedOnCount extends Command
 {
@@ -16,7 +16,7 @@ class UpdateTextForActionsBasedOnCount extends Command
      */
     public function handle()
     {
-        Action::where('created_at','>=', '2023-12-01 00:00:00')->chunk(100, function ($actions) {
+        Action::where('created_at', '>=', '2023-12-01 00:00:00')->chunk(100, function ($actions) {
             foreach ($actions as $action) {
                 $this->info('Updating action: ' . $action->id);
                 $action->text = $this->getText($action);
@@ -42,6 +42,7 @@ class UpdateTextForActionsBasedOnCount extends Command
         } else {
             $message = 'Project report available';
         }
+
         return $message;
     }
 }

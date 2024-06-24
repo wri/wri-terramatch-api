@@ -1,0 +1,29 @@
+summary: Upload KML File
+description: Uploads a KML file, converts it to GeoJSON, and inserts it into the database.
+consumes:
+  - multipart/form-data
+parameters:
+  - name: file
+    in: formData
+    description: The KML file to upload
+    required: true
+    type: file
+  - name: uuid
+    in: formData
+    description: The UUID of the site associated with the KML file
+    required: true
+    type: string
+responses:
+  '200':
+    description: KML file processed and inserted successfully
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+        uuid:
+          type: string
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

@@ -11,6 +11,7 @@ class ProjectLiteResource extends JsonResource
     {
         $data = [
             'uuid' => $this->uuid,
+            'ppc_external_id' => $this->ppc_external_id ?? $this->id,
             'framework_key' => $this->framework_key,
             'framework_uuid' => $this->framework_uuid,
             'status' => $this->status,
@@ -21,7 +22,6 @@ class ProjectLiteResource extends JsonResource
             'organisation' => new OrganisationLiteResource($this->organisation),
             'planting_start_date' => $this->planting_start_date,
             'has_monitoring_data' => $this->has_monitoring_data,
-            'total_reporting_tasks' => $this->total_reporting_tasks,
             'project_reports_total' => $this->project_reports_total,
         ];
 

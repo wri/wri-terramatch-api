@@ -7,9 +7,10 @@ use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-// use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class NurseryReportsViaNurseryControllerTest extends TestCase
@@ -19,7 +20,7 @@ class NurseryReportsViaNurseryControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //         Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -37,7 +38,11 @@ class NurseryReportsViaNurseryControllerTest extends TestCase
         $nursery = Nursery::factory()->create(['project_id' => $project->id, 'framework_key' => 'ppc']);
 
         NurseryReport::query()->delete();
-        NurseryReport::factory()->count(4)->create(['nursery_id' => $nursery->id, 'framework_key' => 'ppc', 'status' => NurseryReport::STATUS_APPROVED]);
+        NurseryReport::factory()->count(4)->create([
+            'nursery_id' => $nursery->id,
+            'framework_key' => 'ppc',
+            'status' => EntityStatusStateMachine::APPROVED,
+        ]);
         NurseryReport::factory()->count(2)->create(['framework_key' => 'ppc']);
 
         $uri = '/api/v2/nurseries/' . $nursery->uuid . '/reports';

@@ -8,7 +8,9 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class DeleteSeedingControllerTest extends TestCase
@@ -18,7 +20,7 @@ class DeleteSeedingControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
     }
 
     /**
@@ -41,7 +43,7 @@ class DeleteSeedingControllerTest extends TestCase
         $site = Site::factory()->create([
             'project_id' => $project->id,
             'framework_key' => $fmKey,
-            'status' => Site::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $seeding = Seeding::factory()->create([
@@ -82,13 +84,13 @@ class DeleteSeedingControllerTest extends TestCase
         $site = Site::factory()->create([
             'project_id' => $project->id,
             'framework_key' => $fmKey,
-            'status' => Site::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $siteReport = SiteReport::factory()->create([
             'site_id' => $site->id,
             'framework_key' => $fmKey,
-            'status' => SiteReport::STATUS_STARTED,
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
 
         $seeding = Seeding::factory()->create([

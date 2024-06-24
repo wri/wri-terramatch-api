@@ -22,7 +22,7 @@ class NurseryFactory extends Factory
         return [
             'framework_key' => $frameworkKey,
             'project_id' => Project::factory()->create(['framework_key' => $frameworkKey])->id,
-            'status' => $this->faker->randomElement(array_keys(Nursery::$statuses)),
+            'status' => array_keys(Nursery::$statuses)[0],
             'type' => $this->faker->randomElement($types),
             'name' => $this->faker->word(),
             'start_date' => $this->faker->date(),

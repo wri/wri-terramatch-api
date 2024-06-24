@@ -8,6 +8,6 @@ class FrameworkPolicy extends Policy
 {
     public function update(?UserModel $user): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']);
+        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc', 'framework-hbf']);
     }
 }

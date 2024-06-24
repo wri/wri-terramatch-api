@@ -29,7 +29,7 @@ class UpdateRequestPolicy extends Policy
 
     public function readAll(?User $user, ?UpdateRequest $updateRequest = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc']);
+        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc', 'framework-hbf']);
     }
 
     public function update(?User $user, ?UpdateRequest $updateRequest = null): bool

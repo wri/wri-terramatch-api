@@ -7,17 +7,12 @@ use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormOptionListOption;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 
 class FormOptionsLabelController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
         $this->authorize('listLinkedFields', Form::class);
-
-        if ($request->query('lang')) {
-            App::setLocale($request->query('lang'));
-        }
 
         if (! empty($request->query('keys'))) {
             $collection = FormOptionListOption::whereIn('slug', explode(',', $request->query('keys')))->get();

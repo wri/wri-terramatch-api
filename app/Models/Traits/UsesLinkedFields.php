@@ -2,101 +2,164 @@
 
 namespace App\Models\Traits;
 
+use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\V2\Forms\Form;
 
 trait UsesLinkedFields
 {
+    private ?Form $frameworkModelForm = null;
+
+    public function getForm(): Form
+    {
+        if (! is_null($this->form)) {
+            // Some classes that use this trait have a direct database link to the form.
+            return $this->form;
+        }
+
+        if (is_null($this->frameworkModelForm)) {
+            $this->frameworkModelForm = Form::where('model', get_class($this))
+                ->where('framework_key', $this->framework_key)
+                ->first();
+        }
+
+        return $this->frameworkModelForm;
+    }
+
+    public function getFormConfig(): ?array
+    {
+        return config('wri.linked-fields.models.' . $this->shortName);
+    }
+
     public function updateAllAnswers(array $input): array
     {
         $localAnswers = [];
-        foreach ($this->form->sections as $section) {
+        foreach ($this->getform()->sections as $section) {
             foreach ($section->questions as $question) {
-                $value = data_get($input, $question->uuid);
-                if ($value) {
-                    if (empty($question->linked_field_key)) {
-                        $localAnswers[$question->uuid] = data_get($input, $question->uuid);
-                    }
+                if ($question->input_type !== 'conditional' && ! empty($question->linked_field_key)) {
                     $linkedFieldInfo = $question->getLinkedFieldInfo([
                         'organisation' => $this->organisation,
                         'project-pitch' => $this->projectPitch,
                     ]);
-
                     if (! empty($linkedFieldInfo)) {
                         $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid));
                     }
                 }
+                $localAnswers[$question->uuid] = data_get($input, $question->uuid);
             }
         }
 
         return $localAnswers;
     }
 
-    public function mapEntityAnswers(array $input, Form $form, array $cfg): array
+    public function updateFromForm(array $formData): void
     {
+        $form = $this->getForm();
+        $formConfig = $this->getFormConfig();
+        $fieldsConfig = data_get($formConfig, 'fields', []);
+        $relationsConfig = data_get($formConfig, 'relations', []);
         $localAnswers = [];
         $entityProps = [];
+
         foreach ($form->sections as $section) {
             foreach ($section->questions as $question) {
                 if ($question->input_type !== 'conditional') {
-                    $fieldConfig = data_get($cfg, $question->linked_field_key);
-                    $property = data_get($fieldConfig, 'property', null);
-                    $value = data_get($input, $question->uuid, null);
+                    $fieldConfig = data_get($fieldsConfig, $question->linked_field_key);
+                    if ($fieldConfig != null) {
+                        $property = data_get($fieldConfig, 'property', null);
+                        $value = data_get($formData, $question->uuid, null);
 
-                    if (! is_null($value)) {
-                        if (empty($property)) {
-                            $localAnswers[$question->uuid] = data_get($input, $question->uuid);
+                        if (! is_null($value)) {
+                            if (empty($property)) {
+                                $localAnswers[$question->uuid] = data_get($formData, $question->uuid);
+                            }
+
+                            $entityProps[$property] = $value;
                         }
-
-                        $entityProps[$property] = $value;
+                    } else {
+                        $property = data_get($relationsConfig, "$question->linked_field_key.property");
+                        if (! empty($property)) {
+                            $inputType = data_get($relationsConfig, "$question->linked_field_key.input_type");
+                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)));
+                        }
                     }
+
                 } else {
-                    $localAnswers[$question->uuid] = data_get($input, $question->uuid, null);
+                    $localAnswers[$question->uuid] = data_get($formData, $question->uuid, null);
                     $entityProps['answers'] = $localAnswers;
                 }
             }
         }
 
-        return $entityProps;
+        $this->update($entityProps);
     }
 
     public function calculateCompletion(Form $form): int
     {
         $questionCount = 0;
         $answeredCount = 0;
+        $answers = [];
 
         foreach ($form->sections as $section) {
             foreach ($section->questions as $question) {
+                $required = data_get($question, 'validation.required', true);
+                $conditionalOn = data_get($question, 'show_on_parent_condition')
+                    ? data_get($question, 'parent_id')
+                    : null;
+                $value = null;
+
                 $linkedFieldInfo = $question->getLinkedFieldInfo(['model_uuid' => $this->uuid]);
                 if (! empty($linkedFieldInfo)) {
-                    $answers[$question->uuid] = $this->getEntityLinkedFieldValue($linkedFieldInfo);
+                    $value = $this->getEntityLinkedFieldValue($linkedFieldInfo);
+                } else {
+                    $value = data_get($this->answers, $question->uuid);
                 }
+
+                $answers[$question->uuid] = [
+                    'required' => $required,
+                    'conditionalOn' => $conditionalOn,
+                    'value' => $value,
+                ];
             }
         }
 
         foreach ($answers as $answer) {
+            if (! $answer['required']) {
+                // don't count it if the question wasn't required
+                continue;
+            }
+
+            if (! empty($answers['conditionalOn'])) {
+                $conditional = $answers['conditional'];
+                if (empty($conditional) || ! $conditional['value']) {
+                    // don't count it if the question wasn't shown to the user because the parent conditional is false
+                    // or missing
+                    continue;
+                }
+            }
+
             $questionCount++;
-            if (! empty($answer)) {
+            if (! is_null($answer['value'])) {
                 $answeredCount++;
             }
         }
 
-        return round(($answeredCount / $questionCount) * 100);
+        return $questionCount == 0 ? 100 : round(($answeredCount / $questionCount) * 100);
     }
 
     public function getAllAnswers(array $params = []): array
     {
         $answers = [];
 
-        foreach ($this->form->sections as $section) {
+        foreach ($this->getForm()->sections as $section) {
             foreach ($section->questions as $question) {
-                if (empty($question->linked_field_key)) {
+                if ($question->input_type !== 'conditional' && ! empty($question->linked_field_key)) {
+                    $linkedFieldInfo = $question->getLinkedFieldInfo($params);
+
+                    if (! empty($linkedFieldInfo)) {
+                        $answers[$question->uuid] = $this->getLinkedFieldValue($linkedFieldInfo);
+                    }
+                } else {
                     $answers[$question->uuid] = data_get($this->answers, $question->uuid);
-                }
-
-                $linkedFieldInfo = $question->getLinkedFieldInfo($params);
-
-                if (! empty($linkedFieldInfo)) {
-                    $answers[$question->uuid] = $this->getLinkedFieldValue($linkedFieldInfo);
                 }
             }
         }
@@ -181,18 +244,46 @@ trait UsesLinkedFields
         if ($linkedFieldInfo['link-type'] == 'fields') {
             $model->$property = $answer;
             $model->save();
+        } elseif ($linkedFieldInfo['link-type'] == 'relations') {
+            $inputType = data_get($linkedFieldInfo, 'input_type');
+            $this->syncRelation($property, $inputType, collect($answer), $model);
         }
     }
 
-    public function getCurrentForm(): Form
+    private function syncRelation(string $property, string $inputType, $data, $entity = null): void
     {
-        return Form::where('model', get_class($this))
-            ->where('framework_key', $this->framework_key)
-            ->first();
-    }
+        $entity ??= $this;
 
-    public function getFormConfig(): ?array
-    {
-        return config('wri.linked-fields.models.' . $this->shortName);
+        // This will expand as we complete more tickets in TM-747, until eventually we support all form relations.
+        if (! in_array($inputType, ['treeSpecies', 'workdays'])) {
+            return;
+        }
+
+        $class = get_class($entity->$property()->make());
+        if (is_a($class, HandlesLinkedFieldSync::class, true)) {
+            $class::syncRelation($entity, $property, $data);
+
+            return;
+        }
+
+        $entity->$property()->whereNotIn('uuid', $data->pluck('uuid')->filter())->delete();
+
+        // This would be better as a bulk operation, but too much processing is required to make that feasible
+        // in Eloquent (upsert isn't supported on MorphMany, for instance), and these sets will always be small
+        // so doing them one at a time is OK.
+        $entries = $entity->$property()->get();
+        foreach ($data as $entry) {
+            $model = null;
+            if (! empty($entry['uuid'])) {
+                $model = $entries->firstWhere('uuid', $entry['uuid']);
+            }
+            if ($model != null) {
+                $model->update($entry);
+            } else {
+                // protection against updating a deleted entry
+                unset($entry['uuid']);
+                $entity->$property()->create($entry);
+            }
+        }
     }
 }

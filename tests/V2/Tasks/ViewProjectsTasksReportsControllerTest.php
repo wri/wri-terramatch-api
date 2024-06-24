@@ -24,7 +24,7 @@ class ViewProjectsTasksReportsControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
 
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);

@@ -18,7 +18,6 @@ class Action extends Model
     use SoftDeletes;
     use HasStatus;
     use HasTypes;
-    use SoftDeletes;
 
     public $table = 'v2_actions';
 
@@ -81,5 +80,12 @@ class Action extends Model
     public function scopePending(Builder $query)
     {
         return $query->where('status', Action::STATUS_PENDING);
+    }
+
+    public function scopeForTarget(Builder $query, Model $targetable)
+    {
+        return $query
+            ->where('targetable_type', get_class($targetable))
+            ->where('targetable_id', $targetable->id);
     }
 }

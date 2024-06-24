@@ -1,0 +1,25 @@
+summary: Retrieve all active projects list view.
+description: |
+  This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
+parameters:
+  - in: query
+    name: country
+    type: string
+    description: Optional. Filter counts and metrics by country.
+  - in: query
+    name: per_page
+    type: string
+    description: Optional. per_page to projects.
+  - in: query
+    name: page
+    type: string
+    description: Optional. page to projects.
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardActiveProjectsListViewResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: 'Internal server error'

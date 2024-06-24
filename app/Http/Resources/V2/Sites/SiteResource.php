@@ -13,6 +13,7 @@ class SiteResource extends JsonResource
     {
         $data = [
             'uuid' => $this->uuid,
+            'ppc_external_id' => $this->ppc_external_id ?? $this->id,
             'name' => $this->name,
             'framework_key' => $this->framework_key,
             'framework_uuid' => $this->framework_uuid,
@@ -26,12 +27,13 @@ class SiteResource extends JsonResource
             'status' => $this->status,
             'readable_status' => $this->readable_status,
             'update_request_status' => $this->update_request_status,
+            'readable_update_request_status' => $this->readable_update_request_status,
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
             'survival_rate_planted' => $this->survival_rate_planted,
             'direct_seeding_survival_rate' => $this->direct_seeding_survival_rate,
             'a_nat_regeneration_trees_per_hectare' => $this->a_nat_regeneration_trees_per_hectare,
-            'a_nat_regeneration' => $this->a_nat_regeneration,
+            'a_nat_regeneration' => $this->a_nat_regeneration > 1 ? intval(round($this->a_nat_regeneration)) : $this->a_nat_regeneration,
             'hectares_to_restore_goal' => $this->hectares_to_restore_goal,
             'landscape_community_contribution' => $this->landscape_community_contribution,
             'planting_pattern' => $this->planting_pattern,
@@ -46,6 +48,8 @@ class SiteResource extends JsonResource
             'site_reports_total' => $this->site_reports_total,
             'overdue_site_reports_total' => $this->overdue_site_reports_total,
             'workday_count' => $this->workday_count,
+            // Temporary until we have bulk import completed.
+            'self_reported_workday_count' => $this->self_reported_workday_count,
             'trees_planted_count' => $this->trees_planted_count,
             'regenerated_trees_count' => $this->regenerated_trees_count,
             'migrated' => ! empty($this->old_model),
@@ -53,6 +57,8 @@ class SiteResource extends JsonResource
             'updated_at' => $this->updated_at,
             'has_monitoring_data' => empty($this->has_monitoring_data) ? false : true,
             'seeds_planted_count' => $this->seeds_planted_count,
+            'siting_strategy' => $this->siting_strategy,
+            'description_siting_strategy' => $this->description_siting_strategy,
         ];
 
         return $this->appendFilesToResource($data);

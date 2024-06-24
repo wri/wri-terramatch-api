@@ -21,7 +21,7 @@ class CustomFormHelper
      * @param string $framework [ppc,terrafund]
      * @return Form
      */
-    public static function generateFakeForm(string $type, string $framework): Form
+    public static function generateFakeForm(string $type, string $framework, bool $withRelations = false): Form
     {
         switch ($type) {
             case 'project':
@@ -50,18 +50,33 @@ class CustomFormHelper
                 break;
         }
 
+        $form = Form::where(['framework_key' => $framework, 'model' => $model])->first();
+        if ($form != null) {
+            // If we've already generated a fake form for this combo, use it because otherwise the form the
+            // controller gets from the DB will be different from the form in use by the test.
+            return $form;
+        }
+
         $form = Form::factory()->create(['framework_key' => $framework, 'model' => $model]);
         $section = FormSection::factory()->create(['form_id' => $form->uuid]);
-        foreach (config('wri.linked-fields.models.' . $type . '.fields') as $key => $fieldCfg) {
-            $questions = FormQuestion::factory()->create(
-                [
-                    'input_type' => data_get($fieldCfg, 'input_type'),
-                    'label' => data_get($fieldCfg, 'label'),
-                    'name' => data_get($fieldCfg, 'label'),
-                    'form_section_id' => $section->id,
-                    'linked_field_key' => $key,
-                ]
-            );
+
+        $generateQuestions = function ($subtype) use ($type, $section) {
+            foreach (config("wri.linked-fields.models.$type.$subtype") as $key => $fieldCfg) {
+                FormQuestion::factory()->create(
+                    [
+                        'input_type' => data_get($fieldCfg, 'input_type'),
+                        'label' => data_get($fieldCfg, 'label'),
+                        'name' => data_get($fieldCfg, 'label'),
+                        'form_section_id' => $section->id,
+                        'linked_field_key' => $key,
+                    ]
+                );
+            }
+        };
+
+        $generateQuestions('fields');
+        if ($withRelations) {
+            $generateQuestions('relations');
         }
 
         $conditional = FormQuestion::factory()->conditionalField()->create(['form_section_id' => $section->id]);

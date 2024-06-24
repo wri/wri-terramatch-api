@@ -7,9 +7,10 @@ use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-// use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class NothingToReportNurseryReportControllerTest extends TestCase
@@ -19,7 +20,7 @@ class NothingToReportNurseryReportControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        //        Artisan::call('v2migration:roles --fresh');
+        Artisan::call('v2migration:roles');
         $tfAdmin = User::factory()->admin()->create();
         $tfAdmin->givePermissionTo('framework-terrafund');
 
@@ -62,7 +63,7 @@ class NothingToReportNurseryReportControllerTest extends TestCase
             ->putJson($uri)
             ->assertSuccessful()
             ->assertJsonFragment([
-                'status' => NurseryReport::STATUS_AWAITING_APPROVAL,
+                'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
                 'nothing_to_report' => true,
             ]);
 
@@ -70,7 +71,7 @@ class NothingToReportNurseryReportControllerTest extends TestCase
             ->putJson($uri)
             ->assertSuccessful()
             ->assertJsonFragment([
-                'status' => NurseryReport::STATUS_AWAITING_APPROVAL,
+                'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
                 'nothing_to_report' => true,
             ]);
     }

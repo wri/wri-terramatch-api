@@ -22,7 +22,7 @@ class ProjectReportFactory extends Factory
             'project_id' => Project::factory()->create(),
             'due_at' => $this->faker->dateTime,
             'title' => $this->faker->text(30),
-            'status' => $this->faker->randomElement(array_keys(ProjectReport::$statuses)),
+            'status' => array_keys(ProjectReport::$statuses)[0],
             'completion' => $this->faker->numberBetween(0, 100),
         ];
     }

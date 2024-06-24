@@ -2,21 +2,27 @@
 
 namespace App\Models\V2\Sites;
 
+use App\Http\Resources\V2\SiteReports\SiteReportResource;
 use App\Models\Framework;
+use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasReportStatus;
+use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
+use App\Models\V2\MediaModel;
+use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\ReportModel;
 use App\Models\V2\Seeding;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use App\Models\V2\UpdateRequests\ApprovalFlow;
-use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,55 +32,37 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Znck\Eloquent\Relations\BelongsToThrough;
+use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
-class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalFlow
+class SiteReport extends Model implements MediaModel, AuditableContract, ReportModel
 {
     use HasFactory;
     use HasUuid;
-    use HasStatus;
     use SoftDeletes;
     use Searchable;
+    use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use HasFrameworkKey;
     use Auditable;
+    use HasUpdateRequests;
+    use HasEntityResources;
+    use BelongsToThroughTrait;
+    use HasWorkdays;
 
     protected $auditInclude = [
         'status',
         'feedback',
         'feedback_fields',
-    ];
-
-    public const STATUS_DUE = 'due';
-    public const STATUS_STARTED = 'started';
-    public const STATUS_AWAITING_APPROVAL = 'awaiting-approval';
-    public const STATUS_NEEDS_MORE_INFORMATION = 'needs-more-information';
-    public const STATUS_APPROVED = 'approved';
-
-    public static $statuses = [
-        self::STATUS_DUE => 'Due',
-        self::STATUS_STARTED => 'Started',
-        self::STATUS_AWAITING_APPROVAL => 'Awaiting approval',
-        self::STATUS_NEEDS_MORE_INFORMATION => 'Needs more information',
-        self::STATUS_APPROVED => 'Approved',
-    ];
-
-    public const COMPLETION_STATUS_NOT_STARTED = 'not-started';
-    public const COMPLETION_STATUS_STARTED = 'started';
-    public const COMPLETION_STATUS_COMPLETE = 'complete';
-
-    public static $completionStatuses = [
-        self::COMPLETION_STATUS_NOT_STARTED => 'Not started',
-        self::COMPLETION_STATUS_STARTED => 'Started',
-        self::COMPLETION_STATUS_COMPLETE => 'Complete',
     ];
 
     protected $fillable = [
@@ -85,8 +73,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         'approved_by',
         'created_by',
         'submitted_at',
-        'workdays_paid',
-        'workdays_volunteer',
         'technical_narrative',
         'public_narrative',
         'disturbance_details',
@@ -95,15 +81,21 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         'framework_key',
         'due_at',
         'completion',
-        'completion_status',
         'seeds_planted',
         'old_id',
         'old_model',
         'site_id',
+        'task_id',
         'feedback',
         'feedback_fields',
         'polygon_status',
         'answers',
+        'paid_other_activity_description',
+        'num_trees_regenerating',
+        'regeneration_description',
+
+        // virtual (see HasWorkdays trait)
+        'other_workdays_description',
     ];
 
     public $fileConfiguration = [
@@ -152,6 +144,28 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         'answers' => 'array',
     ];
 
+    // Required by the HasWorkdays trait
+    public const WORKDAY_COLLECTIONS = [
+        'paid' => [
+            Workday::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT,
+            WORKDAY::COLLECTION_SITE_PAID_PLANTING,
+            Workday::COLLECTION_SITE_PAID_SITE_MAINTENANCE,
+            Workday::COLLECTION_SITE_PAID_SITE_MONITORING,
+            Workday::COLLECTION_SITE_PAID_OTHER,
+        ],
+        'volunteer' => [
+            Workday::COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT,
+            WORKDAY::COLLECTION_SITE_VOLUNTEER_PLANTING,
+            Workday::COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE,
+            Workday::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING,
+            Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
+        ],
+        'other' => [
+            Workday::COLLECTION_SITE_PAID_OTHER,
+            Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
+        ],
+    ];
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumbnail')
@@ -176,19 +190,27 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         return $this->belongsTo(Site::class);
     }
 
-    public function project(): BelongsTo
+    public function project(): BelongsToThrough
     {
-        return empty($this->site) ? $this->site : $this->site->project();
+        return $this->belongsToThrough(
+            Project::class,
+            Site::class,
+            foreignKeyLookup: [Project::class => 'project_id', Site::class => 'site_id']
+        );
     }
 
-    public function organisation(): BelongsTo
+    public function task(): BelongsTo
     {
-        return  empty($this->project) ? $this->project : $this->project->organisation();
+        return $this->belongsTo(Task::class);
     }
 
-    public function updateRequests()
+    public function organisation(): BelongsToThrough
     {
-        return $this->morphMany(UpdateRequest::class, 'updaterequestable');
+        return $this->belongsToThrough(
+            Organisation::class,
+            [Project::class, Site::class],
+            foreignKeyLookup: [Project::class => 'project_id', Site::class => 'site_id']
+        );
     }
 
     public function polygons(): MorphMany
@@ -219,56 +241,6 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
     public function invasive()
     {
         return $this->morphMany(Invasive::class, 'invasiveable');
-    }
-
-    public function workdaysPaidSiteEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT);
-    }
-
-    public function workdaysPaidPlanting()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_PLANTING);
-    }
-
-    public function workdaysPaidSiteMaintenance()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_SITE_MAINTENANCE);
-    }
-
-    public function workdaysPaidSiteMonitoring()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_SITE_MONITORING);
-    }
-
-    public function workdaysPaidOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_PAID_OTHER);
-    }
-
-    public function workdaysVolunteerSiteEstablishment()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT);
-    }
-
-    public function workdaysVolunteerPlanting()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_PLANTING);
-    }
-
-    public function workdaysVolunteerSiteMaintenance()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE);
-    }
-
-    public function workdaysVolunteerSiteMonitoring()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING);
-    }
-
-    public function workdaysVolunteerOtherActivities()
-    {
-        return $this->morphMany(Workday::class, 'workdayable')->where('collection', Workday::COLLECTION_SITE_VOLUNTEER_OTHER);
     }
 
     public function approvedBy(): HasOne
@@ -311,6 +283,11 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         return $this->treeSpecies()->sum('amount');
     }
 
+    public function getTotalSeedsPlantedCountAttribute(): int
+    {
+        return $this->seedings()->sum('amount');
+    }
+
     public function getOrganisationAttribute()
     {
         return $this->site ? $this->site->organisation : null;
@@ -318,14 +295,14 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
 
     public function getTaskUuidAttribute(): ?string
     {
-        return is_null($this->due_at) ? null : (Task::forProjectAndDate($this->project, $this->due_at)->first()->uuid ?? null);
+        return $this->task?->uuid ?? null;
     }
 
     public function toSearchableArray()
     {
         return [
-            'project_name' => $this->site->project->name,
-            'organisation_name' => $this->organisation->name,
+            'project_name' => $this->project?->name,
+            'organisation_name' => $this->organisation?->name,
         ];
     }
 
@@ -364,12 +341,18 @@ class SiteReport extends Model implements HasMedia, AuditableContract, ApprovalF
         return $query->where('site_id', $id);
     }
 
-    public function getReadableCompletionStatusAttribute(): ?string
+    public function createResource(): JsonResource
     {
-        if (empty($this->completion_status)) {
-            return null;
-        }
+        return new SiteReportResource($this);
+    }
 
-        return data_get(static::$completionStatuses, $this->completion_status, 'Unknown');
+    public function supportsNothingToReport(): bool
+    {
+        return true;
+    }
+
+    public function parentEntity(): BelongsTo
+    {
+        return $this->site();
     }
 }

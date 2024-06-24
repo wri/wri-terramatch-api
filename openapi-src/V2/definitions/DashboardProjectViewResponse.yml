@@ -1,0 +1,7 @@
+type: object
+properties:
+  data:
+    object: object
+    properties:
+      allowed:
+        type: boolean

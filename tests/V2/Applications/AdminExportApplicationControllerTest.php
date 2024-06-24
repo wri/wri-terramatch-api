@@ -4,7 +4,6 @@ namespace Tests\V2\Applications;
 
 use App\Models\User;
 use App\Models\V2\Forms\Application;
-use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;
 use App\Models\V2\FundingType;
@@ -24,27 +23,18 @@ class AdminExportApplicationControllerTest extends TestCase
     use WithFaker;
     use RefreshDatabase;
 
+    protected $fundingNames = ['TerraFund for AFR100: Landscapes - Expression of Interest (Non Profits)', 'TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)'];
+
     public function test_invoke_action()
     {
-        $forms = Form::whereIn('title', [
-            'TerraFund for AFR100: Landscapes - Request for Proposals (Non Profits)',
-            'TerraFund for AFR100: Landscapes - Request for Proposals (Enterprise)',
-        ])->get();
-
-        if ($forms->count() == 0) {
-            Artisan::call('v2-custom-form-update-data');
-            Artisan::call('v2-custom-form-prep-phase2');
-            Artisan::call('v2-custom-form-rfp-update-data');
-            $forms = Form::whereIn('title', [
-                'TerraFund for AFR100: Landscapes - Request for Proposals (Non Profits)',
-                'TerraFund for AFR100: Landscapes - Request for Proposals (Enterprise)',
-            ])->get();
-        }
+        Artisan::call('v2-custom-form-update-data');
+        Artisan::call('v2-custom-form-prep-phase2');
+        Artisan::call('v2-custom-form-rfp-update-data');
 
         $admin = User::factory()->admin()->create();
         $user = User::factory()->create();
 
-        $fundingProgrammes = FundingProgramme::whereIn('id', [1,2])->get();
+        $fundingProgrammes = FundingProgramme::whereIn('name', $this->fundingNames)->get();
 
         foreach ($fundingProgrammes as $fundingProgramme) {
             $organisations = Organisation::factory()->count($this->faker->numberBetween(1, 5))->create();

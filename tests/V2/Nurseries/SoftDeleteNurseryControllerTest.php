@@ -1,15 +1,15 @@
 <?php
 
-namespace Nurseries;
+namespace Tests\V2\Nurseries;
 
 use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\Site;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-//use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class SoftDeleteNurseryControllerTest extends TestCase
@@ -22,7 +22,7 @@ class SoftDeleteNurseryControllerTest extends TestCase
      */
     public function test_project_developer_can_soft_delete_nurseries_without_reports(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $project = Project::factory()->create(['framework_key' => $fmKey]);
         $nursery = Nursery::factory()->{$fmKey}()->create([
@@ -49,10 +49,10 @@ class SoftDeleteNurseryControllerTest extends TestCase
      */
     public function test_project_developer_cant_soft_delete_nurseries_with_reports(string $permission, string $fmKey)
     {
-        //        Artisan::call('v2migration:roles');
+        Artisan::call('v2migration:roles');
 
         $statuses = [
-            Site::STATUS_APPROVED,
+            EntityStatusStateMachine::APPROVED,
         ];
 
         $project = Project::factory()->create(['framework_key' => $fmKey]);
