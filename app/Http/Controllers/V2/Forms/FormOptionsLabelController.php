@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\V2\Forms;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V2\Forms\FormQuestionOptionResource;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormOptionListOption;
+use App\Models\V2\Forms\FormQuestionOption;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class FormOptionsLabelController extends Controller
 {
@@ -15,24 +18,63 @@ class FormOptionsLabelController extends Controller
         $this->authorize('listLinkedFields', Form::class);
 
         if (! empty($request->query('keys'))) {
-            $collection = FormOptionListOption::whereIn('slug', explode(',', $request->query('keys')))->get();
+            $keys = explode(',', $request->query('keys'));
+            $collection = $this->getFormOptionListOptions($keys);
+            $missingSlugs = $this->getMissingSlugs($keys, $collection);
 
-            $list = [];
-            foreach ($collection as $item) {
-                $list[] = [
-                    'slug' => $item->slug,
-                    'label' => $item->translated_label,
-                    'image_url' => $item->image_url,
-                ];
+            if (! empty($missingSlugs)) {
+                $additionalCollection = $this->getAdditionalFormQuestionOptions($missingSlugs);
+                $collection = $this->mergeCollections($collection, $additionalCollection);
             }
 
-            if (count($list) > 0) {
-                return new JsonResponse(['data' => $list], 200);
+            if (count($collection) > 0) {
+                return new JsonResponse(['data' => $collection->values()->toArray()], 200);
             }
 
             return new JsonResponse(['data' => []], 200);
         }
 
         return new JsonResponse('No keys provided.', 406);
+    }
+
+    public function getFormOptionListOptions(array $keys): Collection
+    {
+        $options = FormOptionListOption::whereIn('slug', $keys)->get();
+        if ($options->isEmpty()) {
+            return collect([]);
+        }
+
+        return $options->map(function ($item) {
+            return [
+                'slug' => $item->slug,
+                'label' => $item->translated_label,
+                'image_url' => $item->image_url,
+            ];
+        })->unique('slug');
+    }
+
+    public function getMissingSlugs(array $keys, Collection $collection): array
+    {
+        $foundSlugs = $collection->pluck('slug')->toArray();
+
+        return array_diff($keys, $foundSlugs);
+    }
+
+    public function getAdditionalFormQuestionOptions(array $missingSlugs): Collection
+    {
+        $formQuestionOptions = FormQuestionOption::whereIn('slug', $missingSlugs)->get();
+
+        return FormQuestionOptionResource::collection($formQuestionOptions)->map(function ($resource) {
+            return [
+                'slug' => $resource->slug,
+                'label' => $resource->label,
+                'image_url' => $resource->image_url,
+            ];
+        });
+    }
+
+    public function mergeCollections(Collection $collection, Collection $additionalCollection): Collection
+    {
+        return $collection->merge($additionalCollection)->unique('slug');
     }
 }
