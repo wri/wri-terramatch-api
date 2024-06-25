@@ -185,14 +185,14 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['message' => 'No site polygons found for the given UUID.'], 404);
             }
             $validatedData = $request->validate([
-                'poly_name' => 'nullable|string',
-                'plantstart' => 'nullable|date',
-                'plantend' => 'nullable|date',
-                'practice' => 'nullable|string',
-                'distr' => 'nullable|string',
-                'num_trees' => 'nullable|integer',
-                'calc_area' => 'nullable|numeric',
-                'target_sys' => 'nullable|string',
+              'poly_name' => 'nullable|string',
+              'plantstart' => 'nullable|date',
+              'plantend' => 'nullable|date',
+              'practice' => 'nullable|string',
+              'distr' => 'nullable|string',
+              'num_trees' => 'nullable|integer',
+              'calc_area' => 'nullable|numeric',
+              'target_sys' => 'nullable|string',
             ]);
 
             $sitePolygon->update($validatedData);
