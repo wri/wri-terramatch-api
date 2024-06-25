@@ -44238,6 +44238,11 @@ definitions:
         checked:
           type: boolean
           description: Indicates if the polygon has been checked before or not.
+        nonValidCriteria:
+          type: array
+          description: List of criteria that are not valid.
+          items:
+            type: object
   SitePolygon:
     title: SitePolygon
     type: object
@@ -94918,6 +94923,11 @@ paths:
                 checked:
                   type: boolean
                   description: Indicates if the polygon has been checked before or not.
+                nonValidCriteria:
+                  type: array
+                  description: List of criteria that are not valid.
+                  items:
+                    type: object
   /v2/geometry/validate:
     post:
       summary: Test a set of geometries for validity
