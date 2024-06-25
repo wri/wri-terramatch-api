@@ -45152,6 +45152,34 @@ definitions:
         properties:
           allowed:
             type: boolean
+  PolygonChangeStatus:
+    type: object
+    properties:
+      comment:
+        type: string
+      updatePolygons:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+            status:
+              type: string
+  PolygonChangeStatusUpdate:
+    type: object
+    properties:
+      comment:
+        type: string
+      updatePolygons:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+            status:
+              type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -97173,3 +97201,47 @@ paths:
                 properties:
                   can_approve:
                     type: boolean
+  /v2/polygons-status:
+    put:
+      summary: update the status of the polygons
+      operationId: get-v2-polygons-uuid-change-status
+      tags:
+        - V2 Polygons
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              comment:
+                type: string
+              updatePolygons:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    status:
+                      type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  comment:
+                    type: string
+                  updatePolygons:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        status:
+                          type: string

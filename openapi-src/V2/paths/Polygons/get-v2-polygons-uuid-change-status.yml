@@ -1,0 +1,18 @@
+summary: update the status of the polygons
+operationId: get-v2-polygons-uuid-change-status
+tags:
+  - V2 Polygons
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/PolygonChangeStatusUpdate'
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          $ref: '../../definitions/_index.yml#/PolygonChangeStatus'
