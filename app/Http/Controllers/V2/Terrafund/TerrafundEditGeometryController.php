@@ -117,12 +117,12 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
-            if (!$polygonGeometry) {
+            if (! $polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
             $project = $sitePolygon->project;
-            if (!$project) {
+            if (! $project) {
                 return response()->json(['message' => 'No project found for the given UUID.'], 404);
             }
             if ($sitePolygon) {
@@ -149,7 +149,7 @@ class TerrafundEditGeometryController extends Controller
             Log::info("Updating geometry for polygon with UUID: $uuid");
 
             $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
-            if (!$polygonGeometry) {
+            if (! $polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $geometry = json_decode($request->input('geometry'));
@@ -168,7 +168,7 @@ class TerrafundEditGeometryController extends Controller
     public function getPolygonGeojson(string $uuid)
     {
         $geometryQuery = PolygonGeometry::isUuid($uuid);
-        if (!$geometryQuery->exists()) {
+        if (! $geometryQuery->exists()) {
             return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
         }
 
@@ -181,7 +181,7 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $sitePolygon = SitePolygon::where('uuid', $uuid)->first();
-            if (!$sitePolygon) {
+            if (! $sitePolygon) {
                 return response()->json(['message' => 'No site polygons found for the given UUID.'], 404);
             }
             $validatedData = $request->validate([
@@ -230,7 +230,7 @@ class TerrafundEditGeometryController extends Controller
             }
 
             $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
-            if (!$polygonGeometry) {
+            if (! $polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $areaSqDegrees = DB::selectOne('SELECT ST_Area(geom) AS area FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->area;
