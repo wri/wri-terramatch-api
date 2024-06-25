@@ -79,7 +79,6 @@ class CreateProjectInviteControllerTest extends TestCase
                 'project_id' => $project->id,
                 'email_address' => $projectInvite->email_address,
                 'token' => $projectInvite->token,
-                'accepted_at' => null,
             ]);
 
             $emailBody = 'You have been sent an invite to join ' . e($project->name) . '.<br><br>' .
