@@ -24,7 +24,19 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['message' => 'No site polygons found for the given UUID.'], 404);
             }
 
-            return response()->json(['site_polygon' => $sitePolygon]);
+            $sitePolygonArray = $sitePolygon->toArray();
+
+            if ($sitePolygon->site) {
+                $siteName = $sitePolygon->site->name;
+                $sitePolygonArray['site_name'] = $siteName;
+
+                unset($sitePolygonArray['site']);
+            }
+
+            return response()->json(['site_polygon' => $sitePolygonArray]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Site polygon not found.'], 404);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -105,12 +117,12 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
-            if (! $polygonGeometry) {
+            if (!$polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
             $project = $sitePolygon->project;
-            if (! $project) {
+            if (!$project) {
                 return response()->json(['message' => 'No project found for the given UUID.'], 404);
             }
             if ($sitePolygon) {
@@ -137,7 +149,7 @@ class TerrafundEditGeometryController extends Controller
             Log::info("Updating geometry for polygon with UUID: $uuid");
 
             $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
-            if (! $polygonGeometry) {
+            if (!$polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $geometry = json_decode($request->input('geometry'));
@@ -156,7 +168,7 @@ class TerrafundEditGeometryController extends Controller
     public function getPolygonGeojson(string $uuid)
     {
         $geometryQuery = PolygonGeometry::isUuid($uuid);
-        if (! $geometryQuery->exists()) {
+        if (!$geometryQuery->exists()) {
             return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
         }
 
@@ -169,18 +181,18 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $sitePolygon = SitePolygon::where('uuid', $uuid)->first();
-            if (! $sitePolygon) {
+            if (!$sitePolygon) {
                 return response()->json(['message' => 'No site polygons found for the given UUID.'], 404);
             }
             $validatedData = $request->validate([
-              'poly_name' => 'nullable|string',
-              'plantstart' => 'nullable|date',
-              'plantend' => 'nullable|date',
-              'practice' => 'nullable|string',
-              'distr' => 'nullable|string',
-              'num_trees' => 'nullable|integer',
-              'calc_area' => 'nullable|numeric',
-              'target_sys' => 'nullable|string',
+                'poly_name' => 'nullable|string',
+                'plantstart' => 'nullable|date',
+                'plantend' => 'nullable|date',
+                'practice' => 'nullable|string',
+                'distr' => 'nullable|string',
+                'num_trees' => 'nullable|integer',
+                'calc_area' => 'nullable|numeric',
+                'target_sys' => 'nullable|string',
             ]);
 
             $sitePolygon->update($validatedData);
@@ -197,28 +209,28 @@ class TerrafundEditGeometryController extends Controller
         try {
             if ($request->getContent() === '{}') {
                 $validatedData = [
-                  'poly_name' => null,
-                  'plantstart' => null,
-                  'plantend' => null,
-                  'practice' => null,
-                  'distr' => null,
-                  'num_trees' => null,
-                  'target_sys' => null,
+                    'poly_name' => null,
+                    'plantstart' => null,
+                    'plantend' => null,
+                    'practice' => null,
+                    'distr' => null,
+                    'num_trees' => null,
+                    'target_sys' => null,
                 ];
             } else {
                 $validatedData = $request->validate([
-                  'poly_name' => 'nullable|string',
-                  'plantstart' => 'nullable|date',
-                  'plantend' => 'nullable|date',
-                  'practice' => 'nullable|string',
-                  'distr' => 'nullable|string',
-                  'num_trees' => 'nullable|integer',
-                  'target_sys' => 'nullable|string',
+                    'poly_name' => 'nullable|string',
+                    'plantstart' => 'nullable|date',
+                    'plantend' => 'nullable|date',
+                    'practice' => 'nullable|string',
+                    'distr' => 'nullable|string',
+                    'num_trees' => 'nullable|integer',
+                    'target_sys' => 'nullable|string',
                 ]);
             }
 
             $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
-            if (! $polygonGeometry) {
+            if (!$polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $areaSqDegrees = DB::selectOne('SELECT ST_Area(geom) AS area FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->area;
