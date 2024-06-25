@@ -209,23 +209,23 @@ class TerrafundEditGeometryController extends Controller
         try {
             if ($request->getContent() === '{}') {
                 $validatedData = [
-                    'poly_name' => null,
-                    'plantstart' => null,
-                    'plantend' => null,
-                    'practice' => null,
-                    'distr' => null,
-                    'num_trees' => null,
-                    'target_sys' => null,
+                  'poly_name' => null,
+                  'plantstart' => null,
+                  'plantend' => null,
+                  'practice' => null,
+                  'distr' => null,
+                  'num_trees' => null,
+                  'target_sys' => null,
                 ];
             } else {
                 $validatedData = $request->validate([
-                    'poly_name' => 'nullable|string',
-                    'plantstart' => 'nullable|date',
-                    'plantend' => 'nullable|date',
-                    'practice' => 'nullable|string',
-                    'distr' => 'nullable|string',
-                    'num_trees' => 'nullable|integer',
-                    'target_sys' => 'nullable|string',
+                  'poly_name' => 'nullable|string',
+                  'plantstart' => 'nullable|date',
+                  'plantend' => 'nullable|date',
+                  'practice' => 'nullable|string',
+                  'distr' => 'nullable|string',
+                  'num_trees' => 'nullable|integer',
+                  'target_sys' => 'nullable|string',
                 ]);
             }
 
