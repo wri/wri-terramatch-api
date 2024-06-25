@@ -558,11 +558,11 @@ class TerrafundCreateGeometryController extends Controller
                     $isValid = false;
                     $isChecked = false;
                 } else {
+                    $nonValidCriteria = [];
                     foreach ($criteriaData['criteria_list'] as $criteria) {
                         if ($criteria['valid'] == 0) {
                             $isValid = false;
-
-                            break;
+                            $nonValidCriteria[] = $criteria;
                         }
                     }
                 }
@@ -571,6 +571,7 @@ class TerrafundCreateGeometryController extends Controller
                     'uuid' => $polygonUuid,
                     'valid' => $isValid,
                     'checked' => $isChecked,
+                    'nonValidCriteria' => $nonValidCriteria,
                 ];
             }
 
