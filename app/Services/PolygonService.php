@@ -7,7 +7,9 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\SitePolygonValidator;
+use App\Services\PythonService;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -231,6 +233,7 @@ class PolygonService
         foreach (self::POINT_PROPERTIES as $property) {
             $properties[$property] = collect(data_get($geojson, "features.*.properties.$property"))->filter()->first();
         }
+        Log::info('Wrote geojson to '.json_encode($geojson));
 
         // TODO:
         //  * transform points into a polygon
@@ -238,6 +241,8 @@ class PolygonService
         //  * Create the SitePolygon using the data in $properties (including $properties['site_id'] to identify the site)
         //  * Return the PolygonGeometry's real UUID instead of this fake return
 
+        $value = App::make(PythonService::class)->voronoiTransformation($geojson);
+        Log::info(json_encode($value));
         return self::TEMP_FAKE_POLYGON_UUID;
     }
 }
