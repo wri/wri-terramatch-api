@@ -97201,7 +97201,7 @@ paths:
                 properties:
                   can_approve:
                     type: boolean
-  /v2/polygons-status:
+  /v2/site-polygon/status/bulk:
     put:
       summary: update the status of the polygons
       operationId: get-v2-polygons-uuid-change-status

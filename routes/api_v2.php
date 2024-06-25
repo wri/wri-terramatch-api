@@ -729,8 +729,9 @@ Route::prefix('project-pipeline')->group(function () {
     Route::put('/{id}', UpdateProjectPipelineController::class);
     Route::delete('/{id}', DeleteProjectPipelineController::class);
 });
-Route::prefix('polygons-status')->group(function () {
-    Route::put('/', ChangeStatusPolygonsController::class);
+
+Route::prefix('site-polygon')->group(function () {
+    Route::put('/status/bulk', ChangeStatusPolygonsController::class);
 });
 
 Route::get('/type-entity', EntityTypeController::class);

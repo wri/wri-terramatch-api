@@ -18,6 +18,9 @@ class ChangeStatusPolygonsController extends Controller
 
         foreach ($polygons as $polygon) {
             $sitePolygon = SitePolygon::where('uuid', $polygon['uuid'])->first();
+            if (!$sitePolygon) {
+                continue;
+            }
             $sitePolygon->status = $polygon['status'];
             $sitePolygon->save();
 
