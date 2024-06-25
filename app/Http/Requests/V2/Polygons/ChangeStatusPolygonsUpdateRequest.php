@@ -17,7 +17,7 @@ class ChangeStatusPolygonsUpdateRequest extends FormRequest
             'comment' => 'sometimes|nullable|string',
             'updatePolygons' => 'sometimes|nullable|array',
             'updatePolygons.*.uuid' => 'sometimes|nullable|string',
-            'updatePolygons.*.status' => 'sometimes|nullable|string', 
+            'updatePolygons.*.status' => 'sometimes|nullable|string',
         ];
     }
 }
