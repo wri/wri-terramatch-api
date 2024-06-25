@@ -24,7 +24,7 @@ class ChangeStatusPolygonsController extends Controller
             $sitePolygon->status = $polygon['status'];
             $sitePolygon->save();
 
-            $this->saveAuditStatus("polygon", $sitePolygon->uuid, $polygon['status'], $body['comment'], 'status');
+            $this->saveAuditStatus("polygon", $sitePolygon['id'], $polygon['status'], $body['comment'], 'status');
         }
 
         return response()->json($polygons);
