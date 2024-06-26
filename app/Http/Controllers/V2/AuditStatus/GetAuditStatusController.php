@@ -12,20 +12,11 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class GetAuditStatusController extends Controller
 {
     public function __invoke(Request $request, AuditableModel $auditable)
     {
-        $model = $this->getModel(get_class($auditable));
-        $object = $model::isUuid($auditable->uuid)->first();
-
-        $audits = $object->audits()
-            ->orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->get();
-
         $auditStatuses = $auditable->auditStatuses()
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc')
@@ -35,11 +26,26 @@ class GetAuditStatusController extends Controller
             $auditStatus->entity_name = $auditable->getAuditableNameAttribute();
         }
 
-        $transformedAudits = $this->transformAudits($audits, $auditable);
+        $transformedAudits = $this->transformAudits($this->getAudits($auditable), $auditable);
 
-        $combineAuditStatus = $auditStatuses->concat($transformedAudits);
+        $combinedData = $auditStatuses->concat($transformedAudits);
 
-        return AuditStatusResource::collection($combineAuditStatus);
+        return AuditStatusResource::collection($combinedData);
+    }
+
+    private function getAudits($auditable)
+    {
+        $auditsModelInstance = $this->getModelInstance($auditable);
+        if (!$auditsModelInstance) {
+            return collect();
+        }
+
+        $audits = $auditsModelInstance->audits()
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return $audits;
     }
 
     private function transformAudits($audits, $auditable)
@@ -62,6 +68,15 @@ class GetAuditStatusController extends Controller
             ];
             return (object) $data;
         });
+    }
+
+    private function getModelInstance(AuditableModel $auditable)
+    {
+        $modelClass = $this->getModel(get_class($auditable));
+        if (!$modelClass) {
+            return null;
+        }
+        return $modelClass::isUuid($auditable->uuid)->first();
     }
 
     private function getModel(string $entity)
