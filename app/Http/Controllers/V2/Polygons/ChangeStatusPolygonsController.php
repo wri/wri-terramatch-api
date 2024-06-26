@@ -16,7 +16,9 @@ class ChangeStatusPolygonsController extends Controller
         $body = $request->all();
         $updatePolygons = $body['updatePolygons'];
 
-        $sitePolygons = SitePolygon::whereIn('uuid', collect($updatePolygons)->map(fn ($p) => $p['uuid']))->get();
+        $polygonUuids = collect($updatePolygons)->pluck('uuid')->toArray();
+        $sitePolygons = SitePolygon::whereIn('uuid', $polygonUuids)->get();
+
         $changedPolygons = [];
         foreach ($sitePolygons as $sitePolygon) {
             $foundPolygon = collect($updatePolygons)->first(fn ($p) => $p['uuid'] === $sitePolygon->uuid);
