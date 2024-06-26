@@ -2666,3 +2666,6 @@
 /v2/sites/{site}/check-approve:
   get:
     $ref: './Sites/get-v2-sites-uuid-check-approve.yml'
+/v2/site-polygon/status/bulk:
+  put:
+    $ref: './Polygons/get-v2-polygons-uuid-change-status.yml'
