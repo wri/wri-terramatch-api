@@ -28,8 +28,8 @@ class AuditStatusResource extends JsonResource
             'created_by' => $this->created_by,
         ];
 
-        if (isset($this->resource->files) && method_exists($this->resource, 'appendFilesToResource')) {
-            return $this->appendFilesToResource($data);
+        if (method_exists($this->resource, 'appendFilesToResource')) {
+            return $this->resource->appendFilesToResource($data);
         }
 
         return $data;
