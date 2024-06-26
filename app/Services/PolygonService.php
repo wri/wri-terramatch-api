@@ -213,7 +213,7 @@ class PolygonService
             'num_trees' => $properties['num_trees'],
             'calc_area' => $properties['area'] ?? null,
             'status' => 'submitted',
-            'point_id' => $properties['point_uuid'] ?? null
+            'point_id' => $properties['point_id'] ?? null
         ];
     }
 
@@ -227,7 +227,7 @@ class PolygonService
     {
         foreach ($geojson['features'] as &$feature) {
             $currentPointUUID = $this->insertSinglePoint($feature);
-            $feature['properties']['point_uuid'] = $currentPointUUID;
+            $feature['properties']['point_id'] = $currentPointUUID;
         }
 
         $properties = $sitePolygonProperties;
@@ -247,6 +247,7 @@ class PolygonService
 
         $polygonsGeojson = App::make(PythonService::class)->voronoiTransformation($geojson);
         $polygonsUuids = $this->createGeojsonModels($polygonsGeojson, ['site_id' => $mainSiteID]);
+        Log::info('Polygons UUIDs: ' . json_encode($polygonsUuids));
         return $polygonsUuids;
     }
 }
