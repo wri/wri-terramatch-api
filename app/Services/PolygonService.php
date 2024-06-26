@@ -44,7 +44,7 @@ class PolygonService
     public function createGeojsonModels($geojson, $sitePolygonProperties = []): array
     {
         if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
-            return [$this->transformAndStorePoints($geojson, $sitePolygonProperties)];
+            return $this->transformAndStorePoints($geojson, $sitePolygonProperties);
         }
 
         $uuids = [];
@@ -213,6 +213,7 @@ class PolygonService
             'num_trees' => $properties['num_trees'],
             'calc_area' => $properties['area'] ?? null,
             'status' => 'submitted',
+            'point_id' => $properties['point_uuid'] ?? null
         ];
     }
 
@@ -222,27 +223,30 @@ class PolygonService
      *
      * @return string UUID of resulting PolygonGeometry
      */
-    protected function transformAndStorePoints($geojson, $sitePolygonProperties): string
+    protected function transformAndStorePoints($geojson, $sitePolygonProperties): array
     {
-        $pointUuids = [];
-        foreach ($geojson['features'] as $feature) {
-            $pointUuids[] = $this->insertSinglePoint($feature);
+        foreach ($geojson['features'] as &$feature) {
+            $currentPointUUID = $this->insertSinglePoint($feature);
+            $feature['properties']['point_uuid'] = $currentPointUUID;
         }
 
         $properties = $sitePolygonProperties;
+        $mainSiteID = '';
         foreach (self::POINT_PROPERTIES as $property) {
             $properties[$property] = collect(data_get($geojson, "features.*.properties.$property"))->filter()->first();
+            if ($property === 'site_id') {
+                $mainSiteID = $properties[$property];
+            }
         }
-        Log::info('Wrote geojson to '.json_encode($geojson));
 
         // TODO:
-        //  * transform points into a polygon
-        //  * Insert the polygon into PolygonGeometry
-        //  * Create the SitePolygon using the data in $properties (including $properties['site_id'] to identify the site)
+        //  * transform points into a polygon DONE
+        //  * Insert the polygon into PolygonGeometry DONE
+        //  * Create the SitePolygon using the data  in $properties (including $properties['site_id'] to identify the site)
         //  * Return the PolygonGeometry's real UUID instead of this fake return
 
-        $value = App::make(PythonService::class)->voronoiTransformation($geojson);
-        Log::info(json_encode($value));
-        return self::TEMP_FAKE_POLYGON_UUID;
+        $polygonsGeojson = App::make(PythonService::class)->voronoiTransformation($geojson);
+        $polygonsUuids = $this->createGeojsonModels($polygonsGeojson, ['site_id' => $mainSiteID]);
+        return $polygonsUuids;
     }
 }
