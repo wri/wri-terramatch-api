@@ -36,7 +36,7 @@ class GetAuditStatusController extends Controller
     private function getAudits($auditable)
     {
         $auditsModelInstance = $this->getModelInstance($auditable);
-        if (!$auditsModelInstance) {
+        if (! $auditsModelInstance) {
             return collect();
         }
 
@@ -66,6 +66,7 @@ class GetAuditStatusController extends Controller
                 'date_created' => $audit->created_at ?? null,
                 'created_by' => $audit->user_id ?? null,
             ];
+
             return (object) $data;
         });
     }
@@ -73,9 +74,10 @@ class GetAuditStatusController extends Controller
     private function getModelInstance(AuditableModel $auditable)
     {
         $modelClass = $this->getModel(get_class($auditable));
-        if (!$modelClass) {
+        if (! $modelClass) {
             return null;
         }
+
         return $modelClass::isUuid($auditable->uuid)->first();
     }
 
