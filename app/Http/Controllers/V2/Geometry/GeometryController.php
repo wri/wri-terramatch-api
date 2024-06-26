@@ -157,7 +157,7 @@ class GeometryController extends Controller
         }
 
         foreach ($polygons as $polygon) {
-            $polygon->sitePolygon()->delete();
+            $polygon->deleteWithRelated();
             $polygon->delete();
         }
 

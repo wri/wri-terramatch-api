@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class PolygonGeometry extends Model
 {
@@ -46,5 +48,30 @@ class PolygonGeometry extends Model
     public function createdBy(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'created_by');
+    }
+    public function point(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            PointGeometry::class,
+            SitePolygon::class,
+            'poly_id', // Foreign Key on SitePolygon table to Polygon
+            'uuid', // Foreign Key on Points table
+            'uuid', // Local Key on Polygon table
+            'point_id' // Local Key on SitePolygon table
+        );
+    }
+
+    // New convenience method
+    public function deleteWithRelated()
+    {
+        DB::transaction(function () {
+            if ($this->sitePolygon) {
+                if ($this->sitePolygon->point) {
+                    $this->sitePolygon->point->delete();
+                }
+                $this->sitePolygon->delete();
+            }
+            $this->delete();
+        });
     }
 }
