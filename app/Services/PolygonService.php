@@ -192,14 +192,6 @@ class PolygonService
         }
         $properties['num_trees'] = is_int($properties['num_trees'] ?? null) ? $properties['num_trees'] : null;
 
-        $validationGeojson = ['features' => [
-            'feature' => ['properties' => $properties],
-        ]];
-        $validSchema = SitePolygonValidator::isValid('SCHEMA', $validationGeojson);
-        $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
-        $this->createCriteriaSite($polygonUuid, self::SCHEMA_CRITERIA_ID, $validSchema);
-        $this->createCriteriaSite($polygonUuid, self::DATA_CRITERIA_ID, $validData);
-
         return [
             'poly_name' => $properties['poly_name'] ?? null,
             'site_id' => $properties['site_id'] ?? null,
