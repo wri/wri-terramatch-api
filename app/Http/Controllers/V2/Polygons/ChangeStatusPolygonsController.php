@@ -14,19 +14,22 @@ class ChangeStatusPolygonsController extends Controller
     public function __invoke(ChangeStatusPolygonsUpdateRequest $request)
     {
         $body = $request->all();
-        $polygons = $body['updatePolygons'];
+        $updatePolygons = $body['updatePolygons'];
 
-        foreach ($polygons as $polygon) {
-            $sitePolygon = SitePolygon::where('uuid', $polygon['uuid'])->first();
-            if (! $sitePolygon) {
+        $sitePolygons = SitePolygon::whereIn('uuid', collect($updatePolygons)->map(fn ($p) => $p['uuid']))->get();
+        $changedPolygons = [];
+        foreach ($sitePolygons as $sitePolygon) {
+            $foundPolygon = collect($updatePolygons)->first(fn ($p) => $p['uuid'] === $sitePolygon->uuid);
+
+            if (! $foundPolygon) {
                 continue;
             }
-            $sitePolygon->status = $polygon['status'];
+            $sitePolygon->status = $foundPolygon['status'];
             $sitePolygon->save();
-
-            $this->saveAuditStatus('polygon', $sitePolygon['id'], $polygon['status'], $body['comment'], 'status');
+            $changedPolygons[] = $sitePolygon;
+            $this->saveAuditStatus('polygon', $sitePolygon['id'], $sitePolygon['status'], $body['comment'], 'status');
         }
 
-        return response()->json($polygons);
+        return response()->json($changedPolygons);
     }
 }
