@@ -11,7 +11,7 @@ class ChangeStatusPolygonsController extends Controller
 {
     use SaveAuditStatusTrait;
 
-    public function __invoke(ChangeStatusPolygonsUpdateRequest $request)
+    public function __invoke(ChangeStatusPolygonsUpdateRequest $request, SitePolygon $sitePolygon)
     {
         $body = $request->all();
         $polygonCollection = collect($body['updatePolygons']);
@@ -28,7 +28,7 @@ class ChangeStatusPolygonsController extends Controller
             $sitePolygon->status = $foundPolygon['status'];
             $sitePolygon->save();
             $polygonsChanged[] = $sitePolygon;
-            $this->saveAuditStatus('polygon', $sitePolygon['id'], $sitePolygon['status'], $body['comment'], 'status');
+            $this->saveAuditStatus(get_class($sitePolygon), $sitePolygon['id'], $sitePolygon['status'], $body['comment'], 'status');
         }
 
         return response()->json($polygonsChanged);

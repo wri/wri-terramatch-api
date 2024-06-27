@@ -88,6 +88,6 @@ class SitePolygon extends Model implements AuditableModel
 
     public function getAuditableNameAttribute(): string
     {
-        return $this->poly_name;
+        return $this->poly_name ?? '';
     }
 }
