@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Geometry;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Geometry\StoreGeometryRequest;
 use App\Models\V2\PolygonGeometry;
@@ -12,6 +13,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -157,11 +159,22 @@ class GeometryController extends Controller
         foreach ($polygons as $polygon) {
             $this->authorize('delete', $polygon);
         }
+        $projectUuids = [];
 
         foreach ($polygons as $polygon) {
+            $sitePolygon = $polygon->sitePolygon;
+            if ($sitePolygon && $sitePolygon->project) {
+              $projectUuid = $sitePolygon->project->uuid;
+              $projectUuids[] = $projectUuid;
+          }
             $polygon->deleteWithRelated();
         }
-
+        
+        $distinctProjectUuids = array_unique($projectUuids);
+        $geometryHelper = new GeometryHelper();
+        foreach ($distinctProjectUuids as $projectUuid) {
+          $geometryHelper->updateProjectCentroid($projectUuid);
+        }
         return response()->json(['success' => 'geometries have been deleted'], 202);
     }
 
