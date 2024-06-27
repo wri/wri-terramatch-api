@@ -51,6 +51,7 @@ class SitePolygon extends Model implements AuditableModel
     {
         return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'uuid');
     }
+
     public function point(): BelongsTo
     {
         return $this->belongsTo(PointGeometry::class, 'point_id', 'uuid');

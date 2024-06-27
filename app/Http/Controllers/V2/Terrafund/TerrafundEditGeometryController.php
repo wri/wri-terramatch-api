@@ -106,11 +106,13 @@ class TerrafundEditGeometryController extends Controller
             $geometryHelper = new GeometryHelper();
             $polygonGeometry->deleteWithRelated();
             $geometryHelper->updateProjectCentroid($project->uuid);
-            
+
             Log::info("Polygon geometry and associated site polygon deleted successfully for UUID: $uuid");
+
             return response()->json(['message' => 'Polygon geometry and associated site polygon deleted successfully.', 'uuid' => $uuid]);
         } catch (\Exception $e) {
             Log::error('An error occurred: ' . $e->getMessage());
+
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
@@ -225,6 +227,7 @@ class TerrafundEditGeometryController extends Controller
             ]);
             $sitePolygon->save();
             $this->updateProjectCentroidFromPolygon($polygonGeometry);
+
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);
         } catch (\Exception $e) {
             // Handle other exceptions

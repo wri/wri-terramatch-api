@@ -49,6 +49,7 @@ class PolygonGeometry extends Model
     {
         return $this->hasOne(User::class, 'id', 'created_by');
     }
+
     public function point(): HasOneThrough
     {
         return $this->hasOneThrough(
