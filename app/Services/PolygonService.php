@@ -222,14 +222,6 @@ class PolygonService
             $feature['properties']['point_id'] = $currentPointUUID;
         }
 
-        $properties = $sitePolygonProperties;
-        $mainSiteID = '';
-        foreach (self::POINT_PROPERTIES as $property) {
-            $properties[$property] = collect(data_get($geojson, "features.*.properties.$property"))->filter()->first();
-            if ($property === 'site_id') {
-                $mainSiteID = $properties[$property];
-            }
-        }
 
         $polygonsGeojson = App::make(PythonService::class)->voronoiTransformation($geojson);
 
@@ -237,7 +229,7 @@ class PolygonService
             throw new \Exception('Voronoi transformation returned null');
         }
 
-        $polygonsUuids = $this->createGeojsonModels($polygonsGeojson, ['site_id' => $mainSiteID]);
+        $polygonsUuids = $this->createGeojsonModels($polygonsGeojson, $sitePolygonProperties);
 
         return $polygonsUuids;
     }
