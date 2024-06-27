@@ -113,20 +113,14 @@ class TerrafundEditGeometryController extends Controller
             if (! $project) {
                 return response()->json(['message' => 'No project found for the given UUID.'], 404);
             }
-            if ($sitePolygon) {
-                Log::info("Deleting associated site polygon for UUID: $uuid");
-                $sitePolygon->delete();
-            }
             $geometryHelper = new GeometryHelper();
+            $polygonGeometry->deleteWithRelated();
             $geometryHelper->updateProjectCentroid($project->uuid);
-            $polygonGeometry->delete();
+            
             Log::info("Polygon geometry and associated site polygon deleted successfully for UUID: $uuid");
-
             return response()->json(['message' => 'Polygon geometry and associated site polygon deleted successfully.', 'uuid' => $uuid]);
         } catch (\Exception $e) {
             Log::error('An error occurred: ' . $e->getMessage());
-
-            // Return error response if an exception occurs
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }

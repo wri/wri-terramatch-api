@@ -160,7 +160,6 @@ class GeometryController extends Controller
 
         foreach ($polygons as $polygon) {
             $polygon->deleteWithRelated();
-            $polygon->delete();
         }
 
         return response()->json(['success' => 'geometries have been deleted'], 202);
