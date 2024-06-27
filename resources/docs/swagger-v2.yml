@@ -44243,6 +44243,11 @@ definitions:
         checked:
           type: boolean
           description: Indicates if the polygon has been checked before or not.
+        nonValidCriteria:
+          type: array
+          description: List of criteria that are not valid.
+          items:
+            type: object
   SitePolygon:
     title: SitePolygon
     type: object
@@ -45152,6 +45157,78 @@ definitions:
         properties:
           allowed:
             type: boolean
+  PolygonChangeStatus:
+    type: array
+    items:
+      title: SitePolygon
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+        project_id:
+          type: string
+        proj_name:
+          type: string
+        org_name:
+          type: string
+        poly_id:
+          type: string
+        poly_name:
+          type: string
+        site_id:
+          type: string
+        site_name:
+          type: string
+        plantstart:
+          type: string
+          format: date
+        plantend:
+          type: string
+          format: date
+        practice:
+          type: string
+        target_sys:
+          type: string
+        distr:
+          type: string
+        num_trees:
+          type: integer
+        calc_area:
+          type: number
+          format: float
+        created_by:
+          type: string
+        last_modified_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+        country:
+          type: string
+  PolygonChangeStatusUpdate:
+    type: object
+    properties:
+      comment:
+        type: string
+      updatePolygons:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+            status:
+              type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94928,6 +95005,11 @@ paths:
                 checked:
                   type: boolean
                   description: Indicates if the polygon has been checked before or not.
+                nonValidCriteria:
+                  type: array
+                  description: List of criteria that are not valid.
+                  items:
+                    type: object
   /v2/geometry/validate:
     post:
       summary: Test a set of geometries for validity
@@ -95738,6 +95820,8 @@ paths:
                   site_id:
                     type: string
                     nullable: true
+                  site_name:
+                    type: string
                   status:
                     type: string
                   target_sys:
@@ -97283,3 +97367,91 @@ paths:
                 properties:
                   can_approve:
                     type: boolean
+  /v2/site-polygon/status/bulk:
+    put:
+      summary: update the status of the polygons
+      operationId: get-v2-polygons-uuid-change-status
+      tags:
+        - V2 Polygons
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              comment:
+                type: string
+              updatePolygons:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    status:
+                      type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  title: SitePolygon
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    uuid:
+                      type: string
+                    project_id:
+                      type: string
+                    proj_name:
+                      type: string
+                    org_name:
+                      type: string
+                    poly_id:
+                      type: string
+                    poly_name:
+                      type: string
+                    site_id:
+                      type: string
+                    site_name:
+                      type: string
+                    plantstart:
+                      type: string
+                      format: date
+                    plantend:
+                      type: string
+                      format: date
+                    practice:
+                      type: string
+                    target_sys:
+                      type: string
+                    distr:
+                      type: string
+                    num_trees:
+                      type: integer
+                    calc_area:
+                      type: number
+                      format: float
+                    created_by:
+                      type: string
+                    last_modified_by:
+                      type: string
+                    deleted_at:
+                      type: string
+                      format: date-time
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    status:
+                      type: string
+                    country:
+                      type: string

@@ -368,3 +368,7 @@ SiteCheckApproveResponse:
   $ref: './SiteCheckApproveResponse.yml'
 DashboardProjectViewResponse:
   $ref: './DashboardProjectViewResponse.yml'
+PolygonChangeStatus:
+  $ref: './PolygonChangeStatus.yml'
+PolygonChangeStatusUpdate:
+  $ref: './PolygonChangeStatusUpdate.yml'

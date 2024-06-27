@@ -24,7 +24,19 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['message' => 'No site polygons found for the given UUID.'], 404);
             }
 
-            return response()->json(['site_polygon' => $sitePolygon]);
+            $sitePolygonArray = $sitePolygon->toArray();
+
+            if ($sitePolygon->site) {
+                $siteName = $sitePolygon->site->name;
+                $sitePolygonArray['site_name'] = $siteName;
+
+                unset($sitePolygonArray['site']);
+            }
+
+            return response()->json(['site_polygon' => $sitePolygonArray]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Site polygon not found.'], 404);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }

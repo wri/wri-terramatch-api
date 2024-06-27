@@ -42,24 +42,6 @@ class GeometryController extends Controller
 
     /**
      * @throws AuthorizationException
-     * @deprecated Use POST /api/v2/geometry (include site id in the properties of each feature)
-     */
-    public function storeSiteGeometry(Request $request, Site $site): JsonResponse
-    {
-        $this->authorize('uploadPolygons', $site);
-
-        $request->validate([
-            'geometries' => 'required|array',
-        ]);
-
-        $geometries = $request->input('geometries');
-        data_set($geometries, '*.features.*.properties.site_id', $site->uuid);
-
-        return response()->json($this->storeAndValidateGeometries($geometries), 201);
-    }
-
-    /**
-     * @throws AuthorizationException
      * @throws ValidationException
      */
     public function storeGeometry(StoreGeometryRequest $request): JsonResponse
