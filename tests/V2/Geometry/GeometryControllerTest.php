@@ -77,7 +77,10 @@ class GeometryControllerTest extends TestCase
         $this->mock(PythonService::class, function (MockInterface $mock) {
             $mock
                 ->shouldReceive('voronoiTransformation')
-                ->andReturn($this->fakeGeojson([$this->fakePolygon()]))
+                ->andReturn($this->fakeGeojson([
+                    $this->fakePolygon(),
+                    $this->fakePolygon(),
+                ]))
                 ->once();
         });
         $this->actingAs($service)
