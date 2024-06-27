@@ -74,24 +74,26 @@ class GeometryController extends Controller
     {
         /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
-        $polygonUuids = [];
+        $results = [];
         foreach ($geometries as $geometry) {
-            // In this controller we require either single polys or a collection of Points, which get turned into a
-            // single poly, so just pull the first UUID returned
-            $polygonUuids[] = $service->createGeojsonModels($geometry)[0];
+            $results[] = ['polygon_uuids' => $service->createGeojsonModels($geometry)];
         }
 
         // Do the validation in a separate step so that all of the existing polygons are taken into account
         // for things like overlapping and estimated area.
-        $polygonErrors = [];
-        foreach ($polygonUuids as $polygonUuid) {
-            $errors = $this->runStoredGeometryValidations($polygonUuid);
-            if (! empty($errors)) {
-                $polygonErrors[$polygonUuid] = $errors;
+        foreach ($results as $index => $result) {
+            $polygonErrors = [];
+            foreach ($result['polygon_uuids'] as $polygonUuid) {
+                $errors = $this->runStoredGeometryValidations($polygonUuid);
+                if (! empty($errors)) {
+                    $polygonErrors[$polygonUuid] = $errors;
+                }
             }
+
+            data_set($results, "$index.errors", $polygonErrors);
         }
 
-        return ['polygon_uuids' => $polygonUuids, 'errors' => $polygonErrors];
+        return $results;
     }
 
     public function validateGeometries(Request $request): JsonResponse

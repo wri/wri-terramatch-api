@@ -10,6 +10,9 @@ description: |
   
   For additional properties (plantstart, num_trees, etc) on Point geometries, if the properties are present on 
   multiple Points, the first non-null value for each is used.
+  
+  The response is an array of objects. Each index in the response corresponds to the geometry at the same index in the 
+  request payload.
 parameters:
   - in: body
     name: body
