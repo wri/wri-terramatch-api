@@ -9,12 +9,10 @@ use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\SitePolygonValidator;
-use App\Services\PythonService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class PolygonService
 {
@@ -171,6 +169,7 @@ class PolygonService
             $project = $sitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
             $geometryHelper->updateProjectCentroid($project->uuid);
+
             return null;
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -206,7 +205,7 @@ class PolygonService
             'num_trees' => $properties['num_trees'],
             'calc_area' => $properties['area'] ?? null,
             'status' => 'submitted',
-            'point_id' => $properties['point_id'] ?? null
+            'point_id' => $properties['point_id'] ?? null,
         ];
     }
 
@@ -234,6 +233,7 @@ class PolygonService
 
         $polygonsGeojson = App::make(PythonService::class)->voronoiTransformation($geojson);
         $polygonsUuids = $this->createGeojsonModels($polygonsGeojson, ['site_id' => $mainSiteID]);
+
         return $polygonsUuids;
     }
 }
