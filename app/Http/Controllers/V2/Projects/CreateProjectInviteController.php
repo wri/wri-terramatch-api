@@ -17,6 +17,8 @@ use Illuminate\Support\Str;
 
 class CreateProjectInviteController extends Controller
 {
+    private const PASSWORD_KEYSPACE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+
     public function __invoke(CreateProjectInviteRequest $request, Project $project): ProjectInviteResource
     {
         $this->authorize('inviteUser', $project);
@@ -41,6 +43,16 @@ class CreateProjectInviteController extends Controller
             }
             Mail::to($data['email_address'])->queue(new V2ProjectMonitoringNotification($project->name, $url));
         } else {
+            $user = User::create([
+                'email_address' => $data['email_address'],
+                // Accounts need to have a password assigned in order to go through the password reset flow.
+                'password' => $this->generateRandomPassword(),
+                'role' => 'user',
+            ]);
+            $user->assignRole('project-developer');
+            $user->refresh();
+            assignSpatieRole($user);
+
             $organisation = Organisation::where('id', $project->organisation_id)->first();
             $projectInvite = $project->invites()->create($data);
             Mail::to($data['email_address'])->queue(new V2ProjectInviteReceived($project->name, $organisation->name, $url));
@@ -53,8 +65,19 @@ class CreateProjectInviteController extends Controller
     {
         do {
             $token = Str::random(64);
-        } while (ProjectInvite::whereToken($token)->first());
+        } while (ProjectInvite::whereToken($token)->exists());
 
         return $token;
+    }
+
+    private function generateRandomPassword(): string
+    {
+        $pieces = [];
+        $max = mb_strlen(self::PASSWORD_KEYSPACE, '8bit') - 1;
+        for ($i = 0; $i < 64; $i++) {
+            $pieces [] = self::PASSWORD_KEYSPACE[random_int(0, $max)];
+        }
+
+        return implode('', $pieces);
     }
 }
