@@ -20,6 +20,22 @@ class GetAuditStatusController extends Controller
             $auditStatus->entity_name = $auditable->getAuditableNameAttribute();
         }
 
-        return AuditStatusResource::collection($auditStatuses);
+        $combinedData = $auditStatuses->concat($this->getAudits($auditable));
+
+        return AuditStatusResource::collection($combinedData);
+    }
+
+    private function getAudits($auditable)
+    {
+        if (! method_exists($auditable, 'audits')) {
+            return collect();
+        }
+
+        $audits = $auditable->audits()
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return $audits;
     }
 }
