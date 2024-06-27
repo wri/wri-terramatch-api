@@ -74,12 +74,12 @@ class GeometryControllerTest extends TestCase
         ]);
 
         // Valid payload
-        $this->mock(PythonService::class, function (MockInterface $mock) {
+        $this->mock(PythonService::class, function (MockInterface $mock) use ($site) {
             $mock
                 ->shouldReceive('voronoiTransformation')
                 ->andReturn($this->fakeGeojson([
-                    $this->fakePolygon(),
-                    $this->fakePolygon(),
+                    $this->fakePolygon(['site_id' => $site->uuid]),
+                    $this->fakePolygon(['site_id' => $site->uuid]),
                 ]))
                 ->once();
         });
@@ -88,7 +88,7 @@ class GeometryControllerTest extends TestCase
                 $this->fakeGeojson([$this->fakePolygon(['site_id' => $site->uuid])]),
                 $this->fakeGeojson([
                     $this->fakePoint(['site_id' => $site->uuid, 'est_area' => 10]),
-                    $this->fakePoint(['est_area' => 20]),
+                    $this->fakePoint(['site_id' => $site->uuid, 'est_area' => 20]),
                 ]),
             ]])
             ->assertStatus(201);

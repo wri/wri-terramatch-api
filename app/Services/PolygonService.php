@@ -222,15 +222,12 @@ class PolygonService
             $feature['properties']['point_id'] = $currentPointUUID;
         }
 
-
         $polygonsGeojson = App::make(PythonService::class)->voronoiTransformation($geojson);
 
         if (is_null($polygonsGeojson)) {
             throw new \Exception('Voronoi transformation returned null');
         }
 
-        $polygonsUuids = $this->createGeojsonModels($polygonsGeojson, $sitePolygonProperties);
-
-        return $polygonsUuids;
+        return $this->createGeojsonModels($polygonsGeojson, $sitePolygonProperties);
     }
 }
