@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
+use stdClass;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GeometryController extends Controller
@@ -73,7 +74,8 @@ class GeometryController extends Controller
                 }
             }
 
-            data_set($results, "$index.errors", $polygonErrors);
+            // Send an empty object instead of empty array if there are no errors to keep the response shape consistent.
+            data_set($results, "$index.errors", empty($polygonErrors) ? new stdClass() : $polygonErrors);
         }
 
         return $results;
