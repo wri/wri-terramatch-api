@@ -232,6 +232,11 @@ class PolygonService
         }
 
         $polygonsGeojson = App::make(PythonService::class)->voronoiTransformation($geojson);
+
+        if (is_null($polygonsGeojson)) {
+            throw new \Exception('Voronoi transformation returned null');
+        }
+
         $polygonsUuids = $this->createGeojsonModels($polygonsGeojson, ['site_id' => $mainSiteID]);
 
         return $polygonsUuids;
