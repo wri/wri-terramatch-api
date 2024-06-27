@@ -67,7 +67,7 @@ class TerrafundEditGeometryController extends Controller
         }
     }
 
-    public function updateProjectCentroid($polygonGeometry)
+    public function updateProjectCentroidFromPolygon($polygonGeometry)
     {
         try {
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
@@ -78,29 +78,7 @@ class TerrafundEditGeometryController extends Controller
 
                 if ($project) {
                     $geometryHelper = new GeometryHelper();
-                    $centroid = $geometryHelper->centroidOfProject($project->uuid);
-
-                    if ($centroid === null) {
-                        Log::warning("Invalid centroid for project UUID: $project->uuid");
-                    }
-                    $centroidData = json_decode($centroid, true);
-
-                    if (isset($centroidData['coordinates']) && is_array($centroidData['coordinates'])) {
-                        $longitude = $centroidData['coordinates'][0];
-                        $latitude = $centroidData['coordinates'][1];
-                        $project->lat = $latitude;
-                        $project->long = $longitude;
-                        $project->save();
-
-                        Log::info("Updated project centroid for project UUID: $project->uuid with lat: $latitude, lng: $longitude");
-                    } else {
-                        Log::warning("Centroid data for project UUID: $project->uuid is malformed.");
-                    }
-                    if (is_array($centroid) && isset($centroid['lat']) && isset($centroid['lng'])) {
-                        Log::info("Updated project centroid for project UUID: $project->uuid with lat: {$centroid['lat']}, lng: {$centroid['lng']}");
-                    } else {
-                        Log::error('Centroid is not properly defined. Centroid data: ' . print_r($centroid, true));
-                    }
+                    $geometryHelper->updateProjectCentroid($project->uuid);
 
                 } else {
                     Log::warning("Project with UUID $relatedSite->project_id not found.");
@@ -125,20 +103,16 @@ class TerrafundEditGeometryController extends Controller
             if (! $project) {
                 return response()->json(['message' => 'No project found for the given UUID.'], 404);
             }
-            if ($sitePolygon) {
-                Log::info("Deleting associated site polygon for UUID: $uuid");
-                $sitePolygon->delete();
-            }
             $geometryHelper = new GeometryHelper();
+            $polygonGeometry->deleteWithRelated();
             $geometryHelper->updateProjectCentroid($project->uuid);
-            $polygonGeometry->delete();
+
             Log::info("Polygon geometry and associated site polygon deleted successfully for UUID: $uuid");
 
             return response()->json(['message' => 'Polygon geometry and associated site polygon deleted successfully.', 'uuid' => $uuid]);
         } catch (\Exception $e) {
             Log::error('An error occurred: ' . $e->getMessage());
 
-            // Return error response if an exception occurs
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
@@ -157,7 +131,7 @@ class TerrafundEditGeometryController extends Controller
             $polygonGeometry->geom = $geom;
             $polygonGeometry->save();
             $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
-            $this->updateProjectCentroid($polygonGeometry);
+            $this->updateProjectCentroidFromPolygon($polygonGeometry);
 
             return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
         } catch (\Exception $e) {
@@ -252,6 +226,7 @@ class TerrafundEditGeometryController extends Controller
                 'site_id' => $siteUuid,
             ]);
             $sitePolygon->save();
+            $this->updateProjectCentroidFromPolygon($polygonGeometry);
 
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);
         } catch (\Exception $e) {

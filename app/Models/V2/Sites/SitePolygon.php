@@ -5,6 +5,7 @@ namespace App\Models\V2\Sites;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
@@ -49,6 +50,11 @@ class SitePolygon extends Model implements AuditableModel
     public function polygonGeometry(): BelongsTo
     {
         return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'uuid');
+    }
+
+    public function point(): BelongsTo
+    {
+        return $this->belongsTo(PointGeometry::class, 'point_id', 'uuid');
     }
 
     public function scopeForPolygonGeometry($query, $uuid): Builder

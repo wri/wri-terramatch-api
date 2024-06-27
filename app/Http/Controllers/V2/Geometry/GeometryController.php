@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Geometry;
 
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Geometry\StoreGeometryRequest;
 use App\Models\V2\PolygonGeometry;
@@ -13,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
+use stdClass;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GeometryController extends Controller
@@ -56,24 +58,27 @@ class GeometryController extends Controller
     {
         /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
-        $polygonUuids = [];
+        $results = [];
         foreach ($geometries as $geometry) {
-            // In this controller we require either single polys or a collection of Points, which get turned into a
-            // single poly, so just pull the first UUID returned
-            $polygonUuids[] = $service->createGeojsonModels($geometry)[0];
+            $results[] = ['polygon_uuids' => $service->createGeojsonModels($geometry)];
         }
 
         // Do the validation in a separate step so that all of the existing polygons are taken into account
         // for things like overlapping and estimated area.
-        $polygonErrors = [];
-        foreach ($polygonUuids as $polygonUuid) {
-            $errors = $this->runStoredGeometryValidations($polygonUuid);
-            if (! empty($errors)) {
-                $polygonErrors[$polygonUuid] = $errors;
+        foreach ($results as $index => $result) {
+            $polygonErrors = [];
+            foreach ($result['polygon_uuids'] as $polygonUuid) {
+                $errors = $this->runStoredGeometryValidations($polygonUuid);
+                if (! empty($errors)) {
+                    $polygonErrors[$polygonUuid] = $errors;
+                }
             }
+
+            // Send an empty object instead of empty array if there are no errors to keep the response shape consistent.
+            data_set($results, "$index.errors", empty($polygonErrors) ? new stdClass() : $polygonErrors);
         }
 
-        return ['polygon_uuids' => $polygonUuids, 'errors' => $polygonErrors];
+        return $results;
     }
 
     public function validateGeometries(Request $request): JsonResponse
@@ -137,10 +142,21 @@ class GeometryController extends Controller
         foreach ($polygons as $polygon) {
             $this->authorize('delete', $polygon);
         }
+        $projectUuids = [];
 
         foreach ($polygons as $polygon) {
-            $polygon->sitePolygon()->delete();
-            $polygon->delete();
+            $sitePolygon = $polygon->sitePolygon;
+            if ($sitePolygon && $sitePolygon->project) {
+                $projectUuid = $sitePolygon->project->uuid;
+                $projectUuids[] = $projectUuid;
+            }
+            $polygon->deleteWithRelated();
+        }
+
+        $distinctProjectUuids = array_unique($projectUuids);
+        $geometryHelper = new GeometryHelper();
+        foreach ($distinctProjectUuids as $projectUuid) {
+            $geometryHelper->updateProjectCentroid($projectUuid);
         }
 
         return response()->json(['success' => 'geometries have been deleted'], 202);
