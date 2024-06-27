@@ -84,6 +84,8 @@ class StoreGeometryRequest extends FormRequest
                     'geometry.features.*.geometry.type' => 'required|string|in:Point',
                     'geometry.features.*.geometry.coordinates' => 'required|array|size:2',
                     'geometry.features.*.properties.est_area' => 'required|numeric|min:1',
+                    // All points require a site id set, and they must all be the same site (enforced via site_ids below)
+                    'geometry.features.*.properties.site_id' => 'required|string',
                     'site_ids' => 'required|array|size:1',
                 ])->validate();
             }
