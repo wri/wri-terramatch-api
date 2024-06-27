@@ -12,20 +12,22 @@ class AuditStatusResource extends JsonResource
      */
     public function toArray($request)
     {
+        $isAuditStatus = isset($this->status);
+
         $data = [
             'id' => $this->id,
             'uuid' => $this->uuid,
-            'entity_name' => $this->entity_name,
-            'status' => $this->status,
-            'comment' => $this->comment,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'type' => $this->type,
-            'is_submitted' => $this->is_submitted,
-            'is_active' => $this->is_active,
-            'request_removed' => $this->request_removed,
-            'date_created' => $this->date_created,
-            'created_by' => $this->created_by,
+            'entity_name' => $this->entity_name ?? null,
+            'status' => $isAuditStatus ? $this->status : ($this->new_values['status'] ?? $this->event),
+            'comment' => $isAuditStatus ? $this->comment : ($this->new_values['feedback'] ?? null),
+            'first_name' => $isAuditStatus ? $this->first_name : ($this->user->first_name ?? null),
+            'last_name' => $isAuditStatus ? $this->last_name : ($this->user->last_name ?? null),
+            'type' => $this->type ?? 'status',
+            'is_submitted' => $this->is_submitted ?? null,
+            'is_active' => $isAuditStatus ?? null,
+            'request_removed' => $this->request_removed ?? null,
+            'date_created' => $this->created_at,
+            'created_by' => $isAuditStatus ? $this->created_by : ($this->user_id ?? null),
         ];
 
         if (method_exists($this->resource, 'appendFilesToResource')) {
