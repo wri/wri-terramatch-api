@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Helpers\GeometryHelper;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\CriteriaSite;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\SitePolygonValidator;
 use App\Services\PythonService;
@@ -53,25 +55,19 @@ class PolygonService
                 $data = $this->insertSinglePolygon($feature['geometry']);
                 $uuids[] = $data['uuid'];
                 $sitePolygonProperties['area'] = $data['area'];
-                $returnSite = $this->insertSitePolygon(
+                $this->insertSitePolygon(
                     $data['uuid'],
                     array_merge($sitePolygonProperties, $feature['properties']),
                 );
-                if ($returnSite) {
-                    Log::info($returnSite);
-                }
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
                     $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
                     $data = $this->insertSinglePolygon($singlePolygon);
                     $uuids[] = $data['uuid'];
-                    $returnSite = $this->insertSitePolygon(
+                    $this->insertSitePolygon(
                         $data['uuid'],
                         array_merge($sitePolygonProperties, $feature['properties']),
                     );
-                    if ($returnSite) {
-                        Log::info($returnSite);
-                    }
                 }
             }
         }
@@ -108,6 +104,9 @@ class PolygonService
             $polygonGeometry->uuid,
             array_merge(['area' => $dbGeometry['area']], data_get($geometry, 'features.0.properties', []))
         ));
+        $project = $sitePolygon->project()->first();
+        $geometryHelper = new GeometryHelper();
+        $geometryHelper->updateProjectCentroid($project->uuid);
     }
 
     protected function getGeom(array $geometry)
@@ -162,14 +161,16 @@ class PolygonService
     protected function insertSitePolygon(string $polygonUuid, array $properties)
     {
         try {
-            SitePolygon::create(array_merge(
+            $sitePolygon = SitePolygon::create(array_merge(
                 $this->validateSitePolygonProperties($polygonUuid, $properties),
                 [
                     'poly_id' => $polygonUuid ?? null,
                     'created_by' => Auth::user()?->id,
                 ],
             ));
-
+            $project = $sitePolygon->project()->first();
+            $geometryHelper = new GeometryHelper();
+            $geometryHelper->updateProjectCentroid($project->uuid);
             return null;
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -239,15 +240,8 @@ class PolygonService
             }
         }
 
-        // TODO:
-        //  * transform points into a polygon DONE
-        //  * Insert the polygon into PolygonGeometry DONE
-        //  * Create the SitePolygon using the data  in $properties (including $properties['site_id'] to identify the site)
-        //  * Return the PolygonGeometry's real UUID instead of this fake return
-
         $polygonsGeojson = App::make(PythonService::class)->voronoiTransformation($geojson);
         $polygonsUuids = $this->createGeojsonModels($polygonsGeojson, ['site_id' => $mainSiteID]);
-        Log::info('Polygons UUIDs: ' . json_encode($polygonsUuids));
         return $polygonsUuids;
     }
 }
