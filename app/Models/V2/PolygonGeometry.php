@@ -55,14 +55,13 @@ class PolygonGeometry extends Model
         return $this->hasOneThrough(
             PointGeometry::class,
             SitePolygon::class,
-            'poly_id', // Foreign Key on SitePolygon table to Polygon
-            'uuid', // Foreign Key on Points table
-            'uuid', // Local Key on Polygon table
-            'point_id' // Local Key on SitePolygon table
+            'poly_id',
+            'uuid',
+            'uuid',
+            'point_id'
         );
     }
 
-    // New convenience method
     public function deleteWithRelated()
     {
         DB::transaction(function () {
