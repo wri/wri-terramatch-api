@@ -204,7 +204,7 @@ class PolygonService
             'distr' => $properties['distr'] ?? null,
             'num_trees' => $properties['num_trees'],
             'calc_area' => $properties['area'] ?? null,
-            'status' => 'submitted',
+            'status' => 'draft',
             'point_id' => $properties['point_id'] ?? null,
         ];
     }

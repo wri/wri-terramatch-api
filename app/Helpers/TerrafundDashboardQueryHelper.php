@@ -53,7 +53,7 @@ class TerrafundDashboardQueryHelper
     public static function getPolygonsByStatus()
     {
         try {
-            $statuses = ['needs-more-information', 'submitted', 'approved'];
+            $statuses = ['needs-more-information', 'submitted', 'approved', 'draft'];
             $polygons = [];
             foreach ($statuses as $status) {
                 $polygonsOfProject = SitePolygon::where('status', $status)
@@ -76,7 +76,7 @@ class TerrafundDashboardQueryHelper
     {
         $project = Project::where('uuid', $projectUuid)->first();
         $sitePolygons = $project->sitePolygons;
-        $statuses = ['needs-more-information', 'submitted', 'approved'];
+        $statuses = ['needs-more-information', 'submitted', 'approved','draft'];
         $polygons = [];
 
         foreach ($statuses as $status) {
