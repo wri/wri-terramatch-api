@@ -543,22 +543,29 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuid = $request->input('uuid');
-
             $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
             $checkedPolygons = [];
 
             foreach ($sitePolygonsUuids as $polygonUuid) {
-                $isValid = true;
-                $isChecked = true;
-
                 $criteriaData = $this->fetchCriteriaData($polygonUuid);
 
                 if (isset($criteriaData['error'])) {
                     Log::error('Error fetching criteria data', ['polygon_uuid' => $polygonUuid, 'error' => $criteriaData['error']]);
+                    $checkedPolygons[] = [
+                        'uuid' => $polygonUuid,
+                        'valid' => false,
+                        'checked' => false,
+                        'nonValidCriteria' => [],
+                    ];
+
+                    continue;
+                }
+
+                $isValid = true;
+                $nonValidCriteria = [];
+                if (empty($criteriaData['criteria_list'])) {
                     $isValid = false;
-                    $isChecked = false;
                 } else {
-                    $nonValidCriteria = [];
                     foreach ($criteriaData['criteria_list'] as $criteria) {
                         if ($criteria['valid'] == 0) {
                             $isValid = false;
@@ -570,7 +577,7 @@ class TerrafundCreateGeometryController extends Controller
                 $checkedPolygons[] = [
                     'uuid' => $polygonUuid,
                     'valid' => $isValid,
-                    'checked' => $isChecked,
+                    'checked' => ! empty($criteriaData['criteria_list']),
                     'nonValidCriteria' => $nonValidCriteria,
                 ];
             }
