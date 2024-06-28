@@ -49,4 +49,8 @@ return [
         'url' => env('TREE_SEARCH_API_URL')
     ],
 
+    'greenhouse_api' => [
+        'url' => env('GREENHOUSE_API_URL'),
+        'token' => env('GREENHOUSE_API_TOKEN'),
+    ],
 ];
