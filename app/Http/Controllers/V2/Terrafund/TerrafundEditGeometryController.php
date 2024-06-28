@@ -222,7 +222,7 @@ class TerrafundEditGeometryController extends Controller
                 'target_sys' => $validatedData['target_sys'],
                 'poly_id' => $uuid,
                 'created_by' => Auth::user()?->id,
-                'status' => 'submitted',
+                'status' => 'draft',
                 'site_id' => $siteUuid,
             ]);
             $sitePolygon->save();

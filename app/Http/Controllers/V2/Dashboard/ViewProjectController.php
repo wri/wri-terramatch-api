@@ -105,6 +105,7 @@ class ViewProjectController extends Controller
                   'needs-more-information' => [],
                   'submitted' => [],
                   'approved' => [],
+                  'draft' => []
                 ];
 
                 foreach ($projectUuids as $uuid) {
