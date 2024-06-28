@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Log;
 class GreenhouseClient
 {
     protected string $url;
+
     protected string $token;
+
     protected Client $client;
 
     public function __construct(Client $client)
@@ -54,15 +56,19 @@ class GreenhouseClient
             $response = $this->client->request('POST', $this->url, [
                 'headers' => [
                     'api-key' => $this->token,
-                    'Content-Type' => 'application/json'
+                    'Content-Type' => 'application/json',
                 ],
                 'body' => json_encode([
                     'query' => 'mutation ($uuid: Id!) { ' . $functionName . '(uuid: $uuid) { ok } }',
-                    'variables' => [ 'uuid' => $uuid ]
-                ])
+                    'variables' => [ 'uuid' => $uuid ],
+                ]),
             ]);
         } catch (GuzzleException $exception) {
-            Log::error('Exception sending query to Greenhouse: ' . $exception->getMessage());
+            Log::error(
+                "Exception sending query to Greenhouse [fn=$functionName, uuid=$uuid]: " .
+                $exception->getMessage()
+            );
+
             throw new ExternalAPIException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
