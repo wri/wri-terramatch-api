@@ -4,7 +4,10 @@ namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Tasks\Task;
+use App\StateMachines\TaskStatusStateMachine;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class BackfillTasks extends Command
 {
@@ -13,7 +16,7 @@ class BackfillTasks extends Command
      *
      * @var string
      */
-    protected $signature = 'one-off:backfill-tasks';
+    protected $signature = 'one-off:backfill-tasks {--dry-run}';
 
     /**
      * The console command description.
@@ -32,7 +35,10 @@ class BackfillTasks extends Command
         // to bother with batching this initial fetch.
         $projects = [];
         foreach (ProjectReport::where('task_id', null)->whereNot('due_at', null)->get() as $projectReport) {
-            $projects[$projectReport->project_id]['project_reports_due'][] = $projectReport->due_at;
+            $projects[$projectReport->project_id]['project_reports'][] = [
+                'due_at' => $projectReport->due_at,
+                'uuid' => $projectReport->uuid,
+            ];
         }
 
         $totalMissing = 0;
@@ -40,12 +46,13 @@ class BackfillTasks extends Command
         $totalMissingDueDates = 0;
         $totalFound = 0;
         foreach ($projects as $projectId => &$data) {
+            /** @var Project $project */
             $project = Project::find($projectId);
             $data['project_name'] = $project->name;
             $data['project_uuid'] = $project->uuid;
-            foreach ($data['project_reports_due'] as $dueDate) {
-                $minDate = (clone $dueDate)->subDays(5);
-                $maxDate = (clone $dueDate)->addDays(5);
+            foreach ($data['project_reports'] as $projectReport) {
+                $minDate = (clone $projectReport['due_at'])->subDays(5);
+                $maxDate = (clone $projectReport['due_at'])->addDays(5);
                 $foundQuery = $project
                     ->siteReports()
                     ->where('task_id', null)
@@ -57,6 +64,8 @@ class BackfillTasks extends Command
                     (clone $foundQuery)->select('due_at')->distinct()->pluck('due_at')->toArray()
                 );
                 $totalFound += $data['associatable_site_reports'];
+
+                $this->createTask($projectReport['uuid'], $foundQuery);
             }
 
             $missingQuery = $project
@@ -94,13 +103,39 @@ class BackfillTasks extends Command
         }
 
         $this->info(json_encode([
-            "totals" => [
-                "associatable_site_reports" => $totalFound,
-                "unaccounted_for_site_reports" => $totalMissing,
-                "unaccounted_for_site_report_due_dates" => $totalMissingDueDates,
-                "site_reports_matching_a_deleted_project_report" => $totalToDelete,
+            'totals' => [
+                'associatable_site_reports' => $totalFound,
+                'unaccounted_for_site_reports' => $totalMissing,
+                'unaccounted_for_site_report_due_dates' => $totalMissingDueDates,
+                'site_reports_matching_a_deleted_project_report' => $totalToDelete,
             ],
-            "details" => array_values($projects),
+            'details' => array_values($projects),
         ], JSON_PRETTY_PRINT));
+    }
+
+    protected function createTask(string $projectReportUuid, Relation $siteReports): void
+    {
+        if ($this->option('dry-run')) {
+            return;
+        }
+
+        $this->info('Creating task for project report ' . $projectReportUuid . '...');
+
+        $projectReport = ProjectReport::isUuid($projectReportUuid)->first();
+        $dueDate = $projectReport->due_at;
+        $task = Task::create([
+            'organisation_id' => $projectReport->organisation->id,
+            'project_id' => $projectReport->project_id,
+            'status' => TaskStatusStateMachine::DUE,
+            'period_key' => $dueDate->year . '-' . $dueDate->month,
+            'due_at' => $dueDate,
+        ]);
+        $projectReport->update(['task_id' => $task->id]);
+
+        // Set all the site reports to use the exact same due date as the project report / task
+        $this->info('Associating ' . (clone $siteReports)->count() . ' site reports...');
+        $siteReports->update(['task_id' => $task->id, 'due_at' => $dueDate]);
+
+        $this->info('Project report ' . $projectReportUuid . " complete\n");
     }
 }
