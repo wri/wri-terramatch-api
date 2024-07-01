@@ -33,10 +33,7 @@ use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
-use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
-use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
-use App\Http\Controllers\V2\Disturbances\UpdateDisturbanceController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
@@ -484,6 +481,10 @@ ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
     Route::get('/{entity}', GetTreeSpeciesForEntityController::class);
 }, prefix: 'tree-species');
 
+ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+    Route::get('/{entity}', GetDisturbancesForEntityController::class);
+}, 'disturbances');
+
 ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
     Route::get('/{entity}', GetWorkdaysForEntityController::class);
 }, prefix: 'workdays');
@@ -500,14 +501,6 @@ Route::prefix('seedings')->group(function () {
     Route::patch('/{seeding}', \App\Http\Controllers\V2\Seedings\UpdateSeedingController::class);
     Route::delete('/{seeding}', \App\Http\Controllers\V2\Seedings\DeleteSeedingController::class);
     Route::get('/{entity}/{uuid}', \App\Http\Controllers\V2\Seedings\GetSeedingsForEntityController::class);
-});
-
-
-Route::prefix('disturbances')->group(function () {
-    Route::post('/', StoreDisturbanceController::class);
-    Route::patch('/{disturbance}', UpdateDisturbanceController::class);
-    Route::delete('/{disturbance}', DeleteDisturbanceController::class);
-    Route::get('/{entity}/{uuid}', GetDisturbancesForEntityController::class);
 });
 
 Route::prefix('invasives')->group(function () {

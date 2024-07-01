@@ -154,10 +154,6 @@ V2WorkdayRead:
   $ref: './V2WorkdayRead.yml'
 V2DisturbanceRead:
   $ref: './V2DisturbanceRead.yml'
-V2DisturbanceCreate:
-  $ref: './V2DisturbanceCreate.yml'
-V2DisturbanceUpdate:
-  $ref: './V2DisturbanceUpdate.yml'
 V2DisturbancePaginated:
   $ref: './V2DisturbancePaginated.yml'
 V2InvasiveRead:
