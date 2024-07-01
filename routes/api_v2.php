@@ -477,24 +477,19 @@ Route::prefix('project-pitches')->group(function () {
     Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
-ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-    Route::get('/{entity}', GetTreeSpeciesForEntityController::class);
-}, prefix: 'tree-species');
-
-ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-    Route::get('/{entity}', GetDisturbancesForEntityController::class);
-}, 'disturbances');
+foreach ([
+    'tree-species' => GetTreeSpeciesForEntityController::class,
+    'disturbances' => GetDisturbancesForEntityController::class,
+    'stratas' => GetStratasForEntityController::class,
+] as $prefix => $controller) {
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () use ($controller) {
+        Route::get('/{entity}', $controller);
+    }, prefix: $prefix);
+}
 
 ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
     Route::get('/{entity}', GetWorkdaysForEntityController::class);
 }, prefix: 'workdays');
-
-Route::prefix('stratas')->group(function () {
-    Route::post('/', StoreStrataController::class);
-    Route::patch('/{strata}', UpdateStrataController::class);
-    Route::delete('/{strata}', DeleteStrataController::class);
-    Route::get('/{entity}/{uuid}', GetStratasForEntityController::class);
-});
 
 Route::prefix('seedings')->group(function () {
     Route::post('/', \App\Http\Controllers\V2\Seedings\StoreSeedingController::class);
