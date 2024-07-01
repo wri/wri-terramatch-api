@@ -27,6 +27,10 @@ class PolygonService
     public const SCHEMA_CRITERIA_ID = 13;
     public const DATA_CRITERIA_ID = 14;
 
+    public const UPLOADED_SOURCE = 'uploaded';
+    public const TERRAMACH_SOURCE = 'terramatch';
+    public const GREENHOUSE_SOURCE = 'greenhouse';
+
     // TODO: Remove this const and its usages when the point transformation ticket is complete.
     public const TEMP_FAKE_POLYGON_UUID = 'temp_fake_polygon_uuid';
 
@@ -206,6 +210,7 @@ class PolygonService
             'calc_area' => $properties['area'] ?? null,
             'status' => 'draft',
             'point_id' => $properties['point_id'] ?? null,
+            'source' => $properties['source'] ?? null,
         ];
     }
 
