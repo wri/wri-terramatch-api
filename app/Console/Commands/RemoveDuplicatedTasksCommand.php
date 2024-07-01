@@ -2,9 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\V2\Nurseries\NurseryReport;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -25,11 +22,11 @@ class RemoveDuplicatedTasksCommand extends Command
             exit(1);
         }
 
-        $duplicateTaskIds = DB::table("v2_tasks as t1")
+        $duplicateTaskIds = DB::table('v2_tasks as t1')
             ->select('t1.id')
-            ->join('v2_projects','t1.project_id', '=', 'v2_projects.id')
-            ->join("v2_tasks as t2", function ($join) use ($specificDueAt) {
-                $join->on("t1.project_id", '=', "t2.project_id")
+            ->join('v2_projects', 't1.project_id', '=', 'v2_projects.id')
+            ->join('v2_tasks as t2', function ($join) use ($specificDueAt) {
+                $join->on('t1.project_id', '=', 't2.project_id')
                     ->on('t1.due_at', '=', 't2.due_at')
                     ->whereRaw('t1.id > t2.id')
                     ->where('t1.due_at', '=', $specificDueAt);
