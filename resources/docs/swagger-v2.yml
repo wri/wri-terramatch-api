@@ -9320,30 +9320,6 @@ definitions:
         type: string
       type:
         type: integer
-  V2InvasiveCreate:
-    title: V2InvasiveCreate
-    type: object
-    properties:
-      model_type:
-        type: string
-      model_uuid:
-        type: integer
-      name:
-        type: string
-      type:
-        type: string
-      collection:
-        type: string
-  V2InvasiveUpdate:
-    title: V2InvasiveUpdate
-    type: object
-    properties:
-      description:
-        type: string
-      intensity:
-        type: integer
-      collection:
-        type: string
   V2InvasivePaginated:
     type: object
     properties:
@@ -59099,108 +59075,6 @@ paths:
                     type: integer
                   unfiltered_total:
                     type: integer
-  /v2/invasives:
-    post:
-      operationId: post-v2-invasives
-      summary: Crates a Invasive
-      tags:
-        - V2 Invasive
-      responses:
-        '201':
-          description: Created
-          schema:
-            title: V2InvasiveRead
-            type: object
-            properties:
-              uuid:
-                type: string
-              name:
-                type: string
-              type:
-                type: integer
-      parameters:
-        - in: body
-          name: body
-          schema:
-            title: V2InvasiveCreate
-            type: object
-            properties:
-              model_type:
-                type: string
-              model_uuid:
-                type: integer
-              name:
-                type: string
-              type:
-                type: string
-              collection:
-                type: string
-  '/v2/invasives/{UUID}':
-    patch:
-      operationId: patch-v2-invasives-uuid
-      summary: Update a Invasive
-      tags:
-        - V2 Invasive
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  title: V2InvasiveRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    name:
-                      type: string
-                    type:
-                      type: integer
-              links:
-                type: object
-                properties:
-                  first:
-                    type: string
-                  last:
-                    type: string
-                  prev:
-                    type: string
-                  next:
-                    type: string
-              meta:
-                type: object
-                properties:
-                  current_page:
-                    type: integer
-                  from:
-                    type: integer
-                  last_page:
-                    type: integer
-                  next:
-                    type: integer
-                  unfiltered_total:
-                    type: integer
-    delete:
-      operationId: delete-v2-invasives-uuid
-      summary: Delete a Invasive
-      tags:
-        - V2 Invasive
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   '/v2/invasives/{ENTITY}/{UUID}':
     get:
       operationId: get-v2-invasives-entity-uuid
