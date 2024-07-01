@@ -210,7 +210,7 @@ class PolygonService
             'calc_area' => $properties['area'] ?? null,
             'status' => 'draft',
             'point_id' => $properties['point_id'] ?? null,
-            'source' => $properties['source'] ?? null
+            'source' => $properties['source'] ?? null,
         ];
     }
 
