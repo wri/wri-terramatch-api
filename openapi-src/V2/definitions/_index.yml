@@ -136,10 +136,6 @@ V2NurseryLiteRead:
   $ref: './V2NurseryLiteRead.yml'
 V2StrataRead:
   $ref: './V2StrataRead.yml'
-V2StrataCreate:
-  $ref: './V2StrataCreate.yml'
-V2StrataUpdate:
-  $ref: './V2StrataUpdate.yml'
 V2StrataPaginated:
   $ref: './V2StrataPaginated.yml'
 V2SeedingRead:

@@ -6,11 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Disturbances\DisturbanceCollection;
 use App\Models\V2\Disturbance;
 use App\Models\V2\EntityModel;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 
 class GetDisturbancesForEntityController extends Controller
 {
-    public function __invoke(Request $request, EntityModel $entity)
+    /**
+     * @throws AuthorizationException
+     */
+    public function __invoke(Request $request, EntityModel $entity): DisturbanceCollection
     {
         $this->authorize('read', $entity);
 

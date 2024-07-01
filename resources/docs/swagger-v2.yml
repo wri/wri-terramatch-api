@@ -9104,26 +9104,6 @@ definitions:
         type: string
       extent:
         type: integer
-  V2StrataCreate:
-    title: V2StrataCreate
-    type: object
-    properties:
-      model_type:
-        type: string
-      model_uuid:
-        type: string
-      description:
-        type: string
-      extent:
-        type: integer
-  V2StrataUpdate:
-    title: V2StrataUpdate
-    type: object
-    properties:
-      description:
-        type: string
-      extent:
-        type: integer
   V2StrataPaginated:
     type: object
     properties:
@@ -58825,106 +58805,6 @@ paths:
                             type: string
                           amount:
                             type: integer
-  /v2/stratas:
-    post:
-      operationId: post-v2-stratas
-      summary: Crates a strata
-      tags:
-        - V2 Strata
-      responses:
-        '201':
-          description: Created
-          schema:
-            title: V2StrataRead
-            type: object
-            properties:
-              uuid:
-                type: string
-              description:
-                type: string
-              extent:
-                type: integer
-      parameters:
-        - in: body
-          name: body
-          schema:
-            title: V2StrataCreate
-            type: object
-            properties:
-              model_type:
-                type: string
-              model_uuid:
-                type: string
-              description:
-                type: string
-              extent:
-                type: integer
-  '/v2/stratas/{UUID}':
-    patch:
-      operationId: patch-v2-stratas-uuid
-      summary: Updata a strata
-      tags:
-        - V2 Strata
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  title: V2StrataRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    description:
-                      type: string
-                    extent:
-                      type: integer
-              links:
-                type: object
-                properties:
-                  first:
-                    type: string
-                  last:
-                    type: string
-                  prev:
-                    type: string
-                  next:
-                    type: string
-              meta:
-                type: object
-                properties:
-                  current_page:
-                    type: integer
-                  from:
-                    type: integer
-                  last_page:
-                    type: integer
-                  next:
-                    type: integer
-                  unfiltered_total:
-                    type: integer
-    delete:
-      operationId: delete-v2-stratas-uuid
-      summary: Delete a strata
-      tags:
-        - V2 Strata
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   '/v2/stratas/{ENTITY}/{UUID}':
     get:
       operationId: get-v2-stratas-entity-uuid

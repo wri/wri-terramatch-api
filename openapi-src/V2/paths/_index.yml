@@ -107,14 +107,6 @@
 /v2/workdays/{ENTITY}/{UUID}:
   get:
     $ref: './Workdays/get-v2-workdays-entity-uuid.yml'
-/v2/stratas:
-  post:
-    $ref: './Stratas/post-v2-stratas.yml'
-/v2/stratas/{UUID}:
-  patch:
-    $ref: './Stratas/patch-v2-stratas-uuid.yml'
-  delete:
-    $ref: './Stratas/delete-v2-stratas-uuid.yml'
 /v2/stratas/{ENTITY}/{UUID}:
   get:
     $ref: './Stratas/get-v2-stratas-entity-uuid.yml'
