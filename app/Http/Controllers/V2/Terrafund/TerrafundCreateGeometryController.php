@@ -28,6 +28,8 @@ use Symfony\Component\Process\Process;
 
 class TerrafundCreateGeometryController extends Controller
 {
+
+
     public function processGeometry(string $uuid)
     {
         $geometry = PolygonGeometry::isUuid($uuid)->first();
@@ -68,7 +70,7 @@ class TerrafundCreateGeometryController extends Controller
 
         SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-        return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id]);
+        return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id , "source" => PolygonService::UPLOADED_SOURCE]);
     }
 
     public function validateDataInDB(Request $request)
