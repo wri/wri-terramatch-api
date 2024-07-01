@@ -8,6 +8,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Services\PolygonService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -223,6 +224,7 @@ class TerrafundEditGeometryController extends Controller
                 'poly_id' => $uuid,
                 'created_by' => Auth::user()?->id,
                 'status' => 'draft',
+                'source' => PolygonService::TERRAMACH_SOURCE,
                 'site_id' => $siteUuid,
             ]);
             $sitePolygon->save();
