@@ -13,9 +13,11 @@ class AddColumnSourceSitePolygonTable extends Migration
      */
     public function up()
     {
-        Schema::table('site_polygon', function (Blueprint $table) {
-            $table->string('source', 255)->nullable()->after('status');
-        });
+        if (! Schema::hasColumn('site_polygon', 'source')) {
+            Schema::table('site_polygon', function (Blueprint $table) {
+                $table->string('source', 255)->nullable()->after('status');
+            });
+        }
     }
 
     /**
