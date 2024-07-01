@@ -45,7 +45,7 @@ class SitePolygon extends Model implements AuditableModel
       'calc_area',
       'status',
       'created_by',
-      'source'
+      'source',
     ];
 
     public function polygonGeometry(): BelongsTo

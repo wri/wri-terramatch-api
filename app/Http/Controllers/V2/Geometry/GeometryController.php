@@ -60,7 +60,7 @@ class GeometryController extends Controller
         $service = App::make(PolygonService::class);
         $results = [];
         foreach ($geometries as $geometry) {
-            $results[] = ['polygon_uuids' => $service->createGeojsonModels($geometry, ['source' => PolygonService::GREENHOUSE_SOURCE] )];
+            $results[] = ['polygon_uuids' => $service->createGeojsonModels($geometry, ['source' => PolygonService::GREENHOUSE_SOURCE])];
         }
 
         // Do the validation in a separate step so that all of the existing polygons are taken into account
