@@ -44305,6 +44305,8 @@ definitions:
         format: date-time
       status:
         type: string
+      source:
+        type: string
       country:
         type: string
   GeometryString:
@@ -44368,6 +44370,8 @@ definitions:
           type: string
           format: date-time
         status:
+          type: string
+        source:
           type: string
         country:
           type: string
@@ -45108,6 +45112,8 @@ definitions:
               format: date-time
             status:
               type: string
+            source:
+              type: string
             country:
               type: string
       bbox:
@@ -45215,6 +45221,8 @@ definitions:
           type: string
           format: date-time
         status:
+          type: string
+        source:
           type: string
         country:
           type: string
@@ -95484,6 +95492,8 @@ paths:
                   format: date-time
                 status:
                   type: string
+                source:
+                  type: string
                 country:
                   type: string
         '400':
@@ -97168,6 +97178,8 @@ paths:
                       format: date-time
                     status:
                       type: string
+                    source:
+                      type: string
                     country:
                       type: string
               bbox:
@@ -97350,6 +97362,8 @@ paths:
                       type: string
                       format: date-time
                     status:
+                      type: string
+                    source:
                       type: string
                     country:
                       type: string
