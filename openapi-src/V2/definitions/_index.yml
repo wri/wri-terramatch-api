@@ -154,10 +154,6 @@ V2DisturbancePaginated:
   $ref: './V2DisturbancePaginated.yml'
 V2InvasiveRead:
   $ref: './V2InvasiveRead.yml'
-V2InvasiveCreate:
-  $ref: './V2InvasiveCreate.yml'
-V2InvasiveUpdate:
-  $ref: './V2InvasiveUpdate.yml'
 V2InvasivePaginated:
   $ref: './V2InvasivePaginated.yml'
 ProjectLiteRead:

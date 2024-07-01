@@ -481,6 +481,7 @@ foreach ([
     'tree-species' => GetTreeSpeciesForEntityController::class,
     'disturbances' => GetDisturbancesForEntityController::class,
     'stratas' => GetStratasForEntityController::class,
+    'invasives' => GetInvasivesForEntityController::class,
 ] as $prefix => $controller) {
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () use ($controller) {
         Route::get('/{entity}', $controller);
@@ -496,13 +497,6 @@ Route::prefix('seedings')->group(function () {
     Route::patch('/{seeding}', \App\Http\Controllers\V2\Seedings\UpdateSeedingController::class);
     Route::delete('/{seeding}', \App\Http\Controllers\V2\Seedings\DeleteSeedingController::class);
     Route::get('/{entity}/{uuid}', \App\Http\Controllers\V2\Seedings\GetSeedingsForEntityController::class);
-});
-
-Route::prefix('invasives')->group(function () {
-    Route::post('/', StoreInvasiveController::class);
-    Route::delete('/{invasive}', DeleteInvasiveController::class);
-    Route::patch('/{invasive}', UpdateInvasiveController::class);
-    Route::get('/{entity}/{uuid}', GetInvasivesForEntityController::class);
 });
 
 Route::prefix('leadership-team')->group(function () {
