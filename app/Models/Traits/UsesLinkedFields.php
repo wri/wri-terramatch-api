@@ -255,7 +255,7 @@ trait UsesLinkedFields
         $entity ??= $this;
 
         // This will expand as we complete more tickets in TM-747, until eventually we support all form relations.
-        if (! in_array($inputType, ['treeSpecies', 'workdays'])) {
+        if (! in_array($inputType, ['treeSpecies', 'disturbances', 'workdays'])) {
             return;
         }
 

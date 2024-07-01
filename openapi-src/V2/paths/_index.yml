@@ -129,14 +129,6 @@
 /v2/seedings/{ENTITY}/{UUID}:
   get:
     $ref: './Seedings/get-v2-seedings-entity-uuid.yml'
-/v2/disturbances:
-  post:
-    $ref: './Disturbances/post-v2-disturbances.yml'
-/v2/disturbances/{UUID}:
-  patch:
-    $ref: './Disturbances/patch-v2-disturbances-uuid.yml'
-  delete:
-    $ref: './Disturbances/delete-v2-disturbances-uuid.yml'
 /v2/disturbances/{ENTITY}/{UUID}:
   get:
     $ref: './Disturbances/get-v2-disturbances-entity-uuid.yml'
