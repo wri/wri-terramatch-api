@@ -156,7 +156,7 @@ class TerrafundCreateGeometryController extends Controller
                 return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
             }
 
-            App::make(SiteService::class)->updateSiteStatus($site_id);
+            App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
 
             return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
@@ -219,7 +219,7 @@ class TerrafundCreateGeometryController extends Controller
                     return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
                 }
 
-                App::make(SiteService::class)->updateSiteStatus($site_id);
+                App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
 
                 return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
             } else {
@@ -346,7 +346,7 @@ class TerrafundCreateGeometryController extends Controller
             if (is_array($uuid) && isset($uuid['error'])) {
                 return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
             }
-            App::make(SiteService::class)->updateSiteStatus($site_id);
+            App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
 
             return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {

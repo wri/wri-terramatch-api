@@ -230,7 +230,7 @@ class TerrafundEditGeometryController extends Controller
                 'site_id' => $siteUuid,
             ]);
             $sitePolygon->save();
-            App::make(SiteService::class)->updateSiteStatus($siteUuid);
+            App::make(SiteService::class)->setSiteToRestorationInProgress($siteUuid);
             $this->updateProjectCentroidFromPolygon($polygonGeometry);
 
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);

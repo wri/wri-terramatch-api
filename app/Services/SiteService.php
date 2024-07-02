@@ -7,7 +7,7 @@ use App\StateMachines\SiteStatusStateMachine;
 
 class SiteService
 {
-    public static function updateSiteStatus($site_uuid)
+    public static function setSiteToRestorationInProgress($site_uuid)
     {
         if (! $site_uuid) {
             return;
@@ -16,6 +16,6 @@ class SiteService
         if (is_null($site)) {
             return;
         }
-        $site->status()->transitionTo(SiteStatusStateMachine::RESTORATION_IN_PROGRESS);
+        $site->restorationInProgress();
     }
 }

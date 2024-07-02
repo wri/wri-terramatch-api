@@ -405,4 +405,8 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     {
         return '/' . Str::lower(explode_pop('\\', get_class($this))) . '/' . $this->uuid;
     }
+
+    public function restorationInProgress() {
+        $this->status()->transitionTo(SiteStatusStateMachine::RESTORATION_IN_PROGRESS);
+    }
 }
