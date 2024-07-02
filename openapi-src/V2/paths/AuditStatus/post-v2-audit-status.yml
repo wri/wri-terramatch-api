@@ -1,0 +1,24 @@
+operationId: post-v2-audit-status
+summary: Create a new audit status
+tags: 
+  - V2 Audits Status
+parameters:
+  - type: string
+    name: ENTITY
+    in: path
+    required: true
+    description: allowed values project/site/site-polygon
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - in: body
+    name: body
+    description: Body to create a new audit status
+    schema:
+      $ref: '../../definitions/_index.yml#/AuditStatusCreateRequest'
+responses:
+  '201':
+    description: Created
+    schema:
+      $ref: '../../definitions/_index.yml#/AuditStatusResponse'

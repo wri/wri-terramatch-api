@@ -1,0 +1,29 @@
+type: object
+properties:
+  total_volunteers:
+    type: integer
+    description: Total number of volunteers.
+  men_volunteers:
+    type: integer
+    description: Total number of male volunteers.
+  women_volunteers:
+    type: integer
+    description: Total number of female volunteers.
+  youth_volunteers:
+    type: integer
+    description: Total number of youth volunteers.
+  non_youth_volunteers:
+    type: integer
+    description: Total number of non-youth volunteers.
+  non_profit_survival_rate:
+    type: number
+    description: Survival rate for non-profit entities.
+  enterprise_survival_rate:
+    type: number
+    description: Survival rate for enterprise entities.  
+  number_of_sites:
+    type: number
+    description: number of sites.  
+  number_of_nurseries:
+    type: number
+    description: number of nurseries.  

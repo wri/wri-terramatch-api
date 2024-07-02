@@ -1,0 +1,21 @@
+summary: Retrieve all active countries.
+description: |
+  This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
+parameters:
+  - in: query
+    name: country
+    type: string
+    description: Optional. Filter counts and metrics by country.
+  - in: query
+    name: uuid
+    type: string
+    description: Optional. Filter restoration strategy by UUID.
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardActiveCountriesResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

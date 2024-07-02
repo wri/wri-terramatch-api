@@ -1,0 +1,26 @@
+summary: Create site polygon
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    type: string
+    description: The UUID of the polygon related
+  - in: path
+    name: siteUuid
+    required: true
+    type: string
+    description: The UUID of the site
+  - in: body
+    name: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/SitePolygonResponse'
+responses:
+  '201':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/SitePolygonCreateResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

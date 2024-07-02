@@ -1,0 +1,22 @@
+summary: Retrieve polygon GeoJSON by UUID
+description: |
+  Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
+parameters:
+  - in: path
+    name: uuid
+    type: string
+    required: true
+    description: The UUID of the polygon geometry to retrieve.
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/GeojsonData'
+  '404':
+    description: Not Found
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message indicating that no polygon geometry was found for the provided UUID.

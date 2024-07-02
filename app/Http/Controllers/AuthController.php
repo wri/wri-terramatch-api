@@ -157,6 +157,13 @@ class AuthController extends Controller
             throw new SamePasswordException();
         }
         $user->password = $data['password'];
+
+        if (empty($user->email_address_verified_at)) {
+            // If they haven't verified yet, count this as a verification since they had to receive the email
+            // to complete the password reset action.
+            $user->email_address_verified_at = new DateTime('now', new DateTimeZone('UTC'));
+        }
+
         $user->saveOrFail();
         $passwordReset->delete();
 

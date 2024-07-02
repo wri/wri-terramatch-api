@@ -2,14 +2,17 @@
 
 namespace App\Services;
 
+use App\Helpers\GeometryHelper;
+use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\CriteriaSite;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\SitePolygonValidator;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class PolygonService
 {
@@ -24,33 +27,49 @@ class PolygonService
     public const SCHEMA_CRITERIA_ID = 13;
     public const DATA_CRITERIA_ID = 14;
 
+    public const UPLOADED_SOURCE = 'uploaded';
+    public const TERRAMACH_SOURCE = 'terramatch';
+    public const GREENHOUSE_SOURCE = 'greenhouse';
+
+    // TODO: Remove this const and its usages when the point transformation ticket is complete.
+    public const TEMP_FAKE_POLYGON_UUID = 'temp_fake_polygon_uuid';
+
+    protected const POINT_PROPERTIES = [
+        'site_id',
+        'poly_name',
+        'plantstart',
+        'plantend',
+        'practice',
+        'target_sys',
+        'distr',
+        'num_trees',
+    ];
+
     public function createGeojsonModels($geojson, $sitePolygonProperties = []): array
     {
+        if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
+            return $this->transformAndStorePoints($geojson, $sitePolygonProperties);
+        }
+
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
             if ($feature['geometry']['type'] === 'Polygon') {
                 $data = $this->insertSinglePolygon($feature['geometry']);
                 $uuids[] = $data['uuid'];
                 $sitePolygonProperties['area'] = $data['area'];
-                $returnSite = $this->insertSitePolygon(
+                $this->insertSitePolygon(
                     $data['uuid'],
                     array_merge($sitePolygonProperties, $feature['properties']),
                 );
-                if ($returnSite) {
-                    Log::info($returnSite);
-                }
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
                     $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
                     $data = $this->insertSinglePolygon($singlePolygon);
                     $uuids[] = $data['uuid'];
-                    $returnSite = $this->insertSitePolygon(
+                    $this->insertSitePolygon(
                         $data['uuid'],
                         array_merge($sitePolygonProperties, $feature['properties']),
                     );
-                    if ($returnSite) {
-                        Log::info($returnSite);
-                    }
                 }
             }
         }
@@ -87,6 +106,18 @@ class PolygonService
             $polygonGeometry->uuid,
             array_merge(['area' => $dbGeometry['area']], data_get($geometry, 'features.0.properties', []))
         ));
+        $project = $sitePolygon->project()->first();
+        $geometryHelper = new GeometryHelper();
+        $geometryHelper->updateProjectCentroid($project->uuid);
+    }
+
+    protected function getGeom(array $geometry)
+    {
+        // Convert geometry to GeoJSON string
+        $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']]]);
+
+        // get GeoJSON data in the database
+        return DB::raw("ST_GeomFromGeoJSON('$geojson')");
     }
 
     protected function getGeomAndArea(array $geometry): array
@@ -94,7 +125,7 @@ class PolygonService
         // Convert geometry to GeoJSON string
         $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']]]);
 
-        // Update GeoJSON data in the database
+        // Get GeoJSON data in the database
         $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
         $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
         $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
@@ -119,16 +150,29 @@ class PolygonService
         return ['uuid' => $polygonGeometry->uuid, 'area' => $dbGeometry['area']];
     }
 
+    protected function insertSinglePoint(array $feature): string
+    {
+        return PointGeometry::create([
+            'geom' => $this->getGeom($feature['geometry']),
+            'est_area' => data_get($feature, 'properties.est_area'),
+            'created_by' => Auth::user()?->id,
+            'last_modified_by' => Auth::user()?->id,
+        ])->uuid;
+    }
+
     protected function insertSitePolygon(string $polygonUuid, array $properties)
     {
         try {
-            SitePolygon::create(array_merge(
+            $sitePolygon = SitePolygon::create(array_merge(
                 $this->validateSitePolygonProperties($polygonUuid, $properties),
                 [
                     'poly_id' => $polygonUuid ?? null,
                     'created_by' => Auth::user()?->id,
                 ],
             ));
+            $project = $sitePolygon->project()->first();
+            $geometryHelper = new GeometryHelper();
+            $geometryHelper->updateProjectCentroid($project->uuid);
 
             return null;
         } catch (\Exception $e) {
@@ -154,30 +198,41 @@ class PolygonService
         }
         $properties['num_trees'] = is_int($properties['num_trees'] ?? null) ? $properties['num_trees'] : null;
 
-        $validationGeojson = ['features' => [
-            'feature' => ['properties' => $properties],
-        ]];
-        $validSchema = SitePolygonValidator::isValid('SCHEMA', $validationGeojson);
-        $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
-        $this->createCriteriaSite($polygonUuid, self::SCHEMA_CRITERIA_ID, $validSchema);
-        $this->createCriteriaSite($polygonUuid, self::DATA_CRITERIA_ID, $validData);
-
         return [
-            'project_id' => $properties['project_id'] ?? null,
-            'proj_name' => $properties['proj_name'] ?? null,
-            'org_name' => $properties['org_name'] ?? null,
-            'country' => $properties['country'] ?? null,
             'poly_name' => $properties['poly_name'] ?? null,
             'site_id' => $properties['site_id'] ?? null,
-            'site_name' => $properties['site_name'] ?? null,
-            'poly_label' => $properties['poly_label'] ?? null,
             'plantstart' => $properties['plantstart'],
             'plantend' => $properties['plantend'],
             'practice' => $properties['practice'] ?? null,
             'target_sys' => $properties['target_sys'] ?? null,
             'distr' => $properties['distr'] ?? null,
             'num_trees' => $properties['num_trees'],
-            'est_area' => $properties['area'] ?? null,
+            'calc_area' => $properties['area'] ?? null,
+            'status' => 'draft',
+            'point_id' => $properties['point_id'] ?? null,
+            'source' => $properties['source'] ?? null,
         ];
+    }
+
+    /**
+     * Each Point must have an est_area property, and at least one of them must have a site_id as well as
+     * all of the properties listed in SitePolygonValidator::SCHEMA for the resulting polygon to pass validation.
+     *
+     * @return string UUID of resulting PolygonGeometry
+     */
+    protected function transformAndStorePoints($geojson, $sitePolygonProperties): array
+    {
+        foreach ($geojson['features'] as &$feature) {
+            $currentPointUUID = $this->insertSinglePoint($feature);
+            $feature['properties']['point_id'] = $currentPointUUID;
+        }
+
+        $polygonsGeojson = App::make(PythonService::class)->voronoiTransformation($geojson);
+
+        if (is_null($polygonsGeojson)) {
+            throw new \Exception('Voronoi transformation returned null');
+        }
+
+        return $this->createGeojsonModels($polygonsGeojson, $sitePolygonProperties);
     }
 }

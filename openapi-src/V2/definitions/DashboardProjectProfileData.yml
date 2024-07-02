@@ -1,0 +1,35 @@
+type: object
+properties:
+  name:
+    type: string
+  descriptionObjetive:
+    type: string
+  country:
+    type: string
+  organisation:
+    type: string
+  survivalRate:
+    type: integer
+  countrySlug:
+    type: string
+  restorationStrategy:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: string
+  targetLandUse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: string
+  landTenure:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: string

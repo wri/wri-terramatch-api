@@ -3,6 +3,9 @@
 namespace App\Models\V2\Sites;
 
 use App\Models\Traits\HasUuid;
+use App\Models\V2\AuditableModel;
+use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
@@ -11,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
@@ -18,7 +22,7 @@ use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 /**
  * @method static forPolygonGeometry($value):  Builder
  */
-class SitePolygon extends Model
+class SitePolygon extends Model implements AuditableModel
 {
     use HasUuid;
     use SoftDeletes;
@@ -28,28 +32,30 @@ class SitePolygon extends Model
     protected $table = 'site_polygon';
 
     protected $fillable = [
-      'proj_name',
-      'org_name',
       'poly_id',
       'poly_name',
       'site_id',
-      'site_name',
-      'project_id',
-      'poly_label',
+      'point_id',
       'plantstart',
       'plantend',
       'practice',
       'target_sys',
       'distr',
       'num_trees',
-      'est_area',
-      'country',
+      'calc_area',
+      'status',
       'created_by',
+      'source',
     ];
 
     public function polygonGeometry(): BelongsTo
     {
         return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'uuid');
+    }
+
+    public function point(): BelongsTo
+    {
+        return $this->belongsTo(PointGeometry::class, 'point_id', 'uuid');
     }
 
     public function scopeForPolygonGeometry($query, $uuid): Builder
@@ -67,8 +73,28 @@ class SitePolygon extends Model
         );
     }
 
+    public function site(): BelongsTo
+    {
+        return $this->belongsTo(Site::class, 'site_id', 'uuid');
+    }
+
     public function createdBy(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'created_by');
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
+    }
+
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->poly_name ?? '';
     }
 }

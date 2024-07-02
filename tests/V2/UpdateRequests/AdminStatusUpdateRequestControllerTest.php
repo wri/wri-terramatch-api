@@ -53,7 +53,7 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
         $ppcAdmin = User::factory()->admin()->create();
         $ppcAdmin->givePermissionTo('framework-ppc');
 
-        $payload = ['comments' => 'testing more information'];
+        $payload = ['feedback' => 'testing more information', 'feedback_fields' => []];
         $uri = '/api/v2/admin/update-requests/' . $updateRequest->uuid . '/moreinfo';
 
         $this->actingAs($random)
@@ -102,7 +102,7 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
         $uri = '/api/v2/admin/update-requests/' . $updateRequest->uuid;
 
         $this->actingAs($ppcAdmin)
-            ->putJson($uri . '/moreinfo', ['comments' => 'blah blah blah'])
+            ->putJson($uri . '/moreinfo', ['feedback' => 'blah blah blah', 'feedback_fields' => []])
             ->assertSuccessful()
             ->assertJsonFragment(['status' => UpdateRequestStatusStateMachine::NEEDS_MORE_INFORMATION]);
     }

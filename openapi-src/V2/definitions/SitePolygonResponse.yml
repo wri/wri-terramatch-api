@@ -1,0 +1,27 @@
+type: object
+properties:
+  id:
+    type: integer
+  uuid:
+    type: string
+  poly_name:
+    type: string
+  plantstart:
+    type: string
+    format: date
+  plantend:
+    type: string
+    format: date
+  practice:
+    type: string
+  target_sys:
+    type: string
+  distr:
+    type: string
+  num_trees:
+    type: integer
+  calc_area:
+    type: number
+    format: float
+  status:
+    type: string

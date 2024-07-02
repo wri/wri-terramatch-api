@@ -1,0 +1,4 @@
+type: object
+properties:
+  data:
+    $ref: './_index.yml#/DashboardJobsCreatedData'

@@ -32,7 +32,7 @@ class PolygonValidationSeeder extends Seeder
                     $geometry = PolygonGeometry::factory()->geojson($geojsonString)->create();
 
                     SitePolygon::factory()->site($site)->geometry($geometry)->create([
-                        'est_area' => $geometryDef['est_area'] ?? 0,
+                        'calc_area' => $geometryDef['calc_area'] ?? 0,
                     ]);
                 }
             }

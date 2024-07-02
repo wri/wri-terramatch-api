@@ -1,0 +1,20 @@
+operationId: update-v2-project-pipeline
+summary: Update a project in the pipeline by ID
+tags: 
+  - V2 Project Pipeline
+parameters:
+  - type: string
+    name: id
+    in: path
+    required: true
+    description: edit a specific project pipeline.
+  - name: body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/ProjectPipelinePost'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/ProjectPipelinePost'

@@ -15,12 +15,15 @@ class OrganisationsExport implements FromCollection, WithHeadings, WithMapping
 
     public function collection(): Collection
     {
+        ini_set('max_execution_time', 60);
+
         return Organisation::all();
     }
 
     public function headings(): array
     {
         $headings = [
+            'uuid',
             'status',
             'type',
             'private',
@@ -57,14 +60,13 @@ class OrganisationsExport implements FromCollection, WithHeadings, WithMapping
             'created at',
         ];
 
-
-
         return $this->addFileCollectionHeadings($headings);
     }
 
     public function map($organisation): array
     {
         $mapped = [
+            $organisation->uuid,
             $organisation->readable_status,
             $organisation->readable_type,
             $organisation->private,

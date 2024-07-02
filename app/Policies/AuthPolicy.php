@@ -57,6 +57,7 @@ class AuthPolicy extends Policy
         return $this->isUser($user) ||
             $this->isAdmin($user) ||
             $this->isTerrafundAdmin($user) ||
-            $this->isServiceAccount($user);
+            $this->isServiceAccount($user) ||
+            $this->isNewRoleUser($user);
     }
 }

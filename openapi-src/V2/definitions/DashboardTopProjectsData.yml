@@ -1,0 +1,10 @@
+type: object
+properties:
+  top_projects_most_planted_trees:
+    type: array
+    items:
+      $ref: './DashboardTopPlantedTree.yml'
+  top_tree_species_planted:
+    type: array
+    items:
+      $ref: './DashboardTopTreeSpecies.yml'

@@ -13,6 +13,8 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\AuditableModel;
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
 use App\Models\V2\MediaModel;
@@ -41,7 +43,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
-class SiteReport extends Model implements MediaModel, AuditableContract, ReportModel
+class SiteReport extends Model implements MediaModel, AuditableContract, ReportModel, AuditableModel
 {
     use HasFactory;
     use HasUuid;
@@ -354,5 +356,15 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function parentEntity(): BelongsTo
     {
         return $this->site();
+    }
+
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
+    }
+
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->title ?? '';
     }
 }

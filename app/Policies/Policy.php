@@ -37,6 +37,13 @@ abstract class Policy
         return ! $this->isGuest($user) && $user->role == 'admin';
     }
 
+    protected function isNewRoleUser(?UserModel $user): bool
+    {
+        $newRoles = ['project-developer', 'funder', 'government'];
+
+        return in_array($user->role, $newRoles);
+    }
+
     protected function isServiceAccount(?UserModel $user): bool
     {
         return ! $this->isGuest($user) && $user->role == 'service';
@@ -49,7 +56,7 @@ abstract class Policy
 
     protected function isVerifiedUser(?UserModel $user): bool
     {
-        return $this->isUser($user) && (bool) $user->email_address_verified_at;
+        return ($this->isUser($user) || $this->isNewRoleUser($user)) && (bool) $user->email_address_verified_at;
     }
 
     protected function isVerifiedAdmin(?UserModel $user): bool

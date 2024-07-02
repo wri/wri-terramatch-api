@@ -1,0 +1,43 @@
+summary: Update geometry for a polygon
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    type: string
+    description: The UUID of the polygon geometry to update
+  - in: body
+    name: geometry
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/GeometryString'
+    description: The new geometry data
+responses:
+  '200':
+    description: Geometry updated successfully
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Geometry updated successfully.
+        geometry:
+          type: object
+          description: The updated geometry data
+        uuid:
+          type: string
+  '404':
+    description: No polygon geometry found for the given UUID
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: No polygon geometry found for the given UUID.
+  '500':
+    description: An error occurred
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Internal Server Error

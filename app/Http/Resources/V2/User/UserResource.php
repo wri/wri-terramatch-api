@@ -15,6 +15,8 @@ class UserResource extends JsonResource
             'user_type' => $this->role,
             'job_role' => $this->job_role,
             'role' => $this->primary_role ? $this->primary_role->name : '',
+            'country' => $this->country,
+            'program' => $this->program,
 
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,

@@ -2,6 +2,7 @@
 
 namespace App\Models\V2;
 
+use App\Models\Traits\HasGeometry;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
@@ -10,17 +11,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
-/**
- * @method static isUuid($uuid)
- * @property mixed $uuid
- */
 class PolygonGeometry extends Model
 {
     use HasUuid;
     use SoftDeletes;
     use HasFactory;
+    use HasGeometry;
 
     protected $table = 'polygon_geometry';
 
@@ -50,43 +50,28 @@ class PolygonGeometry extends Model
         return $this->hasOne(User::class, 'id', 'created_by');
     }
 
-    public static function getGeoJson(string $uuid): ?array
+    public function point(): HasOneThrough
     {
-        $geojson_string = PolygonGeometry::isUuid($uuid)
-            ->selectRaw('ST_AsGeoJSON(geom) as geojson_string')
-            ->first()
-            ?->geojson_string;
-
-        return $geojson_string == null ? null : json_decode($geojson_string, true);
+        return $this->hasOneThrough(
+            PointGeometry::class,
+            SitePolygon::class,
+            'poly_id',
+            'uuid',
+            'uuid',
+            'point_id'
+        );
     }
 
-    public function getGeoJsonAttribute(): array
+    public function deleteWithRelated()
     {
-        return self::getGeoJson($this->uuid);
-    }
-
-    public static function getGeometryType(string $uuid): ?string
-    {
-        return PolygonGeometry::isUuid($uuid)
-            ->selectRaw('ST_GeometryType(geom) as geometry_type_string')
-            ->first()
-            ?->geometry_type_string;
-    }
-
-    public function getGeometryTypeAttribute(): string
-    {
-        return self::getGeometryType($this->uuid);
-    }
-
-    public static function getDbGeometry(string $uuid)
-    {
-        return PolygonGeometry::isUuid($uuid)
-            ->selectRaw('ST_Area(geom) AS area, ST_Y(ST_Centroid(geom)) AS latitude')
-            ->first();
-    }
-
-    public function getDbGeometryAttribute()
-    {
-        return self::getDbGeometry($this->uuid);
+        DB::transaction(function () {
+            if ($this->sitePolygon) {
+                if ($this->sitePolygon->point) {
+                    $this->sitePolygon->point->delete();
+                }
+                $this->sitePolygon->delete();
+            }
+            $this->delete();
+        });
     }
 }

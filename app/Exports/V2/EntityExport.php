@@ -86,6 +86,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $organisation->name ?? null,
             $entity->project->name ?? null,
             $entity->status ?? null,
+            $entity->update_request_status ?? null,
             $entity->due_at ?? null,
         ]);
 
@@ -134,6 +135,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             'organization-name',
             'project_name',
             'status',
+            'update_request_status',
             'due_date',
         ]);
 

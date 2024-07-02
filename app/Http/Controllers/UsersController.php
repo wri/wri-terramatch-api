@@ -30,8 +30,9 @@ class UsersController extends Controller
         $request->request->remove('callback_url');
         $data = $request->json()->all();
         UserValidator::validate('CREATE', $data);
-        $data['role'] = 'user';
+        $data['role'] = $data['primary_role'];
         $user = new UserModel($data);
+        $user->assignRole($data['primary_role']);
         $user->saveOrFail();
         $user->refresh();
 
