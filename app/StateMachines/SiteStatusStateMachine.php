@@ -17,14 +17,13 @@ class SiteStatusStateMachine extends EntityStatusStateMachine
 
     public function transitions(): array
     {
-        $parentTransitions = parent::transitions();
-
-        return array_merge(
-            $parentTransitions,
-            [
-                parent::APPROVED => [self::RESTORATION_IN_PROGRESS],
-            ]
-        );
+        return [
+                self::DRAFT => [self::AWAITING_APPROVAL],
+                self::AWAITING_APPROVAL => [self::APPROVED, self::NEEDS_MORE_INFORMATION],
+                self::NEEDS_MORE_INFORMATION => [self::APPROVED, self::RESTORATION_IN_PROGRESS],
+                self::RESTORATION_IN_PROGRESS => [self::NEEDS_MORE_INFORMATION, self::APPROVED],
+                self::APPROVED => [self::NEEDS_MORE_INFORMATION, self::RESTORATION_IN_PROGRESS],
+        ];
     }
 
     public function defaultState(): ?string
