@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\V2\Sites\Site;
-use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\SiteStatusStateMachine;
 
 class SiteService
@@ -14,10 +13,9 @@ class SiteService
             return;
         }
         $site = Site::where('uuid', $site_uuid)->first();
-        if ($site->status != EntityStatusStateMachine::APPROVED) {
+        if (is_null($site)) {
             return;
         }
-        $site->status = SiteStatusStateMachine::RESTORATION_IN_PROGRESS;
-        $site->save();
+        $site->status()->transitionTo(SiteStatusStateMachine::RESTORATION_IN_PROGRESS);
     }
 }
