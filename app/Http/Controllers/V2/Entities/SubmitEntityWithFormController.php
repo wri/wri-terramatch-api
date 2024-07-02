@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V2\Entities;
 
 use App\Http\Controllers\Controller;
+use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\Action;
 use App\Models\V2\EntityModel;
 use App\Models\V2\UpdateRequests\UpdateRequest;
@@ -11,6 +12,8 @@ use Illuminate\Http\Request;
 
 class SubmitEntityWithFormController extends Controller
 {
+    use SaveAuditStatusTrait;
+
     public function __invoke(EntityModel $entity, Request $request)
     {
         $this->authorize('submit', $entity);
@@ -24,6 +27,7 @@ class SubmitEntityWithFormController extends Controller
         /** @var UpdateRequest $updateRequest */
         $updateRequest = $entity->updateRequests()->isUnapproved()->first();
         if (! empty($updateRequest)) {
+            $this->saveAuditStatusProjectDeveloperSubmit($entity, $updateRequest);
             $updateRequest->submitForApproval();
             Action::forTarget($updateRequest)->delete();
         } else {
