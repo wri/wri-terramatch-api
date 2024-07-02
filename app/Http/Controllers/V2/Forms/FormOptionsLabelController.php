@@ -69,7 +69,7 @@ class FormOptionsLabelController extends Controller
                     'slug' => $resource->slug,
                     'label' => $resource->label,
                     'image_url' => $resource->image_url ?? $resource->getFirstMediaUrl('image'),
-                ]
+                ],
             ];
         })->values();
     }
