@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\V2\Forms;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Forms\FormQuestionOptionResource;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Forms\FormQuestionOption;
@@ -64,17 +63,19 @@ class FormOptionsLabelController extends Controller
     {
         $formQuestionOptions = FormQuestionOption::whereIn('slug', $missingSlugs)->get();
 
-        return FormQuestionOptionResource::collection($formQuestionOptions)->map(function ($resource) {
+        return $formQuestionOptions->flatMap(function ($resource) {
             return [
-                'slug' => $resource->slug,
-                'label' => $resource->label,
-                'image_url' => $resource->image_url,
+                $resource->slug => [
+                    'slug' => $resource->slug,
+                    'label' => $resource->label,
+                    'image_url' => $resource->image_url ?? $resource->getFirstMediaUrl('image'),
+                ]
             ];
-        });
+        })->values();
     }
 
     public function mergeCollections(Collection $collection, Collection $additionalCollection): Collection
     {
-        return $collection->merge($additionalCollection)->unique('slug');
+        return $collection->merge($additionalCollection);
     }
 }
