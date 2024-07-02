@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Http\Request;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Console\Command;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 
 class UploadShapefileCommand extends Command
 {
     protected $signature = 'shapefile:upload {file} {--site_uuid=}';
+
     protected $description = 'Upload a shapefile to the application';
 
     public function handle()
@@ -18,8 +18,9 @@ class UploadShapefileCommand extends Command
         $filePath = $this->argument('file');
         $siteUuid = $this->option('site_uuid');
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             $this->error("File not found: $filePath");
+
             return 1;
         }
 
@@ -43,10 +44,12 @@ class UploadShapefileCommand extends Command
 
         // Handle the response
         if ($response->getStatusCode() === 200) {
-            $this->info("Shapefile uploaded successfully: " . $response->getContent());
+            $this->info('Shapefile uploaded successfully: ' . $response->getContent());
+
             return 0;
         } else {
-            $this->error("Failed to upload shapefile: " . $response->getContent());
+            $this->error('Failed to upload shapefile: ' . $response->getContent());
+
             return 1;
         }
     }
