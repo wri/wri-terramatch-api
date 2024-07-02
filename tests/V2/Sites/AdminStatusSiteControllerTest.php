@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
-use App\StateMachines\EntityStatusStateMachine;
+use App\StateMachines\SiteStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
@@ -27,7 +27,7 @@ class AdminStatusSiteControllerTest extends TestCase
         $site = Site::factory()->create([
             'framework_key' => 'ppc',
             'project_id' => $project->id,
-            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
+            'status' => SiteStatusStateMachine::AWAITING_APPROVAL,
         ]);
 
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
@@ -60,6 +60,6 @@ class AdminStatusSiteControllerTest extends TestCase
         $this->actingAs($ppcAdmin)
             ->putJson($uri, $payload)
             ->assertSuccessful()
-            ->assertJsonFragment(['status' => EntityStatusStateMachine::NEEDS_MORE_INFORMATION]);
+            ->assertJsonFragment(['status' => SiteStatusStateMachine::NEEDS_MORE_INFORMATION]);
     }
 }
