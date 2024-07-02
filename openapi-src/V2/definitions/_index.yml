@@ -140,10 +140,6 @@ V2StrataPaginated:
   $ref: './V2StrataPaginated.yml'
 V2SeedingRead:
   $ref: './V2SeedingRead.yml'
-V2SeedingCreate:
-  $ref: './V2SeedingCreate.yml'
-V2SeedingUpdate:
-  $ref: './V2SeedingUpdate.yml'
 V2SeedingPaginated:
   $ref: './V2SeedingPaginated.yml'
 V2WorkdayRead:

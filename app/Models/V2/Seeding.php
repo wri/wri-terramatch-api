@@ -2,12 +2,14 @@
 
 namespace App\Models\V2;
 
+use App\Http\Resources\V2\Seedings\SeedingsCollection;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class Seeding extends Model
+class Seeding extends Model implements EntityRelationModel
 {
     use HasFactory;
     use HasUuid;
@@ -25,6 +27,15 @@ class Seeding extends Model
         'old_id',
         'old_model',
     ];
+
+    public static function createResourceCollection(EntityModel $entity): JsonResource
+    {
+        $query = Seeding::query()
+            ->where('seedable_type', get_class($entity))
+            ->where('seedable_id', $entity->id);
+
+        return new SeedingsCollection($query->paginate());
+    }
 
     public function getRouteKeyName()
     {
