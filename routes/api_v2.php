@@ -33,10 +33,10 @@ use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
-use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
+use App\Http\Controllers\V2\Entities\GetRelationsForEntityController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
@@ -95,7 +95,6 @@ use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
 use App\Http\Controllers\V2\Geometry\GeometryController;
-use App\Http\Controllers\V2\Invasives\GetInvasivesForEntityController;
 use App\Http\Controllers\V2\LeadershipTeam\DeleteLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\StoreLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\UpdateLeadershipTeamController;
@@ -185,13 +184,11 @@ use App\Http\Controllers\V2\Stages\StoreStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
 use App\Http\Controllers\V2\Stages\ViewStageController;
-use App\Http\Controllers\V2\Stratas\GetStratasForEntityController;
 use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
-use App\Http\Controllers\V2\TreeSpecies\GetTreeSpeciesForEntityController;
 use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
 use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\AdminStatusUpdateRequestController;
@@ -471,27 +468,17 @@ Route::prefix('project-pitches')->group(function () {
     Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
-foreach ([
-    'tree-species' => GetTreeSpeciesForEntityController::class,
-    'disturbances' => GetDisturbancesForEntityController::class,
-    'stratas' => GetStratasForEntityController::class,
-    'invasives' => GetInvasivesForEntityController::class,
-] as $prefix => $controller) {
-    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () use ($controller) {
-        Route::get('/{entity}', $controller);
-    }, prefix: $prefix);
-}
+Route::prefix('{relationType}')
+    ->whereIn('relationType', array_keys(GetRelationsForEntityController::RELATIONS))
+    ->group(function () {
+        ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+            Route::get('/{entity}', GetRelationsForEntityController::class);
+        });
+    });
 
 ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
     Route::get('/{entity}', GetWorkdaysForEntityController::class);
 }, prefix: 'workdays');
-
-Route::prefix('seedings')->group(function () {
-    Route::post('/', \App\Http\Controllers\V2\Seedings\StoreSeedingController::class);
-    Route::patch('/{seeding}', \App\Http\Controllers\V2\Seedings\UpdateSeedingController::class);
-    Route::delete('/{seeding}', \App\Http\Controllers\V2\Seedings\DeleteSeedingController::class);
-    Route::get('/{entity}/{uuid}', \App\Http\Controllers\V2\Seedings\GetSeedingsForEntityController::class);
-});
 
 Route::prefix('leadership-team')->group(function () {
     Route::post('/', StoreLeadershipTeamController::class);
@@ -597,7 +584,6 @@ Route::prefix('nursery-reports')->group(function () {
 });
 
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
-
 
 Route::prefix('funding-type')->group(function () {
     Route::post('/', StoreFundingTypeController::class);

@@ -110,14 +110,6 @@
 /v2/stratas/{ENTITY}/{UUID}:
   get:
     $ref: './Stratas/get-v2-stratas-entity-uuid.yml'
-/v2/seedings:
-  post:
-    $ref: './Seedings/post-v2-seedings.yml'
-/v2/seedings/{UUID}:
-  patch:
-    $ref: './Seedings/patch-v2-seedings-uuid.yml'
-  delete:
-    $ref: './Seedings/delete-v2-seedings-uuid.yml'
 /v2/seedings/{ENTITY}/{UUID}:
   get:
     $ref: './Seedings/get-v2-seedings-entity-uuid.yml'
