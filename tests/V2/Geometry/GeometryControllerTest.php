@@ -62,8 +62,11 @@ class GeometryControllerTest extends TestCase
         ]);
 
         // Invalid est area
-        $this->assertCreateError('est_area must be at least 1', $service, [
+        $this->assertCreateError('est_area must be at least 0.0001', $service, [
             $this->fakeGeojson([$this->fakePoint(['site_id' => '123', 'est_area' => -1])]),
+        ]);
+        $this->assertCreateError('est_area may not be greater than 5', $service, [
+            $this->fakeGeojson([$this->fakePoint(['site_id' => '123', 'est_area' => 6])]),
         ]);
 
         // Not all sites found
@@ -87,8 +90,8 @@ class GeometryControllerTest extends TestCase
             ->postJson('/api/v2/geometry', ['geometries' => [
                 $this->fakeGeojson([$this->fakePolygon(['site_id' => $site->uuid])]),
                 $this->fakeGeojson([
-                    $this->fakePoint(['site_id' => $site->uuid, 'est_area' => 10]),
-                    $this->fakePoint(['site_id' => $site->uuid, 'est_area' => 20]),
+                    $this->fakePoint(['site_id' => $site->uuid, 'est_area' => 4]),
+                    $this->fakePoint(['site_id' => $site->uuid, 'est_area' => 3]),
                 ]),
             ]])
             ->assertStatus(201);
