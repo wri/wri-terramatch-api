@@ -10,11 +10,6 @@ class SiteStatusStateMachine extends EntityStatusStateMachine
     public const NEEDS_MORE_INFORMATION = 'needs-more-information';
     public const RESTORATION_IN_PROGRESS = 'restoration-in-progress';
 
-    public function recordHistory(): bool
-    {
-        return true;
-    }
-
     public function transitions(): array
     {
         return [
