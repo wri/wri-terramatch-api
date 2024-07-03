@@ -11,6 +11,7 @@ class SiteStatusStateMachine extends EntityStatusStateMachine
         $parentTransitions = parent::transitions();
 
         $parentTransitions[self::NEEDS_MORE_INFORMATION][] = self::RESTORATION_IN_PROGRESS;
+        $parentTransitions[self::APPROVED][] = self::RESTORATION_IN_PROGRESS;
 
         return array_merge(
             [
