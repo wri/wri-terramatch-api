@@ -26,6 +26,7 @@ use App\Models\V2\Stratas\Strata;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\Workdays\Workday;
 use App\Models\V2\Workdays\WorkdayDemographic;
+use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\SiteStatusStateMachine;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
@@ -72,11 +73,11 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     }
 
     public static array $statuses = [
-        SiteStatusStateMachine::DRAFT => 'Draft',
-        SiteStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
-        SiteStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
+        EntityStatusStateMachine::STARTED => 'Started',
+        EntityStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
+        EntityStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
         SiteStatusStateMachine::RESTORATION_IN_PROGRESS => 'Restoration in progress',
-        SiteStatusStateMachine::APPROVED => 'Approved',
+        EntityStatusStateMachine::APPROVED => 'Approved',
     ];
 
     public $stateMachines = [
