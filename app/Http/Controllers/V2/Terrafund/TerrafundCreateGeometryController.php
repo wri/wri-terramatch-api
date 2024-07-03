@@ -8,6 +8,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
+use App\Services\SiteService;
 use App\Validators\Extensions\Polygons\EstimatedArea;
 use App\Validators\Extensions\Polygons\GeometryType;
 use App\Validators\Extensions\Polygons\NotOverlapping;
@@ -155,6 +156,8 @@ class TerrafundCreateGeometryController extends Controller
                 return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
             }
 
+            App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
+
             return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
             return response()->json(['error' => 'KML file not provided'], 400);
@@ -215,6 +218,8 @@ class TerrafundCreateGeometryController extends Controller
                 if (isset($uuid['error'])) {
                     return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
                 }
+
+                App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
 
                 return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
             } else {
@@ -341,6 +346,7 @@ class TerrafundCreateGeometryController extends Controller
             if (is_array($uuid) && isset($uuid['error'])) {
                 return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
             }
+            App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
 
             return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
