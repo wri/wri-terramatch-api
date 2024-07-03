@@ -15,7 +15,7 @@ class SiteStatusStateMachine extends EntityStatusStateMachine
             parent::AWAITING_APPROVAL => [self::RESTORATION_IN_PROGRESS, parent::NEEDS_MORE_INFORMATION],
             parent::NEEDS_MORE_INFORMATION => [self::RESTORATION_IN_PROGRESS, parent::AWAITING_APPROVAL],
             self::RESTORATION_IN_PROGRESS => [parent::NEEDS_MORE_INFORMATION, parent::APPROVED],
-            self::APPROVED => [self::RESTORATION_IN_PROGRESS],
+            self::APPROVED => [self::RESTORATION_IN_PROGRESS, self::AWAITING_APPROVAL],
         ];
     }
 
