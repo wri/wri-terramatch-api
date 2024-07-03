@@ -134,6 +134,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'proj_boundary',
         'states',
         'proj_impact_biodiv',
+        'water_source',
+        'baseline_biodiversity',
+        'goal_trees_restored_planting',
+        'goal_trees_restored_anr',
+        'goal_trees_restored_direct_seeding',
     ];
 
     public $fileConfiguration = [
