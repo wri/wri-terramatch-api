@@ -8,7 +8,7 @@ use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\UpdateRequests\UpdateRequest;
-use App\StateMachines\EntityStatusStateMachine;
+use App\StateMachines\SiteStatusStateMachine;
 use App\StateMachines\UpdateRequestStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
@@ -125,7 +125,7 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
         $site = Site::factory()->create([
             'project_id' => $project->id,
             'framework_key' => 'ppc',
-            'status' => EntityStatusStateMachine::APPROVED,
+            'status' => SiteStatusStateMachine::APPROVED,
         ]);
 
         $form = CustomFormHelper::generateFakeForm('site', 'ppc');
