@@ -5,6 +5,7 @@ namespace App\StateMachines;
 class SiteStatusStateMachine extends EntityStatusStateMachine
 {
     public const RESTORATION_IN_PROGRESS = 'restoration-in-progress';
+    public const APPROVED = 'approved';
 
     public function transitions(): array
     {
