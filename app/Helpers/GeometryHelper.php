@@ -5,6 +5,8 @@ namespace App\Helpers;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\CriteriaSite;
+use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Support\Facades\Log;
 
 class GeometryHelper
@@ -133,5 +135,49 @@ class GeometryHelper
             'valid',
             'created_at as latest_created_at',
         ]);
+    }
+    public static function groupFeaturesBySiteId($geojson)
+    {
+        if (!isset($geojson['features']) || !is_array($geojson['features'])) {
+            return ['error' => 'Invalid GeoJSON structure'];
+        }
+    
+        $groupedFeatures = [];
+    
+        foreach ($geojson['features'] as $feature) {
+            if (isset($feature['properties']['site_id'])) {
+                $siteId = $feature['properties']['site_id'];
+                if (!isset($groupedFeatures[$siteId])) {
+                    $groupedFeatures[$siteId] = [
+                        'type' => 'FeatureCollection',
+                        'features' => []
+                    ];
+                }
+                $groupedFeatures[$siteId]['features'][] = $feature;
+            }
+        }
+    
+        return $groupedFeatures;
+    }
+    public static function groupFeaturesByProjectAndSite($groupedGeoJson)
+    {
+        $projectGroupedFeatures = [];
+    
+        foreach ($groupedGeoJson as $siteId => $featureCollection) {
+            $sitePolygon = Site::isUuid($siteId)->first(); 
+            if ($sitePolygon === null || $sitePolygon->project === null) {
+              Log::error('site polygon or project not found for siteId: '.$siteId);
+              continue;
+            }
+    
+            $projectUuid = $sitePolygon->project->uuid;
+            if (!isset($projectGroupedFeatures[$projectUuid])) {
+                $projectGroupedFeatures[$projectUuid] = [];
+            }
+    
+            $projectGroupedFeatures[$projectUuid][$siteId] = $featureCollection;
+        }
+    
+        return $projectGroupedFeatures;
     }
 }
