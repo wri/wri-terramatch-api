@@ -316,4 +316,17 @@ class User extends Authenticatable implements JWTSubject
         $this->instagram = null;
         $this->avatar = null;
     }
+
+    public function getFullNameAttribute(): string
+    {
+        if (empty($this->first_name) && empty($this->last_name)) {
+            return 'Unnamed User';
+        } elseif (empty($this->first_name)) {
+            return $this->last_name;
+        } elseif (empty($this->last_name)) {
+            return $this->first_name;
+        }
+
+        return $this->first_name . ' ' . $this->last_name;
+    }
 }
