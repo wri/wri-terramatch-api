@@ -2669,3 +2669,15 @@
 /v2/site-polygon/status/bulk:
   put:
     $ref: './Polygons/get-v2-polygons-uuid-change-status.yml'
+/v2/site-polygon/{uuid}:
+  get:
+    $ref: './Polygons/get-v2-site-polygon-uuid.yml'
+/v2/site-polygon/{uuid}/versions:
+  get:
+    $ref: './Polygons/get-v2-site-polygon-uuid-versions.yml'
+/v2/site-polygon/new-version:
+  post:
+    $ref: './Polygons/post-v2-site-polygon-uuid-new-version.yml'
+/v2/site-polygon/make-active:
+  put:
+    $ref: './Polygons/put-v2-site-polygon-uuid-make-active.yml'

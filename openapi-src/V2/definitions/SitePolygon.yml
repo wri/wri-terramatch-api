@@ -5,6 +5,8 @@ properties:
     type: integer
   uuid:
     type: string
+  primary_uuid:
+    type: string
   project_id:
     type: string
   proj_name:
@@ -55,3 +57,7 @@ properties:
     type: string
   country:
     type: string
+  version_name:
+    type: string
+  is_active:
+    type: integer
