@@ -49,37 +49,38 @@ class NotOverlapping extends Extension
 
     public static function checkFeatureIntersections($geojsonFeatures): array
     {
-        if (!is_array($geojsonFeatures) || empty($geojsonFeatures)) {
+        if (! is_array($geojsonFeatures) || empty($geojsonFeatures)) {
             return ['valid' => false, 'error' => 'Invalid or empty GeoJSON features array'];
         }
-    
+
         $intersections = [];
         $count = count($geojsonFeatures);
-    
+
         for ($i = 0; $i < $count; $i++) {
             for ($j = $i + 1; $j < $count; $j++) {
                 $geom1 = json_encode($geojsonFeatures[$i]['geometry']);
                 $geom2 = json_encode($geojsonFeatures[$j]['geometry']);
-    
+
                 $result = DB::select(
-                    "SELECT ST_Intersects(
+                    'SELECT ST_Intersects(
                         ST_GeomFromGeoJSON(?),
                         ST_GeomFromGeoJSON(?)
-                    ) as intersects",
+                    ) as intersects',
                     [$geom1, $geom2]
                 );
-    
+
                 if ($result[0]->intersects) {
                     $intersections[] = [$i, $j];
                 }
             }
         }
-    
+
         return [
             'valid' => empty($intersections),
-            'intersections' => $intersections
+            'intersections' => $intersections,
         ];
     }
+
     public static function doesNotOverlap($geojson, $siteId): array
     {
         $sitePolygon = SitePolygon::where('site_id', $siteId)->first();
