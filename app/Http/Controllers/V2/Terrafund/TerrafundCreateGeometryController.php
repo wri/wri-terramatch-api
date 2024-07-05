@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Process\Process;
@@ -349,6 +350,167 @@ class TerrafundCreateGeometryController extends Controller
             App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
 
             return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
+        } else {
+            return response()->json(['error' => 'GeoJSON file not provided in request'], 400);
+        }
+    }
+
+    //     public function uploadGeoJSONFileWithValidation(Request $request)
+    // {
+    //     ini_set('max_execution_time', '-1');
+    //     ini_set('memory_limit', '-1');
+
+    //     if ($request->hasFile('file')) {
+    //         $site_id = $request->input('uuid');
+    //         $file = $request->file('file');
+    //         $tempDir = sys_get_temp_dir();
+    //         $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
+    //         $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+    //         $file->move($tempDir, $filename);
+
+    //         $geojsonData = file_get_contents($filePath);
+    //         $geojson = json_decode($geojsonData, true);
+
+    //         foreach ($geojson['features'] as $feature) {
+    //             if ($feature['properties']['site_id']) {
+    //                 if ($feature['geometry']['type'] === 'Polygon') {
+
+    //                     $geojsonInside = json_encode($feature['geometry']);
+    //                     Log::info('----------------');
+    //                     Log::info('Geojson inside', ['geojson' => $geojsonInside]);
+    //                     $validationGeojson = ['features' => [
+    //                         'feature' => ['properties' => $feature['properties']],
+    //                     ]];
+    //                     $validSchema = SitePolygonValidator::isValid('SCHEMA', $validationGeojson);
+    //                     $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
+    //                     $validOverlapping = NotOverlapping::doesNotOverlap($geojsonInside, $feature['properties']['site_id']);
+    //                     $validSelfIntersection = SelfIntersection::geoJsonValid($feature['geometry']);
+    //                     $validSize= PolygonSize::geoJsonValid($feature['geometry']);
+    //                     $validWithinCountry = WithinCountry::getIntersectionDataWithSiteId($geojsonInside, $feature['properties']['site_id']);
+    //                     $validSpikes = Spikes::geoJsonValid($feature['geometry']);
+    //                     $validPolygonType = GeometryType::geoJsonValid($feature['geometry']);
+    //                     $validEstimatedArea = EstimatedArea::getAreaDataWithSiteId($feature['properties']['site_id']);
+
+    //                     Log::info('valid schema', ['valid' => $validSchema]);
+    //                     Log::info('valid data', ['valid' => $validData]);
+    //                     Log::info('valid overlapping', ['valid' => $validOverlapping]);
+    //                     Log::info('valid self intersection', ['valid' => $validSelfIntersection]);
+    //                     Log::info('valid size', ['valid' => $validSize]);
+    //                     Log::info('valid within country', ['valid' => $validWithinCountry]);
+    //                     Log::info('valid spikes', ['valid' => $validSpikes]);
+    //                     Log::info('valid polygon type', ['valid' => $validPolygonType]);
+    //                     Log::info('valid estimated area', ['valid' => $validEstimatedArea]);
+
+    //                 } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+    //                     foreach ($feature['geometry']['coordinates'] as $polygon) {
+    //                         $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
+    //                     }
+    //                 }
+    //             }
+    //         }
+
+    //         return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid'], 200);
+    //     } else {
+    //         return response()->json(['error' => 'GeoJSON file not provided in request'], 400);
+    //     }
+    // }
+
+    public function uploadGeoJSONFileWithValidation(Request $request)
+    {
+        ini_set('max_execution_time', '-1');
+        ini_set('memory_limit', '-1');
+
+        if ($request->hasFile('file')) {
+            $site_id = $request->input('uuid');
+            $file = $request->file('file');
+            $tempDir = sys_get_temp_dir();
+            $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
+            $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+            $file->move($tempDir, $filename);
+
+            $geojsonData = file_get_contents($filePath);
+            $geojson = json_decode($geojsonData, true);
+
+            $csvData = [];
+            $counter = 1;
+
+            foreach ($geojson['features'] as $feature) {
+                if ($feature['properties']['site_id']) {
+                    if ($feature['geometry']['type'] === 'Polygon') {
+
+                        $geojsonInside = json_encode($feature['geometry']);
+
+                        // Your validation checks here
+                        $validOverlapping = NotOverlapping::doesNotOverlap($geojsonInside, $feature['properties']['site_id']);
+                        $validSelfIntersection = SelfIntersection::geoJsonValid($feature['geometry']);
+                        $validSize = PolygonSize::geoJsonValid($feature['geometry']);
+                        $validWithinCountry = WithinCountry::getIntersectionDataWithSiteId($geojsonInside, $feature['properties']['site_id']);
+                        $validSpikes = Spikes::geoJsonValid($feature['geometry']);
+                        $validPolygonType = GeometryType::geoJsonValid($feature['geometry']);
+                        $validEstimatedArea = EstimatedArea::getAreaDataWithSiteId($feature['properties']['site_id']);
+
+                        // Determine boolean values based on validation results
+                        $nonOverlapping = $validOverlapping['valid'] ?? false;
+                        $nonSelfIntersection = $validSelfIntersection['valid'] ?? false;
+                        $nonSurpassSizeLimit = $validSize['valid'] ?? false;
+                        $insideCountry = $validWithinCountry['valid'] ?? false;
+                        $noSpikes = $validSpikes['valid'] ?? false;
+                        $validPolyType = $validPolygonType['valid'] ?? false;
+                        $nonSurpassEstimatedArea = $validEstimatedArea['valid'] ?? false;
+
+                        // Prepare CSV row
+                        $csvRow = [
+                            'counter' => $counter,
+                            'site_id' => $feature['properties']['site_id'],
+                            'non_overlapping' => $nonOverlapping ? 'true' : 'false',
+                            'non_self_intersection' => $nonSelfIntersection ? 'true' : 'false',
+                            'non_surpass_size_limit' => $nonSurpassSizeLimit ? 'true' : 'false',
+                            'inside_country' => $insideCountry ? 'true' : 'false',
+                            'no_spikes' => $noSpikes ? 'true' : 'false',
+                            'valid_polygon_type' => $validPolyType ? 'true' : 'false',
+                            'non_surpass_estimated_area' => $nonSurpassEstimatedArea ? 'true' : 'false',
+                            'comments' => '', // Placeholder for comments, you can add messages here
+                        ];
+
+                        // Example of adding comments based on validation results
+                        $comments = [];
+                        if (! $nonOverlapping) {
+                            $comments[] = 'Overlap detected.';
+                        }
+                        if (! $nonSelfIntersection) {
+                            $comments[] = 'Self-intersection detected.';
+                        }
+                        // Add more comments based on other validation results if needed
+
+                        $csvRow['comments'] = implode(' ', $comments);
+
+                        $csvData[] = $csvRow;
+                        $counter++;
+
+                    } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+                        // Handle MultiPolygon if needed
+                    }
+                }
+            }
+
+            // Generate CSV content
+            $csvContent = [];
+            $csvContent[] = implode(',', array_keys($csvData[0])); // headers
+            foreach ($csvData as $row) {
+                $csvContent[] = implode(',', $row);
+            }
+            $csvContent = implode("\n", $csvContent);
+
+            // Create response to download CSV file
+            $response = Response::make($csvContent, 200, [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="validation_results_' . date('Y-m-d_H-i-s') . '.csv"',
+            ]);
+
+            // Delete temporary file
+            unlink($filePath);
+
+            return $response;
         } else {
             return response()->json(['error' => 'GeoJSON file not provided in request'], 400);
         }

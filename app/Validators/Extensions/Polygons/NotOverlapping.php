@@ -45,4 +45,30 @@ class NotOverlapping extends Extension
             'project_id' => $sitePolygon->project->id,
         ];
     }
+
+    public static function doesNotOverlap($geojson, $siteId): array
+    {
+        $sitePolygon = SitePolygon::where('site_id', $siteId)->first();
+        if ($sitePolygon == null) {
+            return ['valid' => false, 'error' => 'Site polygon not found for the given site ID', 'status' => 404];
+        }
+
+        $relatedPolyIds = $sitePolygon->project->sitePolygons()->pluck('poly_id');
+        $intersects = PolygonGeometry::whereIn('uuid', $relatedPolyIds)
+            ->selectRaw(
+                'ST_Intersects(
+                geom, 
+                ST_GeomFromGeoJSON(?)
+            ) as intersects',
+                [$geojson]
+            )
+            ->get()
+            ->pluck('intersects');
+
+        return [
+            'valid' => ! in_array(1, $intersects->toArray()),
+            'site_id' => $siteId,
+            'project_id' => $sitePolygon->project->id,
+        ];
+    }
 }
