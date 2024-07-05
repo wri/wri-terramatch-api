@@ -434,6 +434,8 @@ class TerrafundCreateGeometryController extends Controller
             $csvData = [];
             // this returns false is any intersects, and in intersections returns which intersects [i,j]
             $selfIntersections = NotOverlapping::checkFeatureIntersections($geojson['features']);
+            $geojsonBySiteId = GeometryHelper::groupFeaturesBySiteId($geojson);
+            $groupedByProject = GeometryHelper::groupFeaturesByProjectAndSite($geojsonBySiteId);
             foreach ($geojson['features'] as $feature) {
                 if ($feature['properties']['site_id']) {
                     if ($feature['geometry']['type'] === 'Polygon') {
