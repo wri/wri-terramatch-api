@@ -111,6 +111,8 @@ class SitePolygon extends Model implements AuditableModel
         $this->is_active = 0;
         $this->save();
 
+        //TODO: create a PolygonGeometry copy
+
         $newSitePolygon->primary_uuid = $this->primary_uuid;
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->is_active = 1;

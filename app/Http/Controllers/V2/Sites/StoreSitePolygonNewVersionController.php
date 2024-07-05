@@ -14,7 +14,7 @@ class StoreSitePolygonNewVersionController extends Controller
         Log::info('Fetching site polygons', ['uuid' => $uuid]);
 
         try {
-            $sitePolygon = SitePolygon::where('primary_uuid', $uuid)->active()->first();
+            $sitePolygon = SitePolygon::isUuid($uuid)->first();
             if (! $sitePolygon) {
                 return response()->json(['error' => 'Site polygon not found'], 404);
             }
