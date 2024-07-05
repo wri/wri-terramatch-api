@@ -422,7 +422,6 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('memory_limit', '-1');
 
         if ($request->hasFile('file')) {
-            $site_id = $request->input('uuid');
             $file = $request->file('file');
             $tempDir = sys_get_temp_dir();
             $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
@@ -433,7 +432,6 @@ class TerrafundCreateGeometryController extends Controller
             $geojson = json_decode($geojsonData, true);
 
             $csvData = [];
-            $counter = 1;
             // this returns false is any intersects, and in intersections returns which intersects [i,j]
             $selfIntersections = NotOverlapping::checkFeatureIntersections($geojson['features']);
             foreach ($geojson['features'] as $feature) {
@@ -441,8 +439,10 @@ class TerrafundCreateGeometryController extends Controller
                     if ($feature['geometry']['type'] === 'Polygon') {
 
                         $geojsonInside = json_encode($feature['geometry']);
+                        $validationGeojson = ['features' => [
+                            'feature' => ['properties' => $feature['properties']],
+                        ]];
 
-                        // Your validation checks here
                         $validOverlapping = NotOverlapping::doesNotOverlap($geojsonInside, $feature['properties']['site_id']);
                         $validSelfIntersection = SelfIntersection::geoJsonValid($feature['geometry']);
                         $validSize = PolygonSize::geoJsonValid($feature['geometry']);
@@ -450,44 +450,34 @@ class TerrafundCreateGeometryController extends Controller
                         $validSpikes = Spikes::geoJsonValid($feature['geometry']);
                         $validPolygonType = GeometryType::geoJsonValid($feature['geometry']);
                         $validEstimatedArea = EstimatedArea::getAreaDataWithSiteId($feature['properties']['site_id']);
+                        $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
 
-                        // Determine boolean values based on validation results
                         $nonOverlapping = $validOverlapping['valid'] ?? false;
-                        $nonSelfIntersection = $validSelfIntersection['valid'] ?? false;
-                        $nonSurpassSizeLimit = $validSize['valid'] ?? false;
+                        $nonSelfIntersection = $validSelfIntersection ?? false;
+                        $nonSurpassSizeLimit = $validSize ?? false;
                         $insideCountry = $validWithinCountry['valid'] ?? false;
-                        $noSpikes = $validSpikes['valid'] ?? false;
-                        $validPolyType = $validPolygonType['valid'] ?? false;
+                        $noSpikes = $validSpikes ?? false;
+                        $validPolyType = $validPolygonType ?? false;
                         $nonSurpassEstimatedArea = $validEstimatedArea['valid'] ?? false;
+                        $completeData = $validData ?? false;
+                        $canBeApproved = $nonOverlapping && $nonSelfIntersection && $nonSurpassSizeLimit && $insideCountry && $noSpikes && $validPolyType && $nonSurpassEstimatedArea;
 
-                        // Prepare CSV row
                         $csvRow = [
-                            'counter' => $counter,
-                            'site_id' => $feature['properties']['site_id'],
-                            'non_overlapping' => $nonOverlapping ? 'true' : 'false',
-                            'non_self_intersection' => $nonSelfIntersection ? 'true' : 'false',
-                            'non_surpass_size_limit' => $nonSurpassSizeLimit ? 'true' : 'false',
-                            'inside_country' => $insideCountry ? 'true' : 'false',
-                            'no_spikes' => $noSpikes ? 'true' : 'false',
-                            'valid_polygon_type' => $validPolyType ? 'true' : 'false',
-                            'non_surpass_estimated_area' => $nonSurpassEstimatedArea ? 'true' : 'false',
-                            'comments' => '', // Placeholder for comments, you can add messages here
+                            'polygon_name' => isset($feature['properties']['poly_name']) ? $feature['properties']['poly_name'] : 'Unnamed Polygon',
+                            'site_uuid' => $feature['properties']['site_id'],
+                            'No Overlapping' => $nonOverlapping ? 'TRUE' : 'FALSE',
+                            'No Self-intersection' => $nonSelfIntersection ? 'TRUE' : 'FALSE',
+                            'Inside Size Limit' => $nonSurpassSizeLimit ? 'TRUE' : 'FALSE',
+                            'Within Country' => $insideCountry ? 'TRUE' : 'FALSE',
+                            'No Spikes' => $noSpikes ? 'TRUE' : 'FALSE',
+                            'Polygon Type' => $validPolyType ? 'TRUE' : 'FALSE',
+                            'Within Total Area Expected' => $nonSurpassEstimatedArea ? 'TRUE' : 'FALSE',
+                            'Completed Data' => $completeData ? 'TRUE' : 'FALSE',
+                            'Can Be Approved?' => $canBeApproved ? 'YES' : 'NO',
+
                         ];
 
-                        // Example of adding comments based on validation results
-                        $comments = [];
-                        if (! $nonOverlapping) {
-                            $comments[] = 'Overlap detected.';
-                        }
-                        if (! $nonSelfIntersection) {
-                            $comments[] = 'Self-intersection detected.';
-                        }
-                        // Add more comments based on other validation results if needed
-
-                        $csvRow['comments'] = implode(' ', $comments);
-
                         $csvData[] = $csvRow;
-                        $counter++;
 
                     } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
                         // Handle MultiPolygon if needed
@@ -495,21 +485,18 @@ class TerrafundCreateGeometryController extends Controller
                 }
             }
 
-            // Generate CSV content
             $csvContent = [];
-            $csvContent[] = implode(',', array_keys($csvData[0])); // headers
+            $csvContent[] = implode(',', array_keys($csvData[0]));
             foreach ($csvData as $row) {
                 $csvContent[] = implode(',', $row);
             }
             $csvContent = implode("\n", $csvContent);
 
-            // Create response to download CSV file
             $response = Response::make($csvContent, 200, [
                 'Content-Type' => 'text/csv',
                 'Content-Disposition' => 'attachment; filename="validation_results_' . date('Y-m-d_H-i-s') . '.csv"',
             ]);
 
-            // Delete temporary file
             unlink($filePath);
 
             return $response;
