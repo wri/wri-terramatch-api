@@ -431,60 +431,75 @@ class TerrafundCreateGeometryController extends Controller
             $geojson = json_decode($geojsonData, true);
 
             $csvData = [];
-            // this returns false is any intersects, and in intersections returns which intersects [i,j]
-            $selfIntersections = NotOverlapping::checkFeatureIntersections($geojson['features']);
-            $geojsonBySiteId = GeometryHelper::groupFeaturesBySiteId($geojson);
-            $groupedByProject = GeometryHelper::groupFeaturesByProjectAndSite($geojsonBySiteId);
-            foreach ($geojson['features'] as $feature) {
-                if ($feature['properties']['site_id']) {
-                    if ($feature['geometry']['type'] === 'Polygon') {
-
-                        $geojsonInside = json_encode($feature['geometry']);
-                        $validationGeojson = ['features' => [
-                            'feature' => ['properties' => $feature['properties']],
-                        ]];
-
-                        $validOverlapping = NotOverlapping::doesNotOverlap($geojsonInside, $feature['properties']['site_id']);
-                        $validSelfIntersection = SelfIntersection::geoJsonValid($feature['geometry']);
-                        $validSize = PolygonSize::geoJsonValid($feature['geometry']);
-                        $validWithinCountry = WithinCountry::getIntersectionDataWithSiteId($geojsonInside, $feature['properties']['site_id']);
-                        $validSpikes = Spikes::geoJsonValid($feature['geometry']);
-                        $validPolygonType = GeometryType::geoJsonValid($feature['geometry']);
-                        $validEstimatedArea = EstimatedArea::getAreaDataWithSiteId($feature['properties']['site_id']);
-                        $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
-
-                        $nonOverlapping = $validOverlapping['valid'] ?? false;
-                        $nonSelfIntersection = $validSelfIntersection ?? false;
-                        $nonSurpassSizeLimit = $validSize ?? false;
-                        $insideCountry = $validWithinCountry['valid'] ?? false;
-                        $noSpikes = $validSpikes ?? false;
-                        $validPolyType = $validPolygonType ?? false;
-                        $nonSurpassEstimatedArea = $validEstimatedArea['valid'] ?? false;
-                        $completeData = $validData ?? false;
-                        $canBeApproved = $nonOverlapping && $nonSelfIntersection && $nonSurpassSizeLimit && $insideCountry && $noSpikes && $validPolyType && $nonSurpassEstimatedArea;
-
-                        $csvRow = [
-                            'polygon_name' => isset($feature['properties']['poly_name']) ? $feature['properties']['poly_name'] : 'Unnamed Polygon',
-                            'site_uuid' => $feature['properties']['site_id'],
-                            'No Overlapping' => $nonOverlapping ? 'TRUE' : 'FALSE',
-                            'No Self-intersection' => $nonSelfIntersection ? 'TRUE' : 'FALSE',
-                            'Inside Size Limit' => $nonSurpassSizeLimit ? 'TRUE' : 'FALSE',
-                            'Within Country' => $insideCountry ? 'TRUE' : 'FALSE',
-                            'No Spikes' => $noSpikes ? 'TRUE' : 'FALSE',
-                            'Polygon Type' => $validPolyType ? 'TRUE' : 'FALSE',
-                            'Within Total Area Expected' => $nonSurpassEstimatedArea ? 'TRUE' : 'FALSE',
-                            'Completed Data' => $completeData ? 'TRUE' : 'FALSE',
-                            'Can Be Approved?' => $canBeApproved ? 'YES' : 'NO',
-
-                        ];
-
-                        $csvData[] = $csvRow;
-
-                    } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
-                        // Handle MultiPolygon if needed
+            
+            $groupedByProject = GeometryHelper::groupFeaturesByProjectAndSite($geojson);
+            
+            foreach ($groupedByProject as $projectUuid => $sites) {
+              Log::info("Processing Project UUID: $projectUuid\n");
+          
+              foreach ($sites as $siteUuid => $featureCollection) {
+                  Log::info("  Processing Site UUID: $siteUuid\n". json_encode($featureCollection) );
+                  $features = $featureCollection['features'];
+                  // this returns false is any intersects, and in intersections returns which intersects [i,j]
+                  $selfIntersections = NotOverlapping::checkFeatureIntersections($features);
+                  foreach ($features as $index => $feature) {
+                    // if true then it intersects with another polygon inside the file
+                    $thispolygonoverlaps = in_array($index, $selfIntersections['intersections']);
+                    $polygonArea = GeometryHelper::getArea($feature['geometry']);
+                    Log::info(json_encode($selfIntersections)."    Processing Polygon: $index    ".$polygonArea);
+                    if ($feature['properties']['site_id']) {
+                        if ($feature['geometry']['type'] === 'Polygon') {
+    
+                            $geojsonInside = json_encode($feature['geometry']);
+                            $validationGeojson = ['features' => [
+                                'feature' => ['properties' => $feature['properties']],
+                            ]];
+    
+                            $validOverlappingDB = NotOverlapping::doesNotOverlap($geojsonInside, $feature['properties']['site_id']);
+                            $validSelfIntersection = SelfIntersection::geoJsonValid($feature['geometry']);
+                            $validSize = PolygonSize::geoJsonValid($feature['geometry']);
+                            $validWithinCountry = WithinCountry::getIntersectionDataWithSiteId($geojsonInside, $feature['properties']['site_id']);
+                            $validSpikes = Spikes::geoJsonValid($feature['geometry']);
+                            $validPolygonType = GeometryType::geoJsonValid($feature['geometry']);
+                            $validEstimatedArea = EstimatedArea::getAreaDataWithSiteId($feature['properties']['site_id']);
+                            $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
+    
+                            $nonOverlapping = $validOverlappingDB['valid'] ?? false;
+                            $nonSelfIntersection = $validSelfIntersection ?? false;
+                            $nonSurpassSizeLimit = $validSize ?? false;
+                            $insideCountry = $validWithinCountry['valid'] ?? false;
+                            $noSpikes = $validSpikes ?? false;
+                            $validPolyType = $validPolygonType ?? false;
+                            $nonSurpassEstimatedArea = $validEstimatedArea['valid'] ?? false;
+                            $completeData = $validData ?? false;
+                            $canBeApproved = $nonOverlapping && $nonSelfIntersection && $nonSurpassSizeLimit && $insideCountry && $noSpikes && $validPolyType && $nonSurpassEstimatedArea;
+    
+                            $csvRow = [
+                                'polygon_name' => isset($feature['properties']['poly_name']) ? $feature['properties']['poly_name'] : 'Unnamed Polygon',
+                                'site_uuid' => $feature['properties']['site_id'],
+                                'No Overlapping' => $nonOverlapping ? 'TRUE' : 'FALSE',
+                                'No Self-intersection' => $nonSelfIntersection ? 'TRUE' : 'FALSE',
+                                'Inside Size Limit' => $nonSurpassSizeLimit ? 'TRUE' : 'FALSE',
+                                'Within Country' => $insideCountry ? 'TRUE' : 'FALSE',
+                                'No Spikes' => $noSpikes ? 'TRUE' : 'FALSE',
+                                'Polygon Type' => $validPolyType ? 'TRUE' : 'FALSE',
+                                'Within Total Area Expected' => $nonSurpassEstimatedArea ? 'TRUE' : 'FALSE',
+                                'Completed Data' => $completeData ? 'TRUE' : 'FALSE',
+                                'Can Be Approved?' => $canBeApproved ? 'YES' : 'NO',
+    
+                            ];
+    
+                            $csvData[] = $csvRow;
+    
+                        } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+                            // Handle MultiPolygon if needed
+                        }
                     }
                 }
-            }
+              }
+            }          
+            
+
 
             $csvContent = [];
             $csvContent[] = implode(',', array_keys($csvData[0]));

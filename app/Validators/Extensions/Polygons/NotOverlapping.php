@@ -53,7 +53,7 @@ class NotOverlapping extends Extension
             return ['valid' => false, 'error' => 'Invalid or empty GeoJSON features array'];
         }
 
-        $intersections = [];
+        $intersectingPositions = [];
         $count = count($geojsonFeatures);
 
         for ($i = 0; $i < $count; $i++) {
@@ -68,16 +68,20 @@ class NotOverlapping extends Extension
                     ) as intersects',
                     [$geom1, $geom2]
                 );
-
                 if ($result[0]->intersects) {
-                    $intersections[] = [$i, $j];
+                  if (!in_array($i, $intersectingPositions)) {
+                      $intersectingPositions[] = $i;
+                  }
+                  if (!in_array($j, $intersectingPositions)) {
+                      $intersectingPositions[] = $j;
+                  }
                 }
             }
         }
 
         return [
-            'valid' => empty($intersections),
-            'intersections' => $intersections,
+            'valid' => empty($intersectingPositions),
+            'intersections' => $intersectingPositions,
         ];
     }
 
