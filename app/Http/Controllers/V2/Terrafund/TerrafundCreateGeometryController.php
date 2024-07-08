@@ -486,7 +486,7 @@ class TerrafundCreateGeometryController extends Controller
                 $validSpikes = Spikes::geoJsonValid($feature['geometry']);
                 $validPolygonType = GeometryType::geoJsonValid($feature['geometry']);
                 Log::info(json_encode($feature['properties']) . "\nVALIDATION: \n" . json_encode($validationGeojson));
-                $validData = SitePolygonValidator::isValid('DATA', $validationGeojson);
+                $validData = SitePolygonValidator::isValid('SCHEMA', $validationGeojson) && SitePolygonValidator::isValid('DATA', $validationGeojson);
                 $validator = Validator::make($validationGeojson, SitePolygonValidator::DATA);
                 $fails = $validator->fails();
                 $errors = $validator->errors();
