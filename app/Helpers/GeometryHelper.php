@@ -183,4 +183,45 @@ class GeometryHelper
         return $projectGroupedFeatures;
     }
   
+    public static function splitMultiPolygons($featureCollection) {
+      $features = $featureCollection['features'];
+      $resultFeatures = [];
+  
+      foreach ($features as $feature) {
+          $geometry = $feature['geometry'];
+          $properties = $feature['properties'];
+          
+          if ($geometry['type'] === 'Polygon') {
+              // If it's a single Polygon, keep it as is
+              $resultFeatures[] = [
+                  'type' => 'Feature',
+                  'geometry' => $geometry,
+                  'properties' => $properties,
+              ];
+          } elseif ($geometry['type'] === 'MultiPolygon') {
+              // If it's a MultiPolygon, split it into individual Polygons
+              $coordinates = $geometry['coordinates'];
+              
+              foreach ($coordinates as $index => $polygon) {
+                  $newProperties = $properties;
+                  $newProperties['poly_name'] = $properties['poly_name'] . '-polygon ' . ($index + 1);
+  
+                  $resultFeatures[] = [
+                      'type' => 'Feature',
+                      'geometry' => [
+                          'type' => 'Polygon',
+                          'coordinates' => $polygon,
+                      ],
+                      'properties' => $newProperties,
+                  ];
+              }
+          }
+      }
+  
+      return [
+          'type' => 'FeatureCollection',
+          'features' => $resultFeatures,
+      ];
+  }
+  
 }
