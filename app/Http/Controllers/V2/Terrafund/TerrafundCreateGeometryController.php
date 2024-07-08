@@ -417,6 +417,7 @@ class TerrafundCreateGeometryController extends Controller
   //     }
   // }
 
+
   public function uploadGeoJSONFileWithValidation(Request $request)
   {
     ini_set('max_execution_time', '-1');
@@ -431,13 +432,12 @@ class TerrafundCreateGeometryController extends Controller
 
       $geojsonData = file_get_contents($filePath);
       $geojson = json_decode($geojsonData, true);
-
+      $splittedgeojson = GeometryHelper::splitMultiPolygons($geojson);
       $csvData = [];
 
-      $groupedByProject = GeometryHelper::groupFeaturesByProjectAndSite($geojson);
+      $groupedByProject = GeometryHelper::groupFeaturesByProjectAndSite($splittedgeojson);
 
       foreach ($groupedByProject as $projectUuid => $sites) {
-        Log::info("Processing Project UUID: $projectUuid");
         $currentAreaValuesForProject = EstimatedArea::getAreaOfProject($projectUuid);
         $newTotalArea = 0;
         foreach ($sites as $siteUuid => $featureCollection) {
@@ -452,12 +452,9 @@ class TerrafundCreateGeometryController extends Controller
         $isValidArea = $sumArea >= $currentAreaValuesForProject['lower_bound'] && $sumArea <= $currentAreaValuesForProject['upper_bound'];
         Log::info("\n\n -> " . json_encode($currentAreaValuesForProject) . "\n\n -> " . json_encode($sumArea) . "\n\n -> " . json_encode($isValidArea));
         foreach ($sites as $siteUuid => $featureCollection) {
-          Log::info("  Processing Site UUID: $siteUuid\n" . json_encode($featureCollection));
-          // this returns false is any intersects, and in intersections returns which intersects [i,j]
           $features = $featureCollection['features'];
           $selfIntersections = NotOverlapping::checkFeatureIntersections($features);
           foreach ($features as $index => $feature) {
-            // if true then it intersects with another polygon inside the file
             $thisPolygonOverlaps = in_array($index, $selfIntersections['intersections']);
 
             Log::info(json_encode($selfIntersections) . "    Processing Polygon: " . $feature['properties']['poly_name'] . "    " . $thisPolygonOverlaps);
