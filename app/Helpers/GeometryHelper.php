@@ -192,14 +192,12 @@ class GeometryHelper
           $properties = $feature['properties'];
           
           if ($geometry['type'] === 'Polygon') {
-              // If it's a single Polygon, keep it as is
               $resultFeatures[] = [
                   'type' => 'Feature',
                   'geometry' => $geometry,
                   'properties' => $properties,
               ];
           } elseif ($geometry['type'] === 'MultiPolygon') {
-              // If it's a MultiPolygon, split it into individual Polygons
               $coordinates = $geometry['coordinates'];
               
               foreach ($coordinates as $index => $polygon) {
