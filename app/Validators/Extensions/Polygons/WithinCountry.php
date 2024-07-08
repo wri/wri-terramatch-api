@@ -3,6 +3,7 @@
 namespace App\Validators\Extensions\Polygons;
 
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Validators\Extensions\Extension;
@@ -74,13 +75,11 @@ class WithinCountry extends Extension
 
     public static function getIntersectionDataWithSiteId($geojson, $siteId): array
     {
-        $sitePolygonData = SitePolygon::where('site_id', $siteId)->get();
-
-        if ($sitePolygonData->isEmpty()) {
-            return ['valid' => false, 'status' => 404, 'error' => 'Site polygon data not found for the specified site_id'];
+        $siteData = Site::isUuid($siteId)->first();
+        if (!$siteData) {
+            return ['valid' => false, 'status' => 404, 'error' => 'Site data not found for the specified site_id'];
         }
-
-        $project = $sitePolygonData->first()->project;
+        $project = $siteData->project;
         $countryIso = $project->country;
 
         if ($countryIso == null) {
