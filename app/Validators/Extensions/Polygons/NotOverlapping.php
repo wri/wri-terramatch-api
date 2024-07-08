@@ -89,7 +89,7 @@ class NotOverlapping extends Extension
     {
         $sitePolygon = SitePolygon::where('site_id', $siteId)->first();
         if ($sitePolygon == null) {
-            return ['valid' => false, 'error' => 'Site polygon not found for the given site ID', 'status' => 404];
+            return ['valid' => true, 'error' => 'Site polygon not found for the given site ID', 'status' => 404];
         }
 
         $relatedPolyIds = $sitePolygon->project->sitePolygons()->pluck('poly_id');
