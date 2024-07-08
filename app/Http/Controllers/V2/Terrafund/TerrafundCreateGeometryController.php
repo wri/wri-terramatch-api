@@ -520,7 +520,55 @@ class TerrafundCreateGeometryController extends Controller
                 Log::info(json_encode($csvRow) . "\n\n\n\n");
                 $csvData[] = $csvRow;
               } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
-                // Handle MultiPolygon if needed
+                $validationGeojson = ['features' => [
+                    'feature' => ['properties' => $feature['properties']],
+                ]];
+                
+                foreach ($feature['geometry']['coordinates'] as $index => $polygon) {
+                    $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
+                    $singleFeature = $feature;
+                    $singleFeature['geometry'] = $singlePolygon;
+
+                    $geojsonInside = json_encode($singleFeature['geometry']);
+
+                    if ($thisPolygonOverlaps) {
+                        $validOverlappingDB['valid'] = false;
+                      } else {
+                        $validOverlappingDB = NotOverlapping::doesNotOverlap($geojsonInside, $singleFeature['properties']['site_id']);
+                      }
+                      $validSelfIntersection = SelfIntersection::geoJsonValid($singleFeature['geometry']);
+                      $validSize = PolygonSize::geoJsonValid($singleFeature['geometry']);
+                      $validWithinCountry = WithinCountry::getIntersectionDataWithSiteId($geojsonInside, $singleFeature['properties']['site_id']);
+                      $validSpikes = Spikes::geoJsonValid($singleFeature['geometry']);
+                      $validPolygonType = GeometryType::geoJsonValid($singleFeature['geometry']);
+                      $validData = SitePolygonValidator::isValid('SCHEMA', $validationGeojson) && SitePolygonValidator::isValid('DATA', $validationGeojson);
+      
+                      $nonOverlapping = $validOverlappingDB['valid'] ?? false;
+                      $nonSelfIntersection = $validSelfIntersection ?? false;
+                      $nonSurpassSizeLimit = $validSize ?? false;
+                      $insideCountry = $validWithinCountry['valid'] ?? false;
+                      $noSpikes = $validSpikes ?? false;
+                      $validPolyType = $validPolygonType ?? false;
+                      $nonSurpassEstimatedArea = $isValidArea ?? false;
+                      $completeData = $validData ?? false;
+                      $canBeApproved = $nonOverlapping && $nonSelfIntersection && $nonSurpassSizeLimit && $insideCountry && $noSpikes && $validPolyType && $nonSurpassEstimatedArea;
+      
+                      $csvRow = [
+                        'polygon_name' => isset($singleFeature['properties']['poly_name']) ? $singleFeature['properties']['poly_name'] . " - polygon $index" : 'Unnamed Polygon',
+                        'site_uuid' => $singleFeature['properties']['site_id'],
+                        'No Overlapping' => $nonOverlapping ? 'TRUE' : 'FALSE',
+                        'No Self-intersection' => $nonSelfIntersection ? 'TRUE' : 'FALSE',
+                        'Inside Size Limit' => $nonSurpassSizeLimit ? 'TRUE' : 'FALSE',
+                        'Within Country' => $insideCountry ? 'TRUE' : 'FALSE',
+                        'No Spikes' => $noSpikes ? 'TRUE' : 'FALSE',
+                        'Polygon Type' => $validPolyType ? 'TRUE' : 'FALSE',
+                        'Within Total Area Expected' => $nonSurpassEstimatedArea ? 'TRUE' : 'FALSE',
+                        'Completed Data' => $completeData ? 'TRUE' : 'FALSE',
+                        'Can Be Approved?' => $canBeApproved ? 'YES' : 'NO',
+      
+                      ];
+                      $csvData[] = $csvRow;
+                }
               }
             }
           }
