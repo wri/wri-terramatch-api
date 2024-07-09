@@ -469,25 +469,48 @@ class TerrafundCreateGeometryController extends Controller
 
                     $canBeApproved = array_reduce($validations, fn($carry, $item) => $carry && $item, true);
 
-                    $csvData[] = [
-                        'polygon_name' => $feature['properties']['poly_name'] ?? 'Unnamed Polygon',
-                        'site_uuid' => $feature['properties']['site_id'],
-                        'No Overlapping' => $validations['nonOverlapping'] ? 'TRUE' : 'FALSE',
-                        'No Self-intersection' => $validations['nonSelfIntersection'] ? 'TRUE' : 'FALSE',
-                        'Inside Coordinate System' => $validations['insideCoordinateSystem'] ? 'TRUE' : 'FALSE',
-                        'Inside Size Limit' => $validations['nonSurpassSizeLimit'] ? 'TRUE' : 'FALSE',
-                        'Within Country' => $validations['insideCountry'] ? 'TRUE' : 'FALSE',
-                        'No Spikes' => $validations['noSpikes'] ? 'TRUE' : 'FALSE',
-                        'Polygon Type' => $validations['validPolygonType'] ? 'TRUE' : 'FALSE',
-                        'Within Total Area Expected' => $validations['nonSurpassEstimatedArea'] ? 'TRUE' : 'FALSE',
-                        'Completed Data' => $validations['completeData'] ? 'TRUE' : 'FALSE',
-                        'Can Be Approved?' => $canBeApproved ? 'YES' : 'NO',
-                    ];
+                    $csvData[] = $this->makeCSVRow($feature, $validations, $canBeApproved, false);
+                } elseif (!$feature['properties']['site_id']) {
+                    $csvData[] = $this->makeCSVRow($feature, [], false, true);
                 }
             }
         }
     }
     return $csvData;
+  }
+  function makeCSVRow($feature, $validations, $canBeApproved, $isEmpty) {
+    if ($isEmpty) {
+      return [
+        'polygon_name' => $feature['properties']['poly_name'] ?? 'Unnamed Polygon',
+        'site_uuid' => '',
+        'No Overlapping' => '',
+        'No Self-intersection' => '',
+        'Inside Coordinate System' => '',
+        'Inside Size Limit' => '',
+        'Within Country' => '',
+        'No Spikes' => '',
+        'Polygon Type' => '',
+        'Within Total Area Expected' => '',
+        'Completed Data' => '',
+        'Can Be Approved?' => 'No Site ID Available'
+      ];
+    } else {
+      return [
+        'polygon_name' => $feature['properties']['poly_name'] ?? 'Unnamed Polygon',
+        'site_uuid' => $feature['properties']['site_id'],
+        'No Overlapping' => $validations['nonOverlapping'] ? 'TRUE' : 'FALSE',
+        'No Self-intersection' => $validations['nonSelfIntersection'] ? 'TRUE' : 'FALSE',
+        'Inside Coordinate System' => $validations['insideCoordinateSystem'] ? 'TRUE' : 'FALSE',
+        'Inside Size Limit' => $validations['nonSurpassSizeLimit'] ? 'TRUE' : 'FALSE',
+        'Within Country' => $validations['insideCountry'] ? 'TRUE' : 'FALSE',
+        'No Spikes' => $validations['noSpikes'] ? 'TRUE' : 'FALSE',
+        'Polygon Type' => $validations['validPolygonType'] ? 'TRUE' : 'FALSE',
+        'Within Total Area Expected' => $validations['nonSurpassEstimatedArea'] ? 'TRUE' : 'FALSE',
+        'Completed Data' => $validations['completeData'] ? 'TRUE' : 'FALSE',
+        'Can Be Approved?' => $canBeApproved ? 'YES' : 'NO',
+      ];
+    }
+    
   }
   public function uploadGeoJSONFileWithValidation(Request $request)
   {
