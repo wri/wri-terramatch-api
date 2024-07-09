@@ -10,6 +10,7 @@ use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
 use App\Services\SiteService;
 use App\Validators\Extensions\Polygons\EstimatedArea;
+use App\Validators\Extensions\Polygons\FeatureBounds;
 use App\Validators\Extensions\Polygons\GeometryType;
 use App\Validators\Extensions\Polygons\NotOverlapping;
 use App\Validators\Extensions\Polygons\PolygonSize;
@@ -376,6 +377,17 @@ class TerrafundCreateGeometryController extends Controller
         );
     }
 
+    public function validateCoordinateSystem(Request $request)
+    {
+        $uuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $uuid,
+            ['valid' => FeatureBounds::uuidValid($uuid)],
+            PolygonService::COORDINATE_SYSTEM_CRITERIA_ID
+        );
+    }
+
     public function getPolygonAsGeoJSONDownload(Request $request)
     {
         try {
@@ -508,6 +520,7 @@ class TerrafundCreateGeometryController extends Controller
 
         $this->validateOverlapping($request);
         $this->checkSelfIntersection($request);
+        $this->validateCoordinateSystem($request);
         $this->validatePolygonSize($request);
         $this->checkWithinCountry($request);
         $this->checkBoundarySegments($request);
