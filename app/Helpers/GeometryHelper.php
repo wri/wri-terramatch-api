@@ -142,11 +142,10 @@ class GeometryHelper
         if (!isset($geojson['features']) || !is_array($geojson['features'])) {
             return ['error' => 'Invalid GeoJSON structure'];
         }
-    
         $groupedFeatures = [];
-    
+        $noSiteKey = 'no_site';
         foreach ($geojson['features'] as $feature) {
-            if (isset($feature['properties']['site_id'])) {
+            if (isset($feature['properties']['site_id']) && $feature['properties']['site_id']) {
                 $siteId = $feature['properties']['site_id'];
                 if (!isset($groupedFeatures[$siteId])) {
                     $groupedFeatures[$siteId] = [
@@ -155,21 +154,41 @@ class GeometryHelper
                     ];
                 }
                 $groupedFeatures[$siteId]['features'][] = $feature;
+            } else {
+                if (!isset($groupedFeatures[$noSiteKey])) {
+                    $groupedFeatures[$noSiteKey] = [
+                        'type' => 'FeatureCollection',
+                        'features' => []
+                    ];
+                }
+                $groupedFeatures[$noSiteKey]['features'][] = $feature;
             }
         }
-    
         return $groupedFeatures;
     }
     public static function groupFeaturesByProjectAndSite($geojson)
     {
         $groupedGeoJson = self::groupFeaturesBySiteId($geojson);
         $projectGroupedFeatures = [];
+        $noProjectKey = 'no_project';
     
         foreach ($groupedGeoJson as $siteId => $featureCollection) {
+            if ($siteId === 'no_site') {
+                if (!isset($projectGroupedFeatures[$noProjectKey])) {
+                    $projectGroupedFeatures[$noProjectKey] = [];
+                }
+                $projectGroupedFeatures[$noProjectKey][$siteId] = $featureCollection;
+                continue;
+            }
+    
             $sitePolygon = Site::isUuid($siteId)->first(); 
             if ($sitePolygon === null || $sitePolygon->project === null) {
-              Log::error('site polygon or project not found for siteId: '.$siteId);
-              continue;
+                Log::error('site polygon or project not found for siteId: '.$siteId);
+                if (!isset($projectGroupedFeatures[$noProjectKey])) {
+                    $projectGroupedFeatures[$noProjectKey] = [];
+                }
+                $projectGroupedFeatures[$noProjectKey][$siteId] = $featureCollection;
+                continue;
             }
     
             $projectUuid = $sitePolygon->project->uuid;
@@ -182,7 +201,7 @@ class GeometryHelper
     
         return $projectGroupedFeatures;
     }
-  
+    
     public static function splitMultiPolygons($featureCollection) {
       $features = $featureCollection['features'];
       $resultFeatures = [];
