@@ -1,0 +1,19 @@
+summary: View Tree Restoration Goal for dashboard
+parameters:
+  - in: query
+    name: country
+    type: string
+    description: Optional. Filter tree restoration goal by country.
+  - in: query
+    name: uuid
+    type: string
+    description: Optional. Filter tree restoration goal by UUID.
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardTreeRestorationGoalResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

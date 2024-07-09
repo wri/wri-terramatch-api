@@ -1,0 +1,17 @@
+summary: Create a new polygon
+operationId: post-v2-polygon
+tags:
+  - V2 Terrafund
+consumes:
+  - application/json
+parameters:
+  - in: body
+    name: body
+    description: Polygon to create
+    schema:
+      $ref: '../../definitions/_index.yml#/GeometryString'
+responses:
+  '200':
+    description: Created
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardPolygonResponse'

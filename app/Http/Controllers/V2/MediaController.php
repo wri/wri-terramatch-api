@@ -27,11 +27,10 @@ class MediaController extends Controller
 
         $model = $media->model;
 
-        if (! empty($media)) {
-            $permission = empty($collection) ? 'deleteMedia' : 'delete' . ucfirst($collection) .'Media';
-            $this->authorize($permission, $model);
-        }
-        Media::find($media->id)->delete();
+        $permission = empty($collection) ? 'deleteMedia' : 'delete' . ucfirst($collection) .'Media';
+        $this->authorize($permission, $model);
+
+        $media->delete();
 
         return response()->json(['success' => 'media has been deleted'], 202);
     }

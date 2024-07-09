@@ -8,19 +8,38 @@ use App\Http\Controllers\V2\Applications\AdminViewApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
+use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
+use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
+use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
 use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
+use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
+use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
+use App\Http\Controllers\V2\Dashboard\CountriesController;
+use App\Http\Controllers\V2\Dashboard\CountryDataController;
+use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
+use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
+use App\Http\Controllers\V2\Dashboard\GetProjectsController;
+use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
+use App\Http\Controllers\V2\Dashboard\ProjectProfileDetailsController;
+use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
+use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
+use App\Http\Controllers\V2\Dashboard\ViewProjectController;
+use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
+use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
+use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
 use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
 use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
 use App\Http\Controllers\V2\Disturbances\UpdateDisturbanceController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
+use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
@@ -111,7 +130,13 @@ use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
+use App\Http\Controllers\V2\Polygons\ChangeStatusPolygonsController;
+use App\Http\Controllers\V2\Polygons\ViewAllSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
+use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
+use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
@@ -156,6 +181,8 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
+use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
@@ -189,6 +216,7 @@ use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
+use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use Illuminate\Support\Facades\Route;
@@ -513,6 +541,7 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
     Route::get('/{project}/sites', ViewProjectSitesController::class);
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
+    Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
     Route::get('/{project}/nurseries', ViewProjectNurseriesController::class);
     Route::get('/{project}/files', ViewProjectGalleryController::class);
     Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
@@ -552,10 +581,13 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::delete('/', SoftDeleteSiteController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
-    Route::post('/geometry', [GeometryController::class, 'storeSiteGeometry']);
+    Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
+    Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
+    Route::get('/check-approve', SiteCheckApproveController::class);
 });
 
 Route::prefix('geometry')->group(function () {
+    Route::post('', [GeometryController::class, 'storeGeometry']);
     Route::post('/validate', [GeometryController::class, 'validateGeometries']);
     Route::delete('', [GeometryController::class, 'deleteGeometries']);
     Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
@@ -612,8 +644,10 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
+    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
+    Route::get('/geojson/site', [TerrafundCreateGeometryController::class, 'getAllPolygonsAsGeoJSONDownload']);
 
-    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonsAsGeoJSON']);
+
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
     Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
@@ -624,13 +658,19 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
     Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
     Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
+    Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
+    Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
+    Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
 
     Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
     Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
     Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
+    Route::delete('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndSitePolygon']);
+
+    Route::get('/polygon/bbox/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonBbox']);
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
-    Route::post('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
+    Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
@@ -649,3 +689,49 @@ ModelInterfaceBindingMiddleware::with(
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
 //Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
+
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::post('/{auditable}', StoreAuditStatusController::class);
+    Route::get('/{auditable}', GetAuditStatusController::class);
+}, prefix: 'audit-status');
+
+ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
+    Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
+});
+
+Route::prefix('dashboard')->group(function () {
+    Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
+    Route::get('/jobs-created', GetJobsCreatedController::class);
+    Route::get('/volunteers-survival-rate', VolunteersAndAverageSurvivalRateController::class);
+    Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
+    Route::get('/project-list-export', ProjectListExportController::class);
+    Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
+    Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsByStatusOfProject']);
+    Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
+    Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
+    Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
+    Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
+    Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
+    Route::get('/active-projects', ActiveProjectsTableController::class);
+    Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
+    Route::get('/active-countries', ActiveCountriesTableController::class);
+    Route::get('/countries', CountriesController::class);
+    Route::get('/get-projects', GetProjectsController::class);
+    Route::get('/project-details/{project}', ProjectProfileDetailsController::class);
+    Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
+    Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
+});
+
+Route::prefix('project-pipeline')->group(function () {
+    Route::get('/', GetProjectPipelineController::class);
+    Route::get('/{id}', GetProjectPipelineController::class);
+    Route::post('/', StoreProjectPipelineController::class);
+    Route::put('/{id}', UpdateProjectPipelineController::class);
+    Route::delete('/{id}', DeleteProjectPipelineController::class);
+});
+
+Route::prefix('site-polygon')->group(function () {
+    Route::put('/status/bulk', ChangeStatusPolygonsController::class);
+});
+
+Route::get('/type-entity', EntityTypeController::class);

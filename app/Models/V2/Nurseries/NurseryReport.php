@@ -11,6 +11,8 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\AuditableModel;
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
@@ -24,6 +26,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
@@ -33,7 +36,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
-class NurseryReport extends Model implements MediaModel, AuditableContract, ReportModel
+class NurseryReport extends Model implements MediaModel, AuditableContract, ReportModel, AuditableModel
 {
     use HasFrameworkKey;
     use HasFactory;
@@ -258,5 +261,15 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
     public function parentEntity(): BelongsTo
     {
         return $this->nursery();
+    }
+
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
+    }
+
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->title ?? '';
     }
 }

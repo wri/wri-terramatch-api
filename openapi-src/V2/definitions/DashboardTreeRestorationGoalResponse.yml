@@ -1,0 +1,26 @@
+type: object
+properties:
+  forProfitTreeCount:
+    type: integer
+  nonProfitTreeCount:
+    type: integer
+  totalTreesGrownGoal:
+    type: integer
+  treesUnderRestorationActualTotal:
+    type: array
+    items:
+      $ref: './_index.yml#/DashboardTreesUnderRestorationActual'
+  treesUnderRestorationActualForProfit:
+    type: array
+    items:
+      $ref: './_index.yml#/DashboardTreesUnderRestorationActual'
+  treesUnderRestorationActualNonProfit:
+    type: array
+    items:
+      $ref: './_index.yml#/DashboardTreesUnderRestorationActual'
+  averageSurvivalRateTotal:
+    type: number
+  averageSurvivalRateForProfit:
+    type: number
+  averageSurvivalRateNonProfit:
+    type: number

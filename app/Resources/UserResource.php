@@ -35,6 +35,8 @@ class UserResource
         $this->banners = $user->banners;
         $this->has_ppc_projects = $user->programmes->count() > 0;
         $this->has_terrafund_projects = $user->terrafundProgrammes->count() > 0;
+        $this->country = $user->country;
+        $this->program = $user->program;
     }
 
     private function getOrganisationName($user)

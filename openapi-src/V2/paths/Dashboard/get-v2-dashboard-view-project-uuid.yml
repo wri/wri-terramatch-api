@@ -1,0 +1,16 @@
+summary: Get allowed to project
+tags:
+  - Get allowed to project
+parameters:
+  - in: path
+    name: uuid
+    type: string
+    description: UUID of the project
+    required: true
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardProjectViewResponse'
+  '404':
+    description: Polygon not found

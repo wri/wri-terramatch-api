@@ -11,22 +11,24 @@ use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\StateMachines\TaskStatusStateMachine;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Artisan;
 
-class CreateBackdatedReportCommand extends Command
+class CreateReportCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'create-backdated-report {--T|type=} {uuid}';
+    protected $signature = 'create-report {uuid} {--T|type=} {--D|due_at=} {--A|all_reports}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a report for a specific site or nursery';
+    protected $description = 'Create a report for a specific project, site or nursery';
 
     public function handle(): int
     {
@@ -66,10 +68,19 @@ class CreateBackdatedReportCommand extends Command
         }
 
         if ($type === 'project') {
+            if (empty($this->option('due_at'))) {
+                $this->error('--due_at is required for project report generation');
+
+                return 1;
+            }
+
+            $dueAt = Carbon::parse($this->option('due_at'));
             $task = Task::create([
                 'organisation_id' => $entity->organisation_id,
                 'project_id' => $entity->id,
                 'status' => TaskStatusStateMachine::DUE,
+                'period_key' => $dueAt->year . '-' . $dueAt->month,
+                'due_at' => $dueAt,
             ]);
         } else {
             $task = Task::withTrashed()->where('project_id', $entity->project_id)->latest()->first();
@@ -97,6 +108,16 @@ class CreateBackdatedReportCommand extends Command
             'status' => 'due',
             'due_at' => $task->due_at,
         ]);
+
+        if ($type == 'project' && $this->option('all_reports')) {
+            foreach ($entity->sites as $site) {
+                Artisan::call('create-report -Tsite ' . $site->uuid);
+            }
+
+            foreach ($entity->nurseries as $nursery) {
+                Artisan::call('create-report -Tnursery ' . $nursery->uuid);
+            }
+        }
 
         $this->info("Report created for $type $uuid");
 

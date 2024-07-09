@@ -2481,9 +2481,6 @@
     $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
-/v2/sites/{UUID}/geometry:
-  post:
-    $ref: './Sites/post-v2-sites-uuid-geometry.yml'
 /v2/site-monitorings/{UUID}:
   get:
     $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
@@ -2514,12 +2511,161 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
+'/v2/terrafund/validation/polygon':
+  post:
+    $ref: './Terrafund/get-v2-terrafund-validation-polygon.yml'
+'/v2/terrafund/validation/criteria-data':
+  get:
+    $ref: './Terrafund/get-v2-terrafund-validation-criteria-data.yml'
+'/v2/terrafund/validation/sitePolygons':
+  post:
+    $ref: './Terrafund/get-v2-terrafund-validation-sitepolygons.yml'
+'/v2/terrafund/validation/site':
+  get:
+    $ref: './Terrafund/get-v2-terrafund-validation-criteria-site.yml'
 /v2/geometry/validate:
   post:
     $ref: './Geometry/post-v2-geometry-validate.yml'
 /v2/geometry:
+  post:
+    $ref: './Geometry/post-v2-geometry.yml'
   delete:
     $ref: './Geometry/delete-v2-geometry.yml'
 /v2/geometry/{UUID}:
   put:
     $ref: './Geometry/put-v2-geometry-uuid.yml'
+/v2/audit-status/{ENTITY}/{UUID}:
+  get:
+    $ref: './AuditStatus/get-v2-audit-status.yml'
+  post:
+    $ref: './AuditStatus/post-v2-audit-status.yml'
+/v2/sites/{site}/polygon:
+  get:
+    $ref: './Sites/get-v2-sites-polygons-data.yml'
+/v2/sites/{site}/bbox:
+  get:
+    $ref: './Sites/get-v2-sites-polygon-bbox.yml'
+/v2/terrafund/site-polygon/{uuid}/{siteUuid}:
+  post:
+    $ref: './Terrafund/post-v2-site-polygon-data.yml'
+/v2/terrafund/polygon/bbox/{uuid}:
+  get:
+    $ref: './Terrafund/get-v2-polygon-bbox.yml'
+/v2/terrafund/geojson/complete:
+  get:
+    $ref: './Terrafund/get-v2-geojson-complete-download.yml'
+/v2/terrafund/polygon/{uuid}:
+  get:
+    $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'
+  put:
+    $ref: './Terrafund/put-v2-terrafund-polygon-uuid.yml'
+  delete:
+    $ref: './Terrafund/delete-v2-terrafund-polygon-uuid.yml'
+/v2/terrafund/geojson/site:
+  get:
+    $ref: './Terrafund/get-v2-geojson-site.yml'
+/v2/terrafund/polygon:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-polygon.yml'
+/v2/terrafund/upload-geojson:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-geojson.yml'
+/v2/terrafund/upload-shapefile:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-shapefile.yml'
+/v2/terrafund/upload-kml:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-kml.yml'
+/v2/terrafund/site-polygon/{uuid}:
+  put:
+    $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
+/v2/dashboard/jobs-created:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
+'/v2/dashboard/restoration-strategy':
+  get:
+    $ref: './Dashboard/get-v2-dashboard-restoration-strategy.yml'
+'/v2/dashboard/tree-restoration-goal':
+  get:
+    $ref: './Dashboard/get-v2-dashboard-tree-restoration-goal.yml'
+'/v2/dashboard/project-list-export':
+  get:
+    $ref: './Dashboard/get-v2-dashboard-project-list-export.yml'
+/v2/dashboard/get-polygons:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-polygons.yml'
+/v2/dashboard/get-polygons/statuses:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-polygons-statuses.yml'
+/v2/dashboard/get-bbox-project:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-bbox-project.yml'
+/v2/dashboard/bbox/project:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-bbox-project.yml'
+/v2/dashboard/country/{country}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-country.yml'
+/v2/dashboard/polygon-data/{uuid}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-polygon-data-uuid.yml'
+/v2/dashboard/project-data/{uuid}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-project-data-uuid.yml'
+/v2/dashboard/active-projects:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-active-projects.yml'
+/v2/dashboard/volunteers-survival-rate:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-volunteers-survival-rate.yml'
+/v2/dashboard/total-section-header:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-total-section-header.yml'
+/v2/dashboard/active-countries:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-active-countries.yml'
+/v2/dashboard/countries:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-countries.yml'
+/v2/dashboard/get-projects:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-projects.yml'
+/v2/dashboard/project-details/{project}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-project-details.yml'
+/v2/dashboard/top-trees-planted:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-top-trees-planted.yml'
+/v2/project-pipeline:
+  get:
+    $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
+  post:
+    $ref: './ProjectPipeline/post-v2-project-pipeline.yml'
+/v2/project-pipeline/{id}:
+  get:
+    $ref: './ProjectPipeline/get-v2-project-pipeline-id.yml'
+  put:
+    $ref: './ProjectPipeline/put-v2-project-pipeline-id.yml'
+  delete:
+    $ref: './ProjectPipeline/delete-v2-project-pipeline-id.yml'
+/v2/dashboard/view-project/{uuid}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-view-project-uuid.yml'
+/v2/terrafund/polygon/geojson/{uuid}:
+  get:
+    $ref: './Terrafund/get-v2-terrafund-polygon-geojson-uuid.yml'
+/v2/type-entity:
+  get:
+    $ref: './Entity/get-v2-type-entity.yml'
+/v2/{ENTITY}/{UUID}/status:
+    put:
+      $ref: './Entity/put-v2-entity-uuid-status.yml'
+/v2/projects/{UUID}/site-polygons/all:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-site-polygons-all.yml'
+/v2/sites/{site}/check-approve:
+  get:
+    $ref: './Sites/get-v2-sites-uuid-check-approve.yml'
+/v2/site-polygon/status/bulk:
+  put:
+    $ref: './Polygons/get-v2-polygons-uuid-change-status.yml'
