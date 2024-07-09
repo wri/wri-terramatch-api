@@ -195,6 +195,14 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         ];
     }
 
+    /**
+     * Overrides the method from HasEntityStatusScopesAndTransitions
+     */
+    public function scopeIsApproved(Builder $query): Builder
+    {
+        return $query->whereIn('status', [EntityStatusStateMachine::APPROVED, SiteStatusStateMachine::RESTORATION_IN_PROGRESS]);
+    }
+
     /** RELATIONS */
     public function framework(): BelongsTo
     {
