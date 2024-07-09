@@ -1,0 +1,16 @@
+title: SitePolygonResource
+type: object
+properties:
+  id:
+    type: integer
+  uuid:
+    type: string
+  poly_name:
+    type: string
+  status:
+    type: string
+  date_created:
+    type: string
+    format: date-time
+  created_by:
+    type: string

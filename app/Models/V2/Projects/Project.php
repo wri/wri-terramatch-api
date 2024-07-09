@@ -13,6 +13,8 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\User;
+use App\Models\V2\AuditableModel;
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\MediaModel;
@@ -35,6 +37,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
@@ -43,7 +46,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Project extends Model implements MediaModel, AuditableContract, EntityModel
+class Project extends Model implements MediaModel, AuditableContract, EntityModel, AuditableModel
 {
     use HasFactory;
     use HasUuid;
@@ -122,6 +125,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'pct_beneficiaries_large',
         'pct_beneficiaries_youth',
         'land_tenure_project_area',
+        'lat',
+        'long',
         'answers',
         'ppc_external_id',
         'detailed_intervention_types',
@@ -473,6 +478,16 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         ];
     }
 
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
+    }
+
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->name;
+    }
+
     /**
      * @return HasManyThrough A relation for all site reports associated with this project that is for an approved
      *   site, and has a report status past due/started (has been submitted).
@@ -494,5 +509,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     private function submittedSiteReportIds(): HasManyThrough
     {
         return $this->submittedSiteReports()->select('v2_site_reports.id');
+    }
+
+    public function getTotalSitePolygonsAttribute()
+    {
+        return $this->sitePolygons()->count();
     }
 }

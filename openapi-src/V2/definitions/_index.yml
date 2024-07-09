@@ -274,5 +274,101 @@ WorkdayDemographic:
   $ref: './WorkdayDemographic.yml'
 GeoJSON:
   $ref: './GeoJSON.yml'
-SiteGeometryPost:
-  $ref: './SiteGeometryPost.yml'
+GeometryPost:
+  $ref: './GeometryPost.yml'
+DashboardVolunteersSurvivalRateResponse:
+  $ref: './DashboardVolunteersSurvivalRateResponse.yml'
+DashboardVolundteersSurvivalRateData:
+  $ref: './DashboardVolundteersSurvivalRateData.yml'
+AuditStatusCreateRequest:
+  $ref: './AuditStatusCreateRequest.yml'
+AuditStatusResponse:
+  $ref: './AuditStatusResponse.yml'
+V2TerrafundCriteriaData:
+  $ref: './V2TerrafundCriteriaData.yml'
+V2TerrafundCriteriaSite:
+  $ref: './V2TerrafundCriteriaSite.yml'
+SitePolygon:
+  $ref: './SitePolygon.yml'
+GeometryString:
+  $ref: './GeometryString.yml'
+SitePolygonsDataResponse:
+  $ref: './SitePolygonsDataResponse.yml'
+SitePolygonsBboxResponse:
+  $ref: './SitePolygonsBboxResponse.yml'
+SitePolygonResponse:
+  $ref: './SitePolygonResponse.yml'
+SitePolygonCreateResponse:
+  $ref: './SitePolygonCreateResponse.yml'
+GeoJSONResponse:
+  $ref: './GeoJSONResponse.yml'
+FeatureCollection:
+  $ref: './FeatureCollection.yml'
+PolygonBboxResponse:
+  $ref: './SitePolygonsBboxResponse.yml'
+DashboardPolygonResponse:
+  $ref: './DashboardPolygonResponse.yml'
+DashboardJobsCreatedResponse:
+  $ref: './DashboardJobsCreatedResponse.yml'
+DashboardJobsCreatedData:
+  $ref: './DashboardJobsCreatedData.yml'
+DashboardRestorationStrategyResponse:
+  $ref: './DashboardRestorationStrategyResponse.yml'
+DashboardTreeRestorationGoalResponse:
+  $ref: './DashboardTreeRestorationGoalResponse.yml'
+DashboardTreesUnderRestorationActual:
+  $ref: './DashboardTreesUnderRestorationActual.yml'
+DashboardGetProjectsResponse:
+  $ref: './DashboardGetProjectsResponse.yml'
+DashboardGetProjectsData: 
+  $ref: './DashboardGetProjectsData.yml'
+DashboardGetPolygonStatusResponse:
+  $ref: './DashboardGetPolygonStatusResponse.yml'
+DashboardBBOXProject:
+  $ref: './DashboardBBOXProject.yml'
+DashboardBBOXCountry:
+  $ref: './DashboardBBOXCountry.yml'
+DashboardPolygonData:
+  $ref: './DashboardPolygonData.yml'
+DashboardActiveProjectsListViewResponse:
+  $ref: './DashboardActiveProjectsListViewResponse.yml'
+DashboardTotalSectionHeaderResponse:
+  $ref: './DashboardTotalSectionHeaderResponse.yml'
+DashboardActiveCountriesResponse:
+  $ref: './DashboardActiveCountriesResponse.yml'
+DashboardCountriesResponse:
+  $ref: './DashboardCountriesResponse.yml'
+DashboardCountryData:
+  $ref: './DashboardCountryData.yml'
+DashboardCountryInfo:
+  $ref: './DashboardCountryInfo.yml'
+DashboardProjectProfileResponse:
+  $ref: './DashboardProjectProfileResponse.yml'
+DashboardProjectProfileData:
+  $ref: './DashboardProjectProfileData.yml'
+DashboardTopProjectsResponse:
+  $ref: './DashboardTopProjectsResponse.yml'
+DashboardTopPlantedTree:
+  $ref: './DashboardTopPlantedTree.yml'
+DashboardTopTreeSpecies:
+  $ref: './DashboardTopTreeSpecies.yml'
+ProjectPipeline:
+  $ref: './ProjectPipeline.yml'
+ProjectPipelinePost:
+  $ref: './ProjectPipelinePost.yml'
+GeojsonData:
+  $ref: './GeojsonData.yml'
+EntityTypeResponse:
+  $ref: './EntityTypeResponse.yml'
+AuditStatusUpdateRequest:
+  $ref: './AuditStatusUpdateRequest.yml'
+SitePolygonResource:
+  $ref: './SitePolygonResource.yml'
+SiteCheckApproveResponse:
+  $ref: './SiteCheckApproveResponse.yml'
+DashboardProjectViewResponse:
+  $ref: './DashboardProjectViewResponse.yml'
+PolygonChangeStatus:
+  $ref: './PolygonChangeStatus.yml'
+PolygonChangeStatusUpdate:
+  $ref: './PolygonChangeStatusUpdate.yml'
