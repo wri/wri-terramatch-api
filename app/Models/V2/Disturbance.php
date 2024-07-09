@@ -2,13 +2,15 @@
 
 namespace App\Models\V2;
 
+use App\Http\Resources\V2\Disturbances\DisturbanceCollection;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class Disturbance extends Model
+class Disturbance extends Model implements EntityRelationModel
 {
     use HasFactory;
     use HasUuid;
@@ -30,6 +32,16 @@ class Disturbance extends Model
         'old_id',
         'old_model',
     ];
+
+    public static function createResourceCollection(EntityModel $entity): JsonResource
+    {
+
+        $query = Disturbance::query()
+            ->where('disturbanceable_type', get_class($entity))
+            ->where('disturbanceable_id', $entity->id);
+
+        return new DisturbanceCollection($query->paginate());
+    }
 
     public function getRouteKeyName()
     {
