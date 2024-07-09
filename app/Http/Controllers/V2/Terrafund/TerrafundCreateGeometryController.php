@@ -547,7 +547,6 @@ class TerrafundCreateGeometryController extends Controller
         $process->run();
         if (!$process->isSuccessful()) {
           Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
-
           return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
         }
 
@@ -565,6 +564,37 @@ class TerrafundCreateGeometryController extends Controller
       }
     } else {
       return response()->json(['error' => 'No file uploaded'], 400);
+    }
+  }
+  public function uploadKMLFileWithValidation(Request $request)
+  {
+    ini_set('max_execution_time', '-1');
+    ini_set('memory_limit', '-1');
+    if ($request->hasFile('file')) {
+      $kmlfile = $request->file('file');
+      $tempDir = sys_get_temp_dir();
+      $filename = uniqid('kml_file_') . '.' . $kmlfile->getClientOriginalExtension();
+      $kmlPath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+      $kmlfile->move($tempDir, $filename);
+      $geojsonFilename = Str::replaceLast('.kml', '.geojson', $filename);
+      $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+      $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $kmlPath]);
+      $process->run();
+      if (!$process->isSuccessful()) {
+        Log::error('Error converting KML to GeoJSON: ' . $process->getErrorOutput());
+        return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
+      }
+      $csvData = $this->validateGeojson($geojsonPath);
+      $csvContent = array_merge([implode(',', array_keys($csvData[0]))], array_map(fn($row) => implode(',', $row), $csvData));
+      $csvContent = implode("\n", $csvContent);
+      $response = Response::make($csvContent, 200, [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename="validation_results_' . date('Y-m-d_H-i-s') . '.csv"',
+      ]);
+      unlink($geojsonPath);
+      return $response;
+    } else {
+      return response()->json(['error' => 'KML file not provided'], 400);
     }
   }
   public function validateOverlapping(Request $request)
