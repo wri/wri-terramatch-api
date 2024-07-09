@@ -417,7 +417,77 @@ class TerrafundCreateGeometryController extends Controller
   //     }
   // }
 
+  function validateGeojson($filePath) {
+    $csvData = [];
+    $geojsonData = file_get_contents($filePath);
+    $geojson = json_decode($geojsonData, true);
+    $splittedgeojson = GeometryHelper::splitMultiPolygons($geojson);
+    $groupedByProject = GeometryHelper::groupFeaturesByProjectAndSite($splittedgeojson);
+    
+    foreach ($groupedByProject as $projectUuid => $sites) {
+        $currentAreaValuesForProject = EstimatedArea::getAreaOfProject($projectUuid);
+        $newTotalArea = 0;
+        $siteAreas = [];
 
+        foreach ($sites as $featureCollection) {
+            $siteId = $featureCollection['features'][0]['properties']['site_id'];
+            $siteAreas[$siteId] = 0;
+
+            foreach ($featureCollection['features'] as $feature) {
+                $siteAreas[$siteId] += PolygonSize::getArea($feature['geometry']);
+            }
+
+            $newTotalArea += $siteAreas[$siteId];
+        }
+
+        $sumArea = $currentAreaValuesForProject['sum_area_project'] + $newTotalArea;
+        $isValidArea = $sumArea >= $currentAreaValuesForProject['lower_bound'] && $sumArea <= $currentAreaValuesForProject['upper_bound'];
+
+        foreach ($sites as $featureCollection) {
+            $selfIntersections = NotOverlapping::checkFeatureIntersections($featureCollection['features']);
+
+            foreach ($featureCollection['features'] as $index => $feature) {
+                if ($feature['properties']['site_id'] && $feature['geometry']['type'] === 'Polygon') {
+                    $geojsonInside = json_encode($feature['geometry']);
+                    $validationGeojson = ['features' => ['feature' => ['properties' => $feature['properties']]]];
+
+                    $validOverlappingDB = in_array($index, $selfIntersections['intersections']) ?
+                        ['valid' => false] : NotOverlapping::doesNotOverlap($geojsonInside, $feature['properties']['site_id']);
+
+                    $validations = [
+                        'nonOverlapping' => $validOverlappingDB['valid'] ?? false,
+                        'nonSelfIntersection' => SelfIntersection::geoJsonValid($feature['geometry']),
+                        'insideCoordinateSystem' => FeatureBounds::geoJsonValid($feature['geometry']),
+                        'nonSurpassSizeLimit' => PolygonSize::geoJsonValid($feature['geometry']),
+                        'insideCountry' => WithinCountry::getIntersectionDataWithSiteId($geojsonInside, $feature['properties']['site_id'])['valid'] ?? false,
+                        'noSpikes' => Spikes::geoJsonValid($feature['geometry']),
+                        'validPolygonType' => GeometryType::geoJsonValid($feature['geometry']),
+                        'nonSurpassEstimatedArea' => $isValidArea,
+                        'completeData' => SitePolygonValidator::isValid('SCHEMA', $validationGeojson) && SitePolygonValidator::isValid('DATA', $validationGeojson),
+                    ];
+
+                    $canBeApproved = array_reduce($validations, fn($carry, $item) => $carry && $item, true);
+
+                    $csvData[] = [
+                        'polygon_name' => $feature['properties']['poly_name'] ?? 'Unnamed Polygon',
+                        'site_uuid' => $feature['properties']['site_id'],
+                        'No Overlapping' => $validations['nonOverlapping'] ? 'TRUE' : 'FALSE',
+                        'No Self-intersection' => $validations['nonSelfIntersection'] ? 'TRUE' : 'FALSE',
+                        'Inside Coordinate System' => $validations['insideCoordinateSystem'] ? 'TRUE' : 'FALSE',
+                        'Inside Size Limit' => $validations['nonSurpassSizeLimit'] ? 'TRUE' : 'FALSE',
+                        'Within Country' => $validations['insideCountry'] ? 'TRUE' : 'FALSE',
+                        'No Spikes' => $validations['noSpikes'] ? 'TRUE' : 'FALSE',
+                        'Polygon Type' => $validations['validPolygonType'] ? 'TRUE' : 'FALSE',
+                        'Within Total Area Expected' => $validations['nonSurpassEstimatedArea'] ? 'TRUE' : 'FALSE',
+                        'Completed Data' => $validations['completeData'] ? 'TRUE' : 'FALSE',
+                        'Can Be Approved?' => $canBeApproved ? 'YES' : 'NO',
+                    ];
+                }
+            }
+        }
+    }
+    return $csvData;
+  }
   public function uploadGeoJSONFileWithValidation(Request $request)
   {
       ini_set('max_execution_time', '-1');
@@ -433,75 +503,9 @@ class TerrafundCreateGeometryController extends Controller
       $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
       $file->move($tempDir, $filename);
   
-      $geojsonData = file_get_contents($filePath);
-      $geojson = json_decode($geojsonData, true);
-      $splittedgeojson = GeometryHelper::splitMultiPolygons($geojson);
-      $csvData = [];
+      
+      $csvData = $this->validateGeojson($filePath);
   
-      $groupedByProject = GeometryHelper::groupFeaturesByProjectAndSite($splittedgeojson);
-  
-      foreach ($groupedByProject as $projectUuid => $sites) {
-          $currentAreaValuesForProject = EstimatedArea::getAreaOfProject($projectUuid);
-          $newTotalArea = 0;
-          $siteAreas = [];
-  
-          foreach ($sites as $featureCollection) {
-              $siteId = $featureCollection['features'][0]['properties']['site_id'];
-              $siteAreas[$siteId] = 0;
-  
-              foreach ($featureCollection['features'] as $feature) {
-                  $siteAreas[$siteId] += PolygonSize::getArea($feature['geometry']);
-              }
-  
-              $newTotalArea += $siteAreas[$siteId];
-          }
-  
-          $sumArea = $currentAreaValuesForProject['sum_area_project'] + $newTotalArea;
-          $isValidArea = $sumArea >= $currentAreaValuesForProject['lower_bound'] && $sumArea <= $currentAreaValuesForProject['upper_bound'];
-  
-          foreach ($sites as $featureCollection) {
-              $selfIntersections = NotOverlapping::checkFeatureIntersections($featureCollection['features']);
-  
-              foreach ($featureCollection['features'] as $index => $feature) {
-                  if ($feature['properties']['site_id'] && $feature['geometry']['type'] === 'Polygon') {
-                      $geojsonInside = json_encode($feature['geometry']);
-                      $validationGeojson = ['features' => ['feature' => ['properties' => $feature['properties']]]];
-  
-                      $validOverlappingDB = in_array($index, $selfIntersections['intersections']) ?
-                          ['valid' => false] : NotOverlapping::doesNotOverlap($geojsonInside, $feature['properties']['site_id']);
-  
-                      $validations = [
-                          'nonOverlapping' => $validOverlappingDB['valid'] ?? false,
-                          'nonSelfIntersection' => SelfIntersection::geoJsonValid($feature['geometry']),
-                          'insideCoordinateSystem' => FeatureBounds::geoJsonValid($feature['geometry']),
-                          'nonSurpassSizeLimit' => PolygonSize::geoJsonValid($feature['geometry']),
-                          'insideCountry' => WithinCountry::getIntersectionDataWithSiteId($geojsonInside, $feature['properties']['site_id'])['valid'] ?? false,
-                          'noSpikes' => Spikes::geoJsonValid($feature['geometry']),
-                          'validPolygonType' => GeometryType::geoJsonValid($feature['geometry']),
-                          'nonSurpassEstimatedArea' => $isValidArea,
-                          'completeData' => SitePolygonValidator::isValid('SCHEMA', $validationGeojson) && SitePolygonValidator::isValid('DATA', $validationGeojson),
-                      ];
-  
-                      $canBeApproved = array_reduce($validations, fn($carry, $item) => $carry && $item, true);
-  
-                      $csvData[] = [
-                          'polygon_name' => $feature['properties']['poly_name'] ?? 'Unnamed Polygon',
-                          'site_uuid' => $feature['properties']['site_id'],
-                          'No Overlapping' => $validations['nonOverlapping'] ? 'TRUE' : 'FALSE',
-                          'No Self-intersection' => $validations['nonSelfIntersection'] ? 'TRUE' : 'FALSE',
-                          'Inside Coordinate System' => $validations['insideCoordinateSystem'] ? 'TRUE' : 'FALSE',
-                          'Inside Size Limit' => $validations['nonSurpassSizeLimit'] ? 'TRUE' : 'FALSE',
-                          'Within Country' => $validations['insideCountry'] ? 'TRUE' : 'FALSE',
-                          'No Spikes' => $validations['noSpikes'] ? 'TRUE' : 'FALSE',
-                          'Polygon Type' => $validations['validPolygonType'] ? 'TRUE' : 'FALSE',
-                          'Within Total Area Expected' => $validations['nonSurpassEstimatedArea'] ? 'TRUE' : 'FALSE',
-                          'Completed Data' => $validations['completeData'] ? 'TRUE' : 'FALSE',
-                          'Can Be Approved?' => $canBeApproved ? 'YES' : 'NO',
-                      ];
-                  }
-              }
-          }
-      }
   
       $csvContent = array_merge([implode(',', array_keys($csvData[0]))], array_map(fn($row) => implode(',', $row), $csvData));
       $csvContent = implode("\n", $csvContent);
@@ -515,7 +519,54 @@ class TerrafundCreateGeometryController extends Controller
 
       return $response;
   }
+  public function uploadShapefileWithValidation(Request $request) {
+    ini_set('max_execution_time', '-1');
+    ini_set('memory_limit', '-1');
+    Log::debug('Upload Shape file data', ['request' => $request->all()]);
+    if ($request->hasFile('file')) {
+      $file = $request->file('file');
+      if ($file->getClientOriginalExtension() !== 'zip') {
+        return response()->json(['error' => 'Only ZIP files are allowed'], 400);
+      }
+      $tempDir = sys_get_temp_dir();
+      $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
+      mkdir($directory, 0755, true);
 
+      // Extract the contents of the ZIP file
+      $zip = new \ZipArchive();
+      if ($zip->open($file->getPathname()) === true) {
+        $zip->extractTo($directory);
+        $zip->close();
+        $shpFile = $this->findShpFile($directory);
+        if (!$shpFile) {
+          return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
+        }
+        $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
+        $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+        $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
+        $process->run();
+        if (!$process->isSuccessful()) {
+          Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
+
+          return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
+        }
+
+        $csvData = $this->validateGeojson($geojsonPath);
+        $csvContent = array_merge([implode(',', array_keys($csvData[0]))], array_map(fn($row) => implode(',', $row), $csvData));
+        $csvContent = implode("\n", $csvContent);
+        $response = Response::make($csvContent, 200, [
+          'Content-Type' => 'text/csv',
+          'Content-Disposition' => 'attachment; filename="validation_results_' . date('Y-m-d_H-i-s') . '.csv"',
+        ]);
+        unlink($geojsonPath);
+        return $response;
+      } else {
+        return response()->json(['error' => 'Failed to open the ZIP file'], 400);
+      }
+    } else {
+      return response()->json(['error' => 'No file uploaded'], 400);
+    }
+  }
   public function validateOverlapping(Request $request)
   {
     $uuid = $request->input('uuid');
