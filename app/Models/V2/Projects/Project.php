@@ -498,7 +498,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         // a status field.
         return $this
             ->siteReports()
-            ->where('v2_sites.status', EntityStatusStateMachine::APPROVED)
+            ->whereIn('v2_sites.status', Site::$approvedStatuses)
             ->whereNotIn('v2_site_reports.status', SiteReport::UNSUBMITTED_STATUSES);
     }
 
