@@ -72,6 +72,11 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         submitForApproval as entityStatusSubmitForApproval;
     }
 
+    public static array $approvedStatuses = [
+        EntityStatusStateMachine::APPROVED,
+        SiteStatusStateMachine::RESTORATION_IN_PROGRESS,
+    ];
+
     public static array $statuses = [
         EntityStatusStateMachine::STARTED => 'Started',
         EntityStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
@@ -200,7 +205,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
      */
     public function scopeIsApproved(Builder $query): Builder
     {
-        return $query->whereIn('status', [EntityStatusStateMachine::APPROVED, SiteStatusStateMachine::RESTORATION_IN_PROGRESS]);
+        return $query->whereIn('status', self::$approvedStatuses);
     }
 
     /** RELATIONS */
