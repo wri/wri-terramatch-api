@@ -116,7 +116,7 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon->primary_uuid = $this->primary_uuid;
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->is_active = 1;
-        $newSitePolygon->created_by = Auth::user()->email_address;
+        $newSitePolygon->created_by = Auth::user()->id;
         $newSitePolygon->version_name = now()->format('j_F_Y').'_'.Auth::user()->full_name.'_'.$newSitePolygon->uuid;
 
         $newSitePolygon->save();

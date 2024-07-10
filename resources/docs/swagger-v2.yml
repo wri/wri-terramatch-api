@@ -97056,7 +97056,7 @@ paths:
                       type: string
                     is_active:
                       type: integer
-  /v2/site-polygon/new-version:
+  '/v2/site-polygon/{uuid}/new-version':
     post:
       summary: create a new site polygon version
       operationId: post-v2-site-polygon-uuid-new-version
