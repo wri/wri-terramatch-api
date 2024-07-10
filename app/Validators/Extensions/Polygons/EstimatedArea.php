@@ -88,16 +88,18 @@ class EstimatedArea extends Extension
             'total_area_project' => $project->total_hectares_restored_goal,
         ];
     }
+
     public static function getAreaOfProject(string $projectUuid): array
     {
-      $project = Project::where('uuid', $projectUuid)->first();
-      $sumEstArea = $project->sitePolygons()->sum('calc_area'); 
-      $lowerBound = self::LOWER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
-      $upperBound = self::UPPER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
-      return [
-        'sum_area_project' => $sumEstArea,
-        'lower_bound' => $lowerBound,
-        'upper_bound' => $upperBound
-      ];
+        $project = Project::where('uuid', $projectUuid)->first();
+        $sumEstArea = $project->sitePolygons()->sum('calc_area');
+        $lowerBound = self::LOWER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
+        $upperBound = self::UPPER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
+
+        return [
+          'sum_area_project' => $sumEstArea,
+          'lower_bound' => $lowerBound,
+          'upper_bound' => $upperBound,
+        ];
     }
 }

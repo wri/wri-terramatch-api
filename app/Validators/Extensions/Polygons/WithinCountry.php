@@ -76,7 +76,7 @@ class WithinCountry extends Extension
     public static function getIntersectionDataWithSiteId($geojson, $siteId): array
     {
         $siteData = Site::isUuid($siteId)->first();
-        if (!$siteData) {
+        if (! $siteData) {
             return ['valid' => false, 'status' => 404, 'error' => 'Site data not found for the specified site_id'];
         }
         $project = $siteData->project;
