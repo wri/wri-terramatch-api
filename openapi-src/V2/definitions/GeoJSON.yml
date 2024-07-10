@@ -33,6 +33,9 @@ properties:
               type: number
             site_id:
               type: string
+              required: true
+            est_area:
+              type: number
         geometry:
           type: object
           properties:

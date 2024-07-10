@@ -2,11 +2,13 @@
 
 namespace App\Models\V2\Sites;
 
+use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Models\Framework;
 use App\Models\Traits\HasEntityResources;
-use App\Models\Traits\HasEntityStatus;
+use App\Models\Traits\HasEntityStatusScopesAndTransitions;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
+use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
@@ -24,7 +26,10 @@ use App\Models\V2\Stratas\Strata;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\Workdays\Workday;
 use App\Models\V2\Workdays\WorkdayDemographic;
+use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
+use App\StateMachines\SiteStatusStateMachine;
+use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +39,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -42,6 +48,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @property string project_id
+ * @property string status
  */
 class Site extends Model implements MediaModel, AuditableContract, EntityModel, AuditableModel
 {
@@ -56,8 +63,31 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
-    use HasEntityStatus;
+    use HasStatus;
+    use HasStateMachines;
     use HasEntityResources;
+
+    use HasEntityStatusScopesAndTransitions {
+        approve as entityStatusApprove;
+        submitForApproval as entityStatusSubmitForApproval;
+    }
+
+    public static array $approvedStatuses = [
+        EntityStatusStateMachine::APPROVED,
+        SiteStatusStateMachine::RESTORATION_IN_PROGRESS,
+    ];
+
+    public static array $statuses = [
+        EntityStatusStateMachine::STARTED => 'Started',
+        EntityStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
+        EntityStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
+        SiteStatusStateMachine::RESTORATION_IN_PROGRESS => 'Restoration in progress',
+        EntityStatusStateMachine::APPROVED => 'Approved',
+    ];
+
+    public $stateMachines = [
+        'status' => SiteStatusStateMachine::class,
+    ];
 
     protected $auditInclude = [
         'status',
@@ -168,6 +198,14 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
             'project_name' => data_get($this->project, 'name'),
             'organisation_name' => data_get($this->organisation, 'name'),
         ];
+    }
+
+    /**
+     * Overrides the method from HasEntityStatusScopesAndTransitions
+     */
+    public function scopeIsApproved(Builder $query): Builder
+    {
+        return $query->whereIn('status', self::$approvedStatuses);
     }
 
     /** RELATIONS */
@@ -370,5 +408,20 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     public function getAuditableNameAttribute(): string
     {
         return $this->name;
+    }
+
+    public function dispatchStatusChangeEvent($user): void
+    {
+        EntityStatusChangeEvent::dispatch($user, $this, $this->name ?? '', '', $this->readable_status);
+    }
+
+    public function getViewLinkPath(): string
+    {
+        return '/' . Str::lower(explode_pop('\\', get_class($this))) . '/' . $this->uuid;
+    }
+
+    public function restorationInProgress()
+    {
+        $this->status()->transitionTo(SiteStatusStateMachine::RESTORATION_IN_PROGRESS);
     }
 }
