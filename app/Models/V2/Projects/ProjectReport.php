@@ -143,6 +143,9 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'local_engagement',
         'site_addition',
         'paid_other_activity_description',
+        'local_engagement_description',
+        'indirect_beneficiaries',
+        'indirect_beneficiaries_description',
 
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
