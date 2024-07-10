@@ -14,4 +14,5 @@ return [
     'polygons-manage' => 'Manage polygons',
     'media-manage' => 'Manage media',
     'view-dashboard' => 'View dashboard',
+    'projects-manage' => 'Manage projects',
 ];
