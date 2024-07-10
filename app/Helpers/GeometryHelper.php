@@ -221,7 +221,7 @@ class GeometryHelper
               
               foreach ($coordinates as $index => $polygon) {
                   $newProperties = $properties;
-                  $newProperties['poly_name'] = $properties['poly_name'] . '-polygon ' . ($index + 1);
+                  $newProperties['poly_name'] = ($properties['poly_name'] ?? 'Unnamed Polygon') . '-polygon ' . ($index + 1);
   
                   $resultFeatures[] = [
                       'type' => 'Feature',
