@@ -29,7 +29,6 @@ use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\Workdays\Workday;
 use App\Models\V2\Workdays\WorkdayDemographic;
-use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -498,7 +497,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         // a status field.
         return $this
             ->siteReports()
-            ->where('v2_sites.status', EntityStatusStateMachine::APPROVED)
+            ->whereIn('v2_sites.status', Site::$approvedStatuses)
             ->whereNotIn('v2_site_reports.status', SiteReport::UNSUBMITTED_STATUSES);
     }
 
