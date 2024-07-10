@@ -33,7 +33,6 @@ class AdminStatusEntityController extends Controller
                     break;
                 }
 
-                // no break
             default:
                 return new JsonResponse('status not supported', 401);
         }
