@@ -75,6 +75,11 @@ class RolesMigrationCommand extends Command
             $role->givePermissionTo(['manage-own', 'view-dashboard']);
         }
 
+        if (Role::where('name', 'project-manager')->count() === 0) {
+            $role = Role::create(['name' => 'project-manager']);
+            $role->givePermissionTo(['projects-manage']);
+        }
+
         if (Role::where('name', 'greenhouse-service-account')->count() === 0) {
             $role = Role::create(['name' => 'greenhouse-service-account']);
             $role->givePermissionTo(['projects-read', 'polygons-manage', 'media-manage']);
