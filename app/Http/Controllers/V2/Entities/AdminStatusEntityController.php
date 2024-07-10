@@ -29,9 +29,11 @@ class AdminStatusEntityController extends Controller
             case 'restoration-in-progress':
                 if (get_class($entity) === Site::class) {
                     $entity->restorationInProgress();
+
                     break;
                 }
 
+                // no break
             default:
                 return new JsonResponse('status not supported', 401);
         }
