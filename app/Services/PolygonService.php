@@ -170,6 +170,8 @@ class PolygonService
                     'created_by' => Auth::user()?->id,
                 ],
             ));
+            $site = $sitePolygon->site()->first();
+            $site->restorationInProgress();
             $project = $sitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
             $geometryHelper->updateProjectCentroid($project->uuid);
