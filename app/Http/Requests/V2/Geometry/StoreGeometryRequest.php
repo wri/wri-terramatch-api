@@ -83,7 +83,10 @@ class StoreGeometryRequest extends FormRequest
                 Validator::make(['geometry' => $geometry, 'site_ids' => $siteIds], [
                     'geometry.features.*.geometry.type' => 'required|string|in:Point',
                     'geometry.features.*.geometry.coordinates' => 'required|array|size:2',
-                    'geometry.features.*.properties.est_area' => 'required|numeric|min:1',
+                    // Minimum is 1m^2 (0.0001 hectares)
+                    'geometry.features.*.properties.est_area' => 'required|numeric|min:0.0001|max:5',
+                    // All points require a site id set, and they must all be the same site (enforced via site_ids below)
+                    'geometry.features.*.properties.site_id' => 'required|string',
                     'site_ids' => 'required|array|size:1',
                 ])->validate();
             }

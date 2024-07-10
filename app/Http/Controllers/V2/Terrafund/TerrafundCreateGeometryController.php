@@ -8,7 +8,9 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
+use App\Services\SiteService;
 use App\Validators\Extensions\Polygons\EstimatedArea;
+use App\Validators\Extensions\Polygons\FeatureBounds;
 use App\Validators\Extensions\Polygons\GeometryType;
 use App\Validators\Extensions\Polygons\NotOverlapping;
 use App\Validators\Extensions\Polygons\PolygonSize;
@@ -68,7 +70,7 @@ class TerrafundCreateGeometryController extends Controller
 
         SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-        return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id]);
+        return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id , 'source' => PolygonService::UPLOADED_SOURCE]);
     }
 
     public function validateDataInDB(Request $request)
@@ -155,6 +157,8 @@ class TerrafundCreateGeometryController extends Controller
                 return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
             }
 
+            App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
+
             return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
             return response()->json(['error' => 'KML file not provided'], 400);
@@ -215,6 +219,8 @@ class TerrafundCreateGeometryController extends Controller
                 if (isset($uuid['error'])) {
                     return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
                 }
+
+                App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
 
                 return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
             } else {
@@ -341,6 +347,7 @@ class TerrafundCreateGeometryController extends Controller
             if (is_array($uuid) && isset($uuid['error'])) {
                 return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
             }
+            App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
 
             return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
@@ -367,6 +374,17 @@ class TerrafundCreateGeometryController extends Controller
             $uuid,
             EstimatedArea::getAreaData($uuid),
             PolygonService::ESTIMATED_AREA_CRITERIA_ID
+        );
+    }
+
+    public function validateCoordinateSystem(Request $request)
+    {
+        $uuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $uuid,
+            ['valid' => FeatureBounds::uuidValid($uuid)],
+            PolygonService::COORDINATE_SYSTEM_CRITERIA_ID
         );
     }
 
@@ -502,6 +520,7 @@ class TerrafundCreateGeometryController extends Controller
 
         $this->validateOverlapping($request);
         $this->checkSelfIntersection($request);
+        $this->validateCoordinateSystem($request);
         $this->validatePolygonSize($request);
         $this->checkWithinCountry($request);
         $this->checkBoundarySegments($request);
@@ -543,22 +562,29 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuid = $request->input('uuid');
-
             $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
             $checkedPolygons = [];
 
             foreach ($sitePolygonsUuids as $polygonUuid) {
-                $isValid = true;
-                $isChecked = true;
-
                 $criteriaData = $this->fetchCriteriaData($polygonUuid);
 
                 if (isset($criteriaData['error'])) {
                     Log::error('Error fetching criteria data', ['polygon_uuid' => $polygonUuid, 'error' => $criteriaData['error']]);
+                    $checkedPolygons[] = [
+                        'uuid' => $polygonUuid,
+                        'valid' => false,
+                        'checked' => false,
+                        'nonValidCriteria' => [],
+                    ];
+
+                    continue;
+                }
+
+                $isValid = true;
+                $nonValidCriteria = [];
+                if (empty($criteriaData['criteria_list'])) {
                     $isValid = false;
-                    $isChecked = false;
                 } else {
-                    $nonValidCriteria = [];
                     foreach ($criteriaData['criteria_list'] as $criteria) {
                         if ($criteria['valid'] == 0) {
                             $isValid = false;
@@ -570,7 +596,7 @@ class TerrafundCreateGeometryController extends Controller
                 $checkedPolygons[] = [
                     'uuid' => $polygonUuid,
                     'valid' => $isValid,
-                    'checked' => $isChecked,
+                    'checked' => ! empty($criteriaData['criteria_list']),
                     'nonValidCriteria' => $nonValidCriteria,
                 ];
             }

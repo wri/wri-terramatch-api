@@ -23,7 +23,7 @@ class PythonService
             fclose($writeHandle);
         }
 
-        $process = new Process(['python3', 'resources/python/polygon-voronoi/app.py', $inputGeojson, $outputGeojson]);
+        $process = new Process(['python3', base_path() . '/resources/python/polygon-voronoi/app.py', $inputGeojson, $outputGeojson]);
         $process->run();
         if (! $process->isSuccessful()) {
             Log::error('Error running voronoi script: ' . $process->getErrorOutput());
