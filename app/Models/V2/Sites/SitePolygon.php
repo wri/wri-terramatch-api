@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
@@ -105,20 +104,18 @@ class SitePolygon extends Model implements AuditableModel
         return $query->where('is_active', 1);
     }
 
-    public function createCopy()
+    public function createCopy(User $user)
     {
+        $geometry = $this->polygonGeometry()->first();
+        $geometry->createCopy($user);
+
         $newSitePolygon = $this->replicate();
-        $this->is_active = 0;
-        $this->save();
-
-        //TODO: create a PolygonGeometry copy
-
         $newSitePolygon->primary_uuid = $this->primary_uuid;
+        $newSitePolygon->poly_id = $geometry->uuid;
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->is_active = 1;
-        $newSitePolygon->created_by = Auth::user()->id;
-        $newSitePolygon->version_name = now()->format('j_F_Y').'_'.Auth::user()->full_name.'_'.$newSitePolygon->uuid;
-
+        $newSitePolygon->created_by = $user->id;
+        $newSitePolygon->version_name = now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
         $newSitePolygon->save();
 
         return $newSitePolygon;

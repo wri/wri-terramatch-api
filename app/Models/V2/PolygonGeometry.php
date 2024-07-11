@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class PolygonGeometry extends Model
 {
@@ -73,5 +74,13 @@ class PolygonGeometry extends Model
             }
             $this->delete();
         });
+    }
+
+    public function createCopy(User $user) {
+        $copy = $this->replicate();
+        $copy->uuid = (string) Str::uuid();
+        $copy->created_by = $user->id;
+        $copy->save();
+        return $copy;
     }
 }
