@@ -69,12 +69,12 @@ class NotOverlapping extends Extension
                     [$geom1, $geom2]
                 );
                 if ($result[0]->intersects) {
-                  if (!in_array($i, $intersectingPositions)) {
-                      $intersectingPositions[] = $i;
-                  }
-                  if (!in_array($j, $intersectingPositions)) {
-                      $intersectingPositions[] = $j;
-                  }
+                    if (! in_array($i, $intersectingPositions)) {
+                        $intersectingPositions[] = $i;
+                    }
+                    if (! in_array($j, $intersectingPositions)) {
+                        $intersectingPositions[] = $j;
+                    }
                 }
             }
         }

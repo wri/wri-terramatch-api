@@ -1,7 +1,0 @@
-title: V2StrataUpdate
-type: object
-properties:
-  description:
-    type: string
-  extent:
-    type: integer
