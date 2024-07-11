@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class UploadFilesForValidationsTest extends TestCase
@@ -37,11 +38,13 @@ class UploadFilesForValidationsTest extends TestCase
   }
   public function test_upload_geojson_validate()
   {
-      $passFilePath = self::FILES_DIR . 'validate_geojson_csv.geojson';
+      $passFilePath = self::FILES_DIR . 'validate_geojson.csv.geojson';
       $controller = new TerrafundCreateGeometryController();
+      $tempFilePath = sys_get_temp_dir() . '/temp_' . basename($passFilePath);
+      File::copy($passFilePath, $tempFilePath);
       $file = new UploadedFile(
-        $passFilePath,
-        'validate_geojson_csv.geojson',
+        $tempFilePath,
+        'validate_geojson.csv.geojson',
         'application/geo+json',
         null,
         true
@@ -64,14 +67,17 @@ class UploadFilesForValidationsTest extends TestCase
   {
       $passFilePath = self::FILES_DIR . 'validate_kml_csv.kml';
       $controller = new TerrafundCreateGeometryController();
+      $tempFilePath = sys_get_temp_dir() . '/temp_' . basename($passFilePath);
+      File::copy($passFilePath, $tempFilePath);
+  
       $file = new UploadedFile(
-        $passFilePath,
-        'validate_kml_csv.zip',
-        'application/vnd.google-earth.kml+xml',
-        null,
-        true
-    );
-
+          $tempFilePath,
+          'validate_kml_csv.kml',
+          'application/vnd.google-earth.kml+xml',
+          null,
+          true
+      );
+  
       $request = Request::create(
         '/api/v2/terrafund/upload-kml-validate',
         'POST',
