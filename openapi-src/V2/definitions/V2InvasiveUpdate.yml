@@ -1,9 +1,0 @@
-title: V2InvasiveUpdate
-type: object
-properties:
-  description:
-    type: string
-  intensity:
-    type: integer
-  collection:
-    type: string

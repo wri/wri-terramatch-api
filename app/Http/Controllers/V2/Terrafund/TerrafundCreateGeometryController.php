@@ -598,6 +598,17 @@ class TerrafundCreateGeometryController extends Controller
         );
     }
 
+    public function validateCoordinateSystem(Request $request)
+    {
+        $uuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $uuid,
+            ['valid' => FeatureBounds::uuidValid($uuid)],
+            PolygonService::COORDINATE_SYSTEM_CRITERIA_ID
+        );
+    }
+
     public function getPolygonAsGeoJSONDownload(Request $request)
     {
         try {
@@ -729,6 +740,7 @@ class TerrafundCreateGeometryController extends Controller
 
         $this->validateOverlapping($request);
         $this->checkSelfIntersection($request);
+        $this->validateCoordinateSystem($request);
         $this->validatePolygonSize($request);
         $this->checkWithinCountry($request);
         $this->checkBoundarySegments($request);
