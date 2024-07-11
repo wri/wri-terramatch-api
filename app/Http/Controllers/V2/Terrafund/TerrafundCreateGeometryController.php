@@ -364,6 +364,7 @@ class TerrafundCreateGeometryController extends Controller
     $splittedgeojson = GeometryHelper::splitMultiPolygons($geojson);
     $groupedByProject = GeometryHelper::groupFeaturesByProjectAndSite($splittedgeojson);
     $isValidArea = false;
+        $isValidArea = false;
     foreach ($groupedByProject as $projectUuid => $sites) {
       if ($projectUuid !== 'no_project') {
         $currentAreaValuesForProject = EstimatedArea::getAreaOfProject($projectUuid);
