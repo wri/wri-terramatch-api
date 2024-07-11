@@ -97139,7 +97139,7 @@ paths:
                     type: string
                   is_active:
                     type: integer
-  /v2/site-polygon/make-active:
+  '/v2/site-polygon/{uuid}/make-active':
     put:
       summary: update a site polygon to make active the site polygon uuid version and inactive the rest with same primary_uuid
       operationId: put-v2-site-polygon-uuid-make-active

@@ -2646,6 +2646,6 @@
 /v2/site-polygon/{uuid}/new-version:
   post:
     $ref: './Polygons/post-v2-site-polygon-uuid-new-version.yml'
-/v2/site-polygon/make-active:
+/v2/site-polygon/{uuid}/make-active:
   put:
     $ref: './Polygons/put-v2-site-polygon-uuid-make-active.yml'
