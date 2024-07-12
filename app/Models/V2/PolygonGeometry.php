@@ -76,11 +76,13 @@ class PolygonGeometry extends Model
         });
     }
 
-    public function createCopy(User $user) {
+    public function createCopy(User $user)
+    {
         $copy = $this->replicate();
         $copy->uuid = (string) Str::uuid();
         $copy->created_by = $user->id;
         $copy->save();
+
         return $copy;
     }
 }
