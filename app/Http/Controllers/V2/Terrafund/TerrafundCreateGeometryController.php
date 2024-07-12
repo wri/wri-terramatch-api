@@ -200,7 +200,6 @@ class TerrafundCreateGeometryController extends Controller
             $tempDir = sys_get_temp_dir();
             $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
             mkdir($directory, 0755, true);
-            Log::info('Directory created', ['directory' => $directory]);
             // Extract the contents of the ZIP file
             $zip = new \ZipArchive();
             if ($zip->open($file->getPathname()) === true) {
@@ -212,7 +211,6 @@ class TerrafundCreateGeometryController extends Controller
                 }
                 $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
                 $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
-                Log::info('Geojson path', ['geojsonPath' => $geojsonPath]);
                 $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
                 $process->run();
                 if (! $process->isSuccessful()) {
@@ -220,14 +218,11 @@ class TerrafundCreateGeometryController extends Controller
 
                     return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
                 }
-                Log::info('Geojson file created', ['geojsonPath' => $geojsonPath]);
                 $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
                 if (isset($uuid['error'])) {
                     return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
                 }
-                Log::info("Site set to restoration in progress", ["site_id" => $site_id]);
                 App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
-                Log::info('Shape file processed and inserted successfully', ['uuid' => $uuid]);
                 return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
             } else {
                 return response()->json(['error' => 'Failed to open the ZIP file'], 400);
