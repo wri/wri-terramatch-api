@@ -230,6 +230,11 @@ class TerrafundEditGeometryController extends Controller
                 'site_id' => $siteUuid,
             ]);
             $sitePolygon->save();
+            
+            $sitePolygon->primary_uuid = $sitePolygon->uuid;
+            $sitePolygon->is_active = 1;
+            $sitePolygon->save();
+
             App::make(SiteService::class)->setSiteToRestorationInProgress($siteUuid);
             $this->updateProjectCentroidFromPolygon($polygonGeometry);
 
