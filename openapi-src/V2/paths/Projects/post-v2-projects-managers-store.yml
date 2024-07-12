@@ -16,24 +16,25 @@ parameters:
       properties:
         email_address:
           type: string
-        required:
-          - email_address
+      required:
+        - email_address
 responses:
   '201':
     description: OK
     schema:
-      type: object
       $ref: '../../definitions/_index.yml#/AssociatedUserRead'
   '404':
     description: User not found
     schema:
       type: object
       properties:
-        detail: string
+        detail:
+          type: string
   '422':
     description: Error
     schema:
       type: object
       properties:
-        detail: string
+        detail:
+          type: string
 

@@ -94148,8 +94148,8 @@ paths:
             properties:
               email_address:
                 type: string
-              required:
-                - email_address
+            required:
+              - email_address
       responses:
         '201':
           description: OK
@@ -94176,13 +94176,15 @@ paths:
           schema:
             type: object
             properties:
-              detail: string
+              detail:
+                type: string
         '422':
           description: Error
           schema:
             type: object
             properties:
-              detail: string
+              detail:
+                type: string
     get:
       summary: Index of project managers
       operationId: get-v2-projects-managers
