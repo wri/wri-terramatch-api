@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Process\Process;
@@ -51,8 +52,8 @@ class TerrafundCreateGeometryController extends Controller
         $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
 
         $polygonGeometry = PolygonGeometry::create([
-            'geom' => $geom,
-            'created_by' => Auth::user()?->id,
+          'geom' => $geom,
+          'created_by' => Auth::user()?->id,
         ]);
 
         return response()->json(['uuid' => $polygonGeometry->uuid], 200);
@@ -70,7 +71,7 @@ class TerrafundCreateGeometryController extends Controller
 
         SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-        return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id , 'source' => PolygonService::UPLOADED_SOURCE]);
+        return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id, 'source' => PolygonService::UPLOADED_SOURCE]);
     }
 
     public function validateDataInDB(Request $request)
@@ -91,12 +92,12 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         $sitePolygonData = SitePolygon::forPolygonGeometry($polygonUuid)
-            ->where(function ($query) use ($whereConditions) {
-                foreach ($whereConditions as $condition) {
-                    $query->orWhereRaw($condition);
-                }
-            })
-            ->first();
+          ->where(function ($query) use ($whereConditions) {
+              foreach ($whereConditions as $condition) {
+                  $query->orWhereRaw($condition);
+              }
+          })
+          ->first();
         $valid = $sitePolygonData == null;
         $responseData = ['valid' => $valid];
         if (! $valid) {
@@ -104,7 +105,7 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         App::make(PolygonService::class)
-            ->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $valid);
+          ->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $valid);
 
         return response()->json($responseData);
     }
@@ -134,7 +135,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadKMLFile(Request $request)
     {
-        ini_set('max_execution_time', '-1');
+        ini_set('max_execution_time', '240');
         ini_set('memory_limit', '-1');
         if ($request->hasFile('file')) {
             $site_id = $request->input('uuid');
@@ -184,7 +185,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadShapefile(Request $request)
     {
-        ini_set('max_execution_time', '-1');
+        ini_set('max_execution_time', '240');
         ini_set('memory_limit', '-1');
         Log::debug('Upload Shape file data', ['request' => $request->all()]);
         if ($request->hasFile('file')) {
@@ -243,7 +244,7 @@ class TerrafundCreateGeometryController extends Controller
         $isSimple = SelfIntersection::uuidValid($uuid);
         $message = $isSimple ? 'The geometry is valid' : 'The geometry has self-intersections';
         $insertionSuccess = App::make(PolygonService::class)
-            ->createCriteriaSite($uuid, PolygonService::SELF_CRITERIA_ID, $isSimple);
+          ->createCriteriaSite($uuid, PolygonService::SELF_CRITERIA_ID, $isSimple);
 
         return response()->json(['selfintersects' => $message, 'geometry_id' => $geometry->id, 'insertion_success' => $insertionSuccess, 'valid' => $isSimple ? true : false], 200);
     }
@@ -259,7 +260,7 @@ class TerrafundCreateGeometryController extends Controller
         $spikes = Spikes::detectSpikes($geometry->geo_json);
         $valid = count($spikes) === 0;
         $insertionSuccess = App::make(PolygonService::class)
-            ->createCriteriaSite($uuid, PolygonService::SPIKE_CRITERIA_ID, $valid);
+          ->createCriteriaSite($uuid, PolygonService::SPIKE_CRITERIA_ID, $valid);
 
         return response()->json(['spikes' => $spikes, 'geometry_id' => $uuid, 'insertion_success' => $insertionSuccess, 'valid' => $valid], 200);
     }
@@ -276,7 +277,7 @@ class TerrafundCreateGeometryController extends Controller
         $areaSqMeters = PolygonSize::calculateSqMeters($geometry->db_geometry);
         $valid = $areaSqMeters <= PolygonSize::SIZE_LIMIT;
         $insertionSuccess = App::make(PolygonService::class)
-            ->createCriteriaSite($uuid, PolygonService::SIZE_CRITERIA_ID, $valid);
+          ->createCriteriaSite($uuid, PolygonService::SIZE_CRITERIA_ID, $valid);
 
         return response()->json([
           'area_hectares' => $areaSqMeters / 10000, // Convert to hectares
@@ -306,7 +307,7 @@ class TerrafundCreateGeometryController extends Controller
         if ($geometryType) {
             $valid = $geometryType === GeometryType::VALID_TYPE;
             $insertionSuccess = App::make(PolygonService::class)
-                ->createCriteriaSite($uuid, PolygonService::GEOMETRY_TYPE_CRITERIA_ID, $valid);
+              ->createCriteriaSite($uuid, PolygonService::GEOMETRY_TYPE_CRITERIA_ID, $valid);
 
             return response()->json(['uuid' => $uuid, 'geometry_type' => $geometryType, 'valid' => $valid, 'insertion_success' => $insertionSuccess]);
         } else {
@@ -334,7 +335,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadGeoJSONFile(Request $request)
     {
-        ini_set('max_execution_time', '-1');
+        ini_set('max_execution_time', '240');
         ini_set('memory_limit', '-1');
         if ($request->hasFile('file')) {
             $site_id = $request->input('uuid');
@@ -352,6 +353,227 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
             return response()->json(['error' => 'GeoJSON file not provided in request'], 400);
+        }
+    }
+
+    public function validateGeojson($filePath)
+    {
+        $csvData = [];
+        $geojsonData = file_get_contents($filePath);
+        $geojson = json_decode($geojsonData, true);
+        $splittedgeojson = GeometryHelper::splitMultiPolygons($geojson);
+        $groupedByProject = GeometryHelper::groupFeaturesByProjectAndSite($splittedgeojson);
+        $isValidArea = false;
+        foreach ($groupedByProject as $projectUuid => $sites) {
+            if ($projectUuid !== 'no_project') {
+                $currentAreaValuesForProject = EstimatedArea::getAreaOfProject($projectUuid);
+                $newTotalArea = 0;
+                $siteAreas = [];
+                foreach ($sites as $featureCollection) {
+                    $siteId = $featureCollection['features'][0]['properties']['site_id'];
+                    if ($siteId !== 'no_site') {
+                        $siteAreas[$siteId] = 0;
+                        foreach ($featureCollection['features'] as $feature) {
+                            $siteAreas[$siteId] += PolygonSize::getArea($feature['geometry']);
+                        }
+                        $newTotalArea += $siteAreas[$siteId];
+                    }
+                }
+
+
+                $sumArea = $currentAreaValuesForProject['sum_area_project'] + $newTotalArea;
+                $isValidArea = $sumArea >= $currentAreaValuesForProject['lower_bound'] && $sumArea <= $currentAreaValuesForProject['upper_bound'];
+            }
+            foreach ($sites as $featureCollection) {
+                $selfIntersections = NotOverlapping::checkFeatureIntersections($featureCollection['features']);
+
+                foreach ($featureCollection['features'] as $index => $feature) {
+                    $siteId = $feature['properties']['site_id'] ?? null;
+
+                    if ($siteId && $feature['geometry']['type'] === 'Polygon') {
+                        $geojsonInside = json_encode($feature['geometry']);
+                        $validationGeojson = ['features' => ['feature' => ['properties' => $feature['properties']]]];
+
+                        $validOverlappingDB = in_array($index, $selfIntersections['intersections']) ?
+                          ['valid' => false] : NotOverlapping::doesNotOverlap($geojsonInside, $feature['properties']['site_id']);
+
+                        $validations = [
+                          'nonOverlapping' => $validOverlappingDB['valid'] ?? false,
+                          'nonSelfIntersection' => SelfIntersection::geoJsonValid($feature['geometry']),
+                          'insideCoordinateSystem' => FeatureBounds::geoJsonValid($feature['geometry']),
+                          'nonSurpassSizeLimit' => PolygonSize::geoJsonValid($feature['geometry']),
+                          'insideCountry' => WithinCountry::getIntersectionDataWithSiteId($geojsonInside, $feature['properties']['site_id'])['valid'] ?? false,
+                          'noSpikes' => Spikes::geoJsonValid($feature['geometry']),
+                          'validPolygonType' => GeometryType::geoJsonValid($feature['geometry']),
+                          'nonSurpassEstimatedArea' => $isValidArea,
+                          'completeData' => SitePolygonValidator::isValid('SCHEMA', $validationGeojson) && SitePolygonValidator::isValid('DATA', $validationGeojson),
+                        ];
+
+                        $approvalValidations = array_filter($validations, function ($key) {
+                            return ! in_array($key, ['nonSurpassEstimatedArea', 'completeData']);
+                        }, ARRAY_FILTER_USE_KEY);
+
+                        $canBeApproved = array_reduce($approvalValidations, fn ($carry, $item) => $carry && $item, true);
+
+                        $csvData[] = $this->makeCSVRow($feature, $validations, $canBeApproved, false);
+                    } else {
+                        $csvData[] = $this->makeCSVRow($feature, [], false, true);
+                    }
+                }
+            }
+        }
+
+        return $csvData;
+    }
+
+    public function makeCSVRow($feature, $validations, $canBeApproved, $isEmpty)
+    {
+        if ($isEmpty) {
+            return [
+              'polygon_name' => $feature['properties']['poly_name'] ?? 'Unnamed Polygon',
+              'site_uuid' => '',
+              'No Overlapping' => '',
+              'No Self-intersection' => '',
+              'Inside Coordinate System' => '',
+              'Inside Size Limit' => '',
+              'Within Country' => '',
+              'No Spikes' => '',
+              'Polygon Type' => '',
+              'Within Total Area Expected' => '',
+              'Completed Data' => '',
+              'Can Be Approved?' => 'No Site ID Available',
+            ];
+        } else {
+            return [
+              'polygon_name' => $feature['properties']['poly_name'] ?? 'Unnamed Polygon',
+              'site_uuid' => $feature['properties']['site_id'],
+              'No Overlapping' => $validations['nonOverlapping'] ? 'TRUE' : 'FALSE',
+              'No Self-intersection' => $validations['nonSelfIntersection'] ? 'TRUE' : 'FALSE',
+              'Inside Coordinate System' => $validations['insideCoordinateSystem'] ? 'TRUE' : 'FALSE',
+              'Inside Size Limit' => $validations['nonSurpassSizeLimit'] ? 'TRUE' : 'FALSE',
+              'Within Country' => $validations['insideCountry'] ? 'TRUE' : 'FALSE',
+              'No Spikes' => $validations['noSpikes'] ? 'TRUE' : 'FALSE',
+              'Polygon Type' => $validations['validPolygonType'] ? 'TRUE' : 'FALSE',
+              'Within Total Area Expected' => $validations['nonSurpassEstimatedArea'] ? 'TRUE' : 'FALSE',
+              'Completed Data' => $validations['completeData'] ? 'TRUE' : 'FALSE',
+              'Can Be Approved?' => $canBeApproved ? 'YES' : 'NO',
+            ];
+        }
+    }
+
+    public function uploadGeoJSONFileWithValidation(Request $request)
+    {
+        ini_set('max_execution_time', '240');
+        ini_set('memory_limit', '-1');
+
+        if (! $request->hasFile('file')) {
+            return response()->json(['error' => 'GeoJSON file not provided in request'], 400);
+        }
+
+        $file = $request->file('file');
+        $tempDir = sys_get_temp_dir();
+        $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
+        $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+        $file->move($tempDir, $filename);
+
+
+        $csvData = $this->validateGeojson($filePath);
+
+
+        $csvContent = array_merge([implode(',', array_keys($csvData[0]))], array_map(fn ($row) => implode(',', $row), $csvData));
+        $csvContent = implode("\n", $csvContent);
+
+        $response = Response::make($csvContent, 200, [
+          'Content-Type' => 'text/csv',
+          'Content-Disposition' => 'attachment; filename="validation_results_' . date('Y-m-d_H-i-s') . '.csv"',
+        ]);
+
+        unlink($filePath);
+
+        return $response;
+    }
+
+    public function uploadShapefileWithValidation(Request $request)
+    {
+        ini_set('max_execution_time', '240');
+        ini_set('memory_limit', '-1');
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            if ($file->getClientOriginalExtension() !== 'zip') {
+                return response()->json(['error' => 'Only ZIP files are allowed'], 400);
+            }
+            $tempDir = sys_get_temp_dir();
+            $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
+            mkdir($directory, 0755, true);
+
+            // Extract the contents of the ZIP file
+            $zip = new \ZipArchive();
+            if ($zip->open($file->getPathname()) === true) {
+                $zip->extractTo($directory);
+                $zip->close();
+                $shpFile = $this->findShpFile($directory);
+                if (! $shpFile) {
+                    return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
+                }
+                $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
+                $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+                $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
+                $process->run();
+                if (! $process->isSuccessful()) {
+                    Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
+
+                    return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
+                }
+
+                $csvData = $this->validateGeojson($geojsonPath);
+                $csvContent = array_merge([implode(',', array_keys($csvData[0]))], array_map(fn ($row) => implode(',', $row), $csvData));
+                $csvContent = implode("\n", $csvContent);
+                $response = Response::make($csvContent, 200, [
+                  'Content-Type' => 'text/csv',
+                  'Content-Disposition' => 'attachment; filename="validation_results_' . date('Y-m-d_H-i-s') . '.csv"',
+                ]);
+                unlink($geojsonPath);
+
+                return $response;
+            } else {
+                return response()->json(['error' => 'Failed to open the ZIP file'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'No file uploaded'], 400);
+        }
+    }
+
+    public function uploadKMLFileWithValidation(Request $request)
+    {
+        ini_set('max_execution_time', '240');
+        ini_set('memory_limit', '-1');
+        if ($request->hasFile('file')) {
+            $kmlfile = $request->file('file');
+            $tempDir = sys_get_temp_dir();
+            $filename = uniqid('kml_file_') . '.' . $kmlfile->getClientOriginalExtension();
+            $kmlPath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+            $kmlfile->move($tempDir, $filename);
+            $geojsonFilename = Str::replaceLast('.kml', '.geojson', $filename);
+            $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+            $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $kmlPath]);
+            $process->run();
+            if (! $process->isSuccessful()) {
+                Log::error('Error converting KML to GeoJSON: ' . $process->getErrorOutput());
+
+                return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
+            }
+            $csvData = $this->validateGeojson($geojsonPath);
+            $csvContent = array_merge([implode(',', array_keys($csvData[0]))], array_map(fn ($row) => implode(',', $row), $csvData));
+            $csvContent = implode("\n", $csvContent);
+            $response = Response::make($csvContent, 200, [
+              'Content-Type' => 'text/csv',
+              'Content-Disposition' => 'attachment; filename="validation_results_' . date('Y-m-d_H-i-s') . '.csv"',
+            ]);
+            unlink($geojsonPath);
+
+            return $response;
+        } else {
+            return response()->json(['error' => 'KML file not provided'], 400);
         }
     }
 
@@ -397,7 +619,6 @@ class TerrafundCreateGeometryController extends Controller
               ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
               ->first();
 
-            Log::info('Polygon Geometry', ['polygonGeometry' => $polygonGeometry]);
             if (! $polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
@@ -426,14 +647,14 @@ class TerrafundCreateGeometryController extends Controller
             $propertiesJson = json_encode($properties);
 
             $feature = [
-                'type' => 'Feature',
-                'geometry' => json_decode($polygonGeometry->geojsonGeom),
-                'properties' => json_decode($propertiesJson),
+              'type' => 'Feature',
+              'geometry' => json_decode($polygonGeometry->geojsonGeom),
+              'properties' => json_decode($propertiesJson),
             ];
 
             $featureCollection = [
-                'type' => 'FeatureCollection',
-                'features' => [$feature],
+              'type' => 'FeatureCollection',
+              'features' => [$feature],
             ];
 
             return response()->json($featureCollection);
@@ -471,15 +692,15 @@ class TerrafundCreateGeometryController extends Controller
                 $propertiesJson = json_encode($properties);
 
                 $feature = [
-                    'type' => 'Feature',
-                    'geometry' => json_decode($polygonGeometry->geojsonGeom),
-                    'properties' => json_decode($propertiesJson),
+                  'type' => 'Feature',
+                  'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                  'properties' => json_decode($propertiesJson),
                 ];
                 $features[] = $feature;
             }
             $featureCollection = [
-                'type' => 'FeatureCollection',
-                'features' => $features,
+              'type' => 'FeatureCollection',
+              'features' => $features,
             ];
 
             return response()->json($featureCollection);
@@ -509,7 +730,7 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         $response['insertion_success'] = App::make(PolygonService::class)
-            ->createCriteriaSite($polygonUuid, $criteriaId, $response['valid']);
+          ->createCriteriaSite($polygonUuid, $criteriaId, $response['valid']);
 
         return response()->json($response);
     }
@@ -571,10 +792,10 @@ class TerrafundCreateGeometryController extends Controller
                 if (isset($criteriaData['error'])) {
                     Log::error('Error fetching criteria data', ['polygon_uuid' => $polygonUuid, 'error' => $criteriaData['error']]);
                     $checkedPolygons[] = [
-                        'uuid' => $polygonUuid,
-                        'valid' => false,
-                        'checked' => false,
-                        'nonValidCriteria' => [],
+                      'uuid' => $polygonUuid,
+                      'valid' => false,
+                      'checked' => false,
+                      'nonValidCriteria' => [],
                     ];
 
                     continue;
@@ -594,10 +815,10 @@ class TerrafundCreateGeometryController extends Controller
                 }
 
                 $checkedPolygons[] = [
-                    'uuid' => $polygonUuid,
-                    'valid' => $isValid,
-                    'checked' => ! empty($criteriaData['criteria_list']),
-                    'nonValidCriteria' => $nonValidCriteria,
+                  'uuid' => $polygonUuid,
+                  'valid' => $isValid,
+                  'checked' => ! empty($criteriaData['criteria_list']),
+                  'nonValidCriteria' => $nonValidCriteria,
                 ];
             }
 

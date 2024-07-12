@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\CriteriaSite;
+use App\Models\V2\Sites\Site;
 use Illuminate\Support\Facades\Log;
 
 class GeometryHelper
@@ -133,5 +134,114 @@ class GeometryHelper
             'valid',
             'created_at as latest_created_at',
         ]);
+    }
+
+    public static function groupFeaturesBySiteId($geojson)
+    {
+        if (! isset($geojson['features']) || ! is_array($geojson['features'])) {
+            return ['error' => 'Invalid GeoJSON structure'];
+        }
+        $groupedFeatures = [];
+        $noSiteKey = 'no_site';
+        foreach ($geojson['features'] as $feature) {
+            if (isset($feature['properties']['site_id']) && $feature['properties']['site_id']) {
+                $siteId = $feature['properties']['site_id'];
+                if (! isset($groupedFeatures[$siteId])) {
+                    $groupedFeatures[$siteId] = [
+                        'type' => 'FeatureCollection',
+                        'features' => [],
+                    ];
+                }
+                $groupedFeatures[$siteId]['features'][] = $feature;
+            } else {
+                if (! isset($groupedFeatures[$noSiteKey])) {
+                    $groupedFeatures[$noSiteKey] = [
+                        'type' => 'FeatureCollection',
+                        'features' => [],
+                    ];
+                }
+                $groupedFeatures[$noSiteKey]['features'][] = $feature;
+            }
+        }
+
+        return $groupedFeatures;
+    }
+
+    public static function groupFeaturesByProjectAndSite($geojson)
+    {
+        $groupedGeoJson = self::groupFeaturesBySiteId($geojson);
+        $projectGroupedFeatures = [];
+        $noProjectKey = 'no_project';
+
+        foreach ($groupedGeoJson as $siteId => $featureCollection) {
+            if ($siteId === 'no_site') {
+                if (! isset($projectGroupedFeatures[$noProjectKey])) {
+                    $projectGroupedFeatures[$noProjectKey] = [];
+                }
+                $projectGroupedFeatures[$noProjectKey][$siteId] = $featureCollection;
+
+                continue;
+            }
+
+            $sitePolygon = Site::isUuid($siteId)->first();
+            if ($sitePolygon === null || $sitePolygon->project === null) {
+                Log::error('site polygon or project not found for siteId: '.$siteId);
+                if (! isset($projectGroupedFeatures[$noProjectKey])) {
+                    $projectGroupedFeatures[$noProjectKey] = [];
+                }
+                $projectGroupedFeatures[$noProjectKey][$siteId] = $featureCollection;
+
+                continue;
+            }
+
+            $projectUuid = $sitePolygon->project->uuid;
+            if (! isset($projectGroupedFeatures[$projectUuid])) {
+                $projectGroupedFeatures[$projectUuid] = [];
+            }
+
+            $projectGroupedFeatures[$projectUuid][$siteId] = $featureCollection;
+        }
+
+        return $projectGroupedFeatures;
+    }
+
+    public static function splitMultiPolygons($featureCollection)
+    {
+        $features = $featureCollection['features'];
+        $resultFeatures = [];
+
+        foreach ($features as $feature) {
+            $geometry = $feature['geometry'];
+            $properties = $feature['properties'];
+
+            if ($geometry['type'] === 'Polygon') {
+                $resultFeatures[] = [
+                    'type' => 'Feature',
+                    'geometry' => $geometry,
+                    'properties' => $properties,
+                ];
+            } elseif ($geometry['type'] === 'MultiPolygon') {
+                $coordinates = $geometry['coordinates'];
+
+                foreach ($coordinates as $index => $polygon) {
+                    $newProperties = $properties;
+                    $newProperties['poly_name'] = ($properties['poly_name'] ?? 'Unnamed Polygon') . '-polygon ' . ($index + 1);
+
+                    $resultFeatures[] = [
+                        'type' => 'Feature',
+                        'geometry' => [
+                            'type' => 'Polygon',
+                            'coordinates' => $polygon,
+                        ],
+                        'properties' => $newProperties,
+                    ];
+                }
+            }
+        }
+
+        return [
+            'type' => 'FeatureCollection',
+            'features' => $resultFeatures,
+        ];
     }
 }
