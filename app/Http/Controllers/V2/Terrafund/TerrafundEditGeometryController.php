@@ -8,6 +8,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Models\V2\User;
 use App\Services\PolygonService;
 use App\Services\SiteService;
 use Illuminate\Http\Request;
@@ -230,9 +231,11 @@ class TerrafundEditGeometryController extends Controller
                 'site_id' => $siteUuid,
             ]);
             $sitePolygon->save();
-            
+
+            $user = User::isUuid(Auth::user()->uuid)->first();
             $sitePolygon->primary_uuid = $sitePolygon->uuid;
             $sitePolygon->is_active = 1;
+            $sitePolygon->version_name = now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
             $sitePolygon->save();
 
             App::make(SiteService::class)->setSiteToRestorationInProgress($siteUuid);
