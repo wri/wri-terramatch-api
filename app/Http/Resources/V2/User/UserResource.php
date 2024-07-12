@@ -28,7 +28,7 @@ class UserResource extends JsonResource
             'organisation' => new OrganisationResource($this->my_organisation),
             'monitoring_organisations' => MonitoringOrganisationResource::collection($this->organisations),
 
-            'managed_projects' => ProjectLiteResource::collection($this->managedProjects),
+            'managed_projects' => $this->managedProjects == null ? null : ProjectLiteResource::collection($this->managedProjects),
 
             'last_logged_in_at' => $this->last_logged_in_at,
             'email_address_verified_at' => $this->email_address_verified_at,
