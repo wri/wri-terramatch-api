@@ -107,11 +107,14 @@ class SitePolygon extends Model implements AuditableModel
     public function createCopy(User $user)
     {
         $geometry = $this->polygonGeometry()->first();
-        $geometry->createCopy($user);
+        $copyGeometry = PolygonGeometry::create([
+            'geom' => $geometry->geom,
+            'created_by' => $user->id,
+        ]);
 
         $newSitePolygon = $this->replicate();
         $newSitePolygon->primary_uuid = $this->primary_uuid;
-        $newSitePolygon->poly_id = $geometry->uuid;
+        $newSitePolygon->poly_id = $copyGeometry->uuid;
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->is_active = 0;
         $newSitePolygon->created_by = $user->id;
