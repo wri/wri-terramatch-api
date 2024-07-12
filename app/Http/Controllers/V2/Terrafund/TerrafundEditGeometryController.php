@@ -103,6 +103,16 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
+
+            if ($sitePolygon->is_active == 1) {
+                $previousSitePolygon = SitePolygon::where('primary_uuid', $sitePolygon->primary_uuid)
+                ->orderByDesc('created_at')
+                ->first();
+                if ($previousSitePolygon) {
+                    $previousSitePolygon->is_active = 1;
+                    $previousSitePolygon->save();
+                }
+            }
             $project = $sitePolygon->project;
             if (! $project) {
                 return response()->json(['message' => 'No project found for the given UUID.'], 404);
