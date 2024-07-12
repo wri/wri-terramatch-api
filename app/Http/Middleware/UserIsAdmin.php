@@ -14,7 +14,7 @@ class UserIsAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (! $request->user() || ! in_array($request->user()->role, ['admin', 'terrafund_admin'])) {
+        if (! $request->user() || ! in_array($request->user()->role, ['admin', 'terrafund_admin', 'project-manager'])) {
             abort(403, 'Access denied');
         }
 

@@ -258,7 +258,9 @@ Route::prefix('media')->group(function () {
 
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
-    Route::get('audits/{entity}/{uuid}', AdminIndexAuditsController::class);
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::get('{entity}', AdminIndexAuditsController::class);
+    }, prefix: 'audits');
 
     Route::prefix('reporting-frameworks')->group(function () {
         Route::get('', AdminIndexReportingFrameworkController::class);
