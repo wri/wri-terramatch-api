@@ -108,7 +108,7 @@ definitions:
           type: string
         collection:
           type: string
-  MonitoringUserRead:
+  AssociatedUserRead:
     type: object
     properties:
       uuid:
@@ -94110,6 +94110,45 @@ paths:
               created_at:
                 type: string
                 format: datetime
+  '/v2/projects/{UUID]/managers':
+    post:
+      summary: Add a new project manager
+      operationId: post-v2-projects-managers-store
+      tags:
+        - V2 Projects
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email_address:
+                type: string
+              required:
+                - email_address
+      responses:
+        '201':
+          description: OK
+          schema:
+            type: object
+            properties:
+              uuid:
+                type: string
+              user_type:
+                type: string
+              job_role:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              status:
+                type: string
+                description: allowed values Pending|Accepted
   '/v2/nurseries/{UUID}':
     delete:
       summary: Delete a nursery
