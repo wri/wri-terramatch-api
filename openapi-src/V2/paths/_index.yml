@@ -2467,7 +2467,7 @@
 /v2/projects/invite/accept:
   post:
     $ref: './Projects/post-v2-projects-invite-accept.yml'
-/v2/projects/{UUID]/managers:
+/v2/projects/{UUID}/managers:
   post:
     $ref: './Projects/post-v2-projects-managers-store.yml'
 /v2/nurseries/{UUID}:

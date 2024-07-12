@@ -94128,7 +94128,7 @@ paths:
               created_at:
                 type: string
                 format: datetime
-  '/v2/projects/{UUID]/managers':
+  '/v2/projects/{UUID}/managers':
     post:
       summary: Add a new project manager
       operationId: post-v2-projects-managers-store
@@ -94137,6 +94137,10 @@ paths:
       produces:
         - application/json
       parameters:
+        - in: path
+          type: string
+          name: UUID
+          required: true
         - in: body
           name: body
           schema:
@@ -94167,6 +94171,18 @@ paths:
               status:
                 type: string
                 description: allowed values Pending|Accepted
+        '404':
+          description: User not found
+          schema:
+            type: object
+            properties:
+              detail: string
+        '422':
+          description: Error
+          schema:
+            type: object
+            properties:
+              detail: string
   '/v2/nurseries/{UUID}':
     delete:
       summary: Delete a nursery
