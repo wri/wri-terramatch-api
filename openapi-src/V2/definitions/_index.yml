@@ -4,8 +4,8 @@ TreeSpeciesRead:
   $ref: './TreeSpeciesRead.yml'
 TreeSpeciesReadAll:
   $ref: './TreeSpeciesReadAll.yml'
-MonitoringUserRead:
-  $ref: './MonitoringUserRead.yml'
+AssociatedUserRead:
+  $ref: './AssociatedUserRead.yml'
 EntityFormCreate:
   $ref: './EntityFormCreate.yml'
 EntityFormUpdate:

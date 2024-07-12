@@ -150,6 +150,7 @@ use App\Http\Controllers\V2\Projects\Monitoring\AdminCreateProjectMonitoringCont
 use App\Http\Controllers\V2\Projects\Monitoring\AdminSoftDeleteProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminUpdateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
+use App\Http\Controllers\V2\Projects\ProjectManagersController;
 use App\Http\Controllers\V2\Projects\SoftDeleteProjectController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewMyProjectsController;
@@ -513,6 +514,8 @@ Route::prefix('projects')->group(function () {
 
     Route::post('/{project}/invite', CreateProjectInviteController::class);
     Route::post('/invite/accept', ProjectInviteAcceptController::class);
+
+    Route::resource('/{project}/managers', ProjectManagersController::class)->only(['index', 'store', 'destroy']);
 
     Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);
     Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
