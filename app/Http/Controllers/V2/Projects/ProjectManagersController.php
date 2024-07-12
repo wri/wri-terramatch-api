@@ -16,6 +16,7 @@ class ProjectManagersController extends Controller
     public function index(Project $project)
     {
         $this->authorize('read', $project);
+
         return AssociatedUserResource::collection($project->managers);
     }
 
@@ -50,7 +51,7 @@ class ProjectManagersController extends Controller
             return $this->errorResponse('user', 'was not found', 404);
         }
 
-        if (!$project->managers()->where('uuid', $user->uuid)->exists()) {
+        if (! $project->managers()->where('uuid', $user->uuid)->exists()) {
             return $this->errorResponse('user', 'is not a project manager for this project');
         }
 
