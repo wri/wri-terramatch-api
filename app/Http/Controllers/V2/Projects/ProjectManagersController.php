@@ -9,6 +9,7 @@ use App\Http\Requests\V2\Projects\AddProjectManagerRequest;
 use App\Http\Resources\V2\User\AssociatedUserResource;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
+use Illuminate\Http\JsonResponse;
 
 class ProjectManagersController extends Controller
 {
@@ -21,13 +22,17 @@ class ProjectManagersController extends Controller
     {
         $this->authorize('update', $project);
 
-        $user = User::where('email_address', $request->validated()->get('email_address'))->first();
+        $user = User::where('email_address', $request->get('email_address'))->first();
         if (empty($user)) {
             return $this->errorResponse('email address', 'not found', 404);
         }
 
         if ($user->primaryRole?->name != 'project-manager') {
-            return $this->errorReponse('user', 'is not a project manager');
+            return $this->errorResponse('user', 'is not a project manager');
+        }
+
+        if ($user->projects()->wherePivot('is_managing', true)->isUuid($project->uuid)->exists()) {
+            return $this->errorResponse('user', 'is already a project manager for this project');
         }
 
         $user->projects()->sync([$project->id => ['is_managing' => true]], false);
@@ -40,9 +45,10 @@ class ProjectManagersController extends Controller
         $this->authorize('update', $project);
     }
 
-    protected function errorResponse(string $pretty, string $message, $code = 422)
+    protected function errorResponse(string $pretty, string $message, $code = 422): JsonResponse
     {
         $errors = ErrorHelper::create('*', $pretty, 'CUSTOM', $message);
+
         return JsonResponseHelper::error($errors, $code);
     }
 }
