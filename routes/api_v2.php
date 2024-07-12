@@ -146,6 +146,7 @@ use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\CreateBlankProjectWithFormController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\CreateProjectWithFormController;
+use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminCreateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminSoftDeleteProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminUpdateProjectMonitoringController;
@@ -519,6 +520,8 @@ Route::prefix('projects')->group(function () {
 
     Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);
     Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
+
+    Route::delete('/{project}/{email}/remove-partner', DeleteProjectMonitoringPartnersController::class);
 });
 
 Route::prefix('tasks')->group(function () {
