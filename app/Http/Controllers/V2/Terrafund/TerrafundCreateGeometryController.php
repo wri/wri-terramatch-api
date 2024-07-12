@@ -18,6 +18,7 @@ use App\Validators\Extensions\Polygons\SelfIntersection;
 use App\Validators\Extensions\Polygons\Spikes;
 use App\Validators\Extensions\Polygons\WithinCountry;
 use App\Validators\SitePolygonValidator;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -64,14 +65,16 @@ class TerrafundCreateGeometryController extends Controller
      */
     public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = null)
     {
-        $tempDir = sys_get_temp_dir();
-        $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
-        $geojsonData = file_get_contents($geojsonPath);
-        $geojson = json_decode($geojsonData, true);
-
-        SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
-
-        return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id, 'source' => PolygonService::UPLOADED_SOURCE]);
+        try {
+          $tempDir = sys_get_temp_dir();
+          $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+          $geojsonData = file_get_contents($geojsonPath);
+          $geojson = json_decode($geojsonData, true);
+          SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
+          return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id, 'source' => PolygonService::UPLOADED_SOURCE]);
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
     }
 
     public function validateDataInDB(Request $request)
@@ -197,7 +200,7 @@ class TerrafundCreateGeometryController extends Controller
             $tempDir = sys_get_temp_dir();
             $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
             mkdir($directory, 0755, true);
-
+            Log::info('Directory created', ['directory' => $directory]);
             // Extract the contents of the ZIP file
             $zip = new \ZipArchive();
             if ($zip->open($file->getPathname()) === true) {
@@ -209,6 +212,7 @@ class TerrafundCreateGeometryController extends Controller
                 }
                 $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
                 $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+                Log::info('Geojson path', ['geojsonPath' => $geojsonPath]);
                 $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
                 $process->run();
                 if (! $process->isSuccessful()) {
@@ -216,13 +220,14 @@ class TerrafundCreateGeometryController extends Controller
 
                     return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
                 }
+                Log::info('Geojson file created', ['geojsonPath' => $geojsonPath]);
                 $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
                 if (isset($uuid['error'])) {
                     return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
                 }
-
+                Log::info("Site set to restoration in progress", ["site_id" => $site_id]);
                 App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
-
+                Log::info('Shape file processed and inserted successfully', ['uuid' => $uuid]);
                 return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
             } else {
                 return response()->json(['error' => 'Failed to open the ZIP file'], 400);
@@ -400,7 +405,7 @@ class TerrafundCreateGeometryController extends Controller
                         $validations = [
                           'nonOverlapping' => $validOverlappingDB['valid'] ?? false,
                           'nonSelfIntersection' => SelfIntersection::geoJsonValid($feature['geometry']),
-                          'insideCoordinateSystem' => FeatureBounds::geoJsonValid($feature['geometry']),
+                          'insideCoordinateSystem' => FeatureBounds::geoJsonValid($feature),
                           'nonSurpassSizeLimit' => PolygonSize::geoJsonValid($feature['geometry']),
                           'insideCountry' => WithinCountry::getIntersectionDataWithSiteId($geojsonInside, $feature['properties']['site_id'])['valid'] ?? false,
                           'noSpikes' => Spikes::geoJsonValid($feature['geometry']),
