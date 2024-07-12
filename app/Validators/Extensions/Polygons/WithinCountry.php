@@ -3,9 +3,11 @@
 namespace App\Validators\Extensions\Polygons;
 
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Validators\Extensions\Extension;
+use Illuminate\Support\Facades\DB;
 
 class WithinCountry extends Extension
 {
@@ -66,6 +68,47 @@ class WithinCountry extends Extension
         return [
             'valid' => $insidePercentage >= self::THRESHOLD_PERCENTAGE,
             'geometry_id' => $geometry->id,
+            'inside_percentage' => $insidePercentage,
+            'country_name' => $intersectionData->country,
+        ];
+    }
+
+    public static function getIntersectionDataWithSiteId($geojson, $siteId): array
+    {
+        $siteData = Site::isUuid($siteId)->first();
+        if (! $siteData) {
+            return ['valid' => false, 'status' => 404, 'error' => 'Site data not found for the specified site_id'];
+        }
+        $project = $siteData->project;
+        $countryIso = $project->country;
+
+        if ($countryIso == null) {
+            return ['valid' => false, 'status' => 404, 'error' => 'Country ISO not found for the specified project'];
+        }
+
+        $polygonArea = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
+
+        $intersectionData = WorldCountryGeneralized::forIso($countryIso)
+            ->selectRaw(
+                'world_countries_generalized.country AS country, 
+                        ST_Area(
+                            ST_Intersection(
+                                world_countries_generalized.geometry, 
+                                ST_GeomFromGeoJSON(?)
+                            )
+                        ) AS area',
+                [$geojson]
+            )
+            ->first();
+
+        if ($intersectionData === null) {
+            return ['valid' => false, 'status' => 404, 'error' => 'No intersected data for specified project'];
+        }
+
+        $insidePercentage = $intersectionData->area / $polygonArea * 100;
+
+        return [
+            'valid' => $insidePercentage >= self::THRESHOLD_PERCENTAGE,
             'inside_percentage' => $insidePercentage,
             'country_name' => $intersectionData->country,
         ];
