@@ -94183,6 +94183,59 @@ paths:
             type: object
             properties:
               detail: string
+    get:
+      summary: Index of project managers
+      operationId: get-v2-projects-managers
+      tags:
+        - V2 Projects
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          type: string
+          name: UUID
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                uuid:
+                  type: string
+                user_type:
+                  type: string
+                job_role:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email_address:
+                  type: string
+                status:
+                  type: string
+                  description: allowed values Pending|Accepted
+  '/v2/projects/{UUID}/managers/{USER_UUID}':
+    delete:
+      operationId: delete-v2-projects-uuid-managers
+      summary: Delete a project manager from a project
+      tags:
+        - V2 Projects
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - type: string
+          name: USER_UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
   '/v2/nurseries/{UUID}':
     delete:
       summary: Delete a nursery

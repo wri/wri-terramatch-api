@@ -16,6 +16,7 @@ class ProjectManagersController extends Controller
     public function index(Project $project)
     {
         $this->authorize('read', $project);
+        return AssociatedUserResource::collection($project->managers);
     }
 
     public function store(Project $project, AddProjectManagerRequest $request)
@@ -40,9 +41,22 @@ class ProjectManagersController extends Controller
         return new AssociatedUserResource($user);
     }
 
-    public function destroy(Project $project, User $user)
+    public function destroy(Project $project, string $userUuid)
     {
         $this->authorize('update', $project);
+
+        $user = User::isUuid($userUuid)->first();
+        if (empty($user)) {
+            return $this->errorResponse('user', 'was not found', 404);
+        }
+
+        if (!$project->managers()->where('uuid', $user->uuid)->exists()) {
+            return $this->errorResponse('user', 'is not a project manager for this project');
+        }
+
+        $project->managers()->detach($user->id);
+
+        return response()->json();
     }
 
     protected function errorResponse(string $pretty, string $message, $code = 422): JsonResponse
