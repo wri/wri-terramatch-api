@@ -28,7 +28,8 @@ class IndexMyActionsController extends Controller
                     ->orWhere('organisation_id', $organisationId);
             });
         } else {
-            $qry->where('organisation_id', $organisationId);
+            $qry->where('organisation_id', $organisationId)
+                ->where('project_id', $projectIds);
         }
 
         $actions = $qry->get();
