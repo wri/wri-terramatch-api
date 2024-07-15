@@ -75,14 +75,4 @@ class PolygonGeometry extends Model
             $this->delete();
         });
     }
-
-    public function createCopy(User $user)
-    {
-        $copy = $this->replicate();
-        $copy->uuid = (string) Str::uuid();
-        $copy->created_by = $user->id;
-        $copy->save();
-
-        return $copy;
-    }
 }

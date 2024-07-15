@@ -111,7 +111,6 @@ class SitePolygon extends Model implements AuditableModel
             'geom' => $geometry->geom,
             'created_by' => $user->id,
         ]);
-
         $newSitePolygon = $this->replicate();
         $newSitePolygon->primary_uuid = $this->primary_uuid;
         $newSitePolygon->poly_id = $copyGeometry->uuid;
@@ -122,5 +121,16 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon->save();
 
         return $newSitePolygon;
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($instance){
+            if (! is_null($instance->primary_uuid)) {
+                return;
+            }
+            $instance->primary_uuid = $instance->uuid;
+            $instance->save();
+        });
     }
 }
