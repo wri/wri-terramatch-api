@@ -125,7 +125,7 @@ class SitePolygon extends Model implements AuditableModel
 
     protected static function booted()
     {
-        static::created(function ($instance){
+        static::created(function ($instance) {
             if (! is_null($instance->primary_uuid)) {
                 return;
             }
