@@ -22,6 +22,8 @@ class IndexMyActionsController extends Controller
             ->with('targetable')
             ->pending();
 
+        $qry->where('project_id', $projectIds);
+
         if (count($projectIds) > 0) {
             $qry->where(function ($query) use ($organisationId, $projectIds) {
                 $query->whereIn('project_id', $projectIds)
@@ -29,8 +31,6 @@ class IndexMyActionsController extends Controller
             });
         } else {
             $qry->where('organisation_id', $organisationId);
-
-            $qry->where('project_id', $projectIds);
         }
 
         $actions = $qry->get();
