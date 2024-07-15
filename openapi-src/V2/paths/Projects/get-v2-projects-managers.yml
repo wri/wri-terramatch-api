@@ -1,10 +1,13 @@
-summary: Get a project's monitoring partners
+summary: Index of project managers
+operationId: get-v2-projects-managers
 tags:
   - V2 Projects
+produces:
+  - application/json
 parameters:
-  - type: string
+  - in: path
+    type: string
     name: UUID
-    in: path
     required: true
 responses:
   '200':
@@ -13,4 +16,3 @@ responses:
       type: array
       items:
         $ref: '../../definitions/_index.yml#/AssociatedUserRead'
-operationId: get-v2-projects-uuid-partners
