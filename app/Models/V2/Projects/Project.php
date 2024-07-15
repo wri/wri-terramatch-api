@@ -314,7 +314,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
 
     public function managers(): BelongsToMany
     {
-        return $this->belongsTomany(User::class, 'v2_project_users')->wherePivot('is_managing', true);
+        return $this->belongsToMany(User::class, 'v2_project_users')->wherePivot('is_managing', true);
     }
 
     public function fundingProgramme(): BelongsTo
