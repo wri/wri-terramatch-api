@@ -2467,6 +2467,14 @@
 /v2/projects/invite/accept:
   post:
     $ref: './Projects/post-v2-projects-invite-accept.yml'
+/v2/projects/{UUID}/managers:
+  post:
+    $ref: './Projects/post-v2-projects-managers-store.yml'
+  get:
+    $ref: './Projects/get-v2-projects-managers.yml'
+/v2/projects/{UUID}/managers/{USER_UUID}:
+  delete:
+    $ref: './Projects/delete-v2-projects-uuid-managers.yml'
 /v2/nurseries/{UUID}:
   delete:
     $ref: './Nurseries/delete-v2-nurseries-uuid.yml'

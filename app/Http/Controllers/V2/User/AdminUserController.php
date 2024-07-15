@@ -95,6 +95,11 @@ class AdminUserController extends Controller
                 $data['role'] = 'user';
 
                 break;
+
+            case 'project-manager':
+                $data['role'] = 'project-manager';
+
+                break;
         }
 
         $user = User::create($data);
@@ -139,6 +144,10 @@ class AdminUserController extends Controller
                     $data['role'] = 'project-developer';
 
                     break;
+                case 'project-manager':
+                    $data['role'] = 'project-manager';
+
+                    break;
                 case 'government':
                     $data['role'] = 'government';
 
@@ -174,8 +183,6 @@ class AdminUserController extends Controller
                 $user->organisations()->detach();
             }
         }
-
-
 
         return new UserResource($user);
     }

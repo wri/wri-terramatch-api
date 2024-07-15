@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\IsAdminIndex;
 use App\Http\Resources\V2\NurseryReports\NurseryReportsCollection;
 use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -55,7 +57,12 @@ class AdminIndexNurseryReportsController extends Controller
             $query->whereIn('v2_nursery_reports.id', $ids);
         }
 
-        $this->isolateAuthorizedFrameworks($query, 'v2_nursery_reports');
+        $user = User::find(Auth::user()->id);
+        if ($user->primaryRole?->name == 'project-manager') {
+            $query->whereIn('v2_nurseries.project_id', $user->managedProjects()->select('v2_projects.id'));
+        } else {
+            $this->isolateAuthorizedFrameworks($query, 'v2_nursery_reports');
+        }
 
         return new NurseryReportsCollection($this->paginate($query));
     }

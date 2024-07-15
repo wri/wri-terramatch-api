@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V2\Projects;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\User\MonitoringUserResource;
+use App\Http\Resources\V2\User\AssociatedUserResource;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
 use Illuminate\Http\Request;
@@ -24,7 +24,6 @@ class ViewProjectMonitoringPartnersController extends Controller
         $uniques = $invites->unique('email_address');
 
         $results = $uniques->map(function ($invite) use ($invites){
-
             if(!is_null($invite->accepted_at)){
                 return $invite;
             }
@@ -32,10 +31,8 @@ class ViewProjectMonitoringPartnersController extends Controller
             $accepted = $invites->where('email_address', $invite->email_address)->whereNotNull('accepted_at')->first();
 
             return is_null($accepted) ? $invite : $accepted;
-
         });
 
-
-        return MonitoringUserResource::collection($results);
+        return AssociatedUserResource::collection($results);
     }
 }
