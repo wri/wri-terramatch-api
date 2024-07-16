@@ -18,20 +18,15 @@ class IndexMyActionsController extends Controller
         $organisationId = $user->organisation_id;
         $projectIds = $user->projects()->pluck('v2_projects.id')->toArray();
 
-        $actions = [];
+        $qry = Action::query()
+            ->with('targetable')
+            ->pending()
+            ->where(function ($query) use ($organisationId, $projectIds) {
+                $query->whereIn('project_id', $projectIds)
+                    ->Where('organisation_id', $organisationId);
+            });
 
-        if (count($projectIds) > 0) {
-            $qry = Action::query()
-                ->with('targetable')
-                ->pending()
-                ->where(function ($query) use ($organisationId, $projectIds) {
-                    $query->whereIn('project_id', $projectIds)
-                        ->orWhere('organisation_id', $organisationId);
-                });
-
-            $actions = $qry->get();
-        }
-
+        $actions = $qry->get();
 
         return ActionResource::collection($actions);
     }
