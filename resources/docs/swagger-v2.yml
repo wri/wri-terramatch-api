@@ -108,7 +108,7 @@ definitions:
           type: string
         collection:
           type: string
-  MonitoringUserRead:
+  AssociatedUserRead:
     type: object
     properties:
       uuid:
@@ -94152,6 +94152,116 @@ paths:
               created_at:
                 type: string
                 format: datetime
+  '/v2/projects/{UUID}/managers':
+    post:
+      summary: Add a new project manager
+      operationId: post-v2-projects-managers-store
+      tags:
+        - V2 Projects
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          type: string
+          name: UUID
+          required: true
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email_address:
+                type: string
+            required:
+              - email_address
+      responses:
+        '201':
+          description: OK
+          schema:
+            type: object
+            properties:
+              uuid:
+                type: string
+              user_type:
+                type: string
+              job_role:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              status:
+                type: string
+                description: allowed values Pending|Accepted
+        '404':
+          description: User not found
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+        '422':
+          description: Error
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+    get:
+      summary: Index of project managers
+      operationId: get-v2-projects-managers
+      tags:
+        - V2 Projects
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          type: string
+          name: UUID
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                uuid:
+                  type: string
+                user_type:
+                  type: string
+                job_role:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email_address:
+                  type: string
+                status:
+                  type: string
+                  description: allowed values Pending|Accepted
+  '/v2/projects/{UUID}/managers/{USER_UUID}':
+    delete:
+      operationId: delete-v2-projects-uuid-managers
+      summary: Delete a project manager from a project
+      tags:
+        - V2 Projects
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - type: string
+          name: USER_UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
   '/v2/nurseries/{UUID}':
     delete:
       summary: Delete a nursery

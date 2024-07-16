@@ -170,6 +170,7 @@ function assignSpatieRole($user)
 
             break;
         case 'project-developer':
+        case 'project-manager':
         case 'funder':
         case 'government':
             $user->assignRole($user->role);
