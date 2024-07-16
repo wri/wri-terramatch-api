@@ -15,16 +15,12 @@ class IndexMyActionsController extends Controller
     {
         $user = Auth::user();
 
-        $organisationId = $user->organisation_id;
         $projectIds = $user->projects()->pluck('v2_projects.id')->toArray();
 
         $qry = Action::query()
             ->with('targetable')
             ->pending()
-            ->where(function ($query) use ($organisationId, $projectIds) {
-                $query->whereIn('project_id', $projectIds)
-                    ->where('organisation_id', $organisationId);
-            });
+            ->projectIds($projectIds);
 
         $actions = $qry->get();
 
