@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
@@ -96,5 +97,40 @@ class SitePolygon extends Model implements AuditableModel
     public function getAuditableNameAttribute(): string
     {
         return $this->poly_name ?? '';
+    }
+
+    public function scopeActive(Builder $query)
+    {
+        return $query->where('is_active', 1);
+    }
+
+    public function createCopy(User $user)
+    {
+        $geometry = $this->polygonGeometry()->first();
+        $copyGeometry = PolygonGeometry::create([
+            'geom' => $geometry->geom,
+            'created_by' => $user->id,
+        ]);
+        $newSitePolygon = $this->replicate();
+        $newSitePolygon->primary_uuid = $this->primary_uuid;
+        $newSitePolygon->poly_id = $copyGeometry->uuid;
+        $newSitePolygon->uuid = (string) Str::uuid();
+        $newSitePolygon->is_active = false;
+        $newSitePolygon->created_by = $user->id;
+        $newSitePolygon->version_name = now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
+        $newSitePolygon->save();
+
+        return $newSitePolygon;
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($instance) {
+            if (! is_null($instance->primary_uuid)) {
+                return;
+            }
+            $instance->primary_uuid = $instance->uuid;
+            $instance->save();
+        });
     }
 }

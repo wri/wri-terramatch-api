@@ -172,13 +172,17 @@ use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
+use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\ShowSitePolygonController;
 use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
+use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
+use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
 use App\Http\Controllers\V2\Stages\IndexStageController;
@@ -705,6 +709,10 @@ Route::prefix('project-pipeline')->group(function () {
 
 Route::prefix('site-polygon')->group(function () {
     Route::put('/status/bulk', ChangeStatusPolygonsController::class);
+    Route::get('/{uuid}', ShowSitePolygonController::class);
+    Route::get('/{uuid}/versions', IndexSitePolygonVersionsController::class);
+    Route::post('/{uuid}/new-version', StoreSitePolygonNewVersionController::class);
+    Route::put('/{uuid}/make-active', UpdateSitePolygonActiveController::class);
 });
 
 Route::get('/type-entity', EntityTypeController::class);

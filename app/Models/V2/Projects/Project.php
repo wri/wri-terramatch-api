@@ -299,7 +299,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             'site_id',
             'id',
             'uuid'
-        );
+        )->active();
     }
 
     public function treeSpecies()

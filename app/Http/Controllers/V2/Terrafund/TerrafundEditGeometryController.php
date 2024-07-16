@@ -8,6 +8,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Models\V2\User;
 use App\Services\PolygonService;
 use App\Services\SiteService;
 use Illuminate\Http\Request;
@@ -102,6 +103,18 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
+
+            if ($sitePolygon->is_active) {
+                $previousSitePolygon = SitePolygon::where('primary_uuid', $sitePolygon->primary_uuid)
+                ->where('uuid', '!=', $sitePolygon->uuid)
+                ->latest('created_at')
+                ->first();
+                if ($previousSitePolygon) {
+                    $previousSitePolygon->is_active = true;
+                    $previousSitePolygon->save();
+                }
+            }
+
             $project = $sitePolygon->project;
             if (! $project) {
                 return response()->json(['message' => 'No project found for the given UUID.'], 404);
@@ -230,6 +243,13 @@ class TerrafundEditGeometryController extends Controller
                 'site_id' => $siteUuid,
             ]);
             $sitePolygon->save();
+
+            $user = User::isUuid(Auth::user()->uuid)->first();
+            $sitePolygon->primary_uuid = $sitePolygon->uuid;
+            $sitePolygon->is_active = true;
+            $sitePolygon->version_name = now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
+            $sitePolygon->save();
+
             App::make(SiteService::class)->setSiteToRestorationInProgress($siteUuid);
             $this->updateProjectCentroidFromPolygon($polygonGeometry);
 
