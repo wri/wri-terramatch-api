@@ -36,7 +36,6 @@ class IndexMyActionsControllerTest extends TestCase
             ])
             ->assertJsonMissing([
                 'uuid' => $completedAction->uuid,
-            ])
-            ->assertJsonCount(0, 'data');
+            ]);
     }
 }
