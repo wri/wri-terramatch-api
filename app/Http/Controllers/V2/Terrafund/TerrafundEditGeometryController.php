@@ -106,7 +106,8 @@ class TerrafundEditGeometryController extends Controller
 
             if ($sitePolygon->is_active == 1) {
                 $previousSitePolygon = SitePolygon::where('primary_uuid', $sitePolygon->primary_uuid)
-                ->orderByDesc('created_at')
+                ->where('uuid', '!=', $sitePolygon->uuid)
+                ->latest('created_at')
                 ->first();
                 if ($previousSitePolygon) {
                     $previousSitePolygon->is_active = 1;
