@@ -35,7 +35,7 @@ test: lint migrate-seed-test
 	docker-compose exec -T php ./vendor/bin/phpunit
 
 test-single:
-	docker-compose exec php ./vendor/bin/phpunit --filter IndexMyActionsControllerTest
+	docker-compose exec php ./vendor/bin/phpunit --filter $(t)
 
 ts: test-single
 
