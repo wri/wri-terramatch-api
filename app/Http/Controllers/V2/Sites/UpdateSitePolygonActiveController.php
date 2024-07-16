@@ -20,7 +20,7 @@ class UpdateSitePolygonActiveController extends Controller
             }
             SitePolygon::where('primary_uuid', $sitePolygon->primary_uuid)->update(['is_active' => 0]);
 
-            $sitePolygon->is_active = 1;
+            $sitePolygon->is_active = true;
             $sitePolygon->save();
 
             return response()->json($sitePolygon);

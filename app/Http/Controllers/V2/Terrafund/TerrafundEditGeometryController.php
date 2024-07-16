@@ -104,13 +104,13 @@ class TerrafundEditGeometryController extends Controller
             }
             $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
 
-            if ($sitePolygon->is_active == 1) {
+            if ($sitePolygon->is_active) {
                 $previousSitePolygon = SitePolygon::where('primary_uuid', $sitePolygon->primary_uuid)
                 ->where('uuid', '!=', $sitePolygon->uuid)
                 ->latest('created_at')
                 ->first();
                 if ($previousSitePolygon) {
-                    $previousSitePolygon->is_active = 1;
+                    $previousSitePolygon->is_active = true;
                     $previousSitePolygon->save();
                 }
             }
@@ -245,7 +245,7 @@ class TerrafundEditGeometryController extends Controller
 
             $user = User::isUuid(Auth::user()->uuid)->first();
             $sitePolygon->primary_uuid = $sitePolygon->uuid;
-            $sitePolygon->is_active = 1;
+            $sitePolygon->is_active = true;
             $sitePolygon->version_name = now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
             $sitePolygon->save();
 

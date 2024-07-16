@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->boolean('is_active')->default(false);
         });
 
-        DB::statement('UPDATE site_polygon set primary_uuid = uuid;');
+        DB::statement('UPDATE site_polygon set primary_uuid = uuid, is_active = true;');
 
         Schema::table('site_polygon', function (Blueprint $table) {
             $table->uuid('primary_uuid')->nullable(false)->change();
