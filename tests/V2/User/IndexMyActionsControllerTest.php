@@ -28,7 +28,7 @@ class IndexMyActionsControllerTest extends TestCase
         $this->actingAs($user)
             ->getJson('/api/v2/my/actions')
             ->assertStatus(200)
-            ->assertJsonCount(0, 'data') 
+            ->assertJsonCount(0, 'data')
             ->assertJsonFragment([
                 'uuid' => $projectAction->uuid,
             ])
