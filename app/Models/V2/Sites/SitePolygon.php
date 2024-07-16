@@ -33,6 +33,7 @@ class SitePolygon extends Model implements AuditableModel
     protected $table = 'site_polygon';
 
     protected $fillable = [
+      'primary_uuid',
       'poly_id',
       'poly_name',
       'site_id',
@@ -47,6 +48,8 @@ class SitePolygon extends Model implements AuditableModel
       'status',
       'created_by',
       'source',
+      'version_name',
+      'is_active',
     ];
 
     public function polygonGeometry(): BelongsTo
