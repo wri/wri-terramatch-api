@@ -23,7 +23,7 @@ class IndexMyActionsController extends Controller
             ->pending()
             ->where(function ($query) use ($organisationId, $projectIds) {
                 $query->whereIn('project_id', $projectIds)
-                    ->Where('organisation_id', $organisationId);
+                    ->where('organisation_id', $organisationId);
             });
 
         $actions = $qry->get();
