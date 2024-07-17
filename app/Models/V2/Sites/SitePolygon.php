@@ -104,7 +104,7 @@ class SitePolygon extends Model implements AuditableModel
 
     public function scopeActive(Builder $query)
     {
-        return $query->where('is_active', 1);
+        return $query->where('is_active', true);
     }
 
     public function createCopy(User $user)
