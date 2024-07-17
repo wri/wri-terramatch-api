@@ -13,13 +13,14 @@ return new class extends Migration {
         Schema::table('site_polygon', function (Blueprint $table) {
             $table->string('version_name')->nullable();
             $table->string('primary_uuid')->nullable()->after('uuid');
-            $table->integer('is_active')->nullable();
-            ;
+            $table->boolean('is_active')->default(false);
         });
-        DB::statement('UPDATE site_polygon set primary_uuid = uuid, is_active = 1;');
+
+        DB::statement('UPDATE site_polygon set primary_uuid = uuid, is_active = true;');
 
         Schema::table('site_polygon', function (Blueprint $table) {
             $table->uuid('primary_uuid')->nullable(false)->change();
+            $table->index('primary_uuid');
         });
     }
 

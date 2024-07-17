@@ -33,6 +33,7 @@ class SitePolygon extends Model implements AuditableModel
     protected $table = 'site_polygon';
 
     protected $fillable = [
+      'primary_uuid',
       'poly_id',
       'poly_name',
       'site_id',
@@ -47,6 +48,8 @@ class SitePolygon extends Model implements AuditableModel
       'status',
       'created_by',
       'source',
+      'version_name',
+      'is_active',
     ];
 
     public function polygonGeometry(): BelongsTo
@@ -101,7 +104,7 @@ class SitePolygon extends Model implements AuditableModel
 
     public function scopeActive(Builder $query)
     {
-        return $query->where('is_active', 1);
+        return $query->where('is_active', true);
     }
 
     public function createCopy(User $user)
@@ -115,7 +118,7 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon->primary_uuid = $this->primary_uuid;
         $newSitePolygon->poly_id = $copyGeometry->uuid;
         $newSitePolygon->uuid = (string) Str::uuid();
-        $newSitePolygon->is_active = 0;
+        $newSitePolygon->is_active = false;
         $newSitePolygon->created_by = $user->id;
         $newSitePolygon->version_name = now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
         $newSitePolygon->save();

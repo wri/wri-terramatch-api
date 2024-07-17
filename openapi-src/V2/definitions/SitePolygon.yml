@@ -60,4 +60,4 @@ properties:
   version_name:
     type: string
   is_active:
-    type: integer
+    type: boolean

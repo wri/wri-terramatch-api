@@ -44216,7 +44216,7 @@ definitions:
       version_name:
         type: string
       is_active:
-        type: integer
+        type: boolean
   GeometryString:
     type: object
     properties:
@@ -44288,7 +44288,7 @@ definitions:
         version_name:
           type: string
         is_active:
-          type: integer
+          type: boolean
   SitePolygonsBboxResponse:
     title: SitePolygonsBboxResponse
     type: object
@@ -45035,7 +45035,7 @@ definitions:
             version_name:
               type: string
             is_active:
-              type: integer
+              type: boolean
       bbox:
         type: array
         items:
@@ -45151,7 +45151,7 @@ definitions:
         version_name:
           type: string
         is_active:
-          type: integer
+          type: boolean
   PolygonChangeStatusUpdate:
     type: object
     properties:
@@ -95132,7 +95132,7 @@ paths:
                 version_name:
                   type: string
                 is_active:
-                  type: integer
+                  type: boolean
         '400':
           description: Bad request
         '500':
@@ -96887,7 +96887,7 @@ paths:
                     version_name:
                       type: string
                     is_active:
-                      type: integer
+                      type: boolean
               bbox:
                 type: array
                 items:
@@ -97078,7 +97078,7 @@ paths:
                     version_name:
                       type: string
                     is_active:
-                      type: integer
+                      type: boolean
   '/v2/site-polygon/{uuid}':
     get:
       summary: get a site polygon by uuid
@@ -97161,7 +97161,7 @@ paths:
                   version_name:
                     type: string
                   is_active:
-                    type: integer
+                    type: boolean
   '/v2/site-polygon/{uuid}/versions':
     get:
       summary: list of site polygon versions
@@ -97246,7 +97246,7 @@ paths:
                     version_name:
                       type: string
                     is_active:
-                      type: integer
+                      type: boolean
   '/v2/site-polygon/{uuid}/new-version':
     post:
       summary: create a new site polygon version
@@ -97329,7 +97329,7 @@ paths:
                   version_name:
                     type: string
                   is_active:
-                    type: integer
+                    type: boolean
   '/v2/site-polygon/{uuid}/make-active':
     put:
       summary: update a site polygon to make active the site polygon uuid version and inactive the rest with same primary_uuid
@@ -97412,4 +97412,4 @@ paths:
                   version_name:
                     type: string
                   is_active:
-                    type: integer
+                    type: boolean
