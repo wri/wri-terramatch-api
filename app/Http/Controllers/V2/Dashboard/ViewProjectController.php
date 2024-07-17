@@ -31,7 +31,7 @@ class ViewProjectController extends Controller
             $response = (object)[
                 'allowed' => $isAllowed ? true : false,
             ];
-        } elseif ($role === 'project_developer') {
+        } elseif ($role === 'project-developer') {
             $projectId = Project::where('uuid', $uuid)
                 ->value('id');
             $isInvite = ProjectInvite::where('email_address', $user->email_address)

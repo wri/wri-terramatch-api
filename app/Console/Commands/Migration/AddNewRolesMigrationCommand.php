@@ -50,8 +50,8 @@ class AddNewRolesMigrationCommand extends Command
             }
         }
 
-        if (Role::where('name', 'project_developer')->count() === 0) {
-            $role = Role::create(['name' => 'project_developer']);
+        if (Role::where('name', 'project-developer')->count() === 0) {
+            $role = Role::create(['name' => 'project-developer']);
             $role->givePermissionTo(['view-dashboard']);
         }
 

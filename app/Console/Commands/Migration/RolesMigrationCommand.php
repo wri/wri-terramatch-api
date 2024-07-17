@@ -80,11 +80,6 @@ class RolesMigrationCommand extends Command
             $role->givePermissionTo(['projects-read', 'polygons-manage', 'media-manage']);
         }
 
-        if (Role::where('name', 'project_developer')->count() === 0) {
-            $role = Role::create(['name' => 'project_developer']);
-            $role->givePermissionTo(['view-dashboard']);
-        }
-
         if (Role::where('name', 'government')->count() === 0) {
             $role = Role::create(['name' => 'government']);
             $role->givePermissionTo(['view-dashboard']);
