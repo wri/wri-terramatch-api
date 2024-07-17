@@ -13,7 +13,7 @@ class CreateProjectPolygonsTable extends Migration
      */
     public function up()
     {
-        Schema::create('project_polygons', function (Blueprint $table) {
+        Schema::create('project_polygon', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('poly_id');
@@ -37,6 +37,6 @@ class CreateProjectPolygonsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_polygons');
+        Schema::dropIfExists('project_polygon');
     }
 }
