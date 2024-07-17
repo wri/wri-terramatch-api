@@ -1,0 +1,21 @@
+summary: list of site polygon versions
+operationId: get-v2-site-polygon-uuid-versions
+tags:
+  - V2 Polygons
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    type: string
+    format: uuid
+    description: The UUID of the site polygon
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/SitePolygon'
