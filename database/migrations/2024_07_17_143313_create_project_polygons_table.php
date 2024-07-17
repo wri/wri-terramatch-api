@@ -13,20 +13,17 @@ class CreateProjectPolygonsTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('project_polygon');
         Schema::create('project_polygon', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('poly_id');
-            $table->enum('entity', ['pitch', 'project']);
-            $table->uuid('entity_uuid');
+            $table->string('poly_uuid');
+            $table->morphs('entity');
             $table->string('last_modified_by');
-            $table->timestamp('deleted_at')->nullable();
-            $table->timestamps();
             $table->string('created_by');
 
-            $table->index('poly_id');
-            $table->index('entity');
-            $table->index('entity_uuid');
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 

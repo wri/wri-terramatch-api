@@ -27,9 +27,9 @@ class ProjectPolygon extends Model implements AuditableModel
     protected $table = 'project_polygon';
 
     protected $fillable = [
-        'poly_id',
-        'entity',
-        'entity_uuid',
+        'poly_uuid',
+        'entity_type',
+        'entity_id',
         'last_modified_by',
         'created_by',
     ];
@@ -42,12 +42,12 @@ class ProjectPolygon extends Model implements AuditableModel
 
     public function polygonGeometry(): BelongsTo
     {
-        return $this->belongsTo(PolygonGeometry::class, 'poly_id', 'uuid');
+        return $this->belongsTo(PolygonGeometry::class, 'poly_uuid', 'uuid');
     }
 
     public function scopeForPolygonGeometry($query, $uuid): Builder
     {
-        return $query->where('poly_id', $uuid);
+        return $query->where('poly_uuid', $uuid);
     }
 
     public function entity()
@@ -77,8 +77,6 @@ class ProjectPolygon extends Model implements AuditableModel
 
     public function getAuditableNameAttribute(): string
     {
-        return $this->entity . ' Polygon';
+        return $this->entity_type . ' Polygon';
     }
-
-    
 }
