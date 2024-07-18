@@ -168,6 +168,7 @@ class PolygonService
                 [
                     'poly_id' => $polygonUuid ?? null,
                     'created_by' => Auth::user()?->id,
+                    'is_active' => true,
                 ],
             ));
             $site = $sitePolygon->site()->first();

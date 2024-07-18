@@ -88,4 +88,9 @@ class Action extends Model
             ->where('targetable_type', get_class($targetable))
             ->where('targetable_id', $targetable->id);
     }
+
+    public function scopeProjectIds(Builder $query, array $projectIds)
+    {
+        return $query->whereIn('project_id', $projectIds);
+    }
 }
