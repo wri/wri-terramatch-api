@@ -1,0 +1,19 @@
+summary: update a site polygon to make active the site polygon uuid version and inactive the rest with same primary_uuid
+operationId: put-v2-site-polygon-uuid-make-active
+tags:
+  - V2 Polygons
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    type: string
+    format: uuid
+    description: The UUID of the site polygon
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          $ref: '../../definitions/_index.yml#/SitePolygon'
