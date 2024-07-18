@@ -63,10 +63,11 @@ class FixDuplicateDemographics extends Command
                 foreach ($stat['rows'] as $index => &$row) {
                     if ($hasKept) {
                         $row['action'] = 'delete';
+
                         continue;
                     }
 
-                    if (($allEqual && $index == 0) || (!$allEqual && $row['amount'] == $max)) {
+                    if (($allEqual && $index == 0) || (! $allEqual && $row['amount'] == $max)) {
                         $row['action'] = 'keep';
                         $hasKept = true;
                     } else {
@@ -85,7 +86,7 @@ class FixDuplicateDemographics extends Command
                     'name' => $stat['name'],
                     'rows' => $stat['rows'],
                 ];
-                if (!$hasKept) {
+                if (! $hasKept) {
                     $this->error('No demographic to keep found! ' . json_encode($info, JSON_PRETTY_PRINT));
                     exit(1);
                 }
