@@ -7,6 +7,8 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 
 class GeometryHelper
 {
@@ -144,8 +146,11 @@ class GeometryHelper
         $groupedFeatures = [];
         $noSiteKey = 'no_site';
         foreach ($geojson['features'] as $feature) {
-            if (isset($feature['properties']['site_id']) && $feature['properties']['site_id']) {
-                $siteId = $feature['properties']['site_id'];
+            $siteId = $feature['properties']['site_id'];
+            $isUuid = (bool) Str::isUuid($siteId);
+            
+            if (isset($siteId) && $siteId && $isUuid) {
+                $siteId = $siteId;
                 if (! isset($groupedFeatures[$siteId])) {
                     $groupedFeatures[$siteId] = [
                         'type' => 'FeatureCollection',
@@ -185,7 +190,7 @@ class GeometryHelper
 
             $sitePolygon = Site::isUuid($siteId)->first();
             if ($sitePolygon === null || $sitePolygon->project === null) {
-                Log::error('site polygon or project not found for siteId: '.$siteId);
+                Log::error('Site polygon or project not found for siteId: '.$siteId);
                 if (! isset($projectGroupedFeatures[$noProjectKey])) {
                     $projectGroupedFeatures[$noProjectKey] = [];
                 }

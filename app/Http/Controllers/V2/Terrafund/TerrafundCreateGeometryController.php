@@ -366,7 +366,8 @@ class TerrafundCreateGeometryController extends Controller
         $splittedgeojson = GeometryHelper::splitMultiPolygons($geojson);
         $groupedByProject = GeometryHelper::groupFeaturesByProjectAndSite($splittedgeojson);
         $isValidArea = false;
-        foreach ($groupedByProject as $projectUuid => $sites) {
+        try{
+          foreach ($groupedByProject as $projectUuid => $sites) {
             if ($projectUuid !== 'no_project') {
                 $currentAreaValuesForProject = EstimatedArea::getAreaOfProject($projectUuid);
                 $newTotalArea = 0;
@@ -389,8 +390,7 @@ class TerrafundCreateGeometryController extends Controller
 
                 foreach ($featureCollection['features'] as $index => $feature) {
                     $siteId = $feature['properties']['site_id'] ?? null;
-
-                    if ($siteId && $feature['geometry']['type'] === 'Polygon') {
+                    if ($siteId && $feature['geometry']['type'] === 'Polygon' && Str::isUuid($siteId)) {
                         $geojsonInside = json_encode($feature['geometry']);
                         $validationGeojson = ['features' => ['feature' => ['properties' => $feature['properties']]]];
 
@@ -421,7 +421,11 @@ class TerrafundCreateGeometryController extends Controller
                     }
                 }
             }
+          }
+        } catch(Exception $e){
+          Log::info("Error: ".$e->getMessage());
         }
+        
 
         return $csvData;
     }
@@ -431,7 +435,7 @@ class TerrafundCreateGeometryController extends Controller
         if ($isEmpty) {
             return [
               'polygon_name' => $feature['properties']['poly_name'] ?? 'Unnamed Polygon',
-              'site_uuid' => '',
+              'site_uuid' => $feature['properties']['site_id'] ?? '',
               'No Overlapping' => '',
               'No Self-intersection' => '',
               'Inside Coordinate System' => '',
