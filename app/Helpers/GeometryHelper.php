@@ -9,7 +9,6 @@ use App\Models\V2\Sites\Site;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-
 class GeometryHelper
 {
     public function centroidOfProject($projectUuid)
@@ -148,7 +147,7 @@ class GeometryHelper
         foreach ($geojson['features'] as $feature) {
             $siteId = $feature['properties']['site_id'];
             $isUuid = (bool) Str::isUuid($siteId);
-            
+
             if (isset($siteId) && $siteId && $isUuid) {
                 $siteId = $siteId;
                 if (! isset($groupedFeatures[$siteId])) {
