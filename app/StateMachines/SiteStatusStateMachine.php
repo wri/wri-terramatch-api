@@ -4,16 +4,22 @@ namespace App\StateMachines;
 
 class SiteStatusStateMachine extends EntityStatusStateMachine
 {
+    public const RESTORATION_IN_PROGRESS = 'restoration-in-progress';
     public const DRAFT = 'draft';
-    public const PLANTING_IN_PROGRESS = 'planting-in-progress';
 
     public function transitions(): array
     {
-        return [];
-    }
+        $parentTransitions = parent::transitions();
 
-    public function defaultState(): ?string
-    {
-        return self::DRAFT;
+        $parentTransitions[self::NEEDS_MORE_INFORMATION][] = self::RESTORATION_IN_PROGRESS;
+        $parentTransitions[self::APPROVED][] = self::RESTORATION_IN_PROGRESS;
+        $parentTransitions[self::AWAITING_APPROVAL][] = self::RESTORATION_IN_PROGRESS;
+
+        return array_merge(
+            [
+                self::RESTORATION_IN_PROGRESS => [self::NEEDS_MORE_INFORMATION, self::APPROVED],
+            ],
+            $parentTransitions
+        );
     }
 }

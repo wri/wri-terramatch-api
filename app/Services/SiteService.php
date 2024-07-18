@@ -17,7 +17,7 @@ class SiteService
         if ($site->status != EntityStatusStateMachine::APPROVED) {
             return;
         }
-        $site->status = SiteStatusStateMachine::PLANTING_IN_PROGRESS;
+        $site->status = SiteStatusStateMachine::RESTORATION_IN_PROGRESS;
         $site->save();
     }
 }

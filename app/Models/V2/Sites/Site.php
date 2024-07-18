@@ -20,6 +20,8 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Seeding;
 use App\Models\V2\Stratas\Strata;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\StateMachines\EntityStatusStateMachine;
+use App\StateMachines\SiteStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -57,6 +59,14 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel
     use HasSiteStatus;
     use HasEntityResources;
 
+    public static array $approvedStatuses = [
+        EntityStatusStateMachine::APPROVED,
+        SiteStatusStateMachine::RESTORATION_IN_PROGRESS,
+    ];
+
+    public $stateMachines = [
+        'status' => SiteStatusStateMachine::class,
+    ];
     protected $auditInclude = [
         'status',
         'feedback',

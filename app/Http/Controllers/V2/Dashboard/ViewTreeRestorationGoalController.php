@@ -61,10 +61,7 @@ class ViewTreeRestorationGoalController extends Controller
 
     private function prepareProjectQuery(Request $request)
     {
-
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
-
-        return $query;
+        return TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
     }
 
     private function getRawProjectIds($query)
@@ -82,7 +79,7 @@ class ViewTreeRestorationGoalController extends Controller
 
     private function getSiteIds($projectIds)
     {
-        return Site::whereIn('project_id', $projectIds)->where('status', EntityStatusStateMachine::APPROVED)->pluck('id');
+        return Site::whereIn('project_id', $projectIds)->whereIn('status', Site::$approvedStatuses)->pluck('id');
     }
 
     private function getDistinctDates($siteIds)
@@ -175,8 +172,6 @@ class ViewTreeRestorationGoalController extends Controller
 
     private function getAverageSurvival(array $projectIds)
     {
-        $averageSurvivalRate = ProjectReport::whereIn('project_id', $projectIds)->avg('pct_survival_to_date');
-
-        return $averageSurvivalRate;
+        return ProjectReport::isApproved()->whereIn('project_id', $projectIds)->avg('pct_survival_to_date');
     }
 }

@@ -24,7 +24,7 @@ trait HasSiteStatus
         SiteStatusStateMachine::DRAFT => 'Draft',
         SiteStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
         SiteStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
-        SiteStatusStateMachine::PLANTING_IN_PROGRESS => 'Planting in progress',
+        SiteStatusStateMachine::RESTORATION_IN_PROGRESS => 'Planting in progress',
         SiteStatusStateMachine::APPROVED => 'Approved',
     ];
 
