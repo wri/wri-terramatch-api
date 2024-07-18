@@ -145,11 +145,9 @@ class GeometryHelper
         $groupedFeatures = [];
         $noSiteKey = 'no_site';
         foreach ($geojson['features'] as $feature) {
-            $siteId = $feature['properties']['site_id'];
-            $isUuid = (bool) Str::isUuid($siteId);
 
-            if (isset($siteId) && $siteId && $isUuid) {
-                $siteId = $siteId;
+            if (isset($feature['properties']['site_id']) && Str::isUuid($feature['properties']['site_id'])) {
+                $siteId = $feature['properties']['site_id'];
                 if (! isset($groupedFeatures[$siteId])) {
                     $groupedFeatures[$siteId] = [
                         'type' => 'FeatureCollection',
