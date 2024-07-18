@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 /**
  * @property Collection $demographics
@@ -130,6 +129,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
 
                     // Keep the last value for this type/subtype/name in the incoming data set.
                     $syncRow['amount'] = $amount;
+
                     return $syncData;
                 }
             }
