@@ -18,9 +18,9 @@ class UpdateSitePolygonActiveController extends Controller
             if (! $sitePolygon) {
                 return response()->json(['error' => 'Site polygon not found'], 404);
             }
-            SitePolygon::where('primary_uuid', $sitePolygon->primary_uuid)->update(['is_active' => 0]);
+            SitePolygon::where('primary_uuid', $sitePolygon->primary_uuid)->update(['is_active' => false]);
 
-            $sitePolygon->is_active = 1;
+            $sitePolygon->is_active = true;
             $sitePolygon->save();
 
             return response()->json($sitePolygon);
