@@ -6,6 +6,7 @@ use App\Helpers\GeometryHelper;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\ProjectPolygon;
+use App\Services\PolygonService;
 use App\Services\PythonService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
@@ -27,7 +28,7 @@ class ParseGeomBoundariesPitches extends Command
 
         foreach ($projectPitches as $pitch) {
             if ($pitch->proj_boundary && $pitch->proj_boundary !== 'null') {
-                $this->processProjectPitch($pitch);
+              App::make(PolygonService::class)->processEntity($pitch);
             }
             $bar->advance();
         }
@@ -46,31 +47,4 @@ class ParseGeomBoundariesPitches extends Command
         ->get();
     }
 
-    private function processProjectPitch($pitch)
-    {
-        $currentGeojson = $pitch->proj_boundary;
-        if($currentGeojson) {
-            if (GeometryHelper::isFeatureCollectionEmpty($currentGeojson)) {
-                return;
-            }
-            $needsVoronoi = GeometryHelper::isOneOrTwoPointFeatures($currentGeojson);
-            if ($needsVoronoi) {
-                $pointWithEstArea = GeometryHelper::addEstAreaToPointFeatures($currentGeojson);
-                $currentGeojson = App::make(PythonService::class)->voronoiTransformation(json_decode($pointWithEstArea));
-            }
-            $convexHullWkt = GeometryHelper::getConvexHull($currentGeojson);
-            if ($convexHullWkt) {
-                $polygonGeometry = new PolygonGeometry();
-                $polygonGeometry->geom = DB::raw("ST_GeomFromText('" . $convexHullWkt . "')");
-                $polygonGeometry->save();
-                ProjectPolygon::create([
-                    'poly_uuid' => $polygonGeometry->uuid,
-                    'entity_type' => ProjectPitch::class,
-                    'entity_id' => $pitch->id,
-                    'last_modified_by' => 'system',
-                    'created_by' => 'system',
-                ]);
-            }
-        }
-    }
 }
