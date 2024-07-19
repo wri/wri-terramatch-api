@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 class PolygonService
@@ -78,11 +79,12 @@ class PolygonService
     }
 
     public function getEntity($entity_type, $entity_uuid) {
+      Log::info("Entity type: $entity_type, Entity UUID: $entity_uuid");
       switch ($entity_type) {
           case 'project':
-              return Project::uuid($entity_uuid);
+              return Project::isUuid($entity_uuid)->first();
           case 'pitch':
-              return ProjectPitch::uuid($entity_uuid);
+              return ProjectPitch::isUuid($entity_uuid)->first();
           default:
               throw new InvalidArgumentException("Invalid entity type: $entity_type");
       }
