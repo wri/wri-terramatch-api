@@ -22,8 +22,6 @@ class ParseGeomBoundariesPitches extends Command
         $frameworkKey = $this->argument('framework_key');
 
         $projectPitches = $this->getProjectPitches($frameworkKey);
-        $ids = $projectPitches->pluck('id')->toArray();
-        $this->info(json_encode($ids));
         $bar = $this->output->createProgressBar(count($projectPitches));
         $bar->start();
 
