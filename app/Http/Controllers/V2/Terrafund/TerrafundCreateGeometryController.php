@@ -74,8 +74,9 @@ class TerrafundCreateGeometryController extends Controller
               SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
               return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
             } else if ($entity_type === 'project' || $entity_type === 'pitch') {
-              $entity = App::make(PolygonService::class)->getEntity($entity_uuid, $entity_type);
-              App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);
+              $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
+              Log::info('Entity: '.json_encode($entity));
+              return App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);
             }
             
         } catch (Exception $e) {
@@ -345,8 +346,9 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('max_execution_time', '240');
         ini_set('memory_limit', '-1');
         if ($request->hasFile('file')) {
-            $entity_uuid = $request->input('uuid');
-            $entity_type = $request->input('entity_type');
+            $entity_uuid = $request->get('entity_uuid');
+            $entity_type = $request->get('entity_type');
+            Log::info('inside Entity type: '.$entity_type." Entity UUID: ".$entity_uuid);
             $file = $request->file('file');
             $tempDir = sys_get_temp_dir();
             $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
