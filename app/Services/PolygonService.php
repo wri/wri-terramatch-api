@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Helpers\GeometryHelper;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\ProjectPitch;
+use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
@@ -44,7 +46,38 @@ class PolygonService
         'distr',
         'num_trees',
     ];
+    public function processEntity($entity)
+    {
+        $geojsonField = $entity instanceof ProjectPitch ? 'proj_boundary' : 'boundary_geojson';
+        $currentGeojson = $entity->$geojsonField;
 
+        if ($currentGeojson) {
+            if (GeometryHelper::isFeatureCollectionEmpty($currentGeojson)) {
+                return;
+            }
+
+            $needsVoronoi = GeometryHelper::isOneOrTwoPointFeatures($currentGeojson);
+            if ($needsVoronoi) {
+                $pointWithEstArea = GeometryHelper::addEstAreaToPointFeatures($currentGeojson);
+                $currentGeojson = App::make(PythonService::class)->voronoiTransformation(json_decode($pointWithEstArea));
+            }
+
+            $convexHullWkt = GeometryHelper::getConvexHull($currentGeojson);
+            if ($convexHullWkt) {
+                $polygonGeometry = new PolygonGeometry();
+                $polygonGeometry->geom = DB::raw("ST_GeomFromText('" . $convexHullWkt . "')");
+                $polygonGeometry->save();
+
+                ProjectPolygon::create([
+                    'poly_uuid' => $polygonGeometry->uuid,
+                    'entity_type' => get_class($entity),
+                    'entity_id' => $entity->id,
+                    'last_modified_by' => 'system',
+                    'created_by' => 'system',
+                ]);
+            }
+        }
+    }
     public function createGeojsonModels($geojson, $sitePolygonProperties = []): array
     {
         if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
