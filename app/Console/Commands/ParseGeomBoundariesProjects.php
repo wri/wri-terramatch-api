@@ -2,10 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\GeometryHelper;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
+use App\Services\PythonService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 
 class ParseGeomBoundariesProjects extends Command
@@ -18,30 +21,34 @@ class ParseGeomBoundariesProjects extends Command
     {
         $frameworkKey = $this->argument('framework_key');
         $this->info($frameworkKey);
+
         $projects = Project::where('framework_key', $frameworkKey)
         ->whereNotNull('boundary_geojson')
         ->where('boundary_geojson', '!=', 'null')
         ->get();
+        $bar = $this->output->createProgressBar(count($projects));
+        $bar->start();
         foreach ($projects as $project) {
             $this->processProject($project);
+            $bar->advance();
         }
-
+        $bar->finish();
         $this->info("\nGeometry boundaries parsing completed.");
-    }
-
-    private function getConvexHull($geoJson)
-    {
-        $geoJsonString = is_array($geoJson) ? json_encode($geoJson) : $geoJson;
-        $query = 'SELECT ST_AsText(ST_CONVEXHULL(ST_GeomFromGeoJSON(:geojson))) as wkt';
-        $result = DB::select($query, ['geojson' => $geoJsonString]);
-
-        return $result[0]->wkt ?? null;
     }
 
     private function processProject($project)
     {
-        if ($project->boundary_geojson) {
-            $convexHullWkt = $this->getConvexHull($project->boundary_geojson);
+        $currentGeojson = $project->boundary_geojson;
+        if ($currentGeojson) {
+            if (GeometryHelper::isFeatureCollectionEmpty($currentGeojson)) {
+                return;
+            }
+            $needsVoronoi = GeometryHelper::isOneOrTwoPointFeatures($currentGeojson);
+            if ($needsVoronoi) {
+                $pointWithEstArea = GeometryHelper::addEstAreaToPointFeatures($currentGeojson);
+                $currentGeojson = App::make(PythonService::class)->voronoiTransformation(json_decode($pointWithEstArea));
+            }
+            $convexHullWkt = GeometryHelper::getConvexHull($currentGeojson);
 
             if ($convexHullWkt) {
                 $polygonGeometry = new PolygonGeometry();

@@ -6,6 +6,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -245,5 +246,61 @@ class GeometryHelper
             'type' => 'FeatureCollection',
             'features' => $resultFeatures,
         ];
+    }
+
+    public static function isOneOrTwoPointFeatures($geojson)
+    {
+        $data = json_decode($geojson, true);
+        if (! isset($data['features']) || ! is_array($data['features'])) {
+            return false;
+        }
+        $totalFeatures = count($data['features']);
+        $pointCount = 0;
+
+        foreach ($data['features'] as $feature) {
+            if (isset($feature['geometry']) && $feature['geometry']['type'] === 'Point') {
+                $pointCount++;
+            }
+        }
+
+        return ($totalFeatures === 1 || $totalFeatures === 2) && $pointCount === $totalFeatures;
+    }
+
+    public static function addEstAreaToPointFeatures($geojson)
+    {
+        $EST_AREA = 78;
+        $data = json_decode($geojson, true);
+        if (! isset($data['features']) || ! is_array($data['features'])) {
+            return false;
+        }
+        foreach ($data['features'] as &$feature) {
+            if (isset($feature['geometry']) && $feature['geometry']['type'] === 'Point') {
+                if (! isset($feature['properties'])) {
+                    $feature['properties'] = [];
+                }
+                $feature['properties']['est_area'] = $EST_AREA;
+            }
+        }
+
+        return json_encode($data);
+    }
+
+    public static function isFeatureCollectionEmpty($geojson)
+    {
+        $data = json_decode($geojson, true);
+        if (isset($data['features']) && is_array($data['features'])) {
+            return empty($data['features']);
+        }
+
+        return false;
+    }
+
+    public static function getConvexHull($geoJson)
+    {
+        $geoJsonString = is_array($geoJson) ? json_encode($geoJson) : $geoJson;
+        $query = 'SELECT ST_AsText(ST_CONVEXHULL(ST_GeomFromGeoJSON(:geojson))) as wkt';
+        $result = DB::select($query, ['geojson' => $geoJsonString]);
+
+        return $result[0]->wkt ?? null;
     }
 }
