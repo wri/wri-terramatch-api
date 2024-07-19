@@ -63,7 +63,7 @@ class TerrafundCreateGeometryController extends Controller
     /**
      * @throws ValidationException
      */
-    public function insertGeojsonToDB(string $geojsonFilename, ?string $site_id = null)
+    public function insertGeojsonToDB(string $geojsonFilename, ?string $entity_uuid = null, ?string $entity_type = null)
     {
         try {
             $tempDir = sys_get_temp_dir();
@@ -71,8 +71,10 @@ class TerrafundCreateGeometryController extends Controller
             $geojsonData = file_get_contents($geojsonPath);
             $geojson = json_decode($geojsonData, true);
             SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
-
-            return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $site_id, 'source' => PolygonService::UPLOADED_SOURCE]);
+            if ( $entity_type === 'site' || $entity_type === null) {
+              return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
+            }
+            
         } catch (Exception $e) {
             return ['error' => $e->getMessage()];
         }
@@ -157,7 +159,7 @@ class TerrafundCreateGeometryController extends Controller
 
                 return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
             }
-            $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
+            $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site');
             if (isset($uuid['error'])) {
                 return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
             }
@@ -219,7 +221,7 @@ class TerrafundCreateGeometryController extends Controller
 
                     return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
                 }
-                $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id);
+                $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site');
                 if (isset($uuid['error'])) {
                     return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
                 }
@@ -335,7 +337,7 @@ class TerrafundCreateGeometryController extends Controller
         return response()->json(['polygon_id' => $uuid, 'criteria_list' => $criteriaList]);
     }
 
-    public function uploadGeoJSONFile(Request $request)
+    public function uploadGeoJSONFileProject(Request $request)
     {
         ini_set('max_execution_time', '240');
         ini_set('memory_limit', '-1');
@@ -347,6 +349,29 @@ class TerrafundCreateGeometryController extends Controller
             $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
             $file->move($tempDir, $filename);
             $uuid = $this->insertGeojsonToDB($filename, $site_id);
+            if (is_array($uuid) && isset($uuid['error'])) {
+                return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
+            }
+            App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
+
+            return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
+        } else {
+            return response()->json(['error' => 'GeoJSON file not provided in request'], 400);
+        }
+    }
+
+    public function uploadGeoJSONFile(Request $request)
+    {
+        ini_set('max_execution_time', '240');
+        ini_set('memory_limit', '-1');
+        if ($request->hasFile('file')) {
+            $site_id = $request->input('uuid');
+            $file = $request->file('file');
+            $tempDir = sys_get_temp_dir();
+            $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
+            $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+            $file->move($tempDir, $filename);
+            $uuid = $this->insertGeojsonToDB($filename, $site_id, 'site');
             if (is_array($uuid) && isset($uuid['error'])) {
                 return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
             }
