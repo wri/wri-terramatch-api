@@ -69,10 +69,13 @@ class TerrafundCreateGeometryController extends Controller
             $tempDir = sys_get_temp_dir();
             $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
             $geojsonData = file_get_contents($geojsonPath);
-            $geojson = json_decode($geojsonData, true);
-            SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
             if ( $entity_type === 'site' || $entity_type === null) {
+              $geojson = json_decode($geojsonData, true);
+              SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
               return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
+            } else if ($entity_type === 'project' || $entity_type === 'pitch') {
+              $entity = App::make(PolygonService::class)->getEntity($entity_uuid, $entity_type);
+              App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);
             }
             
         } catch (Exception $e) {
@@ -342,17 +345,16 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('max_execution_time', '240');
         ini_set('memory_limit', '-1');
         if ($request->hasFile('file')) {
-            $site_id = $request->input('uuid');
+            $entity_uuid = $request->input('uuid');
+            $entity_type = $request->input('entity_type');
             $file = $request->file('file');
             $tempDir = sys_get_temp_dir();
             $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
-            $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
             $file->move($tempDir, $filename);
-            $uuid = $this->insertGeojsonToDB($filename, $site_id);
+            $uuid = $this->insertGeojsonToDB($filename, $entity_uuid, $entity_type);
             if (is_array($uuid) && isset($uuid['error'])) {
                 return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
             }
-            App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
 
             return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
