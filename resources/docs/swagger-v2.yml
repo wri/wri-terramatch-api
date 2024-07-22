@@ -45166,6 +45166,15 @@ definitions:
               type: string
             status:
               type: string
+  ProjectPolygonResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Project polygon created successfully
+      uuid:
+        type: string
+        description: UUID of the created project polygon
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95836,7 +95845,7 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/terrafund//project-polygon":
+  /v2/terrafund/project-polygon:
     get:
       summary: Get Site Polygon Data
       description: Retrieve site polygon data for the given UUID.
@@ -95894,6 +95903,57 @@ paths:
               message:
                 type: string
                 example: An error message describing the issue.
+  '/v2/terrafund/project-polygon/{uuid}':
+    delete:
+      summary: Delete polygon records
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon geometry to delete
+      responses:
+        '204':
+          description: No Content
+  '/v2/terrafund/project-polygon/{uuid}/{entity_uuid}/{entity_type}':
+    post:
+      summary: create project/pitch polygon relation
+      tags:
+        - V2 project pitch geometry
+      description: |
+        Receives the uuid of the polygon, the uuid of the entity and the type of the entity and creates a relation between them.
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon related
+        - in: path
+          name: entity_uuid
+          required: true
+          type: string
+          description: The UUID of the entity
+        - in: path
+          name: entity_type
+          required: true
+          type: string
+          description: The type of the entity
+      responses:
+        '201':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Project polygon created successfully
+              uuid:
+                type: string
+                description: UUID of the created project polygon
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   /v2/dashboard/jobs-created:
     get:
       summary: view Jobs created for dashboard
