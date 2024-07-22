@@ -62,6 +62,7 @@ class PolygonService
       }
 
       $convexHullWkt = GeometryHelper::getConvexHull($currentGeojson);
+      Log::info("Convex Hull WKT: $convexHullWkt");
       if ($convexHullWkt) {
           $polygonGeometry = new PolygonGeometry();
           $polygonGeometry->geom = DB::raw("ST_GeomFromText('" . $convexHullWkt . "')");
@@ -71,8 +72,8 @@ class PolygonService
               'poly_uuid' => $polygonGeometry->uuid,
               'entity_type' => get_class($entity),
               'entity_id' => $entity->id,
-              'last_modified_by' => 'system',
-              'created_by' => 'system',
+              'last_modified_by' => Auth::user() ? Auth::user()?->id : 'system',
+              'created_by' => Auth::user() ? Auth::user()?->id : 'system'
           ]);
           return $polygonGeometry->uuid;
       }

@@ -75,7 +75,6 @@ class TerrafundCreateGeometryController extends Controller
               return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
             } else if ($entity_type === 'project' || $entity_type === 'pitch') {
               $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
-              Log::info('Entity: '.json_encode($entity));
               return App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);
             }
             
@@ -142,7 +141,39 @@ class TerrafundCreateGeometryController extends Controller
 
         return $propertiesList;
     }
+    public function uploadKMLFileProject(Request $request)
+    {
+        ini_set('max_execution_time', '240');
+        ini_set('memory_limit', '-1');
+        if ($request->hasFile('file')) {
+            $entity_uuid = $request->get('entity_uuid');
+            $entity_type = $request->get('entity_type');
+            $kmlfile = $request->file('file');
+            $tempDir = sys_get_temp_dir();
+            $filename = uniqid('kml_file_') . '.' . $kmlfile->getClientOriginalExtension();
+            $kmlPath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+            $kmlfile->move($tempDir, $filename);
+            $geojsonFilename = Str::replaceLast('.kml', '.geojson', $filename);
+            $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+            $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $kmlPath]);
+            $process->run();
+            if (! $process->isSuccessful()) {
+                Log::error('Error converting KML to GeoJSON: ' . $process->getErrorOutput());
 
+                return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
+            }
+            $uuid = $this->insertGeojsonToDB($geojsonFilename, $entity_uuid, $entity_type);
+            if (isset($uuid['error'])) {
+                return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
+            }
+
+            App::make(SiteService::class)->setSiteToRestorationInProgress($entity_uuid);
+
+            return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
+        } else {
+            return response()->json(['error' => 'KML file not provided'], 400);
+        }
+    }
     public function uploadKMLFile(Request $request)
     {
         ini_set('max_execution_time', '240');
@@ -192,7 +223,52 @@ class TerrafundCreateGeometryController extends Controller
 
         return $shpFile;
     }
+    public function uploadShapefileProject(Request $request)
+    {
+        ini_set('max_execution_time', '240');
+        ini_set('memory_limit', '-1');
+        Log::debug('Upload Shape file data', ['request' => $request->all()]);
+        if ($request->hasFile('file')) {
+            $entity_uuid = $request->get('entity_uuid');
+            $entity_type = $request->get('entity_type');
+            $file = $request->file('file');
+            if ($file->getClientOriginalExtension() !== 'zip') {
+                return response()->json(['error' => 'Only ZIP files are allowed'], 400);
+            }
+            $tempDir = sys_get_temp_dir();
+            $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
+            mkdir($directory, 0755, true);
+            // Extract the contents of the ZIP file
+            $zip = new \ZipArchive();
+            if ($zip->open($file->getPathname()) === true) {
+                $zip->extractTo($directory);
+                $zip->close();
+                $shpFile = $this->findShpFile($directory);
+                if (! $shpFile) {
+                    return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
+                }
+                $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
+                $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+                $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
+                $process->run();
+                if (! $process->isSuccessful()) {
+                    Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
 
+                    return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
+                }
+                $uuid = $this->insertGeojsonToDB($geojsonFilename, $entity_uuid, $entity_type);
+                if (isset($uuid['error'])) {
+                    return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
+                }
+
+                return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
+            } else {
+                return response()->json(['error' => 'Failed to open the ZIP file'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'No file uploaded'], 400);
+        }
+    }
     public function uploadShapefile(Request $request)
     {
         ini_set('max_execution_time', '240');
