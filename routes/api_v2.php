@@ -621,8 +621,8 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-shapefile-validate', [TerrafundCreateGeometryController::class, 'uploadShapefileWithValidation']);
     Route::post('/upload-kml-validate', [TerrafundCreateGeometryController::class, 'uploadKMLFileWithValidation']);
     Route::post('/upload-geojson-project', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFileProject']);
-    Route::post('/upload-shapefile-project', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
-    Route::post('/upload-kml-project', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
+    Route::post('/upload-shapefile-project', [TerrafundCreateGeometryController::class, 'uploadShapefileProject']);
+    Route::post('/upload-kml-project', [TerrafundCreateGeometryController::class, 'uploadKMLFileProject']);
     
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
     Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
