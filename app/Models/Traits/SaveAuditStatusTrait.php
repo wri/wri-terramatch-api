@@ -61,6 +61,9 @@ trait SaveAuditStatusTrait
         $feedbackFieldLabels = [];
         foreach ($feedbackFields as $formQuestionUUID) {
             $question = FormQuestion::isUuid($formQuestionUUID)->first();
+            if (is_null($question)) {
+                continue;
+            }
             $entityModelLinkedName = $this->getEntityModelLinkedName($entity);
             $fields = config('wri.linked-fields.models.'.$entityModelLinkedName.'.fields');
             foreach ($fields as $field => $fieldValue) {
@@ -81,6 +84,9 @@ trait SaveAuditStatusTrait
                 continue;
             }
             $question = FormQuestion::isUuid($formQuestionUUID)->first();
+            if (is_null($question)) {
+                continue;
+            }
             $entityModelLinkedName = $this->getEntityModelLinkedName($entity);
             $fields = config('wri.linked-fields.models.'.$entityModelLinkedName.'.fields');
             foreach ($fields as $field => $fieldValue) {
