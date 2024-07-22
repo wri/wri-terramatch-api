@@ -14,8 +14,9 @@ class IndexSitePolygonVersionsController extends Controller
         Log::info('Fetching site polygons', ['uuid' => $uuid]);
 
         try {
-            $sitePolygons = SitePolygon::where('primary_uuid', $uuid)->get();
-
+            $sitePolygons = SitePolygon::where('primary_uuid', $uuid)
+                ->orderBy('created_at', 'desc')
+                ->get();
             return response()->json($sitePolygons);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
