@@ -95847,14 +95847,19 @@ paths:
           description: Internal server error
   /v2/terrafund/project-polygon:
     get:
-      summary: Get Site Polygon Data
-      description: Retrieve site polygon data for the given UUID.
+      summary: Get Project Polygon Data
+      description: Retrieve project polygon data for the given UUID.
       parameters:
-        - in: path
+        - in: query
           name: uuid
           type: string
           required: true
-          description: The UUID of the site polygon.
+          description: The UUID of the project polygon.
+        - in: query
+          name: entityType
+          type: string
+          required: true
+          description: The entity type of the project polygon.
       responses:
         '200':
           description: Successful response
