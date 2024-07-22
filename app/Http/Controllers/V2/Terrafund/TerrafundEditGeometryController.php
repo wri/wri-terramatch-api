@@ -217,6 +217,35 @@ class TerrafundEditGeometryController extends Controller
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
+    public function createProjectPolygon(string $uuid, string $entity_id, string $entity_type) { 
+        try {
+            $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_id)->first();
+            if (! $entity) {
+                return response()->json(['message' => 'No entity found for the given UUID.'], 404);
+            }
+            
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+            $projectPolygon = new ProjectPolygon([
+                'entity_id' => $entity->id,
+                'entity_type' => get_class($entity),
+                'poly_uuid' => $uuid,
+                'created_by' => Auth::user()?->id,
+                'last_modified_by' => Auth::user()?->id
+            ]);
+            if ($projectPolygon->save()) {
+              return response()->json(['message' => 'Project polygon created successfully', 'uuid' => $projectPolygon->uuid], 201);
+            } else {
+              return response()->json(['error' => 'An error ocurred at creating'], 500);
+            }
+            
+        } catch (\Exception $e) {
+            // Handle other exceptions
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
 
     public function createSitePolygon(string $uuid, string $siteUuid, Request $request)
     {
