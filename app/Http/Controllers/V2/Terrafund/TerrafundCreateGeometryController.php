@@ -73,7 +73,7 @@ class TerrafundCreateGeometryController extends Controller
               $geojson = json_decode($geojsonData, true);
               SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
               return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
-            } else if ($entity_type === 'project' || $entity_type === 'pitch') {
+            } else if ($entity_type === 'project' || $entity_type === 'project-pitch') {
               $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
               if ($entity) {
                 return App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);

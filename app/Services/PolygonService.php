@@ -80,11 +80,10 @@ class PolygonService
     }
 
     public function getEntity($entity_type, $entity_uuid) {
-      Log::info("Entity type: $entity_type, Entity UUID: $entity_uuid");
       switch ($entity_type) {
           case 'project':
               return Project::isUuid($entity_uuid)->first();
-          case 'pitch':
+          case 'project-pitch':
               return ProjectPitch::isUuid($entity_uuid)->first();
           default:
               throw new InvalidArgumentException("Invalid entity type: $entity_type");
