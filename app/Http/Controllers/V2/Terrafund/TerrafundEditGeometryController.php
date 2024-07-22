@@ -6,6 +6,7 @@ use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
@@ -46,6 +47,29 @@ class TerrafundEditGeometryController extends Controller
         }
     }
 
+    public function getProjectPolygonData(Request $request)
+    {
+        try {
+            $entity_uuid = $request->input('uuid');
+            $entity_type = $request->input('entity_type');
+            $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid)->first();
+
+            $projectPolygon = ProjectPolygon::where('entity_id', $entity->id)->first();
+
+            if (! $projectPolygon) {
+                return response()->json(['message' => 'No project polygons found for the given UUID.'], 404);
+            }
+
+            $projectPolygonArray = $projectPolygon->toArray();
+
+            return response()->json(['project_polygon' => $projectPolygonArray]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Project polygon not found.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
     public function updateEstAreainSitePolygon($polygonGeometry, $geometry)
     {
         try {

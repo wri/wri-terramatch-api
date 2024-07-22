@@ -2564,9 +2564,21 @@
 /v2/terrafund/upload-kml-validate:
   post:
     $ref: './Terrafund/post-v2-terrafund-upload-kml-validate.yml'
+/v2/terrafund/upload-geojson-project:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-geojson-project.yml'
+/v2/terrafund/upload-shapefile-project:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-shapefile-project.yml'
+/v2/terrafund/upload-kml-project:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-kml-project.yml'
 /v2/terrafund/site-polygon/{uuid}:
   put:
     $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
+/v2/terrafund//project-polygon":
+  get:
+    $ref: './Terrafund/get-v2-terrafund-project-polygon.yml'
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
