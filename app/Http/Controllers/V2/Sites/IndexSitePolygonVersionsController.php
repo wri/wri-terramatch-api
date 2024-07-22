@@ -17,6 +17,7 @@ class IndexSitePolygonVersionsController extends Controller
             $sitePolygons = SitePolygon::where('primary_uuid', $uuid)
                 ->orderBy('created_at', 'desc')
                 ->get();
+
             return response()->json($sitePolygons);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
