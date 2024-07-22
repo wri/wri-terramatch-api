@@ -649,6 +649,7 @@ Route::prefix('terrafund')->group(function () {
     Route::delete('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndSitePolygon']);
 
     Route::get('/project-polygon', [TerrafundEditGeometryController::class, 'getProjectPolygonData']);
+    Route::delete('/project-polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndProjectPolygon']);
 
     Route::get('/polygon/bbox/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonBbox']);
 

@@ -2579,10 +2579,12 @@
 /v2/terrafund/project-polygon:
   get:
     $ref: './Terrafund/get-v2-terrafund-project-polygon.yml'
-/project-polygon/{uuid}/{entity_id}/{entity_type}:
+/v2/terrafund/project-polygon/{uuid}:
+  delete:
+    $ref: './Terrafund/delete-v2-terrafund-project-polygon-uuid.yml'
+/v2/terrafund/project-polygon/{uuid}/{entity_uuid}/{entity_type}:
   post:
     $ref: './Terrafund/post-v2-terrafund-project-polygon.yml'
-
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'

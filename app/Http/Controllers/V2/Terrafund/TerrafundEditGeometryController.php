@@ -157,6 +157,26 @@ class TerrafundEditGeometryController extends Controller
         }
     }
 
+    public function deletePolygonAndProjectPolygon(string $uuid)
+    {
+        try {
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+
+            $polygonGeometry->deleteWithRelated();
+
+            Log::info("Polygon geometry and associated project polygon deleted successfully for UUID: $uuid");
+
+            return response()->json(['message' => 'Polygon geometry and associated project polygon deleted successfully.', 'uuid' => $uuid]);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function updateGeometry(string $uuid, Request $request)
     {
         try {
