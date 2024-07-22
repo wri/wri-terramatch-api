@@ -52,8 +52,7 @@ class TerrafundEditGeometryController extends Controller
         try {
             $entity_uuid = $request->input('uuid');
             $entity_type = $request->input('entityType');
-            $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid)->first();
-
+            $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
             $projectPolygon = ProjectPolygon::where('entity_id', $entity->id)->first();
 
             if (! $projectPolygon) {
