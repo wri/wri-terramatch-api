@@ -75,7 +75,11 @@ class TerrafundCreateGeometryController extends Controller
               return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
             } else if ($entity_type === 'project' || $entity_type === 'pitch') {
               $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
-              return App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);
+              if ($entity) {
+                return App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);
+              } else {
+                return ['error' => 'Entity not found'];
+              }              
             }
             
         } catch (Exception $e) {
