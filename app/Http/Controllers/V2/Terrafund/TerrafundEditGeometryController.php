@@ -190,8 +190,11 @@ class TerrafundEditGeometryController extends Controller
             $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
             $polygonGeometry->geom = $geom;
             $polygonGeometry->save();
-            $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
-            $this->updateProjectCentroidFromPolygon($polygonGeometry);
+            $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
+            if ($sitePolygon) {
+              $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
+              $this->updateProjectCentroidFromPolygon($polygonGeometry);
+            }           
 
             return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
         } catch (\Exception $e) {
