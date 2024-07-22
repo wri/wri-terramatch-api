@@ -51,7 +51,7 @@ class TerrafundEditGeometryController extends Controller
     {
         try {
             $entity_uuid = $request->input('uuid');
-            $entity_type = $request->input('entity_type');
+            $entity_type = $request->input('entityType');
             $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid)->first();
 
             $projectPolygon = ProjectPolygon::where('entity_id', $entity->id)->first();
