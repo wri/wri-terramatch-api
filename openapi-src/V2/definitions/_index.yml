@@ -356,3 +356,5 @@ PolygonChangeStatus:
   $ref: './PolygonChangeStatus.yml'
 PolygonChangeStatusUpdate:
   $ref: './PolygonChangeStatusUpdate.yml'
+ProjectPolygonResponse:
+  $ref: './ProjectPolygonResponse.yml'
