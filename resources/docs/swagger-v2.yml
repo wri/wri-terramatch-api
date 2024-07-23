@@ -44213,8 +44213,6 @@ definitions:
         type: string
       country:
         type: string
-      version_name:
-        type: string
       is_active:
         type: boolean
   GeometryString:
@@ -44284,8 +44282,6 @@ definitions:
         source:
           type: string
         country:
-          type: string
-        version_name:
           type: string
         is_active:
           type: boolean
@@ -45032,8 +45028,6 @@ definitions:
               type: string
             country:
               type: string
-            version_name:
-              type: string
             is_active:
               type: boolean
       bbox:
@@ -45147,8 +45141,6 @@ definitions:
         source:
           type: string
         country:
-          type: string
-        version_name:
           type: string
         is_active:
           type: boolean
@@ -95129,8 +95121,6 @@ paths:
                   type: string
                 country:
                   type: string
-                version_name:
-                  type: string
                 is_active:
                   type: boolean
         '400':
@@ -96884,8 +96874,6 @@ paths:
                       type: string
                     country:
                       type: string
-                    version_name:
-                      type: string
                     is_active:
                       type: boolean
               bbox:
@@ -97075,8 +97063,6 @@ paths:
                       type: string
                     country:
                       type: string
-                    version_name:
-                      type: string
                     is_active:
                       type: boolean
   '/v2/site-polygon/{uuid}':
@@ -97157,8 +97143,6 @@ paths:
                   source:
                     type: string
                   country:
-                    type: string
-                  version_name:
                     type: string
                   is_active:
                     type: boolean
@@ -97243,8 +97227,6 @@ paths:
                       type: string
                     country:
                       type: string
-                    version_name:
-                      type: string
                     is_active:
                       type: boolean
   '/v2/site-polygon/{uuid}/new-version':
@@ -97326,8 +97308,6 @@ paths:
                     type: string
                   country:
                     type: string
-                  version_name:
-                    type: string
                   is_active:
                     type: boolean
   '/v2/site-polygon/{uuid}/make-active':
@@ -97408,8 +97388,6 @@ paths:
                   source:
                     type: string
                   country:
-                    type: string
-                  version_name:
                     type: string
                   is_active:
                     type: boolean
