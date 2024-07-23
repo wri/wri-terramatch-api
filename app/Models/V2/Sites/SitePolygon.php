@@ -114,13 +114,15 @@ class SitePolygon extends Model implements AuditableModel
             'geom' => $geometry->geom,
             'created_by' => $user->id,
         ]);
+        $timestamp = now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
         $newSitePolygon = $this->replicate();
         $newSitePolygon->primary_uuid = $this->primary_uuid;
         $newSitePolygon->poly_id = $copyGeometry->uuid;
+        $newSitePolygon->poly_name = $timestamp;
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->is_active = false;
         $newSitePolygon->created_by = $user->id;
-        $newSitePolygon->version_name = now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
+        $newSitePolygon->version_name = $timestamp;
         $newSitePolygon->save();
 
         return $newSitePolygon;
