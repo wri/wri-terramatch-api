@@ -2,15 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\GeometryHelper;
-use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Projects\ProjectPolygon;
 use App\Services\PolygonService;
-use App\Services\PythonService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
 
 class ParseGeomBoundariesProjects extends Command
 {
@@ -36,6 +31,4 @@ class ParseGeomBoundariesProjects extends Command
         $bar->finish();
         $this->info("\nGeometry boundaries parsing completed.");
     }
-
-
 }
