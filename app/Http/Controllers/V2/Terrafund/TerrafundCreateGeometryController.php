@@ -75,7 +75,8 @@ class TerrafundCreateGeometryController extends Controller
               return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
             } else if ($entity_type === 'project' || $entity_type === 'project-pitch') {
               $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
-              if ($entity) {
+              $hasBeenDeleted = GeometryHelper::deletePolygonWithRelated($entity);
+              if ($entity && $hasBeenDeleted) {
                 return App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);
               } else {
                 return ['error' => 'Entity not found'];
@@ -428,7 +429,6 @@ class TerrafundCreateGeometryController extends Controller
         if ($request->hasFile('file')) {
             $entity_uuid = $request->get('entity_uuid');
             $entity_type = $request->get('entity_type');
-            Log::info('inside Entity type: '.$entity_type." Entity UUID: ".$entity_uuid);
             $file = $request->file('file');
             $tempDir = sys_get_temp_dir();
             $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
