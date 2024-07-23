@@ -57,7 +57,5 @@ properties:
     type: string
   country:
     type: string
-  version_name:
-    type: string
   is_active:
     type: boolean
