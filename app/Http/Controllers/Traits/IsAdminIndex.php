@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Traits;
 use App\Models\Framework;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\QueryBuilder;
 
 trait IsAdminIndex
@@ -24,11 +25,11 @@ trait IsAdminIndex
         $frameworkNamesWithPref = $frameworks->map(function ($framework) {
             return 'framework-' . $framework->slug;
         })->toArray();
-
+        
         $frameworkNames = $frameworks->map(function ($framework) {
             return $framework->slug;
         })->toArray();
-
+        Log::info('IsAdminIndex frameworkNames', ['frameworkNames' => $frameworkNamesWithPref]);
         if (! $user->hasAllPermissions($frameworkNamesWithPref)) {
             $query->where(function ($query) use ($tableName, $frameworkNames, $user) {
                 foreach ($frameworkNames as $framework) {
