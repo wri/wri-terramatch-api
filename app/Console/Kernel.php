@@ -2,9 +2,6 @@
 
 namespace App\Console;
 
-use App\Jobs\V2\CreateTaskDueJob;
-use App\Jobs\V2\SendReportRemindersJob;
-use App\Jobs\V2\SendSiteAndNurseryRemindersJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -31,23 +28,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('check-queue-length')->everyFiveMinutes()->onOneServer();
         $schedule->command('send-upcoming-progress-update-notifications')->daily()->onOneServer();
         $schedule->command('generate-control-site-due-submissions')->weeklyOn(5, '00:00')->onOneServer();
-
-        // PPC report jobs
-        $schedule->job(new CreateTaskDueJob('ppc', 4, 4))->yearlyOn(3, 14);
-        $schedule->job(new CreateTaskDueJob('ppc', 7, 5))->yearlyOn(6, 14);
-        $schedule->job(new CreateTaskDueJob('ppc', 10, 4))->yearlyOn(9, 13);
-        $schedule->job(new CreateTaskDueJob('ppc', 1, 3))->yearlyOn(12, 13);
-
-        // Terrafund report jobs
-        $schedule->job(new CreateTaskDueJob('terrafund'))->yearlyOn(12, 31);
-        $schedule->job(new CreateTaskDueJob('terrafund'))->yearlyOn(6, 30);
-
-        $schedule->job(new SendReportRemindersJob('terrafund'))->yearlyOn(5, 30);
-        $schedule->job(new SendReportRemindersJob('terrafund'))->yearlyOn(11, 30);
-
-        $schedule->job(new SendSiteAndNurseryRemindersJob('terrafund'))->yearlyOn(5, 30);
-        $schedule->job(new SendSiteAndNurseryRemindersJob('terrafund'))->yearlyOn(11, 30);
-
+        $schedule->command('process-scheduled-jobs')->everyFiveMinutes()->onOneServer();
         $schedule->command('generate-application-export')->twiceDaily(13, 20)->onOneServer();
         $schedule->command('generate-admin-all-entity-records-export')->twiceDaily(13, 20)->onOneServer();
     }
