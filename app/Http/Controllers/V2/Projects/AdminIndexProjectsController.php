@@ -9,6 +9,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -19,7 +20,14 @@ class AdminIndexProjectsController extends Controller
     public function __invoke(Request $request): ProjectsCollection
     {
         $this->authorize('readAll', Project::class);
-
+        if (! function_exists('str_replace_array')) {
+          function str_replace_array($search, array $replace, $subject) {
+              foreach ($replace as $value) {
+                  $subject = preg_replace('/'.$search.'/', $value, $subject, 1);
+              }
+              return $subject;
+          }
+      }
         $query = QueryBuilder::for(Project::class)
             ->selectRaw('
                 v2_projects.*,
@@ -33,7 +41,8 @@ class AdminIndexProjectsController extends Controller
                 AllowedFilter::scope('organisation_uuid', 'organisationUuid'),
                 AllowedFilter::scope('monitoring_data', 'hasMonitoringData'),
             ]);
-
+        $sql = str_replace_array('\?', $query->getBindings(), $query->toSql());
+        Log::info('AdminIndexProjectsController SQL 00', ['query' => $sql]);
         $this->sort($query, [
             'name', '-name',
             'status', '-status',
@@ -42,19 +51,25 @@ class AdminIndexProjectsController extends Controller
             'created_at', '-created_at',
             'updated_at', '-updated_at',
         ]);
-
+        $sql = str_replace_array('\?', $query->getBindings(), $query->toSql());
+        Log::info('AdminIndexProjectsController SQL 01', ['query' => $sql]);
         if (! empty($request->query('search'))) {
             $ids = Project::search(trim($request->query('search')))->get()->pluck('id')->toArray();
             $query->whereIn('v2_projects.id', $ids);
         }
-
+        $sql = str_replace_array('\?', $query->getBindings(), $query->toSql());
+        Log::info('AdminIndexProjectsController SQL 02', ['query' => $sql]);
         $user = User::find(Auth::user()->id);
         if ($user->primaryRole?->name == 'project-manager') {
+          
             $query->whereIn('id', $user->managedProjects()->select('v2_projects.id'));
         } else {
+          Log::info('AdminIndexProjectsController SQL 02.1');
             $this->isolateAuthorizedFrameworks($query, 'v2_projects');
         }
-
+       
+        $sql = str_replace_array('\?', $query->getBindings(), $query->toSql());
+        Log::info('AdminIndexProjectsController SQL 03', ['query' => $sql]);
         return new ProjectsCollection($this->paginate($query));
     }
 }
