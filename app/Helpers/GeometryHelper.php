@@ -305,32 +305,34 @@ class GeometryHelper
 
         return $result[0]->wkt ?? null;
     }
-    public static function deletePolygonWithRelated($entity) {
-      try {
-          $entityType = get_class($entity);
-          $entityId = $entity->id;
-  
-          $projectPolygons = ProjectPolygon::where('entity_id', $entityId)
-                                           ->where('entity_type', $entityType)
-                                           ->get();
-  
-          if ($projectPolygons->isEmpty()) {
-              return true;
-          }
-  
-          foreach ($projectPolygons as $projectPolygon) {
-              $polygonGeometry = PolygonGeometry::where('uuid', $projectPolygon->poly_uuid)->first();
-              if ($polygonGeometry) {
-                $polygonGeometry->deleteWithRelated();
-              }
-          }
-  
-          return true;
-  
-      } catch (Exception $e) {
-          Log::error('An error occurred while deleting related entities: ' . $e->getMessage());
-          throw $e;
-      }
-  } 
-  
+
+    public static function deletePolygonWithRelated($entity)
+    {
+        try {
+            $entityType = get_class($entity);
+            $entityId = $entity->id;
+
+            $projectPolygons = ProjectPolygon::where('entity_id', $entityId)
+                                             ->where('entity_type', $entityType)
+                                             ->get();
+
+            if ($projectPolygons->isEmpty()) {
+                return true;
+            }
+
+            foreach ($projectPolygons as $projectPolygon) {
+                $polygonGeometry = PolygonGeometry::where('uuid', $projectPolygon->poly_uuid)->first();
+                if ($polygonGeometry) {
+                    $polygonGeometry->deleteWithRelated();
+                }
+            }
+
+            return true;
+
+        } catch (Exception $e) {
+            Log::error('An error occurred while deleting related entities: ' . $e->getMessage());
+
+            throw $e;
+        }
+    }
 }
