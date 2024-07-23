@@ -2,15 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\GeometryHelper;
-use App\Models\V2\PolygonGeometry;
 use App\Models\V2\ProjectPitch;
-use App\Models\V2\Projects\ProjectPolygon;
 use App\Services\PolygonService;
-use App\Services\PythonService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
 
 class ParseGeomBoundariesPitches extends Command
 {
@@ -28,7 +23,7 @@ class ParseGeomBoundariesPitches extends Command
 
         foreach ($projectPitches as $pitch) {
             if ($pitch->proj_boundary && $pitch->proj_boundary !== 'null') {
-              App::make(PolygonService::class)->processEntity($pitch);
+                App::make(PolygonService::class)->processEntity($pitch);
             }
             $bar->advance();
         }
@@ -46,5 +41,4 @@ class ParseGeomBoundariesPitches extends Command
         ->where('proj_boundary', '!=', 'null')
         ->get();
     }
-
 }

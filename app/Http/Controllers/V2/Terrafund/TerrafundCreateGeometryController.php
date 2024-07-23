@@ -69,20 +69,21 @@ class TerrafundCreateGeometryController extends Controller
             $tempDir = sys_get_temp_dir();
             $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
             $geojsonData = file_get_contents($geojsonPath);
-            if ( $entity_type === 'site' || $entity_type === null) {
-              $geojson = json_decode($geojsonData, true);
-              SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
-              return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
-            } else if ($entity_type === 'project' || $entity_type === 'project-pitch') {
-              $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
-              $hasBeenDeleted = GeometryHelper::deletePolygonWithRelated($entity);
-              if ($entity && $hasBeenDeleted) {
-                return App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);
-              } else {
-                return ['error' => 'Entity not found'];
-              }              
+            if ($entity_type === 'site' || $entity_type === null) {
+                $geojson = json_decode($geojsonData, true);
+                SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
+
+                return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
+            } elseif ($entity_type === 'project' || $entity_type === 'project-pitch') {
+                $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
+                $hasBeenDeleted = GeometryHelper::deletePolygonWithRelated($entity);
+                if ($entity && $hasBeenDeleted) {
+                    return App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);
+                } else {
+                    return ['error' => 'Entity not found'];
+                }
             }
-            
+
         } catch (Exception $e) {
             return ['error' => $e->getMessage()];
         }
@@ -146,6 +147,7 @@ class TerrafundCreateGeometryController extends Controller
 
         return $propertiesList;
     }
+
     public function uploadKMLFileProject(Request $request)
     {
         ini_set('max_execution_time', '240');
@@ -179,6 +181,7 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'KML file not provided'], 400);
         }
     }
+
     public function uploadKMLFile(Request $request)
     {
         ini_set('max_execution_time', '240');
@@ -228,6 +231,7 @@ class TerrafundCreateGeometryController extends Controller
 
         return $shpFile;
     }
+
     public function uploadShapefileProject(Request $request)
     {
         ini_set('max_execution_time', '240');
@@ -274,6 +278,7 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'No file uploaded'], 400);
         }
     }
+
     public function uploadShapefile(Request $request)
     {
         ini_set('max_execution_time', '240');

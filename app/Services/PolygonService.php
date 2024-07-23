@@ -49,47 +49,50 @@ class PolygonService
         'distr',
         'num_trees',
     ];
+
     public function createProjectPolygon($entity, $currentGeojson)
     {
-      if (GeometryHelper::isFeatureCollectionEmpty($currentGeojson)) {
-        return;
-      }
+        if (GeometryHelper::isFeatureCollectionEmpty($currentGeojson)) {
+            return;
+        }
 
-      $needsVoronoi = GeometryHelper::isOneOrTwoPointFeatures($currentGeojson);
-      if ($needsVoronoi) {
-          $pointWithEstArea = GeometryHelper::addEstAreaToPointFeatures($currentGeojson);
-          $currentGeojson = App::make(PythonService::class)->voronoiTransformation(json_decode($pointWithEstArea));
-      }
+        $needsVoronoi = GeometryHelper::isOneOrTwoPointFeatures($currentGeojson);
+        if ($needsVoronoi) {
+            $pointWithEstArea = GeometryHelper::addEstAreaToPointFeatures($currentGeojson);
+            $currentGeojson = App::make(PythonService::class)->voronoiTransformation(json_decode($pointWithEstArea));
+        }
 
-      $convexHullWkt = GeometryHelper::getConvexHull($currentGeojson);
-      Log::info("Convex Hull WKT: $convexHullWkt");
-      if ($convexHullWkt) {
-          $polygonGeometry = new PolygonGeometry();
-          $polygonGeometry->geom = DB::raw("ST_GeomFromText('" . $convexHullWkt . "')");
-          $polygonGeometry->save();
+        $convexHullWkt = GeometryHelper::getConvexHull($currentGeojson);
+        Log::info("Convex Hull WKT: $convexHullWkt");
+        if ($convexHullWkt) {
+            $polygonGeometry = new PolygonGeometry();
+            $polygonGeometry->geom = DB::raw("ST_GeomFromText('" . $convexHullWkt . "')");
+            $polygonGeometry->save();
 
-          ProjectPolygon::create([
-              'poly_uuid' => $polygonGeometry->uuid,
-              'entity_type' => get_class($entity),
-              'entity_id' => $entity->id,
-              'last_modified_by' => Auth::user() ? Auth::user()?->id : 'system',
-              'created_by' => Auth::user() ? Auth::user()?->id : 'system'
-          ]);
-          return $polygonGeometry->uuid;
-      }
+            ProjectPolygon::create([
+                'poly_uuid' => $polygonGeometry->uuid,
+                'entity_type' => get_class($entity),
+                'entity_id' => $entity->id,
+                'last_modified_by' => Auth::user() ? Auth::user()?->id : 'system',
+                'created_by' => Auth::user() ? Auth::user()?->id : 'system',
+            ]);
+
+            return $polygonGeometry->uuid;
+        }
     }
 
-    public function getEntity($entity_type, $entity_uuid) {
-      switch ($entity_type) {
-          case 'project':
-              return Project::isUuid($entity_uuid)->first();
-          case 'project-pitch':
-              return ProjectPitch::isUuid($entity_uuid)->first();
-          default:
-              throw new InvalidArgumentException("Invalid entity type: $entity_type");
-      }
+    public function getEntity($entity_type, $entity_uuid)
+    {
+        switch ($entity_type) {
+            case 'project':
+                return Project::isUuid($entity_uuid)->first();
+            case 'project-pitch':
+                return ProjectPitch::isUuid($entity_uuid)->first();
+            default:
+                throw new InvalidArgumentException("Invalid entity type: $entity_type");
+        }
     }
-  
+
     public function processEntity($entity)
     {
         $geojsonField = $entity instanceof ProjectPitch ? 'proj_boundary' : 'boundary_geojson';
@@ -99,6 +102,7 @@ class PolygonService
             $this->createProjectPolygon($entity, $currentGeojson);
         }
     }
+
     public function createGeojsonModels($geojson, $sitePolygonProperties = []): array
     {
         if (data_get($geojson, 'features.0.geometry.type') == 'Point') {

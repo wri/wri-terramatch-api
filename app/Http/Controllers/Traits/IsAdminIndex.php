@@ -25,7 +25,7 @@ trait IsAdminIndex
         $frameworkNamesWithPref = $frameworks->map(function ($framework) {
             return 'framework-' . $framework->slug;
         })->toArray();
-        
+
         $frameworkNames = $frameworks->map(function ($framework) {
             return $framework->slug;
         })->toArray();
