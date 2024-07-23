@@ -8,6 +8,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Str;
 
 class ViewProjectMonitoringPartnersController extends Controller
 {
@@ -20,6 +21,20 @@ class ViewProjectMonitoringPartnersController extends Controller
             ->orderByDesc('id')
             ->orderByDesc('accepted_at')
             ->get();
+        
+        $projectUsersEmails = $project->users->pluck('email_address');
+
+        foreach ($projectUsersEmails as $email_address) {
+            $invite = $invites->where('email_address', '==', $email_address)->first();
+            if (!$invite) {
+                $token = $this->generateUniqueToken();
+                $data['project_id'] = $project->id;
+                $data['token'] = $token;
+                $data['email_address'] = $email_address;
+                $newInvite = $project->invites()->create($data);
+                $invites->push($newInvite);
+            }
+        }
 
         $uniques = $invites->unique('email_address');
 
@@ -34,5 +49,14 @@ class ViewProjectMonitoringPartnersController extends Controller
         });
 
         return AssociatedUserResource::collection($results);
+    }
+
+    private function generateUniqueToken(): string
+    {
+        do {
+            $token = Str::random(64);
+        } while (ProjectInvite::whereToken($token)->exists());
+
+        return $token;
     }
 }
