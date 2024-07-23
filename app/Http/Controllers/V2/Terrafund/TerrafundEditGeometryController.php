@@ -56,7 +56,7 @@ class TerrafundEditGeometryController extends Controller
             $projectPolygon = ProjectPolygon::where('entity_id', $entity->id)->first();
 
             if (! $projectPolygon) {
-                return response()->json(['message' => 'No project polygons found for the given UUID.', "project_polygon" => []], 204);
+                return response()->json(['message' => 'No project polygons found for the given UUID.', "project_polygon" => []], 206);
             }
 
             $projectPolygonArray = $projectPolygon->toArray();
