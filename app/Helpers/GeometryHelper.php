@@ -315,7 +315,7 @@ class GeometryHelper
                                            ->get();
   
           if ($projectPolygons->isEmpty()) {
-              return false;
+              return true;
           }
   
           foreach ($projectPolygons as $projectPolygon) {
