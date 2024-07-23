@@ -324,8 +324,8 @@ class TerrafundEditGeometryController extends Controller
 
             $user = User::isUuid(Auth::user()->uuid)->first();
             $sitePolygon->primary_uuid = $sitePolygon->uuid;
+            $sitePolygon->poly_name = now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
             $sitePolygon->is_active = true;
-            $sitePolygon->version_name = now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
             $sitePolygon->save();
 
             App::make(SiteService::class)->setSiteToRestorationInProgress($siteUuid);
