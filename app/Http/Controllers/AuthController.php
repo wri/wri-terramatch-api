@@ -42,7 +42,7 @@ class AuthController extends Controller
         }
         $invites = ProjectInvite::where('email_address', $me->email_address)->get();
         foreach ($invites as $invite) {
-            $me->projects()->sync([$invite->project_id => ['is_monitoring' => true]]);
+            $me->projects()->sync([$invite->project_id => ['is_monitoring' => true]], false);
             if ($me->organisation_id == null) {
                 $me->organisation_id = $invite->project->organisation_id;
                 $me->saveOrFail();
