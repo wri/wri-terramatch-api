@@ -7,7 +7,7 @@ use App\Services\PolygonService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
 
-class ParseGeomBoundariesPitches extends Command
+class ParseGeomBoundariesPitchesCommand extends Command
 {
     protected $signature = 'parse:pitch-boundaries {framework_key}';
 
