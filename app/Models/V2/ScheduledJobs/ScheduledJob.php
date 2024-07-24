@@ -27,6 +27,7 @@ class ScheduledJob extends Model
 
     protected $casts = [
         'task_definition' => 'json',
+        'execution_time' => 'date',
     ];
 
     public function scopeReadyToExecute(Builder $query): Builder
