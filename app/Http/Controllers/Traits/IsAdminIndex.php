@@ -29,7 +29,6 @@ trait IsAdminIndex
         $frameworkNames = $frameworks->map(function ($framework) {
             return $framework->slug;
         })->toArray();
-        Log::info('IsAdminIndex frameworkNames', ['frameworkNames' => $frameworkNamesWithPref]);
         if (! $user->hasAllPermissions($frameworkNamesWithPref)) {
             $query->where(function ($query) use ($tableName, $frameworkNames, $user) {
                 foreach ($frameworkNames as $framework) {
