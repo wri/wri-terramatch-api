@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Traits;
 use App\Models\Framework;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\QueryBuilder;
 
 trait IsAdminIndex
