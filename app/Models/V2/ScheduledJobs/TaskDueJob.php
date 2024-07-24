@@ -66,7 +66,7 @@ class TaskDueJob extends ScheduledJob
             'due_at' => $this->due_at,
         ]);
 
-        $projectReport = $task->projectReports()->create([
+        $projectReport = $task->projectReport()->create([
             'framework_key' => $this->framework_key,
             'project_id' => $project->id,
             'status' => ReportStatusStateMachine::DUE,

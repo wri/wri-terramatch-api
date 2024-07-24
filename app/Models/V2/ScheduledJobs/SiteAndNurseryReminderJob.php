@@ -38,7 +38,7 @@ class SiteAndNurseryReminderJob extends ScheduledJob
             ->chunkById(100, function ($projects) {
                 $projects->each(function ($project) {
                     if ($project->users->count() > 0) {
-                        Mail::to($project->users->pluck('email_addresses'))->queue(new TerrafundSiteAndNurseryReminder($project->id));
+                        Mail::to($project->users->pluck('email_address'))->queue(new TerrafundSiteAndNurseryReminder($project->id));
                     }
                 });
             });
