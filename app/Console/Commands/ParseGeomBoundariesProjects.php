@@ -23,8 +23,8 @@ class ParseGeomBoundariesProjects extends Command
         $this->info($frameworkKey);
 
         $projects = Project::where('framework_key', $frameworkKey)
-        ->whereNotNull('boundary_geojson')
-        ->where('boundary_geojson', '!=', 'null')
+        ->whereNotNull('proj_boundary')
+        ->where('proj_boundary', '!=', 'null')
         ->get();
         $bar = $this->output->createProgressBar(count($projects));
         $bar->start();
@@ -38,7 +38,7 @@ class ParseGeomBoundariesProjects extends Command
 
     private function processProject($project)
     {
-        $currentGeojson = $project->boundary_geojson;
+        $currentGeojson = $project->proj_boundary;
         if ($currentGeojson) {
             if (GeometryHelper::isFeatureCollectionEmpty($currentGeojson)) {
                 return;
