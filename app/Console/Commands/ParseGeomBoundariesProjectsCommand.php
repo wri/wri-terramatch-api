@@ -7,7 +7,7 @@ use App\Services\PolygonService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
 
-class ParseGeomBoundariesProjects extends Command
+class ParseGeomBoundariesProjectsCommand extends Command
 {
     protected $signature = 'parse:project-boundaries {framework_key}';
 
