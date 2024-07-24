@@ -9,6 +9,7 @@ use App\Models\V2\Tasks\Task;
 use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\TaskStatusStateMachine;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Parental\HasParent;
 
 /**
@@ -20,15 +21,21 @@ class TaskDueJob extends ScheduledJob
 {
     use HasParent;
 
-    public static function createTaskDue(Carbon $execution_time, string $framework_key, Carbon $due_at): TaskDueJob
+    public static function createTaskDue(Carbon $executionTime, string $frameworkKey, Carbon $dueAt): TaskDueJob
     {
         return self::create([
-            'execution_time' => $execution_time,
+            'execution_time' => $executionTime,
             'task_definition' => [
-                'framework_key' => $framework_key,
-                'due_at' => $due_at,
+                'framework_key' => $frameworkKey,
+                'due_at' => $dueAt,
             ],
         ]);
+    }
+
+    public function scopeFramework(Builder $query, string $frameworkKey): Builder
+    {
+        return $query->whereJsonContains('task_definition->framework_key', $frameworkKey)
+            ->orderBy('execution_time');
     }
 
     public function getFrameworkKeyAttribute(): string
