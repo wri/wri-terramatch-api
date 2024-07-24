@@ -44,7 +44,6 @@ class AdminIndexProjectsController extends Controller
                 AllowedFilter::scope('monitoring_data', 'hasMonitoringData'),
             ]);
         $sql = str_replace_array('\?', $query->getBindings(), $query->toSql());
-        Log::info('AdminIndexProjectsController SQL 00', ['query' => $sql]);
         $this->sort($query, [
             'name', '-name',
             'status', '-status',
@@ -54,13 +53,11 @@ class AdminIndexProjectsController extends Controller
             'updated_at', '-updated_at',
         ]);
         $sql = str_replace_array('\?', $query->getBindings(), $query->toSql());
-        Log::info('AdminIndexProjectsController SQL 01', ['query' => $sql]);
         if (! empty($request->query('search'))) {
             $ids = Project::search(trim($request->query('search')))->get()->pluck('id')->toArray();
             $query->whereIn('v2_projects.id', $ids);
         }
         $sql = str_replace_array('\?', $query->getBindings(), $query->toSql());
-        Log::info('AdminIndexProjectsController SQL 02', ['query' => $sql]);
         $user = User::find(Auth::user()->id);
         if ($user->primaryRole?->name == 'project-manager') {
 
@@ -71,7 +68,6 @@ class AdminIndexProjectsController extends Controller
         }
 
         $sql = str_replace_array('\?', $query->getBindings(), $query->toSql());
-        Log::info('AdminIndexProjectsController SQL 03', ['query' => $sql]);
 
         return new ProjectsCollection($this->paginate($query));
     }
