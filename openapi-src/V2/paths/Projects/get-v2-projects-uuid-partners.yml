@@ -12,5 +12,5 @@ responses:
     schema:
       type: array
       items:
-        $ref: '../../definitions/_index.yml#/MonitoringUserRead'
+        $ref: '../../definitions/_index.yml#/AssociatedUserRead'
 operationId: get-v2-projects-uuid-partners

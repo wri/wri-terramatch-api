@@ -40,6 +40,18 @@ class AuthController extends Controller
         if (is_null($me->password)) {
             throw new FailedLoginException();
         }
+        $invites = ProjectInvite::where('email_address', $me->email_address)->get();
+        foreach ($invites as $invite) {
+            $me->projects()->sync([$invite->project_id => ['is_monitoring' => true]], false);
+            if ($me->organisation_id == null) {
+                $me->organisation_id = $invite->project->organisation_id;
+                $me->saveOrFail();
+            }
+            if ($invite->accepted_at === null) {
+                $invite->accepted_at = now();
+                $invite->saveOrFail();
+            }
+        }
         $me->last_logged_in_at = new DateTime('now', new DateTimeZone('UTC'));
         $me->saveOrFail();
 

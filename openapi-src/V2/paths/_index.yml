@@ -16,6 +16,9 @@
 /v2/projects/{UUID}/partners:
   get:
     $ref: './Projects/get-v2-projects-uuid-partners.yml'
+/v2/projects/{UUID}/{EMAIL}/remove-partner:
+  delete:
+    $ref: './Projects/delete-v2-projects-uuid-partners.yml'
 /v2/my/projects:
   get:
     $ref: './Projects/get-v2-my-projects.yml'
@@ -107,47 +110,15 @@
 /v2/workdays/{ENTITY}/{UUID}:
   get:
     $ref: './Workdays/get-v2-workdays-entity-uuid.yml'
-/v2/stratas:
-  post:
-    $ref: './Stratas/post-v2-stratas.yml'
-/v2/stratas/{UUID}:
-  patch:
-    $ref: './Stratas/patch-v2-stratas-uuid.yml'
-  delete:
-    $ref: './Stratas/delete-v2-stratas-uuid.yml'
 /v2/stratas/{ENTITY}/{UUID}:
   get:
     $ref: './Stratas/get-v2-stratas-entity-uuid.yml'
-/v2/seedings:
-  post:
-    $ref: './Seedings/post-v2-seedings.yml'
-/v2/seedings/{UUID}:
-  patch:
-    $ref: './Seedings/patch-v2-seedings-uuid.yml'
-  delete:
-    $ref: './Seedings/delete-v2-seedings-uuid.yml'
 /v2/seedings/{ENTITY}/{UUID}:
   get:
     $ref: './Seedings/get-v2-seedings-entity-uuid.yml'
-/v2/disturbances:
-  post:
-    $ref: './Disturbances/post-v2-disturbances.yml'
-/v2/disturbances/{UUID}:
-  patch:
-    $ref: './Disturbances/patch-v2-disturbances-uuid.yml'
-  delete:
-    $ref: './Disturbances/delete-v2-disturbances-uuid.yml'
 /v2/disturbances/{ENTITY}/{UUID}:
   get:
     $ref: './Disturbances/get-v2-disturbances-entity-uuid.yml'
-/v2/invasives:
-  post:
-    $ref: './Invasives/post-v2-invasives.yml'
-/v2/invasives/{UUID}:
-  patch:
-    $ref: './Invasives/patch-v2-invasives-uuid.yml'
-  delete:
-    $ref: './Invasives/delete-v2-invasives-uuid.yml'
 /v2/invasives/{ENTITY}/{UUID}:
   get:
     $ref: './Invasives/get-v2-invasives-entity-uuid.yml'
@@ -2496,6 +2467,14 @@
 /v2/projects/invite/accept:
   post:
     $ref: './Projects/post-v2-projects-invite-accept.yml'
+/v2/projects/{UUID}/managers:
+  post:
+    $ref: './Projects/post-v2-projects-managers-store.yml'
+  get:
+    $ref: './Projects/get-v2-projects-managers.yml'
+/v2/projects/{UUID}/managers/{USER_UUID}:
+  delete:
+    $ref: './Projects/delete-v2-projects-uuid-managers.yml'
 /v2/nurseries/{UUID}:
   delete:
     $ref: './Nurseries/delete-v2-nurseries-uuid.yml'
@@ -2576,6 +2555,15 @@
 /v2/terrafund/upload-kml:
   post:
     $ref: './Terrafund/post-v2-terrafund-upload-kml.yml'
+/v2/terrafund/upload-geojson-validate:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-geojson-validate.yml'
+/v2/terrafund/upload-shapefile-validate:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-shapefile-validate.yml'
+/v2/terrafund/upload-kml-validate:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-kml-validate.yml'
 /v2/terrafund/site-polygon/{uuid}:
   put:
     $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
@@ -2669,3 +2657,15 @@
 /v2/site-polygon/status/bulk:
   put:
     $ref: './Polygons/get-v2-polygons-uuid-change-status.yml'
+/v2/site-polygon/{uuid}:
+  get:
+    $ref: './Polygons/get-v2-site-polygon-uuid.yml'
+/v2/site-polygon/{uuid}/versions:
+  get:
+    $ref: './Polygons/get-v2-site-polygon-uuid-versions.yml'
+/v2/site-polygon/{uuid}/new-version:
+  post:
+    $ref: './Polygons/post-v2-site-polygon-uuid-new-version.yml'
+/v2/site-polygon/{uuid}/make-active:
+  put:
+    $ref: './Polygons/put-v2-site-polygon-uuid-make-active.yml'

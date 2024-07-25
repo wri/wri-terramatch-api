@@ -13,7 +13,7 @@ class SitePolygonDataController extends Controller
     public function getSitePolygonData($site): JsonResponse
     {
         try {
-            $sitePolygons = SitePolygon::where('site_id', $site)->get();
+            $sitePolygons = SitePolygon::active()->where('site_id', $site)->get();
 
             return response()->json($sitePolygons);
         } catch (\Exception $e) {

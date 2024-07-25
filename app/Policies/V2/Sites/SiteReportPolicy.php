@@ -20,6 +20,10 @@ class SiteReportPolicy extends Policy
             return true;
         }
 
+        if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
+            return true;
+        }
+
         if ($this->isNewRoleUser($user)) {
             return true;
         }
@@ -29,7 +33,7 @@ class SiteReportPolicy extends Policy
 
     public function readAll(?User $user, ?SiteReport $report = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc', 'framework-hbf']);
+        return $user->hasAnyPermission(['projects-manage', 'framework-terrafund', 'framework-ppc', 'framework-hbf']);
     }
 
     public function update(?User $user, ?SiteReport $report = null): bool
@@ -38,22 +42,38 @@ class SiteReportPolicy extends Policy
             return true;
         }
 
+        if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
+            return true;
+        }
+
         return $user->can('manage-own') && $this->isTheirs($user, $report);
     }
 
     public function submit(?User $user, ?SiteReport $report = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
+            return true;
+        }
+
         return $user->can('manage-own') && $this->isTheirs($user, $report);
     }
 
     public function delete(?User $user, ?SiteReport $report = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
+            return true;
+        }
+
         return $user->can('framework-' . $report->framework_key);
     }
 
     public function updateFileProperties(?User $user, ?SiteReport $report = null): bool
     {
         if ($user->can('framework-' . $report->framework_key)) {
+            return true;
+        }
+
+        if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
             return true;
         }
 
@@ -66,16 +86,28 @@ class SiteReportPolicy extends Policy
             return true;
         }
 
+        if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
+            return true;
+        }
+
         return $user->can('manage-own') && $this->isTheirs($user, $report);
     }
 
     public function uploadFiles(?User $user, ?SiteReport $report = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
+            return true;
+        }
+
         return $this->isUser($user) || $this->isAdmin($user);
     }
 
     public function approve(?User $user, ?SiteReport $report = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
+            return true;
+        }
+
         return $user->can('framework-' .  $report->framework_key);
     }
 
@@ -84,8 +116,22 @@ class SiteReportPolicy extends Policy
         return $user->organisation->id == $report->site->project->organisation_id || $user->projects->contains($report->project->id);
     }
 
+    protected function isManaging(?User $user, ?SiteReport $report = null): bool
+    {
+        return $report->project->managers()->where('v2_project_users.user_id', $user->id)->exists();
+    }
+
+    protected function isManagingProject(User $user, Project $project): bool
+    {
+        return $project->managers()->where('v2_project_users.user_id', $user->id)->exists();
+    }
+
     public function export(?User $user, ?Form $form = null, ?Project $project = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManagingProject($user, $project)) {
+            return true;
+        }
+
         return $user->can('framework-' .  $form->framework_key) or
             $user->can('manage-own') && ($user->organisation->id == $project->organisation_id || $user->projects->contains($project->id));
     }
