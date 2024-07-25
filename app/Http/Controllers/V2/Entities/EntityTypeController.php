@@ -71,7 +71,7 @@ class EntityTypeController extends Controller
     {
         try {
             $site = Site::where('uuid', $uuid)->firstOrFail();
-            $sitePolygons = $this->getSitePolygonsWithFiltersAndSorts($site->sitePolygons(), $request);
+            $sitePolygons = $this->getSitePolygonsWithFiltersAndSorts($site->sitePolygons()->active(), $request);
             $polygonsUuids = $sitePolygons->pluck('poly_id');
             $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsUuids);
 

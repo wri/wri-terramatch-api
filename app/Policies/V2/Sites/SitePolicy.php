@@ -20,6 +20,10 @@ class SitePolicy extends Policy
             return true;
         }
 
+        if ($user->can('projects-manage') && $this->isManaging($user, $site)) {
+            return true;
+        }
+
         if ($this->isNewRoleUser($user)) {
             return true;
         }
@@ -29,7 +33,7 @@ class SitePolicy extends Policy
 
     public function readAll(?User $user, ?Site $site = null): bool
     {
-        return $user->hasAnyPermission(['framework-terrafund', 'framework-ppc', 'framework-hbf']);
+        return $user->hasAnyPermission(['projects-manage', 'framework-terrafund', 'framework-ppc', 'framework-hbf']);
     }
 
     public function update(?User $user, ?Site $site = null): bool
@@ -38,16 +42,28 @@ class SitePolicy extends Policy
             return true;
         }
 
+        if ($user->can('projects-manage') && $this->isManaging($user, $site)) {
+            return true;
+        }
+
         return $user->can('manage-own') && $this->isTheirs($user, $site);
     }
 
     public function submit(?User $user, ?Site $site = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManaging($user, $site)) {
+            return true;
+        }
+
         return $user->can('manage-own') && $this->isTheirs($user, $site);
     }
 
     public function delete(?User $user, ?Site $site = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManaging($user, $site)) {
+            return true;
+        }
+
         return $user->can('framework-' . $site->framework_key) or
             $user->can('manage-own') && $this->isTheirs($user, $site);
     }
@@ -55,6 +71,10 @@ class SitePolicy extends Policy
     public function updateFileProperties(?User $user, ?Site $site = null): bool
     {
         if ($user->can('framework-' . $site->framework_key)) {
+            return true;
+        }
+
+        if ($user->can('projects-manage') && $this->isManaging($user, $site)) {
             return true;
         }
 
@@ -67,22 +87,44 @@ class SitePolicy extends Policy
             return true;
         }
 
+        if ($user->can('projects-manage') && $this->isManaging($user, $site)) {
+            return true;
+        }
+
         return $user->can('manage-own') && $this->isTheirs($user, $site);
     }
 
     public function approve(?User $user, ?Site $site = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManaging($user, $site)) {
+            return true;
+        }
+
         return $user->can('framework-' .  $site->framework_key);
     }
 
     public function createReport(?User $user, ?Site $site = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManaging($user, $site)) {
+            return true;
+        }
+
         return $user->can('manage-own') && $this->isTheirs($user, $site);
     }
 
     protected function isTheirs(?User $user, ?Site $site = null): bool
     {
         return $user->organisation_id == $site->project->organisation_id || $user->projects->contains($site->project_id);
+    }
+
+    protected function isManaging(?User $user, ?Site $site = null): bool
+    {
+        return $site->project->managers()->where('v2_project_users.user_id', $user->id)->exists();
+    }
+
+    protected function isManagingProject(User $user, Project $project): bool
+    {
+        return $project->managers()->where('v2_project_users.user_id', $user->id)->exists();
     }
 
     public function uploadFiles(?User $user, ?Site $site = null): bool
@@ -103,6 +145,10 @@ class SitePolicy extends Policy
             return true;
         }
 
+        if ($user->can('projects-manage') && $this->isManaging($user, $site)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -113,12 +159,20 @@ class SitePolicy extends Policy
 
     public function export(?User $user, ?Form $form = null, ?Project $project = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManagingProject($user, $project)) {
+            return true;
+        }
+
         return $user->can('framework-' .  $form->framework_key) or
             $user->can('manage-own') && ($user->organisation->id == $project->organisation_id || $user->projects->contains($project->id));
     }
 
     public function createSiteMonitoring(?User $user, ?Site $site = null): bool
     {
+        if ($user->can('projects-manage') && $this->isManaging($user, $site)) {
+            return true;
+        }
+
         return $this->isAdmin($user);
     }
 }

@@ -1,0 +1,19 @@
+summary: Export CSV document of polygon validation
+description: Uploads a Shapefile file, converts it to GeoJSON, and validate the polygons.
+consumes:
+  - multipart/form-data
+parameters:
+  - name: file
+    in: formData
+    description: The Shapefile file to test
+    required: true
+    type: file
+responses:
+  '200':
+    description: OK
+    schema:
+      type: file
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

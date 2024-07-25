@@ -29,7 +29,7 @@ abstract class Policy
 
     protected function isUser(?UserModel $user): bool
     {
-        return ! $this->isGuest($user) && $user->role == 'user';
+        return ! $this->isGuest($user) && ($user->role == 'user' || $this->isNewRoleUser($user));
     }
 
     protected function isAdmin(?UserModel $user): bool
@@ -39,7 +39,7 @@ abstract class Policy
 
     protected function isNewRoleUser(?UserModel $user): bool
     {
-        $newRoles = ['project-developer', 'funder', 'government'];
+        $newRoles = ['project-developer', 'funder', 'government', 'project-manager'];
 
         return in_array($user->role, $newRoles);
     }

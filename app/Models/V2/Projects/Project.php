@@ -299,7 +299,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             'site_id',
             'id',
             'uuid'
-        );
+        )->active();
     }
 
     public function treeSpecies()
@@ -310,6 +310,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'v2_project_users')->withPivot(['status', 'is_monitoring']);
+    }
+
+    public function managers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'v2_project_users')->wherePivot('is_managing', true);
     }
 
     public function fundingProgramme(): BelongsTo

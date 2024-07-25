@@ -291,6 +291,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Project::class, 'v2_project_users');
     }
 
+    public function managedProjects()
+    {
+        return $this->projects()->wherePivot('is_managing', true);
+    }
+
     public function terrafundProgrammes()
     {
         return $this->belongsToMany(TerrafundProgramme::class);
@@ -315,5 +320,18 @@ class User extends Authenticatable implements JWTSubject
         $this->linkedin = null;
         $this->instagram = null;
         $this->avatar = null;
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        if (empty($this->first_name) && empty($this->last_name)) {
+            return 'Unnamed User';
+        } elseif (empty($this->first_name)) {
+            return $this->last_name;
+        } elseif (empty($this->last_name)) {
+            return $this->first_name;
+        }
+
+        return $this->first_name . ' ' . $this->last_name;
     }
 }

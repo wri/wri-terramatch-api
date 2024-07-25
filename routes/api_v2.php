@@ -33,13 +33,10 @@ use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
-use App\Http\Controllers\V2\Disturbances\DeleteDisturbanceController;
-use App\Http\Controllers\V2\Disturbances\GetDisturbancesForEntityController;
-use App\Http\Controllers\V2\Disturbances\StoreDisturbanceController;
-use App\Http\Controllers\V2\Disturbances\UpdateDisturbanceController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
+use App\Http\Controllers\V2\Entities\GetRelationsForEntityController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
@@ -98,10 +95,6 @@ use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
 use App\Http\Controllers\V2\Geometry\GeometryController;
-use App\Http\Controllers\V2\Invasives\DeleteInvasiveController;
-use App\Http\Controllers\V2\Invasives\GetInvasivesForEntityController;
-use App\Http\Controllers\V2\Invasives\StoreInvasiveController;
-use App\Http\Controllers\V2\Invasives\UpdateInvasiveController;
 use App\Http\Controllers\V2\LeadershipTeam\DeleteLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\StoreLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\UpdateLeadershipTeamController;
@@ -153,10 +146,12 @@ use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\CreateBlankProjectWithFormController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\CreateProjectWithFormController;
+use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminCreateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminSoftDeleteProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminUpdateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
+use App\Http\Controllers\V2\Projects\ProjectManagersController;
 use App\Http\Controllers\V2\Projects\SoftDeleteProjectController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewMyProjectsController;
@@ -177,13 +172,17 @@ use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
+use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
+use App\Http\Controllers\V2\Sites\ShowSitePolygonController;
 use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
+use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
+use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
 use App\Http\Controllers\V2\Stages\IndexStageController;
@@ -191,16 +190,11 @@ use App\Http\Controllers\V2\Stages\StoreStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
 use App\Http\Controllers\V2\Stages\ViewStageController;
-use App\Http\Controllers\V2\Stratas\DeleteStrataController;
-use App\Http\Controllers\V2\Stratas\GetStratasForEntityController;
-use App\Http\Controllers\V2\Stratas\StoreStrataController;
-use App\Http\Controllers\V2\Stratas\UpdateStrataController;
 use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
-use App\Http\Controllers\V2\TreeSpecies\GetTreeSpeciesForEntityController;
 use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
 use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\AdminStatusUpdateRequestController;
@@ -268,7 +262,9 @@ Route::prefix('media')->group(function () {
 
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
-    Route::get('audits/{entity}/{uuid}', AdminIndexAuditsController::class);
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::get('{entity}', AdminIndexAuditsController::class);
+    }, prefix: 'audits');
 
     Route::prefix('reporting-frameworks')->group(function () {
         Route::get('', AdminIndexReportingFrameworkController::class);
@@ -480,42 +476,17 @@ Route::prefix('project-pitches')->group(function () {
     Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
-ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-    Route::get('/{entity}', GetTreeSpeciesForEntityController::class);
-}, prefix: 'tree-species');
+Route::prefix('{relationType}')
+    ->whereIn('relationType', array_keys(GetRelationsForEntityController::RELATIONS))
+    ->group(function () {
+        ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+            Route::get('/{entity}', GetRelationsForEntityController::class);
+        });
+    });
 
 ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
     Route::get('/{entity}', GetWorkdaysForEntityController::class);
 }, prefix: 'workdays');
-
-Route::prefix('stratas')->group(function () {
-    Route::post('/', StoreStrataController::class);
-    Route::patch('/{strata}', UpdateStrataController::class);
-    Route::delete('/{strata}', DeleteStrataController::class);
-    Route::get('/{entity}/{uuid}', GetStratasForEntityController::class);
-});
-
-Route::prefix('seedings')->group(function () {
-    Route::post('/', \App\Http\Controllers\V2\Seedings\StoreSeedingController::class);
-    Route::patch('/{seeding}', \App\Http\Controllers\V2\Seedings\UpdateSeedingController::class);
-    Route::delete('/{seeding}', \App\Http\Controllers\V2\Seedings\DeleteSeedingController::class);
-    Route::get('/{entity}/{uuid}', \App\Http\Controllers\V2\Seedings\GetSeedingsForEntityController::class);
-});
-
-
-Route::prefix('disturbances')->group(function () {
-    Route::post('/', StoreDisturbanceController::class);
-    Route::patch('/{disturbance}', UpdateDisturbanceController::class);
-    Route::delete('/{disturbance}', DeleteDisturbanceController::class);
-    Route::get('/{entity}/{uuid}', GetDisturbancesForEntityController::class);
-});
-
-Route::prefix('invasives')->group(function () {
-    Route::post('/', StoreInvasiveController::class);
-    Route::delete('/{invasive}', DeleteInvasiveController::class);
-    Route::patch('/{invasive}', UpdateInvasiveController::class);
-    Route::get('/{entity}/{uuid}', GetInvasivesForEntityController::class);
-});
 
 Route::prefix('leadership-team')->group(function () {
     Route::post('/', StoreLeadershipTeamController::class);
@@ -551,8 +522,12 @@ Route::prefix('projects')->group(function () {
     Route::post('/{project}/invite', CreateProjectInviteController::class);
     Route::post('/invite/accept', ProjectInviteAcceptController::class);
 
+    Route::resource('/{project}/managers', ProjectManagersController::class)->only(['index', 'store', 'destroy']);
+
     Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);
     Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
+
+    Route::delete('/{project}/{email}/remove-partner', DeleteProjectMonitoringPartnersController::class);
 });
 
 Route::prefix('tasks')->group(function () {
@@ -622,7 +597,6 @@ Route::prefix('nursery-reports')->group(function () {
 
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
 
-
 Route::prefix('funding-type')->group(function () {
     Route::post('/', StoreFundingTypeController::class);
     Route::patch('/{fundingType}', UpdateFundingTypeController::class);
@@ -643,6 +617,9 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-geojson', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFile']);
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
+    Route::post('/upload-geojson-validate', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFileWithValidation']);
+    Route::post('/upload-shapefile-validate', [TerrafundCreateGeometryController::class, 'uploadShapefileWithValidation']);
+    Route::post('/upload-kml-validate', [TerrafundCreateGeometryController::class, 'uploadKMLFileWithValidation']);
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
     Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
     Route::get('/geojson/site', [TerrafundCreateGeometryController::class, 'getAllPolygonsAsGeoJSONDownload']);
@@ -732,6 +709,10 @@ Route::prefix('project-pipeline')->group(function () {
 
 Route::prefix('site-polygon')->group(function () {
     Route::put('/status/bulk', ChangeStatusPolygonsController::class);
+    Route::get('/{uuid}', ShowSitePolygonController::class);
+    Route::get('/{uuid}/versions', IndexSitePolygonVersionsController::class);
+    Route::post('/{uuid}/new-version', StoreSitePolygonNewVersionController::class);
+    Route::put('/{uuid}/make-active', UpdateSitePolygonActiveController::class);
 });
 
 Route::get('/type-entity', EntityTypeController::class);

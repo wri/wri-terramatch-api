@@ -1,0 +1,16 @@
+operationId: delete-v2-projects-uuid-managers
+summary: Delete a project manager from a project
+tags:
+  - V2 Projects
+parameters:
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - type: string
+    name: USER_UUID
+    in: path
+    required: true
+responses:
+  '200':
+    description: OK
