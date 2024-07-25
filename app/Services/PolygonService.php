@@ -16,7 +16,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 class PolygonService
@@ -63,7 +62,6 @@ class PolygonService
         }
 
         $convexHullWkt = GeometryHelper::getConvexHull($currentGeojson);
-        Log::info("Convex Hull WKT: $convexHullWkt");
         if ($convexHullWkt) {
             $polygonGeometry = new PolygonGeometry();
             $polygonGeometry->geom = DB::raw("ST_GeomFromText('" . $convexHullWkt . "')");
