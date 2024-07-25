@@ -321,7 +321,7 @@ class GeometryHelper
             }
 
             foreach ($projectPolygons as $projectPolygon) {
-                $polygonGeometry = PolygonGeometry::where('uuid', $projectPolygon->poly_uuid)->first();
+                $polygonGeometry = PolygonGeometry::isUuid($projectPolygon->poly_uuid)->first();
                 if ($polygonGeometry) {
                     $polygonGeometry->deleteWithRelated();
                 }
