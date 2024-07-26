@@ -84,8 +84,9 @@ class TerrafundCreateGeometryController extends Controller
             } else {
                 $geojson = json_decode($geojsonData, true);
                 SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
+
                 return $service->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid);
-                
+
             }
 
         } catch (Exception $e) {
@@ -156,7 +157,7 @@ class TerrafundCreateGeometryController extends Controller
     {
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
-          
+
         $rules = [
           'entity_uuid' => 'required|string',
           'entity_type' => 'required|string',
@@ -164,18 +165,19 @@ class TerrafundCreateGeometryController extends Controller
               'required',
               'file',
               function ($attribute, $value, $fail) {
-                  if (!$value->getClientOriginalName() || !preg_match('/\.kml$/i', $value->getClientOriginalName())) {
+                  if (! $value->getClientOriginalName() || ! preg_match('/\.kml$/i', $value->getClientOriginalName())) {
                       $fail('The file must have a .kml extension.');
                   }
               },
           ],
         ];
-        
+
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-          $errors = $this->parseValidationErrors($validator->errors());
-          return response()->json(['errors' => $errors], 422);
+            $errors = $this->parseValidationErrors($validator->errors());
+
+            return response()->json(['errors' => $errors], 422);
         }
         $entity_uuid = $request->get('entity_uuid');
         $entity_type = $request->get('entity_type');
@@ -208,24 +210,25 @@ class TerrafundCreateGeometryController extends Controller
     {
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
-                  
+
         $rules = [
           'file' => [
               'required',
               'file',
               function ($attribute, $value, $fail) {
-                  if (!$value->getClientOriginalName() || !preg_match('/\.kml$/i', $value->getClientOriginalName())) {
+                  if (! $value->getClientOriginalName() || ! preg_match('/\.kml$/i', $value->getClientOriginalName())) {
                       $fail('The file must have a .kml extension.');
                   }
               },
           ],
         ];
-        
+
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-          $errors = $this->parseValidationErrors($validator->errors());
-          return response()->json(['errors' => $errors], 422);
+            $errors = $this->parseValidationErrors($validator->errors());
+
+            return response()->json(['errors' => $errors], 422);
         }
 
         $body = $request->all();
@@ -271,18 +274,21 @@ class TerrafundCreateGeometryController extends Controller
 
         return $shpFile;
     }
-    function parseValidationErrors($errors)
+
+    public function parseValidationErrors($errors)
     {
         $parsedErrors = [];
         foreach ($errors->messages() as $field => $messages) {
-            $parsedErrors[$field] = array_map(function($message) {
+            $parsedErrors[$field] = array_map(function ($message) {
                 $decoded = json_decode($message, true);
+
                 return $decoded[3] ?? $message; // Return the last element if it's JSON, otherwise return the original message
             }, $messages);
         }
 
         return $parsedErrors;
     }
+
     public function uploadShapefileProject(Request $request)
     {
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
@@ -293,13 +299,14 @@ class TerrafundCreateGeometryController extends Controller
           'entity_type' => 'required|string',
           'file' => 'required|file|mimes:zip',
         ];
-      
-      $validator = Validator::make($request->all(), $rules);
-      
-      if ($validator->fails()) {
-        $errors = $this->parseValidationErrors($validator->errors());
-        return response()->json(['errors' => $errors], 422);
-      }
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            $errors = $this->parseValidationErrors($validator->errors());
+
+            return response()->json(['errors' => $errors], 422);
+        }
         $entity_uuid = $request->get('entity_uuid');
         $entity_type = $request->get('entity_type');
         $file = $request->file('file');
@@ -343,12 +350,13 @@ class TerrafundCreateGeometryController extends Controller
         $rules = [
           'file' => 'required|file|mimes:zip',
         ];
-      
+
         $validator = Validator::make($request->all(), $rules);
-        
+
         if ($validator->fails()) {
-          $errors = $this->parseValidationErrors($validator->errors());
-          return response()->json(['errors' => $errors], 422);
+            $errors = $this->parseValidationErrors($validator->errors());
+
+            return response()->json(['errors' => $errors], 422);
         }
         $body = $request->all();
         $site_id = $request->input('uuid');
@@ -494,18 +502,19 @@ class TerrafundCreateGeometryController extends Controller
     {
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
-        
+
         $rules = [
           'entity_uuid' => 'required|string',
           'entity_type' => 'required|string',
-          'file' => 'required|file|mimes:json,geojson'
+          'file' => 'required|file|mimes:json,geojson',
         ];
-      
+
         $validator = Validator::make($request->all(), $rules);
-        
+
         if ($validator->fails()) {
-          $errors = $this->parseValidationErrors($validator->errors());
-          return response()->json(['errors' => $errors], 422);
+            $errors = $this->parseValidationErrors($validator->errors());
+
+            return response()->json(['errors' => $errors], 422);
         }
         $entity_uuid = $request->get('entity_uuid');
         $entity_type = $request->get('entity_type');
@@ -527,14 +536,15 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $rules = [
-          'file' => 'required|file|mimes:json,geojson'
+          'file' => 'required|file|mimes:json,geojson',
         ];
-      
+
         $validator = Validator::make($request->all(), $rules);
-        
+
         if ($validator->fails()) {
-          $errors = $this->parseValidationErrors($validator->errors());
-          return response()->json(['errors' => $errors], 422);
+            $errors = $this->parseValidationErrors($validator->errors());
+
+            return response()->json(['errors' => $errors], 422);
         }
         $site_id = $request->input('uuid');
         $file = $request->file('file');
@@ -666,14 +676,15 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $rules = [
-          'file' => 'required|file|mimes:json,geojson'
+          'file' => 'required|file|mimes:json,geojson',
         ];
-      
+
         $validator = Validator::make($request->all(), $rules);
-        
+
         if ($validator->fails()) {
-          $errors = $this->parseValidationErrors($validator->errors());
-          return response()->json(['errors' => $errors], 422);
+            $errors = $this->parseValidationErrors($validator->errors());
+
+            return response()->json(['errors' => $errors], 422);
         }
 
         $file = $request->file('file');
@@ -708,12 +719,13 @@ class TerrafundCreateGeometryController extends Controller
           'entity_type' => 'required|string',
           'file' => 'required|file|mimes:zip',
         ];
-      
+
         $validator = Validator::make($request->all(), $rules);
-        
+
         if ($validator->fails()) {
-          $errors = $this->parseValidationErrors($validator->errors());
-          return response()->json(['errors' => $errors], 422);
+            $errors = $this->parseValidationErrors($validator->errors());
+
+            return response()->json(['errors' => $errors], 422);
         }
         $file = $request->file('file');
         if ($file->getClientOriginalExtension() !== 'zip') {
@@ -766,18 +778,19 @@ class TerrafundCreateGeometryController extends Controller
               'required',
               'file',
               function ($attribute, $value, $fail) {
-                  if (!$value->getClientOriginalName() || !preg_match('/\.kml$/i', $value->getClientOriginalName())) {
+                  if (! $value->getClientOriginalName() || ! preg_match('/\.kml$/i', $value->getClientOriginalName())) {
                       $fail('The file must have a .kml extension.');
                   }
               },
           ],
         ];
-        
+
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-          $errors = $this->parseValidationErrors($validator->errors());
-          return response()->json(['errors' => $errors], 422);
+            $errors = $this->parseValidationErrors($validator->errors());
+
+            return response()->json(['errors' => $errors], 422);
         }
         $kmlfile = $request->file('file');
         $tempDir = sys_get_temp_dir();
