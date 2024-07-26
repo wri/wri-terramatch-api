@@ -8,6 +8,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Models\V2\User;
 use App\Validators\SitePolygonValidator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
@@ -45,7 +46,7 @@ class PolygonService
         'num_trees',
     ];
 
-    public function createGeojsonModels($geojson, $sitePolygonProperties = []): array
+    public function createGeojsonModels($geojson, $sitePolygonProperties = [], ?string $primary_uuid = null): array
     {
         if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
             return $this->transformAndStorePoints($geojson, $sitePolygonProperties);
@@ -57,24 +58,30 @@ class PolygonService
                 $data = $this->insertSinglePolygon($feature['geometry']);
                 $uuids[] = $data['uuid'];
                 $sitePolygonProperties['area'] = $data['area'];
-                $this->insertSitePolygon(
-                    $data['uuid'],
-                    array_merge($feature['properties'], $sitePolygonProperties),
-                );
+                $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $primary_uuid);
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
                     $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
                     $data = $this->insertSinglePolygon($singlePolygon);
                     $uuids[] = $data['uuid'];
-                    $this->insertSitePolygon(
-                        $data['uuid'],
-                        array_merge($feature['properties'], $sitePolygonProperties),
-                    );
+                    $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $primary_uuid);
                 }
             }
         }
 
         return $uuids;
+    }
+
+    private function insertPolygon($uuid, $sitePolygonProperties, $featureProperties, ?string $primary_uuid)
+    {
+        if($primary_uuid) {
+            $this->insertSitePolygonVersion($uuid, $primary_uuid);
+        } else {
+            $this->insertSitePolygon(
+                $uuid,
+                array_merge($sitePolygonProperties, $featureProperties),
+            );
+        }
     }
 
     public function createCriteriaSite($polygonId, $criteriaId, $valid): bool|string
@@ -174,6 +181,27 @@ class PolygonService
             $site = $sitePolygon->site()->first();
             $site->restorationInProgress();
             $project = $sitePolygon->project()->first();
+            $geometryHelper = new GeometryHelper();
+            $geometryHelper->updateProjectCentroid($project->uuid);
+
+            return null;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    protected function insertSitePolygonVersion(string $polygonUuid, string $primary_uuid)
+    {
+        try {
+            $sitePolygon = SitePolygon::isUuid($primary_uuid)->first();
+            if (! $sitePolygon) {
+                return response()->json(['error' => 'Site polygon not found'], 404);
+            }
+            $user = User::isUuid(Auth::user()->uuid)->first();
+            $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid);
+            $site = $newSitePolygon->site()->first();
+            $site->restorationInProgress();
+            $project = $newSitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
             $geometryHelper->updateProjectCentroid($project->uuid);
 
