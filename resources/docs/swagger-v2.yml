@@ -45158,6 +45158,15 @@ definitions:
               type: string
             status:
               type: string
+  ProjectPolygonResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Project polygon created successfully
+      uuid:
+        type: string
+        description: UUID of the created project polygon
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -95643,6 +95652,114 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /v2/terrafund/upload-geojson-project:
+    post:
+      summary: Upload GeoJSON File for project
+      description: 'Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.'
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: The GeoJSON file to upload
+          required: true
+          type: file
+        - name: entity_uuid
+          in: formData
+          description: The UUID of the entity associated with the GeoJSON file
+          required: true
+          type: string
+        - name: entity_type
+          in: formData
+          description: The Enity Type of the entity associated with the GeoJSON file
+          required: true
+          type: string
+      responses:
+        '200':
+          description: GeoJSON file processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/upload-shapefile-project:
+    post:
+      summary: Upload Shapefile for project
+      description: 'Uploads a Shapefile, converts it to Shapefile, and inserts it into the database.'
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: The Shapefile to upload
+          required: true
+          type: file
+        - name: entity_uuid
+          in: formData
+          description: The UUID of the entity associated with the Shapefile
+          required: true
+          type: string
+        - name: entity_type
+          in: formData
+          description: The Enity Type of the entity associated with the Shapefile
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Shapefile processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/upload-kml-project:
+    post:
+      summary: Upload KML File for project
+      description: 'Uploads a KML file, converts it to KML, and inserts it into the database.'
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: The KML file to upload
+          required: true
+          type: file
+        - name: entity_uuid
+          in: formData
+          description: The UUID of the entity associated with the KML file
+          required: true
+          type: string
+        - name: entity_type
+          in: formData
+          description: The Enity Type of the entity associated with the KML file
+          required: true
+          type: string
+      responses:
+        '200':
+          description: KML file processed and inserted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              uuid:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   '/v2/terrafund/site-polygon/{uuid}':
     put:
       summary: Update site polygon
@@ -95714,6 +95831,120 @@ paths:
                 format: float
               status:
                 type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/terrafund/project-polygon:
+    get:
+      summary: Get Project Polygon Data
+      description: Retrieve project polygon data for the given UUID.
+      parameters:
+        - in: query
+          name: uuid
+          type: string
+          required: true
+          description: The UUID of the project polygon.
+        - in: query
+          name: entityType
+          type: string
+          required: true
+          description: The entity type of the project polygon.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              project_polygon:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  uuid:
+                    type: string
+                  poly_uuid:
+                    type: string
+                  entity_type:
+                    type: string
+                  entity_id:
+                    type: number
+                  last_modified_by:
+                    type: string
+                  created_by:
+                    type: string
+                  deleted_at:
+                    type: string
+                    format: date-time
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+        '404':
+          description: No site polygons found for the given UUID
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: No site polygons found for the given UUID.
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: An error message describing the issue.
+  '/v2/terrafund/project-polygon/{uuid}':
+    delete:
+      summary: Delete polygon records
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon geometry to delete
+      responses:
+        '204':
+          description: No Content
+  '/v2/terrafund/project-polygon/{uuid}/{entity_uuid}/{entity_type}':
+    post:
+      summary: create project/pitch polygon relation
+      tags:
+        - V2 project pitch geometry
+      description: |
+        Receives the uuid of the polygon, the uuid of the entity and the type of the entity and creates a relation between them.
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the polygon related
+        - in: path
+          name: entity_uuid
+          required: true
+          type: string
+          description: The UUID of the entity
+        - in: path
+          name: entity_type
+          required: true
+          type: string
+          description: The type of the entity
+      responses:
+        '201':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Project polygon created successfully
+              uuid:
+                type: string
+                description: UUID of the created project polygon
         '400':
           description: Bad request
         '500':

@@ -4,8 +4,10 @@ namespace App\Helpers;
 
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -302,5 +304,35 @@ class GeometryHelper
         $result = DB::select($query, ['geojson' => $geoJsonString]);
 
         return $result[0]->wkt ?? null;
+    }
+
+    public static function deletePolygonWithRelated($entity)
+    {
+        try {
+            $entityType = get_class($entity);
+            $entityId = $entity->id;
+
+            $projectPolygons = ProjectPolygon::where('entity_id', $entityId)
+                                             ->where('entity_type', $entityType)
+                                             ->get();
+
+            if ($projectPolygons->isEmpty()) {
+                return true;
+            }
+
+            foreach ($projectPolygons as $projectPolygon) {
+                $polygonGeometry = PolygonGeometry::isUuid($projectPolygon->poly_uuid)->first();
+                if ($polygonGeometry) {
+                    $polygonGeometry->deleteWithRelated();
+                }
+            }
+
+            return true;
+
+        } catch (Exception $e) {
+            Log::error('An error occurred while deleting related entities: ' . $e->getMessage());
+
+            throw $e;
+        }
     }
 }

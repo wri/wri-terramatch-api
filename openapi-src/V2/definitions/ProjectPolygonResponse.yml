@@ -1,0 +1,8 @@
+type: object
+properties:
+  message:
+    type: string
+    example: Project polygon created successfully
+  uuid:
+    type: string
+    description: UUID of the created project polygon
