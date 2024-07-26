@@ -32,6 +32,8 @@ use Symfony\Component\Process\Process;
 
 class TerrafundCreateGeometryController extends Controller
 {
+    private const MAX_EXECUTION_TIME = 240;
+
     public function processGeometry(string $uuid)
     {
         $geometry = PolygonGeometry::isUuid($uuid)->first();
@@ -150,7 +152,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadKMLFileProject(Request $request)
     {
-        ini_set('max_execution_time', '240');
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         if ($request->hasFile('file')) {
             $entity_uuid = $request->get('entity_uuid');
@@ -184,7 +186,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadKMLFile(Request $request)
     {
-        ini_set('max_execution_time', '240');
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         if ($request->hasFile('file')) {
             $site_id = $request->input('uuid');
@@ -234,7 +236,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadShapefileProject(Request $request)
     {
-        ini_set('max_execution_time', '240');
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         Log::debug('Upload Shape file data', ['request' => $request->all()]);
         if ($request->hasFile('file')) {
@@ -281,7 +283,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadShapefile(Request $request)
     {
-        ini_set('max_execution_time', '240');
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         Log::debug('Upload Shape file data', ['request' => $request->all()]);
         if ($request->hasFile('file')) {
@@ -429,7 +431,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadGeoJSONFileProject(Request $request)
     {
-        ini_set('max_execution_time', '240');
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         if ($request->hasFile('file')) {
             $entity_uuid = $request->get('entity_uuid');
@@ -451,7 +453,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadGeoJSONFile(Request $request)
     {
-        ini_set('max_execution_time', '240');
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         if ($request->hasFile('file')) {
             $site_id = $request->input('uuid');
@@ -584,7 +586,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadGeoJSONFileWithValidation(Request $request)
     {
-        ini_set('max_execution_time', '240');
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
 
         if (! $request->hasFile('file')) {
@@ -616,7 +618,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadShapefileWithValidation(Request $request)
     {
-        ini_set('max_execution_time', '240');
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         if ($request->hasFile('file')) {
             $file = $request->file('file');
@@ -666,7 +668,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function uploadKMLFileWithValidation(Request $request)
     {
-        ini_set('max_execution_time', '240');
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         if ($request->hasFile('file')) {
             $kmlfile = $request->file('file');
