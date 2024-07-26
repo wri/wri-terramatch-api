@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Helpers\GeometryHelper;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\ProjectPitch;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
@@ -14,6 +17,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class PolygonService
 {
@@ -45,6 +49,58 @@ class PolygonService
         'distr',
         'num_trees',
     ];
+
+    public function createProjectPolygon($entity, $currentGeojson)
+    {
+        if (GeometryHelper::isFeatureCollectionEmpty($currentGeojson)) {
+            return;
+        }
+
+        $needsVoronoi = GeometryHelper::isOneOrTwoPointFeatures($currentGeojson);
+        if ($needsVoronoi) {
+            $pointWithEstArea = GeometryHelper::addEstAreaToPointFeatures($currentGeojson);
+            $currentGeojson = App::make(PythonService::class)->voronoiTransformation(json_decode($pointWithEstArea));
+        }
+
+        $convexHull = GeometryHelper::getConvexHull($currentGeojson);
+        if ($convexHull) {
+            $polygonGeometry = new PolygonGeometry();
+            $polygonGeometry->geom = DB::raw("ST_GeomFromText('" . $convexHull . "')");
+            $polygonGeometry->save();
+
+            ProjectPolygon::create([
+                'poly_uuid' => $polygonGeometry->uuid,
+                'entity_type' => get_class($entity),
+                'entity_id' => $entity->id,
+                'last_modified_by' => Auth::user() ? Auth::user()?->id : 'system',
+                'created_by' => Auth::user() ? Auth::user()?->id : 'system',
+            ]);
+
+            return $polygonGeometry->uuid;
+        }
+    }
+
+    public function getEntity($entity_type, $entity_uuid)
+    {
+        switch ($entity_type) {
+            case 'project':
+                return Project::isUuid($entity_uuid)->first();
+            case 'project-pitch':
+                return ProjectPitch::isUuid($entity_uuid)->first();
+            default:
+                throw new InvalidArgumentException("Invalid entity type: $entity_type");
+        }
+    }
+
+    public function processEntity($entity)
+    {
+        $geojsonField = $entity instanceof ProjectPitch ? 'proj_boundary' : 'boundary_geojson';
+        $currentGeojson = $entity->$geojsonField;
+
+        if ($currentGeojson) {
+            $this->createProjectPolygon($entity, $currentGeojson);
+        }
+    }
 
     public function createGeojsonModels($geojson, $sitePolygonProperties = [], ?string $primary_uuid = null): array
     {
