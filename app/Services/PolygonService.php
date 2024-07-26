@@ -115,7 +115,7 @@ class PolygonService
                 $sitePolygonProperties['area'] = $data['area'];
                 $this->insertSitePolygon(
                     $data['uuid'],
-                    array_merge($sitePolygonProperties, $feature['properties']),
+                    array_merge($feature['properties'], $sitePolygonProperties),
                 );
             } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
                 foreach ($feature['geometry']['coordinates'] as $polygon) {
@@ -124,7 +124,7 @@ class PolygonService
                     $uuids[] = $data['uuid'];
                     $this->insertSitePolygon(
                         $data['uuid'],
-                        array_merge($sitePolygonProperties, $feature['properties']),
+                        array_merge($feature['properties'], $sitePolygonProperties),
                     );
                 }
             }

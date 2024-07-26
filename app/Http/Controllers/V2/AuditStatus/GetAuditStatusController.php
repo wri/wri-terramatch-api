@@ -22,7 +22,11 @@ class GetAuditStatusController extends Controller
 
         $combinedData = $auditStatuses->concat($this->getAudits($auditable));
 
-        return AuditStatusResource::collection($combinedData);
+        $sortedData = $combinedData->sortByDesc(function ($item) {
+            return $item->updated_at ?? $item->created_at;
+        });
+
+        return AuditStatusResource::collection($sortedData);
     }
 
     private function getAudits($auditable)
