@@ -715,8 +715,6 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $rules = [
-          'entity_uuid' => 'required|string',
-          'entity_type' => 'required|string',
           'file' => 'required|file|mimes:zip',
         ];
 
