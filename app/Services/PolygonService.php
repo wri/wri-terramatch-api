@@ -61,10 +61,10 @@ class PolygonService
             $currentGeojson = App::make(PythonService::class)->voronoiTransformation(json_decode($pointWithEstArea));
         }
 
-        $convexHullWkt = GeometryHelper::getConvexHull($currentGeojson);
-        if ($convexHullWkt) {
+        $convexHull = GeometryHelper::getConvexHull($currentGeojson);
+        if ($convexHull) {
             $polygonGeometry = new PolygonGeometry();
-            $polygonGeometry->geom = DB::raw("ST_GeomFromText('" . $convexHullWkt . "')");
+            $polygonGeometry->geom = DB::raw("ST_GeomFromText('" . $convexHull . "')");
             $polygonGeometry->save();
 
             ProjectPolygon::create([
