@@ -71,16 +71,17 @@ class TerrafundCreateGeometryController extends Controller
             $tempDir = sys_get_temp_dir();
             $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
             $geojsonData = file_get_contents($geojsonPath);
+            $service = App::make(PolygonService::class);
             if ($entity_type === 'site' || $entity_type === null) {
                 $geojson = json_decode($geojsonData, true);
                 SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-                return App::make(PolygonService::class)->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
+                return $service->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE]);
             } elseif ($entity_type === 'project' || $entity_type === 'project-pitch') {
-                $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
+                $entity = $service->getEntity($entity_type, $entity_uuid);
                 $hasBeenDeleted = GeometryHelper::deletePolygonWithRelated($entity);
                 if ($entity && $hasBeenDeleted) {
-                    return App::make(PolygonService::class)->createProjectPolygon($entity, $geojsonData);
+                    return $service->createProjectPolygon($entity, $geojsonData);
                 } else {
                     return ['error' => 'Entity not found'];
                 }
