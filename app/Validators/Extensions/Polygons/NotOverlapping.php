@@ -35,7 +35,6 @@ class NotOverlapping extends Extension
         $relatedPolyIds = $sitePolygon->project->sitePolygons()
             ->where('poly_id', '!=', $polygonUuid)
             ->pluck('poly_id');
-
         $intersects = PolygonGeometry::join('site_polygon', 'polygon_geometry.uuid', '=', 'site_polygon.poly_id')
             ->whereIn('polygon_geometry.uuid', $relatedPolyIds)
             ->select([
@@ -54,8 +53,12 @@ class NotOverlapping extends Extension
         $extra_info = [];
         foreach ($intersects as $intersect) {
             if ($intersect->intersects) {
-                $percentage = ($intersect->intersection_area / min($mainPolygonArea, $intersect->area)) * 100;
-
+                $minArea = min($mainPolygonArea, $intersect->area);
+                if ($minArea > 0) {
+                    $percentage = ($intersect->intersection_area / $minArea) * 100;
+                } else {
+                    $percentage = 100;
+                }
                 $extra_info[] = [
                     'poly_uuid' => $intersect->uuid,
                     'poly_name' => $intersect->poly_name,
