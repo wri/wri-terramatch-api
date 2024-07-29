@@ -37,26 +37,26 @@ class TerrafundCreateGeometryController extends Controller
     private const MAX_EXECUTION_TIME = 240;
 
     private const VALID_PRACTICES = [
-        "tree-planting",
-        "direct-seeding",
-        "assisted-natural-regeneration"
+        'tree-planting',
+        'direct-seeding',
+        'assisted-natural-regeneration',
     ];
 
     private const VALID_SYSTEMS = [
-        "agroforest",
-        "natural-forest",
-        "mangrove",
-        "peatland",
-        "riparian-area-or-wetland",
-        "silvopasture",
-        "woodlot-or-plantation",
-        "urban-forest"
+        'agroforest',
+        'natural-forest',
+        'mangrove',
+        'peatland',
+        'riparian-area-or-wetland',
+        'silvopasture',
+        'woodlot-or-plantation',
+        'urban-forest',
     ];
 
     private const VALID_DISTRIBUTIONS = [
-        "single-line",
-        "partial",
-        "full"
+        'single-line',
+        'partial',
+        'full',
     ];
 
     public function processGeometry(string $uuid)
