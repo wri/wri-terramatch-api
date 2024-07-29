@@ -36,6 +36,29 @@ class TerrafundCreateGeometryController extends Controller
 {
     private const MAX_EXECUTION_TIME = 240;
 
+    private const VALID_PRACTICES = [
+        "tree-planting",
+        "direct-seeding",
+        "assisted-natural-regeneration"
+    ];
+
+    private const VALID_SYSTEMS = [
+        "agroforest",
+        "natural-forest",
+        "mangrove",
+        "peatland",
+        "riparian-area-or-wetland",
+        "silvopasture",
+        "woodlot-or-plantation",
+        "urban-forest"
+    ];
+
+    private const VALID_DISTRIBUTIONS = [
+        "single-line",
+        "partial",
+        "full"
+    ];
+
     public function processGeometry(string $uuid)
     {
         $geometry = PolygonGeometry::isUuid($uuid)->first();
@@ -142,17 +165,11 @@ class TerrafundCreateGeometryController extends Controller
             case 'plantend':
                 return ! $this->isValidDate($value);
             case 'practice':
-                $validPractices = ['tree-planting', 'direct-seeding', 'assisted-natural-regeneration'];
-
-                return ! in_array($value, $validPractices);
+                return ! in_array($value, self::VALID_PRACTICES);
             case 'target_sys':
-                $validSystems = ['agroforest', 'natural-forest', 'mangrove', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'woodlot-or-plantation', 'urban-forest'];
-
-                return ! in_array($value, $validSystems);
+                return ! in_array($value, self::VALID_SYSTEMS);
             case 'distr':
-                $validDistributions = ['single-line', 'partial', 'full'];
-
-                return ! in_array($value, $validDistributions);
+                return ! in_array($value, self::VALID_DISTRIBUTIONS);
             case 'num_trees':
                 return ! filter_var($value, FILTER_VALIDATE_INT);
             default:
