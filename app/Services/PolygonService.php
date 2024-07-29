@@ -139,13 +139,13 @@ class PolygonService
             );
         }
     }
-
-    public function createCriteriaSite($polygonId, $criteriaId, $valid): bool|string
+    public function createCriteriaSite($polygonId, $criteriaId, $valid, $extraInfo = null): bool|string
     {
         $criteriaSite = new CriteriaSite();
         $criteriaSite->polygon_id = $polygonId;
         $criteriaSite->criteria_id = $criteriaId;
         $criteriaSite->valid = $valid;
+        $criteriaSite->extra_info = $extraInfo ? json_encode($extraInfo) : null;
 
         try {
             $criteriaSite->save();
