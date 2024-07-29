@@ -247,7 +247,7 @@ class TerrafundCreateGeometryController extends Controller
 
             return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
         }
-        $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, $body['primary_uuid'] ?? null);
+        $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, null, $body['primary_uuid'] ?? null);
         if (isset($uuid['error'])) {
             return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
         }
@@ -538,7 +538,7 @@ class TerrafundCreateGeometryController extends Controller
         $rules = [
           'file' => 'required|file|mimes:json,geojson',
         ];
-
+        $body = $request->all();
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
@@ -551,7 +551,7 @@ class TerrafundCreateGeometryController extends Controller
         $tempDir = sys_get_temp_dir();
         $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
         $file->move($tempDir, $filename);
-        $uuid = $this->insertGeojsonToDB($filename, $site_id, 'site');
+        $uuid = $this->insertGeojsonToDB($filename, $site_id, 'site', $body['primary_uuid'] ?? null);
         if (is_array($uuid) && isset($uuid['error'])) {
             return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
         }
