@@ -137,6 +137,7 @@ class GeometryHelper
             'criteria_id',
             'valid',
             'created_at as latest_created_at',
+            'extra_info',
         ]);
     }
 

@@ -44134,6 +44134,9 @@ definitions:
             valid:
               type: integer
               description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
+            extra_info:
+              type: object
+              description: Extra information about the polygon validation
   V2TerrafundCriteriaSite:
     type: array
     items:
@@ -94461,6 +94464,9 @@ paths:
                     valid:
                       type: integer
                       description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
+                    extra_info:
+                      type: object
+                      description: Extra information about the polygon validation
   /v2/terrafund/validation/criteria-data:
     get:
       summary: Get criteria data validation results for a polygon
@@ -94495,6 +94501,9 @@ paths:
                     valid:
                       type: integer
                       description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
+                    extra_info:
+                      type: object
+                      description: Extra information about the polygon validation
   /v2/terrafund/validation/sitePolygons:
     post:
       summary: Run validation for all polygons in a site
