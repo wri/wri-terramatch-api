@@ -6,7 +6,6 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Extension;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class NotOverlapping extends Extension
 {
@@ -29,43 +28,43 @@ class NotOverlapping extends Extension
             return [
                 'valid' => false,
                 'error' => 'Site polygon not found for the given polygon ID',
-                'status' => 404
+                'status' => 404,
             ];
         }
-    
+
         $relatedPolyIds = $sitePolygon->project->sitePolygons()
             ->where('poly_id', '!=', $polygonUuid)
             ->pluck('poly_id');
-    
+
         $intersects = PolygonGeometry::join('site_polygon', 'polygon_geometry.uuid', '=', 'site_polygon.poly_id')
             ->whereIn('polygon_geometry.uuid', $relatedPolyIds)
             ->select([
                 'polygon_geometry.uuid',
                 'site_polygon.poly_name',
-                DB::raw("ST_Intersects(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?)) as intersects"),
-                DB::raw("ST_Area(ST_Intersection(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) as intersection_area"),
-                DB::raw("ST_Area(polygon_geometry.geom) as area")
+                DB::raw('ST_Intersects(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?)) as intersects'),
+                DB::raw('ST_Area(ST_Intersection(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) as intersection_area'),
+                DB::raw('ST_Area(polygon_geometry.geom) as area'),
             ])
             ->addBinding($polygonUuid, 'select')
             ->addBinding($polygonUuid, 'select')
             ->get();
-        
+
         $mainPolygonArea = PolygonGeometry::where('uuid', $polygonUuid)
             ->value(DB::raw('ST_Area(geom)'));
-            $extra_info = [];
-            foreach ($intersects as $intersect) {
-                if ($intersect->intersects) {
-                    $percentage = ($intersect->intersection_area / min($mainPolygonArea, $intersect->area)) * 100;
-                    
-                    $extra_info[] = [
-                        'poly_uuid' => $intersect->uuid,
-                        'poly_name' => $intersect->poly_name,
-                        'percentage' => $percentage,
-                        'smaller' => ($intersect->area < $mainPolygonArea)
-                    ];
-                }
+        $extra_info = [];
+        foreach ($intersects as $intersect) {
+            if ($intersect->intersects) {
+                $percentage = ($intersect->intersection_area / min($mainPolygonArea, $intersect->area)) * 100;
+
+                $extra_info[] = [
+                    'poly_uuid' => $intersect->uuid,
+                    'poly_name' => $intersect->poly_name,
+                    'percentage' => $percentage,
+                    'smaller' => ($intersect->area < $mainPolygonArea),
+                ];
             }
-    
+        }
+
         return [
             'valid' => empty($messages),
             'uuid' => $polygonUuid,
@@ -73,7 +72,6 @@ class NotOverlapping extends Extension
             'extra_info' => $extra_info,
         ];
     }
-    
 
     public static function checkFeatureIntersections($geojsonFeatures): array
     {

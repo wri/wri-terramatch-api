@@ -139,6 +139,7 @@ class PolygonService
             );
         }
     }
+
     public function createCriteriaSite($polygonId, $criteriaId, $valid, $extraInfo = null): bool|string
     {
         $criteriaSite = new CriteriaSite();
