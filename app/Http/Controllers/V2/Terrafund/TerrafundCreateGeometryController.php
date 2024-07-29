@@ -18,6 +18,7 @@ use App\Validators\Extensions\Polygons\SelfIntersection;
 use App\Validators\Extensions\Polygons\Spikes;
 use App\Validators\Extensions\Polygons\WithinCountry;
 use App\Validators\SitePolygonValidator;
+use DateTime;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -34,6 +35,29 @@ use Symfony\Component\Process\Process;
 class TerrafundCreateGeometryController extends Controller
 {
     private const MAX_EXECUTION_TIME = 240;
+
+    private const VALID_PRACTICES = [
+        'tree-planting',
+        'direct-seeding',
+        'assisted-natural-regeneration',
+    ];
+
+    private const VALID_SYSTEMS = [
+        'agroforest',
+        'natural-forest',
+        'mangrove',
+        'peatland',
+        'riparian-area-or-wetland',
+        'silvopasture',
+        'woodlot-or-plantation',
+        'urban-forest',
+    ];
+
+    private const VALID_DISTRIBUTIONS = [
+        'single-line',
+        'partial',
+        'full',
+    ];
 
     public function processGeometry(string $uuid)
     {
@@ -99,35 +123,65 @@ class TerrafundCreateGeometryController extends Controller
         $polygonUuid = $request->input('uuid');
         $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
         // Check if the polygon with the specified poly_id exists
-        $polygonExists = SitePolygon::forPolygonGeometry($polygonUuid)->exists();
-
-        if (! $polygonExists) {
-            return response()->json(['valid' => false, 'message' => 'No site polygon found with the specified poly_id.']);
+        $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
+        if (! $sitePolygon) {
+            return response()->json(['valid' => false, 'message' => 'No site polygon found with the specified UUID.']);
         }
 
         // Proceed with validation of attribute values
-        $whereConditions = [];
+        $validationErrors = [];
         foreach ($fieldsToValidate as $field) {
-            $whereConditions[] = "(IFNULL($field, '') = '' OR $field IS NULL)";
+            $value = $sitePolygon->$field;
+            if ($this->isFieldInvalid($field, $value)) {
+                $validationErrors[] = [
+                    'field' => $field,
+                    'error' => $value,
+                    'exists' => ! is_null($value) && $value !== '',
+                ];
+            }
         }
 
-        $sitePolygonData = SitePolygon::forPolygonGeometry($polygonUuid)
-          ->where(function ($query) use ($whereConditions) {
-              foreach ($whereConditions as $condition) {
-                  $query->orWhereRaw($condition);
-              }
-          })
-          ->first();
-        $valid = $sitePolygonData == null;
-        $responseData = ['valid' => $valid];
-        if (! $valid) {
+        $isValid = empty($validationErrors);
+        $responseData = ['valid' => $isValid];
+        if (! $isValid) {
             $responseData['message'] = 'Some attributes of the site polygon are invalid.';
         }
 
         App::make(PolygonService::class)
-          ->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $valid);
+            ->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $isValid, $validationErrors);
 
         return response()->json($responseData);
+    }
+
+    private function isFieldInvalid($field, $value)
+    {
+        if (is_null($value) || $value === '') {
+            return true;
+        }
+
+        switch ($field) {
+            case 'plantstart':
+                return ! $this->isValidDate($value);
+            case 'plantend':
+                return ! $this->isValidDate($value);
+            case 'practice':
+                return ! in_array($value, self::VALID_PRACTICES);
+            case 'target_sys':
+                return ! in_array($value, self::VALID_SYSTEMS);
+            case 'distr':
+                return ! in_array($value, self::VALID_DISTRIBUTIONS);
+            case 'num_trees':
+                return ! filter_var($value, FILTER_VALIDATE_INT);
+            default:
+                return false;
+        }
+    }
+
+    private function isValidDate($date)
+    {
+        $d = DateTime::createFromFormat('Y-m-d', $date);
+
+        return $d && $d->format('Y-m-d') === $date;
     }
 
     public function getGeometryProperties(string $geojsonFilename)
