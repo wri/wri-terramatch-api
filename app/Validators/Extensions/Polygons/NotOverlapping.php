@@ -56,6 +56,7 @@ class NotOverlapping extends Extension
                 $minArea = min($mainPolygonArea, $intersect->area);
                 if ($minArea > 0) {
                     $percentage = ($intersect->intersection_area / $minArea) * 100;
+                    $percentage = round($percentage, 2);
                 } else {
                     $percentage = 100;
                 }
