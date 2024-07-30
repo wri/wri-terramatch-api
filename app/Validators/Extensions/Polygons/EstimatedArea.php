@@ -5,7 +5,6 @@ namespace App\Validators\Extensions\Polygons;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Extension;
-use Illuminate\Support\Facades\Log;
 
 class EstimatedArea extends Extension
 {
