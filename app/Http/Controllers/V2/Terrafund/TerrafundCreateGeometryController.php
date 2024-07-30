@@ -1021,9 +1021,9 @@ class TerrafundCreateGeometryController extends Controller
 
             return response()->json($response, $status);
         }
-
+        $extraInfo = $response['extra_info'] ?? null;
         $response['insertion_success'] = App::make(PolygonService::class)
-          ->createCriteriaSite($polygonUuid, $criteriaId, $response['valid'], $response['extra_info']);
+          ->createCriteriaSite($polygonUuid, $criteriaId, $response['valid'], $extraInfo);
 
         return response()->json($response);
     }
