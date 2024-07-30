@@ -68,6 +68,7 @@ class NotOverlapping extends Extension
             }
         }
 
+
         return [
             'valid' => ! $intersects->contains('intersects', 1),
             'uuid' => $polygonUuid,
