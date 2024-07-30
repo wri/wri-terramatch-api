@@ -19,6 +19,6 @@ properties:
         valid:
           type: integer
           description: Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
-        extra_info:
-          type: object
+        message:
+          type: array
           description: Extra information about the polygon validation

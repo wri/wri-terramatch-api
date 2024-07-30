@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V2\Terrafund;
 
 use App\Helpers\GeometryHelper;
+use App\Helpers\MessageValidationHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
@@ -549,7 +550,10 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Criteria data not found for the given polygon ID'], 404);
         }
 
-        return response()->json(['polygon_id' => $uuid, 'criteria_list' => $criteriaList]);
+        $messageValidationHelper = new MessageValidationHelper();
+        $formattedCriteriaList = $messageValidationHelper->formatCriteriaList($criteriaList);
+
+        return response()->json(['polygon_id' => $uuid, 'criteria_list' => $formattedCriteriaList]);
     }
 
     public function uploadGeoJSONFileProject(Request $request)
