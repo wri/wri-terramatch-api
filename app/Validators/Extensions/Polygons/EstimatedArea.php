@@ -5,6 +5,7 @@ namespace App\Validators\Extensions\Polygons;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Extension;
+use Illuminate\Support\Facades\Log;
 
 class EstimatedArea extends Extension
 {
@@ -48,11 +49,25 @@ class EstimatedArea extends Extension
         $lowerBound = self::LOWER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
         $upperBound = self::UPPER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
         $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;
-
+        $percentage = ($sumEstArea / $project->total_hectares_restored_goal) * 100;
+        $extra_info = [
+          'sum_area' => $sumEstArea,
+          'percentage' => $percentage,
+          'total_area_project' => $project->total_hectares_restored_goal,
+        ];
+        $message = sprintf(
+          "Project Goal: Sum of all project polygons %.2f is %.2f%% of total hectares to be restored %.2f",
+          $sumEstArea,
+          $percentage,
+          $project->total_hectares_restored_goal
+        );
+      
+        Log::info($message);
         return [
-            'valid' => $valid,
-            'sum_area_project' => $sumEstArea,
-            'total_area_project' => $project->total_hectares_restored_goal,
+          'valid' => $valid,
+          'sum_area_project' => $sumEstArea,
+          'total_area_project' => $project->total_hectares_restored_goal,
+          'extra_info' => $extra_info
         ];
     }
 
