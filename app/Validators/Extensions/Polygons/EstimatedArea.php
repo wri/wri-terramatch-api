@@ -56,18 +56,19 @@ class EstimatedArea extends Extension
           'total_area_project' => $project->total_hectares_restored_goal,
         ];
         $message = sprintf(
-          "Project Goal: Sum of all project polygons %.2f is %.2f%% of total hectares to be restored %.2f",
-          $sumEstArea,
-          $percentage,
-          $project->total_hectares_restored_goal
+            'Project Goal: Sum of all project polygons %.2f is %.2f%% of total hectares to be restored %.2f',
+            $sumEstArea,
+            $percentage,
+            $project->total_hectares_restored_goal
         );
-      
+
         Log::info($message);
+
         return [
           'valid' => $valid,
           'sum_area_project' => $sumEstArea,
           'total_area_project' => $project->total_hectares_restored_goal,
-          'extra_info' => $extra_info
+          'extra_info' => $extra_info,
         ];
     }
 

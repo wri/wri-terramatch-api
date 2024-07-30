@@ -63,12 +63,12 @@ class NotOverlapping extends Extension
                     'poly_uuid' => $intersect->uuid,
                     'poly_name' => $intersect->poly_name,
                     'percentage' => $percentage,
-                    'intersectSmaller' => ($intersect->area < $mainPolygonArea)
+                    'intersectSmaller' => ($intersect->area < $mainPolygonArea),
                 ];
             }
         }
 
-        
+
         return [
             'valid' => ! $intersects->contains('intersects', 1),
             'uuid' => $polygonUuid,
