@@ -166,6 +166,7 @@ class PolygonService
         if($primary_uuid) {
             $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded);
         } else {
+            $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
             $this->insertSitePolygon(
                 $uuid,
                 array_merge($sitePolygonProperties, $featureProperties),
