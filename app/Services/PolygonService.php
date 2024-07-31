@@ -14,12 +14,12 @@ use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
 use App\Validators\SitePolygonValidator;
 use DateTime;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
-use Exception;
 
 class PolygonService
 {
@@ -389,6 +389,7 @@ class PolygonService
     {
         try {
             $d = DateTime::createFromFormat('Y-m-d', $date);
+
             return $d && $d->format('Y-m-d') === $date;
         } catch (Exception $e) {
             return false;
