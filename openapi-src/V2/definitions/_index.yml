@@ -358,3 +358,7 @@ PolygonChangeStatusUpdate:
   $ref: './PolygonChangeStatusUpdate.yml'
 ProjectPolygonResponse:
   $ref: './ProjectPolygonResponse.yml'
+SitePolygonsLoadedDataResponse:
+  $ref: './SitePolygonsLoadedDataResponse.yml'
+SitePolygonLoaded:
+  $ref: './SitePolygonLoaded.yml'
