@@ -66,7 +66,7 @@ class TerrafundCreateGeometryController extends Controller
     /**
      * @throws ValidationException
      */
-    public function insertGeojsonToDB(string $geojsonFilename, ?string $entity_uuid = null, ?string $entity_type = null, ?string $primary_uuid = null, ?bool $submit_polygon_charged = false)
+    public function insertGeojsonToDB(string $geojsonFilename, ?string $entity_uuid = null, ?string $entity_type = null, ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false)
     {
         try {
             $tempDir = sys_get_temp_dir();
@@ -85,7 +85,7 @@ class TerrafundCreateGeometryController extends Controller
                 $geojson = json_decode($geojsonData, true);
                 SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-                return $service->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_charged);
+                return $service->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
 
             }
 
@@ -247,22 +247,22 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
         }
 
-        $polygonChargedList = isset($body['polygon_charged']) && filter_var($body['polygon_charged'], FILTER_VALIDATE_BOOLEAN);
-        $submitPolygonsCharged = isset($body['submit_polygon_charged']) && filter_var($body['submit_polygon_charged'], FILTER_VALIDATE_BOOLEAN);
+        $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
+        $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
 
-        if (! $polygonChargedList && ! $submitPolygonsCharged) {
+        if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
             $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, null, $body['primary_uuid'] ?? null);
         }
 
-        if ($polygonChargedList) {
+        if ($polygonLoadedList) {
             $geojsonContent = file_get_contents($geojsonPath);
-            $polygonCharged = $this->GetAllPolygonsCharged($geojsonContent, $site_id);
+            $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
 
-            return response()->json($polygonCharged->original, 200);
+            return response()->json($polygonLoaded->original, 200);
         }
 
-        if ($submitPolygonsCharged) {
-            $uuid = $this->insertGeojsonToDB($filename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_charged']);
+        if ($submitPolygonsLoaded) {
+            $uuid = $this->insertGeojsonToDB($filename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
         }
 
         if (isset($uuid['error'])) {
@@ -403,23 +403,23 @@ class TerrafundCreateGeometryController extends Controller
                 return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
             }
 
-            $polygonChargedList = isset($body['polygon_charged']) && filter_var($body['polygon_charged'], FILTER_VALIDATE_BOOLEAN);
-            $submitPolygonsCharged = isset($body['submit_polygon_charged']) && filter_var($body['submit_polygon_charged'], FILTER_VALIDATE_BOOLEAN);
+            $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
+            $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
 
-            if (! $polygonChargedList && ! $submitPolygonsCharged) {
+            if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
                 $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
             }
 
-            if ($polygonChargedList) {
+            if ($polygonLoadedList) {
                 $filePath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
                 $geojsonContent = file_get_contents($filePath);
-                $polygonCharged = $this->GetAllPolygonsCharged($geojsonContent, $site_id);
+                $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
 
-                return response()->json($polygonCharged->original, 200);
+                return response()->json($polygonLoaded->original, 200);
             }
 
-            if ($submitPolygonsCharged) {
-                $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_charged']);
+            if ($submitPolygonsLoaded) {
+                $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
             }
 
             if (isset($uuid['error'])) {
@@ -588,23 +588,23 @@ class TerrafundCreateGeometryController extends Controller
         $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
         $file->move($tempDir, $filename);
 
-        $polygonChargedList = isset($body['polygon_charged']) && filter_var($body['polygon_charged'], FILTER_VALIDATE_BOOLEAN);
-        $submitPolygonsCharged = isset($body['submit_polygon_charged']) && filter_var($body['submit_polygon_charged'], FILTER_VALIDATE_BOOLEAN);
+        $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
+        $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
 
-        if (! $polygonChargedList && ! $submitPolygonsCharged) {
+        if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
             $uuid = $this->insertGeojsonToDB($filename, $site_id, 'site', $body['primary_uuid'] ?? null);
         }
 
-        if ($polygonChargedList) {
+        if ($polygonLoadedList) {
             $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
             $geojsonContent = file_get_contents($filePath);
-            $polygonCharged = $this->GetAllPolygonsCharged($geojsonContent, $site_id);
+            $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
 
-            return response()->json($polygonCharged->original, 200);
+            return response()->json($polygonLoaded->original, 200);
         }
 
-        if ($submitPolygonsCharged) {
-            $uuid = $this->insertGeojsonToDB($filename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_charged']);
+        if ($submitPolygonsLoaded) {
+            $uuid = $this->insertGeojsonToDB($filename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
         }
 
         if (is_array($uuid) && isset($uuid['error'])) {
@@ -1006,7 +1006,7 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
-    public function GetAllPolygonsCharged($geojson, $uuid)
+    public function GetAllPolygonsLoaded($geojson, $uuid)
     {
         $polygonsUuids = SitePolygon::where('site_id', $uuid)
             ->active()

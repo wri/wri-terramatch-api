@@ -106,7 +106,7 @@ class SitePolygon extends Model implements AuditableModel
         return $query->where('is_active', true);
     }
 
-    public function createCopy(User $user, ?string $poly_id = null, ?bool $submit_polygon_charged = false)
+    public function createCopy(User $user, ?string $poly_id = null, ?bool $submit_polygon_loaded = false)
     {
         $geometry = $this->polygonGeometry()->first();
         if (! $poly_id) {
@@ -118,7 +118,7 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon = $this->replicate();
         $newSitePolygon->primary_uuid = $this->primary_uuid;
         $newSitePolygon->poly_id = $poly_id ?? $copyGeometry->uuid;
-        if ($submit_polygon_charged) {
+        if ($submit_polygon_loaded) {
             SitePolygon::where('primary_uuid', $this->primary_uuid)->update(['is_active' => false]);
             $newSitePolygon->poly_name = $this->poly_name.' (new)';
             $newSitePolygon->is_active = true;

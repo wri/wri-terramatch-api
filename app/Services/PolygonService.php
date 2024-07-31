@@ -127,7 +127,7 @@ class PolygonService
         }
     }
 
-    public function createGeojsonModels($geojson, $sitePolygonProperties = [], ?string $primary_uuid = null, ?bool $submit_polygon_charged = false): array
+    public function createGeojsonModels($geojson, $sitePolygonProperties = [], ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false): array
     {
         if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
             return $this->transformAndStorePoints($geojson, $sitePolygonProperties);
@@ -139,8 +139,8 @@ class PolygonService
                 $data = $this->insertSinglePolygon($feature['geometry']);
                 $uuids[] = $data['uuid'];
                 $sitePolygonProperties['area'] = $data['area'];
-                if ($submit_polygon_charged) {
-                    $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $feature['properties']['uuid'], $submit_polygon_charged);
+                if ($submit_polygon_loaded) {
+                    $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $feature['properties']['uuid'], $submit_polygon_loaded);
                 } else {
                     $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $primary_uuid);
                 }
@@ -149,8 +149,8 @@ class PolygonService
                     $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
                     $data = $this->insertSinglePolygon($singlePolygon);
                     $uuids[] = $data['uuid'];
-                    if ($submit_polygon_charged) {
-                        $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $feature['properties']['uuid'], $submit_polygon_charged);
+                    if ($submit_polygon_loaded) {
+                        $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $feature['properties']['uuid'], $submit_polygon_loaded);
                     } else {
                         $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $primary_uuid);
                     }
@@ -161,10 +161,10 @@ class PolygonService
         return $uuids;
     }
 
-    private function insertPolygon($uuid, $sitePolygonProperties, $featureProperties, ?string $primary_uuid, ?bool $submit_polygon_charged = false)
+    private function insertPolygon($uuid, $sitePolygonProperties, $featureProperties, ?string $primary_uuid, ?bool $submit_polygon_loaded = false)
     {
         if($primary_uuid) {
-            $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_charged);
+            $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded);
         } else {
             $this->insertSitePolygon(
                 $uuid,
@@ -280,7 +280,7 @@ class PolygonService
         }
     }
 
-    protected function insertSitePolygonVersion(string $polygonUuid, string $primary_uuid, ?bool $submit_polygon_charged = false)
+    protected function insertSitePolygonVersion(string $polygonUuid, string $primary_uuid, ?bool $submit_polygon_loaded = false)
     {
         try {
             $sitePolygon = SitePolygon::isUuid($primary_uuid)->first();
@@ -288,7 +288,7 @@ class PolygonService
                 return response()->json(['error' => 'Site polygon not found'], 404);
             }
             $user = User::isUuid(Auth::user()->uuid)->first();
-            $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid, $submit_polygon_charged);
+            $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid, $submit_polygon_loaded);
             $site = $newSitePolygon->site()->first();
             $site->restorationInProgress();
             $project = $newSitePolygon->project()->first();

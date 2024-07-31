@@ -45170,11 +45170,11 @@ definitions:
       uuid:
         type: string
         description: UUID of the created project polygon
-  SitePolygonsChargedDataResponse:
-    title: SitePolygonsChargedDataResponse
+  SitePolygonsLoadedDataResponse:
+    title: SitePolygonsLoadedDataResponse
     type: array
     items:
-      title: SitePolygonCharged
+      title: SitePolygonLoaded
       type: object
       properties:
         id:
@@ -45237,8 +45237,8 @@ definitions:
           type: boolean
         is_present:
           type: boolean
-  SitePolygonCharged:
-    title: SitePolygonCharged
+  SitePolygonLoaded:
+    title: SitePolygonLoaded
     type: object
     properties:
       id:
