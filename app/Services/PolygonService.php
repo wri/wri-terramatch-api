@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Exception;
 
 class PolygonService
 {
@@ -348,7 +349,7 @@ class PolygonService
         return $this->createGeojsonModels($polygonsGeojson, $sitePolygonProperties);
     }
 
-    public function isFieldInvalid($field, $value)
+    public function isInvalidField($field, $value)
     {
         if (is_null($value) || $value === '') {
             return true;
@@ -360,11 +361,11 @@ class PolygonService
             case 'plantend':
                 return ! $this->isValidDate($value);
             case 'practice':
-                return ! $this->areValidPractices($value);
+                return ! $this->areValidItems($value, self::VALID_PRACTICES);
             case 'target_sys':
                 return ! in_array($value, self::VALID_SYSTEMS);
             case 'distr':
-                return ! $this->areValidDistributions($value);
+                return ! $this->areValidItems($value, self::VALID_DISTRIBUTIONS);
             case 'num_trees':
                 return ! filter_var($value, FILTER_VALIDATE_INT);
             default:
@@ -372,23 +373,11 @@ class PolygonService
         }
     }
 
-    private function areValidPractices($value)
+    private function areValidItems($value, $validItems)
     {
-        $practices = explode(',', $value);
-        foreach ($practices as $practice) {
-            if (! in_array(trim($practice), self::VALID_PRACTICES)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function areValidDistributions($value)
-    {
-        $distributions = explode(',', $value);
-        foreach ($distributions as $distribution) {
-            if (! in_array(trim($distribution), self::VALID_DISTRIBUTIONS)) {
+        $items = explode(',', $value);
+        foreach ($items as $item) {
+            if (! in_array(trim($item), $validItems)) {
                 return false;
             }
         }
@@ -398,8 +387,11 @@ class PolygonService
 
     private function isValidDate($date)
     {
-        $d = DateTime::createFromFormat('Y-m-d', $date);
-
-        return $d && $d->format('Y-m-d') === $date;
+        try {
+            $d = DateTime::createFromFormat('Y-m-d', $date);
+            return $d && $d->format('Y-m-d') === $date;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }
