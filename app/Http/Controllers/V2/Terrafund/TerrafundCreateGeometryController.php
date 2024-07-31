@@ -18,7 +18,6 @@ use App\Validators\Extensions\Polygons\SelfIntersection;
 use App\Validators\Extensions\Polygons\Spikes;
 use App\Validators\Extensions\Polygons\WithinCountry;
 use App\Validators\SitePolygonValidator;
-use DateTime;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -35,29 +34,6 @@ use Symfony\Component\Process\Process;
 class TerrafundCreateGeometryController extends Controller
 {
     private const MAX_EXECUTION_TIME = 240;
-
-    private const VALID_PRACTICES = [
-        'tree-planting',
-        'direct-seeding',
-        'assisted-natural-regeneration',
-    ];
-
-    private const VALID_SYSTEMS = [
-        'agroforest',
-        'natural-forest',
-        'mangrove',
-        'peatland',
-        'riparian-area-or-wetland',
-        'silvopasture',
-        'woodlot-or-plantation',
-        'urban-forest',
-    ];
-
-    private const VALID_DISTRIBUTIONS = [
-        'single-line',
-        'partial',
-        'full',
-    ];
 
     public function processGeometry(string $uuid)
     {
@@ -130,9 +106,10 @@ class TerrafundCreateGeometryController extends Controller
 
         // Proceed with validation of attribute values
         $validationErrors = [];
+        $polygonService = App::make(PolygonService::class);
         foreach ($fieldsToValidate as $field) {
             $value = $sitePolygon->$field;
-            if ($this->isFieldInvalid($field, $value)) {
+            if ($polygonService->isFieldInvalid($field, $value)) {
                 $validationErrors[] = [
                     'field' => $field,
                     'error' => $value,
@@ -147,41 +124,9 @@ class TerrafundCreateGeometryController extends Controller
             $responseData['message'] = 'Some attributes of the site polygon are invalid.';
         }
 
-        App::make(PolygonService::class)
-            ->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $isValid, $validationErrors);
+        $polygonService->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $isValid, $validationErrors);
 
         return response()->json($responseData);
-    }
-
-    private function isFieldInvalid($field, $value)
-    {
-        if (is_null($value) || $value === '') {
-            return true;
-        }
-
-        switch ($field) {
-            case 'plantstart':
-                return ! $this->isValidDate($value);
-            case 'plantend':
-                return ! $this->isValidDate($value);
-            case 'practice':
-                return ! in_array($value, self::VALID_PRACTICES);
-            case 'target_sys':
-                return ! in_array($value, self::VALID_SYSTEMS);
-            case 'distr':
-                return ! in_array($value, self::VALID_DISTRIBUTIONS);
-            case 'num_trees':
-                return ! filter_var($value, FILTER_VALIDATE_INT);
-            default:
-                return false;
-        }
-    }
-
-    private function isValidDate($date)
-    {
-        $d = DateTime::createFromFormat('Y-m-d', $date);
-
-        return $d && $d->format('Y-m-d') === $date;
     }
 
     public function getGeometryProperties(string $geojsonFilename)

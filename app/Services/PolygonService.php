@@ -13,6 +13,7 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
 use App\Validators\SitePolygonValidator;
+use DateTime;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -48,6 +49,29 @@ class PolygonService
         'target_sys',
         'distr',
         'num_trees',
+    ];
+
+    private const VALID_PRACTICES = [
+        'tree-planting',
+        'direct-seeding',
+        'assisted-natural-regeneration',
+    ];
+
+    private const VALID_SYSTEMS = [
+        'agroforest',
+        'natural-forest',
+        'mangrove',
+        'peatland',
+        'riparian-area-or-wetland',
+        'silvopasture',
+        'woodlot-or-plantation',
+        'urban-forest',
+    ];
+
+    private const VALID_DISTRIBUTIONS = [
+        'single-line',
+        'partial',
+        'full',
     ];
 
     public function createProjectPolygon($entity, $currentGeojson)
@@ -322,5 +346,60 @@ class PolygonService
         }
 
         return $this->createGeojsonModels($polygonsGeojson, $sitePolygonProperties);
+    }
+
+    public function isFieldInvalid($field, $value)
+    {
+        if (is_null($value) || $value === '') {
+            return true;
+        }
+
+        switch ($field) {
+            case 'plantstart':
+                return ! $this->isValidDate($value);
+            case 'plantend':
+                return ! $this->isValidDate($value);
+            case 'practice':
+                return ! $this->areValidPractices($value);
+            case 'target_sys':
+                return ! in_array($value, self::VALID_SYSTEMS);
+            case 'distr':
+                return ! $this->areValidDistributions($value);
+            case 'num_trees':
+                return ! filter_var($value, FILTER_VALIDATE_INT);
+            default:
+                return false;
+        }
+    }
+
+    private function areValidPractices($value)
+    {
+        $practices = explode(',', $value);
+        foreach ($practices as $practice) {
+            if (! in_array(trim($practice), self::VALID_PRACTICES)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function areValidDistributions($value)
+    {
+        $distributions = explode(',', $value);
+        foreach ($distributions as $distribution) {
+            if (! in_array(trim($distribution), self::VALID_DISTRIBUTIONS)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function isValidDate($date)
+    {
+        $d = DateTime::createFromFormat('Y-m-d', $date);
+
+        return $d && $d->format('Y-m-d') === $date;
     }
 }
