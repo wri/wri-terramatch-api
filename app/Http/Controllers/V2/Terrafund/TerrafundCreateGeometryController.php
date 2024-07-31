@@ -256,7 +256,7 @@ class TerrafundCreateGeometryController extends Controller
 
         if ($polygonChargedList) {
             $geojsonContent = file_get_contents($geojsonPath);
-            $polygonCharged = $this->GetAllPolygonsChanged($geojsonContent, $site_id);
+            $polygonCharged = $this->GetAllPolygonsCharged($geojsonContent, $site_id);
 
             return response()->json($polygonCharged->original, 200);
         }
@@ -413,7 +413,7 @@ class TerrafundCreateGeometryController extends Controller
             if ($polygonChargedList) {
                 $filePath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
                 $geojsonContent = file_get_contents($filePath);
-                $polygonCharged = $this->GetAllPolygonsChanged($geojsonContent, $site_id);
+                $polygonCharged = $this->GetAllPolygonsCharged($geojsonContent, $site_id);
 
                 return response()->json($polygonCharged->original, 200);
             }
@@ -598,7 +598,7 @@ class TerrafundCreateGeometryController extends Controller
         if ($polygonChargedList) {
             $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
             $geojsonContent = file_get_contents($filePath);
-            $polygonCharged = $this->GetAllPolygonsChanged($geojsonContent, $site_id);
+            $polygonCharged = $this->GetAllPolygonsCharged($geojsonContent, $site_id);
 
             return response()->json($polygonCharged->original, 200);
         }
@@ -1006,7 +1006,7 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
-    public function GetAllPolygonsChanged($geojson, $uuid)
+    public function GetAllPolygonsCharged($geojson, $uuid)
     {
         $polygonsUuids = SitePolygon::where('site_id', $uuid)
             ->active()
