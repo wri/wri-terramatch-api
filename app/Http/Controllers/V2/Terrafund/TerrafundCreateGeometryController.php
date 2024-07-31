@@ -109,7 +109,7 @@ class TerrafundCreateGeometryController extends Controller
         $polygonService = App::make(PolygonService::class);
         foreach ($fieldsToValidate as $field) {
             $value = $sitePolygon->$field;
-            if ($polygonService->isFieldInvalid($field, $value)) {
+            if ($polygonService->isInvalidField($field, $value)) {
                 $validationErrors[] = [
                     'field' => $field,
                     'error' => $value,
