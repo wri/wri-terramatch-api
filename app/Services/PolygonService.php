@@ -167,7 +167,7 @@ class PolygonService
             $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
         }
         if($primary_uuid) {
-            $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded);
+            $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
         } else {
             $this->insertSitePolygon(
                 $uuid,
@@ -283,7 +283,7 @@ class PolygonService
         }
     }
 
-    protected function insertSitePolygonVersion(string $polygonUuid, string $primary_uuid, ?bool $submit_polygon_loaded = false)
+    protected function insertSitePolygonVersion(string $polygonUuid, string $primary_uuid, ?bool $submit_polygon_loaded = false, ?array $properties)
     {
         try {
             $sitePolygon = SitePolygon::isUuid($primary_uuid)->first();
@@ -291,7 +291,7 @@ class PolygonService
                 return response()->json(['error' => 'Site polygon not found'], 404);
             }
             $user = User::isUuid(Auth::user()->uuid)->first();
-            $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid, $submit_polygon_loaded);
+            $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid, $submit_polygon_loaded, $properties);
             $site = $newSitePolygon->site()->first();
             $site->restorationInProgress();
             $project = $newSitePolygon->project()->first();
