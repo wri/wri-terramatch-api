@@ -135,7 +135,7 @@ class PolygonService
 
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
-            if (isset($feature['properties']['site_id'])) {
+            if (isset($feature['properties']['site_id']) && isset($sitePolygonProperties['site_id'])) {
                 $feature['properties']['site_id'] = $sitePolygonProperties['site_id'];
             }
             if ($feature['geometry']['type'] === 'Polygon') {

@@ -85,16 +85,6 @@ class PolygonValidatorsTest extends TestCase
         $this->readGeojsons($validationName, function ($passGeojson, $failGeojson) use ($validationName) {
             /** @var PolygonService $service */
             $service = App::make(PolygonService::class);
-            foreach ($passGeojson['features'] as &$feature) {
-                if (! isset($feature['properties']['site_id'])) {
-                    $feature['properties']['site_id'] = 'dummy_site_id';
-                }
-            }
-            foreach ($failGeojson['features'] as &$feature) {
-                if (! isset($feature['properties']['site_id'])) {
-                    $feature['properties']['site_id'] = 'dummy_site_id';
-                }
-            }
             $passUuids = $service->createGeojsonModels($passGeojson);
             $this->assertTrue(SitePolygonValidator::isValid($validationName, $passUuids, false));
 
