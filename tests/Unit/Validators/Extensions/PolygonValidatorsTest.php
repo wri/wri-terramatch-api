@@ -86,12 +86,12 @@ class PolygonValidatorsTest extends TestCase
             /** @var PolygonService $service */
             $service = App::make(PolygonService::class);
             foreach ($passGeojson['features'] as &$feature) {
-                if (!isset($feature['properties']['site_id'])) {
+                if (! isset($feature['properties']['site_id'])) {
                     $feature['properties']['site_id'] = 'dummy_site_id';
                 }
             }
             foreach ($failGeojson['features'] as &$feature) {
-                if (!isset($feature['properties']['site_id'])) {
+                if (! isset($feature['properties']['site_id'])) {
                     $feature['properties']['site_id'] = 'dummy_site_id';
                 }
             }
