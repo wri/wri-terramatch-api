@@ -163,6 +163,9 @@ class PolygonService
 
     private function insertPolygon($uuid, $sitePolygonProperties, $featureProperties, ?string $primary_uuid, ?bool $submit_polygon_loaded = false)
     {
+        if (isset($featureProperties['site_id']) && isset($sitePolygonProperties['site_id'])) {
+            $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
+        }
         if($primary_uuid) {
             $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded);
         } else {

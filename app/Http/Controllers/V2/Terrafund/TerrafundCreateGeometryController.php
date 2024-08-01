@@ -933,7 +933,6 @@ class TerrafundCreateGeometryController extends Controller
               'num_trees',
               'uuid',
               'site_id',
-              'primary_uuid',
             ];
             foreach ($fieldsToValidate as $field) {
                 $properties[$field] = $sitePolygon->$field;
@@ -981,7 +980,7 @@ class TerrafundCreateGeometryController extends Controller
                 }
 
                 $properties = [];
-                $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid', 'primary_uuid'];
+                $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid'];
                 foreach ($fieldsToValidate as $field) {
                     $properties[$field] = $sitePolygon->$field;
                 }
