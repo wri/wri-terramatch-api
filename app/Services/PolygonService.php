@@ -135,11 +135,13 @@ class PolygonService
 
         $uuids = [];
         foreach ($geojson['features'] as $feature) {
+            if (isset($feature['properties']['site_id'])) {
+                $feature['properties']['site_id'] = $sitePolygonProperties['site_id'];
+            }
             if ($feature['geometry']['type'] === 'Polygon') {
                 $data = $this->insertSinglePolygon($feature['geometry']);
                 $uuids[] = $data['uuid'];
                 $sitePolygonProperties['area'] = $data['area'];
-                $feature['properties']['site_id'] = $sitePolygonProperties['site_id'];
                 if ($submit_polygon_loaded) {
                     $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $feature['properties']['uuid'], $submit_polygon_loaded);
                 } else {
