@@ -139,6 +139,7 @@ class PolygonService
                 $data = $this->insertSinglePolygon($feature['geometry']);
                 $uuids[] = $data['uuid'];
                 $sitePolygonProperties['area'] = $data['area'];
+                $feature['properties']['site_id'] = $sitePolygonProperties['site_id'];
                 if ($submit_polygon_loaded) {
                     $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $feature['properties']['uuid'], $submit_polygon_loaded);
                 } else {
@@ -166,7 +167,6 @@ class PolygonService
         if($primary_uuid) {
             $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded);
         } else {
-            $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
             $this->insertSitePolygon(
                 $uuid,
                 array_merge($sitePolygonProperties, $featureProperties),
