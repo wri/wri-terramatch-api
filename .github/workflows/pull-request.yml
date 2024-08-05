@@ -8,10 +8,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Install deps
-        run: make composer
       - name: test
         run: make ls
+      - name: Install deps
+        run: make composer
       - name: Bring up Docker
         run: make up
       - name: Lint & Test
