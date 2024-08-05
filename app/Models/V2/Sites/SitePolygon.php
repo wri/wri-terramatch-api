@@ -106,6 +106,14 @@ class SitePolygon extends Model implements AuditableModel
         return $query->where('is_active', true);
     }
 
+    public function changeStatusOnEdit()
+    {
+        if ($this->status === 'approved') {
+            $this->status = 'submitted';
+            $this->save();
+        }
+    }
+
     public function createCopy(User $user, ?string $poly_id = null, ?bool $submit_polygon_loaded = false, ?array $properties = [])
     {
         $geometry = $this->polygonGeometry()->first();

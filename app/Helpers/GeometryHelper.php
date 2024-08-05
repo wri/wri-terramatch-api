@@ -307,14 +307,6 @@ class GeometryHelper
         return $result[0]->wkt ?? null;
     }
 
-    public static function updateStatusOnEdit($sitePolygon)
-    {
-        if ($sitePolygon->status === 'approved') {
-            $sitePolygon->status = 'submitted';
-            $sitePolygon->save();
-        }
-    }
-
     public static function deletePolygonWithRelated($entity)
     {
         try {
