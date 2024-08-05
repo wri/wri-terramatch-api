@@ -106,7 +106,7 @@ class SitePolygon extends Model implements AuditableModel
         return $query->where('is_active', true);
     }
 
-    public function createCopy(User $user, ?string $poly_id = null, ?bool $submit_polygon_loaded = false, ?array $properties)
+    public function createCopy(User $user, ?string $poly_id = null, ?bool $submit_polygon_loaded = false, ?array $properties = [])
     {
         $geometry = $this->polygonGeometry()->first();
         if (! $poly_id) {
