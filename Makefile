@@ -9,6 +9,7 @@ rebuild-with-composer:
 
 ls:
 	ls -lh
+	pwd
 
 build:
 	docker-compose build --no-cache

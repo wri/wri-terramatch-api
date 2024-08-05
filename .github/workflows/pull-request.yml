@@ -10,6 +10,8 @@ jobs:
         uses: actions/checkout@v4
       - name: test
         run: make ls
+      - name: test2
+        run: whereis docker-compose
       - name: Install deps
         run: make composer
       - name: Bring up Docker
