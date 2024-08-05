@@ -194,6 +194,7 @@ class TerrafundEditGeometryController extends Controller
             if ($sitePolygon) {
                 $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
                 $this->updateProjectCentroidFromPolygon($polygonGeometry);
+                GeometryHelper::updateStatusOnEdit($sitePolygon);
             }
 
             return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
