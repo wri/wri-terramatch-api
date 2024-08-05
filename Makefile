@@ -7,6 +7,9 @@ rebuild-with-composer:
 	docker-compose build --no-cache
 	docker-compose run composer composer install --ignore-platform-reqs
 
+ls:
+	ls -lh
+
 build:
 	docker-compose build --no-cache
 	cp .env.example .env
