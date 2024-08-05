@@ -11374,6 +11374,8 @@ definitions:
                   description: 'this is a list of key value pairs eg slug: name '
                   items:
                     type: string
+                project_pitch_uuid:
+                  type: string
                 updated_by:
                   type: string
                 deleted_at:
@@ -11609,6 +11611,8 @@ definitions:
                 description: 'this is a list of key value pairs eg slug: name '
                 items:
                   type: string
+              project_pitch_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -14695,6 +14699,8 @@ definitions:
         description: 'this is a list of key value pairs eg slug: name '
         items:
           type: string
+      project_pitch_uuid:
+        type: string
       updated_by:
         type: string
       deleted_at:
@@ -15654,6 +15660,8 @@ definitions:
               description: 'this is a list of key value pairs eg slug: name '
               items:
                 type: string
+            project_pitch_uuid:
+              type: string
             updated_by:
               type: string
             deleted_at:
@@ -15889,6 +15897,8 @@ definitions:
             description: 'this is a list of key value pairs eg slug: name '
             items:
               type: string
+          project_pitch_uuid:
+            type: string
           updated_by:
             type: string
           deleted_at:
@@ -16148,6 +16158,8 @@ definitions:
               description: 'this is a list of key value pairs eg slug: name '
               items:
                 type: string
+            project_pitch_uuid:
+              type: string
             updated_by:
               type: string
             deleted_at:
@@ -16383,6 +16395,8 @@ definitions:
             description: 'this is a list of key value pairs eg slug: name '
             items:
               type: string
+          project_pitch_uuid:
+            type: string
           updated_by:
             type: string
           deleted_at:
@@ -73876,6 +73890,8 @@ paths:
                                 description: 'this is a list of key value pairs eg slug: name '
                                 items:
                                   type: string
+                              project_pitch_uuid:
+                                type: string
                               updated_by:
                                 type: string
                               deleted_at:
@@ -74111,6 +74127,8 @@ paths:
                               description: 'this is a list of key value pairs eg slug: name '
                               items:
                                 type: string
+                            project_pitch_uuid:
+                              type: string
                             updated_by:
                               type: string
                             deleted_at:
@@ -78925,6 +78943,8 @@ paths:
                       description: 'this is a list of key value pairs eg slug: name '
                       items:
                         type: string
+                    project_pitch_uuid:
+                      type: string
                     updated_by:
                       type: string
                     deleted_at:
@@ -79174,6 +79194,8 @@ paths:
                 description: 'this is a list of key value pairs eg slug: name '
                 items:
                   type: string
+              project_pitch_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -79453,6 +79475,8 @@ paths:
                       description: 'this is a list of key value pairs eg slug: name '
                       items:
                         type: string
+                    project_pitch_uuid:
+                      type: string
                     updated_by:
                       type: string
                     deleted_at:
@@ -79762,6 +79786,8 @@ paths:
                       description: 'this is a list of key value pairs eg slug: name '
                       items:
                         type: string
+                    project_pitch_uuid:
+                      type: string
                     updated_by:
                       type: string
                     deleted_at:
@@ -84049,6 +84075,8 @@ paths:
                 description: 'this is a list of key value pairs eg slug: name '
                 items:
                   type: string
+              project_pitch_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -84307,6 +84335,8 @@ paths:
                 description: 'this is a list of key value pairs eg slug: name '
                 items:
                   type: string
+              project_pitch_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -84571,6 +84601,8 @@ paths:
                 description: 'this is a list of key value pairs eg slug: name '
                 items:
                   type: string
+              project_pitch_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -84815,6 +84847,8 @@ paths:
                 description: 'this is a list of key value pairs eg slug: name '
                 items:
                   type: string
+              project_pitch_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -85103,6 +85137,8 @@ paths:
                 description: 'this is a list of key value pairs eg slug: name '
                 items:
                   type: string
+              project_pitch_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -85351,6 +85387,8 @@ paths:
                 description: 'this is a list of key value pairs eg slug: name '
                 items:
                   type: string
+              project_pitch_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -86908,6 +86946,8 @@ paths:
                             description: 'this is a list of key value pairs eg slug: name '
                             items:
                               type: string
+                          project_pitch_uuid:
+                            type: string
                           updated_by:
                             type: string
                           deleted_at:
@@ -87143,6 +87183,8 @@ paths:
                           description: 'this is a list of key value pairs eg slug: name '
                           items:
                             type: string
+                        project_pitch_uuid:
+                          type: string
                         updated_by:
                           type: string
                         deleted_at:
@@ -87455,6 +87497,8 @@ paths:
                       description: 'this is a list of key value pairs eg slug: name '
                       items:
                         type: string
+                    project_pitch_uuid:
+                      type: string
                     updated_by:
                       type: string
                     deleted_at:
@@ -87690,6 +87734,8 @@ paths:
                     description: 'this is a list of key value pairs eg slug: name '
                     items:
                       type: string
+                  project_pitch_uuid:
+                    type: string
                   updated_by:
                     type: string
                   deleted_at:
@@ -89093,6 +89139,8 @@ paths:
                             description: 'this is a list of key value pairs eg slug: name '
                             items:
                               type: string
+                          project_pitch_uuid:
+                            type: string
                           updated_by:
                             type: string
                           deleted_at:
@@ -89328,6 +89376,8 @@ paths:
                           description: 'this is a list of key value pairs eg slug: name '
                           items:
                             type: string
+                        project_pitch_uuid:
+                          type: string
                         updated_by:
                           type: string
                         deleted_at:
@@ -89642,6 +89692,8 @@ paths:
                       description: 'this is a list of key value pairs eg slug: name '
                       items:
                         type: string
+                    project_pitch_uuid:
+                      type: string
                     updated_by:
                       type: string
                     deleted_at:
@@ -89877,6 +89929,8 @@ paths:
                     description: 'this is a list of key value pairs eg slug: name '
                     items:
                       type: string
+                  project_pitch_uuid:
+                    type: string
                   updated_by:
                     type: string
                   deleted_at:
