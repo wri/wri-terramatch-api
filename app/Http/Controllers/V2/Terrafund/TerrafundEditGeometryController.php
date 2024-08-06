@@ -235,6 +235,7 @@ class TerrafundEditGeometryController extends Controller
 
             $sitePolygon->update($validatedData);
             $sitePolygon->changeStatusOnEdit();
+
             return response()->json(['message' => 'Site polygon updated successfully'], 200);
         } catch (\Exception $e) {
             // Handle other exceptions
