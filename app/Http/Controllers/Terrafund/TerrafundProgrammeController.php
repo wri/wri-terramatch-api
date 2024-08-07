@@ -10,7 +10,7 @@ use App\Http\Requests\Terrafund\UpdateTerrafundProgrammeRequest;
 use App\Models\Organisation;
 use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundTreeSpecies;
-use App\Models\User;
+use App\Models\V2\User;
 use App\Resources\Terrafund\TerrafundProgrammeLiteResource;
 use App\Resources\Terrafund\TerrafundProgrammeResource;
 use App\Resources\UserResource;

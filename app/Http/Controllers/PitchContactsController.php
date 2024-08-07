@@ -10,7 +10,7 @@ use App\Http\Requests\StorePitchContactRequest;
 use App\Models\Pitch as PitchModel;
 use App\Models\PitchContact as PitchContactModel;
 use App\Models\TeamMember as TeamMemberModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use App\Resources\PitchContactResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;

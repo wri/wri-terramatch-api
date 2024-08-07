@@ -9,7 +9,7 @@ use App\Models\Terrafund\TerrafundProgrammeSubmission;
 use App\Models\Terrafund\TerrafundSite;
 use App\Models\Terrafund\TerrafundSiteSubmission;
 use App\Models\Upload;
-use App\Models\User;
+use App\Models\V2\User;
 use Tests\TestCase;
 
 /**

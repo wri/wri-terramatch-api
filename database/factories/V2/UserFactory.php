@@ -58,4 +58,14 @@ class UserFactory extends Factory
             ];
         });
     }
+
+    public function serviceAccount()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'api_key' => base64_encode(random_bytes(48)),
+                'role' => 'service',
+            ];
+        });
+    }
 }

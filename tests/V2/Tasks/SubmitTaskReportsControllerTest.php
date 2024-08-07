@@ -3,7 +3,6 @@
 namespace Tests\V2\Tasks;
 
 use App\Helpers\CustomFormHelper;
-use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Organisation;
@@ -12,6 +11,7 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
+use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\TaskStatusStateMachine;

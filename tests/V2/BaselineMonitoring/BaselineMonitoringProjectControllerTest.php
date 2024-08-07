@@ -3,7 +3,7 @@
 namespace Tests\V2\BaselineMonitoring;
 
 use App\Models\Terrafund\TerrafundProgramme;
-use App\Models\User;
+use App\Models\V2\User;
 use App\Models\V2\BaselineMonitoring\ProjectMetric;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

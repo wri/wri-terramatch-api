@@ -11,7 +11,7 @@ use App\Mail\TerrafundProgrammeInviteReceived;
 use App\Mail\UserInvited;
 use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundProgrammeInvite;
-use App\Models\User;
+use App\Models\V2\User;
 use App\Resources\Terrafund\TerrafundProgrammeInviteResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;

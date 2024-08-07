@@ -2,7 +2,7 @@
 
 namespace Tests\V2\Files\Gallery;
 
-use App\Models\User;
+use App\Models\V2\User;
 use App\Models\V2\Projects\ProjectMonitoring;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

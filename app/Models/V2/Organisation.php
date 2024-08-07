@@ -9,7 +9,6 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\HasVersions;
 use App\Models\Traits\NamedEntityTrait;
-use App\Models\User;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Database\Factories\V2\OrganisationFactory;

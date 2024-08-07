@@ -2,10 +2,10 @@
 
 namespace Tests\V2\Tasks;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Tasks\Task;
+use App\Models\V2\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

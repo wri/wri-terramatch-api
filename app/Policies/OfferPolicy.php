@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Offer as OfferModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 
 class OfferPolicy extends Policy
 {

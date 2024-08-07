@@ -2,8 +2,8 @@
 
 namespace Tests\V2\Geometry;
 
-use App\Models\User;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\User;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PythonService;
 use Database\Seeders\WorldCountriesGeneralizedTableSeeder;

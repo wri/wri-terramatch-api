@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Admin as AdminModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 
 class AdminPolicy extends Policy
 {

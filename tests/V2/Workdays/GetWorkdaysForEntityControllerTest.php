@@ -2,11 +2,11 @@
 
 namespace Tests\V2\Workdays;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
 use App\Models\V2\Workdays\WorkdayDemographic;
 use App\StateMachines\EntityStatusStateMachine;
