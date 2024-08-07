@@ -2687,3 +2687,6 @@
 /v2/site-polygon/{uuid}/make-active:
   put:
     $ref: './Polygons/put-v2-site-polygon-uuid-make-active.yml'
+/v2/locale/{locale}:
+  post:
+    $ref: './Locale/post-v2-locale-locale.yml'

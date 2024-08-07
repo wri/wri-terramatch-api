@@ -97816,3 +97816,23 @@ paths:
                     type: string
                   is_active:
                     type: boolean
+  '/v2/locale/{locale}':
+    post:
+      summary: Updates user locale
+      operationId: post-v2-locale-locale
+      tags:
+        - V2 Locale
+      parameters:
+        - in: path
+          name: locale
+          required: true
+          type: string
+          description: 'locale used could be one of en-US,es-MX,fr-FR,pt-BR'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              message:
+                type: string

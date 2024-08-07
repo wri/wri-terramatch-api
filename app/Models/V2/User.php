@@ -69,6 +69,7 @@ class User extends Authenticatable implements JWTSubject
         'api_key',
         'country',
         'program',
+        'locale',
     ];
 
     protected $casts = [
