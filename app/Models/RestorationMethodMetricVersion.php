@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Interfaces\Version;
 use App\Models\Traits\IsVersion;
 use App\Models\Traits\NamedEntityTrait;
+use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

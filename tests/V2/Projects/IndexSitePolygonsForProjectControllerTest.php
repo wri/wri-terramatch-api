@@ -2,10 +2,10 @@
 
 namespace Tests\V2\Projects;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;

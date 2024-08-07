@@ -12,7 +12,7 @@ use App\Mail\ProgrammeInviteReceived;
 use App\Mail\UserInvited;
 use App\Models\Programme;
 use App\Models\ProgrammeInvite;
-use App\Models\User;
+use App\Models\V2\User;
 use App\Resources\ProgrammeInviteResource;
 use App\Resources\UserResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

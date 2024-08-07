@@ -3,11 +3,11 @@
 namespace Tests\V2\UpdateRequests;
 
 use App\Helpers\CustomFormHelper;
-use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\UpdateRequestStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;

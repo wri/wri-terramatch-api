@@ -3,13 +3,13 @@
 namespace Tests\V2\Projects;
 
 use App\Helpers\CustomFormHelper;
-use App\Models\User;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

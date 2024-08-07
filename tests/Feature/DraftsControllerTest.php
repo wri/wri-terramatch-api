@@ -6,7 +6,7 @@ use App\Models\Draft;
 use App\Models\DueSubmission;
 use App\Models\Programme;
 use App\Models\Site;
-use App\Models\User;
+use App\Models\V2\User;
 use Tests\TestCase;
 
 final class DraftsControllerTest extends TestCase

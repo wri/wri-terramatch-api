@@ -50,7 +50,7 @@ class PushService
         if (! config('app.sns.enabled')) {
             return;
         }
-        if (! in_array(get_class($model), [\App\Models\User::class, \App\Models\Admin::class])) {
+        if (! in_array(get_class($model), [\App\Models\V2\User::class, \App\Models\Admin::class])) {
             throw new InvalidArgumentException();
         }
         $devices = DeviceModel::where('user_id', '=', $model->id)->get();

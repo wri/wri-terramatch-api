@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\SatelliteMonitor as SatelliteMonitorModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 
 class SatelliteMonitorPolicy extends Policy
 {

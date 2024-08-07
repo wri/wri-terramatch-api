@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
@@ -26,7 +26,7 @@ final class UsersControllerTest extends TestCase
         )
             ->assertStatus(200)
             ->assertJsonFragment([
-                'role' => 'terrafund_admin',
+                'user_type' => 'terrafund_admin',
             ]);
     }
 

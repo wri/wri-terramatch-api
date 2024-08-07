@@ -161,7 +161,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function scopeUser(Builder $query): Builder
     {
-        return $query->where('role', '=', 'user');
+        return $query->where('role', 'user');
     }
 
     public function scopeUserOrTerrafundAdmin(Builder $query): Builder

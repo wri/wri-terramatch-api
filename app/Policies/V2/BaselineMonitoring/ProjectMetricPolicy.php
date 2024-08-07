@@ -2,8 +2,8 @@
 
 namespace App\Policies\V2\BaselineMonitoring;
 
-use App\Models\User as UserModel;
 use App\Models\V2\BaselineMonitoring\ProjectMetric;
+use App\Models\V2\User as UserModel;
 use App\Policies\Policy;
 
 class ProjectMetricPolicy extends Policy

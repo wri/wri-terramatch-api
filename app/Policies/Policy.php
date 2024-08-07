@@ -14,7 +14,7 @@ use App\Models\PitchDocument as PitchDocumentModel;
 use App\Models\RestorationMethodMetric as RestorationMethodMetricModel;
 use App\Models\Site;
 use App\Models\TreeSpecies as TreeSpeciesModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -85,7 +85,7 @@ abstract class Policy
             return false;
         }
         switch (get_class($model)) {
-            case \App\Models\User::class:
+            case UserModel::class:
             case \App\Models\Admin::class:
                 return $user->id == $model->id;
             case \App\Models\Organisation::class:

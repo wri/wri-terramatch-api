@@ -3,7 +3,7 @@
 namespace App\Http\Resources\V2\User;
 
 use App\Http\Resources\V2\Organisation\OrganisationLiteResource;
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AssociatedUserResource extends JsonResource

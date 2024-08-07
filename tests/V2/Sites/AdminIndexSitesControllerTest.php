@@ -3,8 +3,8 @@
 namespace Tests\V2\Sites;
 
 use App\Models\Framework;
-use App\Models\User;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;

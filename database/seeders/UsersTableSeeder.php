@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use DateTime;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;

@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\Monitoring as MonitoringModel;
 use App\Models\Target as TargetModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 
 class TargetPolicy extends Policy
 {

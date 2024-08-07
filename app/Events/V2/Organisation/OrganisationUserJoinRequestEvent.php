@@ -2,8 +2,8 @@
 
 namespace App\Events\V2\Organisation;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
+use App\Models\V2\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;

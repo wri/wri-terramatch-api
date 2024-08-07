@@ -11,7 +11,7 @@ use App\Http\Requests\StoreSocioeconomicBenefitsRequest;
 use App\Http\Requests\StoreSubmissionMediaUploadRequest;
 use App\Models\Draft as DraftModel;
 use App\Models\DueSubmission;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

@@ -4,7 +4,7 @@ namespace App\Resources;
 
 use App\Http\Resources\V2\Organisation\MonitoringOrganisationResource;
 use App\Http\Resources\V2\Organisation\OrganisationResource;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use App\Models\V2\User as V2UserModel;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 

@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Submission as SubmissionModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 
 class SubmissionPolicy extends Policy
 {

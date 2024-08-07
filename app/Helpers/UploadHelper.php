@@ -6,7 +6,7 @@ use App\Exceptions\DuplicateUploadException;
 use App\Exceptions\InvalidUploadTypeException;
 use App\Exceptions\UploadNotFoundException;
 use App\Models\Upload as UploadModel;
-use App\Models\User;
+use App\Models\V2\User;
 
 class UploadHelper
 {

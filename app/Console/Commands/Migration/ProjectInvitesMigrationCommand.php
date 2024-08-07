@@ -4,9 +4,9 @@ namespace App\Console\Commands\Migration;
 
 use App\Models\Programme;
 use App\Models\Terrafund\TerrafundProgramme;
-use App\Models\User;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
+use App\Models\V2\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 

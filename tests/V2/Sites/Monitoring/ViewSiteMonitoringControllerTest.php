@@ -2,7 +2,7 @@
 
 namespace Tests\V2\Sites\Monitoring;
 
-use App\Models\User;
+use App\Models\V2\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;

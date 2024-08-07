@@ -5,7 +5,7 @@ namespace Tests\V2\Projects\Monitoring;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectMonitoring;
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

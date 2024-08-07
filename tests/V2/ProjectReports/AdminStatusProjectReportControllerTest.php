@@ -2,10 +2,10 @@
 
 namespace Tests\V2\ProjectReports;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
