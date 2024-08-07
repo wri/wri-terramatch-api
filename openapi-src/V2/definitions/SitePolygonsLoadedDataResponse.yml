@@ -1,0 +1,4 @@
+title: SitePolygonsLoadedDataResponse
+type: array
+items:
+  $ref: './_index.yml#/SitePolygonLoaded'

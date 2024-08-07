@@ -6,6 +6,7 @@ use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
@@ -41,6 +42,29 @@ class TerrafundEditGeometryController extends Controller
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['message' => 'Site polygon not found.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getProjectPolygonData(Request $request)
+    {
+        try {
+            $entity_uuid = $request->input('uuid');
+            $entity_type = $request->input('entityType');
+            $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
+            $projectPolygon = ProjectPolygon::where('entity_id', $entity->id)->first();
+
+            if (! $projectPolygon) {
+                return response()->json(['message' => 'No project polygons found for the given UUID.', 'project_polygon' => null], 206);
+            }
+
+            $projectPolygonArray = $projectPolygon->toArray();
+
+            return response()->json(['project_polygon' => $projectPolygonArray]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Project polygon not found.'], 404);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -133,6 +157,26 @@ class TerrafundEditGeometryController extends Controller
         }
     }
 
+    public function deletePolygonAndProjectPolygon(string $uuid)
+    {
+        try {
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+
+            $polygonGeometry->deleteWithRelated();
+
+            Log::info("Polygon geometry and associated project polygon deleted successfully for UUID: $uuid");
+
+            return response()->json(['message' => 'Polygon geometry and associated project polygon deleted successfully.', 'uuid' => $uuid]);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function updateGeometry(string $uuid, Request $request)
     {
         try {
@@ -146,8 +190,12 @@ class TerrafundEditGeometryController extends Controller
             $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
             $polygonGeometry->geom = $geom;
             $polygonGeometry->save();
-            $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
-            $this->updateProjectCentroidFromPolygon($polygonGeometry);
+            $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
+            if ($sitePolygon) {
+                $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
+                $this->updateProjectCentroidFromPolygon($polygonGeometry);
+                $sitePolygon->changeStatusOnEdit();
+            }
 
             return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
         } catch (\Exception $e) {
@@ -186,10 +234,45 @@ class TerrafundEditGeometryController extends Controller
             ]);
 
             $sitePolygon->update($validatedData);
+            $sitePolygon->changeStatusOnEdit();
 
             return response()->json(['message' => 'Site polygon updated successfully'], 200);
         } catch (\Exception $e) {
             // Handle other exceptions
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function createProjectPolygon(string $uuid, string $entity_uuid, string $entity_type)
+    {
+        try {
+            $entity = App::make(PolygonService::class)->getEntity($entity_type, $entity_uuid);
+            if (! $entity) {
+                return response()->json(['message' => 'No entity found for the given UUID.'], 404);
+            }
+            $hasBeenDeleted = GeometryHelper::deletePolygonWithRelated($entity);
+            if ($hasBeenDeleted) {
+                $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+                if (! $polygonGeometry) {
+                    return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+                }
+                $projectPolygon = new ProjectPolygon([
+                    'entity_id' => $entity->id,
+                    'entity_type' => get_class($entity),
+                    'poly_uuid' => $uuid,
+                    'created_by' => Auth::user()?->id,
+                    'last_modified_by' => Auth::user()?->id,
+                ]);
+                if ($projectPolygon->save()) {
+                    return response()->json(['message' => 'Project polygon created successfully', 'uuid' => $projectPolygon->uuid], 201);
+                } else {
+                    return response()->json(['error' => 'An error ocurred at creating'], 500);
+                }
+            } else {
+                throw new \Exception('Error deleting polygon');
+            }
+
+        } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
