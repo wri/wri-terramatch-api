@@ -8,9 +8,9 @@ use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\Tasks\Task;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\JsonResponse;
-use App\Models\V2\Tasks\Task;
 use Illuminate\Support\Carbon;
 
 class CreateSiteWithFormController extends Controller
@@ -35,7 +35,7 @@ class CreateSiteWithFormController extends Controller
         $lastTask = Task::where('project_id', $project->id)
             ->orderBy('created_at', 'desc')
             ->first();
-        
+
         if ($lastTask) {
             $nextReportDueDate = Carbon::parse($lastTask->due_at)->addWeeks(4);
 

@@ -7,9 +7,9 @@ use App\Http\Requests\V2\Forms\CreateEntityFormRequest;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Tasks\Task;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\JsonResponse;
-use App\Models\V2\Tasks\Task;
 use Illuminate\Support\Carbon;
 
 class CreateNurseryWithFormController extends Controller
@@ -34,7 +34,7 @@ class CreateNurseryWithFormController extends Controller
         $lastTask = Task::where('project_id', $project->id)
             ->orderBy('created_at', 'desc')
             ->first();
-        
+
         if ($lastTask) {
             $nextReportDueDate = Carbon::parse($lastTask->due_at)->addWeeks(4);
 
