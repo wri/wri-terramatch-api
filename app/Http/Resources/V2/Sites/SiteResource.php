@@ -59,6 +59,7 @@ class SiteResource extends JsonResource
             'seeds_planted_count' => $this->seeds_planted_count,
             'siting_strategy' => $this->siting_strategy,
             'description_siting_strategy' => $this->description_siting_strategy,
+            'detailed_intervention_types' => $this->detailed_intervention_types,
         ];
 
         return $this->appendFilesToResource($data);

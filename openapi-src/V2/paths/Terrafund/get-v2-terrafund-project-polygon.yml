@@ -1,0 +1,62 @@
+
+summary: Get Project Polygon Data
+description: Retrieve project polygon data for the given UUID.
+parameters:
+  - in: query
+    name: uuid
+    type: string
+    required: true
+    description: The UUID of the project polygon.
+  - in: query
+    name: entityType
+    type: string
+    required: true
+    description: The entity type of the project polygon.
+responses:
+  '200':
+    description: Successful response
+    schema:
+      type: object
+      properties:
+        project_polygon:
+          type: object
+          properties:
+            id:
+              type: number 
+            uuid:
+              type: string
+            poly_uuid:
+              type: string
+            entity_type:
+              type: string
+            entity_id:
+              type: number
+            last_modified_by:
+              type: string
+            created_by:
+              type: string
+            deleted_at:
+              type: string
+              format: date-time
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+  '404':
+    description: No site polygons found for the given UUID
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: No site polygons found for the given UUID.
+  '500':
+    description: Internal server error
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: An error message describing the issue.

@@ -4,6 +4,7 @@ namespace App\Models\V2;
 
 use App\Models\Traits\HasGeometry;
 use App\Models\Traits\HasUuid;
+use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -45,6 +46,11 @@ class PolygonGeometry extends Model
         return $this->belongsTo(SitePolygon::class, 'uuid', 'poly_id');
     }
 
+    public function projectPolygon(): BelongsTo
+    {
+        return $this->belongsTo(ProjectPolygon::class, 'uuid', 'poly_uuid');
+    }
+
     public function createdBy(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'created_by');
@@ -70,6 +76,9 @@ class PolygonGeometry extends Model
                     $this->sitePolygon->point->delete();
                 }
                 $this->sitePolygon->delete();
+            }
+            if ($this->projectPolygon) {
+                $this->projectPolygon->delete();
             }
             $this->delete();
         });

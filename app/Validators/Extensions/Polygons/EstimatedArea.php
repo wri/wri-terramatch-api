@@ -48,11 +48,20 @@ class EstimatedArea extends Extension
         $lowerBound = self::LOWER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
         $upperBound = self::UPPER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
         $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;
+        $percentage = ($sumEstArea / $project->total_hectares_restored_goal) * 100;
+        $sumEstArea = round($sumEstArea);
+        $percentage = round($percentage);
+        $extra_info = [
+          'sum_area' => $sumEstArea,
+          'percentage' => $percentage,
+          'total_area_project' => $project->total_hectares_restored_goal,
+        ];
 
         return [
-            'valid' => $valid,
-            'sum_area_project' => $sumEstArea,
-            'total_area_project' => $project->total_hectares_restored_goal,
+          'valid' => $valid,
+          'sum_area_project' => $sumEstArea,
+          'total_area_project' => $project->total_hectares_restored_goal,
+          'extra_info' => $extra_info,
         ];
     }
 

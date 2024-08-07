@@ -111,7 +111,7 @@ class ProjectPitch extends Model implements MediaModel
     {
         return [
             'project_name' => $this->project_name,
-            'organisation_name' => $this->organisation->name,
+            'organisation_name' => $this->organisation->name ?? null,
         ];
     }
 

@@ -1,0 +1,30 @@
+summary: create project/pitch polygon relation
+tags:
+  - V2 project pitch geometry
+description: |
+  Receives the uuid of the polygon, the uuid of the entity and the type of the entity and creates a relation between them.
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    type: string
+    description: The UUID of the polygon related
+  - in: path
+    name: entity_uuid
+    required: true
+    type: string
+    description: The UUID of the entity
+  - in: path
+    name: entity_type
+    required: true
+    type: string
+    description: The type of the entity
+responses:
+  '201':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/ProjectPolygonResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error
