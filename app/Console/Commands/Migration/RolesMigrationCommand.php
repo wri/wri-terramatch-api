@@ -95,9 +95,9 @@ class RolesMigrationCommand extends Command
             $role->givePermissionTo(['view-dashboard']);
         }
 
-        User::whereIn('role', ['user', 'admin', 'terrafund-admin', 'service'])->get()
+        User::whereIn('role', ['user', 'admin', 'terrafund_admin', 'service'])->get()
             ->each(function (User $user) {
-                if ($user->primary_role == null) {
+                if ($user->primaryRole == null) {
                     assignSpatieRole($user);
                 }
             });

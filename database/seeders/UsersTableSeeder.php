@@ -18,11 +18,11 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Doe';
         $user->email_address = 'joe@example.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
 
         $user = new UserModel();
         $user->id = 2;
@@ -32,10 +32,10 @@ class UsersTableSeeder extends Seeder
         $user->email_address = 'jane@example.com';
         $user->password = 'Password123';
         $user->email_address_verified_at = new DateTime();
-        $user->role = 'admin';
         $user->job_role = 'Manager';
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('admin-super');
 
         $user = new UserModel();
         $user->id = 3;
@@ -45,13 +45,13 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Doe';
         $user->email_address = 'steve@example.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->email_address_verified_at = new DateTime();
         $user->avatar = null;
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
 
         $user->frameworks()->attach(1);
         $user->programmes()->attach(1);
@@ -65,18 +65,18 @@ class UsersTableSeeder extends Seeder
         $user->email_address = 'andrew@example.com';
         $user->password = 'Password123';
         $user->email_address_verified_at = new DateTime();
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->organisation_id = 2;
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
 
         $user = new UserModel();
         $user->id = 5;
         $user->email_address = 'tom@example.com';
-        $user->role = 'admin';
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('admin-super');
 
         $user = new UserModel();
         $user->id = 6;
@@ -86,21 +86,21 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Doe';
         $user->email_address = 'dominic@example.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Supervisor';
         $user->phone_number = '9876543210';
         $user->email_address_verified_at = new DateTime();
         $user->avatar = null;
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
 
         $user = new UserModel();
         $user->id = 7;
         $user->uuid = Str::uuid();
         $user->email_address = 'sue@example.com';
-        $user->role = 'user';
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
 
         $user = new UserModel();
         $user->id = 8;
@@ -110,13 +110,13 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Monitor';
         $user->email_address = 'monitoring.partner.1@monitor.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->email_address_verified_at = new DateTime();
         $user->avatar = null;
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
 
         $user = new UserModel();
         $user->id = 9;
@@ -126,13 +126,13 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Monitor';
         $user->email_address = 'monitoring.partner.2@monitor.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->email_address_verified_at = new DateTime();
         $user->avatar = null;
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
 
         $user = new UserModel();
         $user->id = 10;
@@ -142,13 +142,13 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Monitor';
         $user->email_address = 'monitoring.partner.3@monitor.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->email_address_verified_at = new DateTime();
         $user->uuid = Str::uuid();
         $user->avatar = null;
         $user->saveOrFail();
+        $user->assignRole('project-developer');
         $user->programmes()->sync([1]);
 
         $user = new UserModel();
@@ -159,11 +159,11 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Doe';
         $user->email_address = 'ian@example.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
 
         $user = new UserModel();
         $user->id = 12;
@@ -172,13 +172,13 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Doe';
         $user->email_address = 'terrafund@example.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->email_address_verified_at = new DateTime();
         $user->avatar = null;
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
         $user->frameworks()->attach(2);
         $user->terrafundProgrammes()->attach(1);
         $user->refresh();
@@ -190,13 +190,13 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Doe';
         $user->email_address = 'terrafund.orphan@example.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->email_address_verified_at = new DateTime();
         $user->avatar = null;
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
         $user->frameworks()->attach(2);
         $user->refresh();
 
@@ -208,13 +208,13 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'New';
         $user->email_address = 'new.terrafund@example.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->email_address_verified_at = new DateTime();
         $user->avatar = null;
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
         $user->frameworks()->attach(2);
         $user->refresh();
 
@@ -226,13 +226,13 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Admin';
         $user->email_address = 'terrafund.admin@example.com';
         $user->password = 'Password123';
-        $user->role = 'terrafund_admin';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->email_address_verified_at = new DateTime();
         $user->avatar = null;
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('admin-terrafund');
         $user->frameworks()->attach(2);
         $user->refresh();
 
@@ -244,13 +244,13 @@ class UsersTableSeeder extends Seeder
         $user->last_name = 'Second User';
         $user->email_address = 'terrafund.2@example.com';
         $user->password = 'Password123';
-        $user->role = 'user';
         $user->job_role = 'Manager';
         $user->phone_number = '0123456789';
         $user->email_address_verified_at = new DateTime();
         $user->avatar = null;
         $user->uuid = Str::uuid();
         $user->saveOrFail();
+        $user->assignRole('project-developer');
         $user->frameworks()->attach(2);
         $user->terrafundProgrammes()->attach(1);
         $user->terrafundProgrammes()->attach(2);
