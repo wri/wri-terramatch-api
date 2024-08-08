@@ -424,4 +424,13 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     {
         $this->status()->transitionTo(SiteStatusStateMachine::RESTORATION_IN_PROGRESS);
     }
+    public function scopeFilterByPolygonStatus($query, $statuses)
+    {
+      return $query->whereExists(function ($query) use ($statuses) {
+        $query->select('site_polygon.id')
+            ->from('site_polygon')
+            ->whereColumn('site_polygon.site_id', 'v2_sites.uuid')
+            ->where('status', $statuses);
+    });
+    }
 }

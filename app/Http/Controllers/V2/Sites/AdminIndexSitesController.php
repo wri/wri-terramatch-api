@@ -7,6 +7,7 @@ use App\Http\Controllers\Traits\IsAdminIndex;
 use App\Http\Resources\V2\Sites\V2SitesCollection;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\User;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -39,6 +40,7 @@ class AdminIndexSitesController extends Controller
                 AllowedFilter::exact('status'),
                 AllowedFilter::exact('update_request_status'),
                 AllowedFilter::trashed(),
+                AllowedFilter::scope('polygon', 'filterByPolygonStatus')
             ]);
 
         $this->sort($query, [
