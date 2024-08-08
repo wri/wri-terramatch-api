@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AdminsController;
 use App\Http\Controllers\AimController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CarbonCertificationsController;
@@ -185,12 +184,6 @@ Route::delete('/team_members/{id}', [TeamMembersController::class, 'deleteAction
 Route::get('/organisations/{id}/team_members/inspect', [TeamMembersController::class, 'inspectByOrganisationAction']);
 
 Route::get('/organisation_categories', [DataController::class, 'readAllOrganisationCategoriesAction']);
-
-Route::get('/admins', [AdminsController::class, 'readAllAction']);
-Route::post('/admins/invite', [AdminsController::class, 'inviteAction']);
-Route::post('/admins/accept', [AdminsController::class, 'acceptAction']);
-Route::get('/admins/{id}', [AdminsController::class, 'readAction']);
-Route::patch('/admins/{id}', [AdminsController::class, 'updateAction']);
 
 Route::get('/document_types', [DataController::class, 'readAllDocumentTypesAction']);
 
