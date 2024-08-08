@@ -155,5 +155,4 @@ class Site extends Model
     {
         return $this->total_paid_workdays + $this->total_volunteer_workdays;
     }
-
 }
