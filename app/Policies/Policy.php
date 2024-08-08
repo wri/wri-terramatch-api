@@ -17,6 +17,7 @@ use App\Models\TreeSpecies as TreeSpeciesModel;
 use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Str;
 
 abstract class Policy
 {
@@ -29,24 +30,22 @@ abstract class Policy
 
     protected function isUser(?UserModel $user): bool
     {
-        return ! $this->isGuest($user) && ($user->role == 'user' || $this->isNewRoleUser($user));
+        return ! $this->isGuest($user) && $this->isNewRoleUser($user);
     }
 
     protected function isAdmin(?UserModel $user): bool
     {
-        return ! $this->isGuest($user) && $user->role == 'admin';
+        return ! $this->isGuest($user) && $user->isAdmin;
     }
 
     protected function isNewRoleUser(?UserModel $user): bool
     {
-        $newRoles = ['project-developer', 'funder', 'government', 'project-manager'];
-
-        return in_array($user->role, $newRoles);
+        return $user->hasAnyRole(['project-developer', 'funder', 'government', 'project-manager']);
     }
 
     protected function isServiceAccount(?UserModel $user): bool
     {
-        return ! $this->isGuest($user) && $user->role == 'service';
+        return ! $this->isGuest($user) && $user->hasRole('greenhouse-service-account');
     }
 
     protected function isOrphanedUser(?UserModel $user): bool
@@ -66,7 +65,7 @@ abstract class Policy
 
     protected function isTerrafundAdmin(?UserModel $user): bool
     {
-        return ! $this->isGuest($user) && $user->role == 'terrafund_admin';
+        return ! $this->isGuest($user) && $user->hasRole('admin-terrafund');
     }
 
     protected function isFullUser(?UserModel $user): bool

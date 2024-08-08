@@ -124,36 +124,8 @@ class AdminUserController extends Controller
 
         $data = $request->all();
 
-        if (! empty($request->get('primary_role')) && (Auth::user()->hasRole('admin-super') || Auth::user()->role === 'admin')) {
+        if (! empty($request->get('primary_role')) && (Auth::user()->isAdmin)) {
             $user->syncRoles([$request->get('primary_role')]);
-
-            switch ($request->get('primary_role')) {
-                case 'admin-super':
-                case 'admin-ppc':
-                    $data['role'] = 'admin';
-
-                    break;
-                case 'admin-terrafund':
-                    $data['role'] = 'terrafund_admin';
-
-                    break;
-                case 'project-developer':
-                    $data['role'] = 'project-developer';
-
-                    break;
-                case 'project-manager':
-                    $data['role'] = 'project-manager';
-
-                    break;
-                case 'government':
-                    $data['role'] = 'government';
-
-                    break;
-                case 'funder':
-                    $data['role'] = 'funder';
-
-                    break;
-            }
         }
 
         $user->update($data);

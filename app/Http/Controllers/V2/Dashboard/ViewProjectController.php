@@ -6,6 +6,7 @@ use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
+use App\Models\V2\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -56,17 +57,16 @@ class ViewProjectController extends Controller
     public function getAllProjectsAllowedToUser()
     {
         try {
+            /** @var User $user */
             $user = Auth::user();
-            $role = $user->role;
-            Log::info($role);
-            if ($role === 'admin' || $role === 'terrafund_admin' || $role === 'terrafund-admin') {
+            if ($user->hasAnyRole(['admin-super', 'admin-terrafund'])) {
                 $response = TerrafundDashboardQueryHelper::getPolygonsByStatus();
 
                 return response()->json([
                   'polygonsUuids' => $response,
                 ]);
             } else {
-                if ($role === 'government') {
+                if ($user->hasRole('government')) {
                     try {
                         $projectUuids = Project::where('framework_key', 'terrafund')->where('country', $user->country)->pluck('uuid');
                     } catch (\Exception $e) {
@@ -75,7 +75,7 @@ class ViewProjectController extends Controller
 
                         return response()->json(['error' => 'An error occurred while fetching government projects', 'message' => $errorMessage], 500);
                     }
-                } elseif ($role === 'funder') {
+                } elseif ($user->hasRole('funder')) {
                     try {
                         $projectUuids = Project::where('framework_key', $user->program)->pluck('uuid');
                     } catch (\Exception $e) {
@@ -84,7 +84,7 @@ class ViewProjectController extends Controller
 
                         return response()->json(['error' => 'An error occurred while fetching funder projects', 'message' => $errorMessage], 500);
                     }
-                } elseif ($role === 'project-developer') {
+                } elseif ($user->hasRole('project-developer')) {
                     try {
                         $projectIds = ProjectInvite::where('email_address', $user->email_address)->pluck('project_id');
                         $projectUuids = Project::whereIn('id', $projectIds)->where('framework_key', 'terrafund')->pluck('uuid');
@@ -94,8 +94,6 @@ class ViewProjectController extends Controller
 
                         return response()->json(['error' => 'An error occurred while fetching project developer projects', 'message' => $errorMessage], 500);
                     }
-                } elseif ($role === 'admin' || $role === 'terrafund_admin' || $role === 'terrafund-admin') {
-
                 } else {
                     $projectUuids = null;
                 }

@@ -30,9 +30,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @property Role primaryRole
+ * @property bool isAdmin
+ */
 class User extends Authenticatable implements JWTSubject
 {
     use NamedEntityTrait;
@@ -333,5 +338,10 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->getRoleNames()->contains(fn ($role) => Str::startsWith($role, 'admin'));
     }
 }
