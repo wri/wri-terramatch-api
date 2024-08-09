@@ -6,6 +6,9 @@ jobs:
   lintTest:
     runs-on: ubuntu-latest
     steps:
+      - uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.29.1'
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Install deps
