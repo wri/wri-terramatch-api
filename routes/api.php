@@ -39,7 +39,6 @@ use App\Http\Controllers\PitchVersionsController;
 use App\Http\Controllers\PPCSiteExportController;
 use App\Http\Controllers\ProgrammeController;
 use App\Http\Controllers\ProgrammeImageExportController;
-use App\Http\Controllers\ProgrammeInviteController;
 use App\Http\Controllers\ProgrammeShapefileExportController;
 use App\Http\Controllers\ProgrammeSubmissionAdminCsvExportController;
 use App\Http\Controllers\ProgrammeSubmissionCsvExportController;
@@ -79,7 +78,6 @@ use App\Http\Controllers\Terrafund\TerrafundNurserySubmissionController;
 use App\Http\Controllers\Terrafund\TerrafundNurserySubmissionCsvExportController;
 use App\Http\Controllers\Terrafund\TerrafundProgrammeController;
 use App\Http\Controllers\Terrafund\TerrafundProgrammeImageExportController;
-use App\Http\Controllers\Terrafund\TerrafundProgrammeInviteController;
 use App\Http\Controllers\Terrafund\TerrafundProgrammeNurseriesController;
 use App\Http\Controllers\Terrafund\TerrafundProgrammeSitesController;
 use App\Http\Controllers\Terrafund\TerrafundProgrammeSubmissionController;
@@ -441,12 +439,6 @@ Route::prefix('programme')->group(function () {
     Route::get('/{programme}/sites', [SiteController::class, 'readAllByProgrammeAction']);
     Route::get('/{programme}/all-sites', [SiteController::class, 'readAllNonPaginatedByProgrammeAction']);
     Route::get('/{programme}/site-metrics', [SiteController::class, 'readAllMetricsByProgrammeAction']);
-
-    Route::post('/{programme}/invite', [ProgrammeInviteController::class, 'createAction']);
-    Route::post('/invite/accept', [ProgrammeInviteController::class, 'acceptAction']);
-    Route::delete('/invite/remove', [ProgrammeInviteController::class, 'removeUserAction']);
-    Route::delete('/invite/{programmeInvite}', [ProgrammeInviteController::class, 'deleteAction']);
-    Route::get('/{programme}/partners', [ProgrammeInviteController::class, 'readAllAction']);
 });
 
 Route::get('/programmes', [ProgrammeController::class, 'readAllAction']);
@@ -566,9 +558,7 @@ Route::prefix('terrafund')->group(function () {
         Route::get('/{terrafundProgramme}/has_sites', [TerrafundProgrammeSitesController::class, 'checkHasProgrammeSites']);
         Route::get('/{terrafundProgramme}/nurseries', [TerrafundProgrammeNurseriesController::class, 'readAllProgrammeNurseries']);
         Route::get('/{terrafundProgramme}/has_nurseries', [TerrafundProgrammeNurseriesController::class, 'checkHasProgrammeNurseries']);
-        Route::post('/{terrafundProgramme}/invite', [TerrafundProgrammeInviteController::class, 'createAction']);
         Route::get('/{terrafundProgramme}/submissions', [TerrafundProgrammeSubmissionController::class, 'readAllProgrammeSubmissions']);
-        Route::post('/invite/accept', [TerrafundProgrammeInviteController::class, 'acceptAction']);
 
         Route::prefix('/submission')->group(function () {
             Route::post('/', [TerrafundProgrammeSubmissionController::class, 'createAction']);
