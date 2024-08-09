@@ -39,6 +39,7 @@ class AdminIndexSitesController extends Controller
                 AllowedFilter::exact('status'),
                 AllowedFilter::exact('update_request_status'),
                 AllowedFilter::trashed(),
+                AllowedFilter::scope('polygon', 'filterByPolygonStatus'),
             ]);
 
         $this->sort($query, [
