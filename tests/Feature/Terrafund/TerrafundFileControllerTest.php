@@ -202,7 +202,7 @@ final class TerrafundFileControllerTest extends TestCase
         $data = $this->prepareSiteSubmissionBulkFiles(12, $user, $siteSubmission, [ ]);
 
         $this->actingAs($user)
-            ->postJson('/api/terrafund/file/bulk', $data, $this->getHeadersForUser($user))
+            ->postJson('/api/terrafund/file/bulk', $data, $this->getHeadersForUser($user->email_address))
             ->assertCreated()
             ->assertJsonCount(12, 'data');
     }
@@ -223,7 +223,7 @@ final class TerrafundFileControllerTest extends TestCase
         $data = $this->prepareSiteSubmissionBulkFiles(9, $user, $siteSubmission, [ ]);
 
         $this->actingAs($user)
-            ->postJson('/api/terrafund/file/bulk', $data, $this->getHeadersForUser($user))
+            ->postJson('/api/terrafund/file/bulk', $data, $this->getHeadersForUser($user->email_address))
             ->assertStatus(422);
     }
 
@@ -243,7 +243,7 @@ final class TerrafundFileControllerTest extends TestCase
         $data = $this->prepareSiteSubmissionBulkFiles(9, $user, $siteSubmission, [ 'fileable_type' => 'nursery_submission']);
 
         $this->actingAs($user)
-            ->postJson('/api/terrafund/file/bulk', $data, $this->getHeadersForUser($user))
+            ->postJson('/api/terrafund/file/bulk', $data, $this->getHeadersForUser($user->email_address))
             ->assertStatus(422);
     }
 }

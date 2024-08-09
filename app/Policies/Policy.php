@@ -17,7 +17,6 @@ use App\Models\TreeSpecies as TreeSpeciesModel;
 use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Support\Str;
 
 abstract class Policy
 {
@@ -30,17 +29,12 @@ abstract class Policy
 
     protected function isUser(?UserModel $user): bool
     {
-        return ! $this->isGuest($user) && $this->isNewRoleUser($user);
+        return ! $this->isGuest($user) && ! $user->isAdmin && ! $user->hasRole('greenhouse-service-account');
     }
 
     protected function isAdmin(?UserModel $user): bool
     {
         return ! $this->isGuest($user) && $user->isAdmin;
-    }
-
-    protected function isNewRoleUser(?UserModel $user): bool
-    {
-        return $user->hasAnyRole(['project-developer', 'funder', 'government', 'project-manager']);
     }
 
     protected function isServiceAccount(?UserModel $user): bool
@@ -55,7 +49,7 @@ abstract class Policy
 
     protected function isVerifiedUser(?UserModel $user): bool
     {
-        return ($this->isUser($user) || $this->isNewRoleUser($user)) && (bool) $user->email_address_verified_at;
+        return $this->isUser($user) && (bool) $user->email_address_verified_at;
     }
 
     protected function isVerifiedAdmin(?UserModel $user): bool

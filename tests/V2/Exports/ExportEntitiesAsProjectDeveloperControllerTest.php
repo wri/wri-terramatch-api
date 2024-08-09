@@ -14,7 +14,6 @@ use App\Models\V2\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
@@ -27,11 +26,8 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
      */
     public function test_an_user_can_export_all_sites_data_for_a_given_project(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,
@@ -58,11 +54,8 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
      */
     public function test_an_user_can_export_all_nurseries_data_for_a_given_project(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,
@@ -88,11 +81,8 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
      */
     public function test_an_user_can_export_nursery_reports_data(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,
@@ -123,11 +113,8 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
      */
     public function test_an_user_can_export_site_reports_data(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,
@@ -158,11 +145,8 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
      */
     public function test_an_user_can_export_project_reports_data(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,
@@ -188,13 +172,10 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
      */
     public function test_an_user_can_export_all_project_data(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         Carbon::setTestNow(now());
 
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,
@@ -250,13 +231,10 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
      */
     public function test_an_user_can_export_all_site_data(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         Carbon::setTestNow(now());
 
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,
@@ -290,13 +268,10 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
      */
     public function test_an_user_can_export_all_nursey_data(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         Carbon::setTestNow(now());
 
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,

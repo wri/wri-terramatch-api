@@ -9,7 +9,6 @@ use App\Services\PythonService;
 use Database\Seeders\WorldCountriesGeneralizedTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
@@ -21,7 +20,6 @@ class GeometryControllerTest extends TestCase
     public function test_geometry_payload_validation()
     {
         $service = User::factory()->serviceAccount()->create();
-        Artisan::call('v2migration:roles');
         if (WorldCountryGeneralized::count() == 0) {
             $this->seed(WorldCountriesGeneralizedTableSeeder::class);
         }

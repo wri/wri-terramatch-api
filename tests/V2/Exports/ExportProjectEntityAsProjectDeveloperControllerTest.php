@@ -11,19 +11,12 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class ExportProjectEntityAsProjectDeveloperControllerTest extends TestCase
 {
     use WithFaker;
     use RefreshDatabase;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        Artisan::call('v2migration:roles');
-    }
 
     /**
      * @dataProvider permissionsDataProvider
@@ -32,7 +25,6 @@ class ExportProjectEntityAsProjectDeveloperControllerTest extends TestCase
     {
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,
@@ -61,7 +53,6 @@ class ExportProjectEntityAsProjectDeveloperControllerTest extends TestCase
     {
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,
@@ -90,7 +81,6 @@ class ExportProjectEntityAsProjectDeveloperControllerTest extends TestCase
     {
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'framework_key' => $fmKey,

@@ -70,7 +70,7 @@ class ProgressUpdatesController extends Controller
         if ($monitoring->stage != 'accepted_targets') {
             throw new InvalidMonitoringException();
         }
-        if (!$me->isAdmin) {
+        if (! $me->isAdmin) {
             $matched = $monitoring->matched;
             $interest = InterestModel::whereIn('id', [$matched->primary_interest_id, $matched->secondary_interest_id])
                 ->where('organisation_id', '=', $me->organisation_id)

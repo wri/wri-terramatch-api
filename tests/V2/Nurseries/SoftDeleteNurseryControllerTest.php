@@ -9,7 +9,6 @@ use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class SoftDeleteNurseryControllerTest extends TestCase
@@ -22,14 +21,11 @@ class SoftDeleteNurseryControllerTest extends TestCase
      */
     public function test_project_developer_can_soft_delete_nurseries_without_reports(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         $project = Project::factory()->create(['framework_key' => $fmKey]);
         $nursery = Nursery::factory()->{$fmKey}()->create([
             'project_id' => $project->id,
         ]);
         $owner = User::factory()->create(['organisation_id' => $project->organisation_id]);
-        $owner->givePermissionTo('manage-own');
 
         $uri = '/api/v2/nurseries/' . $nursery->uuid;
 
@@ -49,8 +45,6 @@ class SoftDeleteNurseryControllerTest extends TestCase
      */
     public function test_project_developer_cant_soft_delete_nurseries_with_reports(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         $statuses = [
             EntityStatusStateMachine::APPROVED,
         ];
@@ -67,7 +61,6 @@ class SoftDeleteNurseryControllerTest extends TestCase
         ]);
 
         $owner = User::factory()->create(['organisation_id' => $project->organisation_id]);
-        $owner->givePermissionTo('manage-own');
 
         $uri = '/api/v2/nurseries/' . $nursery->uuid;
 

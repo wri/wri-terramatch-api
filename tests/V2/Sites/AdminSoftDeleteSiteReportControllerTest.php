@@ -7,7 +7,6 @@ use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminSoftDeleteSiteReportControllerTest extends TestCase
@@ -31,12 +30,9 @@ class AdminSoftDeleteSiteReportControllerTest extends TestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_admins_can_soft_delete_site_reports(string $permission, string $fmKey)
+    public function test_admins_can_soft_delete_site_reports(string $adminType, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
-        $user = User::factory()->admin()->create();
-        $user->givePermissionTo($permission);
+        $user = User::factory()->{$adminType}()->create();
 
         $site = Site::factory()->{$fmKey}()->create();
         $report = SiteReport::factory()->{$fmKey}()->for($site)->create();
@@ -57,8 +53,8 @@ class AdminSoftDeleteSiteReportControllerTest extends TestCase
     public static function permissionsDataProvider()
     {
         return [
-            ['framework-terrafund', 'terrafund'],
-            ['framework-ppc', 'ppc'],
+            ['terrafundAdmin', 'terrafund'],
+            ['ppcAdmin', 'ppc'],
         ];
     }
 }

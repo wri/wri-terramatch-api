@@ -7,7 +7,6 @@ use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminSoftDeleteNurseryReportControllerTest extends TestCase
@@ -31,13 +30,9 @@ class AdminSoftDeleteNurseryReportControllerTest extends TestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_admins_can_soft_delete_nursery_reports(string $permission, string $fmKey)
+    public function test_admins_can_soft_delete_nursery_reports(string $adminType, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
-        $user = User::factory()->admin()->create();
-        $user->givePermissionTo($permission);
-
+        $user = User::factory()->{$adminType}()->create();
         $nursery = Nursery::factory()->{$fmKey}()->create();
         $report = NurseryReport::factory()->{$fmKey}()->for($nursery)->create();
 
@@ -57,8 +52,8 @@ class AdminSoftDeleteNurseryReportControllerTest extends TestCase
     public static function permissionsDataProvider()
     {
         return [
-            ['framework-terrafund', 'terrafund'],
-            ['framework-ppc', 'ppc'],
+            ['terrafundAdmin', 'terrafund'],
+            ['ppcAdmin', 'ppc'],
         ];
     }
 }

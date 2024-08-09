@@ -25,9 +25,7 @@ class ViewAProjectsMonitoringsControllerTest extends TestCase
 
         $organisation = Organisation::factory()->create();
 
-        Artisan::call('v2migration:roles');
         $this->owner = User::factory()->admin()->create(['organisation_id' => $organisation->id]);
-        $this->owner->givePermissionTo('manage-own');
 
         $this->project = Project::factory()->ppc()->create([
             'organisation_id' => $organisation->id,
@@ -42,8 +40,7 @@ class ViewAProjectsMonitoringsControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $tfAdmin = User::factory()->admin()->create();
-        $tfAdmin->givePermissionTo('framework-terrafund');
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
 
         $this->actingAs($user)
             ->getJson('/api/v2/projects/' . $this->project->uuid . '/monitorings')

@@ -9,7 +9,6 @@ use App\Models\V2\Stratas\Strata;
 use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class GetStratasForEntityControllerTest extends TestCase
@@ -18,10 +17,8 @@ class GetStratasForEntityControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $user = User::factory()->create();
 

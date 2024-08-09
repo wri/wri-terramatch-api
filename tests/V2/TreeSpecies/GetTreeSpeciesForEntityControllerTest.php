@@ -11,7 +11,6 @@ use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class GetTreeSpeciesForEntityControllerTest extends TestCase
@@ -21,12 +20,9 @@ class GetTreeSpeciesForEntityControllerTest extends TestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_admin_can_fetch_all_tree_species_for_a_given_entity(string $permission, string $fmKey)
+    public function test_admin_can_fetch_all_tree_species_for_a_given_entity(string $adminType, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
-        $user = User::factory()->admin()->create();
-        $user->givePermissionTo($permission);
+        $user = User::factory()->{$adminType}()->create();
 
         $testCases = [
             'project' => Project::factory()->create(['framework_key' => $fmKey, 'status' => 'started']),
@@ -56,8 +52,8 @@ class GetTreeSpeciesForEntityControllerTest extends TestCase
     public static function permissionsDataProvider()
     {
         return [
-            ['framework-terrafund', 'terrafund'],
-            ['framework-ppc', 'ppc'],
+            ['terrafundAdmin', 'terrafund'],
+            ['ppcAdmin', 'ppc'],
         ];
     }
 }

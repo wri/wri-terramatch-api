@@ -7,7 +7,6 @@ use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 final class MediaControllerTest extends TestCase
@@ -19,7 +18,6 @@ final class MediaControllerTest extends TestCase
     {
         $service = User::factory()->serviceAccount()->create();
         $admin = User::factory()->admin()->create();
-        Artisan::call('v2migration:roles');
 
         $site = Site::factory()->ppc()->create();
         $photo1 = $site->addMedia(UploadedFile::fake()->image('photo1'))->toMediaCollection('photos');

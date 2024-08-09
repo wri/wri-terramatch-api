@@ -6,7 +6,6 @@ use App\Models\Framework;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexUpdateRequestControllerTest extends TestCase
@@ -15,18 +14,14 @@ class AdminIndexUpdateRequestControllerTest extends TestCase
 
     public function test_invoke_action(): void
     {
-        Artisan::call('v2migration:roles');
         UpdateRequest::truncate();
         $user = User::factory()->create();
-        $user->givePermissionTo('manage-own');
 
         Framework::factory()->create(['slug' => 'terrafund']);
-        $tfAdmin = User::factory()->admin()->create();
-        $tfAdmin->givePermissionTo('framework-terrafund');
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
 
         Framework::factory()->create(['slug' => 'ppc']);
-        $ppcAdmin = User::factory()->admin()->create();
-        $ppcAdmin->givePermissionTo('framework-ppc');
+        $ppcAdmin = User::factory()->ppcAdmin()->create();
 
         UpdateRequest::factory()->count(3)->create(['framework_key' => 'ppc']);
         UpdateRequest::factory()->count(5)->create(['framework_key' => 'terrafund']);

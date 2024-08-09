@@ -10,7 +10,6 @@ use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class SiteReportsViaSiteControllerTest extends TestCase
@@ -20,19 +19,13 @@ class SiteReportsViaSiteControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles');
-        $tfAdmin = User::factory()->admin()->create();
-        $tfAdmin->givePermissionTo('framework-terrafund');
-
-        $ppcAdmin = User::factory()->admin()->create();
-        $ppcAdmin->givePermissionTo('framework-ppc');
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
+        $ppcAdmin = User::factory()->ppcAdmin()->create();
 
         $user = User::factory()->create();
 
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
-
 
         $project = Project::factory()->create(['organisation_id' => $organisation->id, 'framework_key' => 'ppc']);
         $site = Site::factory()->create(['project_id' => $project->id, 'framework_key' => 'ppc']);

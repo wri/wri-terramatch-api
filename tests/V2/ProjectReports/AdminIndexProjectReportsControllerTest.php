@@ -8,7 +8,6 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexProjectReportsControllerTest extends TestCase
@@ -18,13 +17,10 @@ class AdminIndexProjectReportsControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles');
-        $tfAdmin = User::factory()->admin()->create();
-        $ppcAdmin = User::factory()->admin()->create();
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
+        $ppcAdmin = User::factory()->ppcAdmin()->create();
         Framework::factory()->create(['slug' => 'terrafund']);
         Framework::factory()->create(['slug' => 'ppc']);
-        $tfAdmin->givePermissionTo('framework-terrafund');
-        $ppcAdmin->givePermissionTo('framework-ppc');
         $user = User::factory()->create();
 
         ProjectReport::query()->delete();
@@ -58,9 +54,7 @@ class AdminIndexProjectReportsControllerTest extends TestCase
 
     public function test_searching_on_project_name()
     {
-        Artisan::call('v2migration:roles');
-        $tfAdmin = User::factory()->admin()->create();
-        $tfAdmin->givePermissionTo('framework-terrafund');
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
 
         ProjectReport::query()->delete();
         $project1 = Project::factory()->terrafund()->create();

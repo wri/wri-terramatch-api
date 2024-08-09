@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 final class UsersControllerTest extends TestCase
@@ -13,7 +12,6 @@ final class UsersControllerTest extends TestCase
 
     public function testUpdateRoleAction(): void
     {
-        Artisan::call('v2migration:roles');
         $admin = User::factory()->admin()->create();
         $user = User::factory()->create();
 
@@ -26,7 +24,7 @@ final class UsersControllerTest extends TestCase
         )
             ->assertStatus(200)
             ->assertJsonFragment([
-                'user_type' => 'terrafund_admin',
+                'role' => 'admin-terrafund',
             ]);
     }
 

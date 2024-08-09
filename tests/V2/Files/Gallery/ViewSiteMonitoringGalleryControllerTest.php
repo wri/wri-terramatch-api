@@ -28,9 +28,7 @@ class ViewSiteMonitoringGalleryControllerTest extends TestCase
     {
         parent::setUp();
 
-        Artisan::call('v2migration:roles');
-        $this->admin = User::factory()->admin()->create();
-        $this->admin->givePermissionTo('framework-ppc');
+        $this->admin = User::factory()->ppcAdmin()->create();
 
         $this->siteMonitoring = SiteMonitoring::factory()->ppc()->create();
 
