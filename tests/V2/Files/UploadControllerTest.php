@@ -15,7 +15,6 @@ use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -222,7 +221,6 @@ final class UploadControllerTest extends TestCase
     public function test_file_upload_for_a_site_is_successful()
     {
         $admin = User::factory()->admin()->create();
-        Artisan::call('v2migration:roles');
         $site = Site::factory()->ppc()->create();
 
         Storage::fake('uploads');
@@ -492,7 +490,6 @@ final class UploadControllerTest extends TestCase
     public function test_bulk_upload_validation()
     {
         $service = User::factory()->serviceAccount()->create();
-        Artisan::call('v2migration:roles');
         $site = Site::factory()->create();
         $organisation = Organisation::factory()->create();
         // It's not ideal for the testing suite to use a real hosted image, but I haven't found a way to fake a
@@ -544,7 +541,6 @@ final class UploadControllerTest extends TestCase
     public function test_bulk_upload_functionality()
     {
         $service = User::factory()->serviceAccount()->create();
-        Artisan::call('v2migration:roles');
         $site = Site::factory()->create();
         $url = 'http://localhost/images/V2/land-tenures/national-protected-area.png';
         $badMimeUrl = 'http://localhost/images/email_logo.gif';

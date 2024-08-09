@@ -10,7 +10,6 @@ use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class ViewProjectNurseriesControllerTest extends TestCase
@@ -32,15 +31,12 @@ class ViewProjectNurseriesControllerTest extends TestCase
     {
         parent::setUp();
 
-        Artisan::call('v2migration:roles');
-        $this->ppcAdmin = User::factory()->admin()->create();
-        $this->ppcAdmin->givePermissionTo('framework-ppc');
+        $this->ppcAdmin = User::factory()->ppcAdmin()->create();
 
         $this->user = User::factory()->create();
 
         $organisation = Organisation::factory()->create();
         $this->owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $this->owner->givePermissionTo('manage-own');
 
         $this->project = Project::factory()
             ->has(

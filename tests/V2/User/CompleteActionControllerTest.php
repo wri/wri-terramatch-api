@@ -5,7 +5,6 @@ namespace Tests\V2\User;
 use App\Models\V2\Action;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class CompleteActionControllerTest extends TestCase
@@ -14,9 +13,7 @@ class CompleteActionControllerTest extends TestCase
 
     public function test_users_can_complete_their_actions()
     {
-        Artisan::call('v2migration:roles');
-        $user = User::factory()->admin()->create();
-        $user->givePermissionTo('manage-own');
+        $user = User::factory()->create();
 
         $projectAction = Action::factory()->project()->create([
             'organisation_id' => $user->organisation->id,

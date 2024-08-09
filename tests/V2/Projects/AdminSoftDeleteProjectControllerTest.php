@@ -6,7 +6,6 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminSoftDeleteProjectControllerTest extends TestCase
@@ -34,12 +33,9 @@ class AdminSoftDeleteProjectControllerTest extends TestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_admins_can_soft_delete_projects(string $permission, string $fmKey)
+    public function test_admins_can_soft_delete_projects(string $adminType, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
-        $user = User::factory()->admin()->create();
-        $user->givePermissionTo($permission);
+        $user = User::factory()->{$adminType}()->create();
 
         $project = Project::factory()->create(['framework_key' => $fmKey]);
 
@@ -59,8 +55,8 @@ class AdminSoftDeleteProjectControllerTest extends TestCase
     public static function permissionsDataProvider()
     {
         return [
-            ['framework-terrafund', 'terrafund'],
-            ['framework-ppc', 'ppc'],
+            ['terrafundAdmin', 'terrafund'],
+            ['ppcAdmin', 'ppc'],
         ];
     }
 }

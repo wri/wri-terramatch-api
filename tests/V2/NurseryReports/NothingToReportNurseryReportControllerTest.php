@@ -10,7 +10,6 @@ use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class NothingToReportNurseryReportControllerTest extends TestCase
@@ -20,16 +19,11 @@ class NothingToReportNurseryReportControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles');
-        $tfAdmin = User::factory()->admin()->create();
-        $tfAdmin->givePermissionTo('framework-terrafund');
-
-        $ppcAdmin = User::factory()->admin()->create();
-        $ppcAdmin->givePermissionTo('framework-ppc');
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
+        $ppcAdmin = User::factory()->ppcAdmin()->create();
 
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $user = User::factory()->create();
 

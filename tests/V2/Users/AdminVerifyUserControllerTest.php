@@ -3,7 +3,6 @@
 namespace Tests\V2\Users;
 
 use App\Models\V2\User;
-use App\Models\V2\User as V2User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -17,7 +16,7 @@ class AdminVerifyUserControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();
-        $targetUser = V2User::factory()->create([
+        $targetUser = User::factory()->create([
             'email_address_verified_at' => null,
         ]);
 

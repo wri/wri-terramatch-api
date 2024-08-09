@@ -28,7 +28,7 @@ class ProjectPolicy extends Policy
             return true;
         }
 
-        if ($this->isNewRoleUser($user)) {
+        if ($user->can('view-dashboard')) {
             return true;
         }
 

@@ -18,17 +18,11 @@ class ViewProjectMonitoringPartnersControllerTest extends TestCase
 
     public function test_it_returns_project_partners()
     {
-        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
 
         $user = User::factory()->create(['organisation_id' => $organisation->id]);
-        $user->givePermissionTo('manage-own');
-
         $otherUser = User::factory()->create(['organisation_id' => $organisation->id]);
-        $otherUser->givePermissionTo('manage-own');
-
-        $tfAdmin = User::factory()->admin()->create();
-        $tfAdmin->givePermissionTo('framework-terrafund');
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
 
         $monitoredProject = Project::factory()->create([
             'framework_key' => 'terrafund',

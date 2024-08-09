@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Hash;
 
 class UserFactory extends Factory
 {
+    public function configure()
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->syncRoles(['project-developer']);
+        });
+    }
+
     /**
      * Define the model's default state.
      */
@@ -20,7 +27,6 @@ class UserFactory extends Factory
             'email_address' => $this->generateUniqueEmail(),
             'email_address_verified_at' => now(),
             'password' => Hash::make('password'),
-            'role' => 'user',
             'job_role' => 'Manager',
             'phone_number' => $this->faker->phoneNumber(),
             'whatsapp_phone' => $this->faker->phoneNumber(),
@@ -43,19 +49,29 @@ class UserFactory extends Factory
 
     public function admin()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'role' => 'admin',
-            ];
+        return $this->afterCreating(function (User $user) {
+            $user->syncRoles(['admin-super']);
         });
     }
 
     public function terrafundAdmin()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'role' => 'terrafund_admin',
-            ];
+        return $this->afterCreating(function (User $user) {
+            $user->syncRoles(['admin-terrafund']);
+        });
+    }
+
+    public function ppcAdmin()
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->syncroles(['admin-ppc']);
+        });
+    }
+
+    public function hbfAdmin()
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->syncroles(['admin-hbf']);
         });
     }
 
@@ -64,8 +80,9 @@ class UserFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'api_key' => base64_encode(random_bytes(48)),
-                'role' => 'service',
             ];
+        })->afterCreating(function (User $user) {
+            $user->syncRoles(['greenhouse-service-account']);
         });
     }
 }

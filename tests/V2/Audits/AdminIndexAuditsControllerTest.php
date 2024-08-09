@@ -10,7 +10,6 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexAuditsControllerTest extends TestCase
@@ -20,12 +19,9 @@ class AdminIndexAuditsControllerTest extends TestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_admin_can_fetch_all_audit_logs_for_a_given_entity(string $permission, string $fmKey)
+    public function test_admin_can_fetch_all_audit_logs_for_a_given_entity(string $adminType, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
-        $user = User::factory()->admin()->create();
-        $user->givePermissionTo($permission);
+        $user = User::factory()->{$adminType}()->create();
 
         $testCases = [
             'project' => Project::factory()->create(['framework_key' => $fmKey, 'status' => 'started']),
@@ -63,8 +59,8 @@ class AdminIndexAuditsControllerTest extends TestCase
     public static function permissionsDataProvider()
     {
         return [
-            ['framework-terrafund', 'terrafund'],
-            ['framework-ppc', 'ppc'],
+            ['terrafundAdmin', 'terrafund'],
+            ['ppcAdmin', 'ppc'],
         ];
     }
 }

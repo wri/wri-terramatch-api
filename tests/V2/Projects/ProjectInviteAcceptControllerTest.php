@@ -8,7 +8,6 @@ use App\Models\V2\Projects\ProjectInvite;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -20,7 +19,6 @@ class ProjectInviteAcceptControllerTest extends TestCase
     public function test_invoke_action()
     {
         Mail::fake();
-        Artisan::call('v2migration:roles');
 
         $organisation = Organisation::factory()->create();
         $project = Project::factory()->create([

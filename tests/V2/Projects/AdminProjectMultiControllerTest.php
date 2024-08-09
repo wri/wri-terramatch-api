@@ -6,7 +6,6 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminProjectMultiControllerTest extends TestCase
@@ -16,10 +15,7 @@ class AdminProjectMultiControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles');
         $admin = User::factory()->admin()->create();
-        $admin->givePermissionTo('framework-terrafund');
-        $admin->givePermissionTo('framework-ppc');
         $user = User::factory()->create();
         $projects = Project::factory()->count(8)->create();
         $firstRecord = $projects[4];

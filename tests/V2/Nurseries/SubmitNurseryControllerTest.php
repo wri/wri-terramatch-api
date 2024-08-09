@@ -9,7 +9,6 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class SubmitNurseryControllerTest extends TestCase
@@ -19,10 +18,8 @@ class SubmitNurseryControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $user = User::factory()->create();
 

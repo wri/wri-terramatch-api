@@ -11,7 +11,6 @@ use App\Models\V2\Workdays\Workday;
 use App\Models\V2\Workdays\WorkdayDemographic;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class GetWorkdaysForEntityControllerTest extends TestCase
@@ -20,10 +19,8 @@ class GetWorkdaysForEntityControllerTest extends TestCase
 
     public function test_empty_workdays_response()
     {
-        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $user = User::factory()->create();
 
@@ -63,10 +60,8 @@ class GetWorkdaysForEntityControllerTest extends TestCase
 
     public function test_populated_workdays()
     {
-        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'organisation_id' => $organisation->id,

@@ -113,7 +113,7 @@ definitions:
     properties:
       uuid:
         type: string
-      user_type:
+      role:
         type: string
       job_role:
         type: string
@@ -49519,7 +49519,7 @@ paths:
               properties:
                 uuid:
                   type: string
-                user_type:
+                role:
                   type: string
                 job_role:
                   type: string
@@ -94371,7 +94371,7 @@ paths:
             properties:
               uuid:
                 type: string
-              user_type:
+              role:
                 type: string
               job_role:
                 type: string
@@ -94420,7 +94420,7 @@ paths:
               properties:
                 uuid:
                   type: string
-                user_type:
+                role:
                   type: string
                 job_role:
                   type: string

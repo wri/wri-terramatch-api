@@ -13,7 +13,6 @@ use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class CreateBlankProjectWithFormControllerTest extends TestCase
@@ -26,12 +25,9 @@ class CreateBlankProjectWithFormControllerTest extends TestCase
      */
     public function test_a_project_developer_can_create_a_blank_project_from_a_given_form(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         list($fundingProgramme, $application, $organisation, $projectPitch, $formSubmissions, $form) = $this->prepareData($fmKey);
 
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $form = $this->createAndReturnForm($fmKey);
 
