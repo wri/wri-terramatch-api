@@ -198,13 +198,23 @@ definitions:
   UserRead:
     type: object
     properties:
-      id:
-        type: integer
-      organisation_id:
-        type: integer
-      organisation_name:
+      uuid:
         type: string
-      my_organisation:
+      role:
+        type: string
+      job_role:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      phone_number:
+        type: string
+      whatsapp_phone:
+        type: string
+      organisation:
         title: AdminOrganisationRead
         type: object
         properties:
@@ -1043,429 +1053,47 @@ definitions:
             type: string
           updated_at:
             type: string
-      my_monitoring_organisations:
-        type: array
-        items:
-          title: V2MonitoringOrganisationRead
-          type: object
-          properties:
-            uuid:
-              type: string
-            status:
-              type: string
-            users_status:
-              type: string
-            readable_status:
-              type: string
-            type:
-              type: string
-            private:
-              type: boolean
-            name:
-              type: string
-            phone:
-              type: string
-            founding_date:
-              type: string
-            description:
-              type: string
-            countries:
-              type: array
-              items:
-                type: string
-            languages:
-              type: array
-              items:
-                type: string
-            tree_species:
-              type: array
-              items:
-                title: V2TreeSpeciesRead
-                x-stoplight:
-                  id: 04vvsvyndvy8n
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  name:
-                    type: string
-                  amount:
-                    type: integer
-                  type:
-                    type: string
-                  collection:
-                    type: string
-            web_url:
-              type: string
-            facebook_url:
-              type: string
-            instagram_url:
-              type: string
-            linkedin_url:
-              type: string
-            twitter_url:
-              type: string
-            hq_street_1:
-              type: string
-            hq_street_2:
-              type: string
-            hq_city:
-              type: string
-            hq_state:
-              type: string
-            hq_zipcode:
-              type: string
-            hq_country:
-              type: string
-            fin_start_month:
-              type: integer
-            fin_budget_3year:
-              type: number
-              format: float
-            fin_budget_2year:
-              type: number
-              format: float
-            fin_budget_1year:
-              type: number
-              format: float
-            fin_budget_current_year:
-              type: number
-              format: float
-            ha_restored_total:
-              type: number
-              format: float
-            ha_restored_3year:
-              type: number
-              format: float
-            relevant_experience_years:
-              type: integer
-            trees_grown_total:
-              type: integer
-            trees_grown_3year:
-              type: integer
-            tree_care_approach:
-              type: string
-            logo:
-              title: V2FileRead
-              type: object
-              properties:
-                uuid:
-                  type: string
-                url:
-                  type: string
-                thumb_url:
-                  type: string
-                collection_name:
-                  type: string
-                title:
-                  type: string
-                file_name:
-                  type: string
-                mime_type:
-                  type: string
-                size:
-                  type: integer
-                lat:
-                  type: integer
-                lng:
-                  type: integer
-                is_public:
-                  type: boolean
-                created_at:
-                  type: string
-            cover:
-              title: V2FileRead
-              type: object
-              properties:
-                uuid:
-                  type: string
-                url:
-                  type: string
-                thumb_url:
-                  type: string
-                collection_name:
-                  type: string
-                title:
-                  type: string
-                file_name:
-                  type: string
-                mime_type:
-                  type: string
-                size:
-                  type: integer
-                lat:
-                  type: integer
-                lng:
-                  type: integer
-                is_public:
-                  type: boolean
-                created_at:
-                  type: string
-            reference:
-              type: array
-              items:
-                title: V2FileRead
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  url:
-                    type: string
-                  thumb_url:
-                    type: string
-                  collection_name:
-                    type: string
-                  title:
-                    type: string
-                  file_name:
-                    type: string
-                  mime_type:
-                    type: string
-                  size:
-                    type: integer
-                  lat:
-                    type: integer
-                  lng:
-                    type: integer
-                  is_public:
-                    type: boolean
-                  created_at:
-                    type: string
-            additional:
-              type: array
-              items:
-                title: V2FileRead
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  url:
-                    type: string
-                  thumb_url:
-                    type: string
-                  collection_name:
-                    type: string
-                  title:
-                    type: string
-                  file_name:
-                    type: string
-                  mime_type:
-                    type: string
-                  size:
-                    type: integer
-                  lat:
-                    type: integer
-                  lng:
-                    type: integer
-                  is_public:
-                    type: boolean
-                  created_at:
-                    type: string
-            op_budget_2year:
-              type: array
-              items:
-                title: V2FileRead
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  url:
-                    type: string
-                  thumb_url:
-                    type: string
-                  collection_name:
-                    type: string
-                  title:
-                    type: string
-                  file_name:
-                    type: string
-                  mime_type:
-                    type: string
-                  size:
-                    type: integer
-                  lat:
-                    type: integer
-                  lng:
-                    type: integer
-                  is_public:
-                    type: boolean
-                  created_at:
-                    type: string
-            op_budget_last_year:
-              type: array
-              items:
-                title: V2FileRead
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  url:
-                    type: string
-                  thumb_url:
-                    type: string
-                  collection_name:
-                    type: string
-                  title:
-                    type: string
-                  file_name:
-                    type: string
-                  mime_type:
-                    type: string
-                  size:
-                    type: integer
-                  lat:
-                    type: integer
-                  lng:
-                    type: integer
-                  is_public:
-                    type: boolean
-                  created_at:
-                    type: string
-            op_budget_this_year:
-              type: array
-              items:
-                title: V2FileRead
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  url:
-                    type: string
-                  thumb_url:
-                    type: string
-                  collection_name:
-                    type: string
-                  title:
-                    type: string
-                  file_name:
-                    type: string
-                  mime_type:
-                    type: string
-                  size:
-                    type: integer
-                  lat:
-                    type: integer
-                  lng:
-                    type: integer
-                  is_public:
-                    type: boolean
-                  created_at:
-                    type: string
-            op_budget_next_year:
-              type: array
-              items:
-                title: V2FileRead
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  url:
-                    type: string
-                  thumb_url:
-                    type: string
-                  collection_name:
-                    type: string
-                  title:
-                    type: string
-                  file_name:
-                    type: string
-                  mime_type:
-                    type: string
-                  size:
-                    type: integer
-                  lat:
-                    type: integer
-                  lng:
-                    type: integer
-                  is_public:
-                    type: boolean
-                  created_at:
-                    type: string
-            legal_registration:
-              type: array
-              items:
-                title: V2FileRead
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  url:
-                    type: string
-                  thumb_url:
-                    type: string
-                  collection_name:
-                    type: string
-                  title:
-                    type: string
-                  file_name:
-                    type: string
-                  mime_type:
-                    type: string
-                  size:
-                    type: integer
-                  lat:
-                    type: integer
-                  lng:
-                    type: integer
-                  is_public:
-                    type: boolean
-                  created_at:
-                    type: string
-            tags:
-              type: array
-              description: 'this is a list of key value pairs eg. slug: name'
-              items:
-                type: string
-            created_at:
-              type: string
-            updated_at:
-              type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      email_address:
-        type: string
-      email_address_verified_at:
-        type: string
-        format: date-time
-      role:
-        type: string
       last_logged_in_at:
         type: string
         format: date-time
-      job_role:
+      email_address_verified_at:
         type: string
-      facebook:
-        type: string
-      twitter:
-        type: string
-      instagram:
-        type: string
-      linkedin:
-        type: string
-      avatar:
-        type: string
-      phone_number:
-        type: string
-      whatsapp_phone:
-        type: string
-      has_ppc_projects:
+        format: date-time
+      verified:
         type: boolean
-      has_terrafund_projects:
-        type: boolean
+      date_added:
+        type: string
+        format: date-time
+      banners:
+        type: string
+      updated_at:
+        type: string
+        format: date-time
+      created_at:
+        type: string
+        format: date-time
   UserReadAll:
     type: array
     items:
       type: object
       properties:
-        id:
-          type: integer
-        organisation_id:
-          type: integer
-        organisation_name:
+        uuid:
           type: string
-        my_organisation:
+        role:
+          type: string
+        job_role:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email_address:
+          type: string
+        phone_number:
+          type: string
+        whatsapp_phone:
+          type: string
+        organisation:
           title: AdminOrganisationRead
           type: object
           properties:
@@ -2304,417 +1932,25 @@ definitions:
               type: string
             updated_at:
               type: string
-        my_monitoring_organisations:
-          type: array
-          items:
-            title: V2MonitoringOrganisationRead
-            type: object
-            properties:
-              uuid:
-                type: string
-              status:
-                type: string
-              users_status:
-                type: string
-              readable_status:
-                type: string
-              type:
-                type: string
-              private:
-                type: boolean
-              name:
-                type: string
-              phone:
-                type: string
-              founding_date:
-                type: string
-              description:
-                type: string
-              countries:
-                type: array
-                items:
-                  type: string
-              languages:
-                type: array
-                items:
-                  type: string
-              tree_species:
-                type: array
-                items:
-                  title: V2TreeSpeciesRead
-                  x-stoplight:
-                    id: 04vvsvyndvy8n
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    name:
-                      type: string
-                    amount:
-                      type: integer
-                    type:
-                      type: string
-                    collection:
-                      type: string
-              web_url:
-                type: string
-              facebook_url:
-                type: string
-              instagram_url:
-                type: string
-              linkedin_url:
-                type: string
-              twitter_url:
-                type: string
-              hq_street_1:
-                type: string
-              hq_street_2:
-                type: string
-              hq_city:
-                type: string
-              hq_state:
-                type: string
-              hq_zipcode:
-                type: string
-              hq_country:
-                type: string
-              fin_start_month:
-                type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
-              ha_restored_total:
-                type: number
-                format: float
-              ha_restored_3year:
-                type: number
-                format: float
-              relevant_experience_years:
-                type: integer
-              trees_grown_total:
-                type: integer
-              trees_grown_3year:
-                type: integer
-              tree_care_approach:
-                type: string
-              logo:
-                title: V2FileRead
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  url:
-                    type: string
-                  thumb_url:
-                    type: string
-                  collection_name:
-                    type: string
-                  title:
-                    type: string
-                  file_name:
-                    type: string
-                  mime_type:
-                    type: string
-                  size:
-                    type: integer
-                  lat:
-                    type: integer
-                  lng:
-                    type: integer
-                  is_public:
-                    type: boolean
-                  created_at:
-                    type: string
-              cover:
-                title: V2FileRead
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  url:
-                    type: string
-                  thumb_url:
-                    type: string
-                  collection_name:
-                    type: string
-                  title:
-                    type: string
-                  file_name:
-                    type: string
-                  mime_type:
-                    type: string
-                  size:
-                    type: integer
-                  lat:
-                    type: integer
-                  lng:
-                    type: integer
-                  is_public:
-                    type: boolean
-                  created_at:
-                    type: string
-              reference:
-                type: array
-                items:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-              additional:
-                type: array
-                items:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-              op_budget_2year:
-                type: array
-                items:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-              op_budget_last_year:
-                type: array
-                items:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-              op_budget_this_year:
-                type: array
-                items:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-              op_budget_next_year:
-                type: array
-                items:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-              legal_registration:
-                type: array
-                items:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-              tags:
-                type: array
-                description: 'this is a list of key value pairs eg. slug: name'
-                items:
-                  type: string
-              created_at:
-                type: string
-              updated_at:
-                type: string
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email_address:
-          type: string
-        email_address_verified_at:
-          type: string
-          format: date-time
-        role:
-          type: string
         last_logged_in_at:
           type: string
           format: date-time
-        job_role:
+        email_address_verified_at:
           type: string
-        facebook:
-          type: string
-        twitter:
-          type: string
-        instagram:
-          type: string
-        linkedin:
-          type: string
-        avatar:
-          type: string
-        phone_number:
-          type: string
-        whatsapp_phone:
-          type: string
-        has_ppc_projects:
+          format: date-time
+        verified:
           type: boolean
-        has_terrafund_projects:
-          type: boolean
+        date_added:
+          type: string
+          format: date-time
+        banners:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
   FundingProgramme:
     title: FundingProgrammeRead
     x-stoplight:
@@ -6904,6 +6140,8 @@ definitions:
       email_address:
         type: string
       password:
+        type: string
+      role:
         type: string
       job_role:
         type: string
@@ -33338,13 +32576,23 @@ definitions:
       created_by:
         type: object
         properties:
-          id:
-            type: integer
-          organisation_id:
-            type: integer
-          organisation_name:
+          uuid:
             type: string
-          my_organisation:
+          role:
+            type: string
+          job_role:
+            type: string
+          first_name:
+            type: string
+          last_name:
+            type: string
+          email_address:
+            type: string
+          phone_number:
+            type: string
+          whatsapp_phone:
+            type: string
+          organisation:
             title: AdminOrganisationRead
             type: object
             properties:
@@ -34183,427 +33431,45 @@ definitions:
                 type: string
               updated_at:
                 type: string
-          my_monitoring_organisations:
-            type: array
-            items:
-              title: V2MonitoringOrganisationRead
-              type: object
-              properties:
-                uuid:
-                  type: string
-                status:
-                  type: string
-                users_status:
-                  type: string
-                readable_status:
-                  type: string
-                type:
-                  type: string
-                private:
-                  type: boolean
-                name:
-                  type: string
-                phone:
-                  type: string
-                founding_date:
-                  type: string
-                description:
-                  type: string
-                countries:
-                  type: array
-                  items:
-                    type: string
-                languages:
-                  type: array
-                  items:
-                    type: string
-                tree_species:
-                  type: array
-                  items:
-                    title: V2TreeSpeciesRead
-                    x-stoplight:
-                      id: 04vvsvyndvy8n
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      name:
-                        type: string
-                      amount:
-                        type: integer
-                      type:
-                        type: string
-                      collection:
-                        type: string
-                web_url:
-                  type: string
-                facebook_url:
-                  type: string
-                instagram_url:
-                  type: string
-                linkedin_url:
-                  type: string
-                twitter_url:
-                  type: string
-                hq_street_1:
-                  type: string
-                hq_street_2:
-                  type: string
-                hq_city:
-                  type: string
-                hq_state:
-                  type: string
-                hq_zipcode:
-                  type: string
-                hq_country:
-                  type: string
-                fin_start_month:
-                  type: integer
-                fin_budget_3year:
-                  type: number
-                  format: float
-                fin_budget_2year:
-                  type: number
-                  format: float
-                fin_budget_1year:
-                  type: number
-                  format: float
-                fin_budget_current_year:
-                  type: number
-                  format: float
-                ha_restored_total:
-                  type: number
-                  format: float
-                ha_restored_3year:
-                  type: number
-                  format: float
-                relevant_experience_years:
-                  type: integer
-                trees_grown_total:
-                  type: integer
-                trees_grown_3year:
-                  type: integer
-                tree_care_approach:
-                  type: string
-                logo:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-                cover:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-                reference:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                additional:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_2year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_last_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_this_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_next_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                legal_registration:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                tags:
-                  type: array
-                  description: 'this is a list of key value pairs eg. slug: name'
-                  items:
-                    type: string
-                created_at:
-                  type: string
-                updated_at:
-                  type: string
-          first_name:
-            type: string
-          last_name:
-            type: string
-          email_address:
-            type: string
-          email_address_verified_at:
-            type: string
-            format: date-time
-          role:
-            type: string
           last_logged_in_at:
             type: string
             format: date-time
-          job_role:
+          email_address_verified_at:
             type: string
-          facebook:
-            type: string
-          twitter:
-            type: string
-          instagram:
-            type: string
-          linkedin:
-            type: string
-          avatar:
-            type: string
-          phone_number:
-            type: string
-          whatsapp_phone:
-            type: string
-          has_ppc_projects:
+            format: date-time
+          verified:
             type: boolean
-          has_terrafund_projects:
-            type: boolean
+          date_added:
+            type: string
+            format: date-time
+          banners:
+            type: string
+          updated_at:
+            type: string
+            format: date-time
+          created_at:
+            type: string
+            format: date-time
       approved_by:
         type: object
         properties:
-          id:
-            type: integer
-          organisation_id:
-            type: integer
-          organisation_name:
+          uuid:
             type: string
-          my_organisation:
+          role:
+            type: string
+          job_role:
+            type: string
+          first_name:
+            type: string
+          last_name:
+            type: string
+          email_address:
+            type: string
+          phone_number:
+            type: string
+          whatsapp_phone:
+            type: string
+          organisation:
             title: AdminOrganisationRead
             type: object
             properties:
@@ -35442,417 +34308,25 @@ definitions:
                 type: string
               updated_at:
                 type: string
-          my_monitoring_organisations:
-            type: array
-            items:
-              title: V2MonitoringOrganisationRead
-              type: object
-              properties:
-                uuid:
-                  type: string
-                status:
-                  type: string
-                users_status:
-                  type: string
-                readable_status:
-                  type: string
-                type:
-                  type: string
-                private:
-                  type: boolean
-                name:
-                  type: string
-                phone:
-                  type: string
-                founding_date:
-                  type: string
-                description:
-                  type: string
-                countries:
-                  type: array
-                  items:
-                    type: string
-                languages:
-                  type: array
-                  items:
-                    type: string
-                tree_species:
-                  type: array
-                  items:
-                    title: V2TreeSpeciesRead
-                    x-stoplight:
-                      id: 04vvsvyndvy8n
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      name:
-                        type: string
-                      amount:
-                        type: integer
-                      type:
-                        type: string
-                      collection:
-                        type: string
-                web_url:
-                  type: string
-                facebook_url:
-                  type: string
-                instagram_url:
-                  type: string
-                linkedin_url:
-                  type: string
-                twitter_url:
-                  type: string
-                hq_street_1:
-                  type: string
-                hq_street_2:
-                  type: string
-                hq_city:
-                  type: string
-                hq_state:
-                  type: string
-                hq_zipcode:
-                  type: string
-                hq_country:
-                  type: string
-                fin_start_month:
-                  type: integer
-                fin_budget_3year:
-                  type: number
-                  format: float
-                fin_budget_2year:
-                  type: number
-                  format: float
-                fin_budget_1year:
-                  type: number
-                  format: float
-                fin_budget_current_year:
-                  type: number
-                  format: float
-                ha_restored_total:
-                  type: number
-                  format: float
-                ha_restored_3year:
-                  type: number
-                  format: float
-                relevant_experience_years:
-                  type: integer
-                trees_grown_total:
-                  type: integer
-                trees_grown_3year:
-                  type: integer
-                tree_care_approach:
-                  type: string
-                logo:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-                cover:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-                reference:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                additional:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_2year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_last_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_this_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_next_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                legal_registration:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                tags:
-                  type: array
-                  description: 'this is a list of key value pairs eg. slug: name'
-                  items:
-                    type: string
-                created_at:
-                  type: string
-                updated_at:
-                  type: string
-          first_name:
-            type: string
-          last_name:
-            type: string
-          email_address:
-            type: string
-          email_address_verified_at:
-            type: string
-            format: date-time
-          role:
-            type: string
           last_logged_in_at:
             type: string
             format: date-time
-          job_role:
+          email_address_verified_at:
             type: string
-          facebook:
-            type: string
-          twitter:
-            type: string
-          instagram:
-            type: string
-          linkedin:
-            type: string
-          avatar:
-            type: string
-          phone_number:
-            type: string
-          whatsapp_phone:
-            type: string
-          has_ppc_projects:
+            format: date-time
+          verified:
             type: boolean
-          has_terrafund_projects:
-            type: boolean
+          date_added:
+            type: string
+            format: date-time
+          banners:
+            type: string
+          updated_at:
+            type: string
+            format: date-time
+          created_at:
+            type: string
+            format: date-time
       organisation:
         title: OrganisationRead
         type: object
@@ -37692,13 +36166,23 @@ definitions:
       created_by:
         type: object
         properties:
-          id:
-            type: integer
-          organisation_id:
-            type: integer
-          organisation_name:
+          uuid:
             type: string
-          my_organisation:
+          role:
+            type: string
+          job_role:
+            type: string
+          first_name:
+            type: string
+          last_name:
+            type: string
+          email_address:
+            type: string
+          phone_number:
+            type: string
+          whatsapp_phone:
+            type: string
+          organisation:
             title: AdminOrganisationRead
             type: object
             properties:
@@ -38537,427 +37021,45 @@ definitions:
                 type: string
               updated_at:
                 type: string
-          my_monitoring_organisations:
-            type: array
-            items:
-              title: V2MonitoringOrganisationRead
-              type: object
-              properties:
-                uuid:
-                  type: string
-                status:
-                  type: string
-                users_status:
-                  type: string
-                readable_status:
-                  type: string
-                type:
-                  type: string
-                private:
-                  type: boolean
-                name:
-                  type: string
-                phone:
-                  type: string
-                founding_date:
-                  type: string
-                description:
-                  type: string
-                countries:
-                  type: array
-                  items:
-                    type: string
-                languages:
-                  type: array
-                  items:
-                    type: string
-                tree_species:
-                  type: array
-                  items:
-                    title: V2TreeSpeciesRead
-                    x-stoplight:
-                      id: 04vvsvyndvy8n
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      name:
-                        type: string
-                      amount:
-                        type: integer
-                      type:
-                        type: string
-                      collection:
-                        type: string
-                web_url:
-                  type: string
-                facebook_url:
-                  type: string
-                instagram_url:
-                  type: string
-                linkedin_url:
-                  type: string
-                twitter_url:
-                  type: string
-                hq_street_1:
-                  type: string
-                hq_street_2:
-                  type: string
-                hq_city:
-                  type: string
-                hq_state:
-                  type: string
-                hq_zipcode:
-                  type: string
-                hq_country:
-                  type: string
-                fin_start_month:
-                  type: integer
-                fin_budget_3year:
-                  type: number
-                  format: float
-                fin_budget_2year:
-                  type: number
-                  format: float
-                fin_budget_1year:
-                  type: number
-                  format: float
-                fin_budget_current_year:
-                  type: number
-                  format: float
-                ha_restored_total:
-                  type: number
-                  format: float
-                ha_restored_3year:
-                  type: number
-                  format: float
-                relevant_experience_years:
-                  type: integer
-                trees_grown_total:
-                  type: integer
-                trees_grown_3year:
-                  type: integer
-                tree_care_approach:
-                  type: string
-                logo:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-                cover:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-                reference:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                additional:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_2year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_last_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_this_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_next_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                legal_registration:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                tags:
-                  type: array
-                  description: 'this is a list of key value pairs eg. slug: name'
-                  items:
-                    type: string
-                created_at:
-                  type: string
-                updated_at:
-                  type: string
-          first_name:
-            type: string
-          last_name:
-            type: string
-          email_address:
-            type: string
-          email_address_verified_at:
-            type: string
-            format: date-time
-          role:
-            type: string
           last_logged_in_at:
             type: string
             format: date-time
-          job_role:
+          email_address_verified_at:
             type: string
-          facebook:
-            type: string
-          twitter:
-            type: string
-          instagram:
-            type: string
-          linkedin:
-            type: string
-          avatar:
-            type: string
-          phone_number:
-            type: string
-          whatsapp_phone:
-            type: string
-          has_ppc_projects:
+            format: date-time
+          verified:
             type: boolean
-          has_terrafund_projects:
-            type: boolean
+          date_added:
+            type: string
+            format: date-time
+          banners:
+            type: string
+          updated_at:
+            type: string
+            format: date-time
+          created_at:
+            type: string
+            format: date-time
       approved_by:
         type: object
         properties:
-          id:
-            type: integer
-          organisation_id:
-            type: integer
-          organisation_name:
+          uuid:
             type: string
-          my_organisation:
+          role:
+            type: string
+          job_role:
+            type: string
+          first_name:
+            type: string
+          last_name:
+            type: string
+          email_address:
+            type: string
+          phone_number:
+            type: string
+          whatsapp_phone:
+            type: string
+          organisation:
             title: AdminOrganisationRead
             type: object
             properties:
@@ -39796,417 +37898,25 @@ definitions:
                 type: string
               updated_at:
                 type: string
-          my_monitoring_organisations:
-            type: array
-            items:
-              title: V2MonitoringOrganisationRead
-              type: object
-              properties:
-                uuid:
-                  type: string
-                status:
-                  type: string
-                users_status:
-                  type: string
-                readable_status:
-                  type: string
-                type:
-                  type: string
-                private:
-                  type: boolean
-                name:
-                  type: string
-                phone:
-                  type: string
-                founding_date:
-                  type: string
-                description:
-                  type: string
-                countries:
-                  type: array
-                  items:
-                    type: string
-                languages:
-                  type: array
-                  items:
-                    type: string
-                tree_species:
-                  type: array
-                  items:
-                    title: V2TreeSpeciesRead
-                    x-stoplight:
-                      id: 04vvsvyndvy8n
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      name:
-                        type: string
-                      amount:
-                        type: integer
-                      type:
-                        type: string
-                      collection:
-                        type: string
-                web_url:
-                  type: string
-                facebook_url:
-                  type: string
-                instagram_url:
-                  type: string
-                linkedin_url:
-                  type: string
-                twitter_url:
-                  type: string
-                hq_street_1:
-                  type: string
-                hq_street_2:
-                  type: string
-                hq_city:
-                  type: string
-                hq_state:
-                  type: string
-                hq_zipcode:
-                  type: string
-                hq_country:
-                  type: string
-                fin_start_month:
-                  type: integer
-                fin_budget_3year:
-                  type: number
-                  format: float
-                fin_budget_2year:
-                  type: number
-                  format: float
-                fin_budget_1year:
-                  type: number
-                  format: float
-                fin_budget_current_year:
-                  type: number
-                  format: float
-                ha_restored_total:
-                  type: number
-                  format: float
-                ha_restored_3year:
-                  type: number
-                  format: float
-                relevant_experience_years:
-                  type: integer
-                trees_grown_total:
-                  type: integer
-                trees_grown_3year:
-                  type: integer
-                tree_care_approach:
-                  type: string
-                logo:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-                cover:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-                reference:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                additional:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_2year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_last_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_this_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_next_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                legal_registration:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                tags:
-                  type: array
-                  description: 'this is a list of key value pairs eg. slug: name'
-                  items:
-                    type: string
-                created_at:
-                  type: string
-                updated_at:
-                  type: string
-          first_name:
-            type: string
-          last_name:
-            type: string
-          email_address:
-            type: string
-          email_address_verified_at:
-            type: string
-            format: date-time
-          role:
-            type: string
           last_logged_in_at:
             type: string
             format: date-time
-          job_role:
+          email_address_verified_at:
             type: string
-          facebook:
-            type: string
-          twitter:
-            type: string
-          instagram:
-            type: string
-          linkedin:
-            type: string
-          avatar:
-            type: string
-          phone_number:
-            type: string
-          whatsapp_phone:
-            type: string
-          has_ppc_projects:
+            format: date-time
+          verified:
             type: boolean
-          has_terrafund_projects:
-            type: boolean
+          date_added:
+            type: string
+            format: date-time
+          banners:
+            type: string
+          updated_at:
+            type: string
+            format: date-time
+          created_at:
+            type: string
+            format: date-time
       workdays_volunteer:
         type: integer
       technical_narrative:
@@ -42406,13 +40116,23 @@ definitions:
       created_by:
         type: object
         properties:
-          id:
-            type: integer
-          organisation_id:
-            type: integer
-          organisation_name:
+          uuid:
             type: string
-          my_organisation:
+          role:
+            type: string
+          job_role:
+            type: string
+          first_name:
+            type: string
+          last_name:
+            type: string
+          email_address:
+            type: string
+          phone_number:
+            type: string
+          whatsapp_phone:
+            type: string
+          organisation:
             title: AdminOrganisationRead
             type: object
             properties:
@@ -43251,417 +40971,25 @@ definitions:
                 type: string
               updated_at:
                 type: string
-          my_monitoring_organisations:
-            type: array
-            items:
-              title: V2MonitoringOrganisationRead
-              type: object
-              properties:
-                uuid:
-                  type: string
-                status:
-                  type: string
-                users_status:
-                  type: string
-                readable_status:
-                  type: string
-                type:
-                  type: string
-                private:
-                  type: boolean
-                name:
-                  type: string
-                phone:
-                  type: string
-                founding_date:
-                  type: string
-                description:
-                  type: string
-                countries:
-                  type: array
-                  items:
-                    type: string
-                languages:
-                  type: array
-                  items:
-                    type: string
-                tree_species:
-                  type: array
-                  items:
-                    title: V2TreeSpeciesRead
-                    x-stoplight:
-                      id: 04vvsvyndvy8n
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      name:
-                        type: string
-                      amount:
-                        type: integer
-                      type:
-                        type: string
-                      collection:
-                        type: string
-                web_url:
-                  type: string
-                facebook_url:
-                  type: string
-                instagram_url:
-                  type: string
-                linkedin_url:
-                  type: string
-                twitter_url:
-                  type: string
-                hq_street_1:
-                  type: string
-                hq_street_2:
-                  type: string
-                hq_city:
-                  type: string
-                hq_state:
-                  type: string
-                hq_zipcode:
-                  type: string
-                hq_country:
-                  type: string
-                fin_start_month:
-                  type: integer
-                fin_budget_3year:
-                  type: number
-                  format: float
-                fin_budget_2year:
-                  type: number
-                  format: float
-                fin_budget_1year:
-                  type: number
-                  format: float
-                fin_budget_current_year:
-                  type: number
-                  format: float
-                ha_restored_total:
-                  type: number
-                  format: float
-                ha_restored_3year:
-                  type: number
-                  format: float
-                relevant_experience_years:
-                  type: integer
-                trees_grown_total:
-                  type: integer
-                trees_grown_3year:
-                  type: integer
-                tree_care_approach:
-                  type: string
-                logo:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-                cover:
-                  title: V2FileRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    url:
-                      type: string
-                    thumb_url:
-                      type: string
-                    collection_name:
-                      type: string
-                    title:
-                      type: string
-                    file_name:
-                      type: string
-                    mime_type:
-                      type: string
-                    size:
-                      type: integer
-                    lat:
-                      type: integer
-                    lng:
-                      type: integer
-                    is_public:
-                      type: boolean
-                    created_at:
-                      type: string
-                reference:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                additional:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_2year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_last_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_this_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                op_budget_next_year:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                legal_registration:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      created_at:
-                        type: string
-                tags:
-                  type: array
-                  description: 'this is a list of key value pairs eg. slug: name'
-                  items:
-                    type: string
-                created_at:
-                  type: string
-                updated_at:
-                  type: string
-          first_name:
-            type: string
-          last_name:
-            type: string
-          email_address:
-            type: string
-          email_address_verified_at:
-            type: string
-            format: date-time
-          role:
-            type: string
           last_logged_in_at:
             type: string
             format: date-time
-          job_role:
+          email_address_verified_at:
             type: string
-          facebook:
-            type: string
-          twitter:
-            type: string
-          instagram:
-            type: string
-          linkedin:
-            type: string
-          avatar:
-            type: string
-          phone_number:
-            type: string
-          whatsapp_phone:
-            type: string
-          has_ppc_projects:
+            format: date-time
+          verified:
             type: boolean
-          has_terrafund_projects:
-            type: boolean
+          date_added:
+            type: string
+            format: date-time
+          banners:
+            type: string
+          updated_at:
+            type: string
+            format: date-time
+          created_at:
+            type: string
+            format: date-time
       seedlings_grown:
         type: integer
   UserCreate:
@@ -43691,7 +41019,7 @@ definitions:
         type: string
       callback_url:
         type: string
-      primary_role:
+      role:
         type: string
       country:
         type: string
@@ -48230,7 +45558,7 @@ paths:
                 type: string
               callback_url:
                 type: string
-              primary_role:
+              role:
                 type: string
               country:
                 type: string
@@ -48242,13 +45570,23 @@ paths:
           schema:
             type: object
             properties:
-              id:
-                type: integer
-              organisation_id:
-                type: integer
-              organisation_name:
+              uuid:
                 type: string
-              my_organisation:
+              role:
+                type: string
+              job_role:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              phone_number:
+                type: string
+              whatsapp_phone:
+                type: string
+              organisation:
                 title: AdminOrganisationRead
                 type: object
                 properties:
@@ -49087,417 +46425,25 @@ paths:
                     type: string
                   updated_at:
                     type: string
-              my_monitoring_organisations:
-                type: array
-                items:
-                  title: V2MonitoringOrganisationRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    status:
-                      type: string
-                    users_status:
-                      type: string
-                    readable_status:
-                      type: string
-                    type:
-                      type: string
-                    private:
-                      type: boolean
-                    name:
-                      type: string
-                    phone:
-                      type: string
-                    founding_date:
-                      type: string
-                    description:
-                      type: string
-                    countries:
-                      type: array
-                      items:
-                        type: string
-                    languages:
-                      type: array
-                      items:
-                        type: string
-                    tree_species:
-                      type: array
-                      items:
-                        title: V2TreeSpeciesRead
-                        x-stoplight:
-                          id: 04vvsvyndvy8n
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          name:
-                            type: string
-                          amount:
-                            type: integer
-                          type:
-                            type: string
-                          collection:
-                            type: string
-                    web_url:
-                      type: string
-                    facebook_url:
-                      type: string
-                    instagram_url:
-                      type: string
-                    linkedin_url:
-                      type: string
-                    twitter_url:
-                      type: string
-                    hq_street_1:
-                      type: string
-                    hq_street_2:
-                      type: string
-                    hq_city:
-                      type: string
-                    hq_state:
-                      type: string
-                    hq_zipcode:
-                      type: string
-                    hq_country:
-                      type: string
-                    fin_start_month:
-                      type: integer
-                    fin_budget_3year:
-                      type: number
-                      format: float
-                    fin_budget_2year:
-                      type: number
-                      format: float
-                    fin_budget_1year:
-                      type: number
-                      format: float
-                    fin_budget_current_year:
-                      type: number
-                      format: float
-                    ha_restored_total:
-                      type: number
-                      format: float
-                    ha_restored_3year:
-                      type: number
-                      format: float
-                    relevant_experience_years:
-                      type: integer
-                    trees_grown_total:
-                      type: integer
-                    trees_grown_3year:
-                      type: integer
-                    tree_care_approach:
-                      type: string
-                    logo:
-                      title: V2FileRead
-                      type: object
-                      properties:
-                        uuid:
-                          type: string
-                        url:
-                          type: string
-                        thumb_url:
-                          type: string
-                        collection_name:
-                          type: string
-                        title:
-                          type: string
-                        file_name:
-                          type: string
-                        mime_type:
-                          type: string
-                        size:
-                          type: integer
-                        lat:
-                          type: integer
-                        lng:
-                          type: integer
-                        is_public:
-                          type: boolean
-                        created_at:
-                          type: string
-                    cover:
-                      title: V2FileRead
-                      type: object
-                      properties:
-                        uuid:
-                          type: string
-                        url:
-                          type: string
-                        thumb_url:
-                          type: string
-                        collection_name:
-                          type: string
-                        title:
-                          type: string
-                        file_name:
-                          type: string
-                        mime_type:
-                          type: string
-                        size:
-                          type: integer
-                        lat:
-                          type: integer
-                        lng:
-                          type: integer
-                        is_public:
-                          type: boolean
-                        created_at:
-                          type: string
-                    reference:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    additional:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_2year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_last_year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_this_year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_next_year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    legal_registration:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    tags:
-                      type: array
-                      description: 'this is a list of key value pairs eg. slug: name'
-                      items:
-                        type: string
-                    created_at:
-                      type: string
-                    updated_at:
-                      type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              email_address:
-                type: string
-              email_address_verified_at:
-                type: string
-                format: date-time
-              role:
-                type: string
               last_logged_in_at:
                 type: string
                 format: date-time
-              job_role:
+              email_address_verified_at:
                 type: string
-              facebook:
-                type: string
-              twitter:
-                type: string
-              instagram:
-                type: string
-              linkedin:
-                type: string
-              avatar:
-                type: string
-              phone_number:
-                type: string
-              whatsapp_phone:
-                type: string
-              has_ppc_projects:
+                format: date-time
+              verified:
                 type: boolean
-              has_terrafund_projects:
-                type: boolean
+              date_added:
+                type: string
+                format: date-time
+              banners:
+                type: string
+              updated_at:
+                type: string
+                format: date-time
+              created_at:
+                type: string
+                format: date-time
       operationId: post-users
   '/v2/projects/{UUID}/partners':
     get:
@@ -67049,13 +63995,23 @@ paths:
             items:
               type: object
               properties:
-                id:
-                  type: integer
-                organisation_id:
-                  type: integer
-                organisation_name:
+                uuid:
                   type: string
-                my_organisation:
+                role:
+                  type: string
+                job_role:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email_address:
+                  type: string
+                phone_number:
+                  type: string
+                whatsapp_phone:
+                  type: string
+                organisation:
                   title: AdminOrganisationRead
                   type: object
                   properties:
@@ -67894,417 +64850,25 @@ paths:
                       type: string
                     updated_at:
                       type: string
-                my_monitoring_organisations:
-                  type: array
-                  items:
-                    title: V2MonitoringOrganisationRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      status:
-                        type: string
-                      users_status:
-                        type: string
-                      readable_status:
-                        type: string
-                      type:
-                        type: string
-                      private:
-                        type: boolean
-                      name:
-                        type: string
-                      phone:
-                        type: string
-                      founding_date:
-                        type: string
-                      description:
-                        type: string
-                      countries:
-                        type: array
-                        items:
-                          type: string
-                      languages:
-                        type: array
-                        items:
-                          type: string
-                      tree_species:
-                        type: array
-                        items:
-                          title: V2TreeSpeciesRead
-                          x-stoplight:
-                            id: 04vvsvyndvy8n
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            name:
-                              type: string
-                            amount:
-                              type: integer
-                            type:
-                              type: string
-                            collection:
-                              type: string
-                      web_url:
-                        type: string
-                      facebook_url:
-                        type: string
-                      instagram_url:
-                        type: string
-                      linkedin_url:
-                        type: string
-                      twitter_url:
-                        type: string
-                      hq_street_1:
-                        type: string
-                      hq_street_2:
-                        type: string
-                      hq_city:
-                        type: string
-                      hq_state:
-                        type: string
-                      hq_zipcode:
-                        type: string
-                      hq_country:
-                        type: string
-                      fin_start_month:
-                        type: integer
-                      fin_budget_3year:
-                        type: number
-                        format: float
-                      fin_budget_2year:
-                        type: number
-                        format: float
-                      fin_budget_1year:
-                        type: number
-                        format: float
-                      fin_budget_current_year:
-                        type: number
-                        format: float
-                      ha_restored_total:
-                        type: number
-                        format: float
-                      ha_restored_3year:
-                        type: number
-                        format: float
-                      relevant_experience_years:
-                        type: integer
-                      trees_grown_total:
-                        type: integer
-                      trees_grown_3year:
-                        type: integer
-                      tree_care_approach:
-                        type: string
-                      logo:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                      cover:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                      reference:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      additional:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      op_budget_2year:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      op_budget_last_year:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      op_budget_this_year:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      op_budget_next_year:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      legal_registration:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      tags:
-                        type: array
-                        description: 'this is a list of key value pairs eg. slug: name'
-                        items:
-                          type: string
-                      created_at:
-                        type: string
-                      updated_at:
-                        type: string
-                first_name:
-                  type: string
-                last_name:
-                  type: string
-                email_address:
-                  type: string
-                email_address_verified_at:
-                  type: string
-                  format: date-time
-                role:
-                  type: string
                 last_logged_in_at:
                   type: string
                   format: date-time
-                job_role:
+                email_address_verified_at:
                   type: string
-                facebook:
-                  type: string
-                twitter:
-                  type: string
-                instagram:
-                  type: string
-                linkedin:
-                  type: string
-                avatar:
-                  type: string
-                phone_number:
-                  type: string
-                whatsapp_phone:
-                  type: string
-                has_ppc_projects:
+                  format: date-time
+                verified:
                   type: boolean
-                has_terrafund_projects:
-                  type: boolean
+                date_added:
+                  type: string
+                  format: date-time
+                banners:
+                  type: string
+                updated_at:
+                  type: string
+                  format: date-time
+                created_at:
+                  type: string
+                  format: date-time
   '/v2/organisations/approved-users/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -68325,13 +64889,23 @@ paths:
             items:
               type: object
               properties:
-                id:
-                  type: integer
-                organisation_id:
-                  type: integer
-                organisation_name:
+                uuid:
                   type: string
-                my_organisation:
+                role:
+                  type: string
+                job_role:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email_address:
+                  type: string
+                phone_number:
+                  type: string
+                whatsapp_phone:
+                  type: string
+                organisation:
                   title: AdminOrganisationRead
                   type: object
                   properties:
@@ -69170,417 +65744,25 @@ paths:
                       type: string
                     updated_at:
                       type: string
-                my_monitoring_organisations:
-                  type: array
-                  items:
-                    title: V2MonitoringOrganisationRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      status:
-                        type: string
-                      users_status:
-                        type: string
-                      readable_status:
-                        type: string
-                      type:
-                        type: string
-                      private:
-                        type: boolean
-                      name:
-                        type: string
-                      phone:
-                        type: string
-                      founding_date:
-                        type: string
-                      description:
-                        type: string
-                      countries:
-                        type: array
-                        items:
-                          type: string
-                      languages:
-                        type: array
-                        items:
-                          type: string
-                      tree_species:
-                        type: array
-                        items:
-                          title: V2TreeSpeciesRead
-                          x-stoplight:
-                            id: 04vvsvyndvy8n
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            name:
-                              type: string
-                            amount:
-                              type: integer
-                            type:
-                              type: string
-                            collection:
-                              type: string
-                      web_url:
-                        type: string
-                      facebook_url:
-                        type: string
-                      instagram_url:
-                        type: string
-                      linkedin_url:
-                        type: string
-                      twitter_url:
-                        type: string
-                      hq_street_1:
-                        type: string
-                      hq_street_2:
-                        type: string
-                      hq_city:
-                        type: string
-                      hq_state:
-                        type: string
-                      hq_zipcode:
-                        type: string
-                      hq_country:
-                        type: string
-                      fin_start_month:
-                        type: integer
-                      fin_budget_3year:
-                        type: number
-                        format: float
-                      fin_budget_2year:
-                        type: number
-                        format: float
-                      fin_budget_1year:
-                        type: number
-                        format: float
-                      fin_budget_current_year:
-                        type: number
-                        format: float
-                      ha_restored_total:
-                        type: number
-                        format: float
-                      ha_restored_3year:
-                        type: number
-                        format: float
-                      relevant_experience_years:
-                        type: integer
-                      trees_grown_total:
-                        type: integer
-                      trees_grown_3year:
-                        type: integer
-                      tree_care_approach:
-                        type: string
-                      logo:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                      cover:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                      reference:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      additional:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      op_budget_2year:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      op_budget_last_year:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      op_budget_this_year:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      op_budget_next_year:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      legal_registration:
-                        type: array
-                        items:
-                          title: V2FileRead
-                          type: object
-                          properties:
-                            uuid:
-                              type: string
-                            url:
-                              type: string
-                            thumb_url:
-                              type: string
-                            collection_name:
-                              type: string
-                            title:
-                              type: string
-                            file_name:
-                              type: string
-                            mime_type:
-                              type: string
-                            size:
-                              type: integer
-                            lat:
-                              type: integer
-                            lng:
-                              type: integer
-                            is_public:
-                              type: boolean
-                            created_at:
-                              type: string
-                      tags:
-                        type: array
-                        description: 'this is a list of key value pairs eg. slug: name'
-                        items:
-                          type: string
-                      created_at:
-                        type: string
-                      updated_at:
-                        type: string
-                first_name:
-                  type: string
-                last_name:
-                  type: string
-                email_address:
-                  type: string
-                email_address_verified_at:
-                  type: string
-                  format: date-time
-                role:
-                  type: string
                 last_logged_in_at:
                   type: string
                   format: date-time
-                job_role:
+                email_address_verified_at:
                   type: string
-                facebook:
-                  type: string
-                twitter:
-                  type: string
-                instagram:
-                  type: string
-                linkedin:
-                  type: string
-                avatar:
-                  type: string
-                phone_number:
-                  type: string
-                whatsapp_phone:
-                  type: string
-                has_ppc_projects:
+                  format: date-time
+                verified:
                   type: boolean
-                has_terrafund_projects:
-                  type: boolean
+                date_added:
+                  type: string
+                  format: date-time
+                banners:
+                  type: string
+                updated_at:
+                  type: string
+                  format: date-time
+                created_at:
+                  type: string
+                  format: date-time
   /v2/organisations/approve-user:
     put:
       summary: Approve a users request to join an existing organisation
@@ -69833,6 +66015,8 @@ paths:
               email_address:
                 type: string
               password:
+                type: string
+              role:
                 type: string
               job_role:
                 type: string
@@ -85408,13 +81592,23 @@ paths:
           schema:
             type: object
             properties:
-              id:
-                type: integer
-              organisation_id:
-                type: integer
-              organisation_name:
+              uuid:
                 type: string
-              my_organisation:
+              role:
+                type: string
+              job_role:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              phone_number:
+                type: string
+              whatsapp_phone:
+                type: string
+              organisation:
                 title: AdminOrganisationRead
                 type: object
                 properties:
@@ -86253,417 +82447,25 @@ paths:
                     type: string
                   updated_at:
                     type: string
-              my_monitoring_organisations:
-                type: array
-                items:
-                  title: V2MonitoringOrganisationRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    status:
-                      type: string
-                    users_status:
-                      type: string
-                    readable_status:
-                      type: string
-                    type:
-                      type: string
-                    private:
-                      type: boolean
-                    name:
-                      type: string
-                    phone:
-                      type: string
-                    founding_date:
-                      type: string
-                    description:
-                      type: string
-                    countries:
-                      type: array
-                      items:
-                        type: string
-                    languages:
-                      type: array
-                      items:
-                        type: string
-                    tree_species:
-                      type: array
-                      items:
-                        title: V2TreeSpeciesRead
-                        x-stoplight:
-                          id: 04vvsvyndvy8n
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          name:
-                            type: string
-                          amount:
-                            type: integer
-                          type:
-                            type: string
-                          collection:
-                            type: string
-                    web_url:
-                      type: string
-                    facebook_url:
-                      type: string
-                    instagram_url:
-                      type: string
-                    linkedin_url:
-                      type: string
-                    twitter_url:
-                      type: string
-                    hq_street_1:
-                      type: string
-                    hq_street_2:
-                      type: string
-                    hq_city:
-                      type: string
-                    hq_state:
-                      type: string
-                    hq_zipcode:
-                      type: string
-                    hq_country:
-                      type: string
-                    fin_start_month:
-                      type: integer
-                    fin_budget_3year:
-                      type: number
-                      format: float
-                    fin_budget_2year:
-                      type: number
-                      format: float
-                    fin_budget_1year:
-                      type: number
-                      format: float
-                    fin_budget_current_year:
-                      type: number
-                      format: float
-                    ha_restored_total:
-                      type: number
-                      format: float
-                    ha_restored_3year:
-                      type: number
-                      format: float
-                    relevant_experience_years:
-                      type: integer
-                    trees_grown_total:
-                      type: integer
-                    trees_grown_3year:
-                      type: integer
-                    tree_care_approach:
-                      type: string
-                    logo:
-                      title: V2FileRead
-                      type: object
-                      properties:
-                        uuid:
-                          type: string
-                        url:
-                          type: string
-                        thumb_url:
-                          type: string
-                        collection_name:
-                          type: string
-                        title:
-                          type: string
-                        file_name:
-                          type: string
-                        mime_type:
-                          type: string
-                        size:
-                          type: integer
-                        lat:
-                          type: integer
-                        lng:
-                          type: integer
-                        is_public:
-                          type: boolean
-                        created_at:
-                          type: string
-                    cover:
-                      title: V2FileRead
-                      type: object
-                      properties:
-                        uuid:
-                          type: string
-                        url:
-                          type: string
-                        thumb_url:
-                          type: string
-                        collection_name:
-                          type: string
-                        title:
-                          type: string
-                        file_name:
-                          type: string
-                        mime_type:
-                          type: string
-                        size:
-                          type: integer
-                        lat:
-                          type: integer
-                        lng:
-                          type: integer
-                        is_public:
-                          type: boolean
-                        created_at:
-                          type: string
-                    reference:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    additional:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_2year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_last_year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_this_year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_next_year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    legal_registration:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    tags:
-                      type: array
-                      description: 'this is a list of key value pairs eg. slug: name'
-                      items:
-                        type: string
-                    created_at:
-                      type: string
-                    updated_at:
-                      type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              email_address:
-                type: string
-              email_address_verified_at:
-                type: string
-                format: date-time
-              role:
-                type: string
               last_logged_in_at:
                 type: string
                 format: date-time
-              job_role:
+              email_address_verified_at:
                 type: string
-              facebook:
-                type: string
-              twitter:
-                type: string
-              instagram:
-                type: string
-              linkedin:
-                type: string
-              avatar:
-                type: string
-              phone_number:
-                type: string
-              whatsapp_phone:
-                type: string
-              has_ppc_projects:
+                format: date-time
+              verified:
                 type: boolean
-              has_terrafund_projects:
-                type: boolean
+              date_added:
+                type: string
+                format: date-time
+              banners:
+                type: string
+              updated_at:
+                type: string
+                format: date-time
+              created_at:
+                type: string
+                format: date-time
       parameters:
         - in: body
           name: body
@@ -91592,13 +87394,23 @@ paths:
           schema:
             type: object
             properties:
-              id:
-                type: integer
-              organisation_id:
-                type: integer
-              organisation_name:
+              uuid:
                 type: string
-              my_organisation:
+              role:
+                type: string
+              job_role:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              phone_number:
+                type: string
+              whatsapp_phone:
+                type: string
+              organisation:
                 title: AdminOrganisationRead
                 type: object
                 properties:
@@ -92437,417 +88249,25 @@ paths:
                     type: string
                   updated_at:
                     type: string
-              my_monitoring_organisations:
-                type: array
-                items:
-                  title: V2MonitoringOrganisationRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    status:
-                      type: string
-                    users_status:
-                      type: string
-                    readable_status:
-                      type: string
-                    type:
-                      type: string
-                    private:
-                      type: boolean
-                    name:
-                      type: string
-                    phone:
-                      type: string
-                    founding_date:
-                      type: string
-                    description:
-                      type: string
-                    countries:
-                      type: array
-                      items:
-                        type: string
-                    languages:
-                      type: array
-                      items:
-                        type: string
-                    tree_species:
-                      type: array
-                      items:
-                        title: V2TreeSpeciesRead
-                        x-stoplight:
-                          id: 04vvsvyndvy8n
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          name:
-                            type: string
-                          amount:
-                            type: integer
-                          type:
-                            type: string
-                          collection:
-                            type: string
-                    web_url:
-                      type: string
-                    facebook_url:
-                      type: string
-                    instagram_url:
-                      type: string
-                    linkedin_url:
-                      type: string
-                    twitter_url:
-                      type: string
-                    hq_street_1:
-                      type: string
-                    hq_street_2:
-                      type: string
-                    hq_city:
-                      type: string
-                    hq_state:
-                      type: string
-                    hq_zipcode:
-                      type: string
-                    hq_country:
-                      type: string
-                    fin_start_month:
-                      type: integer
-                    fin_budget_3year:
-                      type: number
-                      format: float
-                    fin_budget_2year:
-                      type: number
-                      format: float
-                    fin_budget_1year:
-                      type: number
-                      format: float
-                    fin_budget_current_year:
-                      type: number
-                      format: float
-                    ha_restored_total:
-                      type: number
-                      format: float
-                    ha_restored_3year:
-                      type: number
-                      format: float
-                    relevant_experience_years:
-                      type: integer
-                    trees_grown_total:
-                      type: integer
-                    trees_grown_3year:
-                      type: integer
-                    tree_care_approach:
-                      type: string
-                    logo:
-                      title: V2FileRead
-                      type: object
-                      properties:
-                        uuid:
-                          type: string
-                        url:
-                          type: string
-                        thumb_url:
-                          type: string
-                        collection_name:
-                          type: string
-                        title:
-                          type: string
-                        file_name:
-                          type: string
-                        mime_type:
-                          type: string
-                        size:
-                          type: integer
-                        lat:
-                          type: integer
-                        lng:
-                          type: integer
-                        is_public:
-                          type: boolean
-                        created_at:
-                          type: string
-                    cover:
-                      title: V2FileRead
-                      type: object
-                      properties:
-                        uuid:
-                          type: string
-                        url:
-                          type: string
-                        thumb_url:
-                          type: string
-                        collection_name:
-                          type: string
-                        title:
-                          type: string
-                        file_name:
-                          type: string
-                        mime_type:
-                          type: string
-                        size:
-                          type: integer
-                        lat:
-                          type: integer
-                        lng:
-                          type: integer
-                        is_public:
-                          type: boolean
-                        created_at:
-                          type: string
-                    reference:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    additional:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_2year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_last_year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_this_year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    op_budget_next_year:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    legal_registration:
-                      type: array
-                      items:
-                        title: V2FileRead
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          url:
-                            type: string
-                          thumb_url:
-                            type: string
-                          collection_name:
-                            type: string
-                          title:
-                            type: string
-                          file_name:
-                            type: string
-                          mime_type:
-                            type: string
-                          size:
-                            type: integer
-                          lat:
-                            type: integer
-                          lng:
-                            type: integer
-                          is_public:
-                            type: boolean
-                          created_at:
-                            type: string
-                    tags:
-                      type: array
-                      description: 'this is a list of key value pairs eg. slug: name'
-                      items:
-                        type: string
-                    created_at:
-                      type: string
-                    updated_at:
-                      type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              email_address:
-                type: string
-              email_address_verified_at:
-                type: string
-                format: date-time
-              role:
-                type: string
               last_logged_in_at:
                 type: string
                 format: date-time
-              job_role:
+              email_address_verified_at:
                 type: string
-              facebook:
-                type: string
-              twitter:
-                type: string
-              instagram:
-                type: string
-              linkedin:
-                type: string
-              avatar:
-                type: string
-              phone_number:
-                type: string
-              whatsapp_phone:
-                type: string
-              has_ppc_projects:
+                format: date-time
+              verified:
                 type: boolean
-              has_terrafund_projects:
-                type: boolean
+              date_added:
+                type: string
+                format: date-time
+              banners:
+                type: string
+              updated_at:
+                type: string
+                format: date-time
+              created_at:
+                type: string
+                format: date-time
       operationId: get-logged-user-details
   /auth/login:
     post:
