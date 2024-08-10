@@ -10,9 +10,9 @@ use App\Http\Resources\V2\User\UserResource;
 use App\Http\Resources\V2\User\UsersCollection;
 use App\Models\V2\Organisation;
 use App\Models\V2\User;
+use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -77,37 +77,14 @@ class AdminUserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $this->authorize('create', User::class);
-
         $data = $request->all();
-
-        switch ($request->get('primary_role')) {
-            case 'admin-super':
-            case 'admin-ppc':
-                $data['role'] = 'admin';
-
-                break;
-            case 'admin-terrafund':
-                $data['role'] = 'terrafund_admin';
-
-                break;
-            case 'project-developer':
-                $data['role'] = 'user';
-
-                break;
-
-            case 'project-manager':
-                $data['role'] = 'project-manager';
-
-                break;
-        }
-
         $user = User::create($data);
 
-        if (! empty($request->get('primary_role')) && Auth::user()->hasRole('admin-super')) {
-            $user->syncRoles([$request->get('primary_role')]);
-        } else {
-            assignSpatieRole($user);
+        $role = $request->get('role');
+        if (empty($role) || app(Gate::class)->denies('updateRole', $user)) {
+            $role = 'project-developer';
         }
+        $user->syncRoles([$role]);
 
         return new UserResource($user);
     }
@@ -124,8 +101,8 @@ class AdminUserController extends Controller
 
         $data = $request->all();
 
-        if (! empty($request->get('primary_role')) && (Auth::user()->isAdmin)) {
-            $user->syncRoles([$request->get('primary_role')]);
+        if (! empty($request->get('role')) && app(Gate::class)->allows('updateRole', $user)) {
+            $user->syncRoles([$request->get('role')]);
         }
 
         $user->update($data);

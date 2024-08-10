@@ -186,20 +186,6 @@ class AuthController extends Controller
     {
         $this->authorize('me', 'App\\Models\\Auth');
         $me = Auth::user();
-        /*
-        $role = $me->role;
-        if ($me->role == 'terrafund_admin') {
-            $role = 'user';
-        }
-        $classes = [
-            'App\\Models\\' . ucfirst($role),
-            'App\\Resources\\' . ucfirst($role) . 'Resource',
-        ];
-        $model = $classes[0]::findOrFail($me->id);
-        $resource = new $classes[1]($model);
-
-        return JsonResponseHelper::success($resource, 200);
-        */
 
         return new MeResource($me);
     }

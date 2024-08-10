@@ -16,7 +16,7 @@ class AssociatedUserResource extends JsonResource
 
         return [
             'uuid' => $user->uuid ?? null,
-            'user_type' => $user->role ?? null,
+            'role' => $user->primary_role->name ?? null,
             'job_role' => $user->job_role ?? null,
             'first_name' => $user->first_name ?? null,
             'last_name' => $user->last_name ?? null,

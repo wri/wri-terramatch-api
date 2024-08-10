@@ -15,33 +15,32 @@ class ViewProjectController extends Controller
 {
     public function getIfUserIsAllowedToProject(String $uuid)
     {
+        /** @var User $user */
         $user = Auth::user();
-        assignSpatieRole($user);
-        $role = $user->roles->first()->name;
-        if ($role === 'government') {
+        if ($user->hasRole('government')) {
             $isAllowed = Project::where('uuid', $uuid)
                 ->where('country', $user->country)
-                ->first();
+                ->exists();
             $response = (object)[
-                'allowed' => $isAllowed ? true : false,
+                'allowed' => $isAllowed,
             ];
-        } elseif ($role === 'funder') {
+        } elseif ($user->hasRole('funder')) {
             $isAllowed = Project::where('uuid', $uuid)
                 ->where('framework_key', $user->program)
-                ->first();
+                ->exists();
             $response = (object)[
-                'allowed' => $isAllowed ? true : false,
+                'allowed' => $isAllowed,
             ];
-        } elseif ($role === 'project-developer') {
+        } elseif ($user->hasRole('project-developer')) {
             $projectId = Project::where('uuid', $uuid)
                 ->value('id');
             $isInvite = ProjectInvite::where('email_address', $user->email_address)
                 ->where('project_id', $projectId)
-                ->first();
+                ->exists();
             $response = (object)[
-                'allowed' => $isInvite ? true : false,
+                'allowed' => $isInvite,
             ];
-        } elseif ($role === 'admin' || $role === 'terrafund_admin') {
+        } elseif ($user->isAdmin) {
             $response = (object)[
                 'allowed' => true,
             ];

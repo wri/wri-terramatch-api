@@ -39,7 +39,7 @@ class UserPolicy extends Policy
 
     public function updateRole(?User $user, ?User $model = null): bool
     {
-        return $this->isVerifiedAdmin($user) && ($user->id !== $model->id);
+        return $this->isVerifiedAdmin($user) && ($user->id !== $model->id) && $user->hasRole('admin-super');
     }
 
     public function update(?User $user, ?User $model = null): bool

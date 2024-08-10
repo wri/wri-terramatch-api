@@ -158,8 +158,7 @@ final class AdminUserControllerTest extends TestCase
         $uri = '/api/v2/admin/users/' . $user->uuid;
 
         $payload = [
-            'primary_role' => $primaryRole,
-            'role' => '', // this is sent like this FED SIDE
+            'role' => $primaryRole,
         ];
 
         $this->actingAs($admin)

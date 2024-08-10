@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Admin as AdminModel;
+use App\Models\V2\User;
 use App\Validators\AdminValidator;
 use DateTime;
 use DateTimeZone;
@@ -36,10 +36,10 @@ class CreateAdminCommand extends Command
 
             return 1;
         }
-        $data['role'] = 'admin';
         $data['email_address_verified_at'] = new DateTime('now', new DateTimeZone('UTC'));
-        $admin = new AdminModel($data);
-        $admin->saveOrFail();
+        $user = new User($data);
+        $user->saveOrFail();
+        $user->assignRole('admin-super');
 
         return 0;
     }

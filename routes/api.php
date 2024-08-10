@@ -139,17 +139,6 @@ Route::get('/uploads/socioeconomic_benefits/template/site_submission', [Socioeco
 Route::get('/uploads/stratification/example', [StratificationController::class, 'downloadTemplateAction']);
 Route::post('/uploads/site_programme_media', [MediaUploadController::class, 'createAction']);
 
-Route::get('/organisations/{id}/users', [UsersController::class, 'readAllByOrganisationAction']);
-Route::get('/users/all', [UsersController::class, 'readAllAction']);
-Route::get('/users/unverified', [UsersController::class, 'readAllUnverifiedAction']);
-Route::post('/users/invite', [UsersController::class, 'inviteAction']);
-Route::post('/users/accept', [UsersController::class, 'acceptAction']);
-Route::get('/users/{id}', [UsersController::class, 'readAction']);
-Route::patch('/users/{id}', [UsersController::class, 'updateAction']);
-Route::patch('/users/{user}/role', [UsersController::class, 'updateRoleAction']);
-Route::get('/organisations/{id}/users/inspect', [UsersController::class, 'inspectByOrganisationAction']);
-Route::post('/users/resend', [UsersController::class, 'resendVerificationEmailAction']);
-
 Route::get('/countries', [DataController::class, 'readAllCountriesAction']);
 
 Route::post('/organisations', [OrganisationsController::class, 'createAction']);

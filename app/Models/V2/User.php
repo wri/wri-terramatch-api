@@ -51,6 +51,8 @@ class User extends Authenticatable implements JWTSubject
 
     protected $guard_name = 'api';
 
+    protected static array $adminRoles;
+
     public $fillable = [
         'organisation_id',
         'first_name',
@@ -58,7 +60,6 @@ class User extends Authenticatable implements JWTSubject
         'email_address',
         'password',
         'email_address_verified_at',
-        'role',
         'last_logged_in_at',
         'job_role',
         'facebook',
@@ -95,6 +96,19 @@ class User extends Authenticatable implements JWTSubject
     protected static function newFactory()
     {
         return UserFactory::new();
+    }
+
+    protected static function adminRoles()
+    {
+        if (! empty(self::$adminRoles)) {
+            return self::$adminRoles;
+        }
+
+        self::$adminRoles = collect(array_keys(config('wri.permissions.roles')))
+            ->filter(fn ($roleName) => Str::startsWith($roleName, 'admin'))
+            ->toArray();
+
+        return self::$adminRoles;
     }
 
     public function toSearchableArray()
@@ -166,13 +180,17 @@ class User extends Authenticatable implements JWTSubject
 
     public function scopeUser(Builder $query): Builder
     {
-        return $query->where('role', 'user');
+        return $query->role('project-developer');
     }
 
     public function scopeUserOrTerrafundAdmin(Builder $query): Builder
     {
-        return $query->where('role', 'user')
-            ->orWhere('role', 'terrafund_admin');
+        return $query->role(['project-developer', 'admin-terrafund']);
+    }
+
+    public function scopeAdmin(Builder $query): Builder
+    {
+        return $query->role(self::adminRoles());
     }
 
     public function scopeOrganisationUuid(Builder $query, string $uuid): Builder
@@ -184,15 +202,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function scopeUnverified(Builder $query): Builder
     {
-        return $query->whereNull('email_address_verified_at');
-    }
-
-    public function scopeVerified(Builder $query, $flag): Builder
-    {
-        if ($flag) {
-            return $query->whereNotNull('email_address_verified_at');
-        }
-
         return $query->whereNull('email_address_verified_at');
     }
 
@@ -342,6 +351,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function getIsAdminAttribute(): bool
     {
-        return $this->getRoleNames()->contains(fn ($role) => Str::startsWith($role, 'admin'));
+        return $this->hasAnyRole(self::adminRoles());
     }
 }
