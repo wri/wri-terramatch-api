@@ -79,7 +79,6 @@ abstract class Policy
         }
         switch (get_class($model)) {
             case UserModel::class:
-            case \App\Models\Admin::class:
                 return $user->id == $model->id;
             case \App\Models\Organisation::class:
                 return $user->organisation_id == $model->id;

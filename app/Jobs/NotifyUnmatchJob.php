@@ -3,11 +3,10 @@
 namespace App\Jobs;
 
 use App\Mail\Unmatch as UnmatchMail;
-use App\Models\Admin as AdminModel;
 use App\Models\Notification as NotificationModel;
 use App\Models\Offer as OfferModel;
 use App\Models\Pitch as PitchModel;
-use App\Models\V2\User as UserModel;
+use App\Models\V2\User;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -62,7 +61,7 @@ class NotifyUnmatchJob implements ShouldQueue
     private function notifyUsers(Int $organisationId, String $name)
     {
         $pushService = App::make(\App\Services\PushService::class);
-        $users = UserModel::where('organisation_id', '=', $organisationId)
+        $users = User::where('organisation_id', '=', $organisationId)
             ->user()->accepted()->verified()
             ->get();
         foreach ($users as $user) {
@@ -88,7 +87,7 @@ class NotifyUnmatchJob implements ShouldQueue
 
     private function notifyAdmins(String $firstName, String $secondName)
     {
-        $admins = AdminModel::admin()->accepted()->verified()->get();
+        $admins = User::admin()->accepted()->verified()->get();
         foreach ($admins as $admin) {
             if ($admin->is_subscribed) {
                 Mail::to($admin->email_address)->send(new UnmatchMail('Admin', $firstName, $secondName));

@@ -4,9 +4,9 @@ namespace App\Jobs;
 
 use App\Helpers\NotificationHelper;
 use App\Mail\VersionCreated as VersionCreatedMail;
-use App\Models\Admin as AdminModel;
 use App\Models\Interfaces\Version as VersionModel;
 use App\Models\Notification as NotificationModel;
+use App\Models\V2\User;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -74,7 +74,7 @@ class NotifyVersionCreatedJob implements ShouldQueue
 
     private function notifyAdmins(String $model, Int $id)
     {
-        $admins = AdminModel::admin()->accepted()->verified()->get();
+        $admins = User::admin()->accepted()->verified()->get();
         foreach ($admins as $admin) {
             if ($admin->is_subscribed) {
                 Mail::to($admin->email_address)->send(new VersionCreatedMail($model, $id));
