@@ -188,16 +188,22 @@ class TerrafundEditGeometryController extends Controller
             }
             $geometry = json_decode($request->input('geometry'));
             $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
-            $polygonGeometry->geom = $geom;
-            $polygonGeometry->save();
+
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-            if ($sitePolygon) {
-                $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
-                $this->updateProjectCentroidFromPolygon($polygonGeometry);
-                $sitePolygon->changeStatusOnEdit();
+
+            $user = User::isUuid(Auth::user()->uuid)->first();
+            $newGeometryVersion = PolygonGeometry::create([
+                'geom' => $geom,
+                'created_by' => $user->id,
+            ]);
+            $newPolygonVersion = $sitePolygon->createCopy($user, $newGeometryVersion->uuid, false);
+            if ($newPolygonVersion) {    
+                $this->updateEstAreainSitePolygon($newGeometryVersion, $geometry);
+                $this->updateProjectCentroidFromPolygon($newGeometryVersion);
+                $newPolygonVersion->changeStatusOnEdit();
             }
 
-            return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
+            return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
@@ -233,10 +239,11 @@ class TerrafundEditGeometryController extends Controller
               'target_sys' => 'nullable|string',
             ]);
 
-            $sitePolygon->update($validatedData);
-            $sitePolygon->changeStatusOnEdit();
+            $user = User::isUuid(Auth::user()->uuid)->first();
+            $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
+            $newPolygonVersion->changeStatusOnEdit();
 
-            return response()->json(['message' => 'Site polygon updated successfully'], 200);
+            return response()->json(['message' => 'Site polygon version created successfully'], 200);
         } catch (\Exception $e) {
             // Handle other exceptions
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
