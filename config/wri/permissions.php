@@ -4,7 +4,7 @@ return [
     'permissions' => [
         'framework-ppc' => 'Framework PPC',
         'framework-terrafund' => 'Framework Terrafund',
-        'framework-terrafund-enterprises' => 'Framework Terrafund Enterprises',
+        'framework-enterprises' => 'Framework Terrafund Enterprises',
         'framework-terrafund-landscapes' => 'Framework Terrafund Landscapes',
         'framework-hbf' => 'Framework Harit Bharat Fund',
         'custom-forms-manage' => 'Manage custom forms',
@@ -22,7 +22,7 @@ return [
         'admin-super' => [
             'framework-terrafund',
             'framework-ppc',
-            'framework-terrafund-enterprises',
+            'framework-enterprises',
             'framework-terrafund-landscapes',
             'framework-hbf',
             'custom-forms-manage',
@@ -39,7 +39,7 @@ return [
         ],
         'admin-terrafund' => [
             'framework-terrafund',
-            'framework-terrafund-enterprises',
+            'framework-enterprises',
             'framework-terrafund-landscapes',
             'custom-forms-manage',
             'users-manage',
