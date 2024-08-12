@@ -209,6 +209,7 @@ use App\Http\Controllers\V2\User\CompleteActionController;
 use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Controllers\V2\UserLocaleController;
+use App\Http\Controllers\V2\TestEmailController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
@@ -728,3 +729,5 @@ Route::prefix('site-polygon')->group(function () {
 Route::get('/type-entity', EntityTypeController::class);
 
 Route::post('/locale/{locale}', UserLocaleController::class);
+
+Route::get('/locale', TestEmailController::class);

@@ -2,12 +2,15 @@
 
 namespace App\Mail;
 
-class ApplicationSubmittedConfirmation extends Mail
+class ApplicationSubmittedConfirmation extends I18nMail
 {
     public function __construct(string $submissionMessage)
     {
-        $this->subject = 'Your Application Has Been Submitted';
-        $this->title = 'Your Application Has Been Submitted!';
+        $this->setSubjectKey('application-submitted-confirmation.subject')
+        ->setTitleKey('application-submitted-confirmation.title');
+
+        // $this->subject = 'Your Application Has Been Submitted';
+        // $this->title = 'Your Application Has Been Submitted!';
 
         $this->body = $submissionMessage;
     }
