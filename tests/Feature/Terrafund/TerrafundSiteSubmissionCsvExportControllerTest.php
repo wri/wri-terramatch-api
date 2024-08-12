@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Terrafund;
 
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

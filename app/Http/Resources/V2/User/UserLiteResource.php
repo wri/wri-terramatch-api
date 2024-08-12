@@ -11,7 +11,7 @@ class UserLiteResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
-            'user_type' => $this->role,
+            'role' => $this->primary_role->name,
             'job_role' => $this->job_role,
 
             'first_name' => $this->first_name,

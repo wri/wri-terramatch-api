@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\TreeSpeciesVersion as TreeSpeciesVersionModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 
 class TreeSpeciesVersionPolicy extends Policy
 {

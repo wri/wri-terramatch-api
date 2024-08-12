@@ -6,7 +6,7 @@ use App\Models\Terrafund\TerrafundDisturbance;
 use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
 use App\Models\Terrafund\TerrafundSiteSubmission;
-use App\Models\User;
+use App\Models\V2\User;
 use Tests\TestCase;
 
 final class TerrafundDisturbanceControllerTest extends TestCase

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UploadFactory extends Factory

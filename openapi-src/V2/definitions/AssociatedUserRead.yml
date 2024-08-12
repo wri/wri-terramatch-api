@@ -2,7 +2,7 @@ type: object
 properties:
   uuid:
     type: string
-  user_type:
+  role:
     type: string
   job_role:
     type: string

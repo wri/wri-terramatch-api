@@ -3,7 +3,7 @@
 namespace Tests\Feature\Terrafund;
 
 use App\Models\Terrafund\TerrafundNurserySubmission;
-use App\Models\User;
+use App\Models\V2\User;
 use Tests\TestCase;
 
 final class TerrafundNurserySingleSubmissionCsvExportControllerTest extends TestCase

@@ -9,7 +9,7 @@ use App\Http\Requests\StorePitchContactRequest;
 use App\Http\Requests\StorePitchDocumentRequest;
 use App\Http\Requests\StorePitchRequest;
 use App\Models\Draft as DraftModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

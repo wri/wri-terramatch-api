@@ -7,7 +7,7 @@ use App\Http\Requests\StoreOrganisationFileRequest;
 use App\Http\Requests\StoreOrganisationPhotoRequest;
 use App\Http\Requests\StoreOrganisationRequest;
 use App\Models\Draft as DraftModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
