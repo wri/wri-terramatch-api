@@ -47,11 +47,9 @@ class CreateProjectInviteController extends Controller
                 'email_address' => $data['email_address'],
                 // Accounts need to have a password assigned in order to go through the password reset flow.
                 'password' => $this->generateRandomPassword(),
-                'role' => 'user',
             ]);
             $user->assignRole('project-developer');
             $user->refresh();
-            assignSpatieRole($user);
 
             $organisation = Organisation::where('id', $project->organisation_id)->first();
             $projectInvite = $project->invites()->create($data);

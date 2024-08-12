@@ -2,7 +2,7 @@
 
 namespace Tests\V2\Sites;
 
-use App\Models\User;
+use App\Models\V2\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
@@ -27,9 +27,7 @@ class ViewASitesMonitoringsControllerTest extends TestCase
 
         $organisation = Organisation::factory()->create();
 
-        Artisan::call('v2migration:roles');
         $this->owner = User::factory()->admin()->create(['organisation_id' => $organisation->id]);
-        $this->owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->ppc()->create([
             'organisation_id' => $organisation->id,
@@ -47,8 +45,7 @@ class ViewASitesMonitoringsControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $tfAdmin = User::factory()->admin()->create();
-        $tfAdmin->givePermissionTo('framework-terrafund');
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
 
         $this->actingAs($user)
             ->getJson('/api/v2/sites/' . $this->site->uuid . '/monitorings')

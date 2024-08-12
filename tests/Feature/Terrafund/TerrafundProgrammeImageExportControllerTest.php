@@ -4,7 +4,7 @@ namespace Tests\Feature\Terrafund;
 
 use App\Models\Organisation;
 use App\Models\Terrafund\TerrafundProgramme;
-use App\Models\User;
+use App\Models\V2\User;
 use Tests\TestCase;
 
 final class TerrafundProgrammeImageExportControllerTest extends TestCase

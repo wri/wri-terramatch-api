@@ -2,12 +2,11 @@
 
 namespace Tests\V2\Users;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
+use App\Models\V2\User;
 use App\Models\V2\User as V2User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 final class AdminUserControllerTest extends TestCase
@@ -111,7 +110,6 @@ final class AdminUserControllerTest extends TestCase
 
     public function test_create_action(): void
     {
-        Artisan::call('v2migration:roles');
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();
 
@@ -153,18 +151,14 @@ final class AdminUserControllerTest extends TestCase
     /**
      * @dataProvider rolesDataProvider
      */
-    public function test_an_user_can_have_been_assigned_with_a_role(string $primaryRole, string $expectedUserType)
+    public function test_an_user_can_have_been_assigned_with_a_role(string $primaryRole)
     {
-        Artisan::call('v2migration:roles');
-
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();
-        $admin->syncRoles(['admin-super']);
         $uri = '/api/v2/admin/users/' . $user->uuid;
 
         $payload = [
-            'primary_role' => $primaryRole,
-            'role' => '', // this is sent like this FED SIDE
+            'role' => $primaryRole,
         ];
 
         $this->actingAs($admin)
@@ -172,17 +166,16 @@ final class AdminUserControllerTest extends TestCase
             ->assertSuccessful()
             ->assertJsonFragment([
                 'role' => $primaryRole,
-                'user_type' => $expectedUserType,
             ]);
     }
 
     public static function rolesDataProvider()
     {
         return [
-            ['admin-super', 'admin'],
-            ['admin-ppc', 'admin'],
-            ['admin-terrafund', 'terrafund_admin'],
-            ['project-developer', 'project-developer'],
+            ['admin-super'],
+            ['admin-ppc'],
+            ['admin-terrafund'],
+            ['project-developer'],
         ];
     }
 

@@ -3,9 +3,9 @@
 namespace Tests\Unit\Jobs\V2;
 
 use App\Jobs\V2\NotifyReportReminderJob;
-use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

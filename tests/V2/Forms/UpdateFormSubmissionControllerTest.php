@@ -2,11 +2,11 @@
 
 namespace Tests\V2\Forms;
 
-use App\Models\User;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Forms\FormSection;
 use App\Models\V2\Forms\FormSubmission;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
