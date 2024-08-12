@@ -61,3 +61,5 @@ properties:
     type: boolean
   is_present:
     type: boolean
+  version_name:
+    type: string

@@ -49,6 +49,7 @@ class SitePolygon extends Model implements AuditableModel
       'created_by',
       'source',
       'is_active',
+      'version_name',
     ];
 
     public function polygonGeometry(): BelongsTo
@@ -133,7 +134,8 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon->distr = $properties['distr'] ?? $this->distr;
         $newSitePolygon->num_trees = $properties['num_trees'] ?? $this->num_trees;
         $newSitePolygon->poly_id = $poly_id ?? $copyGeometry->uuid;
-        $newSitePolygon->poly_name = $submit_polygon_loaded ? $this->poly_name.' (new)' : now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
+        $newSitePolygon->poly_name = $submit_polygon_loaded ? $this->poly_name.' (new)' : $properties['poly_name'] ?? $this->poly_name;
+        $newSitePolygon->version_name = ($properties['poly_name'] ?? $this->poly_name).'_'.now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
         $newSitePolygon->is_active = true;
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->created_by = $user->id;
