@@ -35,6 +35,14 @@ class MoveUserRolesToV2 extends Command
         foreach ($rows as $row) {
             $this->processRow($row);
         }
+
+        // These two tables are a simple update
+        DB::table('audits')
+            ->where('user_type', '=', 'App\\Models\\User')
+            ->update(['user_type' => User::class]);
+        DB::table('state_histories')
+            ->where('responsible_type', '=', 'App\\Models\\User')
+            ->update(['responsible_type' => User::class]);
     }
 
     protected function processRow($row): void
