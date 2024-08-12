@@ -338,24 +338,42 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         return $this->reports()->hasBeenSubmitted()->sum('num_trees_regenerating');
     }
 
-    public function getWorkdayCountAttribute(): int
+    public function getWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
+        $reportQuery = $this->reports()->hasBeenSubmitted();
+        if ($useDemographicsCutoff) {
+            $reportQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+        }
+
         return WorkdayDemographic::whereIn(
             'workday_id',
             Workday::where('workdayable_type', SiteReport::class)
-                ->whereIn('workdayable_id', $this->reports()->hasBeenSubmitted()->select('id'))
+                ->whereIn('workdayable_id', $reportQuery->select('id'))
                 ->select('id')
         )->gender()->sum('amount') ?? 0;
     }
 
-    public function getSelfReportedWorkdayCountAttribute(): int
+    public function getSelfReportedWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
-        $totals = $this->reports()->hasBeenSubmitted()->get([
+        $reportQuery = $this->reports()->hasBeenSubmitted();
+        if ($useDemographicsCutoff) {
+            $reportQuery->where('due_at', '<', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+        }
+        $totals = $reportQuery->get([
             DB::raw('sum(`workdays_volunteer`) as volunteer'),
             DB::raw('sum(`workdays_paid`) as paid'),
         ])->first();
 
         return $totals?->paid + $totals?->volunteer;
+    }
+
+    public function getCombinedWorkdayCountAttribute(): int
+    {
+        // this attribute pulls the self reported values from old reports, and the combined demographic values from
+        // new reports to get a (temporary) accurate count of workday totals. This will be removed when the effort to
+        // import old workday data is completed, and we can simply use the demographics-based count for everything.
+        return $this->getWorkdayCountAttribute(true) +
+            $this->getSelfReportedWorkdayCountAttribute(true);
     }
 
     public function getFrameworkUuidAttribute(): ?string
