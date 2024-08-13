@@ -640,6 +640,18 @@
     responses:
       '200':
         description: OK
+/v2/organisations/has-pending-application:
+  get:
+    summary: Check if a user has a pending application
+    operationId: v2-get-organisations-has-pending-application
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/UserPendingOrganisationApplication'
 /v2/admin/users:
   get:
     summary: Get a collection of users

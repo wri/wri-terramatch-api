@@ -114,6 +114,7 @@ use App\Http\Controllers\V2\Organisations\JoinExistingOrganisationController;
 use App\Http\Controllers\V2\Organisations\OrganisationApprovedUsersController;
 use App\Http\Controllers\V2\Organisations\OrganisationApproveUserController;
 use App\Http\Controllers\V2\Organisations\OrganisationController;
+use App\Http\Controllers\V2\Organisations\OrganisationHasPendingApplicationController;
 use App\Http\Controllers\V2\Organisations\OrganisationListingController;
 use App\Http\Controllers\V2\Organisations\OrganisationListRequestedUsersController;
 use App\Http\Controllers\V2\Organisations\OrganisationRejectUserController;
@@ -397,6 +398,7 @@ Route::prefix('organisations')->group(function () {
     Route::get('user-requests/{organisation}', OrganisationListRequestedUsersController::class);
     Route::get('approved-users/{organisation}', OrganisationApprovedUsersController::class);
     Route::delete('retract-my-draft', OrganisationRetractMyDraftController::class);
+    Route::get('has-pending-application', OrganisationHasPendingApplicationController::class);
 });
 Route::resource('organisations', OrganisationController::class);
 

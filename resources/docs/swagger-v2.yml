@@ -42669,6 +42669,22 @@ definitions:
         type: boolean
       version_name:
         type: string
+  UserPendingOrganisationApplication:
+    title: UserPendingOrganisationApplication
+    type: object
+    properties:
+      has_pending_application:
+        type: boolean
+      message:
+        type: string
+      organisation_name:
+        type: string
+      user_status:
+        type: string
+      organisation_status:
+        type: string
+      organisation_uuid:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -65868,6 +65884,32 @@ paths:
       responses:
         '200':
           description: OK
+  /v2/organisations/has-pending-application:
+    get:
+      summary: Check if a user has a pending application
+      operationId: v2-get-organisations-has-pending-application
+      tags:
+        - V2 Project Developer
+        - V2 Organisations
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: UserPendingOrganisationApplication
+            type: object
+            properties:
+              has_pending_application:
+                type: boolean
+              message:
+                type: string
+              organisation_name:
+                type: string
+              user_status:
+                type: string
+              organisation_status:
+                type: string
+              organisation_uuid:
+                type: string
   /v2/admin/users:
     get:
       summary: Get a collection of users

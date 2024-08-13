@@ -1,0 +1,15 @@
+title: UserPendingOrganisationApplication
+type: object
+properties:
+  has_pending_application:
+    type: boolean
+  message:
+    type: string
+  organisation_name:
+    type: string
+  user_status:
+    type: string
+  organisation_status:
+    type: string
+  organisation_uuid:
+    type: string
