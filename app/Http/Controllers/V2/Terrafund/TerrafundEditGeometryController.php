@@ -192,7 +192,8 @@ class TerrafundEditGeometryController extends Controller
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
 
             $user = User::isUuid(Auth::user()->uuid)->first();
-            if (isset($request['adminUpdate']) && filter_var($request['adminUpdate'], FILTER_VALIDATE_BOOLEAN)) {
+
+            if ($user->role === 'admin') {
                 $newGeometryVersion = PolygonGeometry::create([
                     'geom' => $geom,
                     'created_by' => $user->id,
@@ -204,7 +205,7 @@ class TerrafundEditGeometryController extends Controller
                     $newPolygonVersion->changeStatusOnEdit();
                 }
 
-                return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
+                return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid], 201);
             } else {
                 $polygonGeometry->geom = $geom;
                 $polygonGeometry->save();
@@ -252,17 +253,17 @@ class TerrafundEditGeometryController extends Controller
               'target_sys' => 'nullable|string',
             ]);
 
-            if (isset($request['adminUpdate']) && filter_var($request['adminUpdate'], FILTER_VALIDATE_BOOLEAN)) {
-                $user = User::isUuid(Auth::user()->uuid)->first();
+            $user = User::isUuid(Auth::user()->uuid)->first();
+            if ($user->role === 'admin') {
                 $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
                 $newPolygonVersion->changeStatusOnEdit();
 
-                return response()->json(['message' => 'Site polygon version created successfully'], 200);
+                return response()->json(['message' => 'Site polygon version created successfully'], 201);
             } else {
                 $sitePolygon->update($validatedData);
                 $sitePolygon->changeStatusOnEdit();
 
-                return response()->json(['message' => 'Site polygon updated successfully'], 200);
+                return response()->json(['message' => 'Site polygon updated successfully']);
             }
         } catch (\Exception $e) {
             // Handle other exceptions
