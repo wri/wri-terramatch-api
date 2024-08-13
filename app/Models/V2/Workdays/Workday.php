@@ -23,6 +23,8 @@ class Workday extends Model implements HandlesLinkedFieldSync
     use HasUuid;
     use HasTypes;
 
+    public const DEMOGRAPHICS_COUNT_CUTOFF = '2024-07-05';
+
     protected $casts = [
         'published' => 'boolean',
     ];
