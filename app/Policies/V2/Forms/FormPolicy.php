@@ -2,8 +2,8 @@
 
 namespace App\Policies\V2\Forms;
 
-use App\Models\User;
 use App\Models\V2\Forms\Form as FormModel;
+use App\Models\V2\User;
 use App\Policies\Policy;
 
 class FormPolicy extends Policy

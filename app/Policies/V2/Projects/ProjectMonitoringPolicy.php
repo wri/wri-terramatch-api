@@ -2,7 +2,7 @@
 
 namespace App\Policies\V2\Projects;
 
-use App\Models\User;
+use App\Models\V2\User;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectMonitoring;
 use App\Policies\Policy;
@@ -24,7 +24,8 @@ class ProjectMonitoringPolicy extends Policy
 
     public function update(?User $user, ?ProjectMonitoring $projectMonitoring = null): bool
     {
-        return $user->can('manage-own') && $this->isTheirs($user, $projectMonitoring->project);
+        return ($user->can('manage-own') || $user->can('monitoring-manage')) &&
+            $this->isTheirs($user, $projectMonitoring->project);
     }
 
     public function delete(?User $user, ?ProjectMonitoring $projectMonitoring = null): bool

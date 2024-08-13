@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Mail\TargetUpdated as TargetUpdatedMail;
 use App\Models\Notification as NotificationModel;
 use App\Models\Target as TargetModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

@@ -3,11 +3,8 @@
 namespace App\Models;
 
 use App\Models\Traits\NamedEntityTrait;
+use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Matched;
-use App\Models\Target;
-use App\Models\ProgressUpdate;
-use App\Models\SatelliteMap;
 
 class Monitoring extends Model
 {

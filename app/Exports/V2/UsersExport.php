@@ -38,7 +38,7 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping
     public function map($user): array
     {
         return [
-            $user->role,
+            $user->primary_role->name,
             $user->job_role,
             $user->first_name,
             $user->last_name,

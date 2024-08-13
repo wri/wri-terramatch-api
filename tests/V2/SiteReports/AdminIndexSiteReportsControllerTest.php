@@ -3,11 +3,10 @@
 namespace Tests\V2\SiteReports;
 
 use App\Models\Framework;
-use App\Models\User;
 use App\Models\V2\sites\SiteReport;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexSiteReportsControllerTest extends TestCase
@@ -17,13 +16,10 @@ class AdminIndexSiteReportsControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles');
         Framework::factory()->create(['slug' => 'terrafund']);
         Framework::factory()->create(['slug' => 'ppc']);
-        $tfAdmin = User::factory()->admin()->create();
-        $ppcAdmin = User::factory()->admin()->create();
-        $tfAdmin->givePermissionTo('framework-terrafund');
-        $ppcAdmin->givePermissionTo('framework-ppc');
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
+        $ppcAdmin = User::factory()->ppcAdmin()->create();
         $user = User::factory()->create();
 
         SiteReport::query()->delete();

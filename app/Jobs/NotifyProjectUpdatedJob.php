@@ -6,7 +6,7 @@ use App\Helpers\NotificationHelper;
 use App\Mail\ProjectUpdated as ProjectUpdatedMail;
 use App\Models\Interest as InterestModel;
 use App\Models\Notification as NotificationModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

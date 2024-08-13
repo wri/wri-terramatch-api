@@ -5,16 +5,15 @@ namespace Tests\V2\Exports;
 use App\Helpers\CustomFormHelper;
 use App\Jobs\V2\GenerateAdminAllEntityRecordsExportJob;
 use App\Models\Framework;
-use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class ExportAllMonitoredEntitiesControllerTest extends TestCase
@@ -25,12 +24,9 @@ class ExportAllMonitoredEntitiesControllerTest extends TestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_an_admin_user_can_export_all_monitored_entities(string $permission, string $fmKey)
+    public function test_an_admin_user_can_export_all_monitored_entities(string $adminType, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
-        $user = User::factory()->admin()->create();
-        $user->givePermissionTo($permission);
+        $user = User::factory()->{$adminType}()->create();
 
         Framework::factory()->create(['slug' => $fmKey, 'access_code' => $fmKey]);
 
@@ -59,8 +55,8 @@ class ExportAllMonitoredEntitiesControllerTest extends TestCase
     public static function permissionsDataProvider()
     {
         return [
-            ['framework-terrafund', 'terrafund'],
-            ['framework-ppc', 'ppc'],
+            ['terrafundAdmin', 'terrafund'],
+            ['ppcAdmin', 'ppc'],
         ];
     }
 }

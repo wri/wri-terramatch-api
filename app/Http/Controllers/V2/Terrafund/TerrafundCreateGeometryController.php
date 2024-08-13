@@ -1148,7 +1148,7 @@ class TerrafundCreateGeometryController extends Controller
 
     private function getSitePolygonsUuids($uuid)
     {
-        return SitePolygon::where('site_id', $uuid)->get()->pluck('poly_id');
+        return SitePolygon::where('site_id', $uuid)->where('is_active', true)->get()->pluck('poly_id');
     }
 
     private function fetchCriteriaData($polygonUuid)

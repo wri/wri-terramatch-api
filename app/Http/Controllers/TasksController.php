@@ -9,6 +9,7 @@ use App\Models\Monitoring as MonitoringModel;
 use App\Models\OrganisationVersion as OrganisationVersionModel;
 use App\Models\Pitch as PitchModel;
 use App\Models\PitchVersion as PitchVersionModel;
+use App\Models\V2\User;
 use App\Resources\MatchResource;
 use App\Resources\MonitoringResource;
 use App\Resources\OrganisationLiteResource;
@@ -26,13 +27,14 @@ class TasksController extends Controller
     public function readAllOrganisationsAction(Request $request): JsonResponse
     {
         $this->authorize('readAll', 'App\\Models\\Organisation');
+        /** @var User $me */
         $me = Auth::user();
 
         $qry = OrganisationVersionModel::with('organisation')
             ->where('status', 'pending')
             ->orderBy('name', 'asc');
 
-        if ($me->role == 'terrafund_admin') {
+        if ($me->hasRole('admin-terrafund')) {
             $qry->where('account_type', 'terrafund');
         }
 

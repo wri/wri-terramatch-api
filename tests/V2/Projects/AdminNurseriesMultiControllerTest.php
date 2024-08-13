@@ -2,11 +2,10 @@
 
 namespace Tests\V2\Projects;
 
-use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminNurseriesMultiControllerTest extends TestCase
@@ -16,10 +15,7 @@ class AdminNurseriesMultiControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles');
         $admin = User::factory()->admin()->create();
-        $admin->givePermissionTo('framework-terrafund');
-        $admin->givePermissionTo('framework-ppc');
         $user = User::factory()->create();
         $nurseries = Nursery::factory()->count(8)->create();
         $firstRecord = $nurseries[4];

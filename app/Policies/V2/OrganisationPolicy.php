@@ -2,8 +2,8 @@
 
 namespace App\Policies\V2;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
+use App\Models\V2\User;
 use App\Policies\Policy;
 
 class OrganisationPolicy extends Policy

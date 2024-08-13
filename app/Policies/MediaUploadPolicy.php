@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\MediaUpload as MediaUploadModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 
 class MediaUploadPolicy extends Policy
 {
