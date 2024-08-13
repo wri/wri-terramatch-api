@@ -198,7 +198,7 @@ class TerrafundEditGeometryController extends Controller
                     'created_by' => $user->id,
                 ]);
                 $newPolygonVersion = $sitePolygon->createCopy($user, $newGeometryVersion->uuid, false);
-                if ($newPolygonVersion) {    
+                if ($newPolygonVersion) {
                     $this->updateEstAreainSitePolygon($newGeometryVersion, $geometry);
                     $this->updateProjectCentroidFromPolygon($newGeometryVersion);
                     $newPolygonVersion->changeStatusOnEdit();
@@ -214,7 +214,7 @@ class TerrafundEditGeometryController extends Controller
                     $this->updateProjectCentroidFromPolygon($polygonGeometry);
                     $sitePolygon->changeStatusOnEdit();
                 }
-    
+
                 return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
             }
         } catch (\Exception $e) {
@@ -256,7 +256,7 @@ class TerrafundEditGeometryController extends Controller
                 $user = User::isUuid(Auth::user()->uuid)->first();
                 $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
                 $newPolygonVersion->changeStatusOnEdit();
-    
+
                 return response()->json(['message' => 'Site polygon version created successfully'], 200);
             } else {
                 $sitePolygon->update($validatedData);
