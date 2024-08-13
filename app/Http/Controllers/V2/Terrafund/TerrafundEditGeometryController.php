@@ -193,7 +193,7 @@ class TerrafundEditGeometryController extends Controller
 
             $user = User::isUuid(Auth::user()->uuid)->first();
 
-            if ($user->role === 'admin') {
+            if ($user->isAdmin) {
                 $newGeometryVersion = PolygonGeometry::create([
                     'geom' => $geom,
                     'created_by' => $user->id,
@@ -254,7 +254,7 @@ class TerrafundEditGeometryController extends Controller
             ]);
 
             $user = User::isUuid(Auth::user()->uuid)->first();
-            if ($user->role === 'admin') {
+            if ($user->isAdmin) {
                 $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
                 $newPolygonVersion->changeStatusOnEdit();
 
