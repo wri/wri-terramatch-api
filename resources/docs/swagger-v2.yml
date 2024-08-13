@@ -95631,8 +95631,6 @@ paths:
                 description: The updated geometry data
               uuid:
                 type: string
-              status:
-                type: number
         '404':
           description: No polygon geometry found for the given UUID
           schema:

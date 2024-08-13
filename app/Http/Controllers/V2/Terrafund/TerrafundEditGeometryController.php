@@ -205,7 +205,7 @@ class TerrafundEditGeometryController extends Controller
                     $newPolygonVersion->changeStatusOnEdit();
                 }
 
-                return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid, 'status' => 201], 201);
+                return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid], 201);
             } else {
                 $polygonGeometry->geom = $geom;
                 $polygonGeometry->save();
@@ -216,7 +216,7 @@ class TerrafundEditGeometryController extends Controller
                     $sitePolygon->changeStatusOnEdit();
                 }
 
-                return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid, 'status' => 200]);
+                return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
             }
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
