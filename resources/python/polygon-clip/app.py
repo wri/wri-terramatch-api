@@ -70,11 +70,11 @@ def create_output_geojson(orig_data, changes):
         for i, feat in orig_data:
             if i in changes:
                 feat['geometry'] = changes[i]
-            output_features.append({
-                "type": "Feature",
-                "geometry": mapping(feat['geometry']),
-                "properties": feat['properties']
-            })
+                output_features.append({
+                    "type": "Feature",
+                    "geometry": mapping(feat['geometry']),
+                    "properties": feat['properties']
+                })
         return {"type": "FeatureCollection", "features": output_features}
     except Exception as e:
         print(f"Error in create_output_geojson: {e}")
@@ -97,7 +97,9 @@ def main(input_geojson_path, output_geojson_path):
 
         with open(output_geojson_path, "w") as output_file:
             json.dump(output_geojson, output_file)
-            print(f"Output GeoJSON written to: {output_geojson_path}")
+            print(f"Output GeoJSON (containing only edited polygons) written to: {output_geojson_path}")
+        # output_geojson_str = json.dumps(output_geojson)
+        # print(f"\nOutput GeoJSON as string:\n{output_geojson_str}")
 
     except Exception as e:
         print(f"Error in main: {e}")
@@ -106,7 +108,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Fix small amounts of overlap by cutting into larger polygons."
+        description="Fix small amounts of overlap by cutting into larger polygons and output only edited polygons."
     )
     parser.add_argument("input_geojson", type=str, help="Path to the input GeoJSON file")
     parser.add_argument("output_geojson", type=str, help="Path to the output GeoJSON file")
