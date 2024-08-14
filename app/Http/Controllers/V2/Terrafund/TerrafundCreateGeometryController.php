@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
@@ -1159,26 +1160,40 @@ class TerrafundCreateGeometryController extends Controller
 
         return json_decode($criteriaDataResponse->getContent(), true);
     }
-    
-    
-    public function clipOverlappingPolygonsBySite(string $uuid) 
-    {
-      $polygonUuids = $this->getSitePolygonsUuids($uuid)->toArray();
-    
-      $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
-  
-      $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
 
-      return response()->json($clippedPolygons);
+    public function clipOverlappingPolygonsBySite(string $uuid)
+    {
+        $polygonUuids = $this->getSitePolygonsUuids($uuid)->toArray();
+
+        $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
+
+        $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
+
+        return response()->json($clippedPolygons);
     }
-    public function clipOverlappingPolygons(string $uuid) 
-    {
-      // $polygonUuids = uuid de los que intersectan + uuid del polygon actual 
-    
-      // $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
-  
-      // $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
 
-      // return response()->json($clippedPolygons);
+    public function clipOverlappingPolygons(string $uuid)
+    {
+        $polygonOverlappingExtraInfo = CriteriaSite::where('polygon_id', $uuid)
+          ->where('criteria_id', PolygonService::OVERLAPPING_CRITERIA_ID)->latest()->value('extra_info');
+
+        $decodedInfo = json_decode($polygonOverlappingExtraInfo, true);
+
+        $polygonUuidsOverlapping = array_map(function ($item) {
+            return $item['poly_uuid'] ?? null;
+        }, $decodedInfo);
+
+        $polygonUuids = array_filter($polygonUuidsOverlapping);
+
+        array_unshift($polygonUuids, $uuid);
+
+        $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
+
+        Log::info('Clipping polygons', ['geojson' => $geojson]);
+        $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
+
+        Log::info('Clipped polygons', ['clippedPolygons' => $clippedPolygons]);
+
+        return response()->json($clippedPolygons);
     }
 }

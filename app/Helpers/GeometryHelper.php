@@ -336,10 +336,11 @@ class GeometryHelper
             throw $e;
         }
     }
+
     public static function getPolygonsGeojson(array $polygonUuids): array
     {
         Log::info('Polygon UUIDs to get geojson', $polygonUuids);
-    
+
         $features = PolygonGeometry::whereIn('uuid', $polygonUuids)
             ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
             ->get()
@@ -347,17 +348,18 @@ class GeometryHelper
                 return [
                     'type' => 'Feature',
                     'properties' => [
-                        'poly_id' => $polygon->uuid
+                        'poly_id' => $polygon->uuid,
                     ],
-                    'geometry' => json_decode($polygon->geojsonGeometry, true)
+                    'geometry' => json_decode($polygon->geojsonGeometry, true),
                 ];
             })
             ->toArray();
-    
+
         Log::info('Features', $features);
+
         return [
             'type' => 'FeatureCollection',
-            'features' => $features
+            'features' => $features,
         ];
     }
 }
