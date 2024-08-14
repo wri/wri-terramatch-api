@@ -191,7 +191,7 @@ class TerrafundEditGeometryController extends Controller
 
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
 
-            $user = User::isUuid(Auth::user()->uuid)->first();
+            $user = Auth::user();
 
             if ($user->isAdmin) {
                 $newGeometryVersion = PolygonGeometry::create([
@@ -253,7 +253,7 @@ class TerrafundEditGeometryController extends Controller
               'target_sys' => 'nullable|string',
             ]);
 
-            $user = User::isUuid(Auth::user()->uuid)->first();
+            $user = Auth::user();
             if ($user->isAdmin) {
                 $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
                 $newPolygonVersion->changeStatusOnEdit();
