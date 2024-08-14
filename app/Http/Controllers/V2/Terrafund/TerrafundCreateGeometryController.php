@@ -8,6 +8,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
+use App\Services\PythonService;
 use App\Services\SiteService;
 use App\Validators\Extensions\Polygons\EstimatedArea;
 use App\Validators\Extensions\Polygons\FeatureBounds;
@@ -1157,5 +1158,27 @@ class TerrafundCreateGeometryController extends Controller
         $criteriaDataResponse = $this->getCriteriaData($polygonRequest);
 
         return json_decode($criteriaDataResponse->getContent(), true);
+    }
+    
+    
+    public function clipOverlappingPolygonsBySite(string $uuid) 
+    {
+      $polygonUuids = $this->getSitePolygonsUuids($uuid)->toArray();
+    
+      $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
+  
+      $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
+
+      return response()->json($clippedPolygons);
+    }
+    public function clipOverlappingPolygons(string $uuid) 
+    {
+      // $polygonUuids = uuid de los que intersectan + uuid del polygon actual 
+    
+      // $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
+  
+      // $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
+
+      // return response()->json($clippedPolygons);
     }
 }
