@@ -2,8 +2,8 @@
 
 namespace Tests\V2\Stages;
 
-use App\Models\User;
 use App\Models\V2\Stages\Stage;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

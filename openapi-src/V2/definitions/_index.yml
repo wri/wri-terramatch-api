@@ -4,8 +4,8 @@ TreeSpeciesRead:
   $ref: './TreeSpeciesRead.yml'
 TreeSpeciesReadAll:
   $ref: './TreeSpeciesReadAll.yml'
-MonitoringUserRead:
-  $ref: './MonitoringUserRead.yml'
+AssociatedUserRead:
+  $ref: './AssociatedUserRead.yml'
 EntityFormCreate:
   $ref: './EntityFormCreate.yml'
 EntityFormUpdate:
@@ -136,36 +136,20 @@ V2NurseryLiteRead:
   $ref: './V2NurseryLiteRead.yml'
 V2StrataRead:
   $ref: './V2StrataRead.yml'
-V2StrataCreate:
-  $ref: './V2StrataCreate.yml'
-V2StrataUpdate:
-  $ref: './V2StrataUpdate.yml'
 V2StrataPaginated:
   $ref: './V2StrataPaginated.yml'
 V2SeedingRead:
   $ref: './V2SeedingRead.yml'
-V2SeedingCreate:
-  $ref: './V2SeedingCreate.yml'
-V2SeedingUpdate:
-  $ref: './V2SeedingUpdate.yml'
 V2SeedingPaginated:
   $ref: './V2SeedingPaginated.yml'
 V2WorkdayRead:
   $ref: './V2WorkdayRead.yml'
 V2DisturbanceRead:
   $ref: './V2DisturbanceRead.yml'
-V2DisturbanceCreate:
-  $ref: './V2DisturbanceCreate.yml'
-V2DisturbanceUpdate:
-  $ref: './V2DisturbanceUpdate.yml'
 V2DisturbancePaginated:
   $ref: './V2DisturbancePaginated.yml'
 V2InvasiveRead:
   $ref: './V2InvasiveRead.yml'
-V2InvasiveCreate:
-  $ref: './V2InvasiveCreate.yml'
-V2InvasiveUpdate:
-  $ref: './V2InvasiveUpdate.yml'
 V2InvasivePaginated:
   $ref: './V2InvasivePaginated.yml'
 ProjectLiteRead:
@@ -372,3 +356,9 @@ PolygonChangeStatus:
   $ref: './PolygonChangeStatus.yml'
 PolygonChangeStatusUpdate:
   $ref: './PolygonChangeStatusUpdate.yml'
+ProjectPolygonResponse:
+  $ref: './ProjectPolygonResponse.yml'
+SitePolygonsLoadedDataResponse:
+  $ref: './SitePolygonsLoadedDataResponse.yml'
+SitePolygonLoaded:
+  $ref: './SitePolygonLoaded.yml'

@@ -3,7 +3,7 @@
 namespace App\Resources;
 
 use App\Models\ProgressUpdate as ProgressUpdateModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 
 class ProgressUpdateResource extends Resource
 {
@@ -20,7 +20,7 @@ class ProgressUpdateResource extends Resource
         $this->created_at = $progressUpdate->created_at;
         $this->created_by = $progressUpdate->created_by;
         $user = UserModel::findOrFail($this->created_by);
-        $this->created_by_admin = $user->role == 'admin';
+        $this->created_by_admin = $user->isAdmin;
         $this->updated_at = $progressUpdate->updated_at;
     }
 }

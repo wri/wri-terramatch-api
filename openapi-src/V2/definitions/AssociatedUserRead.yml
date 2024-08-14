@@ -1,0 +1,17 @@
+type: object
+properties:
+  uuid:
+    type: string
+  role:
+    type: string
+  job_role:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  email_address:
+    type: string
+  status:
+    type: string
+    description: allowed values Pending|Accepted

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AdminsController;
 use App\Http\Controllers\AimController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CarbonCertificationsController;
@@ -40,7 +39,6 @@ use App\Http\Controllers\PitchVersionsController;
 use App\Http\Controllers\PPCSiteExportController;
 use App\Http\Controllers\ProgrammeController;
 use App\Http\Controllers\ProgrammeImageExportController;
-use App\Http\Controllers\ProgrammeInviteController;
 use App\Http\Controllers\ProgrammeShapefileExportController;
 use App\Http\Controllers\ProgrammeSubmissionAdminCsvExportController;
 use App\Http\Controllers\ProgrammeSubmissionCsvExportController;
@@ -80,7 +78,6 @@ use App\Http\Controllers\Terrafund\TerrafundNurserySubmissionController;
 use App\Http\Controllers\Terrafund\TerrafundNurserySubmissionCsvExportController;
 use App\Http\Controllers\Terrafund\TerrafundProgrammeController;
 use App\Http\Controllers\Terrafund\TerrafundProgrammeImageExportController;
-use App\Http\Controllers\Terrafund\TerrafundProgrammeInviteController;
 use App\Http\Controllers\Terrafund\TerrafundProgrammeNurseriesController;
 use App\Http\Controllers\Terrafund\TerrafundProgrammeSitesController;
 use App\Http\Controllers\Terrafund\TerrafundProgrammeSubmissionController;
@@ -142,17 +139,6 @@ Route::get('/uploads/socioeconomic_benefits/template/site_submission', [Socioeco
 Route::get('/uploads/stratification/example', [StratificationController::class, 'downloadTemplateAction']);
 Route::post('/uploads/site_programme_media', [MediaUploadController::class, 'createAction']);
 
-Route::get('/organisations/{id}/users', [UsersController::class, 'readAllByOrganisationAction']);
-Route::get('/users/all', [UsersController::class, 'readAllAction']);
-Route::get('/users/unverified', [UsersController::class, 'readAllUnverifiedAction']);
-Route::post('/users/invite', [UsersController::class, 'inviteAction']);
-Route::post('/users/accept', [UsersController::class, 'acceptAction']);
-Route::get('/users/{id}', [UsersController::class, 'readAction']);
-Route::patch('/users/{id}', [UsersController::class, 'updateAction']);
-Route::patch('/users/{user}/role', [UsersController::class, 'updateRoleAction']);
-Route::get('/organisations/{id}/users/inspect', [UsersController::class, 'inspectByOrganisationAction']);
-Route::post('/users/resend', [UsersController::class, 'resendVerificationEmailAction']);
-
 Route::get('/countries', [DataController::class, 'readAllCountriesAction']);
 
 Route::post('/organisations', [OrganisationsController::class, 'createAction']);
@@ -185,12 +171,6 @@ Route::delete('/team_members/{id}', [TeamMembersController::class, 'deleteAction
 Route::get('/organisations/{id}/team_members/inspect', [TeamMembersController::class, 'inspectByOrganisationAction']);
 
 Route::get('/organisation_categories', [DataController::class, 'readAllOrganisationCategoriesAction']);
-
-Route::get('/admins', [AdminsController::class, 'readAllAction']);
-Route::post('/admins/invite', [AdminsController::class, 'inviteAction']);
-Route::post('/admins/accept', [AdminsController::class, 'acceptAction']);
-Route::get('/admins/{id}', [AdminsController::class, 'readAction']);
-Route::patch('/admins/{id}', [AdminsController::class, 'updateAction']);
 
 Route::get('/document_types', [DataController::class, 'readAllDocumentTypesAction']);
 
@@ -448,12 +428,6 @@ Route::prefix('programme')->group(function () {
     Route::get('/{programme}/sites', [SiteController::class, 'readAllByProgrammeAction']);
     Route::get('/{programme}/all-sites', [SiteController::class, 'readAllNonPaginatedByProgrammeAction']);
     Route::get('/{programme}/site-metrics', [SiteController::class, 'readAllMetricsByProgrammeAction']);
-
-    Route::post('/{programme}/invite', [ProgrammeInviteController::class, 'createAction']);
-    Route::post('/invite/accept', [ProgrammeInviteController::class, 'acceptAction']);
-    Route::delete('/invite/remove', [ProgrammeInviteController::class, 'removeUserAction']);
-    Route::delete('/invite/{programmeInvite}', [ProgrammeInviteController::class, 'deleteAction']);
-    Route::get('/{programme}/partners', [ProgrammeInviteController::class, 'readAllAction']);
 });
 
 Route::get('/programmes', [ProgrammeController::class, 'readAllAction']);
@@ -573,9 +547,7 @@ Route::prefix('terrafund')->group(function () {
         Route::get('/{terrafundProgramme}/has_sites', [TerrafundProgrammeSitesController::class, 'checkHasProgrammeSites']);
         Route::get('/{terrafundProgramme}/nurseries', [TerrafundProgrammeNurseriesController::class, 'readAllProgrammeNurseries']);
         Route::get('/{terrafundProgramme}/has_nurseries', [TerrafundProgrammeNurseriesController::class, 'checkHasProgrammeNurseries']);
-        Route::post('/{terrafundProgramme}/invite', [TerrafundProgrammeInviteController::class, 'createAction']);
         Route::get('/{terrafundProgramme}/submissions', [TerrafundProgrammeSubmissionController::class, 'readAllProgrammeSubmissions']);
-        Route::post('/invite/accept', [TerrafundProgrammeInviteController::class, 'acceptAction']);
 
         Route::prefix('/submission')->group(function () {
             Route::post('/', [TerrafundProgrammeSubmissionController::class, 'createAction']);

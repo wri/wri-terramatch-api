@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 
 class AuthPolicy extends Policy
 {
@@ -54,9 +54,6 @@ class AuthPolicy extends Policy
 
     public function me(?UserModel $user, $model = null): bool
     {
-        return $this->isUser($user) ||
-            $this->isAdmin($user) ||
-            $this->isTerrafundAdmin($user) ||
-            $this->isServiceAccount($user);
+        return $this->isUser($user) || $this->isAdmin($user) || $this->isServiceAccount($user);
     }
 }

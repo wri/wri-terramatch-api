@@ -14,7 +14,7 @@ use App\Models\PitchDocument as PitchDocumentModel;
 use App\Models\RestorationMethodMetric as RestorationMethodMetricModel;
 use App\Models\Site;
 use App\Models\TreeSpecies as TreeSpeciesModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -29,24 +29,17 @@ abstract class Policy
 
     protected function isUser(?UserModel $user): bool
     {
-        return ! $this->isGuest($user) && $user->role == 'user';
+        return ! $this->isGuest($user) && ! $user->isAdmin && ! $user->hasRole('greenhouse-service-account');
     }
 
     protected function isAdmin(?UserModel $user): bool
     {
-        return ! $this->isGuest($user) && $user->role == 'admin';
-    }
-
-    protected function isNewRoleUser(?UserModel $user): bool
-    {
-        $newRoles = ['project-developer', 'funder', 'government'];
-
-        return in_array($user->role, $newRoles);
+        return ! $this->isGuest($user) && $user->isAdmin;
     }
 
     protected function isServiceAccount(?UserModel $user): bool
     {
-        return ! $this->isGuest($user) && $user->role == 'service';
+        return ! $this->isGuest($user) && $user->hasRole('greenhouse-service-account');
     }
 
     protected function isOrphanedUser(?UserModel $user): bool
@@ -56,7 +49,7 @@ abstract class Policy
 
     protected function isVerifiedUser(?UserModel $user): bool
     {
-        return ($this->isUser($user) || $this->isNewRoleUser($user)) && (bool) $user->email_address_verified_at;
+        return $this->isUser($user) && (bool) $user->email_address_verified_at;
     }
 
     protected function isVerifiedAdmin(?UserModel $user): bool
@@ -66,7 +59,7 @@ abstract class Policy
 
     protected function isTerrafundAdmin(?UserModel $user): bool
     {
-        return ! $this->isGuest($user) && $user->role == 'terrafund_admin';
+        return ! $this->isGuest($user) && $user->hasRole('admin-terrafund');
     }
 
     protected function isFullUser(?UserModel $user): bool
@@ -85,8 +78,7 @@ abstract class Policy
             return false;
         }
         switch (get_class($model)) {
-            case \App\Models\User::class:
-            case \App\Models\Admin::class:
+            case UserModel::class:
                 return $user->id == $model->id;
             case \App\Models\Organisation::class:
                 return $user->organisation_id == $model->id;

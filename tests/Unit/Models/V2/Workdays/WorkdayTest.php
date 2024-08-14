@@ -51,5 +51,28 @@ class WorkdayTest extends TestCase
         Workday::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', $data);
         $workday->refresh();
         $this->assertEquals(0, $workday->demographics()->count());
+
+        // Test duplicate rows in the incoming data set
+        $data = [
+            [
+                'collection' => Workday::COLLECTION_SITE_VOLUNTEER_PLANTING,
+                'demographics' => [
+                    ['type' => 'age', 'name' => 'youth', 'amount' => 20],
+                    ['type' => 'age', 'name' => 'youth', 'amount' => 40],
+                    ['type' => 'gender', 'name' => 'non-binary', 'amount' => 20],
+                    ['type' => 'gender', 'name' => 'non-binary', 'amount' => 40],
+                    ['type' => 'ethnicity', 'subtype' => 'other', 'amount' => 20],
+                    ['type' => 'ethnicity', 'subtype' => 'other', 'amount' => 40],
+                ],
+            ],
+        ];
+        $siteReport = SiteReport::factory()->create();
+        Workday::syncRelation($siteReport, 'workdaysVolunteerPlanting', $data);
+
+        $workday = $siteReport->workdaysVolunteerPlanting()->first();
+        $this->assertEquals(3, $workday->demographics()->count());
+        $this->assertEquals(40, $workday->demographics()->isAge('youth')->first()->amount);
+        $this->assertEquals(40, $workday->demographics()->isGender('non-binary')->first()->amount);
+        $this->assertEquals(40, $workday->demographics()->isEthnicity('other')->first()->amount);
     }
 }

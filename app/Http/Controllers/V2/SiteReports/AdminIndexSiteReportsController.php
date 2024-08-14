@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\IsAdminIndex;
 use App\Http\Resources\V2\SiteReports\SiteReportsCollection;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -49,11 +51,16 @@ class AdminIndexSiteReportsController extends Controller
         ]);
 
         if (! empty($request->query('search'))) {
-            $ids = SiteReport::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = SiteReport::searchReports(trim($request->query('search')))->pluck('id')->toArray();
             $query->whereIn('v2_site_reports.id', $ids);
         }
 
-        $this->isolateAuthorizedFrameworks($query, 'v2_site_reports');
+        $user = User::find(Auth::user()->id);
+        if ($user->primaryRole?->name == 'project-manager') {
+            $query->whereIn('v2_sites.project_id', $user->managedProjects()->select('v2_projects.id'));
+        } else {
+            $this->isolateAuthorizedFrameworks($query, 'v2_site_reports');
+        }
 
         return new SiteReportsCollection($this->paginate($query));
     }

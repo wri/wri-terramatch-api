@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\NamedEntityTrait;
 use App\Models\Traits\SetAttributeByUploadTrait;
+use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Model;
 
 class ProgressUpdate extends Model

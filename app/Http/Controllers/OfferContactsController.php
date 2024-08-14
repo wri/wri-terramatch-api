@@ -10,7 +10,7 @@ use App\Http\Requests\StoreOfferContactsRequest;
 use App\Models\Offer as OfferModel;
 use App\Models\OfferContact as OfferContactModel;
 use App\Models\TeamMember as TeamMemberModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use App\Resources\OfferContactResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;

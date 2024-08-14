@@ -3,9 +3,9 @@
 namespace Tests\V2\Forms;
 
 use App\Mail\ApplicationSubmittedConfirmation;
-use App\Models\User;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\ProjectPitch;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;

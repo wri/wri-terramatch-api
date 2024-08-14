@@ -15,8 +15,8 @@ use App\Http\Resources\V2\User\MeResource;
 use App\Jobs\ResetPasswordJob;
 use App\Jobs\UserVerificationJob;
 use App\Models\PasswordReset as PasswordResetModel;
-use App\Models\User as UserModel;
 use App\Models\V2\Projects\ProjectInvite;
+use App\Models\V2\User as UserModel;
 use App\Models\Verification as VerificationModel;
 use DateTime;
 use DateTimeZone;
@@ -39,6 +39,18 @@ class AuthController extends Controller
         $me = Auth::user();
         if (is_null($me->password)) {
             throw new FailedLoginException();
+        }
+        $invites = ProjectInvite::where('email_address', $me->email_address)->get();
+        foreach ($invites as $invite) {
+            $me->projects()->sync([$invite->project_id => ['is_monitoring' => true]], false);
+            if ($me->organisation_id == null) {
+                $me->organisation_id = $invite->project->organisation_id;
+                $me->saveOrFail();
+            }
+            if ($invite->accepted_at === null) {
+                $invite->accepted_at = now();
+                $invite->saveOrFail();
+            }
         }
         $me->last_logged_in_at = new DateTime('now', new DateTimeZone('UTC'));
         $me->saveOrFail();
@@ -174,20 +186,6 @@ class AuthController extends Controller
     {
         $this->authorize('me', 'App\\Models\\Auth');
         $me = Auth::user();
-        /*
-        $role = $me->role;
-        if ($me->role == 'terrafund_admin') {
-            $role = 'user';
-        }
-        $classes = [
-            'App\\Models\\' . ucfirst($role),
-            'App\\Resources\\' . ucfirst($role) . 'Resource',
-        ];
-        $model = $classes[0]::findOrFail($me->id);
-        $resource = new $classes[1]($model);
-
-        return JsonResponseHelper::success($resource, 200);
-        */
 
         return new MeResource($me);
     }

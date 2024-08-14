@@ -33,6 +33,7 @@ class PolygonValidationSeeder extends Seeder
 
                     SitePolygon::factory()->site($site)->geometry($geometry)->create([
                         'calc_area' => $geometryDef['calc_area'] ?? 0,
+                        'is_active' => true,
                     ]);
                 }
             }

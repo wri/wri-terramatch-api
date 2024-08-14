@@ -145,35 +145,3 @@ function getDataFromMorphable(string $type, int $id)
             throw new InvalidMorphableModelException();
     }
 }
-
-/**
- * This function will take a User and assign a Spatie role to it based on its 'role' property.
- * This is a super hacky and we will need to rework how roles are assigned to users
- */
-function assignSpatieRole($user)
-{
-    switch($user->role) {
-        case 'user':
-            $user->assignRole('project-developer');
-
-            break;
-        case 'admin':
-            $user->assignRole('admin-ppc');
-
-            break;
-        case 'terrafund_admin':
-            $user->assignRole('admin-terrafund');
-
-            break;
-        case 'service':
-            $user->assignRole('greenhouse-service-account');
-
-            break;
-        case 'project-developer':
-        case 'funder':
-        case 'government':
-            $user->assignRole($user->role);
-
-            break;
-    }
-}

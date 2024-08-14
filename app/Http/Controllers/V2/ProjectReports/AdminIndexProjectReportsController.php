@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\IsAdminIndex;
 use App\Http\Resources\V2\ProjectReports\ProjectReportsCollection;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -50,7 +52,12 @@ class AdminIndexProjectReportsController extends Controller
             $query->whereIn('v2_project_reports.id', $ids);
         }
 
-        $this->isolateAuthorizedFrameworks($query, 'v2_project_reports');
+        $user = User::find(Auth::user()->id);
+        if ($user->primaryRole?->name == 'project-manager') {
+            $query->whereIn('project_id', $user->managedProjects()->select('v2_projects.id'));
+        } else {
+            $this->isolateAuthorizedFrameworks($query, 'v2_project_reports');
+        }
 
         return new ProjectReportsCollection($this->paginate($query));
     }

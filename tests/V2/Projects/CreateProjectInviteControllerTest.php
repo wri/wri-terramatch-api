@@ -3,12 +3,11 @@
 namespace Tests\V2\Projects;
 
 use App\Mail\V2ProjectInviteReceived;
-use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -23,27 +22,23 @@ class CreateProjectInviteControllerTest extends TestCase
         parent::setUp();
 
         Mail::fake();
-
-        Artisan::call('v2migration:roles');
     }
 
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_it_creates_project_invitations_for_existing_users(string $permission, string $fmKey)
+    public function test_it_creates_project_invitations_for_existing_users(string $adminType, string $fmKey)
     {
         DB::table('v2_project_invites')->truncate();
 
         $this->assertDatabaseCount('v2_project_invites', 0);
 
-        $admin = User::factory()->admin()->create();
-        $admin->givePermissionTo($permission);
+        $admin = User::factory()->{$adminType}()->create();
 
         $user = User::factory()->create();
         $organisation = Organisation::factory()->create();
 
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->{$fmKey}()->create(['organisation_id' => $organisation->id]);
 
@@ -99,8 +94,8 @@ class CreateProjectInviteControllerTest extends TestCase
     public static function permissionsDataProvider()
     {
         return [
-            ['framework-terrafund', 'terrafund'],
-            ['framework-ppc', 'ppc'],
+            ['terrafundAdmin', 'terrafund'],
+            ['ppcAdmin', 'ppc'],
         ];
     }
 }

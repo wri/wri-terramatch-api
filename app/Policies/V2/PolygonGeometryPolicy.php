@@ -2,8 +2,8 @@
 
 namespace App\Policies\V2;
 
-use App\Models\User;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\User;
 use App\Policies\Policy;
 
 class PolygonGeometryPolicy extends Policy
