@@ -92796,6 +92796,33 @@ paths:
       responses:
         '200':
           description: OK
+  '/v2/{ENTITY}/{UUID}/{ID}/delete':
+    delete:
+      summary: Delete the audit status of a specific entity
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 SitePolygons
+        - V2 AuditStatus
+        - V2 Nurseries
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/site-polygons
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - type: string
+          name: ID
+          in: path
+          required: true
+          description: allowed values uuid/id
+      responses:
+        '200':
+          description: OK
   '/v2/projects/{UUID}/site-polygons/all':
     get:
       summary: Get all the SitePolygons from all sites belonging to a specific project
