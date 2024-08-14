@@ -190,34 +190,49 @@ class TerrafundEditGeometryController extends Controller
             $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
 
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
+            $polygonGeometry->geom = $geom;
+            $polygonGeometry->save();
+            if ($sitePolygon) {
+                $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
+                $this->updateProjectCentroidFromPolygon($polygonGeometry);
+                $sitePolygon->changeStatusOnEdit();
+            }
+
+            return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function createVersionPolyGeometry(string $uuid, Request $request)
+    {
+        try {
+            Log::info("Creating geometry version for polygon with UUID: $uuid");
+
+            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+            if (! $polygonGeometry) {
+                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
+            }
+            $geometry = json_decode($request->input('geometry'));
+            $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
+
+            $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
 
             $user = Auth::user();
 
-            if ($user->isAdmin) {
-                $newGeometryVersion = PolygonGeometry::create([
-                    'geom' => $geom,
-                    'created_by' => $user->id,
-                ]);
-                $newPolygonVersion = $sitePolygon->createCopy($user, $newGeometryVersion->uuid, false);
-                if ($newPolygonVersion) {
-                    $this->updateEstAreainSitePolygon($newGeometryVersion, $geometry);
-                    $this->updateProjectCentroidFromPolygon($newGeometryVersion);
-                    $newPolygonVersion->changeStatusOnEdit();
-                }
+            $newGeometryVersion = PolygonGeometry::create([
+                'geom' => $geom,
+                'created_by' => $user->id,
+            ]);
+            $newPolygonVersion = $sitePolygon->createCopy($user, $newGeometryVersion->uuid, false);
 
-                return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid], 201);
-            } else {
-                $polygonGeometry->geom = $geom;
-                $polygonGeometry->save();
-
-                if ($sitePolygon) {
-                    $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
-                    $this->updateProjectCentroidFromPolygon($polygonGeometry);
-                    $sitePolygon->changeStatusOnEdit();
-                }
-
-                return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
+            if ($newPolygonVersion) {
+                $this->updateEstAreainSitePolygon($newGeometryVersion, $geometry);
+                $this->updateProjectCentroidFromPolygon($newGeometryVersion);
+                $newPolygonVersion->changeStatusOnEdit();
             }
+
+            return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
@@ -253,18 +268,39 @@ class TerrafundEditGeometryController extends Controller
               'target_sys' => 'nullable|string',
             ]);
 
-            $user = Auth::user();
-            if ($user->isAdmin) {
-                $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
-                $newPolygonVersion->changeStatusOnEdit();
+            $sitePolygon->update($validatedData);
+            $sitePolygon->changeStatusOnEdit();
 
-                return response()->json(['message' => 'Site polygon version created successfully'], 201);
-            } else {
-                $sitePolygon->update($validatedData);
-                $sitePolygon->changeStatusOnEdit();
+            return response()->json(['message' => 'Site polygon updated successfully']);
+        } catch (\Exception $e) {
+            // Handle other exceptions
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
 
-                return response()->json(['message' => 'Site polygon updated successfully']);
+    public function createSitePolygonNewVersion(string $uuid, Request $request)
+    {
+        try {
+            $sitePolygon = SitePolygon::where('uuid', $uuid)->first();
+            if (! $sitePolygon) {
+                return response()->json(['message' => 'No site polygons found for the given UUID.'], 404);
             }
+            $validatedData = $request->validate([
+              'poly_name' => 'nullable|string',
+              'plantstart' => 'nullable|date',
+              'plantend' => 'nullable|date',
+              'practice' => 'nullable|string',
+              'distr' => 'nullable|string',
+              'num_trees' => 'nullable|integer',
+              'calc_area' => 'nullable|numeric',
+              'target_sys' => 'nullable|string',
+            ]);
+
+            $user = Auth::user();
+            $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
+            $newPolygonVersion->changeStatusOnEdit();
+
+            return response()->json(['message' => 'Site polygon version created successfully'], 201);
         } catch (\Exception $e) {
             // Handle other exceptions
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);

@@ -2513,6 +2513,9 @@
 /v2/geometry/{UUID}:
   put:
     $ref: './Geometry/put-v2-geometry-uuid.yml'
+/v2/geometry/{UUID}/new-version:
+  post:
+    $ref: './Geometry/post-v2-geometry-uuid-version.yml'
 /v2/audit-status/{ENTITY}/{UUID}:
   get:
     $ref: './AuditStatus/get-v2-audit-status.yml'
@@ -2576,6 +2579,9 @@
 /v2/terrafund/site-polygon/{uuid}:
   put:
     $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
+/v2/terrafund/new-site-polygon/{uuid}/new-version:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-site-polygon-uuid-version.yml'
 /v2/terrafund/project-polygon:
   get:
     $ref: './Terrafund/get-v2-terrafund-project-polygon.yml'

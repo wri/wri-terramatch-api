@@ -566,6 +566,7 @@ Route::prefix('geometry')->group(function () {
     Route::post('/validate', [GeometryController::class, 'validateGeometries']);
     Route::delete('', [GeometryController::class, 'deleteGeometries']);
     Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
+    Route::post('{polygon}/new-version', [TerrafundEditGeometryController::class, 'createVersionPolyGeometry']);
 });
 
 Route::prefix('project-monitorings')->group(function () {
@@ -655,6 +656,8 @@ Route::prefix('terrafund')->group(function () {
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
     Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
+
+    Route::post('/new-site-polygon/{uuid}/new-version', [TerrafundEditGeometryController::class, 'createSitePolygonNewVersion']);
 
     Route::post('/project-polygon/{uuid}/{entity_uuid}/{entity_type}', [TerrafundEditGeometryController::class, 'createProjectPolygon']);
 });
