@@ -65,6 +65,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
 
                     return implode(' | ', $list);
                 case 'treeSpecies':
+                case 'seedings':
                     return $this->stringifyModel($answer, ['name', 'amount']);
 
                 case 'workdays':
