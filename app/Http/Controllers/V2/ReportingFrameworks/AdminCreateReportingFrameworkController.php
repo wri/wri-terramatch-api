@@ -14,9 +14,9 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class AdminCreateReportingFrameworkController extends Controller
 {
@@ -41,20 +41,18 @@ class AdminCreateReportingFrameworkController extends Controller
 
         $permissionName = 'framework-' . Str::slug($frameworkRequest->name);
         if (! Permission::where('name', $permissionName)->exists()) {
-            $PermissionAdded = Permission::create([
+            Permission::create([
                 'name' => 'framework-' . Str::slug($frameworkRequest->name),
                 'guard_name' => 'api',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
-            $adminSuperRoleId = 1;
-            $adminTerrafund = 3;
-
-            DB::table('role_has_permissions')->insert([
-                ['permission_id' => $PermissionAdded->id, 'role_id' => $adminSuperRoleId],
-                ['permission_id' => $PermissionAdded->id, 'role_id' => $adminTerrafund],
-            ]);
+            // This will allow super admins to administer the new framework immediately, but these steps must
+            // be taken to create the new admin role:
+            //  * Add the role and permission to config/wri/permissions
+            //  * Run php artisan sync-roles
+            Role::where('name', 'admin-super')->givePermissionTo($permissionName);
         }
 
         Form::isUuid($frameworkRequest->project_form_uuid)->update([

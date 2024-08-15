@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a8ecce18a17e4ae23d1c89bf7fff3058",
+    "content-hash": "7e7444846c63b2e54df3407acfeaf209",
     "packages": [
         {
             "name": "asantibanez/laravel-eloquent-state-machines",
@@ -9479,6 +9479,67 @@
                 }
             ],
             "time": "2023-07-31T07:08:24+00:00"
+        },
+        {
+            "name": "tightenco/parental",
+            "version": "v1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tighten/parental.git",
+                "reference": "90e80a93409aac080e74ee441a462875006f0e00"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tighten/parental/zipball/90e80a93409aac080e74ee441a462875006f0e00",
+                "reference": "90e80a93409aac080e74ee441a462875006f0e00",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^9.0||^10.0||^11.0",
+                "illuminate/events": "^9.0||^10.0||^11.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^7.0||^8.0||^9.0",
+                "phpunit/phpunit": "^9.5.10||^10.5",
+                "tightenco/duster": "^2.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Parental\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Caleb Porzio",
+                    "email": "calebporzio@gmail.com",
+                    "homepage": "https://calebporzio.com/",
+                    "role": "author"
+                },
+                {
+                    "name": "Steve McDougall",
+                    "email": "juststevemcd@gmail.com",
+                    "homepage": "https://www.juststeveking.uk/",
+                    "role": "developer"
+                }
+            ],
+            "description": "A simple eloquent trait that allows relationships to be accessed through child models.",
+            "support": {
+                "issues": "https://github.com/tighten/parental/issues",
+                "source": "https://github.com/tighten/parental/tree/v1.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/calebporzio",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-03-12T13:04:57+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

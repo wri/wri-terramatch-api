@@ -3,8 +3,8 @@
 namespace Tests\V2\Organisation;
 
 use App\Mail\OrganisationUserApproved;
-use App\Models\User;
 use App\Models\V2\Organisation;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Mail;

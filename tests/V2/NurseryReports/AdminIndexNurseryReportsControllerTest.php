@@ -3,11 +3,10 @@
 namespace Tests\V2\NurseryReports;
 
 use App\Models\Framework;
-use App\Models\User;
 use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexNurseryReportsControllerTest extends TestCase
@@ -17,13 +16,10 @@ class AdminIndexNurseryReportsControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles');
-        $tfAdmin = User::factory()->admin()->create();
-        $ppcAdmin = User::factory()->admin()->create();
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
+        $ppcAdmin = User::factory()->ppcAdmin()->create();
         Framework::factory()->create(['slug' => 'terrafund']);
         Framework::factory()->create(['slug' => 'ppc']);
-        $tfAdmin->givePermissionTo('framework-terrafund');
-        $ppcAdmin->givePermissionTo('framework-ppc');
         $user = User::factory()->create();
 
         NurseryReport::query()->delete();

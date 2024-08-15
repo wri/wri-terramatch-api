@@ -15,6 +15,5 @@ class StagesTableSeeder extends Seeder
         Artisan::call('v2-custom-form-update-data');
         Artisan::call('v2-custom-form-prep-phase2');
         Artisan::call('v2-custom-form-rfp-update-data');
-        Artisan::call('v2migration:roles');
     }
 }

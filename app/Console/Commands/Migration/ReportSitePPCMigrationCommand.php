@@ -4,9 +4,9 @@ namespace App\Console\Commands\Migration;
 
 use App\Models\Site as PPCSite;
 use App\Models\SiteSubmission;
-use App\Models\User;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\User;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Console\Command;
 

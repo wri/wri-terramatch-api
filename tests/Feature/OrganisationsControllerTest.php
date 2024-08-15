@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\V2\User;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 

@@ -30,9 +30,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @property Role primaryRole
+ * @property bool isAdmin
+ */
 class User extends Authenticatable implements JWTSubject
 {
     use NamedEntityTrait;
@@ -46,6 +51,8 @@ class User extends Authenticatable implements JWTSubject
 
     protected $guard_name = 'api';
 
+    protected static array $adminRoles;
+
     public $fillable = [
         'organisation_id',
         'first_name',
@@ -53,7 +60,6 @@ class User extends Authenticatable implements JWTSubject
         'email_address',
         'password',
         'email_address_verified_at',
-        'role',
         'last_logged_in_at',
         'job_role',
         'facebook',
@@ -92,12 +98,25 @@ class User extends Authenticatable implements JWTSubject
         return UserFactory::new();
     }
 
+    protected static function adminRoles()
+    {
+        if (! empty(self::$adminRoles)) {
+            return self::$adminRoles;
+        }
+
+        self::$adminRoles = collect(array_keys(config('wri.permissions.roles')))
+            ->filter(fn ($roleName) => Str::startsWith($roleName, 'admin'))
+            ->toArray();
+
+        return self::$adminRoles;
+    }
+
     public function toSearchableArray()
     {
         return [
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'email' => $this->email,
+            'email' => $this->email_address,
             'organisation_names' => implode('|', $this->organisations()->pluck('name')->toArray()),
         ];
     }
@@ -161,13 +180,17 @@ class User extends Authenticatable implements JWTSubject
 
     public function scopeUser(Builder $query): Builder
     {
-        return $query->where('role', '=', 'user');
+        return $query->role('project-developer');
     }
 
     public function scopeUserOrTerrafundAdmin(Builder $query): Builder
     {
-        return $query->where('role', 'user')
-            ->orWhere('role', 'terrafund_admin');
+        return $query->role(['project-developer', 'admin-terrafund']);
+    }
+
+    public function scopeAdmin(Builder $query): Builder
+    {
+        return $query->role(self::adminRoles());
     }
 
     public function scopeOrganisationUuid(Builder $query, string $uuid): Builder
@@ -182,18 +205,14 @@ class User extends Authenticatable implements JWTSubject
         return $query->whereNull('email_address_verified_at');
     }
 
-    public function scopeVerified(Builder $query, $flag): Builder
-    {
-        if ($flag) {
-            return $query->whereNotNull('email_address_verified_at');
-        }
-
-        return $query->whereNull('email_address_verified_at');
-    }
-
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(Organisation::class);
+    }
+
+    public function v2Organisation(): BelongsTo
+    {
+        return $this->belongsTo(V2Organisation::class, 'organisation_id', 'id');
     }
 
     public function organisations(): BelongsToMany
@@ -333,5 +352,10 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->hasAnyRole(self::adminRoles());
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Policies\V2\Sites;
 
-use App\Models\User;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\User;
 use App\Policies\Policy;
 
 class SiteReportPolicy extends Policy
@@ -24,7 +24,7 @@ class SiteReportPolicy extends Policy
             return true;
         }
 
-        if ($this->isNewRoleUser($user)) {
+        if ($user->can('view-dashboard')) {
             return true;
         }
 

@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Terrafund\TerrafundProgramme;
-use App\Models\User;
+use App\Models\V2\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Testing\File;

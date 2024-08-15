@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\UpdateVisibility;
 use App\Models\Notification as NotificationModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

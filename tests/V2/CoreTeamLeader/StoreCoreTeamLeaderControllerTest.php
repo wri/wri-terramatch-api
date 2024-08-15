@@ -2,8 +2,8 @@
 
 namespace Tests\V2\CoreTeamLeader;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

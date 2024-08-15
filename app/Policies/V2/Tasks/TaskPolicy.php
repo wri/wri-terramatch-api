@@ -2,9 +2,9 @@
 
 namespace App\Policies\V2\Tasks;
 
-use App\Models\User;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Tasks\Task;
+use App\Models\V2\User;
 use App\Policies\Policy;
 
 class TaskPolicy extends Policy
