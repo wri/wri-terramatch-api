@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\V2\Terrafund;
 
 use App\Helpers\GeometryHelper;
+use App\Helpers\PolygonGeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
-use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
 use App\Services\PolygonService;
@@ -67,55 +66,6 @@ class TerrafundEditGeometryController extends Controller
             return response()->json(['message' => 'Project polygon not found.'], 404);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
-        }
-    }
-
-    public function updateEstAreainSitePolygon($polygonGeometry, $geometry)
-    {
-        try {
-            $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-
-            if ($sitePolygon) {
-                $geojson = json_encode($geometry);
-                $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
-                $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
-                $unitLatitude = 111320;
-                $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
-                $areaHectares = $areaSqMeters / 10000;
-
-                $sitePolygon->calc_area = $areaHectares;
-                $sitePolygon->save();
-
-                Log::info("Updated area for site polygon with UUID: $sitePolygon->uuid");
-            } else {
-                Log::warning("Updating Area: Site polygon with UUID $polygonGeometry->uuid not found.");
-            }
-        } catch (\Exception $e) {
-            Log::error('Error updating area in site polygon: ' . $e->getMessage());
-        }
-    }
-
-    public function updateProjectCentroidFromPolygon($polygonGeometry)
-    {
-        try {
-            $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-
-            if ($sitePolygon) {
-                $relatedSite = Site::where('uuid', $sitePolygon->site_id)->first();
-                $project = Project::where('id', $relatedSite->project_id)->first();
-
-                if ($project) {
-                    $geometryHelper = new GeometryHelper();
-                    $geometryHelper->updateProjectCentroid($project->uuid);
-
-                } else {
-                    Log::warning("Project with UUID $relatedSite->project_id not found.");
-                }
-            } else {
-                Log::warning("Site polygon with UUID $polygonGeometry->uuid not found.");
-            }
-        } catch (\Exception $e) {
-            Log::error('Error updating project centroid: ' . $e->getMessage());
         }
     }
 
@@ -193,8 +143,8 @@ class TerrafundEditGeometryController extends Controller
             $polygonGeometry->geom = $geom;
             $polygonGeometry->save();
             if ($sitePolygon) {
-                $this->updateEstAreainSitePolygon($polygonGeometry, $geometry);
-                $this->updateProjectCentroidFromPolygon($polygonGeometry);
+                PolygonGeometryHelper::updateEstAreainSitePolygon($polygonGeometry, $geometry);
+                PolygonGeometryHelper::updateProjectCentroidFromPolygon($polygonGeometry);
                 $sitePolygon->changeStatusOnEdit();
             }
 
@@ -364,7 +314,7 @@ class TerrafundEditGeometryController extends Controller
             $sitePolygon->save();
 
             App::make(SiteService::class)->setSiteToRestorationInProgress($siteUuid);
-            $this->updateProjectCentroidFromPolygon($polygonGeometry);
+            PolygonGeometryHelper::updateProjectCentroidFromPolygon($polygonGeometry);
 
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);
         } catch (\Exception $e) {
