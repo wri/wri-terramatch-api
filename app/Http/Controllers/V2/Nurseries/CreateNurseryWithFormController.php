@@ -31,20 +31,13 @@ class CreateNurseryWithFormController extends Controller
 
         $lastTask = $project->tasks()->orderby('due_at', 'desc')->first();
 
-        if ($lastTask) {
-            $nextReportingPeriod = Carbon::parse($lastTask->due_at)->addWeeks(4);
-            $creationDate = Carbon::now();
-            $weeksDifference = $creationDate->diffInWeeks($nextReportingPeriod);
-
-            if ($weeksDifference > 4) {
-                $lastTask->nurseryReports()->create([
-                    'framework_key' => $project->framework_key,
-                    'nursery_id' => $nursery->id,
-                    'status' => 'due',
-                    'due_at' => $lastTask->due_at,
-                ]);
-
-            }
+        if ($lastTask && Carbon::now() <= $lastTask->due_at->subWeeks(4)) {
+            $lastTask->nurseryReports()->create([
+                'framework_key' => $project->framework_key,
+                'nursery_id' => $nursery->id,
+                'status' => 'due',
+                'due_at' => $lastTask->due_at,
+            ]);
         }
 
         return $nursery->createSchemaResource();
