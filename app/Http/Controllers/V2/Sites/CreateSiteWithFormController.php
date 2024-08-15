@@ -7,8 +7,6 @@ use App\Http\Requests\V2\Forms\CreateEntityFormRequest;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
-use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\Tasks\Task;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
@@ -32,17 +30,16 @@ class CreateSiteWithFormController extends Controller
             'status' => EntityStatusStateMachine::STARTED,
         ]);
 
-        $lastTask = Task::where('project_id', $project->id)
-            ->orderBy('created_at', 'desc')
-            ->first();
+        $lastTask = $project->tasks()->orderby('due_at', 'desc')->first();
 
         if ($lastTask) {
-            $nextReportDueDate = Carbon::parse($lastTask->due_at)->addWeeks(4);
+            $nextReportingPeriod = Carbon::parse($lastTask->due_at)->addWeeks(4);
+            $creationDate = Carbon::now();
+            $weeksDifference = $creationDate->diffInWeeks($nextReportingPeriod);
 
-            if (Carbon::now()->lessThan($nextReportDueDate)) {
-                SiteReport::create([
-                    'framework_key' => $lastTask->project->framework_key,
-                    'task_id' => $lastTask->id,
+            if ($weeksDifference > 4) {
+                $lastTask->siteReports()->create([
+                    'framework_key' => $project->framework_key,
                     'site_id' => $site->id,
                     'status' => 'due',
                     'due_at' => $lastTask->due_at,
