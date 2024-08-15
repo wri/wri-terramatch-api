@@ -1166,7 +1166,7 @@ class TerrafundCreateGeometryController extends Controller
         $polygonUuids = $this->getSitePolygonsUuids($uuid)->toArray();
 
         $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
-
+        Log::info('Clipping polygons', ['geojson' => $geojson]);
         $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
 
         return response()->json($clippedPolygons);
