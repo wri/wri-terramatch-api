@@ -81,7 +81,6 @@ def fix_overlaps(orig_data):
                 except Exception as e:
                     print(f"Error processing overlap between features {smaller_idx} and {larger_idx}: {e}")
                     continue
-        print(f"Fixed {len(changes)} overlaps")
         return changes
     except Exception as e:
         print(f"Error in fix_overlaps: {e}")
@@ -105,10 +104,8 @@ def create_output_geojson(orig_data, changes):
 def main(input_geojson_path, output_geojson_path):
     try:
         with open(input_geojson_path, "r") as file:
-            print("Reading GeoJSON file")
             geojson_data = json.load(file)
 
-        print("GeoJSON file read successfully")
         features = geojson_data.get("features", [])
         if not features:
             print("No features found in the GeoJSON file")
@@ -120,7 +117,6 @@ def main(input_geojson_path, output_geojson_path):
 
         with open(output_geojson_path, "w") as output_file:
             json.dump(output_geojson, output_file)
-            print(f"Output GeoJSON (containing only edited polygons) written to: {output_geojson_path}")
         # output_geojson_str = json.dumps(output_geojson)
         # print(f"\nOutput GeoJSON as string:\n{output_geojson_str}")
 
