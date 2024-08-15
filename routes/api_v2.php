@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\AdminDeleteApplicationController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
@@ -214,6 +215,7 @@ use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -567,7 +569,10 @@ Route::prefix('geometry')->group(function () {
     Route::post('/validate', [GeometryController::class, 'validateGeometries']);
     Route::delete('', [GeometryController::class, 'deleteGeometries']);
     Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
-    Route::post('{polygon}/new-version', [TerrafundEditGeometryController::class, 'createVersionPolyGeometry']);
+    Route::post('{polygon}/new-version', function ($polygon, Request $request) {
+        return CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($polygon, $request);
+    });
+
 });
 
 Route::prefix('project-monitorings')->group(function () {

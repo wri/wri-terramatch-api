@@ -204,40 +204,6 @@ class TerrafundEditGeometryController extends Controller
         }
     }
 
-    public function createVersionPolyGeometry(string $uuid, Request $request)
-    {
-        try {
-            Log::info("Creating geometry version for polygon with UUID: $uuid");
-
-            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
-            if (! $polygonGeometry) {
-                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
-            }
-            $geometry = json_decode($request->input('geometry'));
-            $geom = DB::raw("ST_GeomFromGeoJSON('" . json_encode($geometry) . "')");
-
-            $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
-
-            $user = Auth::user();
-
-            $newGeometryVersion = PolygonGeometry::create([
-                'geom' => $geom,
-                'created_by' => $user->id,
-            ]);
-            $newPolygonVersion = $sitePolygon->createCopy($user, $newGeometryVersion->uuid, false);
-
-            if ($newPolygonVersion) {
-                $this->updateEstAreainSitePolygon($newGeometryVersion, $geometry);
-                $this->updateProjectCentroidFromPolygon($newGeometryVersion);
-                $newPolygonVersion->changeStatusOnEdit();
-            }
-
-            return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid], 201);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
-        }
-    }
-
     public function getPolygonGeojson(string $uuid)
     {
         $geometryQuery = PolygonGeometry::isUuid($uuid);
