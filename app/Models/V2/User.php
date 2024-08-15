@@ -210,6 +210,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(Organisation::class);
     }
 
+    public function v2Organisation(): BelongsTo
+    {
+        return $this->belongsTo(V2Organisation::class, 'organisation_id', 'id');
+    }
+
     public function organisations(): BelongsToMany
     {
         return $this->belongsToMany(V2Organisation::class)->withPivot('status');
