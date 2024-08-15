@@ -90527,6 +90527,104 @@ paths:
           description: This account does not have permission to update the polygon.
         '404':
           description: Geometry was not found.
+  '/v2/geometry/{UUID}/new-version':
+    post:
+      summary: create a new version of a geometry
+      operationId: post-v2-geometry-uuid-version
+      tags:
+        - V2 Geometry
+      parameters:
+        - in: path
+          type: string
+          name: UUID
+          required: true
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              geometry:
+                title: GeoJSON
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - FeatureCollection
+                  features:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                            - Feature
+                        properties:
+                          type: object
+                          properties:
+                            poly_name:
+                              type: string
+                            plantstart:
+                              type: string
+                              format: date
+                            plantend:
+                              type: string
+                              format: date
+                            practice:
+                              type: string
+                            target_sys:
+                              type: string
+                            distr:
+                              type: string
+                            num_trees:
+                              type: number
+                            site_id:
+                              type: string
+                              required: true
+                            est_area:
+                              type: number
+                        geometry:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                                - Polygon
+                                - Point
+                            coordinates:
+                              type: array
+      responses:
+        '201':
+          description: 'OK: New version was created.'
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                      enum:
+                        - OVERLAPPING_POLYGON
+                        - SELF_INTERSECTION
+                        - COORDINATE_SYSTEM
+                        - SIZE_LIMIT
+                        - WITHIN_COUNTRY
+                        - SPIKE
+                        - GEOMETRY_TYPE
+                        - TOTAL_AREA_EXPECTED
+                        - TABLE_SCHEMA
+                        - DATA_COMPLETED
+                    message:
+                      type: string
+                      description: Human readable string in English to describe the error.
+        '403':
+          description: This account does not have permission to create a new version.
+        '404':
+          description: Geometry was not found.
   '/v2/audit-status/{ENTITY}/{UUID}':
     get:
       operationId: get-v2-audits-status
@@ -91454,6 +91552,81 @@ paths:
                 type: string
       responses:
         '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              uuid:
+                type: string
+              poly_name:
+                type: string
+              plantstart:
+                type: string
+                format: date
+              plantend:
+                type: string
+                format: date
+              practice:
+                type: string
+              target_sys:
+                type: string
+              distr:
+                type: string
+              num_trees:
+                type: integer
+              calc_area:
+                type: number
+                format: float
+              status:
+                type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/terrafund/new-site-polygon/{uuid}/new-version':
+    post:
+      summary: Create a new version of a site polygon
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+          description: The UUID of the site polygon
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              uuid:
+                type: string
+              poly_name:
+                type: string
+              plantstart:
+                type: string
+                format: date
+              plantend:
+                type: string
+                format: date
+              practice:
+                type: string
+              target_sys:
+                type: string
+              distr:
+                type: string
+              num_trees:
+                type: integer
+              calc_area:
+                type: number
+                format: float
+              status:
+                type: string
+      responses:
+        '201':
           description: Successful response
           schema:
             type: object
@@ -92793,6 +92966,33 @@ paths:
           name: UUID
           in: path
           required: true
+      responses:
+        '200':
+          description: OK
+  '/v2/{ENTITY}/{UUID}/{ID}/delete':
+    delete:
+      summary: Delete the audit status of a specific entity
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 SitePolygons
+        - V2 AuditStatus
+        - V2 Nurseries
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/site-polygons
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - type: string
+          name: ID
+          in: path
+          required: true
+          description: allowed values uuid/id
       responses:
         '200':
           description: OK

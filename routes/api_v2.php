@@ -10,6 +10,7 @@ use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
 use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
+use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
@@ -566,6 +567,7 @@ Route::prefix('geometry')->group(function () {
     Route::post('/validate', [GeometryController::class, 'validateGeometries']);
     Route::delete('', [GeometryController::class, 'deleteGeometries']);
     Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
+    Route::post('{polygon}/new-version', [TerrafundEditGeometryController::class, 'createVersionPolyGeometry']);
 });
 
 Route::prefix('project-monitorings')->group(function () {
@@ -658,6 +660,8 @@ Route::prefix('terrafund')->group(function () {
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
     Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
 
+    Route::post('/new-site-polygon/{uuid}/new-version', [TerrafundEditGeometryController::class, 'createSitePolygonNewVersion']);
+
     Route::post('/project-polygon/{uuid}/{entity_uuid}/{entity_type}', [TerrafundEditGeometryController::class, 'createProjectPolygon']);
 });
 
@@ -685,6 +689,7 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
 
 ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
+    Route::delete('/{auditable}/{uuid}/delete', DeleteAuditStatusController::class);
 });
 
 Route::prefix('dashboard')->group(function () {
