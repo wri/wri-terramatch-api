@@ -136,7 +136,6 @@ trait HasReportStatus
     {
         $this->setCompletion();
         $this->entityStatusApprove($feedback);
-        $this->update(['nothing_to_report' => false]);
     }
 
     public function submitForApproval(): void
