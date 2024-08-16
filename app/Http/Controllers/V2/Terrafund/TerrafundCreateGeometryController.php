@@ -1218,6 +1218,6 @@ class TerrafundCreateGeometryController extends Controller
 
         $updatedPolygons = PolygonGeometryHelper::getPolygonsWithNames($uuids);
 
-        return response()->json(['updated polygons' => $updatedPolygons]);
+        return response()->json(['updated_polygons' => $updatedPolygons]);
     }
 }

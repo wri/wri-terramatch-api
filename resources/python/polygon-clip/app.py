@@ -74,11 +74,9 @@ def fix_overlaps(orig_data):
                     pct_overlap = 100 * overlap_shape.area / smaller_geom.area
                     area_overlap = shape_hectares_from_wgs84(overlap_shape)
                     if (pct_overlap <= 3.5) and (area_overlap <= 0.1):
-                        # Create a small buffer around the smaller polygon
-                        buffer_distance = 0.00001  # Adjust this value as needed
+                        buffer_distance = 0.000001  # Adjust this value as needed to add a small buffer
                         smaller_buffered = smaller_geom.buffer(buffer_distance)
                         
-                        # Clip the larger polygon with the buffered smaller polygon
                         larger_geom_new = larger_geom.difference(smaller_buffered)
                         
                         if not larger_geom_new.is_valid:
@@ -124,8 +122,6 @@ def main(input_geojson_path, output_geojson_path):
 
         with open(output_geojson_path, "w") as output_file:
             json.dump(output_geojson, output_file)
-        # output_geojson_str = json.dumps(output_geojson)
-        # print(f"\nOutput GeoJSON as string:\n{output_geojson_str}")
 
     except Exception as e:
         logging.warning(f"Error in main: {e}")
