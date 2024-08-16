@@ -58,4 +58,14 @@ class PolygonGeometryHelper
             Log::error('Error updating project centroid: ' . $e->getMessage());
         }
     }
+
+    public static function getPolygonsProjection(array $uuids, array $fields)
+    {
+        $sitePolygons = SitePolygon::whereIn('poly_id', $uuids)
+                        ->where('is_active', true)
+                        ->get($fields)
+                        ->toArray();
+
+        return $sitePolygons;
+    }
 }

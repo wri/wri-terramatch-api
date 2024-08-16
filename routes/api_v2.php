@@ -195,6 +195,7 @@ use App\Http\Controllers\V2\Stages\ViewStageController;
 use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
+use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
 use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
@@ -649,6 +650,8 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
     Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
     Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
+    Route::post('/clip-polygons/site/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygonsBySite']);
+    Route::post('/clip-polygons/polygon/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygons']);
 
     Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
     Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
