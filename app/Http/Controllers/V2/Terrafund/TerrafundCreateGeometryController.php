@@ -1162,9 +1162,11 @@ class TerrafundCreateGeometryController extends Controller
 
         return json_decode($criteriaDataResponse->getContent(), true);
     }
- public function clipOverlappingPolygonsBySite(string $uuid)
+
+    public function clipOverlappingPolygonsBySite(string $uuid)
     {
         $polygonUuids = $this->getSitePolygonsUuids($uuid)->toArray();
+
         return $this->processClippedPolygons($polygonUuids);
     }
 
@@ -1174,7 +1176,7 @@ class TerrafundCreateGeometryController extends Controller
             ->where('criteria_id', PolygonService::OVERLAPPING_CRITERIA_ID)
             ->latest()
             ->value('extra_info');
-        if (!$polygonOverlappingExtraInfo) {
+        if (! $polygonOverlappingExtraInfo) {
             return response()->json(['error' => 'Need to run checks.'], 400);
         }
         $decodedInfo = json_decode($polygonOverlappingExtraInfo, true);
@@ -1202,7 +1204,7 @@ class TerrafundCreateGeometryController extends Controller
             foreach ($clippedPolygons['features'] as $feature) {
                 if (isset($feature['properties']['poly_id'])) {
                     $poly_id = $feature['properties']['poly_id'];
-                    $result = CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($poly_id, json_encode(["geometry" => $feature]));
+                    $result = CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($poly_id, json_encode(['geometry' => $feature]));
                     $results[] = $result;
 
                     if (isset($result->original['uuid'])) {
