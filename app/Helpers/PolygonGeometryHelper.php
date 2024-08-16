@@ -64,7 +64,7 @@ class PolygonGeometryHelper
         $sitePolygons = SitePolygon::whereIn('poly_id', $uuids)
                         ->get($fields)
                         ->toArray();
-    
+
         return $sitePolygons;
     }
 }

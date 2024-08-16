@@ -23,10 +23,13 @@ class TerrafundClipGeometryController extends Controller
 
     public function clipOverlappingPolygons(string $uuid)
     {
-        $polygonOverlappingExtraInfo = CriteriaSite::polygonProjection($uuid, PolygonService::OVERLAPPING_CRITERIA_ID)
-            ->value('extra_info');
+        $polygonOverlappingExtraInfo = CriteriaSite::forCriteria(PolygonService::OVERLAPPING_CRITERIA_ID)
+          ->where('polygon_id', $uuid)
+          ->first()
+          ->extra_info ?? null;
+
         if (! $polygonOverlappingExtraInfo) {
-            return response()->json(['error' => 'Need to run checks.'], 400);
+            return response()->json(['error' => 'Need to run checks or there is no overlapping error'], 400);
         }
         $decodedInfo = json_decode($polygonOverlappingExtraInfo, true);
 
