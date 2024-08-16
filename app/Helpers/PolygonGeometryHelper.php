@@ -59,12 +59,12 @@ class PolygonGeometryHelper
         }
     }
 
-    public static function getPolygonsWithNames(array $uuids)
+    public static function getPolygonsProjection(array $uuids, array $fields)
     {
         $sitePolygons = SitePolygon::whereIn('poly_id', $uuids)
-                        ->get(['poly_id', 'poly_name'])
+                        ->get($fields)
                         ->toArray();
-
+    
         return $sitePolygons;
     }
 }

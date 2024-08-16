@@ -44,4 +44,10 @@ class CriteriaSite extends Model
     {
         return $query->where('criteria_id', $criteriaId)->latest();
     }
+    public function scopePolygonCriteria($query, $polygonId, $criteriaId)
+    {
+        return $query->where('polygon_id', $polygonId)
+                     ->where('criteria_id', $criteriaId)
+                     ->latest();
+    }
 }

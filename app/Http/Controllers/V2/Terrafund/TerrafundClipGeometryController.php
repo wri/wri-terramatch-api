@@ -23,9 +23,7 @@ class TerrafundClipGeometryController extends Controller
 
     public function clipOverlappingPolygons(string $uuid)
     {
-        $polygonOverlappingExtraInfo = CriteriaSite::where('polygon_id', $uuid)
-            ->where('criteria_id', PolygonService::OVERLAPPING_CRITERIA_ID)
-            ->latest()
+        $polygonOverlappingExtraInfo = CriteriaSite::polygonProjection($uuid, PolygonService::OVERLAPPING_CRITERIA_ID)
             ->value('extra_info');
         if (! $polygonOverlappingExtraInfo) {
             return response()->json(['error' => 'Need to run checks.'], 400);
@@ -65,7 +63,7 @@ class TerrafundClipGeometryController extends Controller
             Log::error('Error clipping polygons', ['clippedPolygons' => $clippedPolygons]);
         }
 
-        $updatedPolygons = PolygonGeometryHelper::getPolygonsWithNames($uuids);
+        $updatedPolygons = PolygonGeometryHelper::getPolygonsProjection($uuids, ['poly_id', 'poly_name']);
 
         return response()->json(['updated_polygons' => $updatedPolygons]);
     }
