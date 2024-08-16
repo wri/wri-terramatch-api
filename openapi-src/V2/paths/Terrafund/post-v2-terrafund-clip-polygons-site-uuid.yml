@@ -1,22 +1,20 @@
-paths:
-  /clip-polygons/site/{uuid}:
-    post:
-      summary: Clip Overlapping Polygons by Site
-      description: Clips overlapping polygons based on the provided site UUID and returns the updated polygons.
-      parameters:
-        - name: uuid
-          in: path
-          description: The UUID of the site to clip polygons for.
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Clipped polygons processed successfully
-          schema:
-            $ref: '#/definitions/ClippedPolygonsResponse'
-        '400':
-          description: Bad request
-        '404':
-          description: Site not found
-        '500':
-          description: Internal server error
+post:
+  summary: Clip Overlapping Polygons by Site
+  description: Clips overlapping polygons based on the provided site UUID and returns the updated polygons.
+  parameters:
+    - name: uuid
+      in: path
+      description: The UUID of the site to clip polygons for.
+      required: true
+      type: string
+  responses:
+    '200':
+      description: Clipped polygons processed successfully
+      schema:
+        $ref: '../../definitions/_index.yml#/ClippedPolygonsResponse'
+    '400':
+      description: Bad request
+    '404':
+      description: Site not found
+    '500':
+      description: Internal server error

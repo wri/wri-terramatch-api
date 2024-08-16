@@ -2699,6 +2699,6 @@
 /v2/terrafund/clip-polygons/polygon/{uuid}:
   post:
     $ref: './Terrafund/post-v2-terrafund-clip-polygons-polygon-uuid.yml'
-/v2/terrafund/clip-polygons/site/:
+/v2/terrafund/clip-polygons/site/{uuid}:
   post:
     $ref: './Terrafund/post-v2-terrafund-clip-polygons-site-uuid.yml'
