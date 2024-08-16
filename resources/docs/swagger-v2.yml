@@ -93501,67 +93501,65 @@ paths:
                     type: string
   '/v2/terrafund/clip-polygons/polygon/{uuid}':
     post:
-      post:
-        summary: Clip Overlapping Polygons by Polygon
-        description: Clips overlapping polygons based on the provided polygon UUID and returns the updated polygons.
-        parameters:
-          - name: uuid
-            in: path
-            description: The UUID of the polygon to clip polygons for.
-            required: true
-            type: string
-        responses:
-          '200':
-            description: Clipped polygons processed successfully
-            schema:
-              title: ClippedPolygonsResponse
-              type: object
-              properties:
-                updated_polygons:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      poly_name:
-                        type: string
-          '400':
-            description: Bad request
-          '404':
-            description: Polygon not found
-          '500':
-            description: Internal server error
+      summary: Clip Overlapping Polygons by Polygon
+      description: Clips overlapping polygons based on the provided polygon UUID and returns the updated polygons.
+      parameters:
+        - name: uuid
+          in: path
+          description: The UUID of the polygon to clip polygons for.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Clipped polygons processed successfully
+          schema:
+            title: ClippedPolygonsResponse
+            type: object
+            properties:
+              updated_polygons:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    poly_name:
+                      type: string
+        '400':
+          description: Bad request
+        '404':
+          description: Polygon not found
+        '500':
+          description: Internal server error
   '/v2/terrafund/clip-polygons/site/{uuid}':
     post:
-      post:
-        summary: Clip Overlapping Polygons by Site
-        description: Clips overlapping polygons based on the provided site UUID and returns the updated polygons.
-        parameters:
-          - name: uuid
-            in: path
-            description: The UUID of the site to clip polygons for.
-            required: true
-            type: string
-        responses:
-          '200':
-            description: Clipped polygons processed successfully
-            schema:
-              title: ClippedPolygonsResponse
-              type: object
-              properties:
-                updated_polygons:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      poly_name:
-                        type: string
-          '400':
-            description: Bad request
-          '404':
-            description: Site not found
-          '500':
-            description: Internal server error
+      summary: Clip Overlapping Polygons by Site
+      description: Clips overlapping polygons based on the provided site UUID and returns the updated polygons.
+      parameters:
+        - name: uuid
+          in: path
+          description: The UUID of the site to clip polygons for.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Clipped polygons processed successfully
+          schema:
+            title: ClippedPolygonsResponse
+            type: object
+            properties:
+              updated_polygons:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    poly_name:
+                      type: string
+        '400':
+          description: Bad request
+        '404':
+          description: Site not found
+        '500':
+          description: Internal server error
