@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
-use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
-use App\Helpers\PolygonGeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
-use App\Services\PythonService;
 use App\Services\SiteService;
 use App\Validators\Extensions\Polygons\EstimatedArea;
 use App\Validators\Extensions\Polygons\FeatureBounds;
@@ -1085,7 +1081,7 @@ class TerrafundCreateGeometryController extends Controller
         try {
             $uuid = $request->input('uuid');
 
-            $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
+            $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid);
 
             foreach ($sitePolygonsUuids as $polygonUuid) {
                 $this->runValidationPolygon($polygonUuid);
@@ -1103,7 +1099,7 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuid = $request->input('uuid');
-            $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
+            $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid);
             $checkedPolygons = [];
 
             foreach ($sitePolygonsUuids as $polygonUuid) {
@@ -1150,72 +1146,11 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
-    private function getSitePolygonsUuids($uuid)
-    {
-        return SitePolygon::where('site_id', $uuid)->where('is_active', true)->get()->pluck('poly_id');
-    }
-
     private function fetchCriteriaData($polygonUuid)
     {
         $polygonRequest = new Request(['uuid' => $polygonUuid]);
         $criteriaDataResponse = $this->getCriteriaData($polygonRequest);
 
         return json_decode($criteriaDataResponse->getContent(), true);
-    }
-
-    public function clipOverlappingPolygonsBySite(string $uuid)
-    {
-        $polygonUuids = $this->getSitePolygonsUuids($uuid)->toArray();
-
-        return $this->processClippedPolygons($polygonUuids);
-    }
-
-    public function clipOverlappingPolygons(string $uuid)
-    {
-        $polygonOverlappingExtraInfo = CriteriaSite::where('polygon_id', $uuid)
-            ->where('criteria_id', PolygonService::OVERLAPPING_CRITERIA_ID)
-            ->latest()
-            ->value('extra_info');
-        if (! $polygonOverlappingExtraInfo) {
-            return response()->json(['error' => 'Need to run checks.'], 400);
-        }
-        $decodedInfo = json_decode($polygonOverlappingExtraInfo, true);
-
-        $polygonUuidsOverlapping = array_map(function ($item) {
-            return $item['poly_uuid'] ?? null;
-        }, $decodedInfo);
-
-        $polygonUuids = array_filter($polygonUuidsOverlapping);
-
-        array_unshift($polygonUuids, $uuid);
-
-        return $this->processClippedPolygons($polygonUuids);
-    }
-
-    private function processClippedPolygons(array $polygonUuids)
-    {
-        $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
-
-        $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
-        $uuids = [];
-
-        if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
-            foreach ($clippedPolygons['features'] as $feature) {
-                if (isset($feature['properties']['poly_id'])) {
-                    $poly_id = $feature['properties']['poly_id'];
-                    $result = CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($poly_id, json_encode(['geometry' => $feature]));
-
-                    if (isset($result->original['uuid'])) {
-                        $uuids[] = $result->original['uuid'];
-                    }
-                }
-            }
-        } else {
-            Log::error('Error clipping polygons', ['clippedPolygons' => $clippedPolygons]);
-        }
-
-        $updatedPolygons = PolygonGeometryHelper::getPolygonsWithNames($uuids);
-
-        return response()->json(['updated_polygons' => $updatedPolygons]);
     }
 }

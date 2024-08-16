@@ -7,6 +7,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -357,5 +358,10 @@ class GeometryHelper
             'type' => 'FeatureCollection',
             'features' => $features,
         ];
+    }
+
+    public static function getSitePolygonsUuids($uuid)
+    {
+        return SitePolygon::where('site_id', $uuid)->where('is_active', true)->get()->pluck('poly_id');
     }
 }
