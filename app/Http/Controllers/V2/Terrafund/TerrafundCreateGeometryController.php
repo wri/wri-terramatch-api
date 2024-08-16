@@ -1198,7 +1198,6 @@ class TerrafundCreateGeometryController extends Controller
 
         $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
         $uuids = [];
-        $results = [];
 
         if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
             foreach ($clippedPolygons['features'] as $feature) {
