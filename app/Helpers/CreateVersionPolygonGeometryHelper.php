@@ -24,7 +24,7 @@ class CreateVersionPolygonGeometryHelper
                 $geometry = $geometry->input('geometry');
             }
 
-            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
+            $polygonGeometry = PolygonGeometry::isUuid($uuid)->first();
 
             if (! $polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
@@ -47,9 +47,11 @@ class CreateVersionPolygonGeometryHelper
                 PolyHelper::updateEstAreainSitePolygon($newGeometryVersion, $geometry);
                 PolyHelper::updateProjectCentroidFromPolygon($newGeometryVersion);
                 $newPolygonVersion->changeStatusOnEdit();
+
+                return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid], 201);
             }
 
-            return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid], 201);
+            return response()->json(['message' => 'Failed to create site polygon version.'], 500);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
