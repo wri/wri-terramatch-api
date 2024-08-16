@@ -1,0 +1,19 @@
+summary: Clip Overlapping Polygons by Polygon
+description: Clips overlapping polygons based on the provided polygon UUID and returns the updated polygons.
+parameters:
+  - name: uuid
+    in: path
+    description: The UUID of the polygon to clip polygons for.
+    required: true
+    type: string
+responses:
+  '200':
+    description: Clipped polygons processed successfully
+    schema:
+      $ref: '../../definitions/_index.yml#/ClippedPolygonsResponse'
+  '400':
+    description: Bad request
+  '404':
+    description: Polygon not found
+  '500':
+    description: Internal server error
