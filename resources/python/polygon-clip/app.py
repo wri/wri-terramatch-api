@@ -4,9 +4,11 @@ from pathlib import Path
 from itertools import combinations
 import numpy as np
 import pyproj
-from shapely.geometry import shape, mapping
-from shapely.ops import transform
+from shapely.geometry import shape, mapping, Polygon
+from shapely.ops import transform, unary_union
 from shapely.validation import make_valid
+import logging
+
 
 # Constants
 WGS84_CRS = pyproj.crs.CRS("epsg:4326")
@@ -23,11 +25,11 @@ def shape_hectares_from_wgs84(geom):
         geom_reproj = transform(transformer.transform, geom)
         area = geom_reproj.area
         if not np.isfinite(area):
-            print(f"Warning: Invalid area calculated. Using envelope area as fallback.")
+            logging.warning(f"Warning: Invalid geometry found in feature {i}. Attempting to fix.")
             area = geom_reproj.envelope.area
         return m2_to_hectare(area)
     except Exception as e:
-        print(f"Error in shape_hectares_from_wgs84: {e}")
+        logging.warning(f"Error in shape_hectares_from_wgs84: {e}")
         return 0
 def process_features(features):
     try:
@@ -35,10 +37,10 @@ def process_features(features):
         for i, f in enumerate(features):
             geom = shape(f['geometry'])
             if not geom.is_valid:
-                print(f"Warning: Invalid geometry found in feature {i}. Attempting to fix.")
+                logging.warning(f"Warning: Invalid geometry found in feature {i}. Attempting to fix.")
                 geom = make_valid(geom)
                 if not geom.is_valid:
-                    print(f"Error: Unable to fix invalid geometry in feature {i}. Skipping.")
+                    logging.warning(f"Error: Unable to fix invalid geometry in feature {i}. Skipping.")
                     continue
             orig_data.append((i, {
                 'geometry': geom,
@@ -46,9 +48,8 @@ def process_features(features):
             }))
         return orig_data
     except Exception as e:
-        print(f"Error in process_features: {e}")
+        logging.warning(f"Error in process_features: {e}")
         return []
-
 def fix_overlaps(orig_data):
     try:
         changes = {}
@@ -68,24 +69,30 @@ def fix_overlaps(orig_data):
                 try:
                     overlap_shape = smaller_geom.intersection(larger_geom)
                     if not overlap_shape.is_valid:
-                        print(f"Warning: Invalid overlap shape between features {smaller_idx} and {larger_idx}. Skipping.")
+                        logging.warning(f"Invalid overlap shape between features {smaller_idx} and {larger_idx}. Skipping.")
                         continue
                     pct_overlap = 100 * overlap_shape.area / smaller_geom.area
                     area_overlap = shape_hectares_from_wgs84(overlap_shape)
                     if (pct_overlap <= 3.5) and (area_overlap <= 0.1):
-                        larger_geom_new = larger_geom.difference(smaller_geom)
+                        # Create a small buffer around the smaller polygon
+                        buffer_distance = 0.00001  # Adjust this value as needed
+                        smaller_buffered = smaller_geom.buffer(buffer_distance)
+                        
+                        # Clip the larger polygon with the buffered smaller polygon
+                        larger_geom_new = larger_geom.difference(smaller_buffered)
+                        
                         if not larger_geom_new.is_valid:
-                            print(f"Warning: Invalid geometry after difference operation between features {smaller_idx} and {larger_idx}. Skipping.")
+                            logging.warning(f"Invalid geometry after difference operation between features {smaller_idx} and {larger_idx}. Skipping.")
                             continue
                         changes[larger_idx] = larger_geom_new
                 except Exception as e:
-                    print(f"Error processing overlap between features {smaller_idx} and {larger_idx}: {e}")
+                    logging.error(f"Error processing overlap between features {smaller_idx} and {larger_idx}: {e}")
                     continue
+        logging.info(f"Fixed {len(changes)} overlaps")
         return changes
     except Exception as e:
-        print(f"Error in fix_overlaps: {e}")
+        logging.error(f"Error in fix_overlaps: {e}")
         return {}
-
 def create_output_geojson(orig_data, changes):
     try:
         output_features = []
@@ -99,7 +106,7 @@ def create_output_geojson(orig_data, changes):
                 })
         return {"type": "FeatureCollection", "features": output_features}
     except Exception as e:
-        print(f"Error in create_output_geojson: {e}")
+        logging.warning(f"Error in create_output_geojson: {e}")
 
 def main(input_geojson_path, output_geojson_path):
     try:
@@ -108,7 +115,7 @@ def main(input_geojson_path, output_geojson_path):
 
         features = geojson_data.get("features", [])
         if not features:
-            print("No features found in the GeoJSON file")
+            logging.warning("No features found in the GeoJSON file")
             return
 
         orig_data = process_features(features)
@@ -121,8 +128,9 @@ def main(input_geojson_path, output_geojson_path):
         # print(f"\nOutput GeoJSON as string:\n{output_geojson_str}")
 
     except Exception as e:
-        print(f"Error in main: {e}")
+        logging.warning(f"Error in main: {e}")
 
+logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
 if __name__ == "__main__":
     import argparse
 
