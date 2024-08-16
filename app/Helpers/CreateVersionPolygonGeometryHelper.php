@@ -47,11 +47,11 @@ class CreateVersionPolygonGeometryHelper
                 PolyHelper::updateEstAreainSitePolygon($newGeometryVersion, $geometry);
                 PolyHelper::updateProjectCentroidFromPolygon($newGeometryVersion);
                 $newPolygonVersion->changeStatusOnEdit();
-            } else {
-                return response()->json(['message' => 'Failed to create site polygon version.'], 500);
+
+                return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid], 201);
             }
 
-            return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $uuid], 201);
+            return response()->json(['message' => 'Failed to create site polygon version.'], 500);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
