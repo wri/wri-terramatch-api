@@ -1204,7 +1204,6 @@ class TerrafundCreateGeometryController extends Controller
                 if (isset($feature['properties']['poly_id'])) {
                     $poly_id = $feature['properties']['poly_id'];
                     $result = CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($poly_id, json_encode(['geometry' => $feature]));
-                    $results[] = $result;
 
                     if (isset($result->original['uuid'])) {
                         $uuids[] = $result->original['uuid'];
