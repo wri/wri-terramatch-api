@@ -65,7 +65,6 @@ class TerrafundClipGeometryController extends Controller
         } else {
             Log::error('Error clipping polygons', ['clippedPolygons' => $clippedPolygons]);
         }
-
         $updatedPolygons = PolygonGeometryHelper::getPolygonsProjection($uuids, ['poly_id', 'poly_name']);
 
         return response()->json(['updated_polygons' => $updatedPolygons]);

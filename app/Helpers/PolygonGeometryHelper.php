@@ -62,7 +62,7 @@ class PolygonGeometryHelper
     public static function getPolygonsProjection(array $uuids, array $fields)
     {
         $sitePolygons = SitePolygon::whereIn('poly_id', $uuids)
-                        ->where('is_active', true)
+                        ->where('is_active', 1)
                         ->get($fields)
                         ->toArray();
 
