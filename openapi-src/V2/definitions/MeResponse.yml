@@ -14,7 +14,7 @@ properties:
   role:
     type: string
   organisation:
-    $ref: './_index.yml#/V2AdminOrganisationRead'
+    $ref: './_index.yml#/MyOrganisationLite'
   frameworks:
     type: array
     items:
