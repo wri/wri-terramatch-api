@@ -42682,6 +42682,870 @@ definitions:
               type: string
             poly_name:
               type: string
+  MeResponse:
+    type: object
+    properties:
+      uuid:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      email_address_verified_at:
+        type: string
+        format: date-time
+      role:
+        type: string
+      organisation:
+        title: AdminOrganisationRead
+        type: object
+        properties:
+          uuid:
+            type: string
+          status:
+            type: string
+          readable_status:
+            type: string
+          type:
+            type: string
+          private:
+            type: boolean
+          name:
+            type: string
+          phone:
+            type: string
+          founding_date:
+            type: string
+          description:
+            type: string
+          countries:
+            type: array
+            items:
+              type: string
+          languages:
+            type: array
+            items:
+              type: string
+          tree_species:
+            type: array
+            items:
+              title: V2TreeSpeciesRead
+              x-stoplight:
+                id: 04vvsvyndvy8n
+              type: object
+              properties:
+                uuid:
+                  type: string
+                name:
+                  type: string
+                amount:
+                  type: integer
+                type:
+                  type: string
+                collection:
+                  type: string
+          project_pitches:
+            type: array
+            items:
+              title: ProjectPitchRead
+              x-stoplight:
+                id: rsuskf5on1pya
+              type: object
+              properties:
+                id:
+                  type: string
+                uuid:
+                  type: string
+                status:
+                  type: string
+                readable_status:
+                  type: string
+                organisation_id:
+                  type: string
+                funding_programmes:
+                  title: LimitedFundingProgrammeRead
+                  x-stoplight:
+                    id: uh5oce75en4za
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    uuid:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    read_more_url:
+                      type: string
+                    organisation_types:
+                      type: array
+                      items:
+                        type: string
+                    location:
+                      type: string
+                    status:
+                      type: string
+                tree_species:
+                  type: array
+                  items:
+                    title: V2TreeSpeciesRead
+                    x-stoplight:
+                      id: 04vvsvyndvy8n
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                      name:
+                        type: string
+                      amount:
+                        type: integer
+                      type:
+                        type: string
+                      collection:
+                        type: string
+                project_name:
+                  type: string
+                how_discovered:
+                  type: string
+                project_objectives:
+                  type: string
+                project_country:
+                  type: array
+                  items:
+                    type: string
+                project_county_district:
+                  type: string
+                restoration_intervention_types:
+                  type: array
+                  items:
+                    type: string
+                land_systems:
+                  type: array
+                  items:
+                    type: string
+                tree_restoration_practices:
+                  type: array
+                  items:
+                    type: string
+                total_hectares:
+                  type: integer
+                project_budget:
+                  type: integer
+                total_trees:
+                  type: integer
+                capacity_building_needs:
+                  type: array
+                  items:
+                    type: string
+                additional:
+                  type: array
+                  items:
+                    title: V2FileRead
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                      url:
+                        type: string
+                      thumb_url:
+                        type: string
+                      collection_name:
+                        type: string
+                      title:
+                        type: string
+                      file_name:
+                        type: string
+                      mime_type:
+                        type: string
+                      size:
+                        type: integer
+                      lat:
+                        type: integer
+                      lng:
+                        type: integer
+                      is_public:
+                        type: boolean
+                      created_at:
+                        type: string
+                restoration_photos:
+                  type: array
+                  items:
+                    title: V2FileRead
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                      url:
+                        type: string
+                      thumb_url:
+                        type: string
+                      collection_name:
+                        type: string
+                      title:
+                        type: string
+                      file_name:
+                        type: string
+                      mime_type:
+                        type: string
+                      size:
+                        type: integer
+                      lat:
+                        type: integer
+                      lng:
+                        type: integer
+                      is_public:
+                        type: boolean
+                      created_at:
+                        type: string
+                cover:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    created_at:
+                      type: string
+                proof_of_land_tenure_mou:
+                  type: array
+                  items:
+                    title: V2FileRead
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                      url:
+                        type: string
+                      thumb_url:
+                        type: string
+                      collection_name:
+                        type: string
+                      title:
+                        type: string
+                      file_name:
+                        type: string
+                      mime_type:
+                        type: string
+                      size:
+                        type: integer
+                      lat:
+                        type: integer
+                      lng:
+                        type: integer
+                      is_public:
+                        type: boolean
+                      created_at:
+                        type: string
+                detailed_project_budget:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    created_at:
+                      type: string
+                expected_active_restoration_start_date:
+                  type: string
+                expected_active_restoration_end_date:
+                  type: string
+                description_of_project_timeline:
+                  type: string
+                proj_partner_info:
+                  type: string
+                land_tenure_proj_area:
+                  type: array
+                  items:
+                    type: string
+                landholder_comm_engage:
+                  type: string
+                proj_success_risks:
+                  type: string
+                monitor_eval_plan:
+                  type: string
+                proj_boundary:
+                  type: string
+                sustainable_dev_goals:
+                  type: array
+                  items:
+                    type: string
+                proj_area_description:
+                  type: string
+                proposed_num_sites:
+                  type: integer
+                  minimum: 0
+                  maximum: 4294967295
+                environmental_goals:
+                  type: string
+                main_degradation_causes:
+                  type: string
+                seedlings_source:
+                  type: string
+                proposed_num_nurseries:
+                  type: integer
+                  minimum: 0
+                  maximum: 4294967295
+                curr_land_degradation:
+                  type: string
+                proj_impact_socieconom:
+                  type: string
+                proj_impact_foodsec:
+                  type: string
+                proj_impact_watersec:
+                  type: string
+                proj_impact_jobtypes:
+                  type: string
+                num_jobs_created:
+                  type: integer
+                  minimum: 0
+                  maximum: 4294967295
+                pct_employees_men:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                pct_employees_women:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                pct_employees_18to35:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                pct_employees_older35:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                proj_beneficiaries:
+                  type: integer
+                pct_beneficiaries_women:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                pct_beneficiaries_small:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                pct_beneficiaries_large:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                pct_beneficiaries_youth:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                pct_beneficiaries_scheduled_classes:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                pct_beneficiaries_scheduled_tribes:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                monitoring_evaluation_plan:
+                  type: string
+                main_causes_of_degradation:
+                  type: string
+                deleted_at:
+                  type: string
+                created_at:
+                  type: string
+                updated_at:
+                  type: string
+          web_url:
+            type: string
+          facebook_url:
+            type: string
+          instagram_url:
+            type: string
+          linkedin_url:
+            type: string
+          twitter_url:
+            type: string
+          hq_street_1:
+            type: string
+          hq_street_2:
+            type: string
+          hq_city:
+            type: string
+          hq_state:
+            type: string
+          hq_zipcode:
+            type: string
+          hq_country:
+            type: string
+          fin_start_month:
+            type: integer
+          fin_budget_3year:
+            type: number
+            format: float
+          fin_budget_2year:
+            type: number
+            format: float
+          fin_budget_1year:
+            type: number
+            format: float
+          fin_budget_current_year:
+            type: number
+            format: float
+          ha_restored_total:
+            type: number
+            format: float
+          ha_restored_3year:
+            type: number
+            format: float
+          relevant_experience_years:
+            type: integer
+          trees_grown_total:
+            type: integer
+          trees_grown_3year:
+            type: integer
+          tree_care_approach:
+            type: string
+          ft_permanent_employees:
+            type: integer
+          pt_permanent_employees:
+            type: integer
+          temp_employees:
+            type: integer
+          female_employees:
+            type: integer
+          male_employees:
+            type: integer
+          young_employees:
+            type: integer
+          additional_funding_details:
+            type: string
+          community_experience:
+            type: string
+          total_engaged_community_members_3yr:
+            type: integer
+          percent_engaged_women_3yr:
+            type: integer
+          percent_engaged_men_3yr:
+            type: integer
+          percent_engaged_under_35_3yr:
+            type: integer
+          percent_engaged_over_35_3yr:
+            type: integer
+          percent_engaged_smallholder_3yr:
+            type: integer
+          total_trees_grown:
+            type: integer
+          avg_tree_survival_rate:
+            type: integer
+          tree_maintenance_aftercare_approach:
+            type: string
+          restored_areas_description:
+            type: string
+          monitoring_evaluation_experience:
+            type: string
+          funding_history:
+            type: string
+          shapefiles:
+            type: array
+            items:
+              title: ShapefileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                shapefileable_type:
+                  type: string
+                shapefileable_id:
+                  type: integer
+                geojson:
+                  type: string
+                created_at:
+                  type: string
+                updated_at:
+                  type: string
+                deleted_at:
+                  type: string
+          bank_statements:
+            type: array
+            items:
+              title: V2FileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                url:
+                  type: string
+                thumb_url:
+                  type: string
+                collection_name:
+                  type: string
+                title:
+                  type: string
+                file_name:
+                  type: string
+                mime_type:
+                  type: string
+                size:
+                  type: integer
+                lat:
+                  type: integer
+                lng:
+                  type: integer
+                is_public:
+                  type: boolean
+                created_at:
+                  type: string
+          previous_annual_reports:
+            type: array
+            items:
+              title: V2FileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                url:
+                  type: string
+                thumb_url:
+                  type: string
+                collection_name:
+                  type: string
+                title:
+                  type: string
+                file_name:
+                  type: string
+                mime_type:
+                  type: string
+                size:
+                  type: integer
+                lat:
+                  type: integer
+                lng:
+                  type: integer
+                is_public:
+                  type: boolean
+                created_at:
+                  type: string
+          logo:
+            title: V2FileRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              url:
+                type: string
+              thumb_url:
+                type: string
+              collection_name:
+                type: string
+              title:
+                type: string
+              file_name:
+                type: string
+              mime_type:
+                type: string
+              size:
+                type: integer
+              lat:
+                type: integer
+              lng:
+                type: integer
+              is_public:
+                type: boolean
+              created_at:
+                type: string
+          cover:
+            title: V2FileRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              url:
+                type: string
+              thumb_url:
+                type: string
+              collection_name:
+                type: string
+              title:
+                type: string
+              file_name:
+                type: string
+              mime_type:
+                type: string
+              size:
+                type: integer
+              lat:
+                type: integer
+              lng:
+                type: integer
+              is_public:
+                type: boolean
+              created_at:
+                type: string
+          reference:
+            type: array
+            items:
+              title: V2FileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                url:
+                  type: string
+                thumb_url:
+                  type: string
+                collection_name:
+                  type: string
+                title:
+                  type: string
+                file_name:
+                  type: string
+                mime_type:
+                  type: string
+                size:
+                  type: integer
+                lat:
+                  type: integer
+                lng:
+                  type: integer
+                is_public:
+                  type: boolean
+                created_at:
+                  type: string
+          additional:
+            type: array
+            items:
+              title: V2FileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                url:
+                  type: string
+                thumb_url:
+                  type: string
+                collection_name:
+                  type: string
+                title:
+                  type: string
+                file_name:
+                  type: string
+                mime_type:
+                  type: string
+                size:
+                  type: integer
+                lat:
+                  type: integer
+                lng:
+                  type: integer
+                is_public:
+                  type: boolean
+                created_at:
+                  type: string
+          op_budget_2year:
+            type: array
+            items:
+              title: V2FileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                url:
+                  type: string
+                thumb_url:
+                  type: string
+                collection_name:
+                  type: string
+                title:
+                  type: string
+                file_name:
+                  type: string
+                mime_type:
+                  type: string
+                size:
+                  type: integer
+                lat:
+                  type: integer
+                lng:
+                  type: integer
+                is_public:
+                  type: boolean
+                created_at:
+                  type: string
+          op_budget_last_year:
+            type: array
+            items:
+              title: V2FileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                url:
+                  type: string
+                thumb_url:
+                  type: string
+                collection_name:
+                  type: string
+                title:
+                  type: string
+                file_name:
+                  type: string
+                mime_type:
+                  type: string
+                size:
+                  type: integer
+                lat:
+                  type: integer
+                lng:
+                  type: integer
+                is_public:
+                  type: boolean
+                created_at:
+                  type: string
+          op_budget_this_year:
+            type: array
+            items:
+              title: V2FileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                url:
+                  type: string
+                thumb_url:
+                  type: string
+                collection_name:
+                  type: string
+                title:
+                  type: string
+                file_name:
+                  type: string
+                mime_type:
+                  type: string
+                size:
+                  type: integer
+                lat:
+                  type: integer
+                lng:
+                  type: integer
+                is_public:
+                  type: boolean
+                created_at:
+                  type: string
+          op_budget_next_year:
+            type: array
+            items:
+              title: V2FileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                url:
+                  type: string
+                thumb_url:
+                  type: string
+                collection_name:
+                  type: string
+                title:
+                  type: string
+                file_name:
+                  type: string
+                mime_type:
+                  type: string
+                size:
+                  type: integer
+                lat:
+                  type: integer
+                lng:
+                  type: integer
+                is_public:
+                  type: boolean
+                created_at:
+                  type: string
+          legal_registration:
+            type: array
+            items:
+              title: V2FileRead
+              type: object
+              properties:
+                uuid:
+                  type: string
+                url:
+                  type: string
+                thumb_url:
+                  type: string
+                collection_name:
+                  type: string
+                title:
+                  type: string
+                file_name:
+                  type: string
+                mime_type:
+                  type: string
+                size:
+                  type: integer
+                lat:
+                  type: integer
+                lng:
+                  type: integer
+                is_public:
+                  type: boolean
+                created_at:
+                  type: string
+          tags:
+            type: array
+            description: 'this is a list of key value pairs eg. slug: name'
+            items:
+              type: string
+          created_at:
+            type: string
+          updated_at:
+            type: string
+      frameworks:
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            slug:
+              type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -87441,13 +88305,7 @@ paths:
           schema:
             type: object
             properties:
-              id:
-                type: number
               uuid:
-                type: string
-              role:
-                type: string
-              job_role:
                 type: string
               first_name:
                 type: string
@@ -87455,9 +88313,10 @@ paths:
                 type: string
               email_address:
                 type: string
-              phone_number:
+              email_address_verified_at:
                 type: string
-              whatsapp_phone:
+                format: date-time
+              role:
                 type: string
               organisation:
                 title: AdminOrganisationRead
@@ -88298,25 +89157,15 @@ paths:
                     type: string
                   updated_at:
                     type: string
-              last_logged_in_at:
-                type: string
-                format: date-time
-              email_address_verified_at:
-                type: string
-                format: date-time
-              verified:
-                type: boolean
-              date_added:
-                type: string
-                format: date-time
-              banners:
-                type: string
-              updated_at:
-                type: string
-                format: date-time
-              created_at:
-                type: string
-                format: date-time
+              frameworks:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    slug:
+                      type: string
       operationId: get-logged-user-details
   /auth/login:
     post:
