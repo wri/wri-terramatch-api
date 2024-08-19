@@ -275,6 +275,23 @@ class User extends Authenticatable implements JWTSubject
         return Application::whereIn('organisation_uuid', $orgUuids)->get();
     }
 
+    public function getMyFrameworksAttribute(): Collection
+    {
+        if ($this->is_admin) {
+            $permissions = $this->getPermissionsViaRoles();
+            $frameworkPermissions = $permissions->filter(function ($permission) {
+                return Str::startsWith($permission->name, 'framework-');
+            });
+            $frameworkSlugs = $frameworkPermissions->map(function ($permission) {
+                return Str::after($permission->name, 'framework-');
+            });
+        } else {
+            $frameworkSlugs = $this->projects()->distinct('framework_key')->pluck('framework_key');
+        }
+
+        return Framework::whereIn('slug', $frameworkSlugs)->get(['slug', 'name']);
+    }
+
     public function devices()
     {
         return $this->hasMany(Device::class);
