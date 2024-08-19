@@ -15,8 +15,7 @@ WGS84_CRS = pyproj.crs.CRS("epsg:4326")
 
 def m2_to_hectare(meter_square):
     return float(meter_square / 10000)
-
-def shape_hectares_from_wgs84(geom):
+def shape_hectares_from_wgs84(geom, feature_index=None):
     try:
         center = geom.envelope.centroid
         proj_str = f"+ellps=WGS84 +proj=tmerc +lon_0={center.x} +lat_0={center.y} +k=1 +x_0=0 +y_0=0"
@@ -24,12 +23,21 @@ def shape_hectares_from_wgs84(geom):
         transformer = pyproj.Transformer.from_crs(WGS84_CRS, crs_dst)
         geom_reproj = transform(transformer.transform, geom)
         area = geom_reproj.area
+        
         if not np.isfinite(area):
-            logging.warning(f"Warning: Invalid geometry found in feature {i}. Attempting to fix.")
+            if feature_index is not None:
+                logging.warning(f"Warning: Invalid geometry found in feature {feature_index}. Attempting to fix.")
+            else:
+                logging.warning("Warning: Invalid geometry found. Attempting to fix.")
             area = geom_reproj.envelope.area
+        
         return m2_to_hectare(area)
+    
     except Exception as e:
-        logging.warning(f"Error in shape_hectares_from_wgs84: {e}")
+        if feature_index is not None:
+            logging.warning(f"Error in shape_hectares_from_wgs84 for feature {feature_index}: {e}")
+        else:
+            logging.warning(f"Error in shape_hectares_from_wgs84: {e}")
         return 0
 def process_features(features):
     try:
