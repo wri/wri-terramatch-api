@@ -83,7 +83,8 @@ def fix_overlaps(orig_data):
                     area_overlap = shape_hectares_from_wgs84(overlap_shape)
                     if (pct_overlap <= 3.5) and (area_overlap <= 0.1):
                         buffer_distance = 0.000001  # Adjust this value as needed to add a small buffer
-                        smaller_buffered = smaller_geom.buffer(buffer_distance)
+                        smaller_buffered = smaller_geom.buffer(buffer_distance).simplify(tolerance=buffer_distance)
+
                         
                         larger_geom_new = larger_geom.difference(smaller_buffered)
                         
