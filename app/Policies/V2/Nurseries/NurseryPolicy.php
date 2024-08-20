@@ -122,7 +122,7 @@ class NurseryPolicy extends Policy
 
     public function export(?User $user, ?Form $form = null, ?Project $project = null): bool
     {
-        if ($user->role('project-manager')) {
+        if ($user->role === 'project-manager') {
             return $user->my_frameworks_slug->contains($form->framework_key);
         }
 
