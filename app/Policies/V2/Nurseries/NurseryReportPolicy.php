@@ -2,10 +2,10 @@
 
 namespace App\Policies\V2\Nurseries;
 
-use App\Models\User;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\User;
 use App\Policies\Policy;
 
 class NurseryReportPolicy extends Policy
@@ -132,6 +132,10 @@ class NurseryReportPolicy extends Policy
 
     public function export(?User $user, ?Form $form = null, ?Project $project = null): bool
     {
+        if ($user->role === 'project-manager') {
+            return $user->my_frameworks_slug->contains($form->framework_key);
+        }
+
         if ($user->can('projects-manage') && $this->isManagingProject($user, $project)) {
             return true;
         }

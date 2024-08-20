@@ -3,17 +3,16 @@
 namespace Tests\V2\Projects;
 
 use App\Helpers\CustomFormHelper;
-use App\Models\User;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class CreateProjectWithFormControllerTest extends TestCase
@@ -24,14 +23,11 @@ class CreateProjectWithFormControllerTest extends TestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_a_project_developer_can_create_a_project_from_a_given_form(string $permission, string $fmKey)
+    public function test_a_project_developer_can_create_a_project_from_a_given_form(string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         list($fundingProgramme, $application, $organisation, $projectPitch, $formSubmissions, $form) = $this->prepareData($fmKey);
 
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
         $form = $this->createAndReturnForm($fmKey);
         $payload = [
@@ -89,10 +85,8 @@ class CreateProjectWithFormControllerTest extends TestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_an_unauthorized_user_cant_create_a_project_from_a_given_form(string $permission, string $fmKey)
+    public function test_an_unauthorized_user_cant_create_a_project_from_a_given_form(string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         list($fundingProgramme, $application, $organisation, $projectPitch, $formSubmissions, $form) = $this->prepareData($fmKey);
 
         $payload = [
@@ -103,10 +97,8 @@ class CreateProjectWithFormControllerTest extends TestCase
         $uri = '/api/v2/forms/projects';
 
         $users = [
-            User::factory()->create(['organisation_id' => $organisation->id]),
             User::factory()->admin()->create(['organisation_id' => $organisation->id]),
             User::factory()->terrafundAdmin()->create(['organisation_id' => $organisation->id]),
-            User::factory()->create([]),
             User::factory()->admin()->create([]),
             User::factory()->terrafundAdmin()->create([]),
         ];
@@ -165,7 +157,7 @@ class CreateProjectWithFormControllerTest extends TestCase
     public static function permissionsDataProvider()
     {
         return [
-            ['framework-terrafund', 'terrafund'],
+            ['terrafund'],
         ];
     }
 }

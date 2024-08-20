@@ -3,9 +3,8 @@
 namespace Tests\V2\ReportingFrameworks;
 
 use App\Models\Framework;
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexReportingFrameworkControllerTest extends TestCase
@@ -14,11 +13,9 @@ class AdminIndexReportingFrameworkControllerTest extends TestCase
 
     public function test_invoke_action()
     {
-        Artisan::call('v2migration:roles');
         $count = Framework::count();
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();
-        $admin->givePermissionTo(['framework-ppc', 'framework-terrafund']);
 
         $framework = Framework::factory()->count(2)->create();
 

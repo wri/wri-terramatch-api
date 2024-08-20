@@ -367,4 +367,15 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     {
         return $this->title ?? '';
     }
+
+    public static function searchReports($query)
+    {
+        return self::select('v2_site_reports.*')
+            ->join('v2_sites', 'v2_site_reports.site_id', '=', 'v2_sites.id')
+            ->join('v2_projects', 'v2_sites.project_id', '=', 'v2_projects.id')
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+            ->where('v2_projects.name', 'like', "%$query%")
+            ->orWhere('organisations.name', 'like', "%$query%")
+            ->get();
+    }
 }

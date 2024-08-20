@@ -2,9 +2,9 @@
 
 namespace App\Policies\V2\Projects;
 
-use App\Models\User;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\User;
 use App\Policies\Policy;
 use App\StateMachines\EntityStatusStateMachine;
 
@@ -28,7 +28,7 @@ class ProjectPolicy extends Policy
             return true;
         }
 
-        if ($this->isNewRoleUser($user)) {
+        if ($user->can('view-dashboard')) {
             return true;
         }
 
@@ -186,6 +186,10 @@ class ProjectPolicy extends Policy
 
     public function export(?User $user, ?Form $form = null, ?Project $project = null): bool
     {
+        if ($user->role === 'project-manager') {
+            return $user->my_frameworks_slug->contains($form->framework_key);
+        }
+
         return $user->can('framework-' .  $form->framework_key) or
             $user->can('manage-own') && ($user->organisation->id == $project->organisation_id || $user->projects->contains($project->id));
     }

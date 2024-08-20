@@ -2,13 +2,12 @@
 
 namespace Tests\V2\Sites;
 
-use App\Models\User;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class SoftDeleteSiteControllerTest extends TestCase
@@ -21,14 +20,11 @@ class SoftDeleteSiteControllerTest extends TestCase
      */
     public function test_project_developer_can_soft_delete_sites_without_reports(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         $project = Project::factory()->create(['framework_key' => $fmKey]);
         $site = Site::factory()->{$fmKey}()->create([
             'project_id' => $project->id,
         ]);
         $owner = User::factory()->create(['organisation_id' => $project->organisation_id]);
-        $owner->givePermissionTo('manage-own');
 
         $uri = '/api/v2/sites/' . $site->uuid;
 
@@ -48,14 +44,11 @@ class SoftDeleteSiteControllerTest extends TestCase
      */
     public function test_project_developer_cant_soft_delete_sites_with_reports(string $permission, string $fmKey)
     {
-        Artisan::call('v2migration:roles');
-
         $project = Project::factory()->create(['framework_key' => $fmKey]);
         $site = Site::factory()->{$fmKey}()->create([
             'project_id' => $project->id,
         ]);
         $owner = User::factory()->create(['organisation_id' => $project->organisation_id]);
-        $owner->givePermissionTo('manage-own');
 
         SiteReport::factory()->create([
             'site_id' => $site->id,

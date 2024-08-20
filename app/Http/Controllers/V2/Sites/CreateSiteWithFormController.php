@@ -9,6 +9,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Carbon;
 
 class CreateSiteWithFormController extends Controller
 {
@@ -28,6 +29,17 @@ class CreateSiteWithFormController extends Controller
             'project_id' => $project->id,
             'status' => EntityStatusStateMachine::STARTED,
         ]);
+
+        $lastTask = $project->tasks()->orderby('due_at', 'desc')->first();
+
+        if ($lastTask && Carbon::now() <= $lastTask->due_at->subWeeks(4)) {
+            $lastTask->siteReports()->create([
+                'framework_key' => $project->framework_key,
+                'site_id' => $site->id,
+                'status' => 'due',
+                'due_at' => $lastTask->due_at,
+            ]);
+        }
 
         return $site->createSchemaResource();
     }

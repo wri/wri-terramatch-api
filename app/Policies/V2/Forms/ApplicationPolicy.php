@@ -2,8 +2,8 @@
 
 namespace App\Policies\V2\Forms;
 
-use App\Models\User;
 use App\Models\V2\Forms\Application;
+use App\Models\V2\User;
 use App\Policies\Policy;
 
 class ApplicationPolicy extends Policy

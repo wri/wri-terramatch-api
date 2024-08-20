@@ -15,7 +15,7 @@ class StoreUserRequest extends FormRequest
         return [
             'type' => 'sometimes|nullable|string',
             'status' => 'sometimes|nullable|string',
-            'primary_role' => 'sometimes|nullable|string',
+            'role' => 'sometimes|nullable|string',
 
             'first_name' => 'required|string|between:1,255',
             'last_name' => 'required|string|between:1,255',

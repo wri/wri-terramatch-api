@@ -11,6 +11,8 @@ properties:
     type: string
   password:
     type: string
+  role:
+    type: string
   job_role:
     type: string
   facebook:

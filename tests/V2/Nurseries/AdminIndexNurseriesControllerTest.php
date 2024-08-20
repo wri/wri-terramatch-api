@@ -2,10 +2,9 @@
 
 namespace Tests\V2\Nurseries;
 
-use App\Models\User;
 use App\Models\V2\Nurseries\Nursery;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminIndexNurseriesControllerTest extends TestCase
@@ -17,10 +16,7 @@ class AdminIndexNurseriesControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        Artisan::call('v2migration:roles');
         $this->user = User::factory()->admin()->create();
-        $this->user->givePermissionTo('framework-terrafund');
-        $this->user->givePermissionTo('framework-ppc');
 
         Nursery::query()->delete();
         Nursery::factory()->count(5)->create();
