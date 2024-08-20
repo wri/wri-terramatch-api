@@ -11,6 +11,30 @@ use Illuminate\Foundation\Http\FormRequest;
 class UpdateFormSubmissionRequest extends FormRequest
 {
     /**
+     * Prepare the data for validation.
+     *
+     * This method is called before the validation rules are applied. 
+     */
+    protected function prepareForValidation()
+    {
+        $answers = $this->input('answers', []);
+
+        $sanitizedAnswers = array_map(function($item) {
+            if (is_string($item)) {
+                if (preg_match('/\b\w+\s*\([^)]*\)/', $item)) {
+                    // Sanitize by escaping HTML special characters
+                    return htmlspecialchars($item, ENT_QUOTES, 'UTF-8');
+                }
+            }
+
+            return $item;
+        }, $answers);
+
+        // Set the sanitized data back to the request
+        $this->merge(['answers' => $sanitizedAnswers]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      */
     public function rules()
