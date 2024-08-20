@@ -364,3 +364,7 @@ SitePolygonLoaded:
   $ref: './SitePolygonLoaded.yml'
 ClippedPolygonsResponse:
   $ref: './ClippedPolygonsResponse.yml'
+MeResponse:
+  $ref: './MeResponse.yml'
+MyOrganisationLite:
+  $ref: './MyOrganisationLite.yml'
