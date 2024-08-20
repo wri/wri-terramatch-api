@@ -38,7 +38,7 @@ class SitePolicy extends Policy
 
     public function update(?User $user, ?Site $site = null): bool
     {
-        if ($user->can('framework-' . $site->framework_key)) {
+        if ($user->can('framework-' . $site->framework_key) || $this->isAdmin($user)) {
             return true;
         }
 
