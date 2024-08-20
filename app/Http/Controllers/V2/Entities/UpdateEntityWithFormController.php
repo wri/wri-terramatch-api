@@ -16,7 +16,16 @@ class UpdateEntityWithFormController extends Controller
     public function __invoke(EntityModel $entity, UpdateFormSubmissionRequest $formSubmissionRequest)
     {
         $this->authorize('update', $entity);
-        $answers = data_get($formSubmissionRequest->validated(), 'answers', []);
+
+        $answers = array_map(function($item) {
+            if (is_string($item)) {
+                if (preg_match('/\b\w+\s*\([^)]*\)/', $item)) {
+                    return htmlspecialchars($item, ENT_QUOTES, 'UTF-8');
+                }
+            }
+
+            return $item;
+        }, data_get($formSubmissionRequest->validated(), 'answers', []));
 
         $form = $entity->getForm();
         if (empty($form)) {
