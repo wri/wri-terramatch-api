@@ -5,14 +5,13 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
-use App\Http\Controllers\Controller;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Services\PolygonService;
 use App\Services\PythonService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
-class TerrafundClipGeometryController extends Controller
+class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 {
     public function clipOverlappingPolygonsBySite(string $uuid)
     {
@@ -60,11 +59,24 @@ class TerrafundClipGeometryController extends Controller
                     if (isset($result->original['uuid'])) {
                         $uuids[] = $result->original['uuid'];
                     }
+
+                    if (($key = array_search($poly_id, $polygonUuids)) !== false) {
+                        unset($polygonUuids[$key]);
+                    }
                 }
             }
+            $polygonUuids = array_values($polygonUuids);
+            $newPolygonUuids = array_merge($uuids, $polygonUuids);
         } else {
             Log::error('Error clipping polygons', ['clippedPolygons' => $clippedPolygons]);
         }
+
+        if (! empty($uuids)) {
+            foreach ($newPolygonUuids as $polygonUuid) {
+                $this->runValidationPolygon($polygonUuid);
+            }
+        }
+
         $updatedPolygons = PolygonGeometryHelper::getPolygonsProjection($uuids, ['poly_id', 'poly_name']);
 
         return response()->json(['updated_polygons' => $updatedPolygons]);
