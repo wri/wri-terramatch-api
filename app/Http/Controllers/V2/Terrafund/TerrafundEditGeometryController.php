@@ -105,7 +105,7 @@ class TerrafundEditGeometryController extends Controller
 
             Log::info("All related polygons and site polygons deleted successfully for primary UUID: $primaryUuid");
 
-            return response()->json(['message' => 'All related polygons and site polygons deleted successfully.', 'primary_uuid' => $primaryUuid]);
+            return response()->json(['message' => 'All related polygons and site polygons deleted successfully.', 'uuid' => $primaryUuid]);
         } catch (\Exception $e) {
             Log::error('An error occurred: ' . $e->getMessage());
 
