@@ -10,13 +10,14 @@ use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\UpdateRequestStatusStateMachine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UpdateEntityWithFormController extends Controller
 {
     public function __invoke(EntityModel $entity, UpdateFormSubmissionRequest $formSubmissionRequest)
     {
         $this->authorize('update', $entity);
-
+        Log::info("next from  authorize");
         $answers = array_map(function($item) {
             if (is_string($item)) {
                 if (preg_match('/\b\w+\s*\([^)]*\)/', $item)) {
@@ -26,7 +27,7 @@ class UpdateEntityWithFormController extends Controller
 
             return $item;
         }, data_get($formSubmissionRequest->validated(), 'answers', []));
-
+        Log::info("next from verify");
         $form = $entity->getForm();
         if (empty($form)) {
             return new JsonResponse('No form schema found for this framework.', 404);
