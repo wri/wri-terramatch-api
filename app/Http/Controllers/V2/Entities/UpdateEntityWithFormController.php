@@ -28,7 +28,7 @@ class UpdateEntityWithFormController extends Controller
                 }
 
                 return $item;
-            }, data_get($formSubmissionRequest->validate(), 'answers', []));
+            }, data_get($formSubmissionRequest->validated(), 'answers', []));
             Log::info("next from verify");
             $form = $entity->getForm();
             if (empty($form)) {
