@@ -16,7 +16,7 @@ class UpdateEntityWithFormController extends Controller
 {
     public function __invoke(EntityModel $entity, UpdateFormSubmissionRequest $formSubmissionRequest)
     {
-        $this->authorize('update', $entity);
+        // $this->authorize('update', $entity);
         Log::info("next from  authorize");
         $answers = array_map(function($item) {
             if (is_string($item)) {
