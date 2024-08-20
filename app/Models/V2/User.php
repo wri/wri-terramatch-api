@@ -21,12 +21,12 @@ use App\Models\V2\Organisation as V2Organisation;
 use App\Models\V2\Projects\Project;
 use Database\Factories\V2\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
@@ -273,6 +273,27 @@ class User extends Authenticatable implements JWTSubject
         $orgUuids = collect($this->all_my_organisations)->pluck('uuid')->toArray();
 
         return Application::whereIn('organisation_uuid', $orgUuids)->get();
+    }
+
+    public function getMyFrameworksSlugAttribute(): Collection
+    {
+        if ($this->is_admin) {
+            $permissions = $this->getPermissionsViaRoles();
+            $frameworkPermissions = $permissions->filter(function ($permission) {
+                return Str::startsWith($permission->name, 'framework-');
+            });
+
+            return $frameworkPermissions->map(function ($permission) {
+                return Str::after($permission->name, 'framework-');
+            });
+        } else {
+            return $this->projects()->distinct('framework_key')->pluck('framework_key');
+        }
+    }
+
+    public function getMyFrameworksAttribute(): Collection
+    {
+        return Framework::whereIn('slug', $this->my_frameworks_slug)->get(['slug', 'name']);
     }
 
     public function devices()

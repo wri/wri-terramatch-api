@@ -1,0 +1,26 @@
+type: object
+properties:
+  uuid:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  email_address:
+    type: string
+  email_address_verified_at:
+    type: string
+    format: date-time
+  role:
+    type: string
+  organisation:
+    $ref: './_index.yml#/MyOrganisationLite'
+  frameworks:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
