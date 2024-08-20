@@ -9,17 +9,17 @@ abstract class I18nMail extends Mail
     protected string $titleKey;
     protected string $bodyKey;
 
-    public function __construct()
-    {
+    public function build() {
         if (isset($this->subjectKey)) {
-            $this->subject = LocalizationKey::where('key', $this->subjectKey)->firstOrFail();
+            $this->subject = LocalizationKey::where('key', $this->subjectKey)->first()->value;
         }
         if (isset($this->titleKey)) {
-            $this->title = LocalizationKey::where('key', $this->titleKey)->firstOrFail();
+            $this->title = LocalizationKey::where('key', $this->titleKey)->first()->value;
         }
         if (isset($this->bodyKey)) {
-            $this->body = LocalizationKey::where('key', $this->bodyKey)->firstOrFail();
+            $this->body = LocalizationKey::where('key', $this->bodyKey)->first()->value;
         }
+        parent::build();
     }
 
     public function setSubjectKey(string $key): I18nMail
