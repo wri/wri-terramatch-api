@@ -42682,6 +42682,31 @@ definitions:
               type: string
             poly_name:
               type: string
+  DeletedPolygonsResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        description: Success message
+      deleted:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+              description: UUID of the deleted polygon geometry
+      failed:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+              description: UUID of the polygon geometry that failed to delete
+            error:
+              type: string
+              description: Error message for the failed deletion
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -91787,6 +91812,70 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /v2/terrafund/project-polygons:
+    delete:
+      summary: Delete Multiple Polygon Geometries and Associated Site Polygons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uuids:
+                  type: array
+                  items:
+                    type: string
+                    description: UUIDs of the polygon geometries to be deleted
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+                  deleted:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                          description: UUID of the deleted polygon geometry
+                  failed:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                          description: UUID of the polygon geometry that failed to delete
+                        error:
+                          type: string
+                          description: Error message for the failed deletion
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
   /v2/dashboard/jobs-created:
     get:
       summary: view Jobs created for dashboard
