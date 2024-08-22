@@ -10,7 +10,7 @@ use App\Models\Organisation;
 use App\Models\Terrafund\TerrafundNurserySubmission;
 use App\Models\Terrafund\TerrafundProgrammeSubmission;
 use App\Models\Terrafund\TerrafundSiteSubmission;
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DraftFactory extends Factory

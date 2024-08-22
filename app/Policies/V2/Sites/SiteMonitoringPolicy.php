@@ -2,10 +2,11 @@
 
 namespace App\Policies\V2\Sites;
 
-use App\Models\User;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteMonitoring;
+use App\Models\V2\User;
 use App\Policies\Policy;
+use Illuminate\Support\Facades\Log;
 
 class SiteMonitoringPolicy extends Policy
 {
@@ -24,7 +25,8 @@ class SiteMonitoringPolicy extends Policy
 
     public function update(?User $user, ?SiteMonitoring $siteMonitoring = null): bool
     {
-        return $user->can('manage-own') && $this->isTheirs($user, $siteMonitoring->site);
+        return ($user->can('manage-own') || $user->can('monitoring-manage')) &&
+            $this->isTheirs($user, $siteMonitoring->site);
     }
 
     public function delete(?User $user, ?SiteMonitoring $siteMonitoring = null): bool
@@ -57,5 +59,4 @@ class SiteMonitoringPolicy extends Policy
     {
         return $user->organisation->id == $site->project->organisation_id || $user->projects->contains($site->project_id);
     }
-
 }

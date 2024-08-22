@@ -7,7 +7,7 @@ use App\Helpers\DraftHelper;
 use App\Http\Requests\Terrafund\StoreTerrafundFileRequest;
 use App\Http\Requests\Terrafund\StoreTerrafundNurserySubmissionRequest;
 use App\Models\Draft as DraftModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

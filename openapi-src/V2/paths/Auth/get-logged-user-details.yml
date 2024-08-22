@@ -7,5 +7,5 @@ responses:
   '200':
     description: OK
     schema:
-      $ref: '../../definitions/_index.yml#/UserRead'
+      $ref: '../../definitions/_index.yml#/MeResponse'
 operationId: get-logged-user-details

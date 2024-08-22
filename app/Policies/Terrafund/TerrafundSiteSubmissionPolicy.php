@@ -3,7 +3,7 @@
 namespace App\Policies\Terrafund;
 
 use App\Models\Terrafund\TerrafundSiteSubmission;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use App\Policies\Policy;
 use Illuminate\Auth\Access\HandlesAuthorization;
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\AdminDeleteApplicationController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
 use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
+use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
@@ -193,6 +195,7 @@ use App\Http\Controllers\V2\Stages\ViewStageController;
 use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
+use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
 use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
@@ -213,6 +216,7 @@ use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -566,6 +570,10 @@ Route::prefix('geometry')->group(function () {
     Route::post('/validate', [GeometryController::class, 'validateGeometries']);
     Route::delete('', [GeometryController::class, 'deleteGeometries']);
     Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
+    Route::post('{polygon}/new-version', function ($polygon, Request $request) {
+        return CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($polygon, $request);
+    });
+
 });
 
 Route::prefix('project-monitorings')->group(function () {
@@ -642,6 +650,8 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
     Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
     Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
+    Route::post('/clip-polygons/site/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygonsBySite']);
+    Route::post('/clip-polygons/polygon/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygons']);
 
     Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
     Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
@@ -655,6 +665,8 @@ Route::prefix('terrafund')->group(function () {
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
     Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
+
+    Route::post('/new-site-polygon/{uuid}/new-version', [TerrafundEditGeometryController::class, 'createSitePolygonNewVersion']);
 
     Route::post('/project-polygon/{uuid}/{entity_uuid}/{entity_type}', [TerrafundEditGeometryController::class, 'createProjectPolygon']);
 });
@@ -683,6 +695,7 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
 
 ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
+    Route::delete('/{auditable}/{uuid}/delete', DeleteAuditStatusController::class);
 });
 
 Route::prefix('dashboard')->group(function () {

@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Log;
 
 class GreenhouseClient
 {
-    protected string $url;
+    protected ?string $url;
 
-    protected string $token;
+    protected ?string $token;
 
     protected Client $client;
 

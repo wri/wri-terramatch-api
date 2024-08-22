@@ -99,6 +99,7 @@ class ProjectReportResource extends JsonResource
             'local_engagement' => $this->local_engagement,
             'site_addition' => $this->site_addition,
             'paid_other_activity_description' => $this->paid_other_activity_description,
+            'local_engagement_description' => $this->local_engagement_description,
         ];
 
         return $this->appendFilesToResource($data);

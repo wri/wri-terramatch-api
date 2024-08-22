@@ -1081,7 +1081,7 @@ class TerrafundCreateGeometryController extends Controller
         try {
             $uuid = $request->input('uuid');
 
-            $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
+            $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid);
 
             foreach ($sitePolygonsUuids as $polygonUuid) {
                 $this->runValidationPolygon($polygonUuid);
@@ -1099,7 +1099,7 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuid = $request->input('uuid');
-            $sitePolygonsUuids = $this->getSitePolygonsUuids($uuid);
+            $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid);
             $checkedPolygons = [];
 
             foreach ($sitePolygonsUuids as $polygonUuid) {
@@ -1144,11 +1144,6 @@ class TerrafundCreateGeometryController extends Controller
 
             return response()->json(['error' => 'An error occurred during current site validation'], 500);
         }
-    }
-
-    private function getSitePolygonsUuids($uuid)
-    {
-        return SitePolygon::where('site_id', $uuid)->get()->pluck('poly_id');
     }
 
     private function fetchCriteriaData($polygonUuid)

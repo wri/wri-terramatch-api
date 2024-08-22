@@ -41,11 +41,11 @@ class CreateServiceAccount extends Command
             ];
             ServiceAccountValidator::validate('CREATE', $data);
 
-            $data['role'] = 'service';
             $data['email_address_verified_at'] = new DateTime('now', new DateTimeZone('UTC'));
 
             $user = new User($data);
             $user->saveOrFail();
+
             // TODO Allow other types of service account, when/if necessary.
             $user->assignRole('greenhouse-service-account');
 

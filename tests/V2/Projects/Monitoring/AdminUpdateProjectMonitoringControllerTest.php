@@ -2,7 +2,7 @@
 
 namespace Tests\V2\Projects\Monitoring;
 
-use App\Models\User;
+use App\Models\V2\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectMonitoring;
@@ -26,9 +26,7 @@ class AdminUpdateProjectMonitoringControllerTest extends TestCase
 
         $organisation = Organisation::factory()->create();
 
-        Artisan::call('v2migration:roles');
         $this->owner = User::factory()->admin()->create(['organisation_id' => $organisation->id]);
-        $this->owner->givePermissionTo('manage-own');
 
         $this->project = Project::factory()->create([
             'organisation_id' => $organisation->id,

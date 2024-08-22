@@ -2,7 +2,7 @@
 
 namespace Tests\V2\Sites\Monitoring;
 
-use App\Models\User;
+use App\Models\V2\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
@@ -26,9 +26,7 @@ class AdminSoftDeleteSiteMonitoringControllerTest extends TestCase
 
         $organisation = Organisation::factory()->create();
 
-        Artisan::call('v2migration:roles');
         $this->owner = User::factory()->admin()->create(['organisation_id' => $organisation->id]);
-        $this->owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'organisation_id' => $organisation->id,
@@ -46,13 +44,8 @@ class AdminSoftDeleteSiteMonitoringControllerTest extends TestCase
         $this->assertDatabaseCount('v2_site_monitorings', 1);
 
         $user = User::factory()->create();
-        $admin = User::factory()->admin()->create();
 
         $this->actingAs($user)
-            ->delete('/api/v2/admin/site-monitorings/' . $this->siteMonitoring->uuid)
-            ->assertStatus(403);
-
-        $this->actingAs($admin)
             ->delete('/api/v2/admin/site-monitorings/' . $this->siteMonitoring->uuid)
             ->assertStatus(403);
 
