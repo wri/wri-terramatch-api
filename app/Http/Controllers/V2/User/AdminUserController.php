@@ -108,11 +108,11 @@ class AdminUserController extends Controller
         $user->update($data);
 
         if ($request->get('organisation')) {
-            $organisation_id = Organisation::isUuid($request->get('organisation'))
-                ->pluck('id')
+            $organisation = Organisation::isUuid($request->get('organisation'))
                 ->first();
-            if ($organisation_id) {
-                $user->organisation_id = $organisation_id;
+            if ($organisation) {
+                $organisation->partners()->updateExistingPivot($user, ['status' => 'approved'], false);
+                $user->organisation_id = $organisation->id;
                 $user->save();
             }
         }
