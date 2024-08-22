@@ -1,8 +1,4 @@
 summary: Delete multiple polygon geometries and associated site polygons
-consumes:
-  - application/json
-produces:
-  - application/json
 parameters:
   - in: body
     name: body
