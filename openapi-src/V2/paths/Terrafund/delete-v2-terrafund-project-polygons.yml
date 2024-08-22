@@ -1,4 +1,8 @@
-summary: Delete Multiple Polygon Geometries and Associated Site Polygons
+summary: Delete multiple polygon geometries and associated site polygons
+consumes:
+  - application/json
+produces:
+  - application/json
 parameters:
   - in: body
     name: body
@@ -13,29 +17,23 @@ parameters:
             type: string
             description: UUIDs of the polygon geometries to be deleted
 responses:
-  '200':
+  200:
     description: Successful response
-    content:
-      application/json:    
-        schema:
-          $ref: '../../definitions/_index.yml#/DeletedPolygonsResponse'
-  '400':
+    schema:
+      $ref: '../../definitions/_index.yml#/DeletedPolygonsResponse'
+  400:
     description: Bad Request
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              description: Error message
-  '500':
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+  500:
     description: Internal Server Error
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
-              description: Error message
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
