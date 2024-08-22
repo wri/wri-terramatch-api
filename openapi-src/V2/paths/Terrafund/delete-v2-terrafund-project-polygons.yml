@@ -23,17 +23,5 @@ responses:
       $ref: '../../definitions/_index.yml#/DeletedPolygonsResponse'
   400:
     description: Bad Request
-    schema:
-      type: object
-      properties:
-        message:
-          type: string
-          description: Error message
   500:
     description: Internal Server Error
-    schema:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Error message
