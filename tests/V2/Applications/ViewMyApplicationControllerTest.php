@@ -2,12 +2,12 @@
 
 namespace Tests\V2\Applications;
 
-use App\Models\User;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;
 use App\Models\V2\Stages\Stage;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;

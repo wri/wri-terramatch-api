@@ -2,7 +2,7 @@
 
 namespace Tests\V2\Files\Gallery;
 
-use App\Models\User;
+use App\Models\V2\User;
 use App\Models\V2\Sites\SiteMonitoring;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -28,9 +28,7 @@ class ViewSiteMonitoringGalleryControllerTest extends TestCase
     {
         parent::setUp();
 
-        Artisan::call('v2migration:roles');
-        $this->admin = User::factory()->admin()->create();
-        $this->admin->givePermissionTo('framework-ppc');
+        $this->admin = User::factory()->ppcAdmin()->create();
 
         $this->siteMonitoring = SiteMonitoring::factory()->ppc()->create();
 

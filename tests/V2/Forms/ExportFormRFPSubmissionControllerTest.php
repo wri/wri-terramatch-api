@@ -2,7 +2,6 @@
 
 namespace Tests\V2\Forms;
 
-use App\Models\User;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormSubmission;
@@ -11,6 +10,7 @@ use App\Models\V2\LeadershipTeam;
 use App\Models\V2\Organisation;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;

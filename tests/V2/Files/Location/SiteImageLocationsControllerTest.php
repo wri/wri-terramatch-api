@@ -2,13 +2,12 @@
 
 namespace Tests\V2\Files\Location;
 
-use App\Models\User;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class SiteImageLocationsControllerTest extends TestCase
@@ -36,9 +35,7 @@ class SiteImageLocationsControllerTest extends TestCase
     {
         parent::setUp();
 
-        Artisan::call('v2migration:roles');
-        $this->admin = User::factory()->admin()->create();
-        $this->admin->givePermissionTo('framework-ppc');
+        $this->admin = User::factory()->ppcAdmin()->create();
 
         $this->site = Site::factory()
             ->has(SiteReport::factory()->ppc(), 'reports')

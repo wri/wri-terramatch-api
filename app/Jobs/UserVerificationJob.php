@@ -33,7 +33,7 @@ class UserVerificationJob implements ShouldQueue
 
     public function handle()
     {
-        if (! in_array(get_class($this->model), [\App\Models\Admin::class, \App\Models\User::class])) {
+        if (! get_class($this->model) == \App\Models\V2\User::class) {
             throw new Exception();
         }
         $verification = new VerificationModel();

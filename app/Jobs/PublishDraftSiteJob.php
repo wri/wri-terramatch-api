@@ -20,7 +20,7 @@ use App\Http\Requests\StoreSiteTreeSpeciesRequest;
 use App\Http\Requests\StoreSocioeconomicBenefitsRequest;
 use App\Models\Draft as DraftModel;
 use App\Models\Site;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

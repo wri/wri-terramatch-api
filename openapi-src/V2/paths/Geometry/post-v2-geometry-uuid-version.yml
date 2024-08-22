@@ -1,0 +1,47 @@
+summary: create a new version of a geometry
+operationId: post-v2-geometry-uuid-version
+tags:
+  - V2 Geometry
+parameters:
+  - in: path
+    type: string
+    name: UUID
+    required: true
+  - in: body
+    name: body
+    schema:
+      type: object
+      properties:
+        geometry:
+          $ref: '../../definitions/_index.yml#/GeoJSON'
+responses:
+  '404':
+    description: Geometry was not found.
+  '403':
+    description: This account does not have permission to create a new version.
+  '201':
+    description: 'OK: New version was created.'
+    schema:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                enum:
+                  - OVERLAPPING_POLYGON
+                  - SELF_INTERSECTION
+                  - COORDINATE_SYSTEM
+                  - SIZE_LIMIT
+                  - WITHIN_COUNTRY
+                  - SPIKE
+                  - GEOMETRY_TYPE
+                  - TOTAL_AREA_EXPECTED
+                  - TABLE_SCHEMA
+                  - DATA_COMPLETED
+              message:
+                type: string
+                description: Human readable string in English to describe the error.
