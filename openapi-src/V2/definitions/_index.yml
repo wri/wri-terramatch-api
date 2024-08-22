@@ -366,3 +366,7 @@ ClippedPolygonsResponse:
   $ref: './ClippedPolygonsResponse.yml'
 DeletedPolygonsResponse:
   $ref: './DeletedPolygonsResponse.yml'
+MeResponse:
+  $ref: './MeResponse.yml'
+MyOrganisationLite:
+  $ref: './MyOrganisationLite.yml'

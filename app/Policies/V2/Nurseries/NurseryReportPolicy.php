@@ -132,6 +132,10 @@ class NurseryReportPolicy extends Policy
 
     public function export(?User $user, ?Form $form = null, ?Project $project = null): bool
     {
+        if ($user->primaryRole?->name == 'project-manager') {
+            return $user->my_frameworks_slug->contains($form->framework_key);
+        }
+
         if ($user->can('projects-manage') && $this->isManagingProject($user, $project)) {
             return true;
         }
