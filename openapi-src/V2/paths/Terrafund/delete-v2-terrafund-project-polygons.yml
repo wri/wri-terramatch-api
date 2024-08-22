@@ -1,15 +1,17 @@
 summary: Delete Multiple Polygon Geometries and Associated Site Polygons
-requestBody:
-  content:
-    application/json:    
-      schema:
-        type: object
-        properties:
-          uuids:
-            type: array
-            items:
-              type: string
-              description: UUIDs of the polygon geometries to be deleted
+parameters:
+  - in: body
+    name: body
+    description: UUIDs of the polygon geometries to be deleted
+    required: true
+    schema:
+      type: object
+      properties:
+        uuids:
+          type: array
+          items:
+            type: string
+            description: UUIDs of the polygon geometries to be deleted
 responses:
   '200':
     description: Successful response
