@@ -2591,6 +2591,9 @@
 /v2/terrafund/project-polygon/{uuid}/{entity_uuid}/{entity_type}:
   post:
     $ref: './Terrafund/post-v2-terrafund-project-polygon.yml'
+/v2/terrafund/project-polygons:
+  delete:
+    $ref: './Terrafund/delete-v2-terrafund-project-polygons.yml'
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
