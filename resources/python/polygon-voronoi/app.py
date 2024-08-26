@@ -11,6 +11,7 @@ from shapely.ops import transform
 WGS84_CRS = pyproj.crs.CRS("epsg:4326")
 BUFFER_ENVELOPE_SIZE = 5000
 ADDITIONAL_RADIUS = 5
+INTERSECTION_BUFFER = 0.000001
 
 
 def calculate_circle_radius(hectares_area, additional_radius=ADDITIONAL_RADIUS):
@@ -75,7 +76,8 @@ def create_output_geojson(features, transformed_points, buffered_points, voronoi
         for i, (voronoi_polygon, buffered_point, feature) in enumerate(
             zip(voronoi_polygons_per_point, buffered_points, features)
         ):
-            intersection_region = buffered_point.intersection(voronoi_polygon)
+            # Add a buffer to the intersection to prevent overlaps
+            intersection_region = buffered_point.intersection(voronoi_polygon).buffer(-INTERSECTION_BUFFER)
             if intersection_region.is_valid and not intersection_region.is_empty:
                 region_in_wgs84 = transform(to_wgs84, intersection_region)
                 properties = feature.get("properties", {})
