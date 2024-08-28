@@ -543,4 +543,9 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     {
         return $this->sitePolygons()->count();
     }
+
+    public function getTotalHectaresRestoredSumAttribute(): float
+    {
+        return round($this->sitePolygons->where('status', 'approved')->sum('calc_area'));
+    }
 }
