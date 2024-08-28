@@ -14,14 +14,17 @@ class AdminUsersOrganizationController extends Controller
         $this->authorize('readAll', User::class);
         $OwnersWithRequestStatus = $organisation->owners->map(function ($user) {
             $user['status'] = 'approved';
+
             return $user;
         });
         $partnersWithRequestStatus = $organisation->partners->map(function ($user) {
             $user['status'] = $user->pivot->status;
+
             return $user;
         });
 
         $usersOrganisation = $OwnersWithRequestStatus->merge($partnersWithRequestStatus);
+
         return response()->json($usersOrganisation);
     }
 }
