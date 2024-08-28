@@ -12,15 +12,16 @@ class AdminUsersOrganizationController extends Controller
     public function __invoke(Organisation $organisation, Request $request)
     {
         $this->authorize('readAll', User::class);
-        $ownersApproved = $organisation->owners;
-        $partnersStatus = $organisation->partners;
-        $usersFinallyWithOwners = $ownersApproved->each(function ($user) {
+        $OwnersWithRequestStatus = $organisation->owners->map(function ($user) {
             $user['status'] = 'approved';
+            return $user;
         });
-        $usersFinallyWithPartners = $partnersStatus->each(function ($user) {
+        $partnersWithRequestStatus = $organisation->partners->map(function ($user) {
             $user['status'] = $user->pivot->status;
+            return $user;
         });
 
-        return response()->json($usersFinallyWithOwners->merge($usersFinallyWithPartners));
+        $usersOrganisation = $OwnersWithRequestStatus->merge($partnersWithRequestStatus);
+        return response()->json($usersOrganisation);
     }
 }
