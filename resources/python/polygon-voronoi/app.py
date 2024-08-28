@@ -10,7 +10,7 @@ from shapely.ops import transform
 WGS84_CRS = pyproj.crs.CRS("epsg:4326")
 BUFFER_ENVELOPE_SIZE = 5000
 ADDITIONAL_RADIUS = 5
-INTERSECTION_BUFFER = 0.000001
+INTERSECTION_BUFFER = 0.0001
 
 def calculate_circle_radius(hectares_area, additional_radius=ADDITIONAL_RADIUS):
     try:
