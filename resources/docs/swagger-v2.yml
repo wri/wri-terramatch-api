@@ -66084,7 +66084,7 @@ paths:
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
-      operationId: v2-get-organisations-approved-users-uuid
+      operationId: v2-admin-get-users-organisation-list-uuid
       tags:
         - V2 Project Developer
         - V2 Organisations
