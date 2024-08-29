@@ -35,6 +35,11 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         $headings = $this->getAttachedHeadingsForEntity();
 
         foreach ($this->fieldMap as $field) {
+            // Skip the boundary_geojson field as it is not a field that should be exported,
+            // until being removed from the database. 
+            if (isset($field['heading']) && $field['heading'] === 'boundary_geojson') {
+                continue;
+            }
             $headings[] = data_get($field, 'heading', 'unknown') ;
         }
 
@@ -53,6 +58,9 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         $mapped = $this->getAttachedMappedForEntity($entity);
 
         foreach ($fieldMap as $field) {
+            if (isset($field['heading']) && $field['heading'] === 'boundary_geojson') {
+                continue;
+            }
             $mapped[] = $this->getAnswer($field, $answers) ;
         }
 
