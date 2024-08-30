@@ -41,10 +41,12 @@ class CreateProjectInviteController extends Controller
             if ($existingUser->organisation_id == null) {
                 $existingUser->update(['organisation_id' => $project->organisation_id]);
             }
+            $url = str_replace('/reset-password', '/login', $url);
             Mail::to($data['email_address'])->queue(new V2ProjectMonitoringNotification($project->name, $url));
         } else {
             $user = User::create([
                 'email_address' => $data['email_address'],
+                'organisation_id' => $project->organisation_id,
                 // Accounts need to have a password assigned in order to go through the password reset flow.
                 'password' => $this->generateRandomPassword(),
             ]);
