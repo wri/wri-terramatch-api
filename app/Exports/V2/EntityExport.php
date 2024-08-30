@@ -53,11 +53,11 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         $mapped = $this->getAttachedMappedForEntity($entity);
 
         foreach ($fieldMap as $field) {
-            $mapped[] = $this->getAnswer($field, $answers) ;
+            $mapped[] = utf8_encode($this->getAnswer($field, $answers));
         }
 
         foreach ($this->auditFields  as $key => $value) {
-            $mapped[] = data_get($entity, $key, '');
+            $mapped[] = utf8_encode(data_get($entity, $key, ''));
         }
 
         return $mapped;
