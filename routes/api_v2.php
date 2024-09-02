@@ -213,6 +213,7 @@ use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Controllers\V2\UserLocaleController;
 use App\Http\Controllers\V2\TestEmailController;
+use App\Http\Controllers\V2\TestLocaleController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
@@ -744,3 +745,4 @@ Route::get('/type-entity', EntityTypeController::class);
 Route::post('/locale/{locale}', UserLocaleController::class);
 
 Route::get('/locale', TestEmailController::class);
+Route::get('/locale/test', TestLocaleController::class);

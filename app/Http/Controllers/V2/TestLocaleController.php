@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\V2;
 
+use App\Models\V2\I18n\I18nItem;
+use App\Models\V2\LocalizationKey;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
@@ -11,16 +13,16 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
 
 
-class TestEmailController extends Controller
+class TestLocaleController extends Controller
 {
     public function __invoke(): JsonResponse
     {
-        Log::info("here");
+        $localizationKey = LocalizationKey::where('key', 'application-submitted-confirmation.subject')
+            ->first();
         $user = Auth::user();
         App::setLocale($user->locale);
-        Mail::to('jlaura@vizonomy.com')->send(new ApplicationSubmittedConfirmation('this is not translated', $user));
         return response()->json([
-            'message' => 'Test email sent successfully',
+            'message' =>  $localizationKey->translated_value
         ]);
     }
 }

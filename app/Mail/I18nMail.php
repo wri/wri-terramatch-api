@@ -51,8 +51,6 @@ abstract class I18nMail extends Mail
     public function getValueTranslated($valueKey, $userLocation) 
     {
         $localizationKey = LocalizationKey::where('key', $valueKey)->first();
-        // $i18item = I18nItem::where('id', $localizationKey->value_id)->first();
-        $valueTranslation = I18nTranslation::where('i18n_item_id', $localizationKey->value_id)->where('language', $userLocation)->first();
-        return $valueTranslation->getValue();
+        return $localizationKey->translated_value;
     }
 }
