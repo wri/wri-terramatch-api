@@ -16,7 +16,7 @@ class TestEmailController extends Controller
     {
         Log::info("here");
         $user = Auth::user();
-        Mail::to('jlaura@vizonomy.com')->send(new ApplicationSubmittedConfirmation('this is not translated'));
+        Mail::to('jlaura@vizonomy.com')->send(new ApplicationSubmittedConfirmation('this is not translated', $user));
         return response()->json([
             'message' => 'Test email sent successfully',
         ]);
