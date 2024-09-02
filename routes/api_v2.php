@@ -47,6 +47,7 @@ use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllSiteDataAsProjectDeveloperController;
+use App\Http\Controllers\V2\Exports\ExportImageController;
 use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Files\FilePropertiesController;
@@ -686,6 +687,8 @@ ModelInterfaceBindingMiddleware::with(
     prefix: 'file/upload',
     modelParameter: 'mediaModel'
 );
+
+Route::post('/export-image', ExportImageController::class);
 
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
