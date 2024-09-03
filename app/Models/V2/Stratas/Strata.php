@@ -21,6 +21,7 @@ class Strata extends Model implements EntityRelationModel
 
     protected $casts = [
         'published' => 'boolean',
+        'hidden' => 'boolean',
     ];
 
     public $table = 'v2_stratas';
@@ -30,6 +31,7 @@ class Strata extends Model implements EntityRelationModel
         'stratasable_id',
         'description',
         'extent',
+        'hidden',
     ];
 
     public static function createResourceCollection(EntityModel $entity): JsonResource

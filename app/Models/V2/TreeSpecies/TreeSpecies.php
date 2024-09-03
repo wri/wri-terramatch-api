@@ -25,6 +25,7 @@ class TreeSpecies extends Model implements EntityRelationModel
 
     protected $casts = [
         'published' => 'boolean',
+        'hidden' => 'boolean',
     ];
 
     public $table = 'v2_tree_species';
@@ -35,6 +36,8 @@ class TreeSpecies extends Model implements EntityRelationModel
         'speciesable_type',
         'speciesable_id',
         'collection',
+        'hidden',
+
         'old_id',
         'old_model',
     ];
