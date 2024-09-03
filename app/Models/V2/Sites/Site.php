@@ -299,6 +299,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
 
         return Seeding::where('seedable_type', SiteReport::class)
             ->whereIn('seedable_id', $submissionsIds)
+            ->visible()
             ->sum('amount');
     }
 
@@ -330,6 +331,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         return TreeSpecies::where('speciesable_type', SiteReport::class)
             ->whereIn('speciesable_id', $reportIds)
             ->where('collection', TreeSpecies::COLLECTION_PLANTED)
+            ->visible()
             ->sum('amount');
     }
 
@@ -349,6 +351,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
             'workday_id',
             Workday::where('workdayable_type', SiteReport::class)
                 ->whereIn('workdayable_id', $reportQuery->select('id'))
+                ->visible()
                 ->select('id')
         )->gender()->sum('amount') ?? 0;
     }

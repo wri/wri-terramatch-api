@@ -7,6 +7,7 @@ use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\EntityModel;
 use App\Models\V2\EntityRelationModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -70,6 +71,11 @@ class TreeSpecies extends Model implements EntityRelationModel
         }
 
         return new TreeSpeciesCollection($query->paginate());
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 
     public function speciesable()

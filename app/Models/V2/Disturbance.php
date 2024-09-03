@@ -5,6 +5,7 @@ namespace App\Models\V2;
 use App\Http\Resources\V2\Disturbances\DisturbanceCollection;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -56,5 +57,10 @@ class Disturbance extends Model implements EntityRelationModel
     public function disturbanceable()
     {
         return $this->morphTo();
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 }
