@@ -5,11 +5,13 @@ namespace App\Mail;
 use App\Models\Organisation as OrganisationModel;
 use App\Models\Pitch as PitchModel;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
-class VersionRejected extends Mail
+class VersionRejected extends I18nMail
 {
     public function __construct(String $model, Int $id, String $explanation)
     {
+        $user = Auth::user();
         switch ($model) {
             case 'Organisation':
                 $link = '/profile';
@@ -34,11 +36,12 @@ class VersionRejected extends Mail
         if (is_null($version)) {
             throw new Exception();
         }
-        $this->subject = 'Your Changes Have Been Rejected';
-        $this->title = 'Your Changes Have Been Rejected';
-        $this->body = 'Your changes to ' . e($version->name) . ' have been rejected. ' . e($explanation) . '. Follow this link to view the changes.<br><br>' .
-            'If you have any questions, feel free to message us at info@terramatch.org.';
+        $this->setSubjectKey('version-rejected.subject')
+            ->setTitleKey('version-rejected.title')
+            ->setBodyKey('version-rejected.body')
+            ->setParams(['{versionName}' => e($version->name), '{explanation}' => e($explanation)])
+            ->setCta('version-rejected.cta')
+            ->setUserLocation($user->locale);
         $this->link = $link;
-        $this->cta = 'View Changes';
     }
 }

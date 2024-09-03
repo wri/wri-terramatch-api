@@ -1,23 +1,19 @@
 <?php
 
 namespace App\Mail;
+use Illuminate\Support\Facades\Auth;
 
-class FormSubmissionFinalStageApproved extends Mail
+class FormSubmissionFinalStageApproved extends I18nMail
 {
     public function __construct(String $feedback = null)
     {
-        $this->subject = 'Application Approved';
-        $this->title = 'Your application has been approved';
-        if (! is_null($feedback)) {
-            $this->body =
-                'Your application has successfully passed all stages of our evaluation process and has been officially approved. Please see the comments below:<br><br>' .
-                e($feedback) .
-                '<br><br>If you have any immediate queries, please do not hesitate to reach out to our dedicated support team.';
-        } else {
-            $this->body =
-            'Your application has successfully passed all stages of our evaluation process and has been officially approved.
-            If you have any immediate queries, please do not hesitate to reach out to our support team.';
-        }
+        $user = Auth::user();
+        $this->setSubjectKey('form-submission-final-stage-approved.subject')
+            ->setTitleKey('form-submission-final-stage-approved.title')
+            ->setBodyKey(! is_null($feedback) ? 'form-submission-final-stage-approved.body-feedback' : 'form-submission-final-stage-approved.body')
+            ->setParams(['{feedback}' => e($feedback)])
+            ->setUserLocation($user->locale);
+
         $this->transactional = true;
     }
 }

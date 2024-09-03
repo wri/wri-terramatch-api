@@ -3,11 +3,13 @@
 namespace App\Mail;
 
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
-class UpdateVisibility extends Mail
+class UpdateVisibility extends I18nMail
 {
     public function __construct(String $model, Int $id)
     {
+        $user = Auth::user();
         switch ($model) {
             case 'Offer':
                 $link = '/funding/' . $id;
@@ -20,12 +22,11 @@ class UpdateVisibility extends Mail
             default:
                 throw new Exception();
         }
-        $this->subject = "Update Your Project's Funding Status";
-        $this->title = "Update Your Project's Funding Status";
-        $this->body =
-            "It's been three days since someone matched with one of your projects. " .
-            'Do you need to update its funding status?';
+        $this->setSubjectKey('update-visibility.subject')
+            ->setTitleKey('update-visibility.title')
+            ->setBodyKey('update-visibility.body')
+            ->setCta('update-visibility.cta')
+            ->setUserLocation($user->locale);
         $this->link = $link;
-        $this->cta = 'Update Funding Status';
     }
 }

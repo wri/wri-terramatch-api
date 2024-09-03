@@ -1,17 +1,19 @@
 <?php
 
 namespace App\Mail;
+use Illuminate\Support\Facades\Auth;
 
-class SatelliteMapCreated extends Mail
+class SatelliteMapCreated extends I18nMail
 {
     public function __construct(Int $satelliteMapId, String $name)
     {
-        $this->subject = 'Remote Sensing Map Received';
-        $this->title = 'Remote Sensing Map Received';
-        $this->body =
-            'WRI has submitted an updated remote sensing map for ' . e($name) . '.<br><br>' .
-            'Click below to view the map.';
+        $user = Auth::user();
+        $this->setSubjectKey('satellite-map-created.subject')
+            ->setTitleKey('satellite-map-created.title')
+            ->setBodyKey('satellite-map-created.body')
+            ->setParams(['{name}' => e($name)])
+            ->setCta('satellite-map-created.cta')
+            ->setUserLocation($user->locale);
         $this->link = '/monitoring/dashboard/?satelliteId=' . $satelliteMapId;
-        $this->cta = 'View Monitored Project';
     }
 }

@@ -3,13 +3,17 @@
 namespace App\Mail;
 
 use App\Models\V2\Organisation;
+use Illuminate\Support\Facades\Auth;
 
-class OrganisationUserApproved extends Mail
+class OrganisationUserApproved extends I18nMail
 {
     public function __construct(Organisation $organisation)
     {
-        $this->subject = 'You have been accepted to join ' . $organisation->name . ' on TerraMatch';
-        $this->title = 'You have been accepted to join ' . $organisation->name . ' on TerraMatch';
-        $this->body = 'You have been accepted to join ' . $organisation->name . ' on TerraMatch. Log-in to view or update your organization’s information.';
+        $user = Auth::user();
+        $this->setSubjectKey('organisation-user-approved.subject')
+            ->setTitleKey('organisation-user-approved.title')
+            ->setBodyKey('organisation-user-approved.body')
+            ->setParams(['{organisationName}' => $organisation->name])
+            ->setUserLocation($user->locale);
     }
 }

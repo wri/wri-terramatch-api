@@ -1,20 +1,20 @@
 <?php
 
 namespace App\Mail;
+use Illuminate\Support\Facades\Auth;
 
-class TerrafundSiteAndNurseryReminder extends Mail
+class TerrafundSiteAndNurseryReminder extends I18nMail
 {
     public function __construct(int $id)
     {
-        $this->subject = 'Terrafund Site & Nursery Reminder';
-        $this->title = 'Terrafund Site & Nursery Reminder';
-
-        $this->body =
-            'You haven\'t created any sites or nurseries for your project, reports are due in a month.<br><br>' .
-            'Click below to create.<br><br>';
+        $user = Auth::user();
+        $this->setSubjectKey('terrafund-site-and-nursery-reminder.subject')
+            ->setTitleKey('terrafund-site-and-nursery-reminder.title')
+            ->setBodyKey('terrafund-site-and-nursery-reminder.body')
+            ->setCta('terrafund-site-and-nursery-reminder.cta')
+            ->setUserLocation($user->locale);
 
         $this->link = '/terrafund/programmeOverview/' . $id;
-        $this->cta = 'Create a site or nursery';
 
         $this->transactional = true;
     }

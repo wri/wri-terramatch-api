@@ -1,15 +1,18 @@
 <?php
 
 namespace App\Mail;
+use Illuminate\Support\Facades\Auth;
 
-class FormSubmissionSubmitted extends Mail
+class FormSubmissionSubmitted extends I18nMail
 {
     public function __construct()
     {
-        $this->subject = 'You have submitted an application';
-        $this->title = 'You have submitted an application';
-        $this->body =
-            'Your application has been submitted';
+        $user = Auth::user();
+        $this->setSubjectKey('form-submission-submitted.subject')
+            ->setTitleKey('form-submission-submitted.title')
+            ->setBodyKey('form-submission-submitted.body')
+            ->setUserLocation($user->locale);
+
         $this->transactional = true;
     }
 }

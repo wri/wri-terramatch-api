@@ -1,17 +1,19 @@
 <?php
 
 namespace App\Mail;
+use Illuminate\Support\Facades\Auth;
 
-class UpcomingProgressUpdate extends Mail
+class UpcomingProgressUpdate extends I18nMail
 {
     public function __construct(Int $monitoringId, String $pitchName)
     {
-        $this->subject = 'Report Due';
-        $this->title = 'Report Due';
-        $this->body =
-            ' You are due to submit a progress update report for ' . e($pitchName) . ' in 30 days.<br><br>' .
-            'Click below to to create your report.';
+        $user = Auth::user();
+        $this->setSubjectKey('upcoming-progress-update.subject')
+            ->setTitleKey('upcoming-progress-update.title')
+            ->setBodyKey('upcoming-progress-update.body')
+            ->setCta('upcoming-progress-update.cta')
+            ->setParams(['{pitchName}' => e($pitchName)])
+            ->setUserLocation($user->locale);
         $this->link = '/report/setup/' . $monitoringId;
-        $this->cta = 'Create Report';
     }
 }

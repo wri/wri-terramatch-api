@@ -3,33 +3,32 @@
 namespace App\Mail;
 
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
-class UserInvited extends Mail
+class UserInvited extends I18nMail
 {
     public function __construct(String $emailAddress, String $type, String $callbackUrl = null)
     {
+        $user = Auth::user();
         switch ($type) {
             case 'Admin':
-                $prefix = "You've been invited to the administration.";
-
+                $this->setBodyKey('user-invited.body-admin');
                 break;
             case 'User':
-                $prefix = "You've been invited to an organisation.";
+                $this->setBodyKey('user-invited.body-user');
 
                 break;
             default:
                 throw new Exception();
         }
-        $this->subject = 'Create Your Account';
-        $this->title = 'Create Your Account';
-        $this->body =
-            $prefix . '<br><br>' .
-            'Follow this link to create your account.';
+        $this->setSubjectKey('user-invited.subject')
+            ->setTitleKey('user-invited.title')
+            ->setCta('user-invited.cta')
+            ->setUserLocation($user->locale);
 
         $this->link = $callbackUrl ?
             $callbackUrl . 'invite?emailAddress=' . urlencode($emailAddress) . '&type=' . urlencode(strtolower($type)) :
             '/invite?emailAddress=' . urlencode($emailAddress) . '&type=' . urlencode(strtolower($type));
-        $this->cta = 'Create Account';
         $this->transactional = true;
     }
 }

@@ -1,19 +1,19 @@
 <?php
 
 namespace App\Mail;
+use Illuminate\Support\Facades\Auth;
 
-class FormSubmissionFeedbackReceived extends Mail
+class FormSubmissionFeedbackReceived extends I18nMail
 {
     public function __construct(String $feedback = null)
     {
-        $this->subject = 'You have received feedback on your application';
-        $this->title = 'You have received feedback on your application';
-        $this->body =
-            'Your application requires more information.';
-        if (! is_null($feedback)) {
-            $this->body = 'Your application requires more information. Please see comments below:<br><br>' .
-            e($feedback);
-        }
+        $user = Auth::user();
+        $this->setSubjectKey('form-submission-feedback-received.subject')
+            ->setTitleKey('form-submission-feedback-received.title')
+            ->setBodyKey(! is_null($feedback) ? 'form-submission-feedback-received.body-feedback' : 'form-submission-feedback-received.body')
+            ->setParams(['{feedback}' => e($feedback)])
+            ->setUserLocation($user->locale);
+
         $this->transactional = true;
     }
 }

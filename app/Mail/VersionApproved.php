@@ -5,11 +5,13 @@ namespace App\Mail;
 use App\Models\Organisation as OrganisationModel;
 use App\Models\Pitch as PitchModel;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
-class VersionApproved extends Mail
+class VersionApproved extends I18nMail
 {
     public function __construct(String $model, Int $id)
     {
+        $user = Auth::user();
         switch ($model) {
             case 'Organisation':
                 $link = '/profile';
@@ -34,12 +36,12 @@ class VersionApproved extends Mail
         if (is_null($version)) {
             throw new Exception();
         }
-        $this->subject = 'Your Changes Have Been Approved';
-        $this->title = 'Your Changes Have Been Approved';
-        $this->body =
-            'Your changes to ' . e($version->name) . ' have been approved.<br><br>' .
-            'Follow this link to view the changes.';
+        $this->setSubjectKey('version-approved.subject')
+            ->setTitleKey('version-approved.title')
+            ->setBodyKey('version-approved.body')
+            ->setParams(['{versionName}' => e($version->name)])
+            ->setCta('version-approved.cta')
+            ->setUserLocation($user->locale);
         $this->link = $link;
-        $this->cta = 'View Changes';
     }
 }

@@ -30,7 +30,6 @@ class AddLocalizationKeys extends Seeder
         $this->createLocalizationKey('form-submission-rejected.title', 'THANK YOU FOR YOUR APPLICATION');
         $this->createLocalizationKey('form-submission-rejected.body', 'After careful review, our team has decided your application will not move forward.');
         $this->createLocalizationKey('form-submission-rejected.body-feedback', 'After careful review, our team has decided your application will not move forward. Please see the comments below for more details or any follow-up resources.<br><br> {feedback}');
-        // ' Please see the comments below for more details or any follow-up resources.<br><br>' . e($feedback);
 
         // entity-status-change
         // needs review
@@ -287,8 +286,9 @@ class AddLocalizationKeys extends Seeder
         // version-rejected
         $this->createLocalizationKey('version-rejected.subject', 'Your Changes Have Been Rejected');
         $this->createLocalizationKey('version-rejected.title', 'Your Changes Have Been Rejected');
-        $this->createLocalizationKey('version-rejected.body', 'Your changes to {versionName} have been rejected. :explanation. Follow this link to view the changes.<br><br>' .
+        $this->createLocalizationKey('version-rejected.body', 'Your changes to {versionName} have been rejected. {explanation}. Follow this link to view the changes.<br><br>' .
             'If you have any questions, feel free to message us at info@terramatch.org.');
+        $this->createLocalizationKey('version-rejected.cta', 'View Changes');
 
     }
 
@@ -303,13 +303,36 @@ class AddLocalizationKeys extends Seeder
         $localizationKey->save();
 
         // Create I18nTranslation for the key to testing
-        if ($key === 'application-submitted-confirmation.title') {
-            $short = strlen($localizationKey->value) < 256;
+        if ($key === 'v2-project-monitoring-notification.subject') {
+            $translate = 'Vous avez été ajouté en tant que partenaire de surveillance.';
+            $short = strlen($translate) < 256;
             I18nTranslation::create([
                 'i18n_item_id' => $localizationKey->value_id,
-                'language' => 'en-US',
-                'short_value' => $short ? $localizationKey->value : null,
-                'long_value' => $short ? null : $localizationKey->value,
+                'language' => 'fr-FR',
+                'short_value' => $short ? $translate : null,
+                'long_value' => $short ? null : $translate,
+            ]);
+        }
+        if ($key === 'v2-project-monitoring-notification.title') {
+            $translate = 'Vous avez été ajouté en tant que partenaire de surveillance.';
+            $short = strlen($translate) < 256;
+            I18nTranslation::create([
+                'i18n_item_id' => $localizationKey->value_id,
+                'language' => 'fr-FR',
+                'short_value' => $short ? $translate : null,
+                'long_value' => $short ? null : $translate,
+            ]);
+        }
+        if ($key === 'v2-project-monitoring-notification.body') {
+            $translate = 'Vous avez été ajouté à {name} en tant que partenaire de surveillance sur TerraMatch. Connectez-vous à votre compte
+                aujourd\'hui pour voir l\'avancement du projet et les rapports pertinents.<br><br>
+                Connectez-vous <a href="{callbackUrl}" style="color: #6E6E6E;">Ici.</a><br><br>';
+            $short = strlen($translate) < 256;
+            I18nTranslation::create([
+                'i18n_item_id' => $localizationKey->value_id,
+                'language' => 'fr-FR',
+                'short_value' => $short ? $translate : null,
+                'long_value' => $short ? null : $translate,
             ]);
         }
     }

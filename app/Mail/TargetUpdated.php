@@ -1,17 +1,19 @@
 <?php
 
 namespace App\Mail;
+use Illuminate\Support\Facades\Auth;
 
-class TargetUpdated extends Mail
+class TargetUpdated extends I18nMail
 {
     public function __construct(Int $targetId, String $name)
     {
-        $this->subject = 'Monitoring Targets Need Review';
-        $this->title = 'Monitoring Targets Need Review';
-        $this->body =
-            'Monitoring targets for ' . e($name) . ' have been edited and need reviewing.<br><br>' .
-            'Click below to review the edited targets';
+        $user = Auth::user();
+        $this->setSubjectKey('target-updated.subject')
+            ->setTitleKey('target-updated.title')
+            ->setBodyKey('target-updated.body')
+            ->setParams(['{name}' => e($name)])
+            ->setCta('target-updated.cta')
+            ->setUserLocation($user->locale);
         $this->link = '/monitoring/review/?targetId=' . $targetId;
-        $this->cta = 'View Monitoring Terms';
     }
 }

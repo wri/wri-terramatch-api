@@ -3,15 +3,17 @@
 namespace App\Mail;
 
 use App\Models\V2\Organisation;
+use Illuminate\Support\Facades\Auth;
 
-class OrganisationUserRejected extends Mail
+class OrganisationUserRejected extends I18nMail
 {
     public function __construct(Organisation $organisation)
     {
-        $this->subject = 'Your request to join ' . $organisation->name . ' on TerraMatch has been rejected';
-        $this->title = 'Your request to join ' . $organisation->name . ' on TerraMatch has been rejected';
-        $this->body = 'Your request to join ' . $organisation->name . ' on TerraMatch has been rejected. <br><br>' .
-            'Please set-up a new organizational profile on TerraMatch if you wish to join the platform. ' .
-            'Please reach out the help center here if you need more information: <a href="https://terramatchsupport.zendesk.com/hc/en-us/requests/new">https://terramatchsupport.zendesk.com/hc/en-us/requests/new</a>';
+        $user = Auth::user();
+        $this->setSubjectKey('organisation-user-rejected.subject')
+            ->setTitleKey('organisation-user-rejected.title')
+            ->setBodyKey('organisation-user-rejected.body')
+            ->setParams(['{organisationName}' => $organisation->name])
+            ->setUserLocation($user->locale);
     }
 }

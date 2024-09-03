@@ -3,8 +3,9 @@
 namespace App\Mail;
 
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
-class MatchMail extends Mail
+class MatchMail extends I18nMail
 {
     public function __construct(String $model, String $firstName = "", String $secondName = "")
     {
@@ -20,35 +21,34 @@ class MatchMail extends Mail
             default:
                 throw new Exception();
         }
+        $user = Auth::user();
         if ($isAdmin) {
-            $this->subject = 'Match Detected';
-            $this->title = "Match Detected";
-            $this->body =
-                e($firstName) . " and " . e($secondName) . " have matched.<br><br>" .
-                "Follow this link to view the match.";
+            $this->setSubjectKey('match-mail.subject-admin')
+                ->setTitleKey('match-mail.title-admin')
+                ->setBodyKey('match-mail.body-admin')
+                ->setCta('match-mail.cta-admin')
+                ->setParams([
+                    '{firstName}' => e($firstName),
+                    '{secondName}' => e($secondName)
+                ])
+                ->setUserLocation($user->locale);
             $this->link = "/admin/matches";
-            $this->cta = "View Match";
         } else {
             if ($isFunder) {
-                $this->subject = 'Someone Has Matched With One Of Your Funding Offers';
-                $this->title = "Someone Has Matched With One Of Your Funding Offers";
-                $this->body =
-                    "Congratulations! " . e($firstName) . " has matched with one of your funding offers.<br><br>" .
-                    "Follow the link below to view their contact details.<br><br>" .
-                    "If you have decided to move forward together, we encourage you to monitor your project on TerraMatch. Our monitoring system allows you to set mutually agreed targets, easily report on project progress using our templates, and access WRI's state-of-the-art satellite monitoring so that you can track progress over the long term.<br><br>" .
-                    "Check out the monitoring section at <a href=\"https://www.TerraMatch.org\" style=\"color: #000000;\">TerraMatch.org</a>.";
+                $this->setSubjectKey('match-mail.subject-funder')
+                    ->setTitleKey('match-mail.title-funder')
+                    ->setBodyKey('match-mail.body-funder')
+                    ->setParams(['{firstName}' => e($firstName)])
+                    ->setUserLocation($user->locale);
             } else {
-                $this->subject = 'Someone Has Matched With One Of Your Projects';
-                $this->title = "Someone Has Matched With One Of Your Projects";
-                $this->body =
-                    "Congratulations! " . e($firstName) . " has matched with one of your projects.<br><br>" .
-                    "Follow the link below to view their contact details.<br><br>" .
-                    "If you have decided to move forward together, we encourage you to monitor your project on TerraMatch. Our monitoring system allows you to set mutually agreed targets, easily report on project progress using our templates, and access WRI's state-of-the-art satellite monitoring to show the funder that your trees are surviving.
-<br><br>" .
-                    "Check out the monitoring section at <a href=\"https://www.TerraMatch.org\" style=\"color: #000000;\">TerraMatch.org</a>.";
+                $this->setSubjectKey('match-mail.subject-user')
+                    ->setTitleKey('match-mail.title-user')
+                    ->setBodyKey('match-mail.body-user')
+                    ->setParams(['{firstName}' => e($firstName)])
+                    ->setUserLocation($user->locale);
             }
             $this->link = "/connections";
-            $this->cta = "View Contact Details";
+            $this->setCta('match-mail.cta');
         }
     }
 }
