@@ -4,6 +4,7 @@ namespace App\Models\V2;
 
 use App\Http\Resources\V2\Seedings\SeedingsCollection;
 use App\Models\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,5 +52,10 @@ class Seeding extends Model implements EntityRelationModel
     public function seedable()
     {
         return $this->morphTo();
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 }

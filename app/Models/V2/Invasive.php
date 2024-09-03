@@ -5,6 +5,7 @@ namespace App\Models\V2;
 use App\Http\Resources\V2\Invasives\InvasiveCollection;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -52,5 +53,10 @@ class Invasive extends Model implements EntityRelationModel
     public function invasiveable()
     {
         return $this->morphTo();
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 }
