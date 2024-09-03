@@ -42,21 +42,18 @@ class BackfillHidden extends Command
         $bar = $this->output->createProgressBar($count);
         $bar->start();
 
-        $hidden = [];
         foreach (self::REPORT_TYPES as $reportType) {
-            $reportType::chunkById(100, function ($reports) use ($bar, &$hidden) {
+            $reportType::chunkById(100, function ($reports) use ($bar) {
                 foreach ($reports as $report) {
-                    $this->findRelationsToHide($report, $hidden);
+                    $this->findRelationsToHide($report);
                     $bar->advance();
                 }
             });
         }
         $bar->finish();
-
-        $this->info("\n\nHidden: \n" . json_encode($hidden, JSON_PRETTY_PRINT));
     }
 
-    protected function findRelationsToHide($entity, &$hidden)
+    protected function findRelationsToHide($entity)
     {
         $questions = $entity->getForm()->sections->map(fn ($section) => $section->questions)->flatten();
         $formConfig = $entity->getFormConfig();
@@ -80,13 +77,6 @@ class BackfillHidden extends Command
             $count = $relation->count();
             if ($count > 0) {
                 $relation->update(['hidden' => true, 'updated_at' => DB::raw('updated_at')]);
-
-                $hidden[] = [
-                    'entity_type' => get_class($entity),
-                    'entity_uuid' => $entity->uuid,
-                    'type' => $question->input_type,
-                    'collection' => $collection,
-                ];
             }
         }
     }
