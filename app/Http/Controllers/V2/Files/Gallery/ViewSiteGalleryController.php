@@ -22,10 +22,13 @@ class ViewSiteGalleryController extends Controller
         $entity = $request->query('model_name');
         $searchTerm = $request->query('search');
         $isGeotagged = $request->query('is_geotagged');
+        $sortOrder = $request->query('sort_order', 'asc');
+        Log::info('sortOrder: ' . $sortOrder);
         $models = [];
         ! empty($entity) && $entity != 'sites' ?: $models[] = ['type' => get_class($site), 'ids' => [$site->id]];
         ! empty($entity) && $entity != 'site-reports' ?: $models[] = ['type' => SiteReport::class, 'ids' => $site->reports()->pluck('id')->toArray()];
 
+        Log::info('models: ' . json_encode($models). " model name".$entity);
         $mediaQueryBuilder = Media::query()->where(function ($query) use ($models) {
             foreach ($models as $model) {
                 $query->orWhere(function ($query) use ($model) {
@@ -46,10 +49,13 @@ class ViewSiteGalleryController extends Controller
   
 
         $query = QueryBuilder::for($mediaQueryBuilder)
-            ->allowedFilters([
-                AllowedFilter::exact('file_type'),
-                AllowedFilter::exact('is_public')
-            ]);
+        ->allowedFilters([
+            AllowedFilter::exact('file_type'),
+            AllowedFilter::exact('is_public')
+        ])
+        ->allowedSorts(['created_at']);
+
+        $query->orderBy('created_at', $sortOrder);
 
         $collection = $query->paginate($perPage)
             ->appends(request()->query());
