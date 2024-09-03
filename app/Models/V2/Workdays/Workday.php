@@ -27,6 +27,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
 
     protected $casts = [
         'published' => 'boolean',
+        'hidden' => 'boolean',
     ];
 
     public $table = 'v2_workdays';
@@ -43,6 +44,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
         'indigeneity',
         'migrated_to_demographics',
         'description',
+        'hidden',
     ];
 
     public const COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS = 'paid-nursery-operations';

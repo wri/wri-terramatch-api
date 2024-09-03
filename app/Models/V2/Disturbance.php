@@ -28,9 +28,14 @@ class Disturbance extends Model implements EntityRelationModel
         'description',
         'disturbanceable_type',
         'disturbanceable_id',
+        'hidden',
 
         'old_id',
         'old_model',
+    ];
+
+    protected $casts = [
+        'hidden' => 'boolean',
     ];
 
     public static function createResourceCollection(EntityModel $entity): JsonResource

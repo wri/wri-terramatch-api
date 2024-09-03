@@ -24,8 +24,14 @@ class Seeding extends Model implements EntityRelationModel
         'amount',
         'seedable_type',
         'seedable_id',
+        'hidden',
+
         'old_id',
         'old_model',
+    ];
+
+    protected $casts = [
+        'hidden' => 'boolean',
     ];
 
     public static function createResourceCollection(EntityModel $entity): JsonResource

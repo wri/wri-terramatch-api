@@ -25,9 +25,14 @@ class Invasive extends Model implements EntityRelationModel
         'collection',
         'invasiveable_type',
         'invasiveable_id',
+        'hidden',
 
         'old_id',
         'old_model',
+    ];
+
+    protected $casts = [
+        'hidden' => 'boolean',
     ];
 
     public static function createResourceCollection(EntityModel $entity): JsonResource
