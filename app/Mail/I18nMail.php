@@ -3,6 +3,8 @@
 namespace App\Mail;
 use App\Models\V2\LocalizationKey;
 use App\Models\V2\I18n\I18nTranslation;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\App;
 
 abstract class I18nMail extends Mail
 {
@@ -50,7 +52,9 @@ abstract class I18nMail extends Mail
 
     public function getValueTranslated($valueKey, $userLocation) 
     {
+        App::setLocale($userLocation);
         $localizationKey = LocalizationKey::where('key', $valueKey)->first();
+
         return $localizationKey->translated_value;
     }
 }
