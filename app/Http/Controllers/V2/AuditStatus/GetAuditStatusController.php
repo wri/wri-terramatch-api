@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2\AuditStatus;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\AuditStatusResource;
+use App\Models\DTOs\AuditStatusDTO;
 use App\Models\V2\AuditableModel;
 use Illuminate\Http\Request;
 
@@ -16,17 +17,17 @@ class GetAuditStatusController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        foreach ($auditStatuses as $auditStatus) {
-            $auditStatus->entity_name = $auditable->getAuditableNameAttribute();
-        }
-
-        $combinedData = $auditStatuses->concat($this->getAudits($auditable));
-
-        $sortedData = $combinedData->sortByDesc(function ($item) {
-            return $item->updated_at ?? $item->created_at;
+        $list = $auditStatuses->map(function ($auditStatus) {
+            return AuditStatusDTO::fromAuditStatus($auditStatus);
         });
 
-        return AuditStatusResource::collection($sortedData);
+        $combinedData = $list->concat($this->getAudits($auditable));
+
+        $sortedData = $combinedData->sortByDesc(function ($item) {
+            return $item->date_created;
+        });
+
+        return AuditStatusResource::collection($sortedData->unique('comment'));
     }
 
     private function getAudits($auditable)
@@ -40,6 +41,8 @@ class GetAuditStatusController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return $audits;
+        return $audits->map(function ($audit) {
+            return AuditStatusDTO::fromAudits($audit);
+        });
     }
 }
