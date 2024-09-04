@@ -7,19 +7,34 @@ use App\Models\V2\ReportModel;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Support\Collection;
 
-class EntityStatusChange extends Mail
+class EntityStatusChange extends I18nMail
 {
     private EntityModel $entity;
 
     public function __construct(EntityModel $entity)
     {
         $this->entity = $entity;
+        // needs review
+        if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
+            $this->setSubjectKey('entity-status-change.subject-approved')
+                ->setTitleKey('entity-status-change.subject-approved')
+                ->setParams(['{entityTypeName}' => $this->getEntityTypeName()])
+                ->setCta('entity-status-change.cta')
+                ->setUserLocation('en-US');
+        } 
+        if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
+            $this->setSubjectKey('entity-status-change.subject-needs-more-information')
+                ->setTitleKey('entity-status-change.subject-needs-more-information')
+                ->setParams(['{entityTypeName}' => $this->getEntityTypeName()])
+                ->setCta('entity-status-change.cta')
+                ->setUserLocation('en-US');
+        }
 
-        $this->subject = $this->getSubject();
-        $this->title = $this->subject;
+        // $this->subject = $this->getSubject();
+        // $this->title = $this->subject;
         $this->body = $this->getBodyParagraphs()->join('<br><br>');
         $this->link = $this->entity->getViewLinkPath();
-        $this->cta = 'View ' . $this->getEntityTypeName();
+        // $this->cta = 'View ' . $this->getEntityTypeName();
         $this->transactional = true;
     }
 
