@@ -7,6 +7,7 @@ use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\EntityModel;
 use App\Models\V2\EntityRelationModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -21,6 +22,7 @@ class Strata extends Model implements EntityRelationModel
 
     protected $casts = [
         'published' => 'boolean',
+        'hidden' => 'boolean',
     ];
 
     public $table = 'v2_stratas';
@@ -30,6 +32,7 @@ class Strata extends Model implements EntityRelationModel
         'stratasable_id',
         'description',
         'extent',
+        'hidden',
     ];
 
     public static function createResourceCollection(EntityModel $entity): JsonResource
@@ -49,5 +52,10 @@ class Strata extends Model implements EntityRelationModel
     public function stratasable()
     {
         return $this->morphTo();
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 }
