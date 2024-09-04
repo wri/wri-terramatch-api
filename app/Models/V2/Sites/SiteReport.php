@@ -322,6 +322,13 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         });
     }
 
+    public function scopeOrganisationUuid(Builder $query, string $organizationUuid): Builder
+    {
+        return $query->whereHas('organisation', function ($qry) use ($organizationUuid) {
+            $qry->where('organisations.uuid', $organizationUuid);
+        });
+    }
+
     public function scopeSiteUuid(Builder $query, string $siteUuid): Builder
     {
         return $query->whereHas('site', function ($qry) use ($siteUuid) {

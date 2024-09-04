@@ -395,6 +395,13 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         });
     }
 
+    public function scopeOrganisationUuid(Builder $query, string $organizationUuid): Builder
+    {
+        return $query->whereHas('organisation', function ($qry) use ($organizationUuid) {
+            $qry->where('organisations.uuid', $organizationUuid);
+        });
+    }
+
     public function scopeCountry(Builder $query, string $country): Builder
     {
         return $query->whereHas('project', function ($qry) use ($country) {
