@@ -70,12 +70,12 @@ class GeometryController extends Controller
         foreach ($results as $index => $result) {
             $polygonErrors = [];
             foreach ($result['polygon_uuids'] as $polygonUuid) {
-              $validationErrors = $this->runStoredGeometryValidations($polygonUuid);
-              $estAreaErrors = $this->runStoredGeometryEstAreaValidation($polygonUuid);
-              $allErrors = array_merge($validationErrors, $estAreaErrors);
-              if (!empty($allErrors)) {
-                  $polygonErrors[$polygonUuid] = $allErrors;
-              }
+                $validationErrors = $this->runStoredGeometryValidations($polygonUuid);
+                $estAreaErrors = $this->runStoredGeometryEstAreaValidation($polygonUuid);
+                $allErrors = array_merge($validationErrors, $estAreaErrors);
+                if (! empty($allErrors)) {
+                    $polygonErrors[$polygonUuid] = $allErrors;
+                }
             }
 
             // Send an empty object instead of empty array if there are no errors to keep the response shape consistent.
@@ -179,14 +179,15 @@ class GeometryController extends Controller
 
         return response()->json(['errors' => $errors], 200);
     }
+
     protected function runStoredGeometryEstAreaValidation($polygonUuid): array
     {
         $errors = [];
         $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
-    
+
         if ($sitePolygon && $sitePolygon->point_id) {
             $pointGeometry = PointGeometry::isUuid($sitePolygon->point_id)->first();
-    
+
             if ($pointGeometry && isset($pointGeometry->est_area)) {
                 if ($pointGeometry->est_area > 5) {
                     $errors[] = [
@@ -197,10 +198,10 @@ class GeometryController extends Controller
                 }
             }
         }
-    
+
         return $errors;
     }
-    
+
     protected function runStoredGeometryValidations(string $polygonUuid): array
     {
         // TODO: remove when the point transformation ticket is complete
