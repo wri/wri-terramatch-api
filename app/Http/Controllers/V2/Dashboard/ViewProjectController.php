@@ -6,10 +6,12 @@ use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
+use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use League\Csv\Writer;
 
 class ViewProjectController extends Controller
 {
@@ -132,5 +134,60 @@ class ViewProjectController extends Controller
 
             return response()->json(['error' => 'An error occurred while fetching the data', 'message' => $errorMessage], 500);
         }
+    }
+
+    public function generateCompleteReport()
+    {
+        $header = [
+            'UUID',
+            'Project Name',
+            'Project Country',
+            'Organization Name',
+            'Trees Grown Goal',
+            'Trees Planted',
+            'Jobs created Goal',
+            'Jobs Created',
+            'Jobs Created Full Time',
+            'Jobs Created Part Time',
+            'Jobs Created Male',
+            'Jobs Created Female',
+            'Beneficiaries Number',
+            'Beneficiaries Male',
+            'Beneficiaries Female'
+        ];
+        
+        $records = [];
+        
+        $projects = Project::whereIn('framework_key', ['terrafund', 'terrafund-landscapes'])->get();
+
+        $projects->each(function (Project $project) use (&$records) {
+            $records[] = [
+                $project->uuid,
+                $project->name,
+                $project->country,
+                $project->organisation->name ?? null,
+                $project->trees_grown_goal,
+                $project->trees_planted_count,
+                $project->jobs_created_goal,
+                $project->total_jobs_created,
+                ProjectReport::where('project_id', $project->id)->sum('ft_total'),
+                ProjectReport::where('project_id', $project->id)->sum('pt_total'),
+                ProjectReport::where('project_id', $project->id)->sum('ft_men') + ProjectReport::where('project_id', $project->id)->sum('pt_men'),
+                ProjectReport::where('project_id', $project->id)->sum('ft_women') + ProjectReport::where('project_id', $project->id)->sum('pt_women'),
+                ProjectReport::where('project_id', $project->id)->sum('beneficiaries'),
+                ProjectReport::where('project_id', $project->id)->sum('beneficiaries_men'),
+                ProjectReport::where('project_id', $project->id)->sum('beneficiaries_women'),
+            ];
+        });
+
+        $csv = Writer::createFromString();
+        $csv->insertOne($header);
+        $csv->insertAll($records);
+
+        return response()->streamDownload(function () use ($csv) {
+            echo $csv->toString();
+        }, 'Project Complete Report - ' . now() . '.csv', [
+            'Content-Type' => 'text/csv',
+        ]);
     }
 };
