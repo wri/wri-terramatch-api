@@ -103,11 +103,13 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
 
                 default:
                     $utf8Answer = mb_convert_encoding($answer, 'UTF-8', mb_detect_encoding($answer));
+
                     return json_encode($utf8Answer, JSON_UNESCAPED_UNICODE);
             }
         }
 
         $utf8Answer = mb_convert_encoding($answer, 'UTF-8', mb_detect_encoding($answer));
+
         return json_encode($utf8Answer, JSON_UNESCAPED_UNICODE);
     }
 
