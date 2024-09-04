@@ -48,7 +48,7 @@ return [
             'use_bom'                => true,
             'include_separator_line' => false,
             'excel_compatibility'    => false,
-            'output_encoding'        => '',
+            'output_encoding'        => 'UTF-8',
         ],
 
         /*
