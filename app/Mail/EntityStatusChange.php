@@ -6,6 +6,7 @@ use App\Models\V2\EntityModel;
 use App\Models\V2\ReportModel;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class EntityStatusChange extends I18nMail
 {
@@ -14,25 +15,57 @@ class EntityStatusChange extends I18nMail
     public function __construct(EntityModel $entity)
     {
         $this->entity = $entity;
-        // needs review
+
         if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
             $this->setSubjectKey('entity-status-change.subject-approved')
                 ->setTitleKey('entity-status-change.subject-approved')
-                ->setParams(['{entityTypeName}' => $this->getEntityTypeName()])
-                ->setCta('entity-status-change.cta')
-                ->setUserLocation('en-US');
+                ->setParams(['{entityTypeName}' => $this->getEntityTypeName()]);
         } 
         if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
             $this->setSubjectKey('entity-status-change.subject-needs-more-information')
                 ->setTitleKey('entity-status-change.subject-needs-more-information')
-                ->setParams(['{entityTypeName}' => $this->getEntityTypeName()])
-                ->setCta('entity-status-change.cta')
-                ->setUserLocation('en-US');
+                ->setParams(['{entityTypeName}' => $this->getEntityTypeName()]);
         }
 
+        if ($this->entity instanceof ReportModel) {
+            if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
+                Log::info('report approved');
+                $this->setBodyKey('entity-status-change.body-report-approved')
+                    ->setParams(['{parentEntityName}' => $this->entity->parentEntity()->pluck('name')->first(),
+                    '{feedback}' => $this->getFeedback()]);
+            }
+            if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
+                Log::info('report need more information');
+                $this->setBodyKey('entity-status-change.body-report-needs-more-information')
+                    ->setParams(['{parentEntityName}' => $this->entity->parentEntity()->pluck('name')->first(),
+                    '{feedback}' => $this->getFeedback() ?? '(No feedback)']);
+            }
+        } else {
+            if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
+                Log::info('entity approved');
+                $this->setBodyKey('entity-status-change.body-entity-approved')
+                    ->setParams(['{entityTypeName}' => strtolower($this->getEntityTypeName()), 
+                    '{entityName}' => $this->entity->name,
+                    '{feedback}' => $this->getFeedback()]);
+            }
+            if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
+                Log::info('entity needs more information');
+                $this->setBodyKey('entity-status-change.body-entity-needs-more-information')
+                    ->setParams(['{entityTypeName}' => strtolower($this->getEntityTypeName()),
+                        '{entityName}' => $this->entity->name,
+                        '{feedback}' => $this->getFeedback() ?? '(No feedback)']);
+            }
+        }
+        $this->setParams(['{entityTypeName}' => $this->getEntityTypeName(),
+            '{parentEntityName}' => $this->entity->parentEntity()->pluck('name')->first(),
+            '{entityName}' => $this->entity->name,
+            '{feedback}' => $this->getFeedback() ?? '(No feedback)'])
+            ->setLink($this->entity->getViewLinkPath())
+            ->setCta('entity-status-change.cta')
+            ->setUserLocation('en-US');
         // $this->subject = $this->getSubject();
         // $this->title = $this->subject;
-        $this->body = $this->getBodyParagraphs()->join('<br><br>');
+        // $this->body = $this->getBodyParagraphs()->join('<br><br>');
         $this->link = $this->entity->getViewLinkPath();
         // $this->cta = 'View ' . $this->getEntityTypeName();
         $this->transactional = true;
