@@ -40,7 +40,8 @@ class Invasive extends Model implements EntityRelationModel
     {
         $query = Invasive::query()
             ->where('invasiveable_type', get_class($entity))
-            ->where('invasiveable_id', $entity->id);
+            ->where('invasiveable_id', $entity->id)
+            ->visible();
 
         return new InvasiveCollection($query->paginate());
     }
