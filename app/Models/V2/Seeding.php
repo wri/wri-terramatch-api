@@ -39,7 +39,8 @@ class Seeding extends Model implements EntityRelationModel
     {
         $query = Seeding::query()
             ->where('seedable_type', get_class($entity))
-            ->where('seedable_id', $entity->id);
+            ->where('seedable_id', $entity->id)
+            ->visible();
 
         return new SeedingsCollection($query->paginate());
     }
