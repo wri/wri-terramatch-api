@@ -23,7 +23,7 @@ class GetWorkdaysForEntityController extends Controller
         $workdays = Workday::where([
             'workdayable_type' => get_class($entity),
             'workdayable_id' => $entity->id,
-        ])->get();
+        ])->visible()->get();
 
         $expectedCollections = match ($entity->shortName) {
             'site-report' => array_keys(Workday::SITE_COLLECTIONS),

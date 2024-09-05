@@ -44,7 +44,8 @@ class Disturbance extends Model implements EntityRelationModel
 
         $query = Disturbance::query()
             ->where('disturbanceable_type', get_class($entity))
-            ->where('disturbanceable_id', $entity->id);
+            ->where('disturbanceable_id', $entity->id)
+            ->visible();
 
         return new DisturbanceCollection($query->paginate());
     }
