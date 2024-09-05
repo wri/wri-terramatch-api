@@ -9,7 +9,7 @@ use Illuminate\Http\UploadedFile;
 
 class UploadShapefileCommand extends Command
 {
-    protected $signature = 'shapefile:upload {file} {--site_uuid=}';
+    protected $signature = 'shapefile:upload {file} {--site_uuid=} {--submit_polygon_loaded=}';
 
     protected $description = 'Upload a shapefile to the application';
 
@@ -17,10 +17,10 @@ class UploadShapefileCommand extends Command
     {
         $filePath = $this->argument('file');
         $siteUuid = $this->option('site_uuid');
+        $submitPolygonLoaded = $this->option('submit_polygon_loaded');
 
         if (! file_exists($filePath)) {
             $this->error("File not found: $filePath");
-
             return 1;
         }
 
@@ -38,6 +38,11 @@ class UploadShapefileCommand extends Command
         $request->files->set('file', $uploadedFile);
         $request->request->set('uuid', $siteUuid);
 
+        // If submit_polygon_loaded is provided, add it to the request
+        if ($submitPolygonLoaded !== null) {
+            $request->request->set('submit_polygon_loaded', $submitPolygonLoaded);
+        }
+
         // Instantiate the controller and call the method
         $controller = new TerrafundCreateGeometryController();
         $response = $controller->uploadShapefile($request);
@@ -45,11 +50,9 @@ class UploadShapefileCommand extends Command
         // Handle the response
         if ($response->getStatusCode() === 200) {
             $this->info('Shapefile uploaded successfully: ' . $response->getContent());
-
             return 0;
         } else {
             $this->error('Failed to upload shapefile: ' . $response->getContent());
-
             return 1;
         }
     }
