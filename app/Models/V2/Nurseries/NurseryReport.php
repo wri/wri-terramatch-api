@@ -166,7 +166,7 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
         return $this->belongsToThrough(
             Organisation::class,
             [Project::class, Nursery::class],
-            foreignKeyLookup: [Project::class => 'project_id', Nursery::class => 'nurseyr_id']
+            foreignKeyLookup: [Project::class => 'project_id', Nursery::class => 'nursery_id']
         );
     }
 
@@ -250,6 +250,13 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
             $qry->whereHas('project', function ($qry) use ($country) {
                 $qry->where('country', $country);
             });
+        });
+    }
+
+    public function scopeOrganisationUuid(Builder $query, string $organizationUuid): Builder
+    {
+        return $query->whereHas('organisation', function ($qry) use ($organizationUuid) {
+            $qry->where('organisations.uuid', $organizationUuid);
         });
     }
 

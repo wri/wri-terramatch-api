@@ -7,6 +7,7 @@ use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\EntityModel;
 use App\Models\V2\EntityRelationModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -25,6 +26,7 @@ class TreeSpecies extends Model implements EntityRelationModel
 
     protected $casts = [
         'published' => 'boolean',
+        'hidden' => 'boolean',
     ];
 
     public $table = 'v2_tree_species';
@@ -35,6 +37,8 @@ class TreeSpecies extends Model implements EntityRelationModel
         'speciesable_type',
         'speciesable_id',
         'collection',
+        'hidden',
+
         'old_id',
         'old_model',
     ];
@@ -59,7 +63,8 @@ class TreeSpecies extends Model implements EntityRelationModel
     {
         $query = TreeSpecies::query()
             ->where('speciesable_type', get_class($entity))
-            ->where('speciesable_id', $entity->id);
+            ->where('speciesable_id', $entity->id)
+            ->visible();
 
         $filter = request()->query('filter');
         if (! empty($filter['collection'])) {
@@ -67,6 +72,11 @@ class TreeSpecies extends Model implements EntityRelationModel
         }
 
         return new TreeSpeciesCollection($query->paginate());
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 
     public function speciesable()

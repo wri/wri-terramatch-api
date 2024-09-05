@@ -294,7 +294,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function getSeedlingsGrownAttribute(): int
     {
         if ($this->framework_key == 'ppc') {
-            return $this->treeSpecies()->sum('amount');
+            return $this->treeSpecies()->visible()->sum('amount');
         }
 
         if ($this->framework_key == 'terrafund') {
@@ -316,6 +316,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
                     'speciesable_id',
                     $this->project->reports()->where('created_at', '<=', $this->created_at)->select('id')
                 )
+                ->visible()
                 ->sum('amount');
         }
 
@@ -332,6 +333,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         return TreeSpecies::where('speciesable_type', SiteReport::class)
             ->whereIn('speciesable_id', $this->task->siteReports()->select('id'))
             ->where('collection', TreeSpecies::COLLECTION_PLANTED)
+            ->visible()
             ->sum('amount');
     }
 
@@ -343,6 +345,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
 
         return Seeding::where('seedable_type', SiteReport::class)
             ->whereIn('seedable_id', $this->task->siteReports()->select('id'))
+            ->visible()
             ->sum('amount');
     }
 
@@ -368,6 +371,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             Workday::where('workdayable_type', SiteReport::class)
                 ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
                 ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
+                ->visible()
                 ->select('id')
         )->gender()->sum('amount');
 
@@ -388,6 +392,13 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     {
         return $query->whereHas('project', function ($qry) use ($projectUuid) {
             $qry->where('uuid', $projectUuid);
+        });
+    }
+
+    public function scopeOrganisationUuid(Builder $query, string $organizationUuid): Builder
+    {
+        return $query->whereHas('organisation', function ($qry) use ($organizationUuid) {
+            $qry->where('organisations.uuid', $organizationUuid);
         });
     }
 

@@ -5,6 +5,7 @@ namespace App\Models\V2;
 use App\Http\Resources\V2\Disturbances\DisturbanceCollection;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -28,9 +29,14 @@ class Disturbance extends Model implements EntityRelationModel
         'description',
         'disturbanceable_type',
         'disturbanceable_id',
+        'hidden',
 
         'old_id',
         'old_model',
+    ];
+
+    protected $casts = [
+        'hidden' => 'boolean',
     ];
 
     public static function createResourceCollection(EntityModel $entity): JsonResource
@@ -38,7 +44,8 @@ class Disturbance extends Model implements EntityRelationModel
 
         $query = Disturbance::query()
             ->where('disturbanceable_type', get_class($entity))
-            ->where('disturbanceable_id', $entity->id);
+            ->where('disturbanceable_id', $entity->id)
+            ->visible();
 
         return new DisturbanceCollection($query->paginate());
     }
@@ -51,5 +58,10 @@ class Disturbance extends Model implements EntityRelationModel
     public function disturbanceable()
     {
         return $this->morphTo();
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 }

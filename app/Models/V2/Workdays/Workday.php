@@ -27,6 +27,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
 
     protected $casts = [
         'published' => 'boolean',
+        'hidden' => 'boolean',
     ];
 
     public $table = 'v2_workdays';
@@ -43,6 +44,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
         'indigeneity',
         'migrated_to_demographics',
         'description',
+        'hidden',
     ];
 
     public const COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS = 'paid-nursery-operations';
@@ -88,7 +90,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
     /**
      * @throws \Exception
      */
-    public static function syncRelation(EntityModel $entity, string $property, $data): void
+    public static function syncRelation(EntityModel $entity, string $property, $data, bool $hidden): void
     {
         if (count($data) == 0) {
             $entity->$property()->delete();
@@ -112,7 +114,10 @@ class Workday extends Model implements HandlesLinkedFieldSync
                 'workdayable_type' => get_class($entity),
                 'workdayable_id' => $entity->id,
                 'collection' => $workdayData['collection'],
+                'hidden' => $hidden,
             ]);
+        } else {
+            $workday->update(['hidden' => $hidden]);
         }
 
         // Make sure the incoming data is clean, and meets our expectations of one row per type/subtype/name combo.
@@ -183,6 +188,11 @@ class Workday extends Model implements HandlesLinkedFieldSync
     public function scopeCollections(Builder $query, array $collections): Builder
     {
         return $query->whereIn('collection', $collections);
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 
     public function demographics(): HasMany
