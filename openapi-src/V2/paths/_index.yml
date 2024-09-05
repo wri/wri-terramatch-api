@@ -685,6 +685,40 @@
             meta:
               type: object
               $ref: '../definitions/_index.yml#/V2PaginationMeta'
+/v2/admin/users/users-organisation-list/{UUID}:
+  get:
+    summary: Get a collection of users that have been approved for a specific organisation
+    operationId: v2-admin-get-users-organisation-list-uuid
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - name: UUID
+        type: string
+        in: path
+        required: true
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/V2AdminUserRead'
 /v2/admin/users/{UUID}:
   get:
     summary: Get a user by uuid
@@ -2591,6 +2625,9 @@
 /v2/terrafund/project-polygon/{uuid}/{entity_uuid}/{entity_type}:
   post:
     $ref: './Terrafund/post-v2-terrafund-project-polygon.yml'
+/v2/terrafund/project-polygons:
+  delete:
+    $ref: './Terrafund/delete-v2-terrafund-project-polygons.yml'
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'

@@ -41,6 +41,7 @@ class ProjectResource extends JsonResource
             'jobs_created_goal' => $this->jobs_created_goal,
             'total_hectares_restored_goal' => $this->total_hectares_restored_goal,
             'total_hectares_restored_count' => $this->total_hectares_restored_count,
+            'total_hectares_restored_sum' => $this->total_hectares_restored_sum,
             'trees_grown_goal' => $this->trees_grown_goal,
             'survival_rate' => $this->survival_rate,
             'year_five_crown_cover' => $this->year_five_crown_cover,

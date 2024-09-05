@@ -5,6 +5,7 @@ namespace App\Models\V2;
 use App\Http\Resources\V2\Invasives\InvasiveCollection;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -25,16 +26,22 @@ class Invasive extends Model implements EntityRelationModel
         'collection',
         'invasiveable_type',
         'invasiveable_id',
+        'hidden',
 
         'old_id',
         'old_model',
+    ];
+
+    protected $casts = [
+        'hidden' => 'boolean',
     ];
 
     public static function createResourceCollection(EntityModel $entity): JsonResource
     {
         $query = Invasive::query()
             ->where('invasiveable_type', get_class($entity))
-            ->where('invasiveable_id', $entity->id);
+            ->where('invasiveable_id', $entity->id)
+            ->visible();
 
         return new InvasiveCollection($query->paginate());
     }
@@ -47,5 +54,10 @@ class Invasive extends Model implements EntityRelationModel
     public function invasiveable()
     {
         return $this->morphTo();
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 }
