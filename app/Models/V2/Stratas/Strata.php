@@ -39,7 +39,8 @@ class Strata extends Model implements EntityRelationModel
     {
         $query = Strata::query()
             ->where('stratasable_type', get_class($entity))
-            ->where('stratasable_id', $entity->id);
+            ->where('stratasable_id', $entity->id)
+            ->visible();
 
         return new StratasCollection($query->paginate());
     }
