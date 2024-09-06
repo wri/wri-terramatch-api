@@ -27,7 +27,7 @@ class GetAuditStatusController extends Controller
             return $item->date_created;
         });
 
-        return AuditStatusResource::collection($sortedData);
+        return AuditStatusResource::collection($sortedData->unique('comment'));
     }
 
     private function getAudits($auditable)
@@ -44,6 +44,7 @@ class GetAuditStatusController extends Controller
         ->orderByDesc('updated_at')
         ->orderByDesc('created_at')
         ->get();
+
         return $audits->map(function ($audit) {
             return AuditStatusDTO::fromAudits($audit);
         });

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\V2\Geometry;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Geometry\StoreGeometryRequest;
+use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
 use App\Validators\SitePolygonValidator;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -68,9 +70,11 @@ class GeometryController extends Controller
         foreach ($results as $index => $result) {
             $polygonErrors = [];
             foreach ($result['polygon_uuids'] as $polygonUuid) {
-                $errors = $this->runStoredGeometryValidations($polygonUuid);
-                if (! empty($errors)) {
-                    $polygonErrors[$polygonUuid] = $errors;
+                $validationErrors = $this->runStoredGeometryValidations($polygonUuid);
+                $estAreaErrors = $this->runStoredGeometryEstAreaValidation($polygonUuid);
+                $allErrors = array_merge($validationErrors, $estAreaErrors);
+                if (! empty($allErrors)) {
+                    $polygonErrors[$polygonUuid] = $allErrors;
                 }
             }
 
@@ -174,6 +178,28 @@ class GeometryController extends Controller
         $errors = $this->runStoredGeometryValidations($polygon->uuid);
 
         return response()->json(['errors' => $errors], 200);
+    }
+
+    protected function runStoredGeometryEstAreaValidation($polygonUuid): array
+    {
+        $errors = [];
+        $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
+
+        if ($sitePolygon && $sitePolygon->point_id) {
+            $pointGeometry = PointGeometry::isUuid($sitePolygon->point_id)->first();
+
+            if ($pointGeometry && isset($pointGeometry->est_area)) {
+                if ($pointGeometry->est_area > 5) {
+                    $errors[] = [
+                        'key' => 'EXCEEDS_EST_AREA',
+                        'message' => 'The est_area is bigger than 5',
+                        'est_area' => $pointGeometry->est_area,
+                    ];
+                }
+            }
+        }
+
+        return $errors;
     }
 
     protected function runStoredGeometryValidations(string $polygonUuid): array

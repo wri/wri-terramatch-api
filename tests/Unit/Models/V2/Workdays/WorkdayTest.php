@@ -23,7 +23,7 @@ class WorkdayTest extends TestCase
                 ],
             ],
         ];
-        Workday::syncRelation($siteReport, 'workdaysVolunteerPlanting', $data);
+        Workday::syncRelation($siteReport, 'workdaysVolunteerPlanting', $data, false);
 
         $workday = $siteReport->workdaysVolunteerPlanting()->first();
         $this->assertEquals(3, $workday->demographics()->count());
@@ -38,7 +38,7 @@ class WorkdayTest extends TestCase
             ['type' => 'gender', 'name' => 'female', 'amount' => 20],
             ['type' => 'ethnicity', 'subtype' => 'indigenous', 'name' => 'Ohlone', 'amount' => 40],
         ];
-        Workday::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', $data);
+        Workday::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', $data, false);
         $workday->refresh();
         $this->assertEquals(4, $workday->demographics()->count());
         $this->assertEquals(40, $workday->demographics()->isAge('youth')->first()->amount);
@@ -48,7 +48,7 @@ class WorkdayTest extends TestCase
 
         // Test remove demographics
         $data[0]['demographics'] = [];
-        Workday::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', $data);
+        Workday::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', $data, false);
         $workday->refresh();
         $this->assertEquals(0, $workday->demographics()->count());
 
@@ -67,7 +67,7 @@ class WorkdayTest extends TestCase
             ],
         ];
         $siteReport = SiteReport::factory()->create();
-        Workday::syncRelation($siteReport, 'workdaysVolunteerPlanting', $data);
+        Workday::syncRelation($siteReport, 'workdaysVolunteerPlanting', $data, false);
 
         $workday = $siteReport->workdaysVolunteerPlanting()->first();
         $this->assertEquals(3, $workday->demographics()->count());
