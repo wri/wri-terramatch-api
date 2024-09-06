@@ -52,10 +52,31 @@ class ViewProjectGalleryController extends Controller
           } elseif ($isGeotagged === '2') {
               $mediaQueryBuilder->whereNull('lat')->whereNull('lng');
           }
+
+          $modelTypeMap = [
+            'projects' => [Project::class],
+            'sites' => [Site::class],
+            'nurseries' => [Nursery::class],
+            'project-reports' => [ProjectReport::class],
+            'site-reports' => [SiteReport::class],
+            'nursery-reports' => [NurseryReport::class],
+            'reports' => [ProjectReport::class, SiteReport::class, NurseryReport::class],
+          ];
+
           $query = QueryBuilder::for($mediaQueryBuilder)
               ->allowedFilters([
                   AllowedFilter::exact('file_type'),
                   AllowedFilter::exact('is_public'),
+                  AllowedFilter::callback('model_type', function ($query, $value) use ($modelTypeMap) {
+                      $classNames = $modelTypeMap[$value] ?? null;
+                      if ($classNames) {
+                          $query->where(function ($subQuery) use ($classNames) {
+                              foreach ($classNames as $className) {
+                                  $subQuery->orWhere('model_type', $className);
+                              }
+                          });
+                      }
+                  }),
               ])
               ->allowedSorts(['created_at']);
           $query->orderBy('created_at', $sortOrder);    
