@@ -56,12 +56,13 @@ class GeometryController extends Controller
 
         return response()->json($this->storeAndValidateGeometries($request->getGeometries()), 201);
     }
+
     protected function storeAndValidateGeometries($geometries): array
     {
         /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
         $results = [];
-    
+
         // Group geometries by site_id
         Log::info('Grouping geometries by site_id', $geometries);
         $groupedGeometries = $this->groupGeometriesBySiteId($geometries);
@@ -69,67 +70,70 @@ class GeometryController extends Controller
         foreach ($groupedGeometries as $siteId => $siteGeometries) {
             // For each group of geometries, process and store
             $polygonUuids = $service->createGeojsonModels($siteGeometries, ['source' => PolygonService::GREENHOUSE_SOURCE]);
-    
+
             // Validate stored geometries
             $polygonErrors = $this->validateStoredGeometries($polygonUuids);
-    
+
             $results[] = [
                 'site_id' => $siteId,
                 'polygon_uuids' => $polygonUuids,
                 'errors' => empty($polygonErrors) ? new stdClass() : $polygonErrors,
             ];
         }
-    
+
         return $results;
     }
+
     protected function validateStoredGeometries(array $polygonUuids): array
     {
         $polygonErrors = [];
-    
+
         foreach ($polygonUuids as $polygonUuid) {
             $validationErrors = $this->runStoredGeometryValidations($polygonUuid);
             $estAreaErrors = $this->runStoredGeometryEstAreaValidation($polygonUuid);
             $allErrors = array_merge($validationErrors, $estAreaErrors);
-    
-            if (!empty($allErrors)) {
+
+            if (! empty($allErrors)) {
                 $polygonErrors[$polygonUuid] = $allErrors;
             }
         }
-    
+
         return $polygonErrors;
     }
+
     protected function groupGeometriesBySiteId(array $geometries): array
     {
         $grouped = [];
-    
+
         Log::info('Starting to group geometries by site_id');
-    
+
         foreach ($geometries as $geometryCollection) {
-            if (!isset($geometryCollection['features'])) {
+            if (! isset($geometryCollection['features'])) {
                 Log::warning('No features found in this geometry collection', $geometryCollection);
+
                 continue; // Skip if there are no features
             }
-    
+
             foreach ($geometryCollection['features'] as $feature) {
                 $siteId = data_get($feature, 'properties.site_id');
                 Log::info("Processing feature for site_id: {$siteId}", ['feature' => $feature]);
-    
-                if (!isset($grouped[$siteId])) {
+
+                if (! isset($grouped[$siteId])) {
                     $grouped[$siteId] = [
                         'type' => 'FeatureCollection',
                         'features' => [],
                     ];
                 }
-    
+
                 $grouped[$siteId]['features'][] = $feature;
             }
         }
-    
+
         Log::info('Completed grouping geometries by site_id', ['groupedGeometries' => $grouped]);
-    
+
         return $grouped;
     }
-    
+
     public function validateGeometries(Request $request): JsonResponse
     {
         $request->validate([
