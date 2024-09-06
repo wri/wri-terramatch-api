@@ -40,7 +40,7 @@ class AdminStatusSiteReportControllerTest extends TestCase
         $tfAdmin = User::factory()->terrafundAdmin()->create();
         $ppcAdmin = User::factory()->ppcAdmin()->create();
 
-        $payload = ['feedback' => 'testing more info'];
+        $payload = ['feedback' => 'testing more info', 'feedback_fields' => []];
         $uri = '/api/v2/admin/site-reports/' . $report->uuid . '/moreinfo';
 
         $this->actingAs($random)
