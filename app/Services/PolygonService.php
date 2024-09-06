@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 class PolygonService
@@ -171,7 +172,13 @@ class PolygonService
             $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
         }
         if($primary_uuid) {
-            $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
+          $result = $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
+          if ($result === false) {
+              $this->insertSitePolygon(
+                  $uuid,
+                  array_merge($sitePolygonProperties, $featureProperties)
+              );
+          }
         } else {
             $this->insertSitePolygon(
                 $uuid,
@@ -292,7 +299,8 @@ class PolygonService
         try {
             $sitePolygon = SitePolygon::isUuid($primary_uuid)->first();
             if (! $sitePolygon) {
-                return response()->json(['error' => 'Site polygon not found'], 404);
+                Log::info('Site polygon not found', ['uuid' => $primary_uuid, 'polygon uuid' => $polygonUuid]);
+                return false;
             }
             $user = User::isUuid(Auth::user()->uuid)->first();
             $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid, $submit_polygon_loaded, $properties);
@@ -301,13 +309,13 @@ class PolygonService
             $project = $newSitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
             $geometryHelper->updateProjectCentroid($project->uuid);
-
-            return null;
+    
+            return true;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
-
+    
     protected function validateSitePolygonProperties(string $polygonUuid, array $properties)
     {
         // Avoid trying to store an invalid date string or int in the DB, as that will throw an exception and prevent
