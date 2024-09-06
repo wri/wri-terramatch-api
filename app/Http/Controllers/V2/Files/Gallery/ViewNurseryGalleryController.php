@@ -33,10 +33,26 @@ class ViewNurseryGalleryController extends Controller
             }
         });
 
+        // Map model types to classes
+        $modelTypeMap = [
+            'nurseries' => [Nursery::class],
+            'reports' => [NurseryReport::class],
+        ];
+
         $query = QueryBuilder::for($mediaQueryBuilder)
             ->allowedFilters([
                 AllowedFilter::exact('file_type'),
                 AllowedFilter::exact('is_public'),
+                AllowedFilter::callback('model_type', function ($query, $value) use ($modelTypeMap) {
+                    $classNames = $modelTypeMap[$value] ?? null;
+                    if ($classNames) {
+                        $query->where(function ($subQuery) use ($classNames) {
+                            foreach ($classNames as $className) {
+                                $subQuery->orWhere('model_type', $className);
+                            }
+                        });
+                    }
+                }),
             ]);
 
         $collection = $query->paginate($perPage)

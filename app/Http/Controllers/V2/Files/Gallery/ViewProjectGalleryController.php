@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Support\Facades\Log;
 
 class ViewProjectGalleryController extends Controller
 {
@@ -43,10 +44,28 @@ class ViewProjectGalleryController extends Controller
                   });
               }
           });
-          if (!empty($searchTerm)) {
-            $ids = Media::search($searchTerm)->get()->pluck('id')->toArray();
-            $mediaQueryBuilder->whereIn('media.id', $ids);
-          }
+        //   if (!empty($searchTerm)) {
+        //     Log::info('searchTerm: '.$searchTerm);
+        //     $ids = Media::search($searchTerm)->get()->pluck('id')->toArray();
+        //     Log::info('ids: '.json_encode($ids));
+        //     $mediaQueryBuilder->whereIn('media.id', $ids);
+        //   }
+        if (!empty($searchTerm)) {
+            Log::info('Searching with term: ' . $searchTerm);
+            try {
+                $searchResults = Media::search($searchTerm)->get();
+                Log::info('Search completed successfully');
+                $ids = $searchResults->pluck('id')->toArray();
+                Log::info('Search results count: ' . count($ids));
+                if (empty($ids)) {
+                    Log::warning('No search results found for term: ' . $searchTerm);
+                }
+                $mediaQueryBuilder->whereIn('media.id', $ids);
+            } catch (\Exception $searchException) {
+                Log::error('Error during search operation: ' . $searchException->getMessage());
+                // Decide how to handle search errors. For now, we'll continue without applying the search filter
+            }
+        }
           if ($isGeotagged === '1') {
             $mediaQueryBuilder->whereNotNull('lat')->whereNotNull('lng');
           } elseif ($isGeotagged === '2') {

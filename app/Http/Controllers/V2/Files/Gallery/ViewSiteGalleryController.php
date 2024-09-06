@@ -23,12 +23,11 @@ class ViewSiteGalleryController extends Controller
         $searchTerm = $request->query('search');
         $isGeotagged = $request->query('is_geotagged');
         $sortOrder = $request->query('sort_order', 'asc');
-        Log::info('sortOrder: ' . $sortOrder);
-        $models = [];
-        ! empty($entity) && $entity != 'sites' ?: $models[] = ['type' => get_class($site), 'ids' => [$site->id]];
-        ! empty($entity) && $entity != 'site-reports' ?: $models[] = ['type' => SiteReport::class, 'ids' => $site->reports()->pluck('id')->toArray()];
 
-        Log::info('models: ' . json_encode($models). " model name".$entity);
+        $models = [];
+        !empty($entity) && $entity != 'sites' ?: $models[] = ['type' => get_class($site), 'ids' => [$site->id]];
+        !empty($entity) && $entity != 'site-reports' ?: $models[] = ['type' => SiteReport::class, 'ids' => $site->reports()->pluck('id')->toArray()];
+
         $mediaQueryBuilder = Media::query()->where(function ($query) use ($models) {
             foreach ($models as $model) {
                 $query->orWhere(function ($query) use ($model) {
@@ -37,23 +36,39 @@ class ViewSiteGalleryController extends Controller
                 });
             }
         });
+
         if (!empty($searchTerm)) {
-          $ids = Media::search($searchTerm)->get()->pluck('id')->toArray();
-          $mediaQueryBuilder->whereIn('media.id', $ids);
+            $ids = Media::search($searchTerm)->get()->pluck('id')->toArray();
+            $mediaQueryBuilder->whereIn('media.id', $ids);
         }
         if ($isGeotagged === '1') {
-          $mediaQueryBuilder->whereNotNull('lat')->whereNotNull('lng');
+            $mediaQueryBuilder->whereNotNull('lat')->whereNotNull('lng');
         } elseif ($isGeotagged === '2') {
             $mediaQueryBuilder->whereNull('lat')->whereNull('lng');
         }
-  
+
+        // Map model types to classes
+        $modelTypeMap = [
+            'sites' => [Site::class],
+            'reports' => [SiteReport::class],
+        ];
 
         $query = QueryBuilder::for($mediaQueryBuilder)
-        ->allowedFilters([
-            AllowedFilter::exact('file_type'),
-            AllowedFilter::exact('is_public')
-        ])
-        ->allowedSorts(['created_at']);
+            ->allowedFilters([
+                AllowedFilter::exact('file_type'),
+                AllowedFilter::exact('is_public'),
+                AllowedFilter::callback('model_type', function ($query, $value) use ($modelTypeMap) {
+                    $classNames = $modelTypeMap[$value] ?? null;
+                    if ($classNames) {
+                        $query->where(function ($subQuery) use ($classNames) {
+                            foreach ($classNames as $className) {
+                                $subQuery->orWhere('model_type', $className);
+                            }
+                        });
+                    }
+                }),
+            ])
+            ->allowedSorts(['created_at']);
 
         $query->orderBy('created_at', $sortOrder);
 
