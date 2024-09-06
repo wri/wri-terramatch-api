@@ -62,7 +62,7 @@ trait SaveAuditStatusTrait
 
     private function getMoreInfoComment($data, $entity)
     {
-        $feedbackFields = data_get($data, 'feedback_fields');
+        $feedbackFields = data_get($data, 'feedback_fields', []);
         $feedbackFieldLabels = [];
         foreach ($feedbackFields as $formQuestionUUID) {
             $question = FormQuestion::isUuid($formQuestionUUID)->first();
