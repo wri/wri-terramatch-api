@@ -34,7 +34,7 @@ class AdminStatusEntityController extends Controller
             case 'restoration-in-progress':
                 if (get_class($entity) === Site::class) {
                     $entity->restorationInProgress();
-                    $this->saveAuditStatusAdminRestorationInProgress($entity);
+                    // $this->saveAuditStatusAdminRestorationInProgress($entity);
 
                     break;
                 }
