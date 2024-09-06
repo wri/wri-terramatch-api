@@ -4,9 +4,9 @@ namespace App\Http\Controllers\V2\Entities;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\UpdateRequests\StatusChangeRequest;
+use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Sites\Site;
-use App\Models\Traits\SaveAuditStatusTrait;
 use Illuminate\Http\JsonResponse;
 
 class AdminStatusEntityController extends Controller

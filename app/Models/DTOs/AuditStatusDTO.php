@@ -59,7 +59,7 @@ class AuditStatusDTO
             $audit->status,
             $user ? $user->first_name : null,
             $user ? $user->last_name : null,
-            $audit->new_values ? str_replace('-', ' ',$comment) : null,
+            $audit->new_values ? str_replace('-', ' ', $comment) : null,
             $audit->type,
             $audit->request_removed,
             $audit->created_at,
