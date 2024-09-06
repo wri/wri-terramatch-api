@@ -162,7 +162,8 @@ class ViewProjectController extends Controller
             'Jobs Created Part Time Non-Youth',
             'Beneficiaries Number',
             'Beneficiaries Men',
-            'Beneficiaries Women'
+            'Beneficiaries Women',
+            'Hectares Under Restoration'
         ];
         
         $records = [];
@@ -196,6 +197,8 @@ class ViewProjectController extends Controller
                 ProjectReport::where('project_id', $project->id)->sum('beneficiaries'),
                 ProjectReport::where('project_id', $project->id)->sum('beneficiaries_men'),
                 ProjectReport::where('project_id', $project->id)->sum('beneficiaries_women'),
+
+                $project->total_hectares_restored_sum
             ];
         });
 
