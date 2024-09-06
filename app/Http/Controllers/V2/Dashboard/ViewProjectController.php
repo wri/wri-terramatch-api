@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use League\Csv\Writer;
+use App\Models\V2\Forms\FormOptionListOption;
 
 class ViewProjectController extends Controller
 {
@@ -149,11 +150,19 @@ class ViewProjectController extends Controller
             'Jobs Created',
             'Jobs Created Full Time',
             'Jobs Created Part Time',
-            'Jobs Created Male',
-            'Jobs Created Female',
+            'Jobs Created Men',
+            'Jobs Created Women',
+            'Jobs Created Full Time Men',
+            'Jobs Created Full Time Women',
+            'Jobs Created Full Time Youth',
+            'Jobs Created Full Time Non-Youth',
+            'Jobs Created Part Time Men',
+            'Jobs Created Part Time Women',
+            'Jobs Created Part Time Youth',
+            'Jobs Created Part Time Non-Youth',
             'Beneficiaries Number',
-            'Beneficiaries Male',
-            'Beneficiaries Female'
+            'Beneficiaries Men',
+            'Beneficiaries Women'
         ];
         
         $records = [];
@@ -164,7 +173,7 @@ class ViewProjectController extends Controller
             $records[] = [
                 $project->uuid,
                 $project->name,
-                $project->country,
+                $this->getCountry($project->country),
                 $project->organisation->name ?? null,
                 $project->trees_grown_goal,
                 $project->trees_planted_count,
@@ -174,6 +183,16 @@ class ViewProjectController extends Controller
                 ProjectReport::where('project_id', $project->id)->sum('pt_total'),
                 ProjectReport::where('project_id', $project->id)->sum('ft_men') + ProjectReport::where('project_id', $project->id)->sum('pt_men'),
                 ProjectReport::where('project_id', $project->id)->sum('ft_women') + ProjectReport::where('project_id', $project->id)->sum('pt_women'),
+                ProjectReport::where('project_id', $project->id)->sum('ft_men'),
+                ProjectReport::where('project_id', $project->id)->sum('ft_women'),
+                ProjectReport::where('project_id', $project->id)->sum('ft_youth'),
+                ProjectReport::where('project_id', $project->id)->sum('ft_jobs_non_youth'),
+
+                ProjectReport::where('project_id', $project->id)->sum('pt_men'),
+                ProjectReport::where('project_id', $project->id)->sum('pt_women'),
+                ProjectReport::where('project_id', $project->id)->sum('pt_youth'),
+                ProjectReport::where('project_id', $project->id)->sum('pt_non_youth'),
+
                 ProjectReport::where('project_id', $project->id)->sum('beneficiaries'),
                 ProjectReport::where('project_id', $project->id)->sum('beneficiaries_men'),
                 ProjectReport::where('project_id', $project->id)->sum('beneficiaries_women'),
@@ -189,5 +208,9 @@ class ViewProjectController extends Controller
         }, 'Project Complete Report - ' . now() . '.csv', [
             'Content-Type' => 'text/csv',
         ]);
+    }
+    public function getCountry($slug)
+    {
+        return FormOptionListOption::where('slug', $slug)->value('label');
     }
 };
