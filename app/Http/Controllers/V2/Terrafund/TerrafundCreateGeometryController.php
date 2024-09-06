@@ -85,9 +85,6 @@ class TerrafundCreateGeometryController extends Controller
                 $geojson = json_decode($geojsonData, true);
                 SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-                Log::info('geojson: ' . json_encode($geojson));
-                Log::info('entity_uuid: ' . $entity_uuid);
-
                 return $service->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
 
             }
@@ -592,7 +589,6 @@ class TerrafundCreateGeometryController extends Controller
         $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
         $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
 
-        Log::info('SITE ID: '.$site_id);
         if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
             $uuid = $this->insertGeojsonToDB($filename, $site_id, 'site', $body['primary_uuid'] ?? null);
         }
