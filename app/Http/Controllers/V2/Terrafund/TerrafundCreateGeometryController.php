@@ -85,8 +85,9 @@ class TerrafundCreateGeometryController extends Controller
                 $geojson = json_decode($geojsonData, true);
                 SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
 
-                Log::info("geojson: " . json_encode($geojson));
-                Log::info("entity_uuid: " . $entity_uuid);
+                Log::info('geojson: ' . json_encode($geojson));
+                Log::info('entity_uuid: ' . $entity_uuid);
+
                 return $service->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
 
             }
@@ -365,7 +366,6 @@ class TerrafundCreateGeometryController extends Controller
     {
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
-        Log::debug('Upload Shape file data', ['request' => $request->all()]);
         $rules = [
           'file' => 'required|file|mimes:zip',
         ];
@@ -406,8 +406,7 @@ class TerrafundCreateGeometryController extends Controller
             }
 
             $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-            $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-
+            $submitPolygonsLoaded = $request->input('submit_polygon_loaded') === true || $request->input('submit_polygon_loaded') === 'true';
             if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
                 $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
             }
@@ -593,7 +592,7 @@ class TerrafundCreateGeometryController extends Controller
         $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
         $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
 
-        Log::info("SITE ID: ".$site_id);
+        Log::info('SITE ID: '.$site_id);
         if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
             $uuid = $this->insertGeojsonToDB($filename, $site_id, 'site', $body['primary_uuid'] ?? null);
         }

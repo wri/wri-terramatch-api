@@ -130,40 +130,40 @@ class PolygonService
 
     public function createGeojsonModels($geojson, $sitePolygonProperties = [], ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false): array
     {
-      try {
-        if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
-          return $this->transformAndStorePoints($geojson, $sitePolygonProperties);
-        }
+        try {
+            if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
+                return $this->transformAndStorePoints($geojson, $sitePolygonProperties);
+            }
 
-        $uuids = [];
-        foreach ($geojson['features'] as $feature) {
-            if ($feature['geometry']['type'] === 'Polygon') {
-                $data = $this->insertSinglePolygon($feature['geometry']);
-                $uuids[] = $data['uuid'];
-                $sitePolygonProperties['area'] = $data['area'];
-                if ($submit_polygon_loaded && isset($feature['properties']['uuid'])) {
-                    $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $feature['properties']['uuid'], $submit_polygon_loaded);
-                } else {
-                    $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $primary_uuid);
-                }
-            } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
-                foreach ($feature['geometry']['coordinates'] as $polygon) {
-                    $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
-                    $data = $this->insertSinglePolygon($singlePolygon);
+            $uuids = [];
+            foreach ($geojson['features'] as $feature) {
+                if ($feature['geometry']['type'] === 'Polygon') {
+                    $data = $this->insertSinglePolygon($feature['geometry']);
                     $uuids[] = $data['uuid'];
+                    $sitePolygonProperties['area'] = $data['area'];
                     if ($submit_polygon_loaded && isset($feature['properties']['uuid'])) {
                         $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $feature['properties']['uuid'], $submit_polygon_loaded);
                     } else {
                         $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $primary_uuid);
                     }
+                } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+                    foreach ($feature['geometry']['coordinates'] as $polygon) {
+                        $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
+                        $data = $this->insertSinglePolygon($singlePolygon);
+                        $uuids[] = $data['uuid'];
+                        if ($submit_polygon_loaded && isset($feature['properties']['uuid'])) {
+                            $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $feature['properties']['uuid'], $submit_polygon_loaded);
+                        } else {
+                            $this->insertPolygon($data['uuid'], $sitePolygonProperties, $feature['properties'], $primary_uuid);
+                        }
+                    }
                 }
             }
-        }
 
-        return $uuids;
-      } catch (\Exception $e) {
-        return ['error create' => $e->getMessage()];
-      }
+            return $uuids;
+        } catch (\Exception $e) {
+            return ['error create' => $e->getMessage()];
+        }
     }
 
     private function insertPolygon($uuid, $sitePolygonProperties, $featureProperties, ?string $primary_uuid, ?bool $submit_polygon_loaded = false)
@@ -172,13 +172,13 @@ class PolygonService
             $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
         }
         if($primary_uuid) {
-          $result = $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
-          if ($result === false) {
-              $this->insertSitePolygon(
-                  $uuid,
-                  array_merge($sitePolygonProperties, $featureProperties)
-              );
-          }
+            $result = $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
+            if ($result === false) {
+                $this->insertSitePolygon(
+                    $uuid,
+                    array_merge($sitePolygonProperties, $featureProperties)
+                );
+            }
         } else {
             $this->insertSitePolygon(
                 $uuid,
@@ -297,9 +297,10 @@ class PolygonService
     protected function insertSitePolygonVersion(string $polygonUuid, string $primary_uuid, ?bool $submit_polygon_loaded = false, ?array $properties)
     {
         try {
-            $sitePolygon = SitePolygon::isUuid($primary_uuid)->first();
+            $sitePolygon = SitePolygon::isUuid($primary_uuid)->active()->first();
             if (! $sitePolygon) {
                 Log::info('Site polygon not found', ['uuid' => $primary_uuid, 'polygon uuid' => $polygonUuid]);
+
                 return false;
             }
             $user = User::isUuid(Auth::user()->uuid)->first();
@@ -309,13 +310,13 @@ class PolygonService
             $project = $newSitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
             $geometryHelper->updateProjectCentroid($project->uuid);
-    
+
             return true;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
-    
+
     protected function validateSitePolygonProperties(string $polygonUuid, array $properties)
     {
         // Avoid trying to store an invalid date string or int in the DB, as that will throw an exception and prevent

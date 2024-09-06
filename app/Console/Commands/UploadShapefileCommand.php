@@ -21,6 +21,7 @@ class UploadShapefileCommand extends Command
 
         if (! file_exists($filePath)) {
             $this->error("File not found: $filePath");
+
             return 1;
         }
 
@@ -33,26 +34,23 @@ class UploadShapefileCommand extends Command
             true // Set test mode to true to prevent the file from being moved
         );
 
-        // Create a fake request with the uploaded file and site UUID
         $request = new Request();
         $request->files->set('file', $uploadedFile);
-        $request->request->set('uuid', $siteUuid);
-
-        // If submit_polygon_loaded is provided, add it to the request
-        if ($submitPolygonLoaded !== null) {
-            $request->request->set('submit_polygon_loaded', $submitPolygonLoaded);
-        }
-
-        // Instantiate the controller and call the method
+        $request->merge([
+          'uuid' => $siteUuid,
+          'submit_polygon_loaded' => $submitPolygonLoaded,
+        ]);
         $controller = new TerrafundCreateGeometryController();
         $response = $controller->uploadShapefile($request);
 
         // Handle the response
         if ($response->getStatusCode() === 200) {
             $this->info('Shapefile uploaded successfully: ' . $response->getContent());
+
             return 0;
         } else {
             $this->error('Failed to upload shapefile: ' . $response->getContent());
+
             return 1;
         }
     }
