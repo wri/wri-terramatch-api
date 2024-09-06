@@ -21,13 +21,13 @@ class AdminStatusEntityController extends Controller
         switch($status) {
             case 'approve':
                 $entity->approve(data_get($data, 'feedback'));
-                $this->saveAuditStatusAdminApprove($data, $entity);
+                // $this->saveAuditStatusAdminApprove($data, $entity);
 
                 break;
 
             case 'moreinfo':
                 $entity->needsMoreInformation(data_get($data, 'feedback'), data_get($data, 'feedback_fields'));
-                $this->saveAuditStatusAdminMoreInfo($data, $entity);
+                // $this->saveAuditStatusAdminMoreInfo($data, $entity);
 
                 break;
 
