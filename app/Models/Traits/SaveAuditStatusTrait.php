@@ -50,6 +50,11 @@ trait SaveAuditStatusTrait
         $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment, 'change-request-updated', true);
     }
 
+    public function saveAuditStatusAdminRestorationInProgress($entity)
+    {
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Restoration In Progress', 'change-request-updated', true);
+    }
+
     private function getApproveComment($data)
     {
         return 'Approve: '.data_get($data, 'feedback');

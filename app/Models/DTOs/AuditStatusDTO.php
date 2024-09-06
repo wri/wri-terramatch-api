@@ -52,13 +52,14 @@ class AuditStatusDTO
     public static function fromAudits($audit)
     {
         $user = self::getUserFromAudit($audit->user_id);
+        $comment = data_get($audit->new_values, 'status').': '.data_get($audit->new_values, 'feedback');
 
         return new AuditStatusDTO(
             $audit->id,
             $audit->status,
             $user ? $user->first_name : null,
             $user ? $user->last_name : null,
-            $audit->new_values ? data_get($audit->new_values, 'feedback') : null,
+            $audit->new_values ? str_replace('-', ' ',$comment) : null,
             $audit->type,
             $audit->request_removed,
             $audit->created_at,

@@ -199,6 +199,16 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         ],
     ];
 
+    // disable auditing for this model
+    // public static function boot()
+    // {
+    //     parent::boot();
+
+    //     static::saving(function ($model) {
+    //         $model->disableAuditing();
+    //     });
+    // }
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumbnail')

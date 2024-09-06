@@ -27,7 +27,7 @@ class GetAuditStatusController extends Controller
             return $item->date_created;
         });
 
-        return AuditStatusResource::collection($sortedData->unique('comment'));
+        return AuditStatusResource::collection($sortedData);
     }
 
     private function getAudits($auditable)
@@ -37,10 +37,13 @@ class GetAuditStatusController extends Controller
         }
 
         $audits = $auditable->audits()
-            ->orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->get();
-
+        ->where(function ($query) {
+            $query->where('created_at', '<', '2024-09-01')
+                  ->orWhere('updated_at', '<', '2024-09-01');
+        })
+        ->orderByDesc('updated_at')
+        ->orderByDesc('created_at')
+        ->get();
         return $audits->map(function ($audit) {
             return AuditStatusDTO::fromAudits($audit);
         });
