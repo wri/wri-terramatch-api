@@ -363,7 +363,6 @@ class TerrafundCreateGeometryController extends Controller
     {
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
-        Log::debug('Upload Shape file data', ['request' => $request->all()]);
         $rules = [
           'file' => 'required|file|mimes:zip',
         ];
@@ -404,8 +403,7 @@ class TerrafundCreateGeometryController extends Controller
             }
 
             $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-            $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-
+            $submitPolygonsLoaded = $request->input('submit_polygon_loaded') === true || $request->input('submit_polygon_loaded') === 'true';
             if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
                 $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
             }
