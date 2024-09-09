@@ -27,7 +27,7 @@ class InterestShown extends I18nMail
             ->setBodyKey('interest-shown.body')
             ->setCta('interest-shown.cta')
             ->setParams(['{name}' => e($name)])
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
 
         $this->link = $link;
     }

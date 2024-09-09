@@ -13,7 +13,7 @@ class UpcomingProgressUpdate extends I18nMail
             ->setBodyKey('upcoming-progress-update.body')
             ->setCta('upcoming-progress-update.cta')
             ->setParams(['{pitchName}' => e($pitchName)])
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = '/report/setup/' . $monitoringId;
     }
 }

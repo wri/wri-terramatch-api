@@ -11,7 +11,7 @@ class FormSubmissionSubmitted extends I18nMail
         $this->setSubjectKey('form-submission-submitted.subject')
             ->setTitleKey('form-submission-submitted.title')
             ->setBodyKey('form-submission-submitted.body')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
 
         $this->transactional = true;
     }

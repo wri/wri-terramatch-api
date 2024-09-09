@@ -12,7 +12,7 @@ class FormSubmissionFinalStageApproved extends I18nMail
             ->setTitleKey('form-submission-final-stage-approved.title')
             ->setBodyKey(! is_null($feedback) ? 'form-submission-final-stage-approved.body-feedback' : 'form-submission-final-stage-approved.body')
             ->setParams(['{feedback}' => e($feedback)])
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
 
         $this->transactional = true;
     }

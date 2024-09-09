@@ -13,7 +13,7 @@ class TerrafundProgrammeSubmissionReceived extends I18nMail
             ->setBodyKey('terrafund-programme-submission-received.body')
             ->setParams(['{name}' => e($name)])
             ->setCta('terrafund-programme-submission-received.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = '/admin/terrafundProgrammes/preview/?programmeId=' . $id;
         $this->transactional = true;
     }

@@ -13,7 +13,7 @@ class ProgressUpdateCreated extends I18nMail
             ->setBodyKey('progress-update-created.body')
             ->setParams(['{pitchName}' => $pitchName])
             ->setCta('progress-update-created.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = '/monitoring/report/' . $progressUpdateId;
     }
 }

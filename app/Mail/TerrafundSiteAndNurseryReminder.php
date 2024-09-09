@@ -12,7 +12,7 @@ class TerrafundSiteAndNurseryReminder extends I18nMail
             ->setTitleKey('terrafund-site-and-nursery-reminder.title')
             ->setBodyKey('terrafund-site-and-nursery-reminder.body')
             ->setCta('terrafund-site-and-nursery-reminder.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
 
         $this->link = '/terrafund/programmeOverview/' . $id;
 

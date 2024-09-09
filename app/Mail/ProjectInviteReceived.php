@@ -13,7 +13,7 @@ class ProjectInviteReceived extends I18nMail
             ->setBodyKey('project-invite-received.body')
             ->setParams(['{name}' => e($name)])
             ->setCta('project-invite-received.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = $callbackUrl ?
             $callbackUrl . 'terrafund/programme/invite/accept?token=' . $token :
             '/terrafund/programme/invite/accept?token=' . $token;

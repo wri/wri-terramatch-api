@@ -11,6 +11,6 @@ class OrganisationRejected extends I18nMail
         $this->setSubjectKey('organisation-rejected.subject')
             ->setTitleKey('organisation-rejected.title')
             ->setBodyKey('organisation-rejected.body')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
     }
 }

@@ -13,7 +13,7 @@ class TargetAccepted extends I18nMail
             ->setBodyKey('target-accepted.body')
             ->setParams(['{name}' => e($name)])
             ->setCta('target-accepted.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->banner = 'target_accepted';
         $this->link = '/monitoring/dashboard/?monitoringId=' . $monitoringId;
     }

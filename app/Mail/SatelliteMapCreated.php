@@ -13,7 +13,7 @@ class SatelliteMapCreated extends I18nMail
             ->setBodyKey('satellite-map-created.body')
             ->setParams(['{name}' => e($name)])
             ->setCta('satellite-map-created.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = '/monitoring/dashboard/?satelliteId=' . $satelliteMapId;
     }
 }

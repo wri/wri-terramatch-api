@@ -41,7 +41,7 @@ class VersionRejected extends I18nMail
             ->setBodyKey('version-rejected.body')
             ->setParams(['{versionName}' => e($version->name), '{explanation}' => e($explanation)])
             ->setCta('version-rejected.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = $link;
     }
 }

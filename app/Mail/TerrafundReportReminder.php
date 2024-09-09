@@ -12,7 +12,7 @@ class TerrafundReportReminder extends I18nMail
             ->setTitleKey('terrafund-report-reminder.title')
             ->setBodyKey('terrafund-report-reminder.body')
             ->setCta('terrafund-report-reminder.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = '/terrafund/programmeOverview/' . $id;
 
         $this->transactional = true;

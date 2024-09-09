@@ -24,7 +24,7 @@ class UserInvited extends I18nMail
         $this->setSubjectKey('user-invited.subject')
             ->setTitleKey('user-invited.title')
             ->setCta('user-invited.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
 
         $this->link = $callbackUrl ?
             $callbackUrl . 'invite?emailAddress=' . urlencode($emailAddress) . '&type=' . urlencode(strtolower($type)) :

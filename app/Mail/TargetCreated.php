@@ -13,7 +13,7 @@ class TargetCreated extends I18nMail
             ->setBodyKey('target-created.body')
             ->setParams(['{name}' => e($name)])
             ->setCta('target-created.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = '/monitoring/review/?targetId=' . $targetId;
     }
 }

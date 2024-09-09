@@ -3,6 +3,7 @@
 namespace App\Mail;
 use App\Models\V2\LocalizationKey;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 abstract class I18nMail extends Mail
 {
@@ -11,22 +12,21 @@ abstract class I18nMail extends Mail
     protected string $titleKey;
     protected string $bodyKey;
     protected string $ctaKey;
-    protected string $userLocation;
+    protected string $userLocale;
     protected array $params;
 
     public function build() {
-
         if (isset($this->subjectKey)) {
-            $this->subject = $this->getValueTranslated($this->subjectKey, $this->userLocation, $this->params);
+            $this->subject = $this->getValueTranslated($this->subjectKey);
         }
         if (isset($this->titleKey)) {
-            $this->title = $this->getValueTranslated($this->titleKey, $this->userLocation, $this->params);
+            $this->title = $this->getValueTranslated($this->titleKey);
         }
         if (isset($this->bodyKey)) {
-            $this->body = $this->getValueTranslated($this->bodyKey, $this->userLocation, $this->params);
+            $this->body = $this->getValueTranslated($this->bodyKey);
         }
         if (isset($this->ctaKey)) {
-            $this->cta = $this->getValueTranslated($this->ctaKey, $this->userLocation, $this->params);
+            $this->cta = $this->getValueTranslated($this->ctaKey);
         }
 
         parent::build();
@@ -50,9 +50,9 @@ abstract class I18nMail extends Mail
         return $this;
     }
 
-    public function setUserLocation(string $location): I18nMail
+    public function setUserLocale(string $location): I18nMail
     {
-        $this->userLocation = $location;
+        $this->userLocale = $location;
         return $this;
     }
 
@@ -68,15 +68,14 @@ abstract class I18nMail extends Mail
         return $this;
     }
 
-    public function getValueTranslated($valueKey, $userLocation, ?array $params = []) 
-    {
-        App::setLocale($userLocation);
-        $localizationKey = LocalizationKey::where('key', $valueKey)->first();
-        
-        if (!empty($params)) {
-            return str_replace(array_keys($params), array_values($params), $localizationKey->translated_value);
-        } 
 
+    public function getValueTranslated($valueKey) 
+    {
+        App::setLocale($this->userLocale);
+        $localizationKey = LocalizationKey::where('key', $valueKey)->first();
+        if (!empty($this->params)) {
+            return str_replace(array_keys($this->params), array_values($this->params), $localizationKey->translated_value);
+        }
         return $localizationKey->translated_value;
     }
 }

@@ -5,8 +5,6 @@ namespace App\Mail;
 use App\Models\V2\EntityModel;
 use App\Models\V2\ReportModel;
 use App\StateMachines\EntityStatusStateMachine;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class EntityStatusChange extends I18nMail
 {
@@ -47,7 +45,7 @@ class EntityStatusChange extends I18nMail
             '{feedback}' => $this->getFeedback() ?? '(No feedback)'])
             ->setLink($this->entity->getViewLinkPath())
             ->setCta('entity-status-change.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = $this->entity->getViewLinkPath();
         $this->transactional = true;
     }

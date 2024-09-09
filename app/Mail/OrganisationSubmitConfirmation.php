@@ -11,6 +11,6 @@ class OrganisationSubmitConfirmation extends I18nMail
         $this->setSubjectKey('organisation-submit-confirmation.subject')
             ->setTitleKey('organisation-submit-confirmation.title')
             ->setBodyKey('organisation-submit-confirmation.body')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
     }
 }

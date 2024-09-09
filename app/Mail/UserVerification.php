@@ -12,7 +12,7 @@ class UserVerification extends I18nMail
             ->setTitleKey('user-verification.title')
             ->setBodyKey('user-verification.body')
             ->setCta('user-verification.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = $callbackUrl ?
             $callbackUrl . urlencode($token) :
             '/verify?token=' . urlencode($token);

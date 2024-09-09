@@ -12,7 +12,7 @@ class V2ProjectMonitoringNotification extends I18nMail
             ->setTitleKey('v2-project-monitoring-notification.title')
             ->setBodyKey('v2-project-monitoring-notification.body')
             ->setParams(['{name}' => $name, '{callbackUrl}' => $callbackUrl])
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
 
         $this->transactional = false;
         $this->monitoring = true;

@@ -25,6 +25,6 @@ class V2ProjectInviteReceived extends I18nMail
         $this->setSubjectKey('project-invite-received.subject')
             ->setTitleKey('project-invite-received.title')
             ->setBodyKey('project-invite-received.body')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
     }
 }

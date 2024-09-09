@@ -12,7 +12,7 @@ class ResetPassword extends I18nMail
             ->setTitleKey('reset-password.title')
             ->setBodyKey('reset-password.body')
             ->setCta('reset-password.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = $callbackUrl ?
             $callbackUrl . urlencode($token) :
             '/passwordReset?token=' . urlencode($token);

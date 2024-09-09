@@ -56,7 +56,7 @@ class ProjectUpdated extends I18nMail
         $this->setBodyKey('project-updated.body')
             ->setParams(['{name}' => e($name)])
             ->setCta('project-updated.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = $link;
     }
 }

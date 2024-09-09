@@ -12,7 +12,7 @@ class OrganisationApproved extends I18nMail
             ->setTitleKey('organisation-approved.title')
             ->setBodyKey('organisation-approved.body')
             ->setCta('organisation-approved.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = '/auth/login';
     }
 }

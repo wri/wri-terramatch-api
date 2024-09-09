@@ -12,7 +12,7 @@ class FormSubmissionFeedbackReceived extends I18nMail
             ->setTitleKey('form-submission-feedback-received.title')
             ->setBodyKey(! is_null($feedback) ? 'form-submission-feedback-received.body-feedback' : 'form-submission-feedback-received.body')
             ->setParams(['{feedback}' => e($feedback)])
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
 
         $this->transactional = true;
     }

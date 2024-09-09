@@ -14,6 +14,6 @@ class OrganisationUserApproved extends I18nMail
             ->setTitleKey('organisation-user-approved.title')
             ->setBodyKey('organisation-user-approved.body')
             ->setParams(['{organisationName}' => $organisation->name])
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
     }
 }

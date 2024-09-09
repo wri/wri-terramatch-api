@@ -41,7 +41,7 @@ class VersionApproved extends I18nMail
             ->setBodyKey('version-approved.body')
             ->setParams(['{versionName}' => e($version->name)])
             ->setCta('version-approved.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = $link;
     }
 }

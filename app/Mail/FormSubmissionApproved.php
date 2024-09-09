@@ -12,7 +12,7 @@ class FormSubmissionApproved extends I18nMail
             ->setTitleKey('form-submission-approved.title')
             ->setBodyKey(! is_null($feedback) ? 'form-submission-approved.body-feedback' : 'form-submission-approved.body')
             ->setParams(['{feedback}' => e($feedback)])
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->transactional = true;
     }
 }

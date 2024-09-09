@@ -26,7 +26,7 @@ class UpdateVisibility extends I18nMail
             ->setTitleKey('update-visibility.title')
             ->setBodyKey('update-visibility.body')
             ->setCta('update-visibility.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = $link;
     }
 }

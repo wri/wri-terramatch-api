@@ -13,6 +13,6 @@ class OrganisationUserJoinRequested extends I18nMail
         $this->setSubjectKey('organisation-user-join-requested.subject')
             ->setTitleKey('organisation-user-join-requested.title')
             ->setBodyKey('organisation-user-join-requested.body')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
     }
 }

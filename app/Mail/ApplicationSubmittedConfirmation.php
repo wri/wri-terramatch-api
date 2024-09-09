@@ -8,8 +8,12 @@ class ApplicationSubmittedConfirmation extends I18nMail
     {
         $this->setSubjectKey('application-submitted-confirmation.subject')
         ->setTitleKey('application-submitted-confirmation.title')
-        ->setUserLocation($user->locale);
-        // ->setBodyKey('application-submitted-confirmation.body');
-        $this->body = $submissionMessage;
+        ->setUserLocale($user->locale);
+
+        if (empty($submissionMessage)) {
+            $this->setBodyKey('application-submitted-confirmation.body');    
+        } else {
+            $this->body = $submissionMessage;
+        }
     }
 }

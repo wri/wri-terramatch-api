@@ -41,7 +41,7 @@ class VersionCreated extends I18nMail
             ->setBodyKey('version-created.body')
             ->setParams(['{versionName}' => e($version->name)])
             ->setCta('version-created.cta')
-            ->setUserLocation($user->locale);
+            ->setUserLocale($user->locale);
         $this->link = $link;
     }
 }
