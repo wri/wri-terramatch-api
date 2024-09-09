@@ -102,13 +102,21 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     return $this->stringifyModel($answer, ['first_name', 'last_name', 'title', 'gender', 'percent_ownership', 'year_of_birth',]);
 
                 default:
-                    $utf8Answer = mb_convert_encoding($answer, 'UTF-8', mb_detect_encoding($answer));
+                    if (is_string($answer)) {
+                        $utf8Answer = mb_convert_encoding($answer, 'UTF-8', mb_detect_encoding($answer));
+                    } else {
+                        $utf8Answer = $answer;
+                    }
 
                     return json_encode($utf8Answer, JSON_UNESCAPED_UNICODE);
             }
         }
 
-        $utf8Answer = mb_convert_encoding($answer, 'UTF-8', mb_detect_encoding($answer));
+        if (is_string($answer)) {
+            $utf8Answer = mb_convert_encoding($answer, 'UTF-8', mb_detect_encoding($answer));
+        } else {
+            $utf8Answer = $answer;
+        }
 
         return json_encode($utf8Answer, JSON_UNESCAPED_UNICODE);
     }
