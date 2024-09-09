@@ -6,9 +6,9 @@ use App\Jobs\V2\NotifyReportReminderJob;
 use App\Mail\TerrafundReportReminder;
 use App\Models\V2\Projects\Project;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Parental\HasParent;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * @property string $framework_key
