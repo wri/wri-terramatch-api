@@ -17,7 +17,7 @@ final class AuthControllerTest extends TestCase
     {
         $primeOrg = Organisation::factory(['status' => Organisation::STATUS_APPROVED])->create();
         $monitoringOrgs = Organisation::factory(['status' => Organisation::STATUS_APPROVED])->count(2)->create();
-        $user = User::factory()->create(['organisation_id' => $primeOrg->id]);
+        $user = User::factory()->create(['organisation_id' => $primeOrg->id, 'locale' => 'en-US']);
         foreach ($monitoringOrgs as $monitoringOrg) {
             $monitoringOrg->partners()->attach($user, ['status' => 'approved']);
         }
