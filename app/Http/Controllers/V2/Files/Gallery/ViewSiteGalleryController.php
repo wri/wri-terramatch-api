@@ -38,8 +38,10 @@ class ViewSiteGalleryController extends Controller
         });
 
         if (!empty($searchTerm)) {
-            $ids = Media::search($searchTerm)->get()->pluck('id')->toArray();
-            $mediaQueryBuilder->whereIn('media.id', $ids);
+            $mediaIds = Media::where('name', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('file_name', 'LIKE', "%{$searchTerm}%")
+            ->pluck('id');
+            $mediaQueryBuilder->whereIn('media.id', $mediaIds);
         }
         if ($isGeotagged === '1') {
             $mediaQueryBuilder->whereNotNull('lat')->whereNotNull('lng');
