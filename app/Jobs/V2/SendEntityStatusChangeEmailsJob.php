@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class SendEntityStatusChangeEmailsJob implements ShouldQueue
@@ -28,6 +29,7 @@ class SendEntityStatusChangeEmailsJob implements ShouldQueue
 
     public function handle(): void
     {
+        $user = Auth::user();
         if ($this->entity->status != EntityStatusStateMachine::APPROVED &&
             $this->entity->status != EntityStatusStateMachine::NEEDS_MORE_INFORMATION &&
             $this->entity->update_request_status != EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
@@ -47,7 +49,7 @@ class SendEntityStatusChangeEmailsJob implements ShouldQueue
                 continue;
             }
 
-            Mail::to($emailAddress)->send(new EntityStatusChangeMail($this->entity));
+            Mail::to($emailAddress)->send(new EntityStatusChangeMail($this->entity, $user));
         }
     }
 }

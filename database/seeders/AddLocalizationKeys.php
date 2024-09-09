@@ -32,7 +32,6 @@ class AddLocalizationKeys extends Seeder
         $this->createLocalizationKey('form-submission-rejected.body-feedback', 'After careful review, our team has decided your application will not move forward. Please see the comments below for more details or any follow-up resources.<br><br> {feedback}');
 
         // entity-status-change
-        // needs review
         $this->createLocalizationKey('entity-status-change.subject-approved', 'Your {entityTypeName} Has Been Approved');
         $this->createLocalizationKey('entity-status-change.subject-needs-more-information', 'There is More Information Requested About Your {entityTypeName}');
         $this->createLocalizationKey('entity-status-change.body-report-approved', 'Thank you for submitting your {parentEntityName} report.' . 
@@ -41,10 +40,10 @@ class AddLocalizationKeys extends Seeder
         $this->createLocalizationKey('entity-status-change.body-report-needs-more-information', 'Thank you for submitting your {parentEntityName} report.' .
             '<br><br>The information has been reviewed by your project manager and they would like to see the following updates: <br><br> {feedback}' .
             '<br><br>If you have any additional questions please reach out to your project manager or to info@terramatch.org<br><br>');
-        $this->createLocalizationKey('entity-status-change.body-entity-approved', 'Thank you for submitting your {entityTypeName} information for {entityName}.' .
+        $this->createLocalizationKey('entity-status-change.body-entity-approved', 'Thank you for submitting your {lowerEntityTypeName} information for {entityName}.' .
             '<br><br>The information has been reviewed by your project manager and has been approved. <br><br>{feedback}' .
             '<br><br>If you have any additional questions please reach out to your project manager or to info@terramatch.org<br><br>');
-        $this->createLocalizationKey('entity-status-change.body-entity-needs-more-information', 'Thank you for submitting your {entityTypeName} information for {entityName}.' .
+        $this->createLocalizationKey('entity-status-change.body-entity-needs-more-information', 'Thank you for submitting your {lowerEntityTypeName} information for {entityName}.' .
             '<br><br>The information has been reviewed by your project manager and they would like to see the following updates: <br><br> {feedback}' .
             '<br><br>If you have any additional questions please reach out to your project manager or to info@terramatch.org<br><br>');
         $this->createLocalizationKey('entity-status-change.cta', 'View {entityTypeName}');

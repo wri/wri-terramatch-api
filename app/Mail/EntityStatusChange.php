@@ -12,62 +12,43 @@ class EntityStatusChange extends I18nMail
 {
     private EntityModel $entity;
 
-    public function __construct(EntityModel $entity)
+    public function __construct(EntityModel $entity, $user)
     {
         $this->entity = $entity;
 
         if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
             $this->setSubjectKey('entity-status-change.subject-approved')
-                ->setTitleKey('entity-status-change.subject-approved')
-                ->setParams(['{entityTypeName}' => $this->getEntityTypeName()]);
+                ->setTitleKey('entity-status-change.subject-approved');
         } 
         if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
             $this->setSubjectKey('entity-status-change.subject-needs-more-information')
-                ->setTitleKey('entity-status-change.subject-needs-more-information')
-                ->setParams(['{entityTypeName}' => $this->getEntityTypeName()]);
+                ->setTitleKey('entity-status-change.subject-needs-more-information');
         }
 
         if ($this->entity instanceof ReportModel) {
             if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
-                Log::info('report approved');
-                $this->setBodyKey('entity-status-change.body-report-approved')
-                    ->setParams(['{parentEntityName}' => $this->entity->parentEntity()->pluck('name')->first(),
-                    '{feedback}' => $this->getFeedback()]);
+                $this->setBodyKey('entity-status-change.body-report-approved');
             }
             if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
-                Log::info('report need more information');
-                $this->setBodyKey('entity-status-change.body-report-needs-more-information')
-                    ->setParams(['{parentEntityName}' => $this->entity->parentEntity()->pluck('name')->first(),
-                    '{feedback}' => $this->getFeedback() ?? '(No feedback)']);
+                $this->setBodyKey('entity-status-change.body-report-needs-more-information');
             }
         } else {
             if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
-                Log::info('entity approved');
-                $this->setBodyKey('entity-status-change.body-entity-approved')
-                    ->setParams(['{entityTypeName}' => strtolower($this->getEntityTypeName()), 
-                    '{entityName}' => $this->entity->name,
-                    '{feedback}' => $this->getFeedback()]);
+                $this->setBodyKey('entity-status-change.body-entity-approved');
             }
             if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
-                Log::info('entity needs more information');
-                $this->setBodyKey('entity-status-change.body-entity-needs-more-information')
-                    ->setParams(['{entityTypeName}' => strtolower($this->getEntityTypeName()),
-                        '{entityName}' => $this->entity->name,
-                        '{feedback}' => $this->getFeedback() ?? '(No feedback)']);
+                $this->setBodyKey('entity-status-change.body-entity-needs-more-information');
             }
         }
         $this->setParams(['{entityTypeName}' => $this->getEntityTypeName(),
+            '{lowerEntityTypeName}' => strtolower($this->getEntityTypeName()),
             '{parentEntityName}' => $this->entity->parentEntity()->pluck('name')->first(),
             '{entityName}' => $this->entity->name,
             '{feedback}' => $this->getFeedback() ?? '(No feedback)'])
             ->setLink($this->entity->getViewLinkPath())
             ->setCta('entity-status-change.cta')
-            ->setUserLocation('en-US');
-        // $this->subject = $this->getSubject();
-        // $this->title = $this->subject;
-        // $this->body = $this->getBodyParagraphs()->join('<br><br>');
+            ->setUserLocation($user->locale);
         $this->link = $this->entity->getViewLinkPath();
-        // $this->cta = 'View ' . $this->getEntityTypeName();
         $this->transactional = true;
     }
 
@@ -94,17 +75,6 @@ class EntityStatusChange extends I18nMail
         return null;
     }
 
-    private function getSubject(): string
-    {
-        return match ($this->getEntityStatus()) {
-            EntityStatusStateMachine::APPROVED =>
-                'Your ' . $this->getEntityTypeName() . ' Has Been Approved',
-            EntityStatusStateMachine::NEEDS_MORE_INFORMATION =>
-                'There is More Information Requested About Your ' . $this->getEntityTypeName(),
-            default => '',
-        };
-    }
-
     private function getFeedback(): ?string
     {
         if ($this->entity->update_request_status == EntityStatusStateMachine::APPROVED ||
@@ -126,35 +96,4 @@ class EntityStatusChange extends I18nMail
         return str_replace("\n", '<br>', $feedback);
     }
 
-    private function getBodyParagraphs(): Collection
-    {
-        $paragraphs = collect();
-        if ($this->entity instanceof ReportModel) {
-            $paragraphs->push('Thank you for submitting your ' .
-                $this->entity->parentEntity()->pluck('name')->first() .
-                ' report.');
-        } else {
-            $paragraphs->push('Thank you for submitting your ' .
-                strtolower($this->getEntityTypeName()) .
-                ' information for ' .
-                $this->entity->name .
-                '.');
-        }
-
-        $paragraphs->push(match ($this->getEntityStatus()) {
-            EntityStatusStateMachine::APPROVED => [
-                'The information has been reviewed by your project manager and has been approved.',
-                $this->getFeedback(),
-            ],
-            EntityStatusStateMachine::NEEDS_MORE_INFORMATION => [
-                'The information has been reviewed by your project manager and they would like to see the following updates:',
-                $this->getFeedback() ?? '(No feedback)',
-            ],
-            default => null
-        });
-
-        $paragraphs->push('If you have any additional questions please reach out to your project manager or to info@terramatch.org');
-
-        return $paragraphs->flatten()->filter();
-    }
 }
