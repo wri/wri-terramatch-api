@@ -8,6 +8,7 @@ use App\Models\V2\Projects\Project;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Parental\HasParent;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @property string $framework_key
@@ -33,12 +34,13 @@ class ReportReminderJob extends ScheduledJob
 
     protected function performJob(): void
     {
+        $user = Auth::user();
         Project::where('framework_key', $this->framework_key)
             ->where(function ($query) {
                 $query->whereHas('sites')->orWhereHas('nurseries');
-            })->chunkById(100, function ($projects) {
-                $projects->each(function ($project) {
-                    Mail::to($project->users->pluck('email_address'))->queue(new TerrafundReportReminder($project->id));
+            })->chunkById(100, function ($projects) use ($user) {
+                $projects->each(function ($project) use ($user) {
+                    Mail::to($project->users->pluck('email_address'))->queue(new TerrafundReportReminder($project->id, $user->locale));
                     $project->users->each(function ($user) use ($project) {
                         NotifyReportReminderJob::dispatch($user, $project, $this->framework_key);
                     });
