@@ -36,7 +36,7 @@ class ViewNurseryGalleryController extends Controller
             }
         });
 
-        if (!empty($searchTerm)) {
+        if (! empty($searchTerm)) {
             $mediaIds = Media::where('name', 'LIKE', "%{$searchTerm}%")
                 ->orWhere('file_name', 'LIKE', "%{$searchTerm}%")
                 ->pluck('id');

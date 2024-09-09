@@ -44,7 +44,7 @@ class ViewProjectGalleryController extends Controller
                 }
             });
 
-            if (!empty($searchTerm)) {
+            if (! empty($searchTerm)) {
                 $mediaIds = Media::where('name', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('file_name', 'LIKE', "%{$searchTerm}%")
                     ->pluck('id');
@@ -93,7 +93,7 @@ class ViewProjectGalleryController extends Controller
                     }),
                 ])
                 ->allowedSorts(['created_at']);
-            $query->orderBy('created_at', $sortOrder);    
+            $query->orderBy('created_at', $sortOrder);
 
             $collection = $query->paginate($perPage)
                 ->appends(request()->query());

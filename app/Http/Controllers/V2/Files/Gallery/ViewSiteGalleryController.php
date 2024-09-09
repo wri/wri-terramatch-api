@@ -7,7 +7,6 @@ use App\Http\Resources\V2\Files\Gallery\GallerysCollection;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -25,8 +24,8 @@ class ViewSiteGalleryController extends Controller
         $sortOrder = $request->query('sort_order', 'asc');
 
         $models = [];
-        !empty($entity) && $entity != 'sites' ?: $models[] = ['type' => get_class($site), 'ids' => [$site->id]];
-        !empty($entity) && $entity != 'site-reports' ?: $models[] = ['type' => SiteReport::class, 'ids' => $site->reports()->pluck('id')->toArray()];
+        ! empty($entity) && $entity != 'sites' ?: $models[] = ['type' => get_class($site), 'ids' => [$site->id]];
+        ! empty($entity) && $entity != 'site-reports' ?: $models[] = ['type' => SiteReport::class, 'ids' => $site->reports()->pluck('id')->toArray()];
 
         $mediaQueryBuilder = Media::query()->where(function ($query) use ($models) {
             foreach ($models as $model) {
@@ -37,7 +36,7 @@ class ViewSiteGalleryController extends Controller
             }
         });
 
-        if (!empty($searchTerm)) {
+        if (! empty($searchTerm)) {
             $mediaIds = Media::where('name', 'LIKE', "%{$searchTerm}%")
             ->orWhere('file_name', 'LIKE', "%{$searchTerm}%")
             ->pluck('id');
