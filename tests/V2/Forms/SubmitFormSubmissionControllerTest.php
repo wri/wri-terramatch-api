@@ -18,6 +18,7 @@ class SubmitFormSubmissionControllerTest extends TestCase
     {
         Mail::fake();
         $user = User::factory()->admin()->create();
+        $this->actingAs($user);
         $projectPitch = ProjectPitch::factory()->create([
             'organisation_id' => $user->organisation->uuid,
             'status' => ProjectPitch::STATUS_DRAFT,
