@@ -42723,6 +42723,8 @@ definitions:
         format: date-time
       role:
         type: string
+      locale:
+        type: string
       organisation:
         title: MyOrganisationLite
         type: object
@@ -87607,6 +87609,8 @@ paths:
                 type: string
                 format: date-time
               role:
+                type: string
+              locale:
                 type: string
               organisation:
                 title: MyOrganisationLite
