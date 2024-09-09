@@ -31,6 +31,7 @@ final class AuthControllerTest extends TestCase
     public function test_resend_by_email_action(): void
     {
         $user = User::factory()->create();
+        $this->actingAs($user);
 
         $this->postJson('/api/v2/users/resend', [
             'email_address' => $user->email_address,
