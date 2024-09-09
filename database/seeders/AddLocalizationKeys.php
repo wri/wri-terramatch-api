@@ -311,39 +311,5 @@ class AddLocalizationKeys extends Seeder
 
         $localizationKey->value_id = I18nHelper::generateI18nItem($localizationKey, 'value');
         $localizationKey->save();
-
-        // Create I18nTranslation for the key to testing
-        if ($key === 'v2-project-monitoring-notification.subject') {
-            $translate = 'Vous avez été ajouté en tant que partenaire de surveillance.';
-            $short = strlen($translate) < 256;
-            I18nTranslation::create([
-                'i18n_item_id' => $localizationKey->value_id,
-                'language' => 'fr-FR',
-                'short_value' => $short ? $translate : null,
-                'long_value' => $short ? null : $translate,
-            ]);
-        }
-        if ($key === 'v2-project-monitoring-notification.title') {
-            $translate = 'Vous avez été ajouté en tant que partenaire de surveillance.';
-            $short = strlen($translate) < 256;
-            I18nTranslation::create([
-                'i18n_item_id' => $localizationKey->value_id,
-                'language' => 'fr-FR',
-                'short_value' => $short ? $translate : null,
-                'long_value' => $short ? null : $translate,
-            ]);
-        }
-        if ($key === 'v2-project-monitoring-notification.body') {
-            $translate = 'Vous avez été ajouté à {name} en tant que partenaire de surveillance sur TerraMatch. Connectez-vous à votre compte
-                aujourd\'hui pour voir l\'avancement du projet et les rapports pertinents.<br><br>
-                Connectez-vous <a href="{callbackUrl}" style="color: #6E6E6E;">Ici.</a><br><br>';
-            $short = strlen($translate) < 256;
-            I18nTranslation::create([
-                'i18n_item_id' => $localizationKey->value_id,
-                'language' => 'fr-FR',
-                'short_value' => $short ? $translate : null,
-                'long_value' => $short ? null : $translate,
-            ]);
-        }
     }
 }
