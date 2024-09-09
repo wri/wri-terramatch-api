@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Mail;
+
 use Illuminate\Support\Facades\Auth;
 
 class UpcomingProgressUpdate extends I18nMail

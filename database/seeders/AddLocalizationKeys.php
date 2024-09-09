@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\V2\LocalizationKey;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\V2\I18n\I18nTranslation;
 use App\Helpers\I18nHelper;
+use App\Models\V2\LocalizationKey;
+use Illuminate\Database\Seeder;
 
 class AddLocalizationKeys extends Seeder
 {
@@ -34,8 +32,8 @@ class AddLocalizationKeys extends Seeder
         // entity-status-change
         $this->createLocalizationKey('entity-status-change.subject-approved', 'Your {entityTypeName} Has Been Approved');
         $this->createLocalizationKey('entity-status-change.subject-needs-more-information', 'There is More Information Requested About Your {entityTypeName}');
-        $this->createLocalizationKey('entity-status-change.body-report-approved', 'Thank you for submitting your {parentEntityName} report.' . 
-            '<br><br>The information has been reviewed by your project manager and has been approved. <br><br>{feedback}' . 
+        $this->createLocalizationKey('entity-status-change.body-report-approved', 'Thank you for submitting your {parentEntityName} report.' .
+            '<br><br>The information has been reviewed by your project manager and has been approved. <br><br>{feedback}' .
             '<br><br>If you have any additional questions please reach out to your project manager or to info@terramatch.org<br><br>');
         $this->createLocalizationKey('entity-status-change.body-report-needs-more-information', 'Thank you for submitting your {parentEntityName} report.' .
             '<br><br>The information has been reviewed by your project manager and they would like to see the following updates: <br><br> {feedback}' .
@@ -47,7 +45,7 @@ class AddLocalizationKeys extends Seeder
             '<br><br>The information has been reviewed by your project manager and they would like to see the following updates: <br><br> {feedback}' .
             '<br><br>If you have any additional questions please reach out to your project manager or to info@terramatch.org<br><br>');
         $this->createLocalizationKey('entity-status-change.cta', 'View {entityTypeName}');
-        // 
+        //
 
         // form-submission-feedback-received
         $this->createLocalizationKey('form-submission-feedback-received.subject', 'You have received feedback on your application');
@@ -302,7 +300,7 @@ class AddLocalizationKeys extends Seeder
 
     }
 
-    public function createLocalizationKey ($key, $value): void 
+    public function createLocalizationKey($key, $value): void
     {
         $localizationKey = LocalizationKey::create([
             'key' => $key,

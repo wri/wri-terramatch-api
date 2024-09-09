@@ -17,7 +17,7 @@ class EntityStatusChange extends I18nMail
         if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
             $this->setSubjectKey('entity-status-change.subject-approved')
                 ->setTitleKey('entity-status-change.subject-approved');
-        } 
+        }
         if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
             $this->setSubjectKey('entity-status-change.subject-needs-more-information')
                 ->setTitleKey('entity-status-change.subject-needs-more-information');
@@ -93,5 +93,4 @@ class EntityStatusChange extends I18nMail
 
         return str_replace("\n", '<br>', $feedback);
     }
-
 }

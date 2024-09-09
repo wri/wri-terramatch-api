@@ -13,9 +13,9 @@ class LocalizationKey extends Model
 
     protected $fillable = [
         'key',
-        'value',    
+        'value',
         'value_id',
-        'tag'
+        'tag',
     ];
 
     public $timestamps = false;

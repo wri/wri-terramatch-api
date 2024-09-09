@@ -13,6 +13,7 @@ class UserInvited extends I18nMail
         switch ($type) {
             case 'Admin':
                 $this->setBodyKey('user-invited.body-admin');
+
                 break;
             case 'User':
                 $this->setBodyKey('user-invited.body-user');

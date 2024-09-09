@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Mail;
+
 use Illuminate\Support\Facades\Auth;
 
 class TargetUpdated extends I18nMail

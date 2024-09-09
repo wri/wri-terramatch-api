@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Mail;
+
 use Illuminate\Support\Facades\Auth;
 
 class TerrafundProgrammeSubmissionReceived extends I18nMail

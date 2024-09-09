@@ -11,7 +11,7 @@ class ApplicationSubmittedConfirmation extends I18nMail
         ->setUserLocale($user->locale);
 
         if (empty($submissionMessage)) {
-            $this->setBodyKey('application-submitted-confirmation.body');    
+            $this->setBodyKey('application-submitted-confirmation.body');
         } else {
             $this->body = $submissionMessage;
         }
