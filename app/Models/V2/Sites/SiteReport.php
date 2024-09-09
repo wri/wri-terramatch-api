@@ -282,12 +282,12 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
 
     public function getTotalTreesPlantedCountAttribute(): int
     {
-        return $this->treeSpecies()->sum('amount');
+        return $this->treeSpecies()->visible()->sum('amount');
     }
 
     public function getTotalSeedsPlantedCountAttribute(): int
     {
-        return $this->seedings()->sum('amount');
+        return $this->seedings()->visible()->sum('amount');
     }
 
     public function getOrganisationAttribute()
@@ -319,6 +319,13 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
             $qry->whereHas('project', function ($qry) use ($projectUuid) {
                 $qry->where('uuid', $projectUuid);
             });
+        });
+    }
+
+    public function scopeOrganisationUuid(Builder $query, string $organizationUuid): Builder
+    {
+        return $query->whereHas('organisation', function ($qry) use ($organizationUuid) {
+            $qry->where('organisations.uuid', $organizationUuid);
         });
     }
 

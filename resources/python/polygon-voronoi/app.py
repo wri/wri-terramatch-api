@@ -1,7 +1,6 @@
 import json
 import os
 from math import pi
-
 import pyproj
 from shapely import voronoi_polygons
 from shapely.geometry import GeometryCollection, MultiPoint, Point, mapping, shape
@@ -11,7 +10,7 @@ from shapely.ops import transform
 WGS84_CRS = pyproj.crs.CRS("epsg:4326")
 BUFFER_ENVELOPE_SIZE = 5000
 ADDITIONAL_RADIUS = 5
-
+INTERSECTION_BUFFER = 0.0001
 
 def calculate_circle_radius(hectares_area, additional_radius=ADDITIONAL_RADIUS):
     try:
@@ -20,7 +19,6 @@ def calculate_circle_radius(hectares_area, additional_radius=ADDITIONAL_RADIUS):
         return radius + additional_radius
     except Exception as e:
         print(f"Error in calculate_circle_radius: {e}")
-
 
 def process_features(features):
     try:
@@ -31,11 +29,10 @@ def process_features(features):
                 multipoint_list.append(shape(geometry))
 
         multipoint = MultiPoint(multipoint_list)
-        print("Calculating the centroid of the multipoint")
         center = multipoint.centroid
-        proj_str = f"+ellps=WGS84 +proj=tmerc +lat_0={center.y} +lon_0={center.x} +units=m +no_defs"
+        proj_str = f"+proj=tmerc +lat_0={center.y} +lon_0={center.x} +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
         crs_dst = pyproj.crs.CRS(proj_str)
-        to_tmp_tmerc = pyproj.Transformer.from_crs(WGS84_CRS, crs_dst).transform
+        to_tmp_tmerc = pyproj.Transformer.from_crs(WGS84_CRS, crs_dst, always_xy=True).transform
 
         transformed_points = []
         buffered_points = []
@@ -45,13 +42,16 @@ def process_features(features):
             est_area = properties.get("est_area", 0)
             buffer_distance = calculate_circle_radius(est_area)
             transformed_point = transform(to_tmp_tmerc, Point(point.x, point.y))
+            if transformed_point.x == float('inf') or transformed_point.y == float('inf'):
+                print(f"Transformation resulted in infinity for point: {point}")
+                continue
+
             transformed_points.append(transformed_point)
             buffered_points.append(transformed_point.buffer(buffer_distance))
 
         return multipoint, transformed_points, buffered_points, crs_dst
     except Exception as e:
         print(f"Error in process_features: {e}")
-
 
 def generate_voronoi_polygons(transformed_points):
     try:
@@ -60,10 +60,9 @@ def generate_voronoi_polygons(transformed_points):
     except Exception as e:
         print(f"Error in generate_voronoi_polygons: {e}")
 
-
 def create_output_geojson(features, transformed_points, buffered_points, voronoi_regions, crs_dst):
     try:
-        to_wgs84 = pyproj.Transformer.from_crs(crs_dst, WGS84_CRS).transform
+        to_wgs84 = pyproj.Transformer.from_crs(crs_dst, WGS84_CRS, always_xy=True).transform
 
         voronoi_polygons_per_point = [0] * len(transformed_points)
         for i, point in enumerate(transformed_points):
@@ -75,7 +74,7 @@ def create_output_geojson(features, transformed_points, buffered_points, voronoi
         for i, (voronoi_polygon, buffered_point, feature) in enumerate(
             zip(voronoi_polygons_per_point, buffered_points, features)
         ):
-            intersection_region = buffered_point.intersection(voronoi_polygon)
+            intersection_region = buffered_point.intersection(voronoi_polygon).buffer(-INTERSECTION_BUFFER)
             if intersection_region.is_valid and not intersection_region.is_empty:
                 region_in_wgs84 = transform(to_wgs84, intersection_region)
                 properties = feature.get("properties", {})
@@ -90,7 +89,6 @@ def create_output_geojson(features, transformed_points, buffered_points, voronoi
         return {"type": "FeatureCollection", "features": output_features}
     except Exception as e:
         print(f"Error in create_output_geojson: {e}")
-
 
 def main(input_geojson_path, output_geojson_path):
     try:
@@ -116,7 +114,6 @@ def main(input_geojson_path, output_geojson_path):
 
     except Exception as e:
         print(f"Error in main: {e}")
-
 
 if __name__ == "__main__":
     import argparse

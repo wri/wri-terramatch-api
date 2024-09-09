@@ -76,30 +76,72 @@ class TerrafundEditGeometryController extends Controller
             if (! $polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
-            $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
 
+            $sitePolygon = $polygonGeometry->sitePolygon()->first();
+            if (! $sitePolygon) {
+                return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
+            }
             if ($sitePolygon->is_active) {
-                $previousSitePolygon = SitePolygon::where('primary_uuid', $sitePolygon->primary_uuid)
-                ->where('uuid', '!=', $sitePolygon->uuid)
-                ->latest('created_at')
-                ->first();
-                if ($previousSitePolygon) {
-                    $previousSitePolygon->is_active = true;
-                    $previousSitePolygon->save();
+                $sitePolygon->is_active = false;
+                $sitePolygon->save();
+            }
+            $primaryUuid = $sitePolygon->primary_uuid;
+
+            $allSitePolygons = SitePolygon::where('primary_uuid', $primaryUuid)->get();
+
+            foreach ($allSitePolygons as $sitePolygon) {
+                $relatedPolygonGeometry = $sitePolygon->polygonGeometry()->first();
+
+                if ($relatedPolygonGeometry) {
+                    $relatedPolygonGeometry->deleteWithRelated();
                 }
             }
 
             $project = $sitePolygon->project;
-            if (! $project) {
-                return response()->json(['message' => 'No project found for the given UUID.'], 404);
+            if ($project) {
+                $geometryHelper = new GeometryHelper();
+                $geometryHelper->updateProjectCentroid($project->uuid);
             }
-            $geometryHelper = new GeometryHelper();
-            $polygonGeometry->deleteWithRelated();
-            $geometryHelper->updateProjectCentroid($project->uuid);
 
-            Log::info("Polygon geometry and associated site polygon deleted successfully for UUID: $uuid");
+            Log::info("All related polygons and site polygons deleted successfully for primary UUID: $primaryUuid");
 
-            return response()->json(['message' => 'Polygon geometry and associated site polygon deleted successfully.', 'uuid' => $uuid]);
+            return response()->json(['message' => 'All related polygons and site polygons deleted successfully.', 'uuid' => $primaryUuid]);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteMultiplePolygonsAndSitePolygons(Request $request)
+    {
+        try {
+            $uuids = $request->input('uuids');
+
+            if (empty($uuids)) {
+                return response()->json(['message' => 'No UUIDs provided.'], 400);
+            }
+
+            $deletedUuids = [];
+            $failedUuids = [];
+
+            foreach ($uuids as $uuid) {
+                try {
+                    $this->deletePolygonAndSitePolygon($uuid);
+                    $deletedUuids[] = ['uuid' => $uuid];
+                } catch (\Exception $e) {
+                    Log::error('An error occurred while deleting polygon and site polygon for UUID: ' . $uuid . '. Error: ' . $e->getMessage());
+                    $failedUuids[] = ['uuid' => $uuid, 'error' => $e->getMessage()];
+                }
+            }
+
+            $response = [
+                'message' => 'Polygon geometries and associated site polygons deleted successfully.',
+                'deleted' => $deletedUuids,
+                'failed' => $failedUuids,
+            ];
+
+            return response()->json($response);
         } catch (\Exception $e) {
             Log::error('An error occurred: ' . $e->getMessage());
 

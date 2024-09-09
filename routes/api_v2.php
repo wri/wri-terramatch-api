@@ -207,6 +207,7 @@ use App\Http\Controllers\V2\User\AdminExportUsersController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
 use App\Http\Controllers\V2\User\AdminUserController;
 use App\Http\Controllers\V2\User\AdminUserMultiController;
+use App\Http\Controllers\V2\User\AdminUsersOrganizationController;
 use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
 use App\Http\Controllers\V2\User\IndexMyActionsController;
@@ -348,6 +349,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::get('export', AdminExportUsersController::class);
         Route::put('reset-password/{user}', AdminResetPasswordController::class);
         Route::patch('verify/{user}', AdminVerifyUserController::class);
+        Route::get('users-organisation-list/{organisation}', AdminUsersOrganizationController::class);
     });
     Route::resource('users', AdminUserController::class);
 
@@ -661,7 +663,7 @@ Route::prefix('terrafund')->group(function () {
 
     Route::get('/project-polygon', [TerrafundEditGeometryController::class, 'getProjectPolygonData']);
     Route::delete('/project-polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndProjectPolygon']);
-
+    Route::delete('/project-polygons', [TerrafundEditGeometryController::class, 'deleteMultiplePolygonsAndSitePolygons']);
     Route::get('/polygon/bbox/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonBbox']);
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
@@ -670,6 +672,7 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/new-site-polygon/{uuid}/new-version', [TerrafundEditGeometryController::class, 'createSitePolygonNewVersion']);
 
     Route::post('/project-polygon/{uuid}/{entity_uuid}/{entity_type}', [TerrafundEditGeometryController::class, 'createProjectPolygon']);
+
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');

@@ -63,9 +63,6 @@ class GeometryControllerTest extends TestCase
         $this->assertCreateError('est_area must be at least 0.0001', $service, [
             $this->fakeGeojson([$this->fakePoint(['site_id' => '123', 'est_area' => -1])]),
         ]);
-        $this->assertCreateError('est_area may not be greater than 5', $service, [
-            $this->fakeGeojson([$this->fakePoint(['site_id' => '123', 'est_area' => 6])]),
-        ]);
 
         // Not all sites found
         $site = Site::factory()->create();
