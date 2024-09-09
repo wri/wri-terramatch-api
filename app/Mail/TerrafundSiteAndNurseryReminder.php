@@ -2,13 +2,12 @@
 
 namespace App\Mail;
 
-use Illuminate\Support\Facades\Auth;
+use App\Models\V2\User;
 
 class TerrafundSiteAndNurseryReminder extends I18nMail
 {
-    public function __construct(int $id)
+    public function __construct(int $id, ?User $user)
     {
-        $user = Auth::user();
         $this->setSubjectKey('terrafund-site-and-nursery-reminder.subject')
             ->setTitleKey('terrafund-site-and-nursery-reminder.title')
             ->setBodyKey('terrafund-site-and-nursery-reminder.body')
