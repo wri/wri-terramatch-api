@@ -35,6 +35,7 @@ class GalleryResource extends JsonResource
             'created_date' => $this->created_at,
             'model_name' => $this->getModelName(),
             'is_public' => (bool) $this->is_public,
+            'is_cover' => (bool) $this->is_cover,
             'location' => [
                 'lat' => (float) $this->lat ?? null,
                 'lng' => (float) $this->lng ?? null,
