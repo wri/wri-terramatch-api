@@ -19,6 +19,9 @@ class ViewNurseryGalleryController extends Controller
 
         $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
         $entity = $request->query('model_name');
+        $searchTerm = $request->query('search');
+        $isGeotagged = $request->query('is_geotagged');
+        $sortOrder = $request->query('sort_order', 'asc');
 
         $models = [];
         ! empty($entity) && $entity != 'nurseries' ?: $models[] = ['type' => get_class($nursery), 'ids' => [$nursery->id]];
@@ -33,11 +36,42 @@ class ViewNurseryGalleryController extends Controller
             }
         });
 
+        if (! empty($searchTerm)) {
+            $mediaIds = Media::where('name', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('file_name', 'LIKE', "%{$searchTerm}%")
+                ->pluck('id');
+            $mediaQueryBuilder->whereIn('media.id', $mediaIds);
+        }
+        if ($isGeotagged === '1') {
+            $mediaQueryBuilder->whereNotNull('lat')->whereNotNull('lng');
+        } elseif ($isGeotagged === '2') {
+            $mediaQueryBuilder->whereNull('lat')->whereNull('lng');
+        }
+
+        // Map model types to classes
+        $modelTypeMap = [
+            'nurseries' => [Nursery::class],
+            'reports' => [NurseryReport::class],
+        ];
+
         $query = QueryBuilder::for($mediaQueryBuilder)
             ->allowedFilters([
                 AllowedFilter::exact('file_type'),
                 AllowedFilter::exact('is_public'),
-            ]);
+                AllowedFilter::callback('model_type', function ($query, $value) use ($modelTypeMap) {
+                    $classNames = $modelTypeMap[$value] ?? null;
+                    if ($classNames) {
+                        $query->where(function ($subQuery) use ($classNames) {
+                            foreach ($classNames as $className) {
+                                $subQuery->orWhere('model_type', $className);
+                            }
+                        });
+                    }
+                }),
+            ])
+            ->allowedSorts(['created_at']);
+
+        $query->orderBy('created_at', $sortOrder);
 
         $collection = $query->paginate($perPage)
             ->appends(request()->query());
