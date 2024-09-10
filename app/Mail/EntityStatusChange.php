@@ -12,6 +12,7 @@ class EntityStatusChange extends I18nMail
 
     public function __construct(EntityModel $entity, $user)
     {
+        parent::__construct($user);
         $this->entity = $entity;
 
         if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
@@ -44,8 +45,7 @@ class EntityStatusChange extends I18nMail
             '{entityName}' => $this->entity->name,
             '{feedback}' => $this->getFeedback() ?? '(No feedback)'])
             ->setLink($this->entity->getViewLinkPath())
-            ->setCta('entity-status-change.cta')
-            ->setUserLocale($user->locale);
+            ->setCta('entity-status-change.cta');
         $this->link = $this->entity->getViewLinkPath();
         $this->transactional = true;
     }

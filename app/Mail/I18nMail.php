@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\V2\LocalizationKey;
+use App\Models\V2\User;
 use Illuminate\Support\Facades\App;
 
 abstract class I18nMail extends Mail
@@ -18,6 +19,11 @@ abstract class I18nMail extends Mail
     protected string $userLocale;
 
     protected array $params;
+
+    public function __construct($user)
+    {
+        $this->userLocale = is_null($user) ? 'en-US' : $user->locale;
+    }
 
     public function build()
     {
@@ -54,13 +60,6 @@ abstract class I18nMail extends Mail
     public function setBodyKey(string $key): I18nMail
     {
         $this->bodyKey = $key;
-
-        return $this;
-    }
-
-    public function setUserLocale(string $location): I18nMail
-    {
-        $this->userLocale = $location;
 
         return $this;
     }

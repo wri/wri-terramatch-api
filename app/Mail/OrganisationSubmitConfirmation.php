@@ -6,12 +6,11 @@ use Illuminate\Support\Facades\Auth;
 
 class OrganisationSubmitConfirmation extends I18nMail
 {
-    public function __construct()
+    public function __construct($user)
     {
-        $user = Auth::user();
+        parent::__construct($user);
         $this->setSubjectKey('organisation-submit-confirmation.subject')
             ->setTitleKey('organisation-submit-confirmation.title')
-            ->setBodyKey('organisation-submit-confirmation.body')
-            ->setUserLocale($user->locale);
+            ->setBodyKey('organisation-submit-confirmation.body');
     }
 }

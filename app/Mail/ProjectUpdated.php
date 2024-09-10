@@ -5,13 +5,12 @@ namespace App\Mail;
 use App\Models\Offer as OfferModel;
 use App\Models\Pitch as PitchModel;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 class ProjectUpdated extends I18nMail
 {
-    public function __construct(string $type, string $model, int $id)
+    public function __construct(string $type, string $model, int $id, $user)
     {
-        $user = Auth::user();
+        parent::__construct($user);
         switch ($type) {
             case 'Match':
                 $this->setSubjectKey('project-updated.subject-match')
@@ -55,8 +54,7 @@ class ProjectUpdated extends I18nMail
         }
         $this->setBodyKey('project-updated.body')
             ->setParams(['{name}' => e($name)])
-            ->setCta('project-updated.cta')
-            ->setUserLocale($user->locale);
+            ->setCta('project-updated.cta');
         $this->link = $link;
     }
 }

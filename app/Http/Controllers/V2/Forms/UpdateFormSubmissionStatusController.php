@@ -13,11 +13,14 @@ use App\Models\Framework;
 use App\Models\Notification;
 use App\Models\V2\Forms\FormSubmission;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateFormSubmissionStatusController extends Controller
 {
     public function __invoke(FormSubmission $formSubmission, UpdateFormSubmissionStatusRequest $updateFormSubmissionStatusRequest): FormSubmissionResource
     {
+        $user = Auth::user();
+
         $formSubmission->update([
             'status' => $updateFormSubmissionStatusRequest->status,
             'feedback' => $updateFormSubmissionStatusRequest->feedback,
@@ -27,7 +30,7 @@ class UpdateFormSubmissionStatusController extends Controller
         switch ($updateFormSubmissionStatusRequest->status) {
             case FormSubmission::STATUS_REQUIRES_MORE_INFORMATION:
                 Mail::to($formSubmission->user->email_address)->queue(
-                    new FormSubmissionFeedbackReceived(data_get($updateFormSubmissionStatusRequest, 'feedback', null))
+                    new FormSubmissionFeedbackReceived(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
                 );
                 $notification = new Notification([
                     'user_id' => $formSubmission->user->id,
@@ -42,7 +45,7 @@ class UpdateFormSubmissionStatusController extends Controller
                 break;
             case FormSubmission::STATUS_REJECTED:
                 Mail::to($formSubmission->user->email_address)->queue(
-                    new FormSubmissionRejected(data_get($updateFormSubmissionStatusRequest, 'feedback', null))
+                    new FormSubmissionRejected(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
                 );
                 $notification = new Notification([
                     'user_id' => $formSubmission->user->id,
@@ -60,14 +63,14 @@ class UpdateFormSubmissionStatusController extends Controller
                     $framework = Framework::where('name', 'Terrafund')->first();
                     if ($framework) {
                         Mail::to($formSubmission->user->email_address)->queue(
-                            new FormSubmissionFinalStageApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null))
+                            new FormSubmissionFinalStageApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
                         );
 
                         $formSubmission->user->frameworks()->syncWithoutDetaching([$framework->id]);
                     }
                 } else {
                     Mail::to($formSubmission->user->email_address)->queue(
-                        new FormSubmissionApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null))
+                        new FormSubmissionApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
                     );
                 }
 

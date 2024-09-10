@@ -2,18 +2,15 @@
 
 namespace App\Mail;
 
-use Illuminate\Support\Facades\Auth;
-
 class OrganisationApproved extends I18nMail
 {
-    public function __construct()
+    public function __construct($user)
     {
-        $user = Auth::user();
+        parent::__construct($user);
         $this->setSubjectKey('organisation-approved.subject')
             ->setTitleKey('organisation-approved.title')
             ->setBodyKey('organisation-approved.body')
-            ->setCta('organisation-approved.cta')
-            ->setUserLocale($user->locale);
+            ->setCta('organisation-approved.cta');
         $this->link = '/auth/login';
     }
 }

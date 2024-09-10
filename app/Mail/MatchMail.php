@@ -9,6 +9,7 @@ class MatchMail extends I18nMail
 {
     public function __construct(String $model, String $firstName = "", String $secondName = "")
     {
+        parent::__construct(null);
         switch ($model) {
             case "Admin":
                 $isAdmin = true;
@@ -21,7 +22,6 @@ class MatchMail extends I18nMail
             default:
                 throw new Exception();
         }
-        $user = Auth::user();
         if ($isAdmin) {
             $this->setSubjectKey('match-mail.subject-admin')
                 ->setTitleKey('match-mail.title-admin')
@@ -30,22 +30,19 @@ class MatchMail extends I18nMail
                 ->setParams([
                     '{firstName}' => e($firstName),
                     '{secondName}' => e($secondName)
-                ])
-                ->setUserLocale($user->locale);
+                ]);
             $this->link = "/admin/matches";
         } else {
             if ($isFunder) {
                 $this->setSubjectKey('match-mail.subject-funder')
                     ->setTitleKey('match-mail.title-funder')
                     ->setBodyKey('match-mail.body-funder')
-                    ->setParams(['{firstName}' => e($firstName)])
-                    ->setUserLocale($user->locale);
+                    ->setParams(['{firstName}' => e($firstName)]);
             } else {
                 $this->setSubjectKey('match-mail.subject-user')
                     ->setTitleKey('match-mail.title-user')
                     ->setBodyKey('match-mail.body-user')
-                    ->setParams(['{firstName}' => e($firstName)])
-                    ->setUserLocale($user->locale);
+                    ->setParams(['{firstName}' => e($firstName)]);
             }
             $this->link = "/connections";
             $this->setCta('match-mail.cta');

@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\Auth;
 
 class InterestShown extends I18nMail
 {
-    public function __construct(String $model, String $name, Int $id)
+    public function __construct(String $model, String $name, Int $id, $user)
     {
+        parent::__construct($user);
         switch ($model) {
             case 'Offer':
                 $link = '/funding/' . $id;
@@ -21,13 +22,11 @@ class InterestShown extends I18nMail
             default:
                 throw new Exception();
         }
-        $user = Auth::user();
         $this->setSubjectKey('interest-shown.subject')
             ->setTitleKey('interest-shown.title')
             ->setBodyKey('interest-shown.body')
             ->setCta('interest-shown.cta')
-            ->setParams(['{name}' => e($name)])
-            ->setUserLocale($user->locale);
+            ->setParams(['{name}' => e($name)]);
 
         $this->link = $link;
     }

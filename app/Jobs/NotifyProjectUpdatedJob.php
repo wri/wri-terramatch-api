@@ -86,7 +86,7 @@ class NotifyProjectUpdatedJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new ProjectUpdatedMail('Matched', $model, $id));
+                Mail::to($user->email_address)->send(new ProjectUpdatedMail('Matched', $model, $id, $user));
             }
             $pushService->sendPush(
                 $user,
@@ -117,7 +117,7 @@ class NotifyProjectUpdatedJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new ProjectUpdatedMail('Interest', $model, $id));
+                Mail::to($user->email_address)->send(new ProjectUpdatedMail('Interest', $model, $id, $user));
             }
             $pushService->sendPush(
                 $user,
