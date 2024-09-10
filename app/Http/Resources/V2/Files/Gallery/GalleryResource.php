@@ -12,6 +12,9 @@ use App\Models\V2\Sites\SiteMonitoring;
 use App\Models\V2\Sites\SiteReport;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\V2\User;
+use App\Http\Resources\V2\User\UserLiteResource;
+
 
 class GalleryResource extends JsonResource
 {
@@ -27,6 +30,7 @@ class GalleryResource extends JsonResource
             'uuid' => $this->uuid,
             'file_url' => $this->getFullUrl(),
             'thumb_url' => $this->getFullUrl('thumbnail'),
+            'name' => $this->name,
             'file_name' => $this->file_name,
             'created_date' => $this->created_at,
             'model_name' => $this->getModelName(),
@@ -38,6 +42,8 @@ class GalleryResource extends JsonResource
             'mime_type' => $this->mime_type,
             'file_size' => $this->size,
             'collection_name' => $this->collection_name,
+            'photographer' => $this->photographer,
+            'created_by' => new UserLiteResource(User::find($this->created_by)),
         ];
     }
 
