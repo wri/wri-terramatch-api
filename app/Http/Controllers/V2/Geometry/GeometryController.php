@@ -68,7 +68,6 @@ class GeometryController extends Controller
             $groupedByType = $this->groupGeometriesByType($siteGeometries);
 
             foreach ($groupedByType as $type => $typeGeometries) {
-                Log::info("Processing {$type} geometries for site_id: {$siteId}");
                 $polygonUuids = $service->createGeojsonModels($typeGeometries, ['source' => PolygonService::GREENHOUSE_SOURCE]);
                 $polygonErrors = $this->validateStoredGeometries($polygonUuids);
 
@@ -107,7 +106,6 @@ class GeometryController extends Controller
 
         foreach ($siteGeometries['features'] as $feature) {
             $geometryType = data_get($feature, 'geometry.type');
-            Log::info("Grouping feature by type: {$geometryType}", ['feature' => $feature]);
 
             if (! isset($groupedByType[$geometryType])) {
                 $groupedByType[$geometryType] = [
