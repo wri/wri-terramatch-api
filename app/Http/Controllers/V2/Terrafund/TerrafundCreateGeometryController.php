@@ -21,6 +21,7 @@ use App\Validators\SitePolygonValidator;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -90,7 +91,7 @@ class TerrafundCreateGeometryController extends Controller
             }
 
         } catch (Exception $e) {
-            return ['error' => $e->getMessage()];
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -374,61 +375,67 @@ class TerrafundCreateGeometryController extends Controller
 
             return response()->json(['errors' => $errors], 422);
         }
-        $body = $request->all();
-        $site_id = $request->input('uuid');
-        $file = $request->file('file');
-        if ($file->getClientOriginalExtension() !== 'zip') {
-            return response()->json(['error' => 'Only ZIP files are allowed'], 400);
+
+        try {
+            $body = $request->all();
+            $site_id = $request->input('uuid');
+            $file = $request->file('file');
+            if ($file->getClientOriginalExtension() !== 'zip') {
+                return response()->json(['error' => 'Only ZIP files are allowed'], 400);
+            }
+            $tempDir = sys_get_temp_dir();
+            $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
+            mkdir($directory, 0755, true);
+            // Extract the contents of the ZIP file
+            $zip = new \ZipArchive();
+            if ($zip->open($file->getPathname()) === true) {
+                $zip->extractTo($directory);
+                $zip->close();
+                $shpFile = $this->findShpFile($directory);
+                if (! $shpFile) {
+                    return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
+                }
+                $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
+                $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+                $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
+                $process->run();
+                if (! $process->isSuccessful()) {
+                    Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
+
+                    return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
+                }
+
+                $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
+                $submitPolygonsLoaded = $request->input('submit_polygon_loaded') === true || $request->input('submit_polygon_loaded') === 'true';
+                if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
+                    $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
+                }
+
+                if ($polygonLoadedList) {
+                    $filePath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+                    $geojsonContent = file_get_contents($filePath);
+                    $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
+
+                    return response()->json($polygonLoaded->original, 200);
+                }
+
+                if ($submitPolygonsLoaded) {
+                    $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
+                }
+
+                if (isset($uuid['error'])) {
+                    return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
+                }
+                App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
+
+                return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
+            } else {
+                return response()->json(['error' => 'Failed to open the ZIP file'], 400);
+            }
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-        $tempDir = sys_get_temp_dir();
-        $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
-        mkdir($directory, 0755, true);
-        // Extract the contents of the ZIP file
-        $zip = new \ZipArchive();
-        if ($zip->open($file->getPathname()) === true) {
-            $zip->extractTo($directory);
-            $zip->close();
-            $shpFile = $this->findShpFile($directory);
-            if (! $shpFile) {
-                return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
-            }
-            $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
-            $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
-            $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
-            $process->run();
-            if (! $process->isSuccessful()) {
-                Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
 
-                return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
-            }
-
-            $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-            $submitPolygonsLoaded = $request->input('submit_polygon_loaded') === true || $request->input('submit_polygon_loaded') === 'true';
-            if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
-                $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
-            }
-
-            if ($polygonLoadedList) {
-                $filePath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
-                $geojsonContent = file_get_contents($filePath);
-                $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
-
-                return response()->json($polygonLoaded->original, 200);
-            }
-
-            if ($submitPolygonsLoaded) {
-                $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
-            }
-
-            if (isset($uuid['error'])) {
-                return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
-            }
-            App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
-
-            return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
-        } else {
-            return response()->json(['error' => 'Failed to open the ZIP file'], 400);
-        }
     }
 
     public function checkSelfIntersection(Request $request)
