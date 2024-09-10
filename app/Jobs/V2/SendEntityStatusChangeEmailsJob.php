@@ -10,7 +10,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class SendEntityStatusChangeEmailsJob implements ShouldQueue
@@ -29,27 +28,26 @@ class SendEntityStatusChangeEmailsJob implements ShouldQueue
 
     public function handle(): void
     {
-        $user = Auth::user();
         if ($this->entity->status != EntityStatusStateMachine::APPROVED &&
             $this->entity->status != EntityStatusStateMachine::NEEDS_MORE_INFORMATION &&
             $this->entity->update_request_status != EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
             return;
         }
 
-        $emailAddresses = $this->entity->project->users()->pluck('email_address');
-        if (empty($emailAddresses)) {
+        $usersFromProject = $this->entity->project->users;
+        if (empty($usersFromProject)) {
             return;
         }
 
         // TODO: This is a temporary hack to avoid spamming folks that have a funky role right now. In the future,
         // they will have a different role, and we can simply skip sending this email to anybody with that role.
         $skipRecipients = collect(explode(',', getenv('ENTITY_UPDATE_DO_NOT_EMAIL')));
-        foreach ($emailAddresses as $emailAddress) {
-            if ($skipRecipients->contains($emailAddress)) {
+        foreach ($usersFromProject as $user) {
+            if ($skipRecipients->contains($user['email_address'])) {
                 continue;
             }
 
-            Mail::to($emailAddress)->send(new EntityStatusChangeMail($this->entity, $user));
+            Mail::to($user['email_address'])->send(new EntityStatusChangeMail($this->entity, $user));
         }
     }
 }

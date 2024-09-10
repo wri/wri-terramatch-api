@@ -44,7 +44,6 @@ class EntityStatusChange extends I18nMail
             '{parentEntityName}' => $this->entity->parentEntity()->pluck('name')->first(),
             '{entityName}' => $this->entity->name,
             '{feedback}' => $this->getFeedback() ?? '(No feedback)'])
-            ->setLink($this->entity->getViewLinkPath())
             ->setCta('entity-status-change.cta');
         $this->link = $this->entity->getViewLinkPath();
         $this->transactional = true;
