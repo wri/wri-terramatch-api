@@ -21,7 +21,7 @@ abstract class I18nMail extends Mail
 
     public function __construct($user)
     {
-        $this->userLocale = is_null($user) ? 'en-US' : $user->locale;
+        $this->userLocale = is_null($user) ? 'en-US' : $user->locale ?? 'en-US';
     }
 
     public function build()
