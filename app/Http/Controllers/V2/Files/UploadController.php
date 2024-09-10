@@ -134,6 +134,7 @@ class UploadController extends Controller
         $media->file_type = $this->getType($media, $config);
         $media->is_public = $data['is_public'] ?? true;
         $media->created_by = Auth::user()->id;
+        $media->photographer = Auth::user()->name;
         $media->save();
     }
 
