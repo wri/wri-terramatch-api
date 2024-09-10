@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 class InterestShown extends I18nMail
 {

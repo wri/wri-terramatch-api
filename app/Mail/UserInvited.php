@@ -3,13 +3,12 @@
 namespace App\Mail;
 
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 class UserInvited extends I18nMail
 {
     public function __construct(String $emailAddress, String $type, String $callbackUrl = null)
     {
-        $user = Auth::user();
+        parent::__construct(null);
         switch ($type) {
             case 'Admin':
                 $this->setBodyKey('user-invited.body-admin');
@@ -24,8 +23,7 @@ class UserInvited extends I18nMail
         }
         $this->setSubjectKey('user-invited.subject')
             ->setTitleKey('user-invited.title')
-            ->setCta('user-invited.cta')
-            ->setUserLocale($user->locale);
+            ->setCta('user-invited.cta');
 
         $this->link = $callbackUrl ?
             $callbackUrl . 'invite?emailAddress=' . urlencode($emailAddress) . '&type=' . urlencode(strtolower($type)) :

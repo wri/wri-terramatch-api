@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use App\Models\V2\LocalizationKey;
-use App\Models\V2\User;
 use Illuminate\Support\Facades\App;
 
 abstract class I18nMail extends Mail

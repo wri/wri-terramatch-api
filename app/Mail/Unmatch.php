@@ -3,13 +3,12 @@
 namespace App\Mail;
 
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 class Unmatch extends I18nMail
 {
-    public function __construct(String $model, String $firstName = '', String $secondName = '')
+    public function __construct(String $model, String $firstName = '', String $secondName = '', $user)
     {
-        $user = Auth::user();
+        parent::__construct($user);
         switch ($model) {
             case 'Admin':
                 $isAdmin = true;
@@ -26,14 +25,12 @@ class Unmatch extends I18nMail
             $this->setSubjectKey('unmatch.subject-admin')
                 ->setTitleKey('unmatch.title-admin')
                 ->setBodyKey('unmatch.body-admin')
-                ->setParams(['{firstName}' => e($firstName), '{secondName}' => e($secondName)])
-                ->setUserLocale($user->locale);
+                ->setParams(['{firstName}' => e($firstName), '{secondName}' => e($secondName)]);
         } else {
             $this->setSubjectKey('unmatch.subject-user')
                 ->setTitleKey('unmatch.title-user')
                 ->setBodyKey('unmatch.body-user')
-                ->setParams(['{firstName}' => e($firstName)])
-                ->setUserLocale($user->locale);
+                ->setParams(['{firstName}' => e($firstName)]);
         }
     }
 }

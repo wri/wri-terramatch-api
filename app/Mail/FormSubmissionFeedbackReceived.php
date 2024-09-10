@@ -2,8 +2,6 @@
 
 namespace App\Mail;
 
-use Illuminate\Support\Facades\Auth;
-
 class FormSubmissionFeedbackReceived extends I18nMail
 {
     public function __construct(String $feedback = null, $user)

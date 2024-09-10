@@ -5,13 +5,12 @@ namespace App\Mail;
 use App\Models\Organisation as OrganisationModel;
 use App\Models\Pitch as PitchModel;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 class VersionApproved extends I18nMail
 {
-    public function __construct(String $model, Int $id)
+    public function __construct(String $model, Int $id, $user)
     {
-        $user = Auth::user();
+        parent::__construct($user);
         switch ($model) {
             case 'Organisation':
                 $link = '/profile';
@@ -40,8 +39,7 @@ class VersionApproved extends I18nMail
             ->setTitleKey('version-approved.title')
             ->setBodyKey('version-approved.body')
             ->setParams(['{versionName}' => e($version->name)])
-            ->setCta('version-approved.cta')
-            ->setUserLocale($user->locale);
+            ->setCta('version-approved.cta');
         $this->link = $link;
     }
 }

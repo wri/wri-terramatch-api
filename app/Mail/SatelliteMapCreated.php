@@ -2,19 +2,16 @@
 
 namespace App\Mail;
 
-use Illuminate\Support\Facades\Auth;
-
 class SatelliteMapCreated extends I18nMail
 {
-    public function __construct(Int $satelliteMapId, String $name)
+    public function __construct(Int $satelliteMapId, String $name, $user)
     {
-        $user = Auth::user();
+        parent::__construct($user);
         $this->setSubjectKey('satellite-map-created.subject')
             ->setTitleKey('satellite-map-created.title')
             ->setBodyKey('satellite-map-created.body')
             ->setParams(['{name}' => e($name)])
-            ->setCta('satellite-map-created.cta')
-            ->setUserLocale($user->locale);
+            ->setCta('satellite-map-created.cta');
         $this->link = '/monitoring/dashboard/?satelliteId=' . $satelliteMapId;
     }
 }

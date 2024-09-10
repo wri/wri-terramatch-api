@@ -2,8 +2,6 @@
 
 namespace App\Mail;
 
-use Illuminate\Support\Facades\Auth;
-
 class FormSubmissionSubmitted extends I18nMail
 {
     public function __construct($user)

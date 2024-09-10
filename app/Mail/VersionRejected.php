@@ -5,13 +5,12 @@ namespace App\Mail;
 use App\Models\Organisation as OrganisationModel;
 use App\Models\Pitch as PitchModel;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 class VersionRejected extends I18nMail
 {
-    public function __construct(String $model, Int $id, String $explanation)
+    public function __construct(String $model, Int $id, String $explanation, $user)
     {
-        $user = Auth::user();
+        parent::__construct($user);
         switch ($model) {
             case 'Organisation':
                 $link = '/profile';
@@ -40,8 +39,7 @@ class VersionRejected extends I18nMail
             ->setTitleKey('version-rejected.title')
             ->setBodyKey('version-rejected.body')
             ->setParams(['{versionName}' => e($version->name), '{explanation}' => e($explanation)])
-            ->setCta('version-rejected.cta')
-            ->setUserLocale($user->locale);
+            ->setCta('version-rejected.cta');
         $this->link = $link;
     }
 }

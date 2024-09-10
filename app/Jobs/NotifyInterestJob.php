@@ -23,6 +23,7 @@ class NotifyInterestJob implements ShouldQueue
     use SerializesModels;
 
     private $interest = null;
+
     private $user = null;
 
     public function __construct(InterestModel $interest, $user)

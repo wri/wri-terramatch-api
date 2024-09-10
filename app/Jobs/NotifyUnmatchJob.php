@@ -66,7 +66,7 @@ class NotifyUnmatchJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new UnmatchMail('User', $name));
+                Mail::to($user->email_address)->send(new UnmatchMail('User', $name, '', $user));
             }
             $pushService->sendPush(
                 $user,
@@ -90,7 +90,7 @@ class NotifyUnmatchJob implements ShouldQueue
         $admins = User::admin()->accepted()->verified()->get();
         foreach ($admins as $admin) {
             if ($admin->is_subscribed) {
-                Mail::to($admin->email_address)->send(new UnmatchMail('Admin', $firstName, $secondName));
+                Mail::to($admin->email_address)->send(new UnmatchMail('Admin', $firstName, $secondName, $admin));
             }
             $notification = new NotificationModel([
                 'user_id' => $admin->id,

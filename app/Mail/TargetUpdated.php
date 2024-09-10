@@ -2,19 +2,16 @@
 
 namespace App\Mail;
 
-use Illuminate\Support\Facades\Auth;
-
 class TargetUpdated extends I18nMail
 {
-    public function __construct(Int $targetId, String $name)
+    public function __construct(Int $targetId, String $name, $user)
     {
-        $user = Auth::user();
+        parent::__construct($user);
         $this->setSubjectKey('target-updated.subject')
             ->setTitleKey('target-updated.title')
             ->setBodyKey('target-updated.body')
             ->setParams(['{name}' => e($name)])
-            ->setCta('target-updated.cta')
-            ->setUserLocale($user->locale);
+            ->setCta('target-updated.cta');
         $this->link = '/monitoring/review/?targetId=' . $targetId;
     }
 }

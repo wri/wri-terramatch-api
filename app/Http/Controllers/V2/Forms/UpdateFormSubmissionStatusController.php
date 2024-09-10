@@ -12,8 +12,8 @@ use App\Mail\FormSubmissionRejected;
 use App\Models\Framework;
 use App\Models\Notification;
 use App\Models\V2\Forms\FormSubmission;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UpdateFormSubmissionStatusController extends Controller
 {

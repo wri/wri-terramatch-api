@@ -2,8 +2,6 @@
 
 namespace App\Mail;
 
-use Illuminate\Support\Facades\Auth;
-
 class ProjectInviteReceived extends I18nMail
 {
     public function __construct(String $name, String $token, String $callbackUrl = null)

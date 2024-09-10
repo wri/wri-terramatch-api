@@ -2,9 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\V2\Organisation;
-use Illuminate\Support\Facades\Auth;
-
 class OrganisationUserJoinRequested extends I18nMail
 {
     public function __construct($user)
