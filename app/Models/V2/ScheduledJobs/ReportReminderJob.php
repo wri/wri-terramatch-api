@@ -8,14 +8,14 @@ use App\Models\V2\Projects\Project;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
-// use Parental\HasParent;
+use Parental\HasParent;
 
 /**
  * @property string $framework_key
  */
 class ReportReminderJob extends ScheduledJob
 {
-    // use HasParent;
+    use HasParent;
 
     public static function createReportReminder(Carbon $execution_time, string $framework_key): ReportReminderJob
     {

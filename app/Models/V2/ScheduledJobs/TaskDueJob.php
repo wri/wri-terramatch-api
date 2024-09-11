@@ -11,7 +11,7 @@ use App\StateMachines\TaskStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
-// use Parental\HasParent;
+use Parental\HasParent;
 
 /**
  * @property string $framework_key
@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class TaskDueJob extends ScheduledJob
 {
-    // use HasParent;
+    use HasParent;
 
     public static function createTaskDue(Carbon $executionTime, string $frameworkKey, Carbon $dueAt): TaskDueJob
     {

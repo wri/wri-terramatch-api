@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 
-// use Parental\HasChildren;
+use Parental\HasChildren;
 
 /**
  * @property Carbon $execution_time
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Log;
  */
 class ScheduledJob extends Model
 {
-    // use HasChildren;
+    use HasChildren;
     use SoftDeletes;
 
     protected $fillable = [
