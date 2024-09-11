@@ -42775,6 +42775,9 @@ definitions:
   UpdateMediaRequest:
     type: object
     properties:
+      name:
+        type: string
+        description: Name of the media
       description:
         type: string
         description: New description for the media
@@ -89437,6 +89440,9 @@ paths:
           schema:
             type: object
             properties:
+              name:
+                type: string
+                description: Name of the media
               description:
                 type: string
                 description: New description for the media

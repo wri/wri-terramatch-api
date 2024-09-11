@@ -67,6 +67,9 @@ class MediaController extends Controller
         DB::transaction(function () use ($media, $request) {
             $updateData = [];
 
+            if ($request->has('name')) {
+                $updateData['name'] = $request->input('name');
+            }
             if ($request->has('description')) {
                 $updateData['description'] = $request->input('description');
             }

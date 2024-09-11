@@ -1,5 +1,8 @@
 type: object
 properties:
+  name:
+    type: string
+    description: Name of the media
   description:
     type: string
     description: New description for the media
