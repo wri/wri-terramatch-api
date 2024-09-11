@@ -81,6 +81,10 @@ abstract class I18nMail extends Mail
     {
         App::setLocale($this->userLocale);
         $localizationKey = LocalizationKey::where('key', $valueKey)->first();
+        if (is_null($localizationKey)) {
+            return $valueKey;
+        }
+
         if (! empty($this->params)) {
             return str_replace(array_keys($this->params), array_values($this->params), $localizationKey->translated_value);
         }
