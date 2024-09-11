@@ -6,14 +6,12 @@ use App\Helpers\I18nHelper;
 use App\Models\V2\LocalizationKey;
 use Illuminate\Database\Seeder;
 
-class AddLocalizationKeysSeeder extends Seeder
+class LocalizationKeySeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $this->createLocalizationKey('application-submitted-confirmation.subject', 'Your Application Has Been Submitted');
         $this->createLocalizationKey('application-submitted-confirmation.title', 'Your Application Has Been Submitted!');
@@ -303,10 +301,6 @@ class AddLocalizationKeysSeeder extends Seeder
 
     public function createLocalizationKey($key, $value): void
     {
-        if (LocalizationKey::where('key', $key)->exists()) {
-            return;
-        }
-
         $localizationKey = LocalizationKey::create([
             'key' => $key,
             'value' => $value,
