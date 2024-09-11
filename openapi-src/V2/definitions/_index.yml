@@ -370,3 +370,7 @@ MeResponse:
   $ref: './MeResponse.yml'
 MyOrganisationLite:
   $ref: './MyOrganisationLite.yml'
+UpdateMediaRequest:
+  $ref: './UpdateMediaRequest.yml'
+FileResource:
+  $ref: './FileResource.yml'

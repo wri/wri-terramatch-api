@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V2\Files\Gallery;
 
+use App\Http\Resources\V2\User\UserLiteResource;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
@@ -10,11 +11,9 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteMonitoring;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Models\V2\User;
-use App\Http\Resources\V2\User\UserLiteResource;
-
 
 class GalleryResource extends JsonResource
 {
@@ -44,6 +43,7 @@ class GalleryResource extends JsonResource
             'file_size' => $this->size,
             'collection_name' => $this->collection_name,
             'photographer' => $this->photographer,
+            'description' => $this->description,
             'created_by' => new UserLiteResource(User::find($this->created_by)),
         ];
     }
