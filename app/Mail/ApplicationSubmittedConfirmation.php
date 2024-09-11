@@ -11,10 +11,6 @@ class ApplicationSubmittedConfirmation extends I18nMail
         $this->setSubjectKey('application-submitted-confirmation.subject')
             ->setTitleKey('application-submitted-confirmation.title');
 
-        if (empty($submissionMessage)) {
-            $this->setBodyKey('application-submitted-confirmation.body');
-        } else {
-            $this->body = $submissionMessage;
-        }
+        $this->body = $submissionMessage;
     }
 }

@@ -13,9 +13,8 @@ class AddLocalizationKeys extends Seeder
      */
     public function run(): void
     {
-        $this->createLocalizationKey('application-submitted-confirmation.subject', 'Welcome to our platform!');
-        $this->createLocalizationKey('application-submitted-confirmation.title', 'Your report is ready!');
-        $this->createLocalizationKey('application-submitted-confirmation.body', 'Your report is ready! Click the link below to download it.');
+        $this->createLocalizationKey('application-submitted-confirmation.subject', 'Your Application Has Been Submitted');
+        $this->createLocalizationKey('application-submitted-confirmation.title', 'Your Application Has Been Submitted!');
 
         // form-submission-approved
         $this->createLocalizationKey('form-submission-approved.subject', 'Application Approved');
