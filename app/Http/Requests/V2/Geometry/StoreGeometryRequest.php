@@ -81,7 +81,7 @@ class StoreGeometryRequest extends FormRequest
                     'geometry.features.*.geometry.coordinates' => 'required|array|size:2',
                     // Minimum is 1m^2 (0.0001 hectares)
                     'geometry.features.*.properties.est_area' => 'required|numeric|min:0.0001',
-                    'geometry.features.*.properties.site_id' => 'required|string'
+                    'geometry.features.*.properties.site_id' => 'required|string',
                 ])->validate();
             }
         }
