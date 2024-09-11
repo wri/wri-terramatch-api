@@ -91,7 +91,7 @@ class ProjectResource extends JsonResource
             'migrated' => ! empty($this->old_model),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'trees_restored_ppc' => 
+            'trees_restored_ppc' =>
                 $this->getTreesGrowingThroughAnr($this->sites) + (($this->trees_planted_count + $this->seeds_planted_count) * ($this->survival_rate / 100)),
         ];
 
