@@ -6,7 +6,7 @@ use App\Helpers\I18nHelper;
 use App\Models\V2\LocalizationKey;
 use Illuminate\Database\Seeder;
 
-class LocalizationKeySeeder extends Seeder
+class LocalizationKeysSeeder extends Seeder
 {
     /**
      * Run the database seeds.
