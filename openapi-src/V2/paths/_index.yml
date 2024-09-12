@@ -2521,6 +2521,12 @@
 /v2/export-image:
   post:
     $ref: './Exports/post-v2-export-image.yml'
+/v2/media/{uuid}:
+  patch:
+    $ref: './Media/patch-v2-media-uuid.yml'
+/v2/media/project/{project}/{mediaUuid}:
+  patch:
+    $ref: './Media/patch-v2-media-project-mediaUuid.yml'
 /v2/admin/{ENTITY}/export/{FRAMEWORK}:
   get:
     $ref: './Exports/get-v2-admin-entity-export-framework.yml'

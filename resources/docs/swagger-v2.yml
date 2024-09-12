@@ -6584,6 +6584,8 @@ definitions:
         type: string
       is_public:
         type: boolean
+      is_cover:
+        type: boolean
       location:
         type: object
         properties:
@@ -42780,6 +42782,64 @@ definitions:
         type: string
       updated_at:
         type: string
+  UpdateMediaRequest:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Name of the media
+      description:
+        type: string
+        description: New description for the media
+      photographer:
+        type: string
+        description: Name of the photographer
+      is_public:
+        type: boolean
+        description: Whether the media is public or not
+  FileResource:
+    type: object
+    properties:
+      id:
+        type: integer
+      model_id:
+        type: integer
+      model_type:
+        type: string
+      collection_name:
+        type: string
+      name:
+        type: string
+      file_name:
+        type: string
+      mime_type:
+        type: string
+      disk:
+        type: string
+      size:
+        type: integer
+      manipulations:
+        type: object
+      custom_properties:
+        type: object
+      responsive_images:
+        type: object
+      order_column:
+        type: integer
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+      description:
+        type: string
+      photographer:
+        type: string
+      is_public:
+        type: boolean
+      is_cover:
+        type: boolean
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -66859,6 +66919,8 @@ paths:
                       type: string
                     is_public:
                       type: boolean
+                    is_cover:
+                      type: boolean
                     location:
                       type: object
                       properties:
@@ -89397,6 +89459,146 @@ paths:
           description: Invalid URL provided
         '500':
           description: Server error
+  '/v2/media/{uuid}':
+    patch:
+      tags:
+        - Media
+      summary: Update media attributes
+      description: 'Update description, photographer, is_public, and is_cover attributes of a media item'
+      produces:
+        - application/json
+      parameters:
+        - name: uuid
+          in: path
+          description: UUID of the media to update
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: Media attributes to update
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Name of the media
+              description:
+                type: string
+                description: New description for the media
+              photographer:
+                type: string
+                description: Name of the photographer
+              is_public:
+                type: boolean
+                description: Whether the media is public or not
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              model_id:
+                type: integer
+              model_type:
+                type: string
+              collection_name:
+                type: string
+              name:
+                type: string
+              file_name:
+                type: string
+              mime_type:
+                type: string
+              disk:
+                type: string
+              size:
+                type: integer
+              manipulations:
+                type: object
+              custom_properties:
+                type: object
+              responsive_images:
+                type: object
+              order_column:
+                type: integer
+              created_at:
+                type: string
+                format: date-time
+              updated_at:
+                type: string
+                format: date-time
+              description:
+                type: string
+              photographer:
+                type: string
+              is_public:
+                type: boolean
+              is_cover:
+                type: boolean
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Media not found
+        '422':
+          description: Validation error
+  '/v2/media/project/{project}/{mediaUuid}':
+    patch:
+      tags:
+        - Media
+      summary: Updates the "is_cover" status of a media item for a project.
+      description: This endpoint allows you to update a specific media item's "is_cover" field to true.
+      parameters:
+        - name: project
+          in: path
+          required: true
+          type: string
+          description: The ID or UUID of the project.
+        - name: mediaUuid
+          in: path
+          required: true
+          type: string
+          description: The UUID of the media item.
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              _method:
+                type: string
+                description: 'This allows PATCH requests via form submissions, used for Laravel.'
+                example: PATCH
+      responses:
+        '200':
+          description: Cover image updated successfully.
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              mediaUuid:
+                type: string
+        '403':
+          description: 'Authorization error, unauthorized access.'
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        '404':
+          description: Media not found.
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        '500':
+          description: Server error.
   '/v2/admin/{ENTITY}/export/{FRAMEWORK}':
     get:
       operationId: get-v2-admin-entity-export-framework.yml
