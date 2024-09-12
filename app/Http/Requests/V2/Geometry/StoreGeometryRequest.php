@@ -73,21 +73,15 @@ class StoreGeometryRequest extends FormRequest
                     'features' => 'required|array|size:1',
                     'features.0.properties.site_id' => 'required|string',
                 ])->validate();
-
                 // This is guaranteed to be Point given the rules specified in rules()
             } else {
-                // Require that all geometries in the collection are valid points, include estimated area, and that the
-                // collection has exactly one unique site id.
-                $siteIds = collect(data_get($geometry, 'features.*.properties.site_id'))
-                    ->unique()->filter()->toArray();
-                Validator::make(['geometry' => $geometry, 'site_ids' => $siteIds], [
+                // Require that all geometries in the collection are valid points, include estimated area
+                Validator::make(['geometry' => $geometry], [
                     'geometry.features.*.geometry.type' => 'required|string|in:Point',
                     'geometry.features.*.geometry.coordinates' => 'required|array|size:2',
                     // Minimum is 1m^2 (0.0001 hectares)
                     'geometry.features.*.properties.est_area' => 'required|numeric|min:0.0001',
-                    // All points require a site id set, and they must all be the same site (enforced via site_ids below)
                     'geometry.features.*.properties.site_id' => 'required|string',
-                    'site_ids' => 'required|array|size:1',
                 ])->validate();
             }
         }
