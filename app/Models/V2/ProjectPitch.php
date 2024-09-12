@@ -24,7 +24,6 @@ class ProjectPitch extends Model implements MediaModel
     use HasUuid;
     use HasStatus;
     use SoftDeletes;
-    use Searchable;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use HasTags;
@@ -113,6 +112,13 @@ class ProjectPitch extends Model implements MediaModel
             'project_name' => $this->project_name,
             'organisation_name' => $this->organisation->name ?? null,
         ];
+    }
+
+    public static function searchProjectPitches($query){
+        return self::select('project_pitches.*')
+            ->join('organisations','project_pitches.organisation_id','=','organisations.uuid')
+            ->where('project_pitches.project_name','like', "%$query%")
+            ->orwhere('organisations.name','like', "%$query%");
     }
 
     public function getRouteKeyName()
