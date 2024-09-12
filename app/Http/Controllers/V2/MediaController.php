@@ -4,6 +4,12 @@ namespace App\Http\Controllers\V2;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Files\FileResource;
+use App\Models\V2\Nurseries\Nursery;
+use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SiteReport;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -12,12 +18,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Nurseries\NurseryReport;
-use App\Models\V2\Projects\Project;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\Site;
-use App\Models\V2\Sites\SiteReport;
 
 class MediaController extends Controller
 {
@@ -122,7 +122,7 @@ class MediaController extends Controller
             Nursery::class,
             ProjectReport::class,
             SiteReport::class,
-            NurseryReport::class
+            NurseryReport::class,
         ];
 
         $relatedModelIds = collect([
@@ -131,7 +131,7 @@ class MediaController extends Controller
             $project->nurseries->pluck('id'),
             $project->reports->pluck('id'),
             $project->siteReports->pluck('id'),
-            $project->nurseryReports->pluck('id')
+            $project->nurseryReports->pluck('id'),
         ])->flatten()->toArray();
 
         Media::whereIn('model_type', $relatedModelTypes)
