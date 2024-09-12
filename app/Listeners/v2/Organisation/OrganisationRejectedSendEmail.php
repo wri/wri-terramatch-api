@@ -27,6 +27,6 @@ class OrganisationRejectedSendEmail
         $organisation = $event->organisation;
         $user = User::where('organisation_id', $organisation->id)->firstOrFail();
 
-        Mail::to($user->email_address)->send(new OrganisationRejected($organisation));
+        Mail::to($user->email_address)->send(new OrganisationRejected($organisation, $user));
     }
 }

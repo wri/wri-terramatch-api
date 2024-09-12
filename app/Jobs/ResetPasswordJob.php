@@ -40,6 +40,6 @@ class ResetPasswordJob implements ShouldQueue
         $passwordReset->user_id = $this->model->id;
         $passwordReset->token = Str::random(32);
         $passwordReset->saveOrFail();
-        Mail::to($this->model->email_address)->send(new ResetPasswordMail($passwordReset->token, $this->callbackUrl));
+        Mail::to($this->model->email_address)->send(new ResetPasswordMail($passwordReset->token, $this->callbackUrl, $this->model));
     }
 }

@@ -27,6 +27,6 @@ class OrganisationSubmittedConfirmationSendEmail
         $organisation = $event->organisation;
         $user = User::where('organisation_id', $organisation->id)->firstOrFail();
 
-        Mail::to($user->email_address)->send(new OrganisationSubmitConfirmation($organisation));
+        Mail::to($user->email_address)->send(new OrganisationSubmitConfirmation($user));
     }
 }
