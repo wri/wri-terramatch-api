@@ -743,4 +743,4 @@ Route::prefix('site-polygon')->group(function () {
 
 Route::get('/type-entity', EntityTypeController::class);
 
-Route::post('/locale/{locale}', UserLocaleController::class);
+Route::patch('/locale/{locale}', UserLocaleController::class);

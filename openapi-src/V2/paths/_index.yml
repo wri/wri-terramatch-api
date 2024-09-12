@@ -2734,7 +2734,7 @@
   put:
     $ref: './Polygons/put-v2-site-polygon-uuid-make-active.yml'
 /v2/locale/{locale}:
-  post:
+  patch:
     $ref: './Locale/post-v2-locale-locale.yml'
 /v2/terrafund/clip-polygons/polygon/{uuid}:
   post:

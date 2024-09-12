@@ -92872,7 +92872,7 @@ paths:
                   version_name:
                     type: string
   '/v2/locale/{locale}':
-    post:
+    patch:
       summary: Updates user locale
       operationId: post-v2-locale-locale
       tags:
