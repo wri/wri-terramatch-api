@@ -750,4 +750,4 @@ Route::prefix('site-polygon')->group(function () {
 
 Route::get('/type-entity', EntityTypeController::class);
 
-Route::patch('/locale/{locale}', UserLocaleController::class);
+Route::patch('/users/locale', UserLocaleController::class);

@@ -93140,18 +93140,21 @@ paths:
                     type: boolean
                   version_name:
                     type: string
-  '/v2/locale/{locale}':
+  /v2/users/locale:
     patch:
       summary: Updates user locale
-      operationId: post-v2-locale-locale
+      operationId: post-v2-users-locale
       tags:
         - V2 Locale
       parameters:
-        - in: path
+        - in: body
           name: locale
           required: true
-          type: string
           description: 'locale used could be one of en-US,es-MX,fr-FR,pt-BR'
+          type: object
+          properties:
+            locale:
+              type: string
       responses:
         '200':
           description: OK

@@ -12,7 +12,7 @@ class UserLocaleController extends Controller
     public function __invoke(UserLocaleRequest $request): JsonResponse
     {
         $user = Auth::user();
-        $user->locale = $request->route('locale');
+        $user->locale = $request->get('locale');
         $user->saveOrFail();
 
         return response()->json([
