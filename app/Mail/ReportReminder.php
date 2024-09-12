@@ -20,7 +20,7 @@ class ReportReminder extends I18nMail
             ->setBodyKey('report-reminder.body')
             ->setParams([
                 '{entityTypeName}' => $this->getEntityTypeName($entity),
-                '{entityStatus}' => $entity->status,
+                '{entityStatus}' => str_replace('-', ' ', $entity->status),
                 '{feedback}' => $feedback,
             ]);
     }
