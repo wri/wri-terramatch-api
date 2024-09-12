@@ -250,6 +250,8 @@ V2TaskActionRead:
   $ref: './V2TaskActionRead.yml'
 StatusUpdate:
   $ref: './StatusUpdate.yml'
+EntityReportReminder:
+  $ref: './EntityReportReminder.yml'
 V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
 V2ProjectInviteCreate:
