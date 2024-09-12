@@ -2521,6 +2521,9 @@
 /v2/media/{UUID}:
   patch:
     $ref: './Media/patch-v2-media-uuid.yml'
+/v2/media/project/{project}/{mediaUuid}:
+  patch:
+    $ref: './Media/patch-v2-media-project-mediaUuid.yml'
 /v2/admin/{ENTITY}/export/{FRAMEWORK}:
   get:
     $ref: './Exports/get-v2-admin-entity-export-framework.yml'

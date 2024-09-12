@@ -265,6 +265,7 @@ Route::prefix('media')->group(function () {
     Route::delete('/{uuid}', [MediaController::class, 'delete']);
     Route::delete('/{uuid}/{collection}', [MediaController::class, 'delete']);
     Route::patch('/{uuid}', [MediaController::class, 'updateMedia']);
+    Route::patch('project/{project}/{mediaUuid}', [MediaController::class, 'updateIsCover']);
 });
 
 /** ADMIN ONLY ROUTES */

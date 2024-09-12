@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Models\V2\Nurseries\Nursery;
+use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SiteReport;
 
 class MediaController extends Controller
 {
@@ -85,18 +91,51 @@ class MediaController extends Controller
             if (! empty($updateData)) {
                 $media->update($updateData);
             }
-
-            if ($request->has('is_cover') && $request->input('is_cover')) {
-                Media::where('model_type', $media->model_type)
-                    ->where('model_id', $media->model_id)
-                    ->where('id', '!=', $media->id)
-                    ->update(['is_cover' => false]);
-
-                $media->is_cover = true;
-                $media->save();
-            }
         });
 
         return response()->json(new FileResource($media), 200);
+    }
+
+    public function updateIsCover(Request $request, Project $project, string $mediaUuid): JsonResponse
+    {
+        try {
+            $this->authorize('read', $project);
+
+            DB::transaction(function () use ($project, $mediaUuid) {
+                $this->resetCoverForProjectMedia($project);
+
+                $media = Media::where('uuid', $mediaUuid)->firstOrFail();
+                $media->update(['is_cover' => true]);
+            });
+
+            return response()->json(['message' => 'Cover image updated successfully', 'mediaUuid' => $mediaUuid], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Media not found'], 404);
+        }
+    }
+
+    private function resetCoverForProjectMedia(Project $project)
+    {
+        $relatedModelTypes = [
+            Project::class,
+            Site::class,
+            Nursery::class,
+            ProjectReport::class,
+            SiteReport::class,
+            NurseryReport::class
+        ];
+
+        $relatedModelIds = collect([
+            $project->id,
+            $project->sites->pluck('id'),
+            $project->nurseries->pluck('id'),
+            $project->reports->pluck('id'),
+            $project->siteReports->pluck('id'),
+            $project->nurseryReports->pluck('id')
+        ])->flatten()->toArray();
+
+        Media::whereIn('model_type', $relatedModelTypes)
+            ->whereIn('model_id', $relatedModelIds)
+            ->update(['is_cover' => false]);
     }
 }

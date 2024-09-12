@@ -42787,9 +42787,6 @@ definitions:
       is_public:
         type: boolean
         description: Whether the media is public or not
-      is_cover:
-        type: boolean
-        description: Whether this media should be set as cover
   FileResource:
     type: object
     properties:
@@ -89452,9 +89449,6 @@ paths:
               is_public:
                 type: boolean
                 description: Whether the media is public or not
-              is_cover:
-                type: boolean
-                description: Whether this media should be set as cover
       responses:
         '200':
           description: Successful operation
@@ -89509,6 +89503,59 @@ paths:
           description: Media not found
         '422':
           description: Validation error
+  '/v2/media/project/{project}/{mediaUuid}':
+    patch:
+      tags:
+        - Media
+      summary: Updates the "is_cover" status of a media item for a project.
+      description: This endpoint allows you to update a specific media item's "is_cover" field to true.
+      parameters:
+        - name: project
+          in: path
+          required: true
+          type: string
+          description: The ID or UUID of the project.
+        - name: mediaUuid
+          in: path
+          required: true
+          type: string
+          description: The UUID of the media item.
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              _method:
+                type: string
+                description: 'This allows PATCH requests via form submissions, used for Laravel.'
+                example: PATCH
+      responses:
+        '200':
+          description: Cover image updated successfully.
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              mediaUuid:
+                type: string
+        '403':
+          description: 'Authorization error, unauthorized access.'
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        '404':
+          description: Media not found.
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        '500':
+          description: Server error.
   '/v2/admin/{ENTITY}/export/{FRAMEWORK}':
     get:
       operationId: get-v2-admin-entity-export-framework.yml

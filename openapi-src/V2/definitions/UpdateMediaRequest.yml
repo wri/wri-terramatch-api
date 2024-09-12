@@ -12,6 +12,3 @@ properties:
   is_public:
     type: boolean
     description: Whether the media is public or not
-  is_cover:
-    type: boolean
-    description: Whether this media should be set as cover
