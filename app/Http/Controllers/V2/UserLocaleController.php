@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class UserLocaleController extends Controller
 {
-    public function __invoke(UserLocaleRequest $request, string $locale): JsonResponse
+    public function __invoke(UserLocaleRequest $request): JsonResponse
     {
         $user = Auth::user();
-        $user->locale = $locale;
+        $user->locale = $request->route('locale');
         $user->saveOrFail();
 
         return response()->json([
