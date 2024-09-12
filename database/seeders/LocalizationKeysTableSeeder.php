@@ -297,6 +297,12 @@ class LocalizationKeysTableSeeder extends Seeder
             'If you have any questions, feel free to message us at info@terramatch.org.');
         $this->createLocalizationKey('version-rejected.cta', 'View Changes');
 
+        // report-reminder
+        $this->createLocalizationKey('report-reminder.subject', 'Your {entityTypeName} is Still {entityStatus}');
+        $this->createLocalizationKey('report-reminder.title', 'Your {entityTypeName} is Still {entityStatus}');
+        $this->createLocalizationKey('report-reminder.body', 'This is a reminder that your {entityTypeName} still has the status {entityStatus}. Below you will see a note from your project manager about the report.<br><br> 
+            If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>{feedback}');
+
     }
 
     public function createLocalizationKey($key, $value): void

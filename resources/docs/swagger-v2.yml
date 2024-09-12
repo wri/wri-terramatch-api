@@ -41203,6 +41203,12 @@ definitions:
         type: array
         items:
           type: string
+  EntityReportReminder:
+    title: EntityReportReminder
+    type: object
+    properties:
+      feedback:
+        type: string
   V2ProjectInviteRead:
     title: V2ProjectInviteRead
     type: object
@@ -55946,6 +55952,35 @@ paths:
                 type: array
                 items:
                   type: string
+      responses:
+        '200':
+          description: OK
+  '/v2/admin/{ENTITY}/{UUID}/reminder':
+    post:
+      summary: Send reminder to an entity report
+      operationId: post-v2-admin-entity-uuid-reminder
+      tags:
+        - V2 Project Reports
+        - V2 Site Reports
+        - V2 Nursery Reports
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: 'allowed values are project-reports, site-reports, nursery-reports'
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            title: EntityReportReminder
+            type: object
+            properties:
+              feedback:
+                type: string
       responses:
         '200':
           description: OK
