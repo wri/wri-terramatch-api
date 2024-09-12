@@ -52,7 +52,7 @@ class ViewProjectSitesController extends Controller
             if (is_numeric($search)) {
                 $qry->where('v2_sites.ppc_external_id', $search);
             } else {
-                $ids = Site::search(trim($request->query('search')))
+                $ids = Site::searchSites(trim($request->query('search')))
                     ->get()
                     ->pluck('id')
                     ->toArray();

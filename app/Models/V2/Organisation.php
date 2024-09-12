@@ -32,7 +32,6 @@ class Organisation extends Model implements MediaModel
     use HasUuid;
     use HasStatus;
     use HasTypes;
-    use Searchable;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use SoftDeletes;
@@ -218,6 +217,11 @@ class Organisation extends Model implements MediaModel
         return [
             'name' => $this->name,
         ];
+    }
+
+    public static function searchOrganisations($query){
+        return self::select('organisations.*')
+            ->where('organisations.name', 'like', "%$query%");
     }
 
     public function treeSpecies(): MorphMany
