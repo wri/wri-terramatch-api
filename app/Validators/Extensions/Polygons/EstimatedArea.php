@@ -5,6 +5,7 @@ namespace App\Validators\Extensions\Polygons;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Extension;
+use Illuminate\Support\Facades\Log;
 
 class EstimatedArea extends Extension
 {
@@ -64,7 +65,33 @@ class EstimatedArea extends Extension
           'extra_info' => $extra_info,
         ];
     }
+    public static function getAreaDataSite(string $polygonUuid): array
+    {
+        $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
+        if ($sitePolygon == null) {
+            return ['valid' => false, 'error' => 'Site polygon not found for the given polygon ID', 'status' => 404];
+        }
 
+        $site = $sitePolygon->site;
+        $sumEstArea = $site->sitePolygons()->sum('calc_area');
+        $lowerBound = self::LOWER_BOUND_MULTIPLIER * $site->hectares_to_restore_goal;
+        $upperBound = self::UPPER_BOUND_MULTIPLIER * $site->hectares_to_restore_goal;
+        $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;
+        $percentage = ($sumEstArea / $site->hectares_to_restore_goal) * 100;
+        $sumEstArea = round($sumEstArea);
+        $percentage = round($percentage);
+        $extra_info = [
+          'sum_area' => $sumEstArea,
+          'percentage' => $percentage,
+          'total_area_site' => $site->hectares_to_restore_goal,
+        ];
+        return [
+          'valid' => $valid,
+          'sum_area_project' => $sumEstArea,
+          'total_area_project' => $site->hectares_to_restore_goal,
+          'extra_info' => $extra_info
+        ];
+    }
     public static function getAreaDataWithSiteID(string $siteUuid): array
     {
         $sitePolygon = SitePolygon::where('site_id', $siteUuid)->first();
