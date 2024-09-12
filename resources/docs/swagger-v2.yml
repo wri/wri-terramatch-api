@@ -6584,6 +6584,8 @@ definitions:
         type: string
       is_public:
         type: boolean
+      is_cover:
+        type: boolean
       location:
         type: object
         properties:
@@ -66879,6 +66881,8 @@ paths:
                     model_name:
                       type: string
                     is_public:
+                      type: boolean
+                    is_cover:
                       type: boolean
                     location:
                       type: object
