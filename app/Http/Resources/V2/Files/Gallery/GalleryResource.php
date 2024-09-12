@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V2\Files\Gallery;
 
+use App\Http\Resources\V2\User\UserLiteResource;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
@@ -10,6 +11,7 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteMonitoring;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,10 +29,12 @@ class GalleryResource extends JsonResource
             'uuid' => $this->uuid,
             'file_url' => $this->getFullUrl(),
             'thumb_url' => $this->getFullUrl('thumbnail'),
+            'name' => $this->name,
             'file_name' => $this->file_name,
             'created_date' => $this->created_at,
             'model_name' => $this->getModelName(),
             'is_public' => (bool) $this->is_public,
+            'is_cover' => (bool) $this->is_cover,
             'location' => [
                 'lat' => (float) $this->lat ?? null,
                 'lng' => (float) $this->lng ?? null,
@@ -38,6 +42,9 @@ class GalleryResource extends JsonResource
             'mime_type' => $this->mime_type,
             'file_size' => $this->size,
             'collection_name' => $this->collection_name,
+            'photographer' => $this->photographer,
+            'description' => $this->description,
+            'created_by' => new UserLiteResource(User::find($this->created_by)),
         ];
     }
 
