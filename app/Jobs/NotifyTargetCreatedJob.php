@@ -57,7 +57,7 @@ class NotifyTargetCreatedJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new TargetCreatedMail($targetId, $name));
+                Mail::to($user->email_address)->send(new TargetCreatedMail($targetId, $name, $user));
             }
             /*
             $pushService->sendPush(

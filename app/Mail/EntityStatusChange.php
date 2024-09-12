@@ -5,21 +5,47 @@ namespace App\Mail;
 use App\Models\V2\EntityModel;
 use App\Models\V2\ReportModel;
 use App\StateMachines\EntityStatusStateMachine;
-use Illuminate\Support\Collection;
 
-class EntityStatusChange extends Mail
+class EntityStatusChange extends I18nMail
 {
     private EntityModel $entity;
 
-    public function __construct(EntityModel $entity)
+    public function __construct(EntityModel $entity, $user)
     {
+        parent::__construct($user);
         $this->entity = $entity;
 
-        $this->subject = $this->getSubject();
-        $this->title = $this->subject;
-        $this->body = $this->getBodyParagraphs()->join('<br><br>');
+        if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
+            $this->setSubjectKey('entity-status-change.subject-approved')
+                ->setTitleKey('entity-status-change.subject-approved');
+        }
+        if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
+            $this->setSubjectKey('entity-status-change.subject-needs-more-information')
+                ->setTitleKey('entity-status-change.subject-needs-more-information');
+        }
+
+        if ($this->entity instanceof ReportModel) {
+            if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
+                $this->setBodyKey('entity-status-change.body-report-approved');
+            }
+            if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
+                $this->setBodyKey('entity-status-change.body-report-needs-more-information');
+            }
+        } else {
+            if ($this->getEntityStatus() == EntityStatusStateMachine::APPROVED) {
+                $this->setBodyKey('entity-status-change.body-entity-approved');
+            }
+            if ($this->getEntityStatus() == EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
+                $this->setBodyKey('entity-status-change.body-entity-needs-more-information');
+            }
+        }
+        $this->setParams(['{entityTypeName}' => $this->getEntityTypeName(),
+            '{lowerEntityTypeName}' => strtolower($this->getEntityTypeName()),
+            '{parentEntityName}' => $this->entity->parentEntity()->pluck('name')->first(),
+            '{entityName}' => $this->entity->name,
+            '{feedback}' => $this->getFeedback() ?? '(No feedback)'])
+            ->setCta('entity-status-change.cta');
         $this->link = $this->entity->getViewLinkPath();
-        $this->cta = 'View ' . $this->getEntityTypeName();
         $this->transactional = true;
     }
 
@@ -46,17 +72,6 @@ class EntityStatusChange extends Mail
         return null;
     }
 
-    private function getSubject(): string
-    {
-        return match ($this->getEntityStatus()) {
-            EntityStatusStateMachine::APPROVED =>
-                'Your ' . $this->getEntityTypeName() . ' Has Been Approved',
-            EntityStatusStateMachine::NEEDS_MORE_INFORMATION =>
-                'There is More Information Requested About Your ' . $this->getEntityTypeName(),
-            default => '',
-        };
-    }
-
     private function getFeedback(): ?string
     {
         if ($this->entity->update_request_status == EntityStatusStateMachine::APPROVED ||
@@ -76,37 +91,5 @@ class EntityStatusChange extends Mail
         }
 
         return str_replace("\n", '<br>', $feedback);
-    }
-
-    private function getBodyParagraphs(): Collection
-    {
-        $paragraphs = collect();
-        if ($this->entity instanceof ReportModel) {
-            $paragraphs->push('Thank you for submitting your ' .
-                $this->entity->parentEntity()->pluck('name')->first() .
-                ' report.');
-        } else {
-            $paragraphs->push('Thank you for submitting your ' .
-                strtolower($this->getEntityTypeName()) .
-                ' information for ' .
-                $this->entity->name .
-                '.');
-        }
-
-        $paragraphs->push(match ($this->getEntityStatus()) {
-            EntityStatusStateMachine::APPROVED => [
-                'The information has been reviewed by your project manager and has been approved.',
-                $this->getFeedback(),
-            ],
-            EntityStatusStateMachine::NEEDS_MORE_INFORMATION => [
-                'The information has been reviewed by your project manager and they would like to see the following updates:',
-                $this->getFeedback() ?? '(No feedback)',
-            ],
-            default => null
-        });
-
-        $paragraphs->push('If you have any additional questions please reach out to your project manager or to info@terramatch.org');
-
-        return $paragraphs->flatten()->filter();
     }
 }
