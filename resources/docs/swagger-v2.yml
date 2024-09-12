@@ -93151,10 +93151,11 @@ paths:
           name: locale
           required: true
           description: 'locale used could be one of en-US,es-MX,fr-FR,pt-BR'
-          type: object
-          properties:
-            locale:
-              type: string
+          schema:
+            type: object
+            properties:
+              locale:
+                type: string
       responses:
         '200':
           description: OK
