@@ -2515,6 +2515,9 @@
 /v2/admin/audits/{ENTITY}/{UUID}:
   get:
     $ref: './Audits/get-v2-admin-audits-entity-uuid.yml'
+/v2/export-image:
+  post:
+    $ref: './Exports/post-v2-export-image.yml'
 /v2/admin/{ENTITY}/export/{FRAMEWORK}:
   get:
     $ref: './Exports/get-v2-admin-entity-export-framework.yml'

@@ -123,7 +123,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
         // Make sure the incoming data is clean, and meets our expectations of one row per type/subtype/name combo.
         // The FE is not supposed to send us data with duplicates, but there has been a bug in the past that caused
         // this problem, so this extra check is just covering our bases.
-        $syncData = collect($workdayData['demographics'])->reduce(function ($syncData, $row) {
+        $syncData = isset($workdayData['demographics']) ? collect($workdayData['demographics'])->reduce(function ($syncData, $row) {
             $type = data_get($row, 'type');
             $subtype = data_get($row, 'subtype');
             $name = data_get($row, 'name');
@@ -144,7 +144,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
             $syncData[] = $row;
 
             return $syncData;
-        }, []);
+        }, []) : [];
 
         $demographics = $workday->demographics;
         $represented = collect();

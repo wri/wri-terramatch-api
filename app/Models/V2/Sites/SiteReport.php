@@ -383,6 +383,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
             ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
             ->where('v2_projects.name', 'like', "%$query%")
             ->orWhere('organisations.name', 'like', "%$query%")
+            ->orWhere('v2_sites.name', 'like', "%$query%")
             ->get();
     }
 }
