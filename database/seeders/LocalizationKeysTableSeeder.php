@@ -301,6 +301,10 @@ class LocalizationKeysTableSeeder extends Seeder
 
     public function createLocalizationKey($key, $value): void
     {
+        if (LocalizationKey::where('key', operator: $key)->exists()) {
+            return;
+        }
+
         $localizationKey = LocalizationKey::create([
             'key' => $key,
             'value' => $value,
