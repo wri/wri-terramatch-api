@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
@@ -1009,7 +1010,84 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
         }
     }
+    public function downloadAllActivePolygonsByFramework(Request $request)
+    {
+      ini_set('max_execution_time', '-1');
+      ini_set('memory_limit', '-1');
+      $framework = $request->query('framework');
+        try {
+            $sitesFromFramework = Site::where('framework_key', $framework)->pluck('uuid');
+            
+            $activePolygonIds = SitePolygon::wherein('site_id', $sitesFromFramework)->active()->pluck('poly_id');
+            Log::info("count of active polygons: ", ['count' => count($activePolygonIds)]);
+            $features = [];
+            foreach ($activePolygonIds as $polygonUuid) {
 
+                $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
+                    ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+                    ->first();
+                
+                if (! $polygonGeometry) {
+                  Log::warning('No geometry found for Polygon UUID:', ['uuid' => $polygonUuid]);
+                    continue;
+                }
+                $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
+                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
+                $feature = [
+                    'type' => 'Feature',
+                    'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                    'properties' => $properties,
+                ];
+                $features[] = $feature;
+            }
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => $features,
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
+    }
+    public function downloadGeojsonAllActivePolygons()
+    {
+      ini_set('max_execution_time', '-1');
+      ini_set('memory_limit', '-1');
+        try {
+            $activePolygonIds = SitePolygon::active()->pluck('poly_id');
+            
+            $features = [];
+            foreach ($activePolygonIds as $polygonUuid) {
+
+                $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
+                    ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+                    ->first();
+                
+                if (! $polygonGeometry) {
+                  Log::warning('No geometry found for Polygon UUID:', ['uuid' => $polygonUuid]);
+                    continue;
+                }
+                $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
+                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
+                $feature = [
+                    'type' => 'Feature',
+                    'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                    'properties' => $properties,
+                ];
+                $features[] = $feature;
+            }
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => $features,
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
+    }
+    
     public function GetAllPolygonsLoaded($geojson, $uuid)
     {
         $polygonsUuids = SitePolygon::where('site_id', $uuid)
