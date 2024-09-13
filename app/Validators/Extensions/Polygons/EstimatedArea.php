@@ -87,8 +87,8 @@ class EstimatedArea extends Extension
         ];
         return [
           'valid' => $valid,
-          'sum_area_project' => $sumEstArea,
-          'total_area_project' => $site->hectares_to_restore_goal,
+          'sum_area_site' => $sumEstArea,
+          'total_area_site' => $site->hectares_to_restore_goal,
           'extra_info' => $extra_info
         ];
     }
