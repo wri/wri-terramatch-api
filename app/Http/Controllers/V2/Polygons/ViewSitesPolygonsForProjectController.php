@@ -20,7 +20,7 @@ class ViewSitesPolygonsForProjectController extends Controller
             $qry = Site::whereIn('id', $siteIds);
         } else {
             $qry = Site::searchSites(trim($request->query('search')))
-                ->whereIn('id', $siteIds);
+                ->whereIn('v2_sites.id', $siteIds);
         }
 
         $qry->orderBy('created_at', 'desc');
