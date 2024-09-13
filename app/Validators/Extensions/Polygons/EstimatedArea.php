@@ -31,40 +31,88 @@ class EstimatedArea extends Extension
         if ($sitePolygon == null) {
             return ['valid' => false, 'error' => 'Site polygon not found for the given polygon ID', 'status' => 404];
         }
+        $siteData = self::generateAreaDataSite($sitePolygon);
+        $projectData = self::generateAreaDataProject($sitePolygon);
+        
+    }
+    public static function generateAreaDataProject ($sitePolygon): array 
+    {
+      $project = $sitePolygon->project;
+      if ($project == null) {
+          return [
+              'valid' => false,
+              'error' => 'Project not found for the given SitePolygon',
+              'sitePolygonId' => $sitePolygon->uuid,
+              'status' => 404,
+          ];
+      }
 
-        $project = $sitePolygon->project;
-        if ($project == null) {
-            return [
-                'valid' => false,
-                'error' => 'Project not found for the given SitePolygon',
-                'sitePolygonId' => $sitePolygon->uuid,
-                'status' => 404,
-            ];
+      if (empty($project->total_hectares_restored_goal)) {
+          return ['valid' => false, 'error' => 'Total hectares restored goal not set for the project', 'status' => 500];
+      }
+
+      $sumEstArea = $project->sitePolygons()->sum('calc_area');
+      $lowerBound = self::LOWER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
+      $upperBound = self::UPPER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
+      $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;
+      $percentage = ($sumEstArea / $project->total_hectares_restored_goal) * 100;
+      $sumEstArea = round($sumEstArea);
+      $percentage = round($percentage);
+      $extra_info = [
+        'sum_area' => $sumEstArea,
+        'percentage' => $percentage,
+        'total_area_project' => $project->total_hectares_restored_goal,
+      ];
+
+      return [
+        'valid' => $valid,
+        'sum_area_project' => $sumEstArea,
+        'total_area_project' => $project->total_hectares_restored_goal,
+        'extra_info' => $extra_info,
+      ];
+    }
+    public static function getAreaDataProject(string $polygonUuid): array
+    {
+        $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
+        if ($sitePolygon == null) {
+            return ['valid' => false, 'error' => 'Site polygon not found for the given polygon ID', 'status' => 404];
         }
 
-        if (empty($project->total_hectares_restored_goal)) {
-            return ['valid' => false, 'error' => 'Total hectares restored goal not set for the project', 'status' => 500];
-        }
-
-        $sumEstArea = $project->sitePolygons()->sum('calc_area');
-        $lowerBound = self::LOWER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
-        $upperBound = self::UPPER_BOUND_MULTIPLIER * $project->total_hectares_restored_goal;
-        $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;
-        $percentage = ($sumEstArea / $project->total_hectares_restored_goal) * 100;
-        $sumEstArea = round($sumEstArea);
-        $percentage = round($percentage);
-        $extra_info = [
-          'sum_area' => $sumEstArea,
-          'percentage' => $percentage,
-          'total_area_project' => $project->total_hectares_restored_goal,
-        ];
-
+        return self::generateAreaDataProject($sitePolygon);
+    }
+    
+    public static function generateAreaDataSite ($sitePolygon): array 
+    {
+      $site = $sitePolygon->site;
+      $sumEstArea = $site->sitePolygons()->sum('calc_area');
+      $lowerBound = self::LOWER_BOUND_MULTIPLIER * $site->hectares_to_restore_goal;
+      $upperBound = self::UPPER_BOUND_MULTIPLIER * $site->hectares_to_restore_goal;
+      $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;
+      if (!$site->hectares_to_restore_goal) {
         return [
-          'valid' => $valid,
-          'sum_area_project' => $sumEstArea,
-          'total_area_project' => $project->total_hectares_restored_goal,
-          'extra_info' => $extra_info,
+          'valid' => false,
+          'total_area_site' => $site->hectares_to_restore_goal,
+          'extra_info' => [
+            'sum_area' => null,
+            'percentage' => null,
+            'total_area_site' => null,
+          ]
         ];
+      }
+      $percentage = ($sumEstArea / $site->hectares_to_restore_goal) * 100;
+      $sumEstArea = round($sumEstArea);
+      $percentage = round($percentage);
+      $extra_info = [
+        'sum_area' => $sumEstArea,
+        'percentage' => $percentage,
+        'total_area_site' => $site->hectares_to_restore_goal,
+      ];
+      return [
+        'valid' => $valid,
+        'sum_area_site' => $sumEstArea,
+        'total_area_site' => $site->hectares_to_restore_goal,
+        'extra_info' => $extra_info
+      ];
     }
     public static function getAreaDataSite(string $polygonUuid): array
     {
@@ -73,36 +121,7 @@ class EstimatedArea extends Extension
             return ['valid' => false, 'error' => 'Site polygon not found for the given polygon ID', 'status' => 404];
         }
         try {
-          $site = $sitePolygon->site;
-          $sumEstArea = $site->sitePolygons()->sum('calc_area');
-          $lowerBound = self::LOWER_BOUND_MULTIPLIER * $site->hectares_to_restore_goal;
-          $upperBound = self::UPPER_BOUND_MULTIPLIER * $site->hectares_to_restore_goal;
-          $valid = $sumEstArea >= $lowerBound && $sumEstArea <= $upperBound;
-          if (!$site->hectares_to_restore_goal) {
-            return [
-              'valid' => false,
-              'total_area_site' => $site->hectares_to_restore_goal,
-              'extra_info' => [
-                'sum_area' => null,
-                'percentage' => null,
-                'total_area_site' => null,
-              ]
-            ];
-          }
-          $percentage = ($sumEstArea / $site->hectares_to_restore_goal) * 100;
-          $sumEstArea = round($sumEstArea);
-          $percentage = round($percentage);
-          $extra_info = [
-            'sum_area' => $sumEstArea,
-            'percentage' => $percentage,
-            'total_area_site' => $site->hectares_to_restore_goal,
-          ];
-          return [
-            'valid' => $valid,
-            'sum_area_site' => $sumEstArea,
-            'total_area_site' => $site->hectares_to_restore_goal,
-            'extra_info' => $extra_info
-          ];
+          return self::generateAreaDataSite($sitePolygon);
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return [
