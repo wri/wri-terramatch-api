@@ -33,7 +33,23 @@ class EstimatedArea extends Extension
         }
         $siteData = self::generateAreaDataSite($sitePolygon);
         $projectData = self::generateAreaDataProject($sitePolygon);
-        
+        $valid = $siteData['valid'] || $projectData['valid'];
+
+        // Construct the result array
+        return [
+            'valid' => $valid,
+            'total_area_site' => $siteData['total_area_site'] ?? null,
+            'total_area_project' => $projectData['total_area_project'] ?? null,
+            'extra_info' => [
+                'sum_area_site' => $siteData['extra_info']['sum_area_site'] ?? null,
+                'sum_area_project' => $projectData['extra_info']['sum_area_project'] ?? null,
+                'percentage_site' => $siteData['extra_info']['percentage_site'] ?? null,
+                'percentage_project' => $projectData['extra_info']['percentage_project'] ?? null,
+                'total_area_site' => $siteData['extra_info']['total_area_site'] ?? null,
+                'total_area_project' => $projectData['extra_info']['total_area_project'] ?? null,
+            ],
+            'insertion_success' => true, // Assuming 'insertion_success' is always true for now
+        ];
     }
     public static function generateAreaDataProject ($sitePolygon): array 
     {
@@ -47,8 +63,16 @@ class EstimatedArea extends Extension
           ];
       }
 
-      if (empty($project->total_hectares_restored_goal)) {
-          return ['valid' => false, 'error' => 'Total hectares restored goal not set for the project', 'status' => 500];
+      if (empty($project->total_hectares_restored_goal) || !$project->hectares_to_restore_goal) {
+          return [
+            'valid' => false,
+            'total_area_project' => $project->hectares_to_restore_goal,
+            'extra_info' => [
+              'sum_area_project' => null,
+              'percentage_project' => null,
+              'total_area_project' => null,
+            ]
+          ];
       }
 
       $sumEstArea = $project->sitePolygons()->sum('calc_area');
@@ -59,8 +83,8 @@ class EstimatedArea extends Extension
       $sumEstArea = round($sumEstArea);
       $percentage = round($percentage);
       $extra_info = [
-        'sum_area' => $sumEstArea,
-        'percentage' => $percentage,
+        'sum_area_project' => $sumEstArea,
+        'percentage_project' => $percentage,
         'total_area_project' => $project->total_hectares_restored_goal,
       ];
 
@@ -103,8 +127,8 @@ class EstimatedArea extends Extension
       $sumEstArea = round($sumEstArea);
       $percentage = round($percentage);
       $extra_info = [
-        'sum_area' => $sumEstArea,
-        'percentage' => $percentage,
+        'sum_area_site' => $sumEstArea,
+        'percentage_site' => $percentage,
         'total_area_site' => $site->hectares_to_restore_goal,
       ];
       return [
