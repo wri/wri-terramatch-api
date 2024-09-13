@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Tags\HasTags;
@@ -219,7 +218,8 @@ class Organisation extends Model implements MediaModel
         ];
     }
 
-    public static function searchOrganisations($query){
+    public static function searchOrganisations($query)
+    {
         return self::select('organisations.*')
             ->where('organisations.name', 'like', "%$query%");
     }
