@@ -63,10 +63,10 @@ class EstimatedArea extends Extension
           ];
       }
 
-      if (empty($project->total_hectares_restored_goal) || !$project->hectares_to_restore_goal) {
+      if (empty($project->total_hectares_restored_goal) || !$project->total_hectares_restored_goal) {
           return [
             'valid' => false,
-            'total_area_project' => $project->hectares_to_restore_goal,
+            'total_area_project' => $project->total_hectares_restored_goal,
             'extra_info' => [
               'sum_area_project' => null,
               'percentage_project' => null,
