@@ -1010,25 +1010,28 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
         }
     }
+
     public function downloadAllActivePolygonsByFramework(Request $request)
     {
-      ini_set('max_execution_time', '-1');
-      ini_set('memory_limit', '-1');
-      $framework = $request->query('framework');
+        ini_set('max_execution_time', '-1');
+        ini_set('memory_limit', '-1');
+        $framework = $request->query('framework');
+
         try {
             $sitesFromFramework = Site::where('framework_key', $framework)->pluck('uuid');
-            
+
             $activePolygonIds = SitePolygon::wherein('site_id', $sitesFromFramework)->active()->pluck('poly_id');
-            Log::info("count of active polygons: ", ['count' => count($activePolygonIds)]);
+            Log::info('count of active polygons: ', ['count' => count($activePolygonIds)]);
             $features = [];
             foreach ($activePolygonIds as $polygonUuid) {
 
                 $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
                     ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
                     ->first();
-                
+
                 if (! $polygonGeometry) {
-                  Log::warning('No geometry found for Polygon UUID:', ['uuid' => $polygonUuid]);
+                    Log::warning('No geometry found for Polygon UUID:', ['uuid' => $polygonUuid]);
+
                     continue;
                 }
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
@@ -1050,22 +1053,25 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
         }
     }
+
     public function downloadGeojsonAllActivePolygons()
     {
-      ini_set('max_execution_time', '-1');
-      ini_set('memory_limit', '-1');
+        ini_set('max_execution_time', '-1');
+        ini_set('memory_limit', '-1');
+
         try {
             $activePolygonIds = SitePolygon::active()->pluck('poly_id');
-            
+
             $features = [];
             foreach ($activePolygonIds as $polygonUuid) {
 
                 $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
                     ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
                     ->first();
-                
+
                 if (! $polygonGeometry) {
-                  Log::warning('No geometry found for Polygon UUID:', ['uuid' => $polygonUuid]);
+                    Log::warning('No geometry found for Polygon UUID:', ['uuid' => $polygonUuid]);
+
                     continue;
                 }
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
@@ -1087,7 +1093,7 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
         }
     }
-    
+
     public function GetAllPolygonsLoaded($geojson, $uuid)
     {
         $polygonsUuids = SitePolygon::where('site_id', $uuid)
