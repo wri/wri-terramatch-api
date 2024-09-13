@@ -40,7 +40,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -55,7 +54,6 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
@@ -198,6 +196,16 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
             'project_name' => data_get($this->project, 'name'),
             'organisation_name' => data_get($this->organisation, 'name'),
         ];
+    }
+
+    public static function searchSites($query)
+    {
+        return self::select('v2_sites.*')
+            ->join('v2_projects', 'v2_sites.project_id', '=', 'v2_projects.id')
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+            ->where('v2_sites.name', 'like', "%$query%")
+            ->orWhere('v2_projects.name', 'like', "%$query%")
+            ->orWhere('organisations.name', 'like', "%$query%");
     }
 
     /**

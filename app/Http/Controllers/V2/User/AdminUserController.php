@@ -53,7 +53,7 @@ class AdminUserController extends Controller
         }
 
         if ($request->query('search')) {
-            $ids = User::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = User::searchUsers(trim($request->query('search')))->pluck('id')->toArray();
 
             if (empty($ids)) {
                 return new UsersCollection([]);
