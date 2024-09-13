@@ -29,7 +29,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -123,9 +122,9 @@ class User extends Authenticatable implements JWTSubject
 
     public static function searchUsers($query)
     {
-        return self::select("users.*")
-            ->leftJoin("organisations","users.organisation_id","=","organisations.id")
-            ->where('organisations.name','like',"%$query%")
+        return self::select('users.*')
+            ->leftJoin('organisations', 'users.organisation_id', '=', 'organisations.id')
+            ->where('organisations.name', 'like', "%$query%")
             ->orWhere('users.first_name', 'like', "%$query%")
             ->orWhere('users.last_name', 'like', "%$query%")
             ->orWhere('users.email_address', 'like', "%$query%");
