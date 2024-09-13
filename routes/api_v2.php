@@ -643,7 +643,8 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
     Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
     Route::get('/geojson/site', [TerrafundCreateGeometryController::class, 'getAllPolygonsAsGeoJSONDownload']);
-
+    Route::get('/geojson/all-active', [TerrafundCreateGeometryController::class, 'downloadGeojsonAllActivePolygons']);
+    Route::get('/geojson/all-by-framework', [TerrafundCreateGeometryController::class, 'downloadAllActivePolygonsByFramework']);
 
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
