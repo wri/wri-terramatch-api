@@ -909,16 +909,18 @@ class TerrafundCreateGeometryController extends Controller
         );
     }
 
-    public function validateEstimatedAreaSite(Request $request) 
+    public function validateEstimatedAreaSite(Request $request)
     {
         $uuid = $request->input('uuid');
         Log::info('validateEstimatedAreaSites', ['uuid' => $uuid]);
+
         return $this->handlePolygonValidation(
             $uuid,
             EstimatedArea::getAreaDataSite($uuid),
             PolygonService::ESTIMATED_AREA_CRITERIA_ID
         );
     }
+
     public function validateCoordinateSystem(Request $request)
     {
         $uuid = $request->input('uuid');
