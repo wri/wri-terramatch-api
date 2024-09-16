@@ -303,6 +303,50 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('report-reminder.body', 'This is a reminder that your {entityTypeName} still has the status {entityStatus}. Below you will see a note from your project manager about the report.<br><br> 
             If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>{feedback}');
 
+
+        // task-digest
+        $this->createLocalizationKey('task-digest.subject', '{projectName} - Report Summary for {date}');
+        $this->createLocalizationKey('task-digest.title', 'Action Items Summary - Task Due {date}');
+        $this->createLocalizationKey('task-digest.body', '
+        <table>
+            <tr>
+                <th>Submission Status</th>
+                <th>Report Name</th>
+                <th>Action</th>
+                <th>Latest comments</th>
+            </tr>
+            <tr>
+                <td>Reports Due</td>
+                <td>{tasks}</td>
+                <td>Submit</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Reports Started</td>
+                <td>{tasks}</td>
+                <td>Continue</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Reports Awaiting Approval</td>
+                <td>{tasks}</td>
+                <td>Review</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Reports in QA</td>
+                <td>{tasks}</td>
+                <td>Review</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Reports Approved</td>
+                <td>{tasks}</td>
+                <td>View</td>
+                <td></td>
+            </tr>
+        ');
+        $this->createLocalizationKey('task-digest.cta', 'Access this task here');
     }
 
     public function createLocalizationKey($key, $value): void

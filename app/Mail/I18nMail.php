@@ -19,6 +19,10 @@ abstract class I18nMail extends Mail
 
     protected array $params;
 
+    protected array $bodyParams;
+
+    protected array $titleParams;
+
     public function __construct($user)
     {
         $this->userLocale = is_null($user) ? 'en-US' : $user->locale ?? $user['locale'] ?? 'en-US';
@@ -70,6 +74,20 @@ abstract class I18nMail extends Mail
         return $this;
     }
 
+    public function setBodyParams(array $params = []): I18nMail
+    {
+        $this->bodyParams = $params;
+
+        return $this;
+    }
+
+    public function setTitleParams(array $params = []): I18nMail
+    {
+        $this->titleParams = $params;
+
+        return $this;
+    }
+
     public function setParams(array $params = []): I18nMail
     {
         $this->params = $params;
@@ -79,10 +97,18 @@ abstract class I18nMail extends Mail
 
     public function getValueTranslated($valueKey)
     {
-        App::setLocale($this->userLocale);
+        App::setLocale($this->userLocale ?? 'en-US');
         $localizationKey = LocalizationKey::where('key', $valueKey)->first();
         if (is_null($localizationKey)) {
             return $valueKey;
+        }
+
+        if (! empty($this->bodyParams)) {
+            return str_replace(array_keys($this->bodyParams), array_values($this->bodyParams), $localizationKey->translated_value);
+        }
+
+        if (! empty($this->titleParams)) {
+            return str_replace(array_keys($this->titleParams), array_values($this->titleParams), $localizationKey->translated_value);
         }
 
         if (! empty($this->params)) {
