@@ -899,6 +899,28 @@ class TerrafundCreateGeometryController extends Controller
         );
     }
 
+    public function validateEstimatedAreaProject(Request $request)
+    {
+        $uuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $uuid,
+            EstimatedArea::getAreaDataProject($uuid),
+            PolygonService::ESTIMATED_AREA_CRITERIA_ID
+        );
+    }
+
+    public function validateEstimatedAreaSite(Request $request)
+    {
+        $uuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $uuid,
+            EstimatedArea::getAreaDataSite($uuid),
+            PolygonService::ESTIMATED_AREA_CRITERIA_ID
+        );
+    }
+
     public function validateCoordinateSystem(Request $request)
     {
         $uuid = $request->input('uuid');
