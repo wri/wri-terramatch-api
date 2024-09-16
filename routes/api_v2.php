@@ -655,6 +655,8 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/criteria-data', [TerrafundCreateGeometryController::class, 'getCriteriaData']);
     Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
     Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
+    Route::get('/validation/estimated-area-project', [TerrafundCreateGeometryController::class, 'validateEstimatedAreaProject']);
+    Route::get('/validation/estimated-area-site', [TerrafundCreateGeometryController::class, 'validateEstimatedAreaSite']);
     Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
     Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
     Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
