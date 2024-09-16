@@ -912,7 +912,6 @@ class TerrafundCreateGeometryController extends Controller
     public function validateEstimatedAreaSite(Request $request)
     {
         $uuid = $request->input('uuid');
-        Log::info('validateEstimatedAreaSites', ['uuid' => $uuid]);
 
         return $this->handlePolygonValidation(
             $uuid,
