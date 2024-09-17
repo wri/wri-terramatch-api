@@ -256,6 +256,9 @@ class TerrafundEditGeometryController extends Controller
 
             $user = Auth::user();
             $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
+            if (! $newPolygonVersion) {
+                return response()->json(['error' => 'An error occurred while creating a new version of the site polygon'], 500);
+            }
             $newPolygonVersion->changeStatusOnEdit();
 
             return response()->json(['message' => 'Site polygon version created successfully'], 201);
