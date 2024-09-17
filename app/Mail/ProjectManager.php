@@ -26,11 +26,13 @@ class ProjectManager extends I18nMail
                 ->setBodyKey('project-manager-project.body')
                 ->setParams([
                     '{projectName}' => $this->entity->project->name ?? $this->entity->name,
-                    '{viewLinkEntityPath}' => $this->getViewLinkEntity(
-                        $this->entity->project->shortName ?? $this->entity->shortName,
-                        $this->entity->project->uuid ?? $this->entity->uuid
-                    ),
-                ]);
+                    '{entityTypeName}' => 'Project',
+                ])
+                ->setCta('project-manager-project.cta');
+            $this->link = $this->getViewLinkEntity(
+                $this->entity->project->shortName ?? $this->entity->shortName,
+                $this->entity->project->uuid ?? $this->entity->uuid
+            );
         }
 
         if (get_class($entity) === Site::class || get_class($entity) === SiteReport::class) {
@@ -39,12 +41,14 @@ class ProjectManager extends I18nMail
                 ->setBodyKey('project-manager-site.body')
                 ->setParams([
                     '{projectName}' => $this->entity->project->name,
-                    '{viewLinkEntityPath}' => $this->getViewLinkEntity(
-                        $this->entity->site->shortName ?? $this->entity->shortName,
-                        $this->entity->site->uuid ?? $this->entity->uuid
-                    ),
                     '{entityName}' => $this->entity->site->name ?? $this->entity->name,
-                ]);
+                    '{entityTypeName}' => 'Site',
+                ])
+                ->setCta('project-manager-site.cta');
+            $this->link = $this->getViewLinkEntity(
+                $this->entity->site->shortName ?? $this->entity->shortName,
+                $this->entity->site->uuid ?? $this->entity->uuid
+            );
         }
 
         if (get_class($entity) === Nursery::class || get_class($entity) === NurseryReport::class) {
@@ -53,19 +57,19 @@ class ProjectManager extends I18nMail
                 ->setBodyKey('project-manager-nursery.body')
                 ->setParams([
                     '{projectName}' => $this->entity->project->name,
-                    '{viewLinkEntityPath}' => $this->getViewLinkEntity(
-                        $this->entity->nursery->shortName ?? $this->entity->shortName,
-                        $this->entity->nursery->uuid ?? $this->entity->uuid
-                    ),
                     '{entityName}' => $this->entity->nursery->name ?? $this->entity->name,
-                ]);
+                    '{entityTypeName}' => 'Nursery',
+                ])
+                ->setCta('project-manager-nursery.cta');
+            $this->link = $this->getViewLinkEntity(
+                $this->entity->nursery->shortName ?? $this->entity->shortName,
+                $this->entity->nursery->uuid ?? $this->entity->uuid
+            );
         }
     }
 
     public function getViewLinkEntity($entity, $uuid)
     {
-        $frontEndUrl = config('app.front_end');
-
-        return $frontEndUrl . '/admin#/' . Str::camel($entity) . '/' . $uuid . '/show';
+        return '/admin#/' . Str::camel($entity) . '/' . $uuid . '/show';
     }
 }

@@ -308,7 +308,6 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('project-manager-project.title', 'Please Review Project Profile Update');
         $this->createLocalizationKey('project-manager-project.body', 'The {projectName}. has submitted an update to their project that needs to be reviewed. '.
                 'Please review the project and either accept the submission or request for more information.<br><br>'.
-                '<a href="{viewLinkEntityPath}" style="color: #6E6E6E;">View Project</a><br><br>'.
                 'You are receiving this message because you are associated with this project as a Project Manager in TerraMatch.  '.
                 'If you wish to no longer recieve these messages or have any issues seeing or responding to the changes, please reach out to info@terramatch.org');
         $this->createLocalizationKey('project-manager-project.cta', 'View {entityTypeName}');
@@ -318,7 +317,6 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('project-manager-site.title', 'A Site Has Been Submitted for Your Review');
         $this->createLocalizationKey('project-manager-site.body', 'The project {projectName} has submitted the site {entityName} for your review. '.
                 'Please review the site and either accept the submission or request for more information.<br><br>'.
-                '<a href="{viewLinkEntityPath}" style="color: #6E6E6E;">View Site</a><br><br>'.
                 'You are receiving this message because you are associated with this project as a Project Manager in TerraMatch.  '.
                 'If you wish to no longer recieve these messages or have any issues seeing or responding to the changes, please reach out to info@terramatch.org');
         $this->createLocalizationKey('project-manager-site.cta', 'View {entityTypeName}');
@@ -328,7 +326,6 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('project-manager-nursery.title', 'A Nursery Has Been Submitted for Your Review');
         $this->createLocalizationKey('project-manager-nursery.body', 'The project {projectName} has submitted the nursery {entityName} for your review. '.
                 'Please review the nursery and either accept the submission or request for more information.<br><br>'.
-                '<a href="{viewLinkEntityPath}" style="color: #6E6E6E;">View Nursery</a><br><br>'.
                 'You are receiving this message because you are associated with this project as a Project Manager in TerraMatch.  If you wish to no longer recieve these messages or have any issues seeing or responding to the changes, please reach out to info@terramatch.org');
         $this->createLocalizationKey('project-manager-nursery.cta', 'View {entityTypeName}');
 
