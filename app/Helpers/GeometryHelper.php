@@ -78,9 +78,6 @@ class GeometryHelper
                     'long' => $longitude,
                 ]);
 
-
-            Log::info("Centroid updated for projectUuid: $projectUuid");
-
             return response()->json([
               'message' => 'Centroid updated',
               'centroid' => $centroid,

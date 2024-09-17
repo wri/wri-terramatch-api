@@ -290,6 +290,10 @@ class PolygonService
                 ],
             ));
             $site = $sitePolygon->site()->first();
+            if (! $site) {
+                Log::error('Site not found', ['site polygon uuid' => $sitePolygon->uuid, 'site id' => $sitePolygon->site_id]);
+                return response()->json(['error' => "Site not found"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
             $site->restorationInProgress();
             $project = $sitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
@@ -306,8 +310,6 @@ class PolygonService
         try {
             $sitePolygon = SitePolygon::isUuid($primary_uuid)->active()->first();
             if (! $sitePolygon) {
-                Log::info('Site polygon not found', ['uuid' => $primary_uuid, 'polygon uuid' => $polygonUuid]);
-
                 return false;
             }
             $user = Auth::check() ? Auth::user() : null;
@@ -315,11 +317,18 @@ class PolygonService
             if ($user) {
                 $user = User::isUuid($user->uuid)->first();
             } else {
-                Log::info('Running without an authenticated user');
                 $user = User::find(1);
             }
             $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid, $submit_polygon_loaded, $properties);
+            if (! $newSitePolygon) {
+                return false;
+            }
             $site = $newSitePolygon->site()->first();
+            if (! $site) {
+                Log::error('Site not found', ['site polygon uuid' => $newSitePolygon->uuid, 'site id' => $newSitePolygon->site_id]);
+                return false;
+
+            }
             $site->restorationInProgress();
             $project = $newSitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
