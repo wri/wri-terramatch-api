@@ -292,7 +292,8 @@ class PolygonService
             $site = $sitePolygon->site()->first();
             if (! $site) {
                 Log::error('Site not found', ['site polygon uuid' => $sitePolygon->uuid, 'site id' => $sitePolygon->site_id]);
-                return response()->json(['error' => "Site not found"], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+                return response()->json(['error' => 'Site not found'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             $site->restorationInProgress();
             $project = $sitePolygon->project()->first();
@@ -326,6 +327,7 @@ class PolygonService
             $site = $newSitePolygon->site()->first();
             if (! $site) {
                 Log::error('Site not found', ['site polygon uuid' => $newSitePolygon->uuid, 'site id' => $newSitePolygon->site_id]);
+
                 return false;
 
             }

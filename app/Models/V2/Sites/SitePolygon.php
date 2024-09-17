@@ -120,30 +120,32 @@ class SitePolygon extends Model implements AuditableModel
     {
         $geometry = $this->polygonGeometry()->first();
         SitePolygon::where('primary_uuid', $this->primary_uuid)->update(['is_active' => false]);
-        
+
         $newSitePolygon = $this->replicate();
         $currentSite = Site::where('uuid', $newSitePolygon->site_id)->exists();
         if (! $currentSite) {
-          if (isset($properties['site_id'])) {
-              $siteExists = Site::where('uuid', $properties['site_id'])->exists();
-              if (! $siteExists) {
-                  Log::info('Provided Site UUID not found = ' . $properties['site_id'] . " for SitePolygon UUID = " . $newSitePolygon->uuid);
-                  return null;
-              }
-              Log::info($this->primary_uuid."Changing sites from " . $newSitePolygon->site_id . " to " . $properties['site_id']);
-              $newSitePolygon->site_id = $properties['site_id'];
-          } else {
-              Log::info('Site UUID not found = ' . $newSitePolygon->site_id . " for SitePolygon UUID = " . $newSitePolygon->uuid);
-              return null;
-          }
-      }
+            if (isset($properties['site_id'])) {
+                $siteExists = Site::where('uuid', $properties['site_id'])->exists();
+                if (! $siteExists) {
+                    Log::info('Provided Site UUID not found = ' . $properties['site_id'] . ' for SitePolygon UUID = ' . $newSitePolygon->uuid);
+
+                    return null;
+                }
+                Log::info($this->primary_uuid.'Changing sites from ' . $newSitePolygon->site_id . ' to ' . $properties['site_id']);
+                $newSitePolygon->site_id = $properties['site_id'];
+            } else {
+                Log::info('Site UUID not found = ' . $newSitePolygon->site_id . ' for SitePolygon UUID = ' . $newSitePolygon->uuid);
+
+                return null;
+            }
+        }
 
         if (! $poly_id) {
-          $copyGeometry = PolygonGeometry::create([
-              'geom' => $geometry->geom,
-              'created_by' => $user->id,
-          ]);
-      }
+            $copyGeometry = PolygonGeometry::create([
+                'geom' => $geometry->geom,
+                'created_by' => $user->id,
+            ]);
+        }
         $newSitePolygon->primary_uuid = $this->primary_uuid;
         $newSitePolygon->plantstart = $properties['plantstart'] ?? $this->plantstart;
         $newSitePolygon->plantend = $properties['plantend'] ?? $this->plantend;
