@@ -10,9 +10,9 @@ use App\StateMachines\ReportStatusStateMachine;
 
 class TaskDigestMail extends I18nMail
 {
-    public function __construct(Task $task)
+    public function __construct($user, Task $task)
     {
-        parent::__construct(null);
+        parent::__construct($user);
         $params = $this->getBodyParams($task);
         $this->setSubjectKey('task-digest.subject')
             ->setSubjectParams([
