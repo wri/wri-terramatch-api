@@ -2,6 +2,18 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <!-- add styles -->
+        <style>
+            .table-custom {
+                table-layout : fixed;
+                border-collapse: collapse;
+                border-spacing: 0;
+                width: 100%;
+            }
+            .border-custom {
+                border: 1px solid #ddd;
+            }
+        </style>
     </head>
     <body bgcolor="#F7F7F7">
         <table cellpadding="0" cellspacing="0" border="0" bgcolor="#F7F7F7" width="100%">

@@ -17,7 +17,9 @@ abstract class I18nMail extends Mail
 
     protected string $userLocale;
 
-    protected array $params;
+    protected array $params = [];
+
+    protected array $subjectParams;
 
     protected array $bodyParams;
 
@@ -31,16 +33,16 @@ abstract class I18nMail extends Mail
     public function build()
     {
         if (isset($this->subjectKey)) {
-            $this->subject = $this->getValueTranslated($this->subjectKey);
+            $this->subject = $this->getValueTranslated($this->subjectKey, $this->subjectParams ?? $this->params);
         }
         if (isset($this->titleKey)) {
-            $this->title = $this->getValueTranslated($this->titleKey);
+            $this->title = $this->getValueTranslated($this->titleKey, $this->titleParams ?? $this->params);
         }
         if (isset($this->bodyKey)) {
-            $this->body = $this->getValueTranslated($this->bodyKey);
+            $this->body = $this->getValueTranslated($this->bodyKey, $this->bodyParams ?? $this->params);
         }
         if (isset($this->ctaKey)) {
-            $this->cta = $this->getValueTranslated($this->ctaKey);
+            $this->cta = $this->getValueTranslated($this->ctaKey, $this->params);
         }
 
         parent::build();
@@ -74,6 +76,13 @@ abstract class I18nMail extends Mail
         return $this;
     }
 
+    public function setSubjectParams(array $params = []): I18nMail
+    {
+        $this->subjectParams = $params;
+
+        return $this;
+    }
+
     public function setBodyParams(array $params = []): I18nMail
     {
         $this->bodyParams = $params;
@@ -95,7 +104,7 @@ abstract class I18nMail extends Mail
         return $this;
     }
 
-    public function getValueTranslated($valueKey)
+    public function getValueTranslated($valueKey, $params)
     {
         App::setLocale($this->userLocale ?? 'en-US');
         $localizationKey = LocalizationKey::where('key', $valueKey)->first();
@@ -103,16 +112,8 @@ abstract class I18nMail extends Mail
             return $valueKey;
         }
 
-        if (! empty($this->bodyParams)) {
-            return str_replace(array_keys($this->bodyParams), array_values($this->bodyParams), $localizationKey->translated_value);
-        }
-
-        if (! empty($this->titleParams)) {
-            return str_replace(array_keys($this->titleParams), array_values($this->titleParams), $localizationKey->translated_value);
-        }
-
-        if (! empty($this->params)) {
-            return str_replace(array_keys($this->params), array_values($this->params), $localizationKey->translated_value);
+        if (! empty($params)) {
+            return str_replace(array_keys($params), array_values($params), $localizationKey->translated_value);
         }
 
         return $localizationKey->translated_value;
