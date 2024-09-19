@@ -69,37 +69,37 @@ class TaskDigestMail extends I18nMail
         $params['{reportData}'] = '';
         foreach($types as $type) {
             $list = ${$type.'List'};
-                $rows = '';
-                $rowCount = count($list);
-                if ($rowCount > 0) {
-                    $count = 0;
-                    foreach ($list as $element) {
-                        $count++;
-                        if ($count === 1) {
-                            $rows .= '<tr>';
-                            $rows .= '<td class="border-custom" rowspan='.count($list).'>'.$typeLabels[$type].'</td>';
-                            $rows .= '<td class="border-custom">' .($element['name'] ?? 'n/a') . '</td>';
-                            $rows .= '<td class="border-custom">' . ($element['action'] ?? 'n/a') . '</td>';
-                            $rows .= '<td class="border-custom">' . ($element['latestComment'] ?? 'n/a') . '</td>';
-                            $rows .= '</tr>';
-                        } else {
-                            $rows .= '<tr>';
-                            $rows .= '<td class="border-custom">' . ($element['name'] ?? 'n/a') . '</td>';
-                            $rows .= '<td class="border-custom">' . ($element['action'] ?? 'n/a') . '</td>';
-                            $rows .= '<td class="border-custom">' . ($element['latestComment'] ?? 'n/a') . '</td>';
-                            $rows .= '</tr>';
-                        }
+            $rows = '';
+            $rowCount = count($list);
+            if ($rowCount > 0) {
+                $count = 0;
+                foreach ($list as $element) {
+                    $count++;
+                    if ($count === 1) {
+                        $rows .= '<tr>';
+                        $rows .= '<td class="border-custom" rowspan='.count($list).'>'.$typeLabels[$type].'</td>';
+                        $rows .= '<td class="border-custom">' .($element['name'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-custom">' . ($element['action'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-custom">' . ($element['latestComment'] ?? 'n/a') . '</td>';
+                        $rows .= '</tr>';
+                    } else {
+                        $rows .= '<tr>';
+                        $rows .= '<td class="border-custom">' . ($element['name'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-custom">' . ($element['action'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-custom">' . ($element['latestComment'] ?? 'n/a') . '</td>';
+                        $rows .= '</tr>';
                     }
-                } else {
-                    $rows .= '<tr>';
-                    $rows .= '<td class="border-custom" rowspan="1">'.$typeLabels[$type].'</td>';
-                    $rows .= '<td class="border-custom">n/a</td>';
-                    $rows .= '<td class="border-custom">n/a</td>';
-                    $rows .= '<td class="border-custom">n/a</td>';
-                    $rows .= '</tr>';
                 }
+            } else {
+                $rows .= '<tr>';
+                $rows .= '<td class="border-custom" rowspan="1">'.$typeLabels[$type].'</td>';
+                $rows .= '<td class="border-custom">n/a</td>';
+                $rows .= '<td class="border-custom">n/a</td>';
+                $rows .= '<td class="border-custom">n/a</td>';
+                $rows .= '</tr>';
+            }
 
-                $params['{reportData}'] .= $rows;
+            $params['{reportData}'] .= $rows;
         }
 
         return $params;
