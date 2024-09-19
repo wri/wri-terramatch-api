@@ -298,8 +298,8 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('version-rejected.cta', 'View Changes');
 
         // report-reminder
-        $this->createLocalizationKey('report-reminder.subject', 'Your {entityTypeName} is Still {entityStatus}');
-        $this->createLocalizationKey('report-reminder.title', 'Your {entityTypeName} is Still {entityStatus}');
+        $this->createLocalizationKey('report-reminder.subject', 'Reminder: Your {entityTypeName} Still Needs Your Input');
+        $this->createLocalizationKey('report-reminder.title', 'Reminder: Your {entityTypeName} Still Needs Your Input');
         $this->createLocalizationKey('report-reminder.body', 'This is a reminder that your {entityTypeName} still has the status {entityStatus}. Below you will see a note from your project manager about the report.<br><br> 
             If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>{feedback}');
 
