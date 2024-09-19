@@ -308,44 +308,16 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('task-digest.subject', '{projectName} - Report Summary for {date}');
         $this->createLocalizationKey('task-digest.title', 'Action Items Summary - Task Due {date}');
         $this->createLocalizationKey('task-digest.body', 'Please note: this digest summarizes any reports that require engagement or were approved today. Any reports already approved will not be mentioned below, since they do not require any action. Once all reports in this task are approved, the task status will be changed to approved, and you’ll no longer receive this digest. 
-<table class="table-custom">
-<tr class="border-custom">
-    <th class="border-custom" style="width: 25%;">Submission Status</th>
-    <th class="border-custom" style="width: 25%;">Report Name</th>
-    <th class="border-custom" style="width: 25%;">Action</th>
-    <th class="border-custom" style="width: 25%;">Latest comments</th>
-</tr>
-<tr class="border-custom">
-    <td class="border-custom">Reports Due</td>
-    <td class="border-custom">{dueReportName}</td>
-    <td class="border-custom">{dueAction}</td>
-    <td class="border-custom">{dueLatestComment}</td>
-</tr>
-<tr class="border-custom">
-    <td class="border-custom">Reports Started</td>
-    <td class="border-custom">{startedReportName}</td>
-    <td class="border-custom">{startedAction}</td>
-    <td class="border-custom">{startedLatestComment}</td>
-</tr>
-<tr class="border-custom">
-    <td class="border-custom">Reports Awaiting Approval</td>
-    <td class="border-custom">{awaitingApprovalReportName}</td>
-    <td class="border-custom">{awaitingApprovalAction}</td>
-    <td class="border-custom">{awaitingApprovalLatestComment}</td>
-</tr>
-<tr class="border-custom">
-    <td class="border-custom">Reports in QA</td>
-    <td class="border-custom">{qaReportName}</td>
-    <td class="border-custom">{qaAction}</td>
-    <td class="border-custom">{qaLatestComment}</td>
-</tr>
-<tr class="border-custom">
-    <td class="border-custom">Reports Approved</td>
-    <td class="border-custom">{approvedReportName}</td>
-    <td class="border-custom">{approvedAction}</td>
-    <td class="border-custom">{approvedLatestComment}</td>
-</tr>
-</table>');
+            <table class="table-custom">
+            <tr class="border-custom">
+                <th class="border-custom" style="width: 25%;">Submission Status</th>
+                <th class="border-custom" style="width: 25%;">Report Name</th>
+                <th class="border-custom" style="width: 25%;">Action</th>
+                <th class="border-custom" style="width: 25%;">Latest comments</th>
+            </tr>
+            {reportData}
+            </table>');
+
         $this->createLocalizationKey('task-digest.cta', 'Access this task here');
     }
 

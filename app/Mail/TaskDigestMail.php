@@ -51,26 +51,55 @@ class TaskDigestMail extends I18nMail
             return $report['status'] === ReportStatusStateMachine::AWAITING_APPROVAL;
         });
         $qaList = $allReports->filter(function ($report) {
-            return $report['status'] === ReportStatusStateMachine::NEEDS_MORE_INFORMATION;
+            return $report['status'] === ReportStatusStateMachine::NEEDS_MORE_INFORMATION || $report['update_request_status'] === ReportStatusStateMachine::AWAITING_APPROVAL;
         });
         $approvedList = $allReports->filter(function ($report) {
             return $report['status'] === ReportStatusStateMachine::APPROVED;
         });
         $types = ['due', 'started', 'awaitingApproval', 'qa', 'approved'];
         $params = [];
+        $typeLabels = [
+            'due' => 'Reports Due',
+            'started' => 'Reports Started',
+            'awaitingApproval' => 'Reports Awaiting Approval',
+            'qa' => 'Reports in QA',
+            'approved' => 'Reports Approved',
+        ];
+
+        $params['{reportData}'] = '';
         foreach($types as $type) {
             $list = ${$type.'List'};
-            $element = [];
-            if (count($list) > 0) {
-                $element = $list->first();
-            }
-            $reportNameVar = '{'.$type.'ReportName}';
-            $actionVar = '{'.$type.'Action}';
-            $latestCommentVar = '{'.$type.'LatestComment}';
+                $rows = '';
+                $rowCount = count($list);
+                if ($rowCount > 0) {
+                    $count = 0;
+                    foreach ($list as $element) {
+                        $count++;
+                        if ($count === 1) {
+                            $rows .= '<tr>';
+                            $rows .= '<td class="border-custom" rowspan='.count($list).'>'.$typeLabels[$type].'</td>';
+                            $rows .= '<td class="border-custom">' .($element['name'] ?? 'n/a') . '</td>';
+                            $rows .= '<td class="border-custom">' . ($element['action'] ?? 'n/a') . '</td>';
+                            $rows .= '<td class="border-custom">' . ($element['latestComment'] ?? 'n/a') . '</td>';
+                            $rows .= '</tr>';
+                        } else {
+                            $rows .= '<tr>';
+                            $rows .= '<td class="border-custom">' . ($element['name'] ?? 'n/a') . '</td>';
+                            $rows .= '<td class="border-custom">' . ($element['action'] ?? 'n/a') . '</td>';
+                            $rows .= '<td class="border-custom">' . ($element['latestComment'] ?? 'n/a') . '</td>';
+                            $rows .= '</tr>';
+                        }
+                    }
+                } else {
+                    $rows .= '<tr>';
+                    $rows .= '<td class="border-custom" rowspan="1">'.$typeLabels[$type].'</td>';
+                    $rows .= '<td class="border-custom">n/a</td>';
+                    $rows .= '<td class="border-custom">n/a</td>';
+                    $rows .= '<td class="border-custom">n/a</td>';
+                    $rows .= '</tr>';
+                }
 
-            $params[$reportNameVar] = $element['name'] ?? 'n/a';
-            $params[$actionVar] = $element['action'] ?? 'n/a';
-            $params[$latestCommentVar] = $element['latestComment'] ?? 'n/a';
+                $params['{reportData}'] .= $rows;
         }
 
         return $params;
@@ -91,13 +120,17 @@ class TaskDigestMail extends I18nMail
         }
         $mapped['name'] = $type.' Report: '. $name;
         $mapped['status'] = $report->status;
-        $latestComment = $report->auditStatuses()->latest()->first();
-        if (! is_null($latestComment)) {
-            $mapped['latestComment'] = $latestComment->comment;
-            $mapped['action'] = $latestComment->status;
+        $mapped['update_request_status'] = $report->update_request_status;
+        $latestCommentAuditStatus = $report->auditStatuses()->latest()->first();
+        if (! is_null($latestCommentAuditStatus)) {
+            $mapped['latestComment'] = $latestCommentAuditStatus['comment'] ?? '';
+            $mapped['action'] = ucwords(str_replace('-', ' ', $latestCommentAuditStatus['status']));
         } else {
-            $mapped['latestComment'] = '';
-            $mapped['action'] = '';
+            if (method_exists($report, 'audits')) {
+                $latestCommentAudits = $report->audits()->latest()->first();
+            }
+            $mapped['latestComment'] = $latestCommentAudits['new_values']['feedback'] ?? 'n/a';
+            $mapped['action'] = ucwords(str_replace('-', ' ', $latestCommentAudits['new_values']['status'] ?? 'n/a'));
         }
 
         return $mapped;
