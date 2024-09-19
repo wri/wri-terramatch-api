@@ -28,7 +28,7 @@ class TaskDigestMail extends I18nMail
             ->setBodyParams($params);
         $this->transactional = true;
         $projectUUID = $task->project()->first()->uuid;
-        $this->link = '/project/'.$projectUUID.'?tab=reporting-tasks';
+        $this->link = '/project/'.$projectUUID.'/reporting-task/'.$task->uuid;
     }
 
     private function getBodyParams(Task $task): array
