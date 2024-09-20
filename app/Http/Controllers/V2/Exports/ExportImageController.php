@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Intervention\Image\ImageManagerStatic as Image;
-use App\Models\V2\User;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class ExportImageController extends Controller
 {
@@ -18,39 +18,38 @@ class ExportImageController extends Controller
         $imageUrl = $media->getFullUrl();
         $imageContent = Http::get($imageUrl)->body();
 
-        $image = Image::make($imageContent);
-
-        $user = User::find($media->model_id);
-        $userName = $user ? $user->name : 'Unknown';
+        $tempImagePath = storage_path('app/temp_image.jpg');
+        file_put_contents($tempImagePath, $imageContent);
 
         $metadata = [
-            'name' => $media->name,
-            'is_cover' => $media->is_cover ? true : false,
-            'is_public' => $media->is_public ? true : false,
-            'photographer' => $media->photographer,
-            'description' => $media->description,
-            'created_by' => $userName,
-            'created_at' => $media->created_at->toDateTimeString(),
-            'filename' => $media->file_name,
-            'geotagged' => ($media->lat !== null && $media->lng !== null) ? true : false,
-            'coordinates' => [
-                'lat' => $media->lat,
-                'lng' => $media->lng
-            ]
+            'Title' => $media->name,
+            'Comment' => $media->description,
+            'Author' => $media->photographer,
+            'Latitude' => $media->lat,
+            'Longitude' => $media->lng,
+            'CreateDate' => $media->created_at->toDateTimeString(),
         ];
 
-        foreach ($metadata as $key => $value) {
-            if (is_bool($value)) {
-                $value = $value ? 'true' : 'false';
-            } elseif (is_array($value)) {
-                $value = json_encode($value);
-            }
-            $image->exif($key, $value);
+        $process = new Process([
+            'exiftool',
+            '-Title=' . $metadata['Title'],
+            '-Comment=' . $metadata['Comment'],
+            '-Author=' . $metadata['Author'],
+            '-GPSLatitude=' . $metadata['Latitude'],
+            '-GPSLongitude=' . $metadata['Longitude'],
+            '-CreateDate=' . $metadata['CreateDate'],
+            $tempImagePath,
+        ]);
+
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new ProcessFailedException($process);
         }
 
-        $modifiedImageContent = $image->encode('jpg')->getEncoded();
+        $updatedImageContent = file_get_contents($tempImagePath);
 
-        return response($modifiedImageContent)
+        return response($updatedImageContent)
             ->header('Content-Type', 'image/jpeg')
             ->header('Content-Disposition', 'attachment; filename="' . $media->file_name . '"');
     }
