@@ -28,6 +28,7 @@ class UserFactory extends Factory
             'email_address_verified_at' => now(),
             'password' => Hash::make('password'),
             'job_role' => 'Manager',
+            'locale' => 'en-US',
             'phone_number' => $this->faker->phoneNumber(),
             'whatsapp_phone' => $this->faker->phoneNumber(),
             'organisation_id' => Organisation::factory(['status' => Organisation::STATUS_APPROVED])->create()->id,

@@ -7,6 +7,7 @@ use App\Mail\TerrafundReportReminder;
 use App\Models\V2\Projects\Project;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+
 use Parental\HasParent;
 
 /**
@@ -38,8 +39,10 @@ class ReportReminderJob extends ScheduledJob
                 $query->whereHas('sites')->orWhereHas('nurseries');
             })->chunkById(100, function ($projects) {
                 $projects->each(function ($project) {
-                    Mail::to($project->users->pluck('email_address'))->queue(new TerrafundReportReminder($project->id));
                     $project->users->each(function ($user) use ($project) {
+                        Mail::to($user->email_address)
+                                ->queue(new TerrafundReportReminder($project->id, $user));
+
                         NotifyReportReminderJob::dispatch($user, $project, $this->framework_key);
                     });
                 });

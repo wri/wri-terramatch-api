@@ -77,7 +77,7 @@ class NotifyVersionCreatedJob implements ShouldQueue
         $admins = User::admin()->accepted()->verified()->get();
         foreach ($admins as $admin) {
             if ($admin->is_subscribed) {
-                Mail::to($admin->email_address)->send(new VersionCreatedMail($model, $id));
+                Mail::to($admin->email_address)->send(new VersionCreatedMail($model, $id, $admin));
             }
             $notification = new NotificationModel([
                 'user_id' => $admin->id,

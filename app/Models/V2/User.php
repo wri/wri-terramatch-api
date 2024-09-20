@@ -29,7 +29,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -45,7 +44,6 @@ class User extends Authenticatable implements JWTSubject
     use InvitedAcceptedAndVerifiedScopesTrait;
     use HasFactory;
     use HasUuid;
-    use Searchable;
     use SoftDeletes;
     use HasRoles;
 
@@ -75,6 +73,7 @@ class User extends Authenticatable implements JWTSubject
         'api_key',
         'country',
         'program',
+        'locale',
     ];
 
     protected $casts = [
@@ -119,6 +118,16 @@ class User extends Authenticatable implements JWTSubject
             'email' => $this->email_address,
             'organisation_names' => implode('|', $this->organisations()->pluck('name')->toArray()),
         ];
+    }
+
+    public static function searchUsers($query)
+    {
+        return self::select('users.*')
+            ->leftJoin('organisations', 'users.organisation_id', '=', 'organisations.id')
+            ->where('organisations.name', 'like', "%$query%")
+            ->orWhere('users.first_name', 'like', "%$query%")
+            ->orWhere('users.last_name', 'like', "%$query%")
+            ->orWhere('users.email_address', 'like', "%$query%");
     }
 
     public function getJWTIdentifier(): string

@@ -1,0 +1,23 @@
+summary: Send reminder to an entity report
+operationId: post-v2-admin-entity-uuid-reminder
+tags:
+  - V2 Project Reports
+  - V2 Site Reports
+  - V2 Nursery Reports
+parameters:
+  - type: string
+    name: ENTITY
+    in: path
+    required: true
+    description: "allowed values are project-reports, site-reports, nursery-reports"
+  - type: string
+    name: UUID
+    in: path
+    required: true
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/EntityReportReminder'
+responses:
+  '200':
+    description: OK

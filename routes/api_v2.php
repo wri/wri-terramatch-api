@@ -35,6 +35,7 @@ use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
+use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
@@ -47,6 +48,7 @@ use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllSiteDataAsProjectDeveloperController;
+use App\Http\Controllers\V2\Exports\ExportImageController;
 use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Files\FilePropertiesController;
@@ -212,6 +214,7 @@ use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
 use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
+use App\Http\Controllers\V2\UserLocaleController;
 use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
@@ -263,6 +266,8 @@ Route::prefix('media')->group(function () {
     Route::delete('', [MediaController::class, 'bulkDelete']);
     Route::delete('/{uuid}', [MediaController::class, 'delete']);
     Route::delete('/{uuid}/{collection}', [MediaController::class, 'delete']);
+    Route::patch('/{uuid}', [MediaController::class, 'updateMedia']);
+    Route::patch('project/{project}/{mediaUuid}', [MediaController::class, 'updateIsCover']);
 });
 
 /** ADMIN ONLY ROUTES */
@@ -326,6 +331,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::put('/{entity}/{status}', AdminStatusEntityController::class);
+        Route::post('/{entity}/reminder', AdminSendReminderController::class);
         Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
     });
 
@@ -637,7 +643,8 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
     Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
     Route::get('/geojson/site', [TerrafundCreateGeometryController::class, 'getAllPolygonsAsGeoJSONDownload']);
-
+    Route::get('/geojson/all-active', [TerrafundCreateGeometryController::class, 'downloadGeojsonAllActivePolygons']);
+    Route::get('/geojson/all-by-framework', [TerrafundCreateGeometryController::class, 'downloadAllActivePolygonsByFramework']);
 
     Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
     Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
@@ -648,6 +655,8 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/criteria-data', [TerrafundCreateGeometryController::class, 'getCriteriaData']);
     Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
     Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
+    Route::get('/validation/estimated-area-project', [TerrafundCreateGeometryController::class, 'validateEstimatedAreaProject']);
+    Route::get('/validation/estimated-area-site', [TerrafundCreateGeometryController::class, 'validateEstimatedAreaSite']);
     Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
     Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
     Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
@@ -686,6 +695,8 @@ ModelInterfaceBindingMiddleware::with(
     prefix: 'file/upload',
     modelParameter: 'mediaModel'
 );
+
+Route::post('/export-image', ExportImageController::class);
 
 Route::resource('files', FilePropertiesController::class);
 //Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
@@ -741,3 +752,5 @@ Route::prefix('site-polygon')->group(function () {
 });
 
 Route::get('/type-entity', EntityTypeController::class);
+
+Route::patch('/users/locale', UserLocaleController::class);

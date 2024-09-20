@@ -1,0 +1,30 @@
+operationId: exportImage
+summary: Download an image from a provided URL
+tags:
+  - V2 Exports
+consumes:
+  - application/json
+produces:
+  - image/jpeg
+parameters:
+  - in: body
+    name: body
+    description: JSON object containing the image URL.
+    required: true
+    schema:
+      type: object
+      required:
+        - imageUrl
+      properties:
+        imageUrl:
+          type: string
+          description: The URL of the image to be downloaded.
+responses:
+  '200':
+    description: OK
+    schema:
+      type: file
+  '400':
+    description: Invalid URL provided
+  '500':
+    description: Server error

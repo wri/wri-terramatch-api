@@ -50,6 +50,16 @@ trait SaveAuditStatusTrait
         $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment, 'change-request-updated', true);
     }
 
+    public function saveAuditStatusAdminRestorationInProgress($entity)
+    {
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Restoration In Progress', 'change-request-updated', true);
+    }
+
+    public function saveAuditStatusAdminSendReminder($entity, $feedback)
+    {
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Feedback: '.$feedback, 'reminder-sent', true);
+    }
+
     private function getApproveComment($data)
     {
         return 'Approve: '.data_get($data, 'feedback');
@@ -57,7 +67,7 @@ trait SaveAuditStatusTrait
 
     private function getMoreInfoComment($data, $entity)
     {
-        $feedbackFields = data_get($data, 'feedback_fields');
+        $feedbackFields = data_get($data, 'feedback_fields', []);
         $feedbackFieldLabels = [];
         foreach ($feedbackFields as $formQuestionUUID) {
             $question = FormQuestion::isUuid($formQuestionUUID)->first();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
@@ -21,6 +22,7 @@ use App\Validators\SitePolygonValidator;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -90,7 +92,7 @@ class TerrafundCreateGeometryController extends Controller
             }
 
         } catch (Exception $e) {
-            return ['error' => $e->getMessage()];
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -363,7 +365,6 @@ class TerrafundCreateGeometryController extends Controller
     {
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
-        Log::debug('Upload Shape file data', ['request' => $request->all()]);
         $rules = [
           'file' => 'required|file|mimes:zip',
         ];
@@ -375,62 +376,67 @@ class TerrafundCreateGeometryController extends Controller
 
             return response()->json(['errors' => $errors], 422);
         }
-        $body = $request->all();
-        $site_id = $request->input('uuid');
-        $file = $request->file('file');
-        if ($file->getClientOriginalExtension() !== 'zip') {
-            return response()->json(['error' => 'Only ZIP files are allowed'], 400);
+
+        try {
+            $body = $request->all();
+            $site_id = $request->input('uuid');
+            $file = $request->file('file');
+            if ($file->getClientOriginalExtension() !== 'zip') {
+                return response()->json(['error' => 'Only ZIP files are allowed'], 400);
+            }
+            $tempDir = sys_get_temp_dir();
+            $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
+            mkdir($directory, 0755, true);
+            // Extract the contents of the ZIP file
+            $zip = new \ZipArchive();
+            if ($zip->open($file->getPathname()) === true) {
+                $zip->extractTo($directory);
+                $zip->close();
+                $shpFile = $this->findShpFile($directory);
+                if (! $shpFile) {
+                    return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
+                }
+                $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
+                $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+                $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
+                $process->run();
+                if (! $process->isSuccessful()) {
+                    Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
+
+                    return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
+                }
+
+                $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
+                $submitPolygonsLoaded = $request->input('submit_polygon_loaded') === true || $request->input('submit_polygon_loaded') === 'true';
+                if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
+                    $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
+                }
+
+                if ($polygonLoadedList) {
+                    $filePath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+                    $geojsonContent = file_get_contents($filePath);
+                    $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
+
+                    return response()->json($polygonLoaded->original, 200);
+                }
+
+                if ($submitPolygonsLoaded) {
+                    $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
+                }
+
+                if (isset($uuid['error'])) {
+                    return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
+                }
+                App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
+
+                return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
+            } else {
+                return response()->json(['error' => 'Failed to open the ZIP file'], 400);
+            }
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-        $tempDir = sys_get_temp_dir();
-        $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
-        mkdir($directory, 0755, true);
-        // Extract the contents of the ZIP file
-        $zip = new \ZipArchive();
-        if ($zip->open($file->getPathname()) === true) {
-            $zip->extractTo($directory);
-            $zip->close();
-            $shpFile = $this->findShpFile($directory);
-            if (! $shpFile) {
-                return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
-            }
-            $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
-            $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
-            $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
-            $process->run();
-            if (! $process->isSuccessful()) {
-                Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
 
-                return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
-            }
-
-            $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-            $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-
-            if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
-                $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
-            }
-
-            if ($polygonLoadedList) {
-                $filePath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
-                $geojsonContent = file_get_contents($filePath);
-                $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
-
-                return response()->json($polygonLoaded->original, 200);
-            }
-
-            if ($submitPolygonsLoaded) {
-                $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
-            }
-
-            if (isset($uuid['error'])) {
-                return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
-            }
-            App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
-
-            return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
-        } else {
-            return response()->json(['error' => 'Failed to open the ZIP file'], 400);
-        }
     }
 
     public function checkSelfIntersection(Request $request)
@@ -893,6 +899,28 @@ class TerrafundCreateGeometryController extends Controller
         );
     }
 
+    public function validateEstimatedAreaProject(Request $request)
+    {
+        $uuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $uuid,
+            EstimatedArea::getAreaDataProject($uuid),
+            PolygonService::ESTIMATED_AREA_CRITERIA_ID
+        );
+    }
+
+    public function validateEstimatedAreaSite(Request $request)
+    {
+        $uuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $uuid,
+            EstimatedArea::getAreaDataSite($uuid),
+            PolygonService::ESTIMATED_AREA_CRITERIA_ID
+        );
+    }
+
     public function validateCoordinateSystem(Request $request)
     {
         $uuid = $request->input('uuid');
@@ -997,6 +1025,89 @@ class TerrafundCreateGeometryController extends Controller
             $featureCollection = [
               'type' => 'FeatureCollection',
               'features' => $features,
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function downloadAllActivePolygonsByFramework(Request $request)
+    {
+        ini_set('max_execution_time', '-1');
+        ini_set('memory_limit', '-1');
+        $framework = $request->query('framework');
+
+        try {
+            $sitesFromFramework = Site::where('framework_key', $framework)->pluck('uuid');
+
+            $activePolygonIds = SitePolygon::wherein('site_id', $sitesFromFramework)->active()->pluck('poly_id');
+            Log::info('count of active polygons: ', ['count' => count($activePolygonIds)]);
+            $features = [];
+            foreach ($activePolygonIds as $polygonUuid) {
+
+                $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
+                    ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+                    ->first();
+
+                if (! $polygonGeometry) {
+                    Log::warning('No geometry found for Polygon UUID:', ['uuid' => $polygonUuid]);
+
+                    continue;
+                }
+                $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
+                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
+                $feature = [
+                    'type' => 'Feature',
+                    'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                    'properties' => $properties,
+                ];
+                $features[] = $feature;
+            }
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => $features,
+            ];
+
+            return response()->json($featureCollection);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function downloadGeojsonAllActivePolygons()
+    {
+        ini_set('max_execution_time', '-1');
+        ini_set('memory_limit', '-1');
+
+        try {
+            $activePolygonIds = SitePolygon::active()->pluck('poly_id');
+
+            $features = [];
+            foreach ($activePolygonIds as $polygonUuid) {
+
+                $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
+                    ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+                    ->first();
+
+                if (! $polygonGeometry) {
+                    Log::warning('No geometry found for Polygon UUID:', ['uuid' => $polygonUuid]);
+
+                    continue;
+                }
+                $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
+                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
+                $feature = [
+                    'type' => 'Feature',
+                    'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                    'properties' => $properties,
+                ];
+                $features[] = $feature;
+            }
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => $features,
             ];
 
             return response()->json($featureCollection);

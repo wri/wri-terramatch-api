@@ -17,7 +17,8 @@ class SubmitFormSubmissionControllerTest extends TestCase
     public function test_invoke_action(): void
     {
         Mail::fake();
-        $user = User::factory()->admin()->create();
+        $user = User::factory()->admin()->create(['locale' => 'en-US']);
+        $this->actingAs($user);
         $projectPitch = ProjectPitch::factory()->create([
             'organisation_id' => $user->organisation->uuid,
             'status' => ProjectPitch::STATUS_DRAFT,
