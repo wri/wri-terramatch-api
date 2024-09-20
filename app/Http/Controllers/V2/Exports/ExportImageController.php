@@ -28,7 +28,7 @@ class ExportImageController extends Controller
 
         file_put_contents($tempImagePath, $imageContent);
         $user = new UserLiteResource(User::find($media->created_by));
-        $createdBy = $user ? $user->first_name . ' ' . $user->last_name : 'Unkonwn';
+        $createdBy = $user->resource ? $user->resource->first_name . ' ' . $user->resource->last_name : 'Unknown';
 
         $metadata = [
           'XMP-dc:Title=' . escapeshellarg($media->name),
