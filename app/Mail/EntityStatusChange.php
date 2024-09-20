@@ -39,11 +39,17 @@ class EntityStatusChange extends I18nMail
                 $this->setBodyKey('entity-status-change.body-entity-needs-more-information');
             }
         }
-        $this->setParams(['{entityTypeName}' => $this->getEntityTypeName(),
+        $params = [
+            '{entityTypeName}' => $this->getEntityTypeName(),
             '{lowerEntityTypeName}' => strtolower($this->getEntityTypeName()),
-            '{parentEntityName}' => $this->entity->parentEntity()->pluck('name')->first(),
             '{entityName}' => $this->entity->name,
-            '{feedback}' => $this->getFeedback() ?? '(No feedback)'])
+            '{feedback}' => $this->getFeedback() ?? '(No feedback)',
+        ];
+        if ($this->entity->parentEntity) {
+            $params['{parentEntityName}'] = $this->entity->parentEntity()->pluck('name')->first();
+        }
+
+        $this->setParams($params)
             ->setCta('entity-status-change.cta');
         $this->link = $this->entity->getViewLinkPath();
         $this->transactional = true;
