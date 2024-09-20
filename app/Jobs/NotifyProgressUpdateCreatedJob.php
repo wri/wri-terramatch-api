@@ -44,7 +44,7 @@ class NotifyProgressUpdateCreatedJob implements ShouldQueue
         foreach ($users as $user) {
             if ($user->is_subscribed) {
                 Mail::to($user->email_address)->send(
-                    new ProgressUpdateCreatedMail($progressUpdateId, $pitchName)
+                    new ProgressUpdateCreatedMail($progressUpdateId, $pitchName, $user)
                 );
             }
             /*

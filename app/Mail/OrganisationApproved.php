@@ -2,14 +2,15 @@
 
 namespace App\Mail;
 
-class OrganisationApproved extends Mail
+class OrganisationApproved extends I18nMail
 {
-    public function __construct()
+    public function __construct($user)
     {
-        $this->subject = 'Your organization has been accepted into TerraMatch.';
-        $this->title = 'YOUR ORGANIZATION HAS BEEN ACCEPTED INTO TERRAMATCH.';
-        $this->body = 'Please login to submit an application or report on a monitored project. If you have any questions, please reach out to info@terramatch.org';
-        $this->cta = 'LOGIN';
+        parent::__construct($user);
+        $this->setSubjectKey('organisation-approved.subject')
+            ->setTitleKey('organisation-approved.title')
+            ->setBodyKey('organisation-approved.body')
+            ->setCta('organisation-approved.cta');
         $this->link = '/auth/login';
     }
 }

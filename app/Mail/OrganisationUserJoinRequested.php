@@ -2,14 +2,13 @@
 
 namespace App\Mail;
 
-use App\Models\V2\Organisation;
-
-class OrganisationUserJoinRequested extends Mail
+class OrganisationUserJoinRequested extends I18nMail
 {
-    public function __construct(Organisation $organisation)
+    public function __construct($user)
     {
-        $this->subject = 'A user has requested to join your organization';
-        $this->title = 'A user has requested to join your organization';
-        $this->body = 'A user has requested to join your organization. Please go to the ‘Meet the Team’ page to review this request.';
+        parent::__construct($user);
+        $this->setSubjectKey('organisation-user-join-requested.subject')
+            ->setTitleKey('organisation-user-join-requested.title')
+            ->setBodyKey('organisation-user-join-requested.body');
     }
 }

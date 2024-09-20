@@ -39,7 +39,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -50,7 +49,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasFrameworkKey;
     use HasLinkedFields;
     use UsesLinkedFields;
@@ -508,6 +506,12 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return [
             'name' => $this->name,
         ];
+    }
+
+    public static function searchProjects($query)
+    {
+        return self::select('v2_projects.*')
+        ->where('v2_projects.name', 'like', "%$query%");
     }
 
     public function auditStatuses(): MorphMany

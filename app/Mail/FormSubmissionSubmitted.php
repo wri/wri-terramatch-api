@@ -2,14 +2,15 @@
 
 namespace App\Mail;
 
-class FormSubmissionSubmitted extends Mail
+class FormSubmissionSubmitted extends I18nMail
 {
-    public function __construct()
+    public function __construct($user)
     {
-        $this->subject = 'You have submitted an application';
-        $this->title = 'You have submitted an application';
-        $this->body =
-            'Your application has been submitted';
+        parent::__construct($user);
+        $this->setSubjectKey('form-submission-submitted.subject')
+            ->setTitleKey('form-submission-submitted.title')
+            ->setBodyKey('form-submission-submitted.body');
+
         $this->transactional = true;
     }
 }

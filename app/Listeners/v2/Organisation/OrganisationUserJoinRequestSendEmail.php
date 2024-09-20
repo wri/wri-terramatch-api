@@ -24,8 +24,9 @@ class OrganisationUserJoinRequestSendEmail
     public function handle(OrganisationUserJoinRequestEvent $event)
     {
         $organisation = $event->organisation;
-        $emailAddressList = $organisation->owners()->pluck('email_address')->toArray();
-
-        Mail::to($emailAddressList)->send(new OrganisationUserJoinRequested($organisation));
+        $emailAddressList = $organisation->owners;
+        foreach ($emailAddressList as $user) {
+            Mail::to($user->email_address)->send(new OrganisationUserJoinRequested($user));
+        }
     }
 }

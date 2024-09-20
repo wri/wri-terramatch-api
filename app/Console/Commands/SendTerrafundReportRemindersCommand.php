@@ -32,10 +32,13 @@ class SendTerrafundReportRemindersCommand extends Command
             ->chunkById(100, function ($programmes) {
                 $programmes->each(function ($programme) {
                     if ($programme->users->count()) {
-                        Mail::to($programme->users->pluck('email_address'))->queue(new TerrafundReportReminder($programme->id));
                         $programme->users->each(function ($user) use ($programme) {
+                            Mail::to($user->email_address)
+                                ->queue(new TerrafundReportReminder($programme->id, $user));
+
                             NotifyTerrafundReportReminderJob::dispatch($user, $programme);
                         });
+
                     }
                 });
             });

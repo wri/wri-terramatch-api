@@ -10,6 +10,7 @@ use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\TaskStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+
 use Parental\HasParent;
 
 /**

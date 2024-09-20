@@ -2,18 +2,15 @@
 
 namespace App\Mail;
 
-class FormSubmissionApproved extends Mail
+class FormSubmissionApproved extends I18nMail
 {
-    public function __construct(String $feedback = null)
+    public function __construct(String $feedback = null, $user)
     {
-        $this->subject = 'Application Approved';
-        $this->title = 'Your application has been approved';
-        $this->body =
-            'Your application has been approved.';
-        if (! is_null($feedback)) {
-            $this->body = 'Your application has been approved. Please see comments below:<br><br>' .
-            e($feedback);
-        }
+        parent::__construct($user);
+        $this->setSubjectKey('form-submission-approved.subject')
+            ->setTitleKey('form-submission-approved.title')
+            ->setBodyKey(! is_null($feedback) ? 'form-submission-approved.body-feedback' : 'form-submission-approved.body')
+            ->setParams(['{feedback}' => e($feedback)]);
         $this->transactional = true;
     }
 }

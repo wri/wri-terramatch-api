@@ -2,16 +2,16 @@
 
 namespace App\Mail;
 
-class TargetUpdated extends Mail
+class TargetUpdated extends I18nMail
 {
-    public function __construct(Int $targetId, String $name)
+    public function __construct(Int $targetId, String $name, $user)
     {
-        $this->subject = 'Monitoring Targets Need Review';
-        $this->title = 'Monitoring Targets Need Review';
-        $this->body =
-            'Monitoring targets for ' . e($name) . ' have been edited and need reviewing.<br><br>' .
-            'Click below to review the edited targets';
+        parent::__construct($user);
+        $this->setSubjectKey('target-updated.subject')
+            ->setTitleKey('target-updated.title')
+            ->setBodyKey('target-updated.body')
+            ->setParams(['{name}' => e($name)])
+            ->setCta('target-updated.cta');
         $this->link = '/monitoring/review/?targetId=' . $targetId;
-        $this->cta = 'View Monitoring Terms';
     }
 }

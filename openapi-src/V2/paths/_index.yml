@@ -99,6 +99,9 @@
 /v2/admin/{ENTITY}/{UUID}/{STATUS}:
   put:
     $ref: './Entity/put-v2-admin-entity-uuid-status.yml'
+/v2/admin/{ENTITY}/{UUID}/reminder:
+  post:
+    $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'
 /v2/update-requests/{UUID}:
   get:
     $ref: './UpdateRequests/get-v2-update-requests-uuid.yml'
@@ -2515,6 +2518,15 @@
 /v2/admin/audits/{ENTITY}/{UUID}:
   get:
     $ref: './Audits/get-v2-admin-audits-entity-uuid.yml'
+/v2/export-image:
+  post:
+    $ref: './Exports/post-v2-export-image.yml'
+/v2/media/{uuid}:
+  patch:
+    $ref: './Media/patch-v2-media-uuid.yml'
+/v2/media/project/{project}/{mediaUuid}:
+  patch:
+    $ref: './Media/patch-v2-media-project-mediaUuid.yml'
 /v2/admin/{ENTITY}/export/{FRAMEWORK}:
   get:
     $ref: './Exports/get-v2-admin-entity-export-framework.yml'
@@ -2733,6 +2745,9 @@
 /v2/site-polygon/{uuid}/make-active:
   put:
     $ref: './Polygons/put-v2-site-polygon-uuid-make-active.yml'
+/v2/users/locale:
+  patch:
+    $ref: './Users/post-v2-users-locale.yml'
 /v2/terrafund/clip-polygons/polygon/{uuid}:
   post:
     $ref: './Terrafund/post-v2-terrafund-clip-polygons-polygon-uuid.yml'

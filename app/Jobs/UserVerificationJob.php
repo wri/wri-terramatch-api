@@ -40,6 +40,6 @@ class UserVerificationJob implements ShouldQueue
         $verification->user_id = $this->model->id;
         $verification->token = Str::random(32);
         $verification->saveOrFail();
-        Mail::to($this->model->email_address)->send(new UserVerificationMail($verification->token, $this->callbackUrl));
+        Mail::to($this->model->email_address)->send(new UserVerificationMail($verification->token, $this->callbackUrl, $this->model));
     }
 }
