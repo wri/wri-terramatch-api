@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\V2\Exports;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V2\User\UserLiteResource;
+use App\Models\V2\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use App\Http\Resources\V2\User\UserLiteResource;
-use App\Models\V2\User;
 
 class ExportImageController extends Controller
 {
@@ -24,51 +25,80 @@ class ExportImageController extends Controller
 
         $tempDir = sys_get_temp_dir();
         $tempImagePath = $tempDir . DIRECTORY_SEPARATOR . uniqid('image_', true) . '.' . $extension;
-        
+
         file_put_contents($tempImagePath, $imageContent);
-        $user =  new UserLiteResource(User::find($media->created_by));
+        $user = new UserLiteResource(User::find($media->created_by));
         $createdBy = $user->first_name . ' ' . $user->last_name;
+
         $metadata = [
-          'name' => $media->name,
-          'is_cover' => $media->is_cover ? 'true' : 'false',
-          'is_public' => $media->is_public ? 'true' : 'false',
-          'photographer' => $media->photographer, 
-          'description' => $media->description,
-          'uploaded_by' => $media->uploaded_by,
-          'DateCaptured' => $media->date_captured,
-          'filename' => $media->file_name,
-          'geotagged' => ($media->lat !== null && $media->lng !== null) ? 'true' : 'false',
-          'coordinates' => json_encode([
-              'lat' => $media->lat,
-              'lng' => $media->lng
-          ]),
-          'created_by' => $createdBy
+          'XMP-dc:Title=' . escapeshellarg($media->name),
+          'XMP-dc:Creator=' . escapeshellarg($createdBy),
+          'XMP-dc:Description=' . escapeshellarg($media->description ?? ''),
+          'DateTimeOriginal=' . escapeshellarg($media->create_at ?? ''),
+          'Artist=' . escapeshellarg($media->photographer ?? ''),
         ];
-        
-        $process = new Process([
-            'exiftool',
-            '-name=' . escapeshellarg($metadata['name']),
-            '-is_cover=' . escapeshellarg($metadata['is_cover']),
-            '-is_public=' . escapeshellarg($metadata['is_public']),
-            '-photographer=' . escapeshellarg($metadata['photographer']),
-            '-description=' . escapeshellarg($metadata['description']),
-            '-data_captured=' . escapeshellarg($metadata['DateCaptured']),
-            '-file_name=' . escapeshellarg($metadata['filename']),
-            '-coordinates=' . escapeshellarg($media->lat),
-            '-geotagged=' . escapeshellarg($metadata['geotagged']),
-            '-created_by=' . escapeshellarg($metadata['created_by']),
-        ]);
 
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+        if ($media->lat !== null && $media->lng !== null) {
+            $metadata[] = 'GPSLatitude=' . escapeshellarg($media->lat);
+            $metadata[] = 'GPSLongitude=' . escapeshellarg($media->lng);
         }
 
-        $updatedImageContent = file_get_contents($tempImagePath);
+        $userComment = json_encode([
+            'IsCover' => $media->is_cover ? 'true' : 'false',
+            'IsPublic' => $media->is_public ? 'true' : 'false',
+            'UploadedBy' => $createdBy ?? '',
+            'Filename' => $media->file_name,
+            'Geotagged' => ($media->lat !== null && $media->lng !== null) ? 'true' : 'false',
+            'Name' => $media->name,
+            'Photographer' => $media->photographer ?? '',
+            'Description' => $media->description ?? '',
+            'Date Captured' => $media->created_at,
+            'Coordinates' => [
+                'Latitude' => $media->lat,
+                'Longitude' => $media->lng,
+            ],
+        ]);
 
-        return response($updatedImageContent)
-            ->header('Content-Type', 'image/jpeg')
-            ->header('Content-Disposition', 'attachment; filename="' . $media->file_name . '"');
+        $metadata[] = 'UserComment=' . escapeshellarg($userComment);
+
+        Log::info('Metadata: ' . json_encode($metadata));
+
+        // Prepare exiftool command
+        $command = ['exiftool', '-overwrite_original'];
+        foreach ($metadata as $tag) {
+            $command[] = '-' . $tag;
+        }
+        $command[] = $tempImagePath;
+
+        try {
+            // Log the command
+            Log::info('Command: ' . implode(' ', $command));
+
+            // Execute exiftool command
+            $process = new Process($command);
+            $process->run();
+
+            // Log output of the process
+            Log::info('ExifTool Output: ' . $process->getOutput());
+
+            // Check if the process was successful
+            if (! $process->isSuccessful()) {
+                throw new ProcessFailedException($process);
+            }
+
+            // Read the updated image content
+            $updatedImageContent = file_get_contents($tempImagePath);
+
+            // Clean up temporary file
+            unlink($tempImagePath);
+
+            // Return the response with the updated image
+            return response($updatedImageContent)
+                ->header('Content-Type', 'image/' . $extension)
+                ->header('Content-Disposition', 'attachment; filename="' . $media->file_name . '"');
+        } catch (\Exception $e) {
+            Log::error('Error updating metadata: ' . $e->getMessage());
+            // Handle the error appropriately
+        }
     }
 }
