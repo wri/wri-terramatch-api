@@ -141,6 +141,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'goal_trees_restored_planting',
         'goal_trees_restored_anr',
         'goal_trees_restored_direct_seeding',
+        'landscape',
     ];
 
     public $fileConfiguration = [
