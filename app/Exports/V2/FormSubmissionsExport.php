@@ -60,7 +60,7 @@ class FormSubmissionsExport extends BaseExportFormSubmission implements FromQuer
             $headings[] = data_get($field, 'heading', 'unknown');
         }
 
-        foreach ($this->auditFields  as $key => $value) {
+        foreach ($this->auditFields as $key => $value) {
             $headings[$key] = $value;
         }
 
@@ -101,7 +101,7 @@ class FormSubmissionsExport extends BaseExportFormSubmission implements FromQuer
             $mapped[] = $this->getAnswer($field, $answers);
         }
 
-        foreach ($this->auditFields  as $key => $value) {
+        foreach ($this->auditFields as $key => $value) {
             $mapped[] = data_get($formSubmission, $key, '');
         }
 

@@ -173,7 +173,7 @@ class PolygonService
             if (isset($featureProperties['site_id']) && isset($sitePolygonProperties['site_id']) && $sitePolygonProperties['site_id'] !== null) {
                 $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
             }
-            if($primary_uuid) {
+            if ($primary_uuid) {
                 $result = $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
                 if ($result === false) {
                     $this->insertSitePolygon(

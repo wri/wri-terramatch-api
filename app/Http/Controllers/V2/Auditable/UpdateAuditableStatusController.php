@@ -44,7 +44,7 @@ class UpdateAuditableStatusController extends Controller
 
     private function canChangeStatus($auditable, $status): bool
     {
-        switch(get_class($auditable)) {
+        switch (get_class($auditable)) {
             case 'App\Models\V2\Sites\Site':
                 return $this->canChangeSiteStatusTo($auditable, $status);
             case 'App\Models\V2\Sites\SitePolygon':

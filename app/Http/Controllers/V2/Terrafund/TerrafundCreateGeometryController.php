@@ -689,7 +689,7 @@ class TerrafundCreateGeometryController extends Controller
                     }
                 }
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::info('Error: '.$e->getMessage());
         }
 

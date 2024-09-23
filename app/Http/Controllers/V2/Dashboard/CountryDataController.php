@@ -55,7 +55,7 @@ class CountryDataController extends Controller
 
         $site = $sitePolygon->site()->first();
 
-        if(! $site) {
+        if (! $site) {
             Log::error("Site not found for site polygon with ID: $sitePolygon->id");
 
         }
