@@ -23,7 +23,7 @@ class LinkedFieldsHelper
 
         self::$fields = collect();
 
-        foreach (data_get(self::config(), 'models', []) as $model) {
+        foreach (data_get(self::config(), 'models', []) as  $model) {
             foreach ($includes as $section) {
                 foreach (data_get($model, $section, []) as $fieldKey => $value) {
                     throw_if(

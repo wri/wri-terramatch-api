@@ -43,7 +43,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $headings[] = data_get($field, 'heading', 'unknown') ;
         }
 
-        foreach ($this->auditFields as $key => $value) {
+        foreach ($this->auditFields  as $key => $value) {
             $headings[] = $key;
         }
 
@@ -64,7 +64,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $mapped[] = $this->getAnswer($field, $answers);
         }
 
-        foreach ($this->auditFields as $key => $value) {
+        foreach ($this->auditFields  as $key => $value) {
             $mapped[] = mb_convert_encoding(data_get($entity, $key, ''), 'UTF-8', 'auto');
         }
 
@@ -104,7 +104,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
 
         if ($this->form->type === 'project-report') {
             $mapped[] = $entity->project->uuid ?? null;
-            if ($this->form->framework_key === 'ppc') {
+            if($this->form->framework_key === 'ppc') {
                 $mapped[] = $entity->seedlings_grown ?? null;
                 $mapped[] = $entity->seedlings_grown_to_date ?? null;
             }
@@ -120,7 +120,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             $sumTreeSpecies = $entity->treeSpecies()->sum('amount');
             $mapped[] = $sumTreeSpecies > 0 ? $sumTreeSpecies : null;
             $mapped[] = $entity->site->trees_planted_count ?? null;
-            if ($this->form->framework_key === 'ppc') {
+            if($this->form->framework_key === 'ppc') {
                 $sumSeeding = $entity->seedings()->sum('amount');
                 $mapped[] = $sumSeeding > 0 ? $sumSeeding : null;
                 $mapped[] = $entity->site->seeds_planted_count ?? null;
@@ -153,7 +153,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
 
         if ($this->form->type === 'project-report') {
             $initialHeadings[] = 'project_uuid';
-            if ($this->form->framework_key === 'ppc') {
+            if($this->form->framework_key === 'ppc') {
                 $initialHeadings[] = 'total_seedlings_grown_report';
                 $initialHeadings[] = 'total_seedlings_grown';
             }
@@ -165,7 +165,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
 
         if ($this->form->type === 'site-report') {
             $initialHeadings = array_merge($initialHeadings, ['site-id', 'site-name', 'total_trees_planted_report', 'total_trees_planted']);
-            if ($this->form->framework_key === 'ppc') {
+            if($this->form->framework_key === 'ppc') {
                 $initialHeadings[] = 'total_seeds_planted_report';
                 $initialHeadings[] = 'total_seeds_planted';
             }

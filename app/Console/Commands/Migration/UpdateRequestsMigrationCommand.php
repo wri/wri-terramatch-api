@@ -100,7 +100,7 @@ class UpdateRequestsMigrationCommand extends Command
 
     private function getV2Model(string $oldModel): ?string
     {
-        switch ($oldModel) {
+        switch($oldModel) {
             case TerrafundProgramme::class:
             case PPCProgramme::class:
                 return Project::class;

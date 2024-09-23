@@ -29,7 +29,7 @@ class AdminStatusUpdateRequestController extends Controller
         $this->authorize($status, $updateRequest);
         $entity = $updateRequest->updaterequestable;
 
-        switch ($status) {
+        switch($status) {
             case 'approve':
                 $this->applyUpdates($updateRequest);
                 $updateRequest->approve(data_get($data, 'feedback'));
@@ -86,7 +86,7 @@ class AdminStatusUpdateRequestController extends Controller
     {
         $entity = $updateRequest->updaterequestable;
 
-        switch (get_class($entity)) {
+        switch(get_class($entity)) {
             case Project::class :
                 $title = $entity->name;
                 $sub_title = '';

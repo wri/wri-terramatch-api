@@ -99,7 +99,7 @@ class ViewProjectGalleryController extends Controller
                 ->appends(request()->query());
 
             return new GallerysCollection($collection);
-        } catch (\Exception $e) {
+        } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

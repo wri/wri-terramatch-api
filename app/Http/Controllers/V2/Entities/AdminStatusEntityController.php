@@ -18,7 +18,7 @@ class AdminStatusEntityController extends Controller
         $data = $request->validated();
         $this->authorize('approve', $entity);
 
-        switch ($status) {
+        switch($status) {
             case 'approve':
                 $entity->approve(data_get($data, 'feedback'));
                 $this->saveAuditStatusAdminApprove($data, $entity);

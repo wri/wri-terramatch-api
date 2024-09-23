@@ -48,7 +48,7 @@ class TerrafundProgrammeController extends Controller
                 ->where('treeable_id', data_get($terrafundProgramme, 'id'))
                 ->delete();
 
-            foreach (data_get($data, 'tree_species') as $treeSpeciesData) {
+            foreach (data_get($data, 'tree_species')as $treeSpeciesData) {
                 $payload = [
                     'treeable_type' => 'programme',
                     'treeable_id' => data_get($terrafundProgramme, 'id'),

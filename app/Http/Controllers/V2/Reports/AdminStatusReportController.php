@@ -14,7 +14,7 @@ class AdminStatusReportController extends Controller
         $data = $request->validated();
         $this->authorize('approve', $report);
 
-        switch ($status) {
+        switch($status) {
             case 'approve':
                 $report->approve(data_get($data, 'feedback'));
 
