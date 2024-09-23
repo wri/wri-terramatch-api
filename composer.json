@@ -23,7 +23,6 @@
         "maatwebsite/excel": "^3.1",
         "mavinoo/laravel-batch": "^2.3",
         "owen-it/laravel-auditing": "^13.5",
-        "phpexiftool/exiftool": "^10.16",
         "sentry/sentry-laravel": "^3.2",
         "spatie/laravel-medialibrary": "^10.7",
         "spatie/laravel-permission": "^5.11",
