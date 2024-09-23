@@ -89445,9 +89445,9 @@ paths:
           schema:
             type: object
             required:
-              - imageUrl
+              - uuid
             properties:
-              imageUrl:
+              uuid:
                 type: string
                 description: The URL of the image to be downloaded.
       responses:

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e7444846c63b2e54df3407acfeaf209",
+    "content-hash": "e97c4c4d96877ea486dc15c1cabf7957",
     "packages": [
         {
             "name": "asantibanez/laravel-eloquent-state-machines",
@@ -4710,6 +4710,43 @@
                 "source": "https://github.com/php-http/promise/tree/1.1.0"
             },
             "time": "2020-07-07T09:29:14+00:00"
+        },
+        {
+            "name": "phpexiftool/exiftool",
+            "version": "10.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alchemy-fr/exiftool.git",
+                "reference": "c47639a6e9d8fd9746c8c24725e3c3e1e7eb0cbb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alchemy-fr/exiftool/zipball/c47639a6e9d8fd9746c8c24725e3c3e1e7eb0cbb",
+                "reference": "c47639a6e9d8fd9746c8c24725e3c3e1e7eb0cbb",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Perl Licensing"
+            ],
+            "authors": [
+                {
+                    "name": "Phil Harvey",
+                    "email": "phil@owl.phy.queensu.ca",
+                    "homepage": "http://www.sno.phy.queensu.ca/~phil/exiftool/"
+                }
+            ],
+            "description": "Exiftool is a library for reading, writing and editing meta information. This package is not PHP, but required for the main PHP driver : PHP Exiftool",
+            "keywords": [
+                "exiftool",
+                "metadata"
+            ],
+            "support": {
+                "issues": "https://github.com/alchemy-fr/exiftool/issues",
+                "source": "https://github.com/alchemy-fr/exiftool/tree/10.16"
+            },
+            "time": "2016-05-09T09:08:26+00:00"
         },
         {
             "name": "phpoffice/phpspreadsheet",
@@ -13631,5 +13668,5 @@
         "php": "8.2.10",
         "ext-gd": "2.1.0"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
