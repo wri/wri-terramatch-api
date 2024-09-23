@@ -28,13 +28,13 @@ class ExportImageController extends Controller
 
         file_put_contents($tempImagePath, $imageContent);
         $user = new UserLiteResource(User::find($media->created_by));
-        $createdBy = $user->first_name . ' ' . $user->last_name;
+        $createdBy = $user->resource ? $user->resource->first_name . ' ' . $user->resource->last_name : 'Unknown';
 
         $metadata = [
           'XMP-dc:Title=' . escapeshellarg($media->name),
           'XMP-dc:Creator=' . escapeshellarg($createdBy),
           'XMP-dc:Description=' . escapeshellarg($media->description ?? ''),
-          'DateTimeOriginal=' . escapeshellarg($media->create_at ?? ''),
+          'DateTimeOriginal=' . escapeshellarg($media->created_at ?? ''),
           'Artist=' . escapeshellarg($media->photographer ?? ''),
         ];
 
@@ -46,7 +46,7 @@ class ExportImageController extends Controller
         $userComment = json_encode([
             'IsCover' => $media->is_cover ? 'true' : 'false',
             'IsPublic' => $media->is_public ? 'true' : 'false',
-            'UploadedBy' => $createdBy ?? '',
+            'UploadedBy' => $createdBy,
             'Filename' => $media->file_name,
             'Geotagged' => ($media->lat !== null && $media->lng !== null) ? 'true' : 'false',
             'Name' => $media->name,
@@ -61,9 +61,6 @@ class ExportImageController extends Controller
 
         $metadata[] = 'UserComment=' . escapeshellarg($userComment);
 
-        Log::info('Metadata: ' . json_encode($metadata));
-
-        // Prepare exiftool command
         $command = ['exiftool', '-overwrite_original'];
         foreach ($metadata as $tag) {
             $command[] = '-' . $tag;
@@ -71,34 +68,23 @@ class ExportImageController extends Controller
         $command[] = $tempImagePath;
 
         try {
-            // Log the command
-            Log::info('Command: ' . implode(' ', $command));
-
-            // Execute exiftool command
             $process = new Process($command);
             $process->run();
-
-            // Log output of the process
-            Log::info('ExifTool Output: ' . $process->getOutput());
-
-            // Check if the process was successful
             if (! $process->isSuccessful()) {
                 throw new ProcessFailedException($process);
             }
 
-            // Read the updated image content
             $updatedImageContent = file_get_contents($tempImagePath);
 
-            // Clean up temporary file
             unlink($tempImagePath);
 
-            // Return the response with the updated image
             return response($updatedImageContent)
                 ->header('Content-Type', 'image/' . $extension)
                 ->header('Content-Disposition', 'attachment; filename="' . $media->file_name . '"');
         } catch (\Exception $e) {
             Log::error('Error updating metadata: ' . $e->getMessage());
-            // Handle the error appropriately
+
+            return response()->json(['error' => 'An error occurred while processing the image'], 500);
         }
     }
 }
