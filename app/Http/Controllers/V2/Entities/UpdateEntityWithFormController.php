@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2\Entities;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Forms\UpdateFormSubmissionRequest;
+use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\EntityModel;
 use App\Models\V2\ReportModel;
 use App\Models\V2\UpdateRequests\UpdateRequest;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 
 class UpdateEntityWithFormController extends Controller
 {
+    use SaveAuditStatusTrait;
+
     public function __invoke(EntityModel $entity, UpdateFormSubmissionRequest $formSubmissionRequest)
     {
         $this->authorize('update', $entity);
@@ -31,12 +34,18 @@ class UpdateEntityWithFormController extends Controller
             if ($entity instanceof ReportModel) {
                 $entity->updateInProgress($isAdmin);
             }
+            if (data_get($formSubmissionRequest, 'continue_later_action')) {
+                $this->saveAuditStatusProjectDeveloperSubmitDraft($entity);
+            }
 
             return $entity->createSchemaResource();
         }
 
         if (! empty($updateRequest)) {
-            $updateRequest->update([ 'content' => array_merge($updateRequest->content, $answers) ]);
+            $updateRequest->update(['content' => array_merge($updateRequest->content, $answers)]);
+            if (data_get($formSubmissionRequest, 'continue_later_action')) {
+                $this->saveAuditStatusProjectDeveloperSubmitDraft($entity);
+            }
         } else {
             UpdateRequest::create([
                 'organisation_id' => $entity->organisation ? $entity->organisation->id : $entity->project->organisation_id,

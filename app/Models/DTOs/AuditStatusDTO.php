@@ -9,6 +9,8 @@ class AuditStatusDTO
 {
     public $id;
 
+    public $uuid;
+
     public $status;
 
     public $first_name;
@@ -29,6 +31,7 @@ class AuditStatusDTO
 
     public function __construct(
         $id,
+        $uuid,
         $status,
         $first_name,
         $last_name,
@@ -39,6 +42,7 @@ class AuditStatusDTO
         $attachments
     ) {
         $this->id = $id;
+        $this->uuid = $uuid;
         $this->status = $status;
         $this->first_name = $first_name;
         $this->last_name = $last_name;
@@ -56,7 +60,8 @@ class AuditStatusDTO
 
         return new AuditStatusDTO(
             $audit->id,
-            $audit->status,
+            $audit->uuid ?? null,
+            $audit->new_values ? data_get($audit->new_values, 'status') : null,
             $user ? $user->first_name : null,
             $user ? $user->last_name : null,
             $audit->new_values ? str_replace('-', ' ', $comment) : null,
@@ -73,13 +78,14 @@ class AuditStatusDTO
 
         return new AuditStatusDTO(
             $auditStatus->id,
-            $auditStatus->status,
+            $auditStatus->uuid,
+            $auditStatus->status === 'started' ? 'Draft' : $auditStatus->status,
             $auditStatus->first_name,
             $auditStatus->last_name,
             $auditStatus->comment,
             $auditStatus->type,
             $auditStatus->request_removed,
-            $auditStatus->date_created,
+            $auditStatus->created_at,
             FileResource::collection($auditStatus->getMedia('attachments'))
         );
     }
