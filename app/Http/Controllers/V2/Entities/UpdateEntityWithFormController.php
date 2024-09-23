@@ -4,13 +4,13 @@ namespace App\Http\Controllers\V2\Entities;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Forms\UpdateFormSubmissionRequest;
+use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\EntityModel;
 use App\Models\V2\ReportModel;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\UpdateRequestStatusStateMachine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Traits\SaveAuditStatusTrait;
 
 class UpdateEntityWithFormController extends Controller
 {
@@ -42,7 +42,7 @@ class UpdateEntityWithFormController extends Controller
         }
 
         if (! empty($updateRequest)) {
-            $updateRequest->update([ 'content' => array_merge($updateRequest->content, $answers) ]);
+            $updateRequest->update(['content' => array_merge($updateRequest->content, $answers)]);
             if (data_get($formSubmissionRequest, 'continue_later_action')) {
                 $this->saveAuditStatusProjectDeveloperSubmitDraft($entity);
             }
