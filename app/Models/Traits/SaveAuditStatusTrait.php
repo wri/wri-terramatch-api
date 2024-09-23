@@ -47,7 +47,7 @@ trait SaveAuditStatusTrait
     public function saveAuditStatusAdminMoreInfo($data, $entity)
     {
         $comment = $this->getMoreInfoComment($data, $entity);
-        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment, 'change-request-updated', true);
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment, 'change-request', true);
     }
 
     public function saveAuditStatusAdminRestorationInProgress($entity)
@@ -58,6 +58,15 @@ trait SaveAuditStatusTrait
     public function saveAuditStatusAdminSendReminder($entity, $feedback)
     {
         $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Feedback: '.$feedback, 'reminder-sent', true);
+    }
+
+    public function saveAuditStatusProjectDeveloperSubmitDraft($entity)
+    {
+        if ($entity->status == 'approved' || $entity->status == 'needs-more-information') {
+            $type = 'change-request';
+            $comment = 'change request updated';
+        }
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment ?? 'Updated', $type ?? '-', true);
     }
 
     private function getApproveComment($data)
