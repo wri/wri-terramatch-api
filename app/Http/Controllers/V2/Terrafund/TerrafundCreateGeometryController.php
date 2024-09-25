@@ -87,19 +87,21 @@ class TerrafundCreateGeometryController extends Controller
                 $geojson = json_decode($geojsonData, true);
                 SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
                 SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
+
                 return $service->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
 
             }
 
         } catch (Exception $e) {
-          $errorMessage = $e->getMessage();
-          $decodedErrorMessage = json_decode($errorMessage, true);
-          if (json_last_error() === JSON_ERROR_NONE) {
-              return ['error' => $decodedErrorMessage];
-          } else {
-              Log::info('Error inserting geojson to DB', ['error' => $errorMessage]);
-              return ['error' => $errorMessage];
-          }
+            $errorMessage = $e->getMessage();
+            $decodedErrorMessage = json_decode($errorMessage, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return ['error' => $decodedErrorMessage];
+            } else {
+                Log::info('Error inserting geojson to DB', ['error' => $errorMessage]);
+
+                return ['error' => $errorMessage];
+            }
         }
     }
 
