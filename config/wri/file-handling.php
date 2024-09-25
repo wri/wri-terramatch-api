@@ -8,9 +8,8 @@ return [
         'photos' => 'file|mimes:jpg,png',
         'pdf' => 'file|mimes:pdf',
         'documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,doc',
-        'general-documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,png,jpg,doc',
+        'general-documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,png,jpg,doc,mp4',
         'spreadsheet' => 'file|mimes:pdf,xls,xlsx,csv,txt',
-        'videos' => 'file|mimes:mp4',
     ],
     'validation-file-types' => [
         'logo-image' => 'media',
@@ -20,6 +19,5 @@ return [
         'pdf' => 'media',
         'general-documents' => 'documents',
         'spreadsheet' => 'documents',
-        'videos' => 'media',
     ],
 ];

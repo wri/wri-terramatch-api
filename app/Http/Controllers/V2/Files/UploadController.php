@@ -148,14 +148,10 @@ class UploadController extends Controller
             return 'documents';
         }
 
-        if (in_array($media->mime_type, $images)) {
+        if (in_array($media->mime_type, $images) || in_array($media->mime_type, $videos)) {
             return 'media';
         }
 
-        if (in_array($media->mime_type, $videos)) {
-            return 'media';
-        }
-
-        return  config('wri.file-handling.validation-file-types.' . data_get($config, 'validation', ''), '');
+        return config('wri.file-handling.validation-file-types.' . data_get($config, 'validation', ''), '');
     }
 }
