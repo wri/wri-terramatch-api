@@ -10,6 +10,7 @@ return [
         'documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,doc',
         'general-documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,png,jpg,doc',
         'spreadsheet' => 'file|mimes:pdf,xls,xlsx,csv,txt',
+        'videos' => 'file|mimes:mp4',
     ],
     'validation-file-types' => [
         'logo-image' => 'media',
@@ -19,5 +20,6 @@ return [
         'pdf' => 'media',
         'general-documents' => 'documents',
         'spreadsheet' => 'documents',
+        'videos' => 'media',
     ],
 ];
