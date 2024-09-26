@@ -53,7 +53,7 @@ class AdminIndexSiteReportsController extends Controller
         ]);
 
         if (! empty($request->query('search'))) {
-            $ids = SiteReport::searchReports(trim($request->query('search')))->pluck('id')->toArray();
+            $ids = SiteReport::search(trim($request->query('search')))->pluck('id')->toArray();
             $query->whereIn('v2_site_reports.id', $ids);
         }
 

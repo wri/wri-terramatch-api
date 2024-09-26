@@ -42,7 +42,7 @@ class ProjectReportsViaProjectController extends Controller
         }
 
         if (! empty($request->query('search'))) {
-            $ids = ProjectReport::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = ProjectReport::search(trim($request->query('search')))->pluck('id')->toArray();
             $qry->whereIn('id', $ids);
         }
 

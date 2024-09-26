@@ -40,7 +40,7 @@ class SiteReportsViaSiteController extends Controller
         }
 
         if (! empty($request->query('search'))) {
-            $ids = SiteReport::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = SiteReport::search(trim($request->query('search')))->pluck('id')->toArray();
             $qry->whereIn('v2_site_reports.id', $ids);
         }
 
