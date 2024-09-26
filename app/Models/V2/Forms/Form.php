@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -24,7 +23,6 @@ class Form extends Model implements MediaModel
     use HasFactory;
     use SoftDeletes;
     use HasUuid;
-    use Searchable;
     use HasI18nTranslations;
     use HasV2MediaCollections;
     use InteractsWithMedia;
@@ -126,6 +124,12 @@ class Form extends Model implements MediaModel
         return [
             'title' => $this->title,
         ];
+    }
+
+    public static function search($query)
+    {
+        return self::select('forms.*')
+            ->where('forms.title', 'like', "%$query%");
     }
 
     public function i18nTitle(): BelongsTo

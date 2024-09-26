@@ -9,14 +9,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 
 class FormOptionListOption extends Model
 {
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasI18nTranslations;
 
     protected $guarded = [];
@@ -26,6 +24,12 @@ class FormOptionListOption extends Model
         return [
             'label' => $this->label,
         ];
+    }
+
+    public static function search($query)
+    {
+        return self::select('form_option_list_options.*')
+            ->where('form_option_list_options.label', 'like', "%$query%");
     }
 
     public function i18nLabel(): BelongsTo
