@@ -16,7 +16,6 @@ class GetJobsCreatedController extends Controller
         $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
 
         $rawProjectIds = $query
-        ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
         ->select('v2_projects.id', 'organisations.type')
         ->get();
 
