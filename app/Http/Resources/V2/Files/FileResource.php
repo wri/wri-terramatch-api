@@ -20,6 +20,7 @@ class FileResource extends JsonResource
             'lat' => (float) $this->lat ?? null,
             'lng' => (float) $this->lng ?? null,
             'is_public' => (bool) $this->is_public,
+            'is_cover' => (bool) $this->is_cover,
             'created_at' => $this->created_at,
         ];
     }
