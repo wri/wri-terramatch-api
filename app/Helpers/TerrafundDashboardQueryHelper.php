@@ -5,21 +5,34 @@ namespace App\Helpers;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Support\Facades\Log;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Http\Request;
 
 class TerrafundDashboardQueryHelper
 {
-    public static function buildQueryFromRequest($request)
+    public static function buildQueryFromRequest(Request $request)
     {
-        $query = Project::where('framework_key', 'terrafund')
-            ->whereHas('organisation', function ($query) {
-                $query->whereIn('type', ['for-profit-organization', 'non-profit-organization']);
+        $query = QueryBuilder::for(Project::class)
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+            ->select('v2_projects.*',
+                'organisations.name as organisation_name',
+                'organisations.type as organisation_type',
+            )
+            ->allowedFilters([
+                AllowedFilter::exact('framework_key'),
+                AllowedFilter::exact('landscape'),
+                AllowedFilter::exact('country'),
+                AllowedFilter::exact('organisations.type'),
+                AllowedFilter::exact('v2_projects.status'),
+            ]);
+
+        if ($request->has('search')) {
+            $searchTerm = $request->query('search');
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('v2_projects.name', 'like', "%$searchTerm%")
+                    ->orWhere('v2_projects.framework_key', 'like', "%$searchTerm%");
             });
-        if ($request->has('country')) {
-            $country = $request->input('country');
-            $query = $query->where('country', $country);
-        } elseif ($request->has('uuid')) {
-            $projectId = $request->input('uuid');
-            $query = $query->where('v2_projects.uuid', $projectId);
         }
 
         return $query;

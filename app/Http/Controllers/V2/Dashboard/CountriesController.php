@@ -7,6 +7,8 @@ use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Projects\Project;
 use Illuminate\Http\Request;
+use App\Helpers\TerrafundDashboardQueryHelper;
+use Illuminate\Support\Facades\Log;
 
 class CountriesController extends Controller
 {
@@ -19,10 +21,7 @@ class CountriesController extends Controller
 
     public function getAllCountries($request)
     {
-        $projectsCountrieslug = Project::where('framework_key', 'terrafund')
-            ->whereHas('organisation', function ($query) {
-                $query->whereIn('type', ['for-profit-organization', 'non-profit-organization']);
-            })->pluck('country');
+        $projectsCountrieslug = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->pluck('country');
         $countryId = FormOptionList::where('key', 'countries')->value('id');
         $countries = FormOptionListOption::where('form_option_list_id', $countryId)
             ->orderBy('label')
@@ -30,7 +29,7 @@ class CountriesController extends Controller
             ->get();
         $countriesResponse = [];
         foreach ($countries as $country) {
-            if ($request->input('country')) {
+            if (data_get($request, 'filter.country') === $country->slug) {
                 $countriesResponse[] = [
                     'country_slug' => $country->slug,
                     'id' => $country->id,

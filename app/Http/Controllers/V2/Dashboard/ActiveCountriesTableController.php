@@ -6,26 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
+use App\Helpers\TerrafundDashboardQueryHelper;
+use Illuminate\Http\Request;
 
 class ActiveCountriesTableController extends Controller
 {
-    public function __invoke()
+    public function __invoke(Request $request)
     {
         $response = (object) [
-            'data' => $this->getAllCountries(),
+            'data' => $this->getAllCountries($request),
         ];
 
         return response()->json($response);
     }
 
-    public function getAllCountries()
+    public function getAllCountries($request)
     {
-        $projects = Project::where('framework_key', 'terrafund')
-            ->whereHas('organisation', function ($query) {
-                $query->whereIn('type', ['for-profit-organization', 'non-profit-organization']);
-            })->get();
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
         $countryId = FormOptionList::where('key', 'countries')->value('id');
         $countries = FormOptionListOption::where('form_option_list_id', $countryId)
             ->orderBy('label')

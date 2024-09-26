@@ -6,6 +6,7 @@ use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TotalTerrafundHeaderDashboardController extends Controller
 {
@@ -13,8 +14,8 @@ class TotalTerrafundHeaderDashboardController extends Controller
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
         $countryName = '';
-        if ($request->country) {
-            $countryName = WorldCountryGeneralized::where('iso', $request->country)->first()->country;
+        if (data_get($request, 'filter.country')) {
+            $countryName = WorldCountryGeneralized::where('iso', $request['filter']['country'])->first()->country;
         }
         $response = (object)[
             'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
