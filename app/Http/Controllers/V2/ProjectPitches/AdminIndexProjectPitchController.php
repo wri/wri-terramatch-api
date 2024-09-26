@@ -38,7 +38,7 @@ class AdminIndexProjectPitchController extends Controller
         }
 
         if ($request->query('search')) {
-            $ids = ProjectPitch::searchProjectPitches(trim($request->get('search')) ?? '')
+            $ids = ProjectPitch::search(trim($request->get('search')) ?? '')
                     ->pluck('id')
                     ->toArray();
 

@@ -14,7 +14,7 @@ class OrganisationListingController extends Controller
         $this->authorize('listing', Organisation::class);
 
         if (! empty($request->query('search'))) {
-            $qry = Organisation::searchOrganisations($request->query('search'))
+            $qry = Organisation::search($request->query('search'))
                 ->where('status', Organisation::STATUS_APPROVED);
             $qry->limit(25);
         } else {

@@ -120,7 +120,7 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
-    public static function searchUsers($query)
+    public static function search($query)
     {
         return self::select('users.*')
             ->leftJoin('organisations', 'users.organisation_id', '=', 'organisations.id')
