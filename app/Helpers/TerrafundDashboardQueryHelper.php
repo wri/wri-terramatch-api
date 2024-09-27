@@ -27,8 +27,7 @@ class TerrafundDashboardQueryHelper
         if ($request->has('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('v2_projects.name', 'like', "%$searchTerm%")
-                    ->orWhere('v2_projects.framework_key', 'like', "%$searchTerm%");
+                $query->where('v2_projects.name', 'like', "%$searchTerm%");
             });
         }
 
