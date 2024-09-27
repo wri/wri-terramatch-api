@@ -6,7 +6,6 @@ use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class TotalTerrafundHeaderDashboardController extends Controller
 {

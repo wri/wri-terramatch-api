@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
+use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
-use App\Models\V2\Projects\Project;
 use Illuminate\Http\Request;
-use App\Helpers\TerrafundDashboardQueryHelper;
-use Illuminate\Support\Facades\Log;
 
 class CountriesController extends Controller
 {
