@@ -144,6 +144,17 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'local_engagement_description',
         'indirect_beneficiaries',
         'indirect_beneficiaries_description',
+        'resilience_progress',
+        'local_governance',
+        'adaptive_management',
+        'scalability_replicability',
+        'convergence_jobs_description',
+        'convergence_schemes',
+        'convergence_amount',
+        'community_partners_assets_description',
+        'volunteer_scstobc',
+        'beneficiaries_scstobc_farmers',
+        'beneficiaries_scstobc',
 
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
