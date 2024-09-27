@@ -93,6 +93,12 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'paid_other_activity_description',
         'num_trees_regenerating',
         'regeneration_description',
+        'invasive_species_removed',
+        'invasive_species_management',
+        'soil_water_restoration_description',
+        'water_structures',
+        'site_community_partners_description',
+        'site_community_partners_income_increase_description',
 
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
