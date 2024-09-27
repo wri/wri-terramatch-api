@@ -22,6 +22,8 @@ class FileResource extends JsonResource
             'is_public' => (bool) $this->is_public,
             'is_cover' => (bool) $this->is_cover,
             'created_at' => $this->created_at,
+            'description' => $this->description,
+            'photographer' => $this->photographer
         ];
     }
 }
