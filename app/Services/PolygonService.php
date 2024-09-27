@@ -131,17 +131,13 @@ class PolygonService
 
     public function createGeojsonModels($geojson, $sitePolygonProperties = [], ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false): array
     {
-
-
         try {
             if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
                 return $this->transformAndStorePoints($geojson, $sitePolygonProperties);
             }
-
             $uuids = [];
             foreach ($geojson['features'] as $feature) {
                 DB::beginTransaction();
-
                 try {
                     if ($feature['geometry']['type'] === 'Polygon') {
                         $data = $this->insertSinglePolygon($feature['geometry']);
@@ -160,7 +156,6 @@ class PolygonService
                             $uuids[] = $data['uuid'];
                         }
                     }
-
                 } catch (\Exception $e) {
                     DB::rollBack();
                     Log::error('Error with polygon, rolled back current transaction', [
@@ -175,7 +170,6 @@ class PolygonService
             return $uuids;
 
         } catch (\Exception $e) {
-            // Handle any outer exceptions if needed.
             return response()->json(['error at create geojson models' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -373,7 +367,6 @@ class PolygonService
             return true;
         } catch (\Exception $e) {
             Log::error('Error inserting site polygon version', ['polygon uuid' => $polygonUuid, 'error' => $e->getMessage()]);
-
             return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
