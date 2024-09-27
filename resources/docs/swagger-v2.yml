@@ -91432,14 +91432,14 @@ paths:
     get:
       summary: view Jobs created for dashboard
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter counts and metrics by country.
-        - in: query
-          name: uuid
+          in: query
+          description: search term to use on the collection
+        - name: filter
           type: string
-          description: Optional. Filter counts and metrics by UUID.
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -91491,14 +91491,14 @@ paths:
     get:
       summary: View Restoration Strategy for dashboard
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter restoration strategy by country.
-        - in: query
-          name: uuid
+          in: query
+          description: search term to use on the collection
+        - name: filter
           type: string
-          description: Optional. Filter restoration strategy by UUID.
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -91558,14 +91558,14 @@ paths:
     get:
       summary: View Tree Restoration Goal for dashboard
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter tree restoration goal by country.
-        - in: query
-          name: uuid
+          in: query
+          description: search term to use on the collection
+        - name: filter
           type: string
-          description: Optional. Filter tree restoration goal by UUID.
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -91642,10 +91642,10 @@ paths:
       description: |
         This endpoint returns all polygons by project uuid.
       parameters:
-        - in: query
-          name: uuid
+        - name: filter
           type: string
-          description: uuid for the given project
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -91677,10 +91677,10 @@ paths:
       description: |
         This endpoint returns all polygons by project uuid.
       parameters:
-        - in: query
-          name: uuid
+        - name: filter
           type: string
-          description: uuid for the given project
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -91708,10 +91708,10 @@ paths:
       tags:
         - Projects
       parameters:
-        - in: query
-          name: uuid
+        - name: filter
           type: string
-          description: UUID of the project
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
           required: true
       responses:
         '200':
@@ -91731,10 +91731,10 @@ paths:
       tags:
         - Projects
       parameters:
-        - in: query
-          name: uuid
+        - name: filter
           type: string
-          description: UUID of the project
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
           required: true
       responses:
         '200':
