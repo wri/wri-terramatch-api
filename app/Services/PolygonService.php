@@ -138,6 +138,7 @@ class PolygonService
             $uuids = [];
             foreach ($geojson['features'] as $feature) {
                 DB::beginTransaction();
+
                 try {
                     if ($feature['geometry']['type'] === 'Polygon') {
                         $data = $this->insertSinglePolygon($feature['geometry']);
@@ -367,6 +368,7 @@ class PolygonService
             return true;
         } catch (\Exception $e) {
             Log::error('Error inserting site polygon version', ['polygon uuid' => $polygonUuid, 'error' => $e->getMessage()]);
+
             return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
