@@ -14,10 +14,7 @@ class TerrafundDashboardQueryHelper
     {
         $query = QueryBuilder::for(Project::class)
             ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
-            ->select('v2_projects.*',
-                'organisations.name as organisation_name',
-                'organisations.type as organisation_type',
-            )
+            ->select('v2_projects.*')
             ->allowedFilters([
                 AllowedFilter::exact('framework_key'),
                 AllowedFilter::exact('landscape'),

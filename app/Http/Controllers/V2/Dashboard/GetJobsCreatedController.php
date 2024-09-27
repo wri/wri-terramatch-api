@@ -86,7 +86,6 @@ class GetJobsCreatedController extends Controller
     private function getTotalJobsCreated($projectIds)
     {
         $sumData = ProjectReport::whereIn('project_id', $projectIds)
-            ->where('framework_key', 'terrafund')
             ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
             ->first();
 
@@ -96,7 +95,6 @@ class GetJobsCreatedController extends Controller
     private function getJobsCreatedDetailed($projectIds)
     {
         return ProjectReport::whereIn('project_id', $projectIds)
-            ->where('framework_key', 'terrafund')
             ->selectRaw(
                 'SUM(ft_total) as total_ft, 
                  SUM(pt_total) as total_pt, 
