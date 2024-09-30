@@ -91432,14 +91432,14 @@ paths:
     get:
       summary: view Jobs created for dashboard
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter counts and metrics by country.
-        - in: query
-          name: uuid
+          in: query
+          description: search term to use on the collection
+        - name: filter
           type: string
-          description: Optional. Filter counts and metrics by UUID.
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -91491,14 +91491,14 @@ paths:
     get:
       summary: View Restoration Strategy for dashboard
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter restoration strategy by country.
-        - in: query
-          name: uuid
+          in: query
+          description: search term to use on the collection
+        - name: filter
           type: string
-          description: Optional. Filter restoration strategy by UUID.
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -91558,14 +91558,14 @@ paths:
     get:
       summary: View Tree Restoration Goal for dashboard
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter tree restoration goal by country.
-        - in: query
-          name: uuid
+          in: query
+          description: search term to use on the collection
+        - name: filter
           type: string
-          description: Optional. Filter tree restoration goal by UUID.
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -91642,10 +91642,10 @@ paths:
       description: |
         This endpoint returns all polygons by project uuid.
       parameters:
-        - in: query
-          name: uuid
+        - name: filter
           type: string
-          description: uuid for the given project
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -91677,10 +91677,10 @@ paths:
       description: |
         This endpoint returns all polygons by project uuid.
       parameters:
-        - in: query
-          name: uuid
+        - name: filter
           type: string
-          description: uuid for the given project
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -91708,10 +91708,10 @@ paths:
       tags:
         - Projects
       parameters:
-        - in: query
-          name: uuid
+        - name: filter
           type: string
-          description: UUID of the project
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
           required: true
       responses:
         '200':
@@ -91731,10 +91731,10 @@ paths:
       tags:
         - Projects
       parameters:
-        - in: query
-          name: uuid
+        - name: filter
           type: string
-          description: UUID of the project
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
           required: true
       responses:
         '200':
@@ -91843,10 +91843,14 @@ paths:
       description: |
         This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter counts and metrics by country.
+          in: query
+          description: search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
         - in: query
           name: per_page
           type: string
@@ -91912,10 +91916,14 @@ paths:
       description: |
         This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter counts and metrics by country.
+          in: query
+          description: search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
         - in: query
           name: uuid
           type: string
@@ -91966,10 +91974,14 @@ paths:
       description: |
         This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter counts and metrics by country.
+          in: query
+          description: search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -92010,14 +92022,14 @@ paths:
       description: |
         This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter counts and metrics by country.
-        - in: query
-          name: uuid
+          in: query
+          description: search term to use on the collection
+        - name: filter
           type: string
-          description: Optional. Filter restoration strategy by UUID.
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -92052,10 +92064,14 @@ paths:
       description: |
         This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter counts and metrics by country.
+          in: query
+          description: search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -92088,10 +92104,14 @@ paths:
       description: |
         This endpoint returns all project location.
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Filter counts and metrics by country.
+          in: query
+          description: search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
@@ -92180,10 +92200,14 @@ paths:
       description: |
         This endpoint returns Tops and metrics related to projects and tree species.
       parameters:
-        - in: query
-          name: country
+        - name: search
           type: string
-          description: Optional. Filter counts and metrics by country.
+          in: query
+          description: search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
       responses:
         '200':
           description: Successful response
