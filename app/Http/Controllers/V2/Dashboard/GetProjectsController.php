@@ -13,7 +13,7 @@ class GetProjectsController extends Controller
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->whereNotNull('long')
             ->whereNotNull('lat')
-            ->select('uuid', 'long', 'lat', 'name')
+            ->select('v2_projects.uuid', 'long', 'lat', 'v2_projects.name')
             ->get();
 
         return response()->json(['data' => $projects]);

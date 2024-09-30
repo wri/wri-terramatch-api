@@ -67,7 +67,6 @@ class ViewTreeRestorationGoalController extends Controller
     private function getRawProjectIds($query)
     {
         return $query
-            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
             ->select('v2_projects.id', 'organisations.type')
             ->get();
     }
