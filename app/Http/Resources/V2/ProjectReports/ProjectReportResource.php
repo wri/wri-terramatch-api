@@ -100,6 +100,17 @@ class ProjectReportResource extends JsonResource
             'site_addition' => $this->site_addition,
             'paid_other_activity_description' => $this->paid_other_activity_description,
             'local_engagement_description' => $this->local_engagement_description,
+            'resilience_progress' => $this->resilience_progress,
+            'local_governance' => $this->local_governance,
+            'adaptive_management' => $this->adaptive_management,
+            'scalability_replicability' => $this->scalability_replicability,
+            'convergence_jobs_description' => $this->convergence_jobs_description,
+            'convergence_schemes' => $this->convergence_schemes,
+            'convergence_amount' => $this->convergence_amount,
+            'community_partners_assets_description' => $this->community_partners_assets_description,
+            'volunteer_scstobc' => $this->volunteer_scstobc,
+            'beneficiaries_scstobc_farmers' => $this->beneficiaries_scstobc_farmers,
+            'beneficiaries_scstobc' => $this->beneficiaries_scstobc,
         ];
 
         return $this->appendFilesToResource($data);

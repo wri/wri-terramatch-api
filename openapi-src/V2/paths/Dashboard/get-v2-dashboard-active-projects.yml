@@ -2,10 +2,14 @@ summary: Retrieve all active projects list view.
 description: |
   This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
 parameters:
-  - in: query
-    name: country
+  - name: search
     type: string
-    description: Optional. Filter counts and metrics by country.
+    in: query
+    description: 'search term to use on the collection'
+  - name: filter
+    type: string
+    in: query
+    description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
   - in: query
     name: per_page
     type: string

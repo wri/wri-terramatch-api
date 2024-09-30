@@ -198,7 +198,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         ];
     }
 
-    public static function searchSites($query)
+    public static function search($query)
     {
         return self::select('v2_sites.*')
             ->join('v2_projects', 'v2_sites.project_id', '=', 'v2_projects.id')

@@ -65,7 +65,7 @@ class Application extends Model
         ];
     }
 
-    public static function searchApplications($query)
+    public static function search($query)
     {
         return self::select('applications.*')
             ->join('organisations', 'applications.organisation_uuid', '=', 'organisations.uuid')

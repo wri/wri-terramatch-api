@@ -218,7 +218,7 @@ class Organisation extends Model implements MediaModel
         ];
     }
 
-    public static function searchOrganisations($query)
+    public static function search($query)
     {
         return self::select('organisations.*')
             ->where('organisations.name', 'like', "%$query%");

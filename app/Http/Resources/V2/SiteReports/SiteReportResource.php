@@ -44,6 +44,13 @@ class SiteReportResource extends JsonResource
             'total_trees_planted_count' => $this->total_trees_planted_count,
             'total_seeds_planted_count' => $this->total_seeds_planted_count,
 
+            'invasive_species_removed' => $this->invasive_species_removed,
+            'invasive_species_management' => $this->invasive_species_management,
+            'soil_water_restoration_description' => $this->soil_water_restoration_description,
+            'water_structures' => $this->water_structures,
+            'site_community_partners_description' => $this->site_community_partners_description,
+            'site_community_partners_income_increase_description' => $this->site_community_partners_income_increase_description,
+
             'due_at' => $this->due_at,
             'approved_at' => $this->approved_at,
             'submitted_at' => $this->submitted_at,
