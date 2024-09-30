@@ -361,4 +361,8 @@ class GeometryHelper
     {
         return SitePolygon::where('site_id', $uuid)->where('is_active', true)->get()->pluck('poly_id');
     }
+    public static function getSitePolygonsOfPolygons(array $polygonUuids)
+    {
+        return SitePolygon::whereIn('poly_id', $polygonUuids)->where('is_active', true)->get()->pluck('uuid');
+    }
 }

@@ -1213,6 +1213,20 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'An error occurred during site validation'], 500);
         }
     }
+    
+    public function getPolygonsValidation(Request $request) 
+    {
+      try{
+        $uuids = $request->input('uuids');
+        $sitePolygonsUuids = GeometryHelper::getSitePolygonsOfPolygons($uuids);
+        foreach ($sitePolygonsUuids as $polygonUuid) {
+          $this->runValidationPolygon($polygonUuid);
+        }
+        return response()->json(['message' => 'Validation completed for these polygons'], 200);
+      } catch (\Exception $e) {
+        return response()->json(['error' => 'An error occurred during validation'], 500);
+      }
+    }
 
     public function getCurrentSiteValidation(Request $request)
     {
