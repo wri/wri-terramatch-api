@@ -547,7 +547,28 @@ class TerrafundCreateGeometryController extends Controller
 
         return response()->json(['polygon_id' => $uuid, 'criteria_list' => $criteriaList]);
     }
-
+    public function getCriteriaDataForMultiplePolygons(array $uuids)
+    {
+        $result = [];
+        $unprocessed = [];
+    
+        foreach ($uuids as $uuid) {
+            $geometry = PolygonGeometry::isUuid($uuid)->first();
+    
+            if ($geometry === null) {
+                continue;
+            }
+            $criteriaList = GeometryHelper::getCriteriaDataForPolygonGeometry($geometry);
+    
+            if (empty($criteriaList)) {
+                $unprocessed[] = ['uuid' => $uuid, 'error' => 'Criteria data not found for the given polygon'];
+                continue;
+            }
+            $result[] = ['polygon_id' => $uuid, 'criteria_list' => $criteriaList];
+        }
+        return response()->json($result);
+    }
+    
     public function uploadGeoJSONFileProject(Request $request)
     {
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);

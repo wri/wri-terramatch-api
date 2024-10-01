@@ -10,7 +10,7 @@ responses:
   '200':
     description: Clipped polygons processed successfully
     schema:
-      $ref: '../../definitions/_index.yml#/ClippedPolygonsResponse'
+      $ref: '../../definitions/_index.yml#/ClippedPolygonResponse'
   '400':
     description: Bad request
   '404':
