@@ -21,11 +21,12 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
         return $this->processClippedPolygons($polygonUuids);
     }
+
     public function clipOverlappingPolygons(Request $request)
     {
         $uuids = $request->input('uuids');
         Log::info('Clipping polygons', ['uuids' => $uuids]);
-        if (empty($uuids) || !is_array($uuids)) {
+        if (empty($uuids) || ! is_array($uuids)) {
             return response()->json(['error' => 'Invalid or missing UUIDs'], 400);
         }
         $allPolygonUuids = [];
@@ -35,42 +36,44 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
                 ->where('polygon_id', $uuid)
                 ->first()
                 ->extra_info ?? null;
-    
+
             if (! $polygonOverlappingExtraInfo) {
                 $sitePolygon = SitePolygon::where('poly_id', $uuid)->active()->first();
                 if ($sitePolygon) {
-                  $unprocessedPolygons[] = [
-                    'uuid' => $uuid,
-                    'poly_name' => $sitePolygon->poly_name ?? 'Unnamed Polygon'
-                  ];
+                    $unprocessedPolygons[] = [
+                      'uuid' => $uuid,
+                      'poly_name' => $sitePolygon->poly_name ?? 'Unnamed Polygon',
+                    ];
                 } else {
-                  $unprocessedPolygons[] = $uuid;
+                    $unprocessedPolygons[] = $uuid;
                 }
-                continue; 
+
+                continue;
             }
             $decodedInfo = json_decode($polygonOverlappingExtraInfo, true);
             $polygonUuidsOverlapping = array_map(function ($item) {
                 return $item['poly_uuid'] ?? null;
             }, $decodedInfo);
             $polygonUuids = array_filter($polygonUuidsOverlapping);
-            array_unshift($polygonUuids, $uuid); 
+            array_unshift($polygonUuids, $uuid);
             $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
         }
         $uniquePolygonUuids = array_unique($allPolygonUuids);
         $processedPolygons = [];
-        if (!empty($uniquePolygonUuids)) {
-          $response = $this->processClippedPolygons($uniquePolygonUuids);
-          $responseData = $response->getData(true);
-          $processedPolygons = $responseData['updated_polygons'] ?? [];
+        if (! empty($uniquePolygonUuids)) {
+            $response = $this->processClippedPolygons($uniquePolygonUuids);
+            $responseData = $response->getData(true);
+            $processedPolygons = $responseData['updated_polygons'] ?? [];
         } else {
-            $processedPolygons = null; 
+            $processedPolygons = null;
         }
+
         return response()->json([
             'processed' => $processedPolygons,
             'unprocessed' => $unprocessedPolygons,
         ]);
     }
-    
+
     public function clipOverlappingPolygon(string $uuid)
     {
         $polygonOverlappingExtraInfo = CriteriaSite::forCriteria(PolygonService::OVERLAPPING_CRITERIA_ID)
