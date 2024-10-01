@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <!-- add styles -->
         <style>
-            .table-custom {
+            .full-width-fixed-table {
                 table-layout : fixed;
                 border-collapse: collapse;
                 border-spacing: 0;
