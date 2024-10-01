@@ -24,7 +24,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
     public function clipOverlappingPolygons(Request $request)
     {
         $uuids = $request->input('uuids');
-    
+        Log::info('Clipping polygons', ['uuids' => $uuids]);
         if (empty($uuids) || !is_array($uuids)) {
             return response()->json(['error' => 'Invalid or missing UUIDs'], 400);
         }
@@ -57,13 +57,16 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
         }
         $uniquePolygonUuids = array_unique($allPolygonUuids);
+        $processedPolygons = [];
         if (!empty($uniquePolygonUuids)) {
-            $result = $this->processClippedPolygons($uniquePolygonUuids);
+          $response = $this->processClippedPolygons($uniquePolygonUuids);
+          $responseData = $response->getData(true);
+          $processedPolygons = $responseData['updated_polygons'] ?? [];
         } else {
-            $result = null; 
+            $processedPolygons = null; 
         }
         return response()->json([
-            'processed' => $result,
+            'processed' => $processedPolygons,
             'unprocessed' => $unprocessedPolygons,
         ]);
     }
