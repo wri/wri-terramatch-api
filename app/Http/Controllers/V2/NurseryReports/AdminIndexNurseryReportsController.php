@@ -55,7 +55,7 @@ class AdminIndexNurseryReportsController extends Controller
         ]);
 
         if (! empty($request->query('search'))) {
-            $ids = NurseryReport::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = NurseryReport::search(trim($request->query('search')))->pluck('id')->toArray();
             $query->whereIn('v2_nursery_reports.id', $ids);
         }
 

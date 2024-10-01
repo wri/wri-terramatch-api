@@ -7,7 +7,6 @@ use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 
 class Polygon extends Model
 {
@@ -15,7 +14,6 @@ class Polygon extends Model
     use HasUuid;
     use SoftDeletes;
     use HasStatus;
-    use Searchable;
 
     public $table = 'v2_polygons';
 
@@ -37,6 +35,12 @@ class Polygon extends Model
         return [
             'name' => $this->name,
         ];
+    }
+
+    public static function search($query)
+    {
+        return self::select('v2_polygons.*')
+            ->where('v2_polygons.name', 'like', "%$query%");
     }
 
     public function polygonable()

@@ -16,7 +16,6 @@ class GetJobsCreatedController extends Controller
         $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
 
         $rawProjectIds = $query
-        ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
         ->select('v2_projects.id', 'organisations.type')
         ->get();
 
@@ -87,7 +86,6 @@ class GetJobsCreatedController extends Controller
     private function getTotalJobsCreated($projectIds)
     {
         $sumData = ProjectReport::whereIn('project_id', $projectIds)
-            ->where('framework_key', 'terrafund')
             ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
             ->first();
 
@@ -97,7 +95,6 @@ class GetJobsCreatedController extends Controller
     private function getJobsCreatedDetailed($projectIds)
     {
         return ProjectReport::whereIn('project_id', $projectIds)
-            ->where('framework_key', 'terrafund')
             ->selectRaw(
                 'SUM(ft_total) as total_ft, 
                  SUM(pt_total) as total_pt, 

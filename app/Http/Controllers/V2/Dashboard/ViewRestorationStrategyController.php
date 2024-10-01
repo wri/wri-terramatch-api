@@ -43,6 +43,10 @@ class ViewRestorationStrategyController extends Controller
 
     private function getRestorationStrategy(array $projectIds)
     {
+        if (empty($projectIds)) {
+            return;
+        }
+
         $conditions = implode(' OR ', array_map(function ($strategy) {
             return "JSON_UNQUOTE(JSON_EXTRACT(restoration_strategy, CONCAT('\$[', numbers.n, ']'))) = '$strategy'";
         }, self::RESTORATION_STRATEGIES));
@@ -69,6 +73,9 @@ class ViewRestorationStrategyController extends Controller
 
     private function getLandUseType(array $projectIds)
     {
+        if (empty($projectIds)) {
+            return;
+        }
         $conditions = implode(' OR ', array_map(function ($type) {
             return "JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_use_types, CONCAT('\$[', numbers.n, ']'))) = '$type'";
         }, self::LAND_USE_TYPES));
@@ -95,6 +102,9 @@ class ViewRestorationStrategyController extends Controller
 
     private function getLandTenures(array $projectIds)
     {
+        if (empty($projectIds)) {
+            return;
+        }
         $conditions = implode(' OR ', array_map(function ($type) {
             return "JSON_UNQUOTE(JSON_EXTRACT(v2_sites.land_tenures, CONCAT('\$[', numbers.n, ']'))) = '$type'";
         }, self::LAND_TENURES));

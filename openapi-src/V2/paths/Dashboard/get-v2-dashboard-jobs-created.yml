@@ -1,13 +1,13 @@
 summary: view Jobs created for dashboard
 parameters:
-  - in: query
-    name: country
+  - name: search
     type: string
-    description: Optional. Filter counts and metrics by country.
-  - in: query
-    name: uuid
+    in: query
+    description: 'search term to use on the collection'
+  - name: filter
     type: string
-    description: Optional. Filter counts and metrics by UUID.
+    in: query
+    description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
 responses:
   '200':
     description: Successful response

@@ -58,7 +58,7 @@ class AdminIndexSitesController extends Controller
             if (is_numeric($search)) {
                 $query->where('v2_sites.ppc_external_id', $search);
             } else {
-                $ids = Site::searchSites($search)->pluck('id')->toArray();
+                $ids = Site::search($search)->pluck('id')->toArray();
                 $query->whereIn('v2_sites.id', $ids);
             }
         }

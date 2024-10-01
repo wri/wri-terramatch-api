@@ -31,7 +31,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -44,7 +43,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
@@ -146,6 +144,17 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'local_engagement_description',
         'indirect_beneficiaries',
         'indirect_beneficiaries_description',
+        'resilience_progress',
+        'local_governance',
+        'adaptive_management',
+        'scalability_replicability',
+        'convergence_jobs_description',
+        'convergence_schemes',
+        'convergence_amount',
+        'community_partners_assets_description',
+        'volunteer_scstobc',
+        'beneficiaries_scstobc_farmers',
+        'beneficiaries_scstobc',
 
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
@@ -218,6 +227,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             'project_name' => $this->project->name,
             'organisation_name' => $this->organisation->name,
         ];
+    }
+
+    public static function search($query)
+    {
+        return self::select('v2_project_reports.*')
+            ->join('v2_projects', 'v2_project_reports.project_id', '=', 'v2_projects.id')
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+            ->where('v2_projects.name', 'like', "%$query%")
+            ->orWhere('organisations.name', 'like', "%$query%");
     }
 
     /** RELATIONS */
