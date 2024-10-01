@@ -77,25 +77,25 @@ class TaskDigestMail extends I18nMail
                     $count++;
                     if ($count === 1) {
                         $rows .= '<tr>';
-                        $rows .= '<td class="border-custom" rowspan='.count($list).'>'.$typeLabels[$type].'</td>';
-                        $rows .= '<td class="border-custom">' .($element['name'] ?? 'n/a') . '</td>';
-                        $rows .= '<td class="border-custom">' . ($element['action'] ?? 'n/a') . '</td>';
-                        $rows .= '<td class="border-custom">' . ($element['latestComment'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-light-gray" rowspan='.count($list).'>'.$typeLabels[$type].'</td>';
+                        $rows .= '<td class="border-light-gray">' .($element['name'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-light-gray">' . ($element['action'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-light-gray">' . ($element['latestComment'] ?? 'n/a') . '</td>';
                         $rows .= '</tr>';
                     } else {
                         $rows .= '<tr>';
-                        $rows .= '<td class="border-custom">' . ($element['name'] ?? 'n/a') . '</td>';
-                        $rows .= '<td class="border-custom">' . ($element['action'] ?? 'n/a') . '</td>';
-                        $rows .= '<td class="border-custom">' . ($element['latestComment'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-light-gray">' . ($element['name'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-light-gray">' . ($element['action'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-light-gray">' . ($element['latestComment'] ?? 'n/a') . '</td>';
                         $rows .= '</tr>';
                     }
                 }
             } else {
                 $rows .= '<tr>';
-                $rows .= '<td class="border-custom" rowspan="1">'.$typeLabels[$type].'</td>';
-                $rows .= '<td class="border-custom">n/a</td>';
-                $rows .= '<td class="border-custom">n/a</td>';
-                $rows .= '<td class="border-custom">n/a</td>';
+                $rows .= '<td class="border-light-gray" rowspan="1">'.$typeLabels[$type].'</td>';
+                $rows .= '<td class="border-light-gray">n/a</td>';
+                $rows .= '<td class="border-light-gray">n/a</td>';
+                $rows .= '<td class="border-light-gray">n/a</td>';
                 $rows .= '</tr>';
             }
 

@@ -10,7 +10,7 @@
                 border-spacing: 0;
                 width: 100%;
             }
-            .border-custom {
+            .border-light-gray {
                 border: 1px solid #ddd;
             }
         </style>

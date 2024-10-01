@@ -34,10 +34,11 @@ class SendDailyDigestNotificationsJob implements ShouldQueue
     public function handle(): void
     {
         $users = $this->task->project->users()->get();
-        foreach ($users as $user) {
-            Mail::to($user->email_address)->send(
-                new TaskDigestMail($user, $this->task)
-            );
+        $usersGroupedByLocale = $users->groupBy('locale');
+
+        foreach ($usersGroupedByLocale as $locale => $users) {
+            $groupedLocale['locale'] = $locale;
+            Mail::to($users->pluck('email_address')->toArray())->queue(new TaskDigestMail($groupedLocale, $this->task));
         }
     }
 }

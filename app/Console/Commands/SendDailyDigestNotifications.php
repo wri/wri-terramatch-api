@@ -27,8 +27,10 @@ class SendDailyDigestNotifications extends Command
      */
     public function handle()
     {
-        Task::isIncomplete()->get()->each(function (Task $task) {
-            SendDailyDigestNotificationsJob::dispatchSync($task);
+        Task::isIncomplete()->chunkById(100, function ($tasks) {
+            $tasks->each(function (Task $task) {
+                SendDailyDigestNotificationsJob::dispatchSync($task);
+            });
         });
     }
 }
