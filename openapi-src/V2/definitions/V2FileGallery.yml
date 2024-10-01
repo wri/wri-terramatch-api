@@ -9,6 +9,8 @@ properties:
     type: string
   file_name:
     type: string
+  name:
+    type: string
   created_date:
     type: string
   model_name:
