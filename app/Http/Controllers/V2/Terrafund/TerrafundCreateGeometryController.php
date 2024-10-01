@@ -1239,11 +1239,10 @@ class TerrafundCreateGeometryController extends Controller
     {
       try{
         $uuids = $request->input('uuids');
-        $sitePolygonsUuids = GeometryHelper::getSitePolygonsOfPolygons($uuids);
-        foreach ($sitePolygonsUuids as $polygonUuid) {
+        foreach ($uuids as $polygonUuid) {
           $this->runValidationPolygon($polygonUuid);
         }
-        return response()->json(['message' => 'Validation completed for these polygons'], 200);
+        return response()->json(['message' => 'Validation completed for these polygonsxxxx'], 200);
       } catch (\Exception $e) {
         return response()->json(['error' => 'An error occurred during validation'], 500);
       }
