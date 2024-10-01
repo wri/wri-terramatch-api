@@ -308,11 +308,11 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('task-digest.title', 'Action Items Summary - Task Due {date}');
         $this->createLocalizationKey('task-digest.body', 'Please note: this digest summarizes any reports that require engagement or were approved today. Any reports already approved will not be mentioned below, since they do not require any action. Once all reports in this task are approved, the task status will be changed to approved, and you’ll no longer receive this digest. 
             <table class="table-custom">
-            <tr class="border-custom">
-                <th class="border-custom" style="width: 25%;">Submission Status</th>
-                <th class="border-custom" style="width: 25%;">Report Name</th>
-                <th class="border-custom" style="width: 25%;">Action</th>
-                <th class="border-custom" style="width: 25%;">Latest comments</th>
+            <tr class="border-light-gray">
+                <th class="border-light-gray" style="width: 25%;">Submission Status</th>
+                <th class="border-light-gray" style="width: 25%;">Report Name</th>
+                <th class="border-light-gray" style="width: 25%;">Action</th>
+                <th class="border-light-gray" style="width: 25%;">Latest comments</th>
             </tr>
             {reportData}
             </table>');
