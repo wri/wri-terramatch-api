@@ -1,12 +1,30 @@
-title: ClippedPolygonsResponse
 type: object
 properties:
-  updated_polygons:
+  processed:
     type: array
+    description: A list of processed polygons
     items:
       type: object
       properties:
         uuid:
           type: string
+          description: The UUID of the unprocessed polygon
+          example: uuid1
         poly_name:
           type: string
+          description: The name of the unprocessed polygon
+          example: "Polygon Name"
+  unprocessed:
+    type: array
+    description: A list of polygons that couldn't be processed
+    items:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: The UUID of the unprocessed polygon
+          example: uuid1
+        poly_name:
+          type: string
+          description: The name of the unprocessed polygon
+          example: "Polygon Name"
