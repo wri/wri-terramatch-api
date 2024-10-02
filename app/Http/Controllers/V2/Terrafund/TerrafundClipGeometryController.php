@@ -71,7 +71,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         return response()->json([
             'processed' => $processedPolygons,
             'unprocessed' => $unprocessedPolygons,
-        ]);
+        ], 200);
     }
 
     public function clipOverlappingPolygon(string $uuid)
