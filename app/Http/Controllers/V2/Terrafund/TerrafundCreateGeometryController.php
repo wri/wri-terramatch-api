@@ -1246,7 +1246,7 @@ class TerrafundCreateGeometryController extends Controller
                 $this->runValidationPolygon($polygonUuid);
             }
 
-            return response()->json(['message' => 'Validation completed for these polygonsxxxx'], 200);
+            return response()->json(['message' => 'Validation completed for these polygons'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred during validation'], 500);
         }
