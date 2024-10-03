@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Helpers\GeometryHelper;
 use App\Models\DelayedJob;
 use App\Services\PolygonService;
+use App\Services\SiteService;
 use App\Validators\SitePolygonValidator;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -61,50 +62,46 @@ class InsertGeojsonToDBJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(PolygonService $service)
     {
         try {
+            Log::info('starting the job to sleep zzz....', ['job_uuid' => $this->job_uuid]);
             DelayedJob::create([
-              'uuid' => $this->job_uuid,
-              'status' => self::STATUS_PENDING,
-              'created_at' => now(),
+                'uuid' => $this->job_uuid,
+                'status' => self::STATUS_PENDING,
+                'created_at' => now(),
             ]);
-            $tempDir = sys_get_temp_dir();
-            $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $this->geojsonFilename;
-            $geojsonData = file_get_contents($geojsonPath);
-
-            $service = App::make(PolygonService::class);
-
-            if ($this->entity_type === 'project' || $this->entity_type === 'project-pitch') {
-                $entity = $service->getEntity($this->entity_type, $this->entity_uuid);
-                $hasBeenDeleted = GeometryHelper::deletePolygonWithRelated($entity);
-
-                if ($entity && $hasBeenDeleted) {
-                    $payload = $service->createProjectPolygon($entity, $geojsonData);
-                } else {
-                    Log::error('Entity not found');
-                }
-            } else {
-                $geojson = json_decode($geojsonData, true);
-
-                SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
-                SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
-
-                $payload = $service->createGeojsonModels($geojson, ['site_id' => $this->entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $this->primary_uuid, $this->submit_polygon_loaded);
+            $uuids = $service->insertGeojsonToDB(
+                $this->geojsonFilename,
+                $this->entity_uuid,
+                $this->entity_type,
+                $this->primary_uuid,
+                $this->submit_polygon_loaded
+            );
+            if (isset($uuids['error'])) {
+              throw new Exception($uuids['error']);
             }
+            App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
             DelayedJob::where('uuid', $this->job_uuid)->update([
-              'status' => self::STATUS_SUCCEEDED,
-              'payload' => json_encode($payload),
-              'updated_at' => now(),
+                'status' => self::STATUS_SUCCEEDED,
+                'payload' => json_encode($uuids),
+                'updated_at' => now(),
             ]);
+    
         } catch (Exception $e) {
             DelayedJob::where('uuid', $this->job_uuid)->update([
-              'status' => self::STATUS_FAILED,
-              'payload' => json_encode(['error' => $e->getMessage()]),
-              'updated_at' => now(),
+                'status' => self::STATUS_FAILED,
+                'payload' => json_encode(['error' => $e->getMessage()]),
+                'updated_at' => now(),
             ]);
-            $errorMessage = $e->getMessage();
-            Log::error('Error inserting GeoJSON to DB', ['error' => $errorMessage]);
+    
+            Log::error('Error inserting GeoJSON to DB', ['error' => $e->getMessage()]);
         }
     }
+    public function getJobUuid()
+    {
+        return $this->job_uuid;
+    }
+
+    
 }

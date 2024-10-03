@@ -485,14 +485,13 @@ class PolygonService
             $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
             $geojsonData = file_get_contents($geojsonPath);
 
-            $service = App::make(PolygonService::class);
-
             if ($entity_type === 'project' || $entity_type === 'project-pitch') {
-                $entity = $service->getEntity($entity_type, $entity_uuid);
+                $entity = $this->getEntity($entity_type, $entity_uuid);
+                
                 $hasBeenDeleted = GeometryHelper::deletePolygonWithRelated($entity);
 
                 if ($entity && $hasBeenDeleted) {
-                    return $service->createProjectPolygon($entity, $geojsonData);
+                    return $this->createProjectPolygon($entity, $geojsonData);
                 } else {
                     return ['error' => 'Entity not found'];
                 }
@@ -502,7 +501,7 @@ class PolygonService
                 SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
                 SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
 
-                return $service->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
+                return $this->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
 
             }
 
