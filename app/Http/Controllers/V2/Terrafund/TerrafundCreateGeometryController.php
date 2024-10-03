@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
+use App\Jobs\InsertGeojsonToDBJob;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
@@ -380,7 +381,7 @@ class TerrafundCreateGeometryController extends Controller
                 $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
                 $submitPolygonsLoaded = $request->input('submit_polygon_loaded') === true || $request->input('submit_polygon_loaded') === 'true';
                 if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
-                    $uuid = App::make(PolygonService::class)->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
+                      $job = new InsertGeojsonToDBJob($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
                 }
 
                 if ($polygonLoadedList) {
@@ -392,14 +393,11 @@ class TerrafundCreateGeometryController extends Controller
                 }
 
                 if ($submitPolygonsLoaded) {
-                    $uuid = App::make(PolygonService::class)->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
+                    $job = new InsertGeojsonToDBJob($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
                 }
-                if (isset($uuid['error'])) {
-                    return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
-                }
-                App::make(SiteService::class)->setSiteToRestorationInProgress($site_id);
-
-                return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
+                $jobUUID = $job->getJobUuid();
+                dispatch($job);
+                return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $jobUUID], 200);
             } else {
                 return response()->json(['error' => 'Failed to open the ZIP file'], 400);
             }
