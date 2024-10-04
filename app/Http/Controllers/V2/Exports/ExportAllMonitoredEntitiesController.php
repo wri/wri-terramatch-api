@@ -30,7 +30,7 @@ class ExportAllMonitoredEntitiesController extends Controller
         $filename = Str::of(data_get($form, 'title', 'Form'))->replace(['/', '\\'], '-') . ' '.Str::of($entity)->replace('-', ' ')->ucfirst().' - ' . now() . '.csv';
 
         return response()->streamDownload(function () use ($csv) {
-            echo $csv->toString();
+            echo "\xEF\xBB\xBF" . $csv->toString();
         }, $filename, [
             'Content-Type' => 'text/csv',
         ]);
