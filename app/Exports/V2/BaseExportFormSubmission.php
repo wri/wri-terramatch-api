@@ -108,7 +108,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                         $utf8Answer = $answer ?? '';
                     }
 
-                return $utf8Answer;
+                    return $utf8Answer;
             }
         }
 
