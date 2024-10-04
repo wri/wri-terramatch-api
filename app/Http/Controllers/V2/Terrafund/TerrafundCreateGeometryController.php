@@ -1169,7 +1169,7 @@ class TerrafundCreateGeometryController extends Controller
         $this->validateDataInDB($request);
     }
 
-    public function getValidationPolygon(Request $request)
+    public function sendRunValidationPolygon(Request $request)
     {
 
         $uuid = $request->input('uuid');
@@ -1179,7 +1179,7 @@ class TerrafundCreateGeometryController extends Controller
         return $criteriaData;
     }
 
-    public function getSiteValidationPolygon(Request $request)
+    public function runSiteValidationPolygon(Request $request)
     {
         try {
             $uuid = $request->input('uuid');
@@ -1198,7 +1198,7 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
-    public function getPolygonsValidation(Request $request)
+    public function runPolygonsValidation(Request $request)
     {
         try {
             $uuids = $request->input('uuids');
