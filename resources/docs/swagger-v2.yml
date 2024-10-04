@@ -43889,8 +43889,8 @@ definitions:
         type: boolean
       version_name:
         type: string
-  ClippedPolygonsResponse:
-    title: ClippedPolygonsResponse
+  ClippedPolygonResponse:
+    title: ClippedPolygonResponse
     type: object
     properties:
       updated_polygons:
@@ -43902,6 +43902,37 @@ definitions:
               type: string
             poly_name:
               type: string
+  ClippedPolygonsResponse:
+    type: object
+    properties:
+      processed:
+        type: array
+        description: A list of processed polygons
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+              description: The UUID of the unprocessed polygon
+              example: uuid1
+            poly_name:
+              type: string
+              description: The name of the unprocessed polygon
+              example: Polygon Name
+      unprocessed:
+        type: array
+        description: A list of polygons that couldn't be processed
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+              description: The UUID of the unprocessed polygon
+              example: uuid1
+            poly_name:
+              type: string
+              description: The name of the unprocessed polygon
+              example: Polygon Name
   DeletedPolygonsResponse:
     type: object
     properties:
@@ -95416,7 +95447,7 @@ paths:
         '200':
           description: Clipped polygons processed successfully
           schema:
-            title: ClippedPolygonsResponse
+            title: ClippedPolygonResponse
             type: object
             properties:
               updated_polygons:
@@ -95448,7 +95479,7 @@ paths:
         '200':
           description: Clipped polygons processed successfully
           schema:
-            title: ClippedPolygonsResponse
+            title: ClippedPolygonResponse
             type: object
             properties:
               updated_polygons:
@@ -95466,3 +95497,77 @@ paths:
           description: Site not found
         '500':
           description: Internal server error
+  /v2/terrafund/clip-polygons/polygons:
+    post:
+      summary: Clip overlapping polygons
+      parameters:
+        - in: body
+          name: body
+          description: UUIDs of the polygon geometries to be fixed
+          required: true
+          schema:
+            type: object
+            properties:
+              uuids:
+                type: array
+                items:
+                  type: string
+                  description: UUIDs of the polygon geometries to be fixed
+      responses:
+        '200':
+          description: A list of processed and unprocessed polygons
+          schema:
+            type: object
+            properties:
+              processed:
+                type: array
+                description: A list of processed polygons
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      description: The UUID of the unprocessed polygon
+                      example: uuid1
+                    poly_name:
+                      type: string
+                      description: The name of the unprocessed polygon
+                      example: Polygon Name
+              unprocessed:
+                type: array
+                description: A list of polygons that couldn't be processed
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      description: The UUID of the unprocessed polygon
+                      example: uuid1
+                    poly_name:
+                      type: string
+                      description: The name of the unprocessed polygon
+                      example: Polygon Name
+  /v2/terrafund/validation/polygons:
+    post:
+      summary: Validate multiple polygons
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              uuids:
+                type: array
+                items:
+                  type: string
+                  description: UUIDs of the polygon geometries to be validated
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: A message indicating the completion of validation for all site polygons.
