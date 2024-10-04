@@ -43,7 +43,6 @@ return [
         */
         'csv'                    => [
             'delimiter'              => ',',
-            'enclosure'              => '',
             'line_ending'            => PHP_EOL,
             'use_bom'                => true,
             'include_separator_line' => false,
