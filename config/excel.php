@@ -45,10 +45,10 @@ return [
             'delimiter'              => ',',
             'enclosure'              => '"',
             'line_ending'            => PHP_EOL,
-            'use_bom'                => true,
+            'use_bom'                => false,
             'include_separator_line' => false,
             'excel_compatibility'    => false,
-            'output_encoding'        => 'UTF-8',
+            'output_encoding'        => '',
         ],
 
         /*
@@ -123,7 +123,7 @@ return [
         */
         'csv'         => [
             'delimiter'        => null,
-            'enclosure'        => '',
+            'enclosure'        => '"',
             'escape_character' => '\\',
             'contiguous'       => false,
             'input_encoding'   => 'UTF-8',
