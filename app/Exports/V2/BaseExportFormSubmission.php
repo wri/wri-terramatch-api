@@ -105,20 +105,20 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     if (is_string($answer)) {
                         $utf8Answer = mb_convert_encoding($answer, 'UTF-8', mb_detect_encoding($answer));
                     } else {
-                        $utf8Answer = $answer;
+                        $utf8Answer = $answer ?? '';
                     }
 
-                return $utf8Answer ?? '""';
+                return $utf8Answer;
             }
         }
 
         if (is_string($answer)) {
             $utf8Answer = mb_convert_encoding($answer, 'UTF-8', mb_detect_encoding($answer));
         } else {
-            $utf8Answer = $answer;
+            $utf8Answer = $answer ?? '';
         }
 
-        return $utf8Answer ?? '""';
+        return $utf8Answer ?? '';
     }
 
     protected function generateFieldMap(Form $form): array

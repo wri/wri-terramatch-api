@@ -1,0 +1,22 @@
+summary: Validate multiple polygons
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        uuids:
+          type: array
+          items:
+            type: string
+            description: UUIDs of the polygon geometries to be validated
+responses:
+  '200':
+    description: Successful response
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A message indicating the completion of validation for all site polygons.

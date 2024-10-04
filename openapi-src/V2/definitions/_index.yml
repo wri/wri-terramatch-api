@@ -364,6 +364,8 @@ SitePolygonsLoadedDataResponse:
   $ref: './SitePolygonsLoadedDataResponse.yml'
 SitePolygonLoaded:
   $ref: './SitePolygonLoaded.yml'
+ClippedPolygonResponse:
+  $ref: './ClippedPolygonResponse.yml'
 ClippedPolygonsResponse:
   $ref: './ClippedPolygonsResponse.yml'
 DeletedPolygonsResponse:

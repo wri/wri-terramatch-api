@@ -1,0 +1,19 @@
+summary: Clip overlapping polygons
+parameters:
+  - in: body
+    name: body
+    description: UUIDs of the polygon geometries to be fixed
+    required: true
+    schema:
+      type: object
+      properties:
+        uuids:
+          type: array
+          items:
+            type: string
+            description: UUIDs of the polygon geometries to be fixed
+responses:
+  '200':
+    description: A list of processed and unprocessed polygons
+    schema:
+      $ref: '../../definitions/_index.yml#/ClippedPolygonsResponse'
