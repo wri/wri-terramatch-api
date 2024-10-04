@@ -65,7 +65,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         }
 
         foreach ($this->auditFields  as $key => $value) {
-            $mapped[] = mb_convert_encoding(data_get($entity, $key, ''), 'UTF-8', 'auto');
+            $mapped[] = data_get($entity, $key, '');
         }
 
         return $mapped;
@@ -91,8 +91,8 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
 
         $mapped = array_merge($mapped, [
             $organisation->readable_type ?? null,
-            mb_convert_encoding($organisation->name ?? null, 'UTF-8', 'auto'),
-            mb_convert_encoding($entity->project->name ?? null, 'UTF-8', 'auto'),
+            $organisation->name ?? null,
+            $entity->project->name ?? null,
             $entity->status ?? null,
             $entity->update_request_status ?? null,
             $entity->due_at ?? null,
@@ -111,12 +111,12 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         }
         if ($this->form->type === 'nursery-report') {
             $mapped[] = $entity->nursery->old_id ?? ($entity->nursery->id ?? null);
-            $mapped[] = mb_convert_encoding($entity->nursery->name ?? null, 'UTF-8', 'auto');
+            $mapped[] = $entity->nursery->name ?? null;
         }
 
         if ($this->form->type === 'site-report') {
             $mapped[] = $entity->site->ppc_external_id ?? $entity->site->id ?? null;
-            $mapped[] = mb_convert_encoding($entity->site->name ?? null, 'UTF-8', 'auto');
+            $mapped[] = $entity->site->name ?? null;
             $sumTreeSpecies = $entity->treeSpecies()->sum('amount');
             $mapped[] = $sumTreeSpecies > 0 ? $sumTreeSpecies : null;
             $mapped[] = $entity->site->trees_planted_count ?? null;

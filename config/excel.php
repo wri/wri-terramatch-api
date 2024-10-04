@@ -42,13 +42,13 @@ return [
         |
         */
         'csv'                    => [
-            'delimiter'              => ';',
+            'delimiter'              => ',',
             'enclosure'              => '"',
             'line_ending'            => PHP_EOL,
             'use_bom'                => true,
             'include_separator_line' => false,
             'excel_compatibility'    => false,
-            'output_encoding'        => 'UTF-8',
+            'output_encoding'        => '',
         ],
 
         /*
