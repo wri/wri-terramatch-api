@@ -17,6 +17,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Throwable;
 
 class InsertGeojsonToDBJob implements ShouldQueue
 {
@@ -54,7 +55,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
         $this->entity_type = $entity_type;
         $this->primary_uuid = $primary_uuid;
         $this->submit_polygon_loaded = $submit_polygon_loaded;
-        $this->job_uuid = Str::uuid();
+        $this->job_uuid = Str::uuid()->toString();
     }
 
     /**
@@ -65,7 +66,6 @@ class InsertGeojsonToDBJob implements ShouldQueue
     public function handle(PolygonService $service)
     {
         try {
-            Log::info('starting the job to sleep zzz....', ['job_uuid' => $this->job_uuid]);
             DelayedJob::create([
                 'uuid' => $this->job_uuid,
                 'status' => self::STATUS_PENDING,
@@ -78,8 +78,13 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 $this->primary_uuid,
                 $this->submit_polygon_loaded
             );
-            if (isset($uuids['error'])) {
-              throw new Exception($uuids['error']);
+            if (isset($uuids['error'])) {          
+              $errorMessage = is_array($uuids['error']) 
+                ? json_encode($uuids['error'], JSON_PRETTY_PRINT) 
+                : strval($uuids['error']);
+            
+              throw new \Exception($errorMessage);
+
             }
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
             DelayedJob::where('uuid', $this->job_uuid)->update([
@@ -91,11 +96,9 @@ class InsertGeojsonToDBJob implements ShouldQueue
         } catch (Exception $e) {
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_FAILED,
-                'payload' => json_encode(['error' => $e->getMessage()]),
+                'payload' => ['error' => $e->getMessage()],
                 'updated_at' => now(),
             ]);
-    
-            Log::error('Error inserting GeoJSON to DB', ['error' => $e->getMessage()]);
         }
     }
     public function getJobUuid()
