@@ -2,10 +2,10 @@ summary: Get Bbox of all polygons of project
 tags:
   - Projects 
 parameters:
-  - in: query
-    name: uuid
+  - name: filter
     type: string
-    description: UUID of the project
+    in: query
+    description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
     required: true
 responses:
   '200':

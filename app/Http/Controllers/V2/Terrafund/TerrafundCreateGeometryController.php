@@ -86,13 +86,22 @@ class TerrafundCreateGeometryController extends Controller
             } else {
                 $geojson = json_decode($geojsonData, true);
                 SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
+                SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
 
                 return $service->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
 
             }
 
         } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            $errorMessage = $e->getMessage();
+            $decodedErrorMessage = json_decode($errorMessage, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return ['error' => $decodedErrorMessage];
+            } else {
+                Log::info('Error inserting geojson to DB', ['error' => $errorMessage]);
+
+                return ['error' => $errorMessage];
+            }
         }
     }
 
@@ -423,7 +432,6 @@ class TerrafundCreateGeometryController extends Controller
                 if ($submitPolygonsLoaded) {
                     $uuid = $this->insertGeojsonToDB($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
                 }
-
                 if (isset($uuid['error'])) {
                     return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
                 }
@@ -538,6 +546,30 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         return response()->json(['polygon_id' => $uuid, 'criteria_list' => $criteriaList]);
+    }
+
+    public function getCriteriaDataForMultiplePolygons(array $uuids)
+    {
+        $result = [];
+        $unprocessed = [];
+
+        foreach ($uuids as $uuid) {
+            $geometry = PolygonGeometry::isUuid($uuid)->first();
+
+            if ($geometry === null) {
+                continue;
+            }
+            $criteriaList = GeometryHelper::getCriteriaDataForPolygonGeometry($geometry);
+
+            if (empty($criteriaList)) {
+                $unprocessed[] = ['uuid' => $uuid, 'error' => 'Criteria data not found for the given polygon'];
+
+                continue;
+            }
+            $result[] = ['polygon_id' => $uuid, 'criteria_list' => $criteriaList];
+        }
+
+        return response()->json($result);
     }
 
     public function uploadGeoJSONFileProject(Request $request)
@@ -1203,6 +1235,20 @@ class TerrafundCreateGeometryController extends Controller
             Log::error('Error during site validation polygon: ' . $e->getMessage());
 
             return response()->json(['error' => 'An error occurred during site validation'], 500);
+        }
+    }
+
+    public function getPolygonsValidation(Request $request)
+    {
+        try {
+            $uuids = $request->input('uuids');
+            foreach ($uuids as $polygonUuid) {
+                $this->runValidationPolygon($polygonUuid);
+            }
+
+            return response()->json(['message' => 'Validation completed for these polygons'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred during validation'], 500);
         }
     }
 

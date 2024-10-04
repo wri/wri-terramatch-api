@@ -141,6 +141,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'goal_trees_restored_planting',
         'goal_trees_restored_anr',
         'goal_trees_restored_direct_seeding',
+        'landscape',
     ];
 
     public $fileConfiguration = [
@@ -508,7 +509,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         ];
     }
 
-    public static function searchProjects($query)
+    public static function search($query)
     {
         return self::select('v2_projects.*')
         ->where('v2_projects.name', 'like', "%$query%");

@@ -113,7 +113,7 @@ class ProjectPitch extends Model implements MediaModel
         ];
     }
 
-    public static function searchProjectPitches($query)
+    public static function search($query)
     {
         return self::select('project_pitches.*')
             ->join('organisations', 'project_pitches.organisation_id', '=', 'organisations.uuid')

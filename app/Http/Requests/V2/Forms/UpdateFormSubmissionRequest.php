@@ -19,6 +19,7 @@ class UpdateFormSubmissionRequest extends FormRequest
             'name' => ['sometimes', 'string', 'max:65000'],
             'status' => ['sometimes', 'string', 'in:' . implode(',', array_keys(FormSubmission::$userControlledStatuses))],
             'answers' => ['required', 'array'],
+            'continue_later_action' => ['sometimes', 'boolean'],
             /*
             'answers.*.question_id' => [
                 'required',

@@ -2,10 +2,14 @@ summary: Retrieve top 10 projects and top 20 tree species planted
 description: |
   This endpoint returns Tops and metrics related to projects and tree species.
 parameters:
-  - in: query
-    name: country
+  - name: search
     type: string
-    description: Optional. Filter counts and metrics by country.
+    in: query
+    description: 'search term to use on the collection'
+  - name: filter
+    type: string
+    in: query
+    description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
 responses:
   '200':
     description: Successful response

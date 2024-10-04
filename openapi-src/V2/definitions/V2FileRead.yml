@@ -23,5 +23,7 @@ properties:
     type: integer
   is_public:
     type: boolean
+  is_cover:
+    type: boolean
   created_at:
     type: string
