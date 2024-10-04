@@ -10,13 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 
 class FormCommonOption extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    use Searchable;
     use HasUuid;
     use HasI18nTranslations;
 
@@ -33,6 +31,12 @@ class FormCommonOption extends Model
         return [
             'label' => $this->label,
         ];
+    }
+
+    public static function search($query)
+    {
+        return self::select('form_common_options.*')
+            ->where('form_common_options.label', 'like', "%$query%");
     }
 
     public static function boot()

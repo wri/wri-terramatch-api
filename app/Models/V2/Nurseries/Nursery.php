@@ -115,7 +115,7 @@ class Nursery extends Model implements MediaModel, AuditableContract, EntityMode
         ];
     }
 
-    public static function searchNurseries($query)
+    public static function search($query)
     {
         return self::select('v2_nurseries.*')
             ->join('v2_projects', 'v2_nurseries.project_id', '=', 'v2_projects.id')

@@ -28,11 +28,12 @@ class SubmitEntityWithFormController extends Controller
         /** @var UpdateRequest $updateRequest */
         $updateRequest = $entity->updateRequests()->isUnapproved()->first();
         if (! empty($updateRequest)) {
-            $this->saveAuditStatusProjectDeveloperSubmit($entity, $updateRequest);
             $updateRequest->submitForApproval();
+            $this->saveAuditStatusProjectDeveloperSubmit($entity, $updateRequest);
             Action::forTarget($updateRequest)->delete();
         } else {
             $entity->submitForApproval();
+            $this->saveAuditStatusProjectDeveloperSubmitNotUpdateRequest($entity);
         }
 
         SendProjectManagerJobs::dispatch($entity);

@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
@@ -25,7 +24,6 @@ class FormSubmission extends Model implements AuditableContract
     use SoftDeletes;
     use HasUuid;
     use HasStatus;
-    use Searchable;
     use UsesLinkedFields;
     use Auditable;
 
@@ -119,6 +117,12 @@ class FormSubmission extends Model implements AuditableContract
             'name' => $this->name,
             'answers' => $this->answers,
         ];
+    }
+
+    public static function search($query)
+    {
+        return self::select('form_submissions.*')
+            ->where('form_submissions.name', 'like', "%$query%");
     }
 
     public function scopeFundingProgrammeUuid(Builder $query, string $fundingProgrammeId): Builder

@@ -1,0 +1,12 @@
+title: ClippedPolygonResponse
+type: object
+properties:
+  updated_polygons:
+    type: array
+    items:
+      type: object
+      properties:
+        uuid:
+          type: string
+        poly_name:
+          type: string

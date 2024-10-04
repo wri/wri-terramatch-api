@@ -142,15 +142,16 @@ class UploadController extends Controller
     {
         $documents = ['application/pdf', 'application/vnd.ms-excel', 'text/plain', 'application/msword'];
         $images = ['image/png', 'image/jpeg', 'image/svg+xml'];
+        $videos = ['video/mp4'];
 
         if (in_array($media->mime_type, $documents)) {
             return 'documents';
         }
 
-        if (in_array($media->mime_type, $images)) {
+        if (in_array($media->mime_type, $images) || in_array($media->mime_type, $videos)) {
             return 'media';
         }
 
-        return  config('wri.file-handling.validation-file-types.' . data_get($config, 'validation', ''), '');
+        return config('wri.file-handling.validation-file-types.' . data_get($config, 'validation', ''), '');
     }
 }
