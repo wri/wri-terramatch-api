@@ -25,16 +25,17 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
     protected $uuid;
     protected $job_uuid;
-    
+    protected $sitePolygonsUuids;
+
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(string $uuid)
+    public function __construct(array $sitePolygonsUuids)
     {
-        $this->uuid = $uuid;
+        $this->sitePolygonsUuids = $sitePolygonsUuids;
         $this->job_uuid = Str::uuid()->toString();
     }
 
@@ -51,24 +52,17 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 'status' => self::STATUS_PENDING,
                 'created_at' => now(),
             ]);
-
-            $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($this->uuid);
-            $validationResults = [];
-
-            foreach ($sitePolygonsUuids as $polygonUuid) {
+            foreach ($this->sitePolygonsUuids as $polygonUuid) {
                 $request = new Request(['uuid' => $polygonUuid]);
-                
-                $validationResults[$polygonUuid] = [
-                    'overlapping' => $validationService->validateOverlapping($request),
-                    'selfIntersection' => $validationService->checkSelfIntersection($request),
-                    'coordinateSystem' => $validationService->validateCoordinateSystem($request),
-                    'polygonSize' => $validationService->validatePolygonSize($request),
-                    'withinCountry' => $validationService->checkWithinCountry($request),
-                    'boundarySegments' => $validationService->checkBoundarySegments($request),
-                    'geometryType' => $validationService->getGeometryType($request),
-                    'estimatedArea' => $validationService->validateEstimatedArea($request),
-                    'dataInDB' => $validationService->validateDataInDB($request),
-                ];
+                $validationService->validateOverlapping($request);
+                $validationService->checkSelfIntersection($request);
+                $validationService->validateCoordinateSystem($request);
+                $validationService->validatePolygonSize($request);
+                $validationService->checkWithinCountry($request);
+                $validationService->checkBoundarySegments($request);
+                $validationService->getGeometryType($request);
+                $validationService->validateEstimatedArea($request);
+                $validationService->validateDataInDB($request);
             }
 
             DelayedJob::where('uuid', $this->job_uuid)->update([
