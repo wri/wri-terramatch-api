@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\InsertGeojsonToDBJob;
+use App\Jobs\RunSitePolygonsValidationJob;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
@@ -1184,13 +1185,16 @@ class TerrafundCreateGeometryController extends Controller
         try {
             $uuid = $request->input('uuid');
 
-            $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid);
+            // $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid);
 
-            foreach ($sitePolygonsUuids as $polygonUuid) {
-                $this->runValidationPolygon($polygonUuid);
-            }
+            // foreach ($sitePolygonsUuids as $polygonUuid) {
+            //     $this->runValidationPolygon($polygonUuid);
+            // }
 
-            return response()->json(['message' => 'Validation completed for all site polygons']);
+            $job = new RunSitePolygonsValidationJob($uuid);
+            $jobUUID = $job->getJobUuid();
+            dispatch($job);
+            return response()->json(['message' => 'Validation completed for all site polygons', 'uuid' => $jobUUID], 200);
         } catch (\Exception $e) {
             Log::error('Error during site validation polygon: ' . $e->getMessage());
 
