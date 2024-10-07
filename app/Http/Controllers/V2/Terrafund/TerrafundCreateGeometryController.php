@@ -1185,13 +1185,8 @@ class TerrafundCreateGeometryController extends Controller
         try {
             $uuid = $request->input('uuid');
 
-            // $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid);
-
-            // foreach ($sitePolygonsUuids as $polygonUuid) {
-            //     $this->runValidationPolygon($polygonUuid);
-            // }
-
-            $job = new RunSitePolygonsValidationJob($uuid);
+            $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
+            $job = new RunSitePolygonsValidationJob($sitePolygonsUuids);
             $jobUUID = $job->getJobUuid();
             dispatch($job);
             return response()->json(['message' => 'Validation completed for all site polygons', 'uuid' => $jobUUID], 200);
@@ -1206,11 +1201,10 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuids = $request->input('uuids');
-            foreach ($uuids as $polygonUuid) {
-                $this->runValidationPolygon($polygonUuid);
-            }
-
-            return response()->json(['message' => 'Validation completed for these polygons'], 200);
+            $job = new RunSitePolygonsValidationJob($uuids);
+            $jobUUID = $job->getJobUuid();
+            dispatch($job);
+            return response()->json(['message' => 'Validation completed for these polygons', 'uuid' => $jobUUID], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred during validation'], 500);
         }
