@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
+use App\Helpers\PolygonGeometryHelper;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\ProjectPitch;
@@ -514,5 +516,43 @@ class PolygonService
                 return ['error' => $errorMessage];
             }
         }
+    }
+    public function processClippedPolygons(array $polygonUuids)
+    {
+        $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
+
+        $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
+        $uuids = [];
+
+        if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
+            foreach ($clippedPolygons['features'] as $feature) {
+                if (isset($feature['properties']['poly_id'])) {
+                    $poly_id = $feature['properties']['poly_id'];
+                    $result = CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($poly_id, json_encode(['geometry' => $feature]));
+
+                    if (isset($result->original['uuid'])) {
+                        $uuids[] = $result->original['uuid'];
+                    }
+
+                    if (($key = array_search($poly_id, $polygonUuids)) !== false) {
+                        unset($polygonUuids[$key]);
+                    }
+                }
+            }
+            $polygonUuids = array_values($polygonUuids);
+            $newPolygonUuids = array_merge($uuids, $polygonUuids);
+        } else {
+            Log::error('Error clipping polygons', ['clippedPolygons' => $clippedPolygons]);
+        }
+
+        if (! empty($uuids)) {
+            foreach ($newPolygonUuids as $polygonUuid) {
+                App::make(PolygonValidationService::class)->runValidationPolygon($polygonUuid);
+            }
+        }
+
+        $updatedPolygons = PolygonGeometryHelper::getPolygonsProjection($uuids, ['poly_id', 'poly_name']);
+
+        return $updatedPolygons;
     }
 }

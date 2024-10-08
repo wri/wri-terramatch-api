@@ -19,7 +19,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
     public function clipOverlappingPolygonsBySite(string $uuid)
     {
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-        $polygonsClipped = $this->processClippedPolygons($polygonUuids);
+        $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($polygonUuids);
         return response()->json(['updated_polygons' => $polygonsClipped], 200);
 
     }
@@ -28,7 +28,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $sitePolygon = Site::isUuid($uuid)->first();
         $projectId = $sitePolygon->project_id ?? null;
         $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
-        $polygonsClipped = $this->processClippedPolygons($polygonUuids);
+        $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($polygonUuids);
         return response()->json(['updated_polygons' => $polygonsClipped], 200);
     }
 
@@ -71,7 +71,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $uniquePolygonUuids = array_unique($allPolygonUuids);
         $processedPolygons = [];
         if (! empty($uniquePolygonUuids)) {
-            $processedPolygons = $this->processClippedPolygons($uniquePolygonUuids);
+            $processedPolygons = App::make(PolygonService::class)->processClippedPolygons($polygonUuids);
         } else {
             $processedPolygons = null;
         }
@@ -102,46 +102,9 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
         array_unshift($polygonUuids, $uuid);
 
-        $polygonsClipped = $this->processClippedPolygons($polygonUuids);
+        $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($polygonUuids);
         return response()->json(['updated_polygons' => $polygonsClipped], 200);
     }
 
-    private function processClippedPolygons(array $polygonUuids)
-    {
-        $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
 
-        $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
-        $uuids = [];
-
-        if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
-            foreach ($clippedPolygons['features'] as $feature) {
-                if (isset($feature['properties']['poly_id'])) {
-                    $poly_id = $feature['properties']['poly_id'];
-                    $result = CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($poly_id, json_encode(['geometry' => $feature]));
-
-                    if (isset($result->original['uuid'])) {
-                        $uuids[] = $result->original['uuid'];
-                    }
-
-                    if (($key = array_search($poly_id, $polygonUuids)) !== false) {
-                        unset($polygonUuids[$key]);
-                    }
-                }
-            }
-            $polygonUuids = array_values($polygonUuids);
-            $newPolygonUuids = array_merge($uuids, $polygonUuids);
-        } else {
-            Log::error('Error clipping polygons', ['clippedPolygons' => $clippedPolygons]);
-        }
-
-        if (! empty($uuids)) {
-            foreach ($newPolygonUuids as $polygonUuid) {
-                $this->runValidationPolygon($polygonUuid);
-            }
-        }
-
-        $updatedPolygons = PolygonGeometryHelper::getPolygonsProjection($uuids, ['poly_id', 'poly_name']);
-
-        return $updatedPolygons;
-    }
 }
