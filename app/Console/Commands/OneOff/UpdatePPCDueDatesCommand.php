@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\Tasks\Task;
 use Illuminate\Console\Command;
