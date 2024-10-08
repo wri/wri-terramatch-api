@@ -13,14 +13,16 @@ use App\Services\PythonService;
 use App\Jobs\FixPolygonOverlapJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 {
     public function clipOverlappingPolygonsBySite(string $uuid)
     {
+        $user = Auth::user();
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-        $job = new FixPolygonOverlapJob($polygonUuids);
+        $job = new FixPolygonOverlapJob($polygonUuids, $user->id);
         $jobUUID = $job->getJobUuid();
         dispatch($job);
         return response()->json(['job_uuid' => $jobUUID], 200);
@@ -28,10 +30,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
     }
     public function clipOverlappingPolygonsOfProjectBySite(string $uuid)
     {
+        $user = Auth::user(); 
         $sitePolygon = Site::isUuid($uuid)->first();
         $projectId = $sitePolygon->project_id ?? null;
         $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
-        $job = new FixPolygonOverlapJob($polygonUuids);
+        $job = new FixPolygonOverlapJob($polygonUuids, $user->id);
         $jobUUID = $job->getJobUuid();
         dispatch($job);
         return response()->json(['job_uuid' => $jobUUID], 200);
@@ -75,7 +78,8 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         }
         $uniquePolygonUuids = array_unique($allPolygonUuids);
         if (! empty($uniquePolygonUuids)) {
-            $job = new FixPolygonOverlapJob($polygonUuids);
+            $user = Auth::user();
+            $job = new FixPolygonOverlapJob($polygonUuids, $user->id);
             $jobUUID = $job->getJobUuid();
             dispatch($job);
         }
@@ -101,7 +105,6 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $polygonUuids = array_filter($polygonUuidsOverlapping);
 
         array_unshift($polygonUuids, $uuid);
-
         $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($polygonUuids);
         return response()->json(['updated_polygons' => $polygonsClipped], 200);
     }

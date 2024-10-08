@@ -529,7 +529,7 @@ class PolygonService
                 if (isset($feature['properties']['poly_id'])) {
                     $poly_id = $feature['properties']['poly_id'];
                     $result = CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($poly_id, json_encode(['geometry' => $feature]));
-
+                    
                     if (isset($result->original['uuid'])) {
                         $uuids[] = $result->original['uuid'];
                     }
