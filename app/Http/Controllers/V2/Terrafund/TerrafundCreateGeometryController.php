@@ -398,7 +398,7 @@ class TerrafundCreateGeometryController extends Controller
                 }
                 $jobUUID = $job->getJobUuid();
                 dispatch($job);
-                return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $jobUUID], 200);
+                return response()->json(['message' => 'Shape file processed and inserted successfully', 'job_uuid' => $jobUUID], 200);
             } else {
                 return response()->json(['error' => 'Failed to open the ZIP file'], 400);
             }
@@ -1195,7 +1195,7 @@ class TerrafundCreateGeometryController extends Controller
             $job = new RunSitePolygonsValidationJob($sitePolygonsUuids);
             $jobUUID = $job->getJobUuid();
             dispatch($job);
-            return response()->json(['message' => 'Validation completed for all site polygons', 'uuid' => $jobUUID], 200);
+            return response()->json(['message' => 'Validation completed for all site polygons', 'job_uuid' => $jobUUID], 200);
         } catch (\Exception $e) {
             Log::error('Error during site validation polygon: ' . $e->getMessage());
 
@@ -1210,7 +1210,7 @@ class TerrafundCreateGeometryController extends Controller
             $job = new RunSitePolygonsValidationJob($uuids);
             $jobUUID = $job->getJobUuid();
             dispatch($job);
-            return response()->json(['message' => 'Validation completed for these polygons', 'uuid' => $jobUUID], 200);
+            return response()->json(['message' => 'Validation completed for these polygons', 'job_uuid' => $jobUUID], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred during validation'], 500);
         }
