@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Jobs;
+
 use App\Models\DelayedJob;
 use App\Services\PolygonService;
 use Illuminate\Bus\Queueable;
@@ -73,7 +75,7 @@ class FixPolygonOverlapJob implements ShouldQueue
           ]);
       }
     }
-    
+
     public function getJobUuid()
     {
         return $this->job_uuid;

@@ -10,7 +10,7 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
 use App\Services\PythonService;
-use FixPolygonOverlapJob;
+use App\Jobs\FixPolygonOverlapJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
