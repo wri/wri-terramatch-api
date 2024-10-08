@@ -6,6 +6,7 @@ use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
 use App\Models\V2\Sites\CriteriaSite;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
 use App\Services\PythonService;
@@ -18,7 +19,13 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
     public function clipOverlappingPolygonsBySite(string $uuid)
     {
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-
+        return $this->processClippedPolygons($polygonUuids);
+    }
+    public function clipOverlappingPolygonsOfProjectBySite(string $uuid)
+    {
+        $sitePolygon = Site::isUuid($uuid)->first();
+        $projectId = $sitePolygon->project_id ?? null;
+        $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
         return $this->processClippedPolygons($polygonUuids);
     }
 
