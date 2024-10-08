@@ -10,6 +10,7 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
 use App\Services\PythonService;
+use FixPolygonOverlapJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -19,8 +20,10 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
     public function clipOverlappingPolygonsBySite(string $uuid)
     {
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-        $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($polygonUuids);
-        return response()->json(['updated_polygons' => $polygonsClipped], 200);
+        $job = new FixPolygonOverlapJob($polygonUuids);
+        $jobUUID = $job->getJobUuid();
+        dispatch($job);
+        return response()->json(['job_uuid' => $jobUUID], 200);
 
     }
     public function clipOverlappingPolygonsOfProjectBySite(string $uuid)
@@ -28,19 +31,21 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $sitePolygon = Site::isUuid($uuid)->first();
         $projectId = $sitePolygon->project_id ?? null;
         $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
-        $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($polygonUuids);
-        return response()->json(['updated_polygons' => $polygonsClipped], 200);
+        $job = new FixPolygonOverlapJob($polygonUuids);
+        $jobUUID = $job->getJobUuid();
+        dispatch($job);
+        return response()->json(['job_uuid' => $jobUUID], 200);
     }
 
     public function clipOverlappingPolygons(Request $request)
     {
         $uuids = $request->input('uuids');
         Log::info('Clipping polygons', ['uuids' => $uuids]);
+        $jobUUID = null;
         if (empty($uuids) || ! is_array($uuids)) {
             return response()->json(['error' => 'Invalid or missing UUIDs'], 400);
         }
         $allPolygonUuids = [];
-        $unprocessedPolygons = [];
         foreach ($uuids as $uuid) {
             $polygonOverlappingExtraInfo = CriteriaSite::forCriteria(PolygonService::OVERLAPPING_CRITERIA_ID)
                 ->where('polygon_id', $uuid)
@@ -69,17 +74,12 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
         }
         $uniquePolygonUuids = array_unique($allPolygonUuids);
-        $processedPolygons = [];
         if (! empty($uniquePolygonUuids)) {
-            $processedPolygons = App::make(PolygonService::class)->processClippedPolygons($polygonUuids);
-        } else {
-            $processedPolygons = null;
+            $job = new FixPolygonOverlapJob($polygonUuids);
+            $jobUUID = $job->getJobUuid();
+            dispatch($job);
         }
-
-        return response()->json([
-            'processed' => $processedPolygons,
-            'unprocessed' => $unprocessedPolygons,
-        ], 200);
+        return response()->json(['job_uuid' => $jobUUID,], 200);
     }
 
     public function clipOverlappingPolygon(string $uuid)
