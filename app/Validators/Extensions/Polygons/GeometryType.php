@@ -13,7 +13,7 @@ class GeometryType extends Extension
 
     public static $message = [
         'key' => 'GEOMETRY_TYPE',
-        'message' => 'The geometry must by of polygon type',
+        'message' => 'The geometry must be of polygon or multipolygon type',
     ];
 
     public const VALID_TYPE_POLYGON = 'POLYGON';
