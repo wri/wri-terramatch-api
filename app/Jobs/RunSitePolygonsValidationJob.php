@@ -14,6 +14,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Throwable;
 
 class RunSitePolygonsValidationJob implements ShouldQueue
 {
@@ -73,6 +74,14 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
         } catch (Exception $e) {
             Log::error('Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
+            
+            DelayedJob::where('uuid', $this->job_uuid)->update([
+                'status' => self::STATUS_FAILED,
+                'payload' => json_encode(['error' => $e->getMessage()]),
+                'updated_at' => now(),
+            ]);
+        } catch (Throwable $e) {
+            Log::error('Throwable Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
             
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_FAILED,

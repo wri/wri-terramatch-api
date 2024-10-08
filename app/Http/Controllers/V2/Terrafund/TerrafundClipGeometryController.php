@@ -19,14 +19,17 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
     public function clipOverlappingPolygonsBySite(string $uuid)
     {
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-        return $this->processClippedPolygons($polygonUuids);
+        $polygonsClipped = $this->processClippedPolygons($polygonUuids);
+        return response()->json(['updated_polygons' => $polygonsClipped], 200);
+
     }
     public function clipOverlappingPolygonsOfProjectBySite(string $uuid)
     {
         $sitePolygon = Site::isUuid($uuid)->first();
         $projectId = $sitePolygon->project_id ?? null;
         $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
-        return $this->processClippedPolygons($polygonUuids);
+        $polygonsClipped = $this->processClippedPolygons($polygonUuids);
+        return response()->json(['updated_polygons' => $polygonsClipped], 200);
     }
 
     public function clipOverlappingPolygons(Request $request)
@@ -68,9 +71,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $uniquePolygonUuids = array_unique($allPolygonUuids);
         $processedPolygons = [];
         if (! empty($uniquePolygonUuids)) {
-            $response = $this->processClippedPolygons($uniquePolygonUuids);
-            $responseData = $response->getData(true);
-            $processedPolygons = $responseData['updated_polygons'] ?? [];
+            $processedPolygons = $this->processClippedPolygons($uniquePolygonUuids);
         } else {
             $processedPolygons = null;
         }
@@ -101,7 +102,8 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
         array_unshift($polygonUuids, $uuid);
 
-        return $this->processClippedPolygons($polygonUuids);
+        $polygonsClipped = $this->processClippedPolygons($polygonUuids);
+        return response()->json(['updated_polygons' => $polygonsClipped], 200);
     }
 
     private function processClippedPolygons(array $polygonUuids)
@@ -140,6 +142,6 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
         $updatedPolygons = PolygonGeometryHelper::getPolygonsProjection($uuids, ['poly_id', 'poly_name']);
 
-        return response()->json(['updated_polygons' => $updatedPolygons]);
+        return $updatedPolygons;
     }
 }
