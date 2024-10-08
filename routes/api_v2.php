@@ -662,7 +662,7 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/validation/polygons', [TerrafundCreateGeometryController::class, 'getPolygonsValidation']);
     Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
     Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
-    Route::post('/clip-polygons/site/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygonsBySite']);
+    Route::post('/clip-polygons/site/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygonsOfProjectBySite']);
     Route::post('/clip-polygons/polygon/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygon']);
     Route::post('/clip-polygons/polygons', [TerrafundClipGeometryController::class, 'clipOverlappingPolygons']);
 

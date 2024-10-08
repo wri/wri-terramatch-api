@@ -329,9 +329,7 @@ class PolygonService
 
             return null;
         } catch (\Exception $e) {
-            if (! $sitePolygon) {
-                throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
-            }
+            throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
         }
     }
 

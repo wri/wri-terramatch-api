@@ -5,6 +5,7 @@ namespace App\Validators\Extensions\Polygons;
 use App\Models\V2\PolygonGeometry;
 use App\Validators\Extensions\Extension;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GeometryType extends Extension
 {
@@ -15,7 +16,8 @@ class GeometryType extends Extension
         'message' => 'The geometry must by of polygon type',
     ];
 
-    public const VALID_TYPE = 'POLYGON';
+    public const VALID_TYPE_POLYGON = 'POLYGON';
+    public const VALID_TYPE_MULTIPOLYGON = 'MULTIPOLYGON';
 
     public static function passes($attribute, $value, $parameters, $validator): bool
     {
@@ -31,8 +33,7 @@ class GeometryType extends Extension
     public static function uuidValid($uuid): bool
     {
         $geometryType = PolygonGeometry::getGeometryType($uuid);
-
-        return $geometryType === self::VALID_TYPE;
+        return $geometryType === self::VALID_TYPE_POLYGON || $geometryType === self::VALID_TYPE_MULTIPOLYGON;
     }
 
     public static function geoJsonValid($geojson): bool
@@ -41,7 +42,6 @@ class GeometryType extends Extension
             'SELECT ST_GeometryType(ST_GeomFromGeoJSON(:geojson)) AS geometry_type',
             ['geojson' => json_encode($geojson)]
         );
-
-        return $result->geometry_type === self::VALID_TYPE;
+        return $result->geometry_type === self::VALID_TYPE_POLYGON || $result->geometry_type === self::VALID_TYPE_MULTIPOLYGON;
     }
 }
