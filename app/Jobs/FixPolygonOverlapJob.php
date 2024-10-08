@@ -12,6 +12,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
+use Throwable;
+use Exception;
 
 class FixPolygonOverlapJob implements ShouldQueue
 {
