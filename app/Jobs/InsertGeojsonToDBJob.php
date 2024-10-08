@@ -12,6 +12,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
@@ -83,7 +85,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 ? json_encode($uuids['error'], JSON_PRETTY_PRINT) 
                 : strval($uuids['error']);
             
-              throw new \Exception($errorMessage, 500);
+              throw new \Exception($errorMessage, Response::HTTP_INTERNAL_SERVER_ERROR);
 
             }
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
@@ -91,6 +93,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 'status' => self::STATUS_SUCCEEDED,
                 'payload' => json_encode($uuids),
                 'updated_at' => now(),
+                'statusCode' => Response::HTTP_OK
             ]);
     
         } catch (Exception $e) {
