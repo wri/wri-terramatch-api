@@ -201,4 +201,18 @@ class PolygonValidationService
 
         return $response;
     }
+    public function runValidationPolygon(string $uuid)
+    {
+        $request = new Request(['uuid' => $uuid]);
+
+        $this->validateOverlapping($request);
+        $this->checkSelfIntersection($request);
+        $this->validateCoordinateSystem($request);
+        $this->validatePolygonSize($request);
+        $this->checkWithinCountry($request);
+        $this->checkBoundarySegments($request);
+        $this->getGeometryType($request);
+        $this->validateEstimatedArea($request);
+        $this->validateDataInDB($request);
+    }
 }

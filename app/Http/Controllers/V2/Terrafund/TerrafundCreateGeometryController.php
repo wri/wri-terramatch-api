@@ -1157,6 +1157,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function runValidationPolygon(string $uuid)
     {
+      try{
         $request = new Request(['uuid' => $uuid]);
 
         $this->validateOverlapping($request);
@@ -1168,6 +1169,11 @@ class TerrafundCreateGeometryController extends Controller
         $this->getGeometryType($request);
         $this->validateEstimatedArea($request);
         $this->validateDataInDB($request);
+      } catch(\Exception $e) {
+        Log::error('Error during validation polygon: ' . $e->getMessage());
+        throw $e;
+      }
+       
     }
 
     public function sendRunValidationPolygon(Request $request)
