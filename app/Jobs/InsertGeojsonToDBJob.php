@@ -78,12 +78,12 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 $this->primary_uuid,
                 $this->submit_polygon_loaded
             );
-            if (isset($uuids['error'])) {          
+            if (true) {          
               $errorMessage = is_array($uuids['error']) 
                 ? json_encode($uuids['error'], JSON_PRETTY_PRINT) 
                 : strval($uuids['error']);
             
-              throw new \Exception($errorMessage);
+              throw new \Exception($errorMessage, 500);
 
             }
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
@@ -98,6 +98,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 'status' => self::STATUS_FAILED,
                 'payload' => ['error' => $e->getMessage()],
                 'updated_at' => now(),
+                'statusCode' => $e->getCode()
             ]);
         }
     }
