@@ -42,6 +42,7 @@ class AdminFundingProgrammeController extends Controller
         $fundingProgramme = FundingProgramme::create($storeFundingProgrammeRequest->validated());
         $fundingProgramme->name_id = I18nHelper::generateI18nItem($fundingProgramme, 'name');
         $fundingProgramme->description_id = I18nHelper::generateI18nItem($fundingProgramme, 'description');
+        $fundingProgramme->location_id = I18nHelper::generateI18nItem($fundingProgramme, 'location');
         $fundingProgramme->save();
 
         return new FundingProgrammeResource($fundingProgramme);
@@ -57,6 +58,7 @@ class AdminFundingProgrammeController extends Controller
         $fundingProgramme->update($updateFundingProgrammeRequest->validated());
         $fundingProgramme->name_id = I18nHelper::generateI18nItem($fundingProgramme, 'name');
         $fundingProgramme->description_id = I18nHelper::generateI18nItem($fundingProgramme, 'description');
+        $fundingProgramme->location_id = I18nHelper::generateI18nItem($fundingProgramme, 'location');
         $fundingProgramme->save();
 
         return new FundingProgrammeResource($fundingProgramme);

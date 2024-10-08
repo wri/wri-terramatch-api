@@ -47,6 +47,7 @@ class FundingProgramme extends Model implements MediaModel
         'name_id',
         'status',
         'location',
+        'location_id',
         'read_more_url',
         'description',
         'description_id',
@@ -96,6 +97,16 @@ class FundingProgramme extends Model implements MediaModel
     public function i18nDescription(): BelongsTo
     {
         return $this->belongsTo(I18nItem::class, 'description_id', 'id');
+    }
+
+    public function i18nLocation(): BelongsTo
+    {
+        return $this->belongsTo(I18nItem::class, 'location_id', 'id');
+    }
+
+    public function getTranslatedLocationAttribute(): ?string
+    {
+        return $this->getTranslation('i18nLocation', 'location');
     }
 
     public function applications(): HasMany
