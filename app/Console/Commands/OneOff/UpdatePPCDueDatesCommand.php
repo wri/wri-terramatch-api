@@ -13,7 +13,7 @@ class UpdatePPCDueDatesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'update:ppc-due-dates';
+    protected $signature = 'one-off:update:ppc-due-dates';
 
     /**
      * The console command description.
