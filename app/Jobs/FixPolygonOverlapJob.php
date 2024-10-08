@@ -73,4 +73,9 @@ class FixPolygonOverlapJob implements ShouldQueue
           ]);
       }
     }
+    
+    public function getJobUuid()
+    {
+        return $this->job_uuid;
+    }
 }
