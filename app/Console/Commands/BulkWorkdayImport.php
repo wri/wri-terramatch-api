@@ -304,7 +304,7 @@ class BulkWorkdayImport extends Command
                     'totals' => $totals,
                 ], JSON_PRETTY_PRINT) . "\n";
 
-                // We've decided go ahead an import unbalanced collections, but we do want to make sure we still
+                // We've decided go ahead and import unbalanced collections, but we do want to make sure we still
                 // log the error in sequence with the rest.
                 $parseErrors->push(new AbortException(ExceptionLevel::Warning, $message, 1));
             }
