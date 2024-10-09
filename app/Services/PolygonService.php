@@ -475,6 +475,7 @@ class PolygonService
             return false;
         }
     }
+
     /**
       * @throws ValidationException
     */
@@ -487,7 +488,7 @@ class PolygonService
 
             if ($entity_type === 'project' || $entity_type === 'project-pitch') {
                 $entity = $this->getEntity($entity_type, $entity_uuid);
-                
+
                 $hasBeenDeleted = GeometryHelper::deletePolygonWithRelated($entity);
 
                 if ($entity && $hasBeenDeleted) {
@@ -517,6 +518,7 @@ class PolygonService
             }
         }
     }
+
     public function processClippedPolygons(array $polygonUuids)
     {
         $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
@@ -529,7 +531,7 @@ class PolygonService
                 if (isset($feature['properties']['poly_id'])) {
                     $poly_id = $feature['properties']['poly_id'];
                     $result = CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($poly_id, json_encode(['geometry' => $feature]));
-                    
+
                     if (isset($result->original['uuid'])) {
                         $uuids[] = $result->original['uuid'];
                     }

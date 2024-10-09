@@ -2,24 +2,19 @@
 
 namespace App\Jobs;
 
-use App\Helpers\GeometryHelper;
 use App\Models\DelayedJob;
 use App\Services\PolygonService;
 use App\Services\SiteService;
-use App\Validators\SitePolygonValidator;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Throwable;
 
 class InsertGeojsonToDBJob implements ShouldQueue
 {
@@ -80,12 +75,12 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 $this->primary_uuid,
                 $this->submit_polygon_loaded
             );
-            if (true) {          
-              $errorMessage = is_array($uuids['error']) 
-                ? json_encode($uuids['error'], JSON_PRETTY_PRINT) 
-                : strval($uuids['error']);
-            
-              throw new \Exception($errorMessage, Response::HTTP_INTERNAL_SERVER_ERROR);
+            if (true) {
+                $errorMessage = is_array($uuids['error'])
+                  ? json_encode($uuids['error'], JSON_PRETTY_PRINT)
+                  : strval($uuids['error']);
+
+                throw new \Exception($errorMessage, Response::HTTP_INTERNAL_SERVER_ERROR);
 
             }
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
@@ -93,22 +88,21 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 'status' => self::STATUS_SUCCEEDED,
                 'payload' => json_encode($uuids),
                 'updated_at' => now(),
-                'statusCode' => Response::HTTP_OK
+                'statusCode' => Response::HTTP_OK,
             ]);
-    
+
         } catch (Exception $e) {
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_FAILED,
                 'payload' => ['error' => $e->getMessage()],
                 'updated_at' => now(),
-                'statusCode' => $e->getCode() ?? Response::HTTP_INTERNAL_SERVER_ERROR
+                'statusCode' => $e->getCode() ?? Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }
+
     public function getJobUuid()
     {
         return $this->job_uuid;
     }
-
-    
 }

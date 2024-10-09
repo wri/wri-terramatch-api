@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
-use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
-use App\Helpers\PolygonGeometryHelper;
+use App\Jobs\FixPolygonOverlapJob;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
-use App\Services\PythonService;
-use App\Jobs\FixPolygonOverlapJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -25,18 +22,21 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $job = new FixPolygonOverlapJob($polygonUuids, $user->id);
         $jobUUID = $job->getJobUuid();
         dispatch($job);
+
         return response()->json(['job_uuid' => $jobUUID], 200);
 
     }
+
     public function clipOverlappingPolygonsOfProjectBySite(string $uuid)
     {
-        $user = Auth::user(); 
+        $user = Auth::user();
         $sitePolygon = Site::isUuid($uuid)->first();
         $projectId = $sitePolygon->project_id ?? null;
         $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
         $job = new FixPolygonOverlapJob($polygonUuids, $user->id);
         $jobUUID = $job->getJobUuid();
         dispatch($job);
+
         return response()->json(['job_uuid' => $jobUUID], 200);
     }
 
@@ -83,6 +83,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             $jobUUID = $job->getJobUuid();
             dispatch($job);
         }
+
         return response()->json(['job_uuid' => $jobUUID,], 200);
     }
 
@@ -106,8 +107,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
         array_unshift($polygonUuids, $uuid);
         $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($polygonUuids);
+
         return response()->json(['updated_polygons' => $polygonsClipped], 200);
     }
-
-
 }

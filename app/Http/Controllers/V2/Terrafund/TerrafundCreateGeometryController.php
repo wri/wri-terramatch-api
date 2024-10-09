@@ -32,7 +32,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\Process\Process;
 
 class TerrafundCreateGeometryController extends Controller
@@ -66,7 +65,6 @@ class TerrafundCreateGeometryController extends Controller
 
         return response()->json(['uuid' => $polygonGeometry->uuid], 200);
     }
-
 
     public function validateDataInDB(Request $request)
     {
@@ -168,7 +166,7 @@ class TerrafundCreateGeometryController extends Controller
 
             return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
         }
-        
+
         $uuid = App::make(PolygonService::class)->insertGeojsonToDB($geojsonFilename, $entity_uuid, $entity_type);
         if (isset($uuid['error'])) {
             return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
@@ -241,8 +239,9 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         $jobUUID = $job->getJobUuid();
-                dispatch($job);
-                return response()->json(['message' => 'KML queued to insert', 'job_uuid' => $jobUUID], 200);
+        dispatch($job);
+
+        return response()->json(['message' => 'KML queued to insert', 'job_uuid' => $jobUUID], 200);
 
     }
 
@@ -378,7 +377,7 @@ class TerrafundCreateGeometryController extends Controller
                 $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
                 $submitPolygonsLoaded = $request->input('submit_polygon_loaded') === true || $request->input('submit_polygon_loaded') === 'true';
                 if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
-                      $job = new InsertGeojsonToDBJob($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
+                    $job = new InsertGeojsonToDBJob($geojsonFilename, $site_id, 'site', $body['primary_uuid'] ?? null);
                 }
 
                 if ($polygonLoadedList) {
@@ -394,6 +393,7 @@ class TerrafundCreateGeometryController extends Controller
                 }
                 $jobUUID = $job->getJobUuid();
                 dispatch($job);
+
                 return response()->json(['message' => 'Shapefile queued to insert', 'job_uuid' => $jobUUID], 200);
             } else {
                 return response()->json(['error' => 'Failed to open the ZIP file'], 400);
@@ -604,6 +604,7 @@ class TerrafundCreateGeometryController extends Controller
 
         $jobUUID = $job->getJobUuid();
         dispatch($job);
+
         return response()->json(['message' => 'Geojson queued to insert', 'job_uuid' => $jobUUID], 200);
 
     }
@@ -1150,23 +1151,24 @@ class TerrafundCreateGeometryController extends Controller
 
     public function runValidationPolygon(string $uuid)
     {
-      try{
-        $request = new Request(['uuid' => $uuid]);
+        try {
+            $request = new Request(['uuid' => $uuid]);
 
-        $this->validateOverlapping($request);
-        $this->checkSelfIntersection($request);
-        $this->validateCoordinateSystem($request);
-        $this->validatePolygonSize($request);
-        $this->checkWithinCountry($request);
-        $this->checkBoundarySegments($request);
-        $this->getGeometryType($request);
-        $this->validateEstimatedArea($request);
-        $this->validateDataInDB($request);
-      } catch(\Exception $e) {
-        Log::error('Error during validation polygon: ' . $e->getMessage());
-        throw $e;
-      }
-       
+            $this->validateOverlapping($request);
+            $this->checkSelfIntersection($request);
+            $this->validateCoordinateSystem($request);
+            $this->validatePolygonSize($request);
+            $this->checkWithinCountry($request);
+            $this->checkBoundarySegments($request);
+            $this->getGeometryType($request);
+            $this->validateEstimatedArea($request);
+            $this->validateDataInDB($request);
+        } catch(\Exception $e) {
+            Log::error('Error during validation polygon: ' . $e->getMessage());
+
+            throw $e;
+        }
+
     }
 
     public function sendRunValidationPolygon(Request $request)
@@ -1188,6 +1190,7 @@ class TerrafundCreateGeometryController extends Controller
             $job = new RunSitePolygonsValidationJob($sitePolygonsUuids);
             $jobUUID = $job->getJobUuid();
             dispatch($job);
+
             return response()->json(['message' => 'Validation completed for all site polygons', 'job_uuid' => $jobUUID], 200);
         } catch (\Exception $e) {
             Log::error('Error during site validation polygon: ' . $e->getMessage());
@@ -1203,6 +1206,7 @@ class TerrafundCreateGeometryController extends Controller
             $job = new RunSitePolygonsValidationJob($uuids);
             $jobUUID = $job->getJobUuid();
             dispatch($job);
+
             return response()->json(['message' => 'Validation completed for these polygons', 'job_uuid' => $jobUUID], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred during validation'], 500);
