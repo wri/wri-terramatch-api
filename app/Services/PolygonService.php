@@ -542,7 +542,7 @@ class PolygonService
             $polygonUuids = array_values($polygonUuids);
             $newPolygonUuids = array_merge($uuids, $polygonUuids);
         } else {
-            Log::error('Error clipping polygons', ['clippedPolygons' => $clippedPolygons]);
+            throw new \Exception('Error processing polygons', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         if (! empty($uuids)) {
