@@ -306,7 +306,7 @@ class BulkWorkdayImport extends Command
 
                 // We've decided go ahead and import unbalanced collections, but we do want to make sure we still
                 // log the error in sequence with the rest.
-                $parseErrors->push(new AbortException(ExceptionLevel::Warning, $message, 1));
+                $parseErrors[] = new AbortException(ExceptionLevel::Warning, $message, 1);
             }
         }
 
