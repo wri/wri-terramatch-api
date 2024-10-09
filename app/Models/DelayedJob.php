@@ -9,10 +9,8 @@ class DelayedJob extends Model
 {
     use HasFactory;
 
-    // Define the table name explicitly, if necessary (optional)
     protected $table = 'delayed_jobs';
 
-    // Use mass assignment protection for the fields that are fillable
     protected $fillable = [
         'uuid',
         'status',
@@ -20,7 +18,6 @@ class DelayedJob extends Model
         'payload',
     ];
 
-    // Ensure the UUID is cast to string
     protected $casts = [
         'uuid' => 'string',
     ];

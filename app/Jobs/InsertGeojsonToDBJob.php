@@ -27,7 +27,6 @@ class InsertGeojsonToDBJob implements ShouldQueue
     private const STATUS_FAILED = 'failed';
     private const STATUS_SUCCEEDED = 'succeeded';
 
-    // Define the properties for the parameters
     protected $geojsonFilename;
 
     protected $entity_uuid;
