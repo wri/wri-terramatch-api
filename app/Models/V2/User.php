@@ -21,18 +21,22 @@ use App\Models\V2\Organisation as V2Organisation;
 use App\Models\V2\Projects\Project;
 use Database\Factories\V2\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @property Role primaryRole
+ * @property bool isAdmin
+ */
 class User extends Authenticatable implements JWTSubject
 {
     use NamedEntityTrait;
@@ -40,11 +44,12 @@ class User extends Authenticatable implements JWTSubject
     use InvitedAcceptedAndVerifiedScopesTrait;
     use HasFactory;
     use HasUuid;
-    use Searchable;
     use SoftDeletes;
     use HasRoles;
 
     protected $guard_name = 'api';
+
+    protected static array $adminRoles;
 
     public $fillable = [
         'organisation_id',
@@ -53,7 +58,6 @@ class User extends Authenticatable implements JWTSubject
         'email_address',
         'password',
         'email_address_verified_at',
-        'role',
         'last_logged_in_at',
         'job_role',
         'facebook',
@@ -67,6 +71,9 @@ class User extends Authenticatable implements JWTSubject
         'has_consented',
         'banners',
         'api_key',
+        'country',
+        'program',
+        'locale',
     ];
 
     protected $casts = [
@@ -90,14 +97,37 @@ class User extends Authenticatable implements JWTSubject
         return UserFactory::new();
     }
 
+    protected static function adminRoles()
+    {
+        if (! empty(self::$adminRoles)) {
+            return self::$adminRoles;
+        }
+
+        self::$adminRoles = collect(array_keys(config('wri.permissions.roles')))
+            ->filter(fn ($roleName) => Str::startsWith($roleName, 'admin'))
+            ->toArray();
+
+        return self::$adminRoles;
+    }
+
     public function toSearchableArray()
     {
         return [
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'email' => $this->email,
+            'email' => $this->email_address,
             'organisation_names' => implode('|', $this->organisations()->pluck('name')->toArray()),
         ];
+    }
+
+    public static function searchUsers($query)
+    {
+        return self::select('users.*')
+            ->leftJoin('organisations', 'users.organisation_id', '=', 'organisations.id')
+            ->where('organisations.name', 'like', "%$query%")
+            ->orWhere('users.first_name', 'like', "%$query%")
+            ->orWhere('users.last_name', 'like', "%$query%")
+            ->orWhere('users.email_address', 'like', "%$query%");
     }
 
     public function getJWTIdentifier(): string
@@ -159,13 +189,17 @@ class User extends Authenticatable implements JWTSubject
 
     public function scopeUser(Builder $query): Builder
     {
-        return $query->where('role', '=', 'user');
+        return $query->role('project-developer');
     }
 
     public function scopeUserOrTerrafundAdmin(Builder $query): Builder
     {
-        return $query->where('role', 'user')
-            ->orWhere('role', 'terrafund_admin');
+        return $query->role(['project-developer', 'admin-terrafund']);
+    }
+
+    public function scopeAdmin(Builder $query): Builder
+    {
+        return $query->role(self::adminRoles());
     }
 
     public function scopeOrganisationUuid(Builder $query, string $uuid): Builder
@@ -180,18 +214,14 @@ class User extends Authenticatable implements JWTSubject
         return $query->whereNull('email_address_verified_at');
     }
 
-    public function scopeVerified(Builder $query, $flag): Builder
-    {
-        if ($flag) {
-            return $query->whereNotNull('email_address_verified_at');
-        }
-
-        return $query->whereNull('email_address_verified_at');
-    }
-
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(Organisation::class);
+    }
+
+    public function v2Organisation(): BelongsTo
+    {
+        return $this->belongsTo(V2Organisation::class, 'organisation_id', 'id');
     }
 
     public function organisations(): BelongsToMany
@@ -254,6 +284,27 @@ class User extends Authenticatable implements JWTSubject
         return Application::whereIn('organisation_uuid', $orgUuids)->get();
     }
 
+    public function getMyFrameworksSlugAttribute(): Collection
+    {
+        if ($this->is_admin) {
+            $permissions = $this->getPermissionsViaRoles();
+            $frameworkPermissions = $permissions->filter(function ($permission) {
+                return Str::startsWith($permission->name, 'framework-');
+            });
+
+            return $frameworkPermissions->map(function ($permission) {
+                return Str::after($permission->name, 'framework-');
+            });
+        } else {
+            return $this->projects()->distinct('framework_key')->pluck('framework_key');
+        }
+    }
+
+    public function getMyFrameworksAttribute(): Collection
+    {
+        return Framework::whereIn('slug', $this->my_frameworks_slug)->get(['slug', 'name']);
+    }
+
     public function devices()
     {
         return $this->hasMany(Device::class);
@@ -289,6 +340,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Project::class, 'v2_project_users');
     }
 
+    public function managedProjects()
+    {
+        return $this->projects()->wherePivot('is_managing', true);
+    }
+
     public function terrafundProgrammes()
     {
         return $this->belongsToMany(TerrafundProgramme::class);
@@ -313,5 +369,23 @@ class User extends Authenticatable implements JWTSubject
         $this->linkedin = null;
         $this->instagram = null;
         $this->avatar = null;
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        if (empty($this->first_name) && empty($this->last_name)) {
+            return 'Unnamed User';
+        } elseif (empty($this->first_name)) {
+            return $this->last_name;
+        } elseif (empty($this->last_name)) {
+            return $this->first_name;
+        }
+
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->hasAnyRole(self::adminRoles());
     }
 }

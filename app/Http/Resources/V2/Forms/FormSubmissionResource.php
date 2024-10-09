@@ -39,6 +39,7 @@ class FormSubmissionResource extends JsonResource
             'deleted_at' => $this->deleted_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'project_pitch_uuid' => $this->project_pitch_uuid,
         ];
     }
 

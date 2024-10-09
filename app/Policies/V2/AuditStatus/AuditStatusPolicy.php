@@ -2,8 +2,8 @@
 
 namespace App\Policies\V2\AuditStatus;
 
-use App\Models\User;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\User;
 use App\Policies\Policy;
 
 class AuditStatusPolicy extends Policy

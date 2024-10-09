@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\UpdateVisibility;
 use App\Models\Notification as NotificationModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -46,7 +46,7 @@ class NotifyUpdateVisibilityJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new UpdateVisibility($model, $id));
+                Mail::to($user->email_address)->send(new UpdateVisibility($model, $id, $user));
             }
             $pushService->sendPush(
                 $user,

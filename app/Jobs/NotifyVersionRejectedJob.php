@@ -7,7 +7,7 @@ use App\Mail\VersionRejected as VersionRejectedMail;
 use App\Models\Interfaces\Version as VersionModel;
 use App\Models\Notification as NotificationModel;
 use App\Models\Pitch as PitchModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -83,7 +83,7 @@ class NotifyVersionRejectedJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new VersionRejectedMail($model, $id, $explanation));
+                Mail::to($user->email_address)->send(new VersionRejectedMail($model, $id, $explanation, $user));
             }
             $pushService->sendPush(
                 $user,

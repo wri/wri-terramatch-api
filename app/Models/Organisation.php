@@ -22,7 +22,7 @@ class Organisation extends Model
 
     public function users()
     {
-        return $this->hasMany(\App\Models\User::class);
+        return $this->hasMany(\App\Models\V2\User::class);
     }
 
     public function programmes()

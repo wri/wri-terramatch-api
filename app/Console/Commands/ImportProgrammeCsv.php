@@ -7,7 +7,7 @@ use App\Models\Organisation;
 use App\Models\OrganisationVersion;
 use App\Models\Programme;
 use App\Models\ProgrammeTreeSpecies;
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;

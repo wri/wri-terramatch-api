@@ -41,6 +41,7 @@ class ProjectResource extends JsonResource
             'jobs_created_goal' => $this->jobs_created_goal,
             'total_hectares_restored_goal' => $this->total_hectares_restored_goal,
             'total_hectares_restored_count' => $this->total_hectares_restored_count,
+            'total_hectares_restored_sum' => $this->total_hectares_restored_sum,
             'trees_grown_goal' => $this->trees_grown_goal,
             'survival_rate' => $this->survival_rate,
             'year_five_crown_cover' => $this->year_five_crown_cover,
@@ -52,8 +53,9 @@ class ProjectResource extends JsonResource
             'seeds_planted_count' => $this->seeds_planted_count,
             'regenerated_trees_count' => $this->regenerated_trees_count,
             'workday_count' => $this->workday_count,
-            // Temporary until we have bulk import completed.
+            // These two are temporary until we have bulk import completed.
             'self_reported_workday_count' => $this->self_reported_workday_count,
+            'combined_workday_count' => $this->combined_workday_count,
             'total_jobs_created' => $this->total_jobs_created,
             'total_sites' => $this->total_sites,
             'total_nurseries' => $this->total_nurseries,
@@ -80,13 +82,26 @@ class ProjectResource extends JsonResource
             'pct_beneficiaries_large' => $this->pct_beneficiaries_large,
             'pct_beneficiaries_youth' => $this->pct_beneficiaries_youth,
             'land_tenure_project_area' => $this->land_tenure_project_area,
+            'proj_impact_biodiv' => $this->proj_impact_biodiv,
+            'proj_impact_foodsec' => $this->proj_impact_foodsec,
+            'proposed_gov_partners' => $this->proposed_gov_partners,
+            'states' => $this->states,
             'organisation' => new OrganisationLiteResource($this->organisation),
             'application' => new ApplicationLiteResource($this->application),
             'migrated' => ! empty($this->old_model),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'trees_restored_ppc' =>
+                $this->getTreesGrowingThroughAnr($this->sites) + (($this->trees_planted_count + $this->seeds_planted_count) * ($this->survival_rate / 100)),
         ];
 
         return $this->appendFilesToResource($data);
+    }
+
+    public function getTreesGrowingThroughAnr($sites)
+    {
+        return $sites->sum(function ($site) {
+            return $site->reports->sum('num_trees_regenerating');
+        });
     }
 }

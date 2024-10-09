@@ -27,6 +27,6 @@ class ApplicationSubmittedConfirmationSendEmail
         $form = $formSubmission->form;
         $user = $event->user;
 
-        Mail::to($user->email_address)->send(new ApplicationSubmittedConfirmation(data_get($form, 'submission_message', 'Thank you for sending your application.')));
+        Mail::to($user->email_address)->send(new ApplicationSubmittedConfirmation(data_get($form, 'submission_message', 'Thank you for sending your application.'), $user));
     }
 }

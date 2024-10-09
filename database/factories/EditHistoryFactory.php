@@ -9,7 +9,7 @@ use App\Models\Site;
 use App\Models\Terrafund\TerrafundNursery;
 use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 

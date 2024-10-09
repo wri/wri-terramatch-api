@@ -2,17 +2,16 @@
 
 namespace App\Mail;
 
-class TargetCreated extends Mail
+class TargetCreated extends I18nMail
 {
-    public function __construct(Int $targetId, String $name)
+    public function __construct(Int $targetId, String $name, $user)
     {
-        $this->subject = 'Monitoring Targets Set';
-        $this->title = 'Monitoring Targets Set';
-        $this->body =
-            'You have been sent monitoring targets to approve for ' . e($name) . '.<br><br>' .
-            'Click below to view these targets.<br><br>' .
-            'Note: you may need to update your funding status on TerraMatch to view.';
+        parent::__construct($user);
+        $this->setSubjectKey('target-created.subject')
+            ->setTitleKey('target-created.title')
+            ->setBodyKey('target-created.body')
+            ->setParams(['{name}' => e($name)])
+            ->setCta('target-created.cta');
         $this->link = '/monitoring/review/?targetId=' . $targetId;
-        $this->cta = 'View Monitoring Terms';
     }
 }

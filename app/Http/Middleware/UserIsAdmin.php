@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\V2\User;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,9 @@ class UserIsAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (! $request->user() || ! in_array($request->user()->role, ['admin', 'terrafund_admin'])) {
+        /** @var User $user */
+        $user = $request->user();
+        if (empty($user) || (! $user->isAdmin && ! $user->hasRole('project-manager'))) {
             abort(403, 'Access denied');
         }
 

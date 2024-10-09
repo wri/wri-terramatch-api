@@ -9,7 +9,6 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\HasVersions;
 use App\Models\Traits\NamedEntityTrait;
-use App\Models\User;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Database\Factories\V2\OrganisationFactory;
@@ -20,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Tags\HasTags;
@@ -33,7 +31,6 @@ class Organisation extends Model implements MediaModel
     use HasUuid;
     use HasStatus;
     use HasTypes;
-    use Searchable;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use SoftDeletes;
@@ -219,6 +216,12 @@ class Organisation extends Model implements MediaModel
         return [
             'name' => $this->name,
         ];
+    }
+
+    public static function searchOrganisations($query)
+    {
+        return self::select('organisations.*')
+            ->where('organisations.name', 'like', "%$query%");
     }
 
     public function treeSpecies(): MorphMany

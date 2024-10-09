@@ -59,6 +59,8 @@ responses:
                 site_id:
                   type: string
                   nullable: true
+                site_name:
+                  type: string
                 status:
                   type: string
                 target_sys:

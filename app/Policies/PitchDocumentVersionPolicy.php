@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\PitchDocumentVersion as PitchDocumentVersionModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 
 class PitchDocumentVersionPolicy extends Policy
 {

@@ -23,8 +23,11 @@ class Workday extends Model implements HandlesLinkedFieldSync
     use HasUuid;
     use HasTypes;
 
+    public const DEMOGRAPHICS_COUNT_CUTOFF = '2024-07-05';
+
     protected $casts = [
         'published' => 'boolean',
+        'hidden' => 'boolean',
     ];
 
     public $table = 'v2_workdays';
@@ -41,6 +44,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
         'indigeneity',
         'migrated_to_demographics',
         'description',
+        'hidden',
     ];
 
     public const COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS = 'paid-nursery-operations';
@@ -86,7 +90,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
     /**
      * @throws \Exception
      */
-    public static function syncRelation(EntityModel $entity, string $property, $data): void
+    public static function syncRelation(EntityModel $entity, string $property, $data, bool $hidden): void
     {
         if (count($data) == 0) {
             $entity->$property()->delete();
@@ -110,23 +114,52 @@ class Workday extends Model implements HandlesLinkedFieldSync
                 'workdayable_type' => get_class($entity),
                 'workdayable_id' => $entity->id,
                 'collection' => $workdayData['collection'],
+                'hidden' => $hidden,
             ]);
+        } else {
+            $workday->update(['hidden' => $hidden]);
         }
+
+        // Make sure the incoming data is clean, and meets our expectations of one row per type/subtype/name combo.
+        // The FE is not supposed to send us data with duplicates, but there has been a bug in the past that caused
+        // this problem, so this extra check is just covering our bases.
+        $syncData = isset($workdayData['demographics']) ? collect($workdayData['demographics'])->reduce(function ($syncData, $row) {
+            $type = data_get($row, 'type');
+            $subtype = data_get($row, 'subtype');
+            $name = data_get($row, 'name');
+            $amount = data_get($row, 'amount');
+
+            foreach ($syncData as &$syncRow) {
+                if (data_get($syncRow, 'type') === $type &&
+                    data_get($syncRow, 'subtype') === $subtype &&
+                    data_get($syncRow, 'name') === $name) {
+
+                    // Keep the last value for this type/subtype/name in the incoming data set.
+                    $syncRow['amount'] = $amount;
+
+                    return $syncData;
+                }
+            }
+
+            $syncData[] = $row;
+
+            return $syncData;
+        }, []) : [];
 
         $demographics = $workday->demographics;
         $represented = collect();
-        foreach (($workdayData['demographics'] ?? []) as $demographicData) {
+        foreach ($syncData as $row) {
             $demographic = $demographics->firstWhere([
-                'type' => data_get($demographicData, 'type'),
-                'subtype' => data_get($demographicData, 'subtype'),
-                'name' => data_get($demographicData, 'name'),
+                'type' => data_get($row, 'type'),
+                'subtype' => data_get($row, 'subtype'),
+                'name' => data_get($row, 'name'),
             ]);
 
             if ($demographic == null) {
-                $workday->demographics()->create($demographicData);
+                $workday->demographics()->create($row);
             } else {
                 $represented->push($demographic->id);
-                $demographic->update(['amount' => data_get($demographicData, 'amount')]);
+                $demographic->update(['amount' => data_get($row, 'amount')]);
             }
         }
         // Remove any existing demographic that wasn't in the submitted set.
@@ -155,6 +188,11 @@ class Workday extends Model implements HandlesLinkedFieldSync
     public function scopeCollections(Builder $query, array $collections): Builder
     {
         return $query->whereIn('collection', $collections);
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 
     public function demographics(): HasMany

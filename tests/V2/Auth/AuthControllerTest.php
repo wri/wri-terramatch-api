@@ -2,8 +2,8 @@
 
 namespace Tests\V2\Auth;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -17,7 +17,7 @@ final class AuthControllerTest extends TestCase
     {
         $primeOrg = Organisation::factory(['status' => Organisation::STATUS_APPROVED])->create();
         $monitoringOrgs = Organisation::factory(['status' => Organisation::STATUS_APPROVED])->count(2)->create();
-        $user = User::factory()->create(['organisation_id' => $primeOrg->id]);
+        $user = User::factory()->create(['organisation_id' => $primeOrg->id, 'locale' => 'en-US']);
         foreach ($monitoringOrgs as $monitoringOrg) {
             $monitoringOrg->partners()->attach($user, ['status' => 'approved']);
         }
@@ -30,7 +30,8 @@ final class AuthControllerTest extends TestCase
 
     public function test_resend_by_email_action(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['locale' => 'en-US']);
+        $this->actingAs($user);
 
         $this->postJson('/api/v2/users/resend', [
             'email_address' => $user->email_address,

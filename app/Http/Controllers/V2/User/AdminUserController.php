@@ -8,12 +8,11 @@ use App\Http\Requests\V2\User\StoreUserRequest;
 use App\Http\Requests\V2\User\UpdateUserRequest;
 use App\Http\Resources\V2\User\UserResource;
 use App\Http\Resources\V2\User\UsersCollection;
-use App\Models\User as V1User;
 use App\Models\V2\Organisation;
 use App\Models\V2\User;
+use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -54,7 +53,7 @@ class AdminUserController extends Controller
         }
 
         if ($request->query('search')) {
-            $ids = User::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = User::searchUsers(trim($request->query('search')))->pluck('id')->toArray();
 
             if (empty($ids)) {
                 return new UsersCollection([]);
@@ -78,32 +77,14 @@ class AdminUserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $this->authorize('create', User::class);
-
         $data = $request->all();
-
-        switch ($request->get('primary_role')) {
-            case 'admin-super':
-            case 'admin-ppc':
-                $data['role'] = 'admin';
-
-                break;
-            case 'admin-terrafund':
-                $data['role'] = 'terrafund_admin';
-
-                break;
-            case 'project-developer':
-                $data['role'] = 'user';
-
-                break;
-        }
-
         $user = User::create($data);
 
-        if (! empty($request->get('primary_role')) && Auth::user()->hasRole('admin-super')) {
-            $user->syncRoles([$request->get('primary_role')]);
-        } else {
-            assignSpatieRole($user);
+        $role = $request->get('role');
+        if (empty($role) || app(Gate::class)->denies('updateRole', $user)) {
+            $role = 'project-developer';
         }
+        $user->syncRoles([$role]);
 
         return new UserResource($user);
     }
@@ -120,36 +101,18 @@ class AdminUserController extends Controller
 
         $data = $request->all();
 
-        if (! empty($request->get('primary_role')) && Auth::user()->hasRole('admin-super')) {
-            $v1User = V1User::find($user->id);
-            $v1User->syncRoles([$request->get('primary_role')]);
-            $user->syncRoles([$request->get('primary_role')]);
-
-            switch ($request->get('primary_role')) {
-                case 'admin-super':
-                case 'admin-ppc':
-                    $data['role'] = 'admin';
-
-                    break;
-                case 'admin-terrafund':
-                    $data['role'] = 'terrafund_admin';
-
-                    break;
-                case 'project-developer':
-                    $data['role'] = 'user';
-
-                    break;
-            }
+        if (! empty($request->get('role')) && app(Gate::class)->allows('updateRole', $user)) {
+            $user->syncRoles([$request->get('role')]);
         }
 
         $user->update($data);
 
         if ($request->get('organisation')) {
-            $organisation_id = Organisation::isUuid($request->get('organisation'))
-                ->pluck('id')
+            $organisation = Organisation::isUuid($request->get('organisation'))
                 ->first();
-            if ($organisation_id) {
-                $user->organisation_id = $organisation_id;
+            if ($organisation) {
+                $organisation->partners()->updateExistingPivot($user, ['status' => 'approved'], false);
+                $user->organisation_id = $organisation->id;
                 $user->save();
             }
         }
@@ -166,8 +129,6 @@ class AdminUserController extends Controller
                 $user->organisations()->detach();
             }
         }
-
-
 
         return new UserResource($user);
     }

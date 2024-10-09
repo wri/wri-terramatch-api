@@ -2,7 +2,7 @@
 
 namespace Tests\V2\Projects\Monitoring;
 
-use App\Models\User;
+use App\Models\V2\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectMonitoring;
@@ -24,9 +24,7 @@ class AdminSoftDeleteProjectMonitoringControllerTest extends TestCase
 
         $organisation = Organisation::factory()->create();
 
-        Artisan::call('v2migration:roles');
         $this->owner = User::factory()->admin()->create(['organisation_id' => $organisation->id]);
-        $this->owner->givePermissionTo('manage-own');
 
         $project = Project::factory()->create([
             'organisation_id' => $organisation->id,
@@ -44,10 +42,6 @@ class AdminSoftDeleteProjectMonitoringControllerTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         $this->actingAs($user)
-            ->delete('/api/v2/admin/project-monitorings/' . $this->projectMonitoring->uuid)
-            ->assertStatus(403);
-
-        $this->actingAs($admin)
             ->delete('/api/v2/admin/project-monitorings/' . $this->projectMonitoring->uuid)
             ->assertStatus(403);
 

@@ -24,6 +24,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
+/**
+ * @property mixed $project
+ */
 class Task extends Model
 {
     use HasFactory;

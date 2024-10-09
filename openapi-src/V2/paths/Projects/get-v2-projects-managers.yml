@@ -1,0 +1,18 @@
+summary: Index of project managers
+operationId: get-v2-projects-managers
+tags:
+  - V2 Projects
+produces:
+  - application/json
+parameters:
+  - in: path
+    type: string
+    name: UUID
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: '../../definitions/_index.yml#/AssociatedUserRead'

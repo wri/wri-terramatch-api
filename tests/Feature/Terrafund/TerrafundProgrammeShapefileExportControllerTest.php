@@ -5,7 +5,7 @@ namespace Tests\Feature\Terrafund;
 use App\Models\Organisation;
 use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
-use App\Models\User;
+use App\Models\V2\User;
 use Tests\TestCase;
 
 final class TerrafundProgrammeShapefileExportControllerTest extends TestCase

@@ -11,6 +11,8 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\AuditableModel;
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Polygon;
@@ -22,20 +24,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Nursery extends Model implements MediaModel, AuditableContract, EntityModel
+class Nursery extends Model implements MediaModel, AuditableContract, EntityModel, AuditableModel
 {
     use HasFrameworkKey;
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
@@ -112,6 +113,16 @@ class Nursery extends Model implements MediaModel, AuditableContract, EntityMode
             'project_name' => data_get($this->project, 'name'),
             'organisation_name' => data_get($this->organisation, 'name'),
         ];
+    }
+
+    public static function searchNurseries($query)
+    {
+        return self::select('v2_nurseries.*')
+            ->join('v2_projects', 'v2_nurseries.project_id', '=', 'v2_projects.id')
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+            ->where('v2_nurseries.name', 'like', "%$query%")
+            ->orWhere('v2_projects.name', 'like', "%$query%")
+            ->orWhere('organisations.name', 'like', "%$query%");
     }
 
     /** RELATIONS */
@@ -204,5 +215,15 @@ class Nursery extends Model implements MediaModel, AuditableContract, EntityMode
                 $query->where('uuid', $uuid);
             });
         });
+    }
+
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
+    }
+
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->title ?? '';
     }
 }

@@ -13,6 +13,7 @@ use App\Jobs\NotifyProgressUpdateCreatedJob;
 use App\Models\Interest as InterestModel;
 use App\Models\Monitoring as MonitoringModel;
 use App\Models\ProgressUpdate as ProgressUpdateModel;
+use App\Models\V2\User;
 use App\Resources\ProgressUpdateResource;
 use App\Validators\ProgressUpdateValidator;
 use Illuminate\Http\JsonResponse;
@@ -41,6 +42,7 @@ class ProgressUpdatesController extends Controller
 
             return JsonResponseHelper::error($errors, 422);
         }
+        /** @var User $me */
         $me = Auth::user();
         $images = [];
         foreach ($data['images'] as $key => &$image) {
@@ -68,7 +70,7 @@ class ProgressUpdatesController extends Controller
         if ($monitoring->stage != 'accepted_targets') {
             throw new InvalidMonitoringException();
         }
-        if ($me->role != 'admin' && $me->role != 'terrafund_admin') {
+        if (! $me->isAdmin) {
             $matched = $monitoring->matched;
             $interest = InterestModel::whereIn('id', [$matched->primary_interest_id, $matched->secondary_interest_id])
                 ->where('organisation_id', '=', $me->organisation_id)
