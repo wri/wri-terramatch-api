@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
 use Exception;
+use Illuminate\Http\Response;
 
 class FixPolygonOverlapJob implements ShouldQueue
 {
@@ -81,6 +82,7 @@ class FixPolygonOverlapJob implements ShouldQueue
               'status' => self::STATUS_FAILED,
               'payload' => json_encode(['error' => $e->getMessage()]),
               'updated_at' => now(),
+              'statusCode' => $e->getCode() ?? Response::HTTP_INTERNAL_SERVER_ERROR
           ]);
       } catch (Throwable $e) {
           Log::error('Throwable Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
@@ -89,6 +91,7 @@ class FixPolygonOverlapJob implements ShouldQueue
               'status' => self::STATUS_FAILED,
               'payload' => json_encode(['error' => $e->getMessage()]),
               'updated_at' => now(),
+              'statusCode' => $e->getCode() ?? Response::HTTP_INTERNAL_SERVER_ERROR
           ]);
       }
     }

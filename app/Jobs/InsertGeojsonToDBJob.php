@@ -101,7 +101,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 'status' => self::STATUS_FAILED,
                 'payload' => ['error' => $e->getMessage()],
                 'updated_at' => now(),
-                'statusCode' => $e->getCode()
+                'statusCode' => $e->getCode() ?? Response::HTTP_INTERNAL_SERVER_ERROR
             ]);
         }
     }
