@@ -2,34 +2,35 @@
 
 namespace App\Jobs;
 
-use App\Helpers\GeometryHelper;
 use App\Models\DelayedJob;
 use App\Services\PolygonValidationService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Throwable;
-
 
 class RunSitePolygonsValidationJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     private const STATUS_PENDING = 'pending';
     private const STATUS_FAILED = 'failed';
     private const STATUS_SUCCEEDED = 'succeeded';
 
     protected $uuid;
-    protected $job_uuid;
-    protected $sitePolygonsUuids;
 
+    protected $job_uuid;
+
+    protected $sitePolygonsUuids;
 
     /**
      * Create a new job instance.
@@ -77,12 +78,12 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
         } catch (Exception $e) {
             Log::error('Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
-            
+
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'updated_at' => now(),
-                'statusCode' => $e->getCode() ?? Response::HTTP_INTERNAL_SERVER_ERROR
+                'statusCode' => $e->getCode() ?? Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }

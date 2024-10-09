@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
-use App\Services\PolygonService;
 use App\Validators\Extensions\Polygons\EstimatedArea;
 use App\Validators\Extensions\Polygons\FeatureBounds;
 use App\Validators\Extensions\Polygons\GeometryType;
@@ -21,6 +20,7 @@ class PolygonValidationService
     public function validateOverlapping(Request $request)
     {
         $uuid = $request->input('uuid');
+
         return $this->handlePolygonValidation(
             $uuid,
             NotOverlapping::getIntersectionData($uuid),
@@ -33,7 +33,7 @@ class PolygonValidationService
         $uuid = $request->query('uuid');
         $geometry = PolygonGeometry::where('uuid', $uuid)->first();
 
-        if (!$geometry) {
+        if (! $geometry) {
             return ['error' => 'Geometry not found', 'status' => 404];
         }
 
@@ -47,7 +47,7 @@ class PolygonValidationService
             'geometry_id' => $geometry->id,
             'insertion_success' => $insertionSuccess,
             'valid' => $isSimple,
-            'status' => 200
+            'status' => 200,
         ];
     }
 
@@ -67,7 +67,7 @@ class PolygonValidationService
         $uuid = $request->query('uuid');
         $geometry = PolygonGeometry::isUuid($uuid)->first();
 
-        if (!$geometry) {
+        if (! $geometry) {
             return ['error' => 'Geometry not found', 'status' => 404];
         }
 
@@ -82,7 +82,7 @@ class PolygonValidationService
             'geometry_id' => $geometry->id,
             'insertion_success' => $insertionSuccess,
             'valid' => $valid,
-            'status' => 200
+            'status' => 200,
         ];
     }
 
@@ -102,7 +102,7 @@ class PolygonValidationService
         $uuid = $request->query('uuid');
         $geometry = PolygonGeometry::isUuid($uuid)->first();
 
-        if (!$geometry) {
+        if (! $geometry) {
             return ['error' => 'Geometry not found', 'status' => 404];
         }
         $spikes = Spikes::detectSpikes($geometry->geo_json);
@@ -115,7 +115,7 @@ class PolygonValidationService
             'geometry_id' => $uuid,
             'insertion_success' => $insertionSuccess,
             'valid' => $valid,
-            'status' => 200
+            'status' => 200,
         ];
     }
 
@@ -134,7 +134,7 @@ class PolygonValidationService
                 'geometry_type' => $geometryType,
                 'valid' => $valid,
                 'insertion_success' => $insertionSuccess,
-                'status' => 200
+                'status' => 200,
             ];
         } else {
             return ['error' => 'Geometry not found for the given UUID', 'status' => 404];
@@ -158,7 +158,7 @@ class PolygonValidationService
         $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
 
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
-        if (!$sitePolygon) {
+        if (! $sitePolygon) {
             return ['valid' => false, 'message' => 'No site polygon found with the specified UUID.', 'status' => 404];
         }
 
@@ -170,14 +170,14 @@ class PolygonValidationService
                 $validationErrors[] = [
                     'field' => $field,
                     'error' => $value,
-                    'exists' => !is_null($value) && $value !== '',
+                    'exists' => ! is_null($value) && $value !== '',
                 ];
             }
         }
 
         $isValid = empty($validationErrors);
         $responseData = ['valid' => $isValid];
-        if (!$isValid) {
+        if (! $isValid) {
             $responseData['message'] = 'Some attributes of the site polygon are invalid.';
         }
 
@@ -201,6 +201,7 @@ class PolygonValidationService
 
         return $response;
     }
+
     public function runValidationPolygon(string $uuid)
     {
         $request = new Request(['uuid' => $uuid]);

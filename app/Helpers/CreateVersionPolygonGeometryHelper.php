@@ -45,6 +45,7 @@ class CreateVersionPolygonGeometryHelper
 
                 return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $newPolygonVersion->poly_id], 201);
             }
+
             return response()->json(['message' => 'Failed to create site polygon version.'], 500);
         } catch (\Exception $e) {
             throw $e;
