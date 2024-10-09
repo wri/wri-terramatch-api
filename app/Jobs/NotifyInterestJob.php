@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Mail\InterestShown as InterestShownMail;
 use App\Models\Interest as InterestModel;
 use App\Models\Notification as NotificationModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,9 +24,12 @@ class NotifyInterestJob implements ShouldQueue
 
     private $interest = null;
 
-    public function __construct(InterestModel $interest)
+    private $user = null;
+
+    public function __construct(InterestModel $interest, $user)
     {
         $this->interest = $interest;
+        $this->user = $user;
     }
 
     public function handle()
@@ -60,7 +63,7 @@ class NotifyInterestJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new InterestShownMail($model, $name, $id));
+                Mail::to($user->email_address)->send(new InterestShownMail($model, $name, $id, $user));
             }
             $pushService->sendPush(
                 $user,

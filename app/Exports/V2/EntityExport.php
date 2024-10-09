@@ -35,6 +35,11 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         $headings = $this->getAttachedHeadingsForEntity();
 
         foreach ($this->fieldMap as $field) {
+            // Skip the boundary_geojson field as it is not a field that should be exported,
+            // until being removed from the database.
+            if (isset($field['heading']) && $field['heading'] === 'boundary_geojson') {
+                continue;
+            }
             $headings[] = data_get($field, 'heading', 'unknown') ;
         }
 
@@ -53,11 +58,14 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         $mapped = $this->getAttachedMappedForEntity($entity);
 
         foreach ($fieldMap as $field) {
-            $mapped[] = $this->getAnswer($field, $answers) ;
+            if (isset($field['heading']) && $field['heading'] === 'boundary_geojson') {
+                continue;
+            }
+            $mapped[] = $this->getAnswer($field, $answers);
         }
 
         foreach ($this->auditFields  as $key => $value) {
-            $mapped[] = data_get($entity, $key, '');
+            $mapped[] = mb_convert_encoding(data_get($entity, $key, ''), 'UTF-8', 'auto');
         }
 
         return $mapped;
@@ -83,9 +91,10 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
 
         $mapped = array_merge($mapped, [
             $organisation->readable_type ?? null,
-            $organisation->name ?? null,
-            $entity->project->name ?? null,
+            mb_convert_encoding($organisation->name ?? null, 'UTF-8', 'auto'),
+            mb_convert_encoding($entity->project->name ?? null, 'UTF-8', 'auto'),
             $entity->status ?? null,
+            $entity->update_request_status ?? null,
             $entity->due_at ?? null,
         ]);
 
@@ -102,12 +111,12 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
         }
         if ($this->form->type === 'nursery-report') {
             $mapped[] = $entity->nursery->old_id ?? ($entity->nursery->id ?? null);
-            $mapped[] = $entity->nursery->name ?? null;
+            $mapped[] = mb_convert_encoding($entity->nursery->name ?? null, 'UTF-8', 'auto');
         }
 
         if ($this->form->type === 'site-report') {
             $mapped[] = $entity->site->ppc_external_id ?? $entity->site->id ?? null;
-            $mapped[] = $entity->site->name ?? null;
+            $mapped[] = mb_convert_encoding($entity->site->name ?? null, 'UTF-8', 'auto');
             $sumTreeSpecies = $entity->treeSpecies()->sum('amount');
             $mapped[] = $sumTreeSpecies > 0 ? $sumTreeSpecies : null;
             $mapped[] = $entity->site->trees_planted_count ?? null;
@@ -134,6 +143,7 @@ class EntityExport extends BaseExportFormSubmission implements WithHeadings, Wit
             'organization-name',
             'project_name',
             'status',
+            'update_request_status',
             'due_date',
         ]);
 

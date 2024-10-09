@@ -4,6 +4,7 @@ namespace App\Http\Resources\V2\User;
 
 use App\Http\Resources\V2\Organisation\MonitoringOrganisationResource;
 use App\Http\Resources\V2\Organisation\OrganisationResource;
+use App\Http\Resources\V2\Projects\ProjectLiteResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -11,10 +12,12 @@ class UserResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
-            'user_type' => $this->role,
             'job_role' => $this->job_role,
-            'role' => $this->primary_role ? $this->primary_role->name : '',
+            'role' => $this->primary_role->name,
+            'country' => $this->country,
+            'program' => $this->program,
 
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
@@ -24,6 +27,8 @@ class UserResource extends JsonResource
 
             'organisation' => new OrganisationResource($this->my_organisation),
             'monitoring_organisations' => MonitoringOrganisationResource::collection($this->organisations),
+
+            'managed_projects' => $this->managedProjects == null ? null : ProjectLiteResource::collection($this->managedProjects),
 
             'last_logged_in_at' => $this->last_logged_in_at,
             'email_address_verified_at' => $this->email_address_verified_at,

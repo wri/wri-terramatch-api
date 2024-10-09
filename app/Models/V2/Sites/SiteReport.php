@@ -13,6 +13,8 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\AuditableModel;
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
 use App\Models\V2\MediaModel;
@@ -41,7 +43,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
-class SiteReport extends Model implements MediaModel, AuditableContract, ReportModel
+class SiteReport extends Model implements MediaModel, AuditableContract, ReportModel, AuditableModel
 {
     use HasFactory;
     use HasUuid;
@@ -280,12 +282,12 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
 
     public function getTotalTreesPlantedCountAttribute(): int
     {
-        return $this->treeSpecies()->sum('amount');
+        return $this->treeSpecies()->visible()->sum('amount');
     }
 
     public function getTotalSeedsPlantedCountAttribute(): int
     {
-        return $this->seedings()->sum('amount');
+        return $this->seedings()->visible()->sum('amount');
     }
 
     public function getOrganisationAttribute()
@@ -317,6 +319,13 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
             $qry->whereHas('project', function ($qry) use ($projectUuid) {
                 $qry->where('uuid', $projectUuid);
             });
+        });
+    }
+
+    public function scopeOrganisationUuid(Builder $query, string $organizationUuid): Builder
+    {
+        return $query->whereHas('organisation', function ($qry) use ($organizationUuid) {
+            $qry->where('organisations.uuid', $organizationUuid);
         });
     }
 
@@ -354,5 +363,27 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function parentEntity(): BelongsTo
     {
         return $this->site();
+    }
+
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
+    }
+
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->title ?? '';
+    }
+
+    public static function searchReports($query)
+    {
+        return self::select('v2_site_reports.*')
+            ->join('v2_sites', 'v2_site_reports.site_id', '=', 'v2_sites.id')
+            ->join('v2_projects', 'v2_sites.project_id', '=', 'v2_projects.id')
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+            ->where('v2_projects.name', 'like', "%$query%")
+            ->orWhere('organisations.name', 'like', "%$query%")
+            ->orWhere('v2_sites.name', 'like', "%$query%")
+            ->get();
     }
 }

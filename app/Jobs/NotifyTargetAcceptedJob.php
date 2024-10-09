@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Mail\TargetAccepted as TargetAcceptedMail;
 use App\Models\Notification as NotificationModel;
 use App\Models\Target as TargetModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -47,7 +47,7 @@ class NotifyTargetAcceptedJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new TargetAcceptedMail($monitoringId, $name));
+                Mail::to($user->email_address)->send(new TargetAcceptedMail($monitoringId, $name, $user));
             }
             /*
             $pushService->sendPush(

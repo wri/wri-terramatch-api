@@ -33,13 +33,13 @@ class UserVerificationJob implements ShouldQueue
 
     public function handle()
     {
-        if (! in_array(get_class($this->model), [\App\Models\Admin::class, \App\Models\User::class])) {
+        if (! get_class($this->model) == \App\Models\V2\User::class) {
             throw new Exception();
         }
         $verification = new VerificationModel();
         $verification->user_id = $this->model->id;
         $verification->token = Str::random(32);
         $verification->saveOrFail();
-        Mail::to($this->model->email_address)->send(new UserVerificationMail($verification->token, $this->callbackUrl));
+        Mail::to($this->model->email_address)->send(new UserVerificationMail($verification->token, $this->callbackUrl, $this->model));
     }
 }

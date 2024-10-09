@@ -12,6 +12,8 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\AuditableModel;
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
@@ -27,6 +29,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
@@ -36,7 +39,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
-class ProjectReport extends Model implements MediaModel, AuditableContract, ReportModel
+class ProjectReport extends Model implements MediaModel, AuditableContract, ReportModel, AuditableModel
 {
     use HasFactory;
     use HasUuid;
@@ -140,6 +143,9 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'local_engagement',
         'site_addition',
         'paid_other_activity_description',
+        'local_engagement_description',
+        'indirect_beneficiaries',
+        'indirect_beneficiaries_description',
 
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
@@ -288,7 +294,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function getSeedlingsGrownAttribute(): int
     {
         if ($this->framework_key == 'ppc') {
-            return $this->treeSpecies()->sum('amount');
+            return $this->treeSpecies()->visible()->sum('amount');
         }
 
         if ($this->framework_key == 'terrafund') {
@@ -310,6 +316,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
                     'speciesable_id',
                     $this->project->reports()->where('created_at', '<=', $this->created_at)->select('id')
                 )
+                ->visible()
                 ->sum('amount');
         }
 
@@ -326,6 +333,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         return TreeSpecies::where('speciesable_type', SiteReport::class)
             ->whereIn('speciesable_id', $this->task->siteReports()->select('id'))
             ->where('collection', TreeSpecies::COLLECTION_PLANTED)
+            ->visible()
             ->sum('amount');
     }
 
@@ -337,6 +345,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
 
         return Seeding::where('seedable_type', SiteReport::class)
             ->whereIn('seedable_id', $this->task->siteReports()->select('id'))
+            ->visible()
             ->sum('amount');
     }
 
@@ -362,6 +371,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             Workday::where('workdayable_type', SiteReport::class)
                 ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
                 ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
+                ->visible()
                 ->select('id')
         )->gender()->sum('amount');
 
@@ -385,6 +395,13 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         });
     }
 
+    public function scopeOrganisationUuid(Builder $query, string $organizationUuid): Builder
+    {
+        return $query->whereHas('organisation', function ($qry) use ($organizationUuid) {
+            $qry->where('organisations.uuid', $organizationUuid);
+        });
+    }
+
     public function scopeCountry(Builder $query, string $country): Builder
     {
         return $query->whereHas('project', function ($qry) use ($country) {
@@ -400,5 +417,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function parentEntity(): BelongsTo
     {
         return $this->project();
+    }
+
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
+    }
+
+    public function getAuditableNameAttribute(): string
+    {
+        return $this->title ?? '';
     }
 }

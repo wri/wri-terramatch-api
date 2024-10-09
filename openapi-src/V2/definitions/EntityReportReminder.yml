@@ -1,0 +1,5 @@
+title: EntityReportReminder
+type: object
+properties:
+  feedback:
+    type: string

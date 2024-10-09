@@ -3,15 +3,14 @@
 namespace Tests\V2\UpdateRequests;
 
 use App\Helpers\CustomFormHelper;
-use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\UpdateRequestStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminStatusUpdateRequestControllerTest extends TestCase
@@ -20,7 +19,6 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
 
     public function test_invoke_action_permissions(): void
     {
-        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $project = Project::factory()->create([
             'framework_key' => 'ppc',
@@ -42,18 +40,11 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
         ]);
 
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
-
         $random = User::factory()->create();
-        $random->givePermissionTo('manage-own');
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
+        $ppcAdmin = User::factory()->ppcAdmin()->create();
 
-        $tfAdmin = User::factory()->admin()->create();
-        $tfAdmin->givePermissionTo('framework-terrafund');
-
-        $ppcAdmin = User::factory()->admin()->create();
-        $ppcAdmin->givePermissionTo('framework-ppc');
-
-        $payload = ['comments' => 'testing more information'];
+        $payload = ['feedback' => 'testing more information', 'feedback_fields' => []];
         $uri = '/api/v2/admin/update-requests/' . $updateRequest->uuid . '/moreinfo';
 
         $this->actingAs($random)
@@ -75,7 +66,6 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
 
     public function test_flow(): void
     {
-        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $project = Project::factory()->create([
             'framework_key' => 'ppc',
@@ -96,26 +86,22 @@ class AdminStatusUpdateRequestControllerTest extends TestCase
             'status' => UpdateRequestStatusStateMachine::AWAITING_APPROVAL,
         ]);
 
-        $ppcAdmin = User::factory()->admin()->create();
-        $ppcAdmin->givePermissionTo('framework-ppc');
+        $ppcAdmin = User::factory()->ppcAdmin()->create();
 
         $uri = '/api/v2/admin/update-requests/' . $updateRequest->uuid;
 
         $this->actingAs($ppcAdmin)
-            ->putJson($uri . '/moreinfo', ['comments' => 'blah blah blah'])
+            ->putJson($uri . '/moreinfo', ['feedback' => 'blah blah blah', 'feedback_fields' => []])
             ->assertSuccessful()
             ->assertJsonFragment(['status' => UpdateRequestStatusStateMachine::NEEDS_MORE_INFORMATION]);
     }
 
     public function test_approve_updates(): void
     {
-        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
 
-        $ppcAdmin = User::factory()->admin()->create();
-        $ppcAdmin->givePermissionTo('framework-ppc');
+        $ppcAdmin = User::factory()->ppcAdmin()->create();
 
         $project = Project::factory()->create([
             'organisation_id' => $organisation->id,

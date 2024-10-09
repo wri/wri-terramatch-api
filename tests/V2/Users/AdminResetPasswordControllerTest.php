@@ -2,7 +2,7 @@
 
 namespace Tests\V2\Users;
 
-use App\Models\User;
+use App\Models\V2\User;
 use App\Models\V2\User as V2User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

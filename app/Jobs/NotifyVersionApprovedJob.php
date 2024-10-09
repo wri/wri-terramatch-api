@@ -6,7 +6,7 @@ use App\Helpers\NotificationHelper;
 use App\Mail\VersionApproved as VersionApprovedMail;
 use App\Models\Interfaces\Version as VersionModel;
 use App\Models\Notification as NotificationModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -78,7 +78,7 @@ class NotifyVersionApprovedJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new VersionApprovedMail($model, $id));
+                Mail::to($user->email_address)->send(new VersionApprovedMail($model, $id, $user));
             }
             $pushService->sendPush(
                 $user,

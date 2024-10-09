@@ -2,11 +2,13 @@
 
 namespace App\Models\V2\Sites;
 
+use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Models\Framework;
 use App\Models\Traits\HasEntityResources;
-use App\Models\Traits\HasEntityStatus;
+use App\Models\Traits\HasEntityStatusScopesAndTransitions;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
+use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
@@ -24,7 +26,10 @@ use App\Models\V2\Stratas\Strata;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\Workdays\Workday;
 use App\Models\V2\Workdays\WorkdayDemographic;
+use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
+use App\StateMachines\SiteStatusStateMachine;
+use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,7 +39,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-use Laravel\Scout\Searchable;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -42,13 +47,13 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @property string project_id
+ * @property string status
  */
 class Site extends Model implements MediaModel, AuditableContract, EntityModel, AuditableModel
 {
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
@@ -56,8 +61,31 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
-    use HasEntityStatus;
+    use HasStatus;
+    use HasStateMachines;
     use HasEntityResources;
+
+    use HasEntityStatusScopesAndTransitions {
+        approve as entityStatusApprove;
+        submitForApproval as entityStatusSubmitForApproval;
+    }
+
+    public static array $approvedStatuses = [
+        EntityStatusStateMachine::APPROVED,
+        SiteStatusStateMachine::RESTORATION_IN_PROGRESS,
+    ];
+
+    public static array $statuses = [
+        EntityStatusStateMachine::STARTED => 'Started',
+        EntityStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
+        EntityStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
+        SiteStatusStateMachine::RESTORATION_IN_PROGRESS => 'Restoration in progress',
+        EntityStatusStateMachine::APPROVED => 'Approved',
+    ];
+
+    public $stateMachines = [
+        'status' => SiteStatusStateMachine::class,
+    ];
 
     protected $auditInclude = [
         'status',
@@ -170,6 +198,24 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         ];
     }
 
+    public static function searchSites($query)
+    {
+        return self::select('v2_sites.*')
+            ->join('v2_projects', 'v2_sites.project_id', '=', 'v2_projects.id')
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+            ->where('v2_sites.name', 'like', "%$query%")
+            ->orWhere('v2_projects.name', 'like', "%$query%")
+            ->orWhere('organisations.name', 'like', "%$query%");
+    }
+
+    /**
+     * Overrides the method from HasEntityStatusScopesAndTransitions
+     */
+    public function scopeIsApproved(Builder $query): Builder
+    {
+        return $query->whereIn('status', self::$approvedStatuses);
+    }
+
     /** RELATIONS */
     public function framework(): BelongsTo
     {
@@ -261,6 +307,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
 
         return Seeding::where('seedable_type', SiteReport::class)
             ->whereIn('seedable_id', $submissionsIds)
+            ->visible()
             ->sum('amount');
     }
 
@@ -292,6 +339,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         return TreeSpecies::where('speciesable_type', SiteReport::class)
             ->whereIn('speciesable_id', $reportIds)
             ->where('collection', TreeSpecies::COLLECTION_PLANTED)
+            ->visible()
             ->sum('amount');
     }
 
@@ -300,24 +348,43 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         return $this->reports()->hasBeenSubmitted()->sum('num_trees_regenerating');
     }
 
-    public function getWorkdayCountAttribute(): int
+    public function getWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
+        $reportQuery = $this->reports()->hasBeenSubmitted();
+        if ($useDemographicsCutoff) {
+            $reportQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+        }
+
         return WorkdayDemographic::whereIn(
             'workday_id',
             Workday::where('workdayable_type', SiteReport::class)
-                ->whereIn('workdayable_id', $this->reports()->hasBeenSubmitted()->select('id'))
+                ->whereIn('workdayable_id', $reportQuery->select('id'))
+                ->visible()
                 ->select('id')
         )->gender()->sum('amount') ?? 0;
     }
 
-    public function getSelfReportedWorkdayCountAttribute(): int
+    public function getSelfReportedWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
-        $totals = $this->reports()->hasBeenSubmitted()->get([
+        $reportQuery = $this->reports()->hasBeenSubmitted();
+        if ($useDemographicsCutoff) {
+            $reportQuery->where('due_at', '<', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+        }
+        $totals = $reportQuery->get([
             DB::raw('sum(`workdays_volunteer`) as volunteer'),
             DB::raw('sum(`workdays_paid`) as paid'),
         ])->first();
 
         return $totals?->paid + $totals?->volunteer;
+    }
+
+    public function getCombinedWorkdayCountAttribute(): int
+    {
+        // this attribute pulls the self reported values from old reports, and the combined demographic values from
+        // new reports to get a (temporary) accurate count of workday totals. This will be removed when the effort to
+        // import old workday data is completed, and we can simply use the demographics-based count for everything.
+        return $this->getWorkdayCountAttribute(true) +
+            $this->getSelfReportedWorkdayCountAttribute(true);
     }
 
     public function getFrameworkUuidAttribute(): ?string
@@ -370,5 +437,37 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     public function getAuditableNameAttribute(): string
     {
         return $this->name;
+    }
+
+    public function dispatchStatusChangeEvent($user): void
+    {
+        EntityStatusChangeEvent::dispatch($user, $this, $this->name ?? '', '', $this->readable_status);
+    }
+
+    public function getViewLinkPath(): string
+    {
+        return '/' . Str::lower(explode_pop('\\', get_class($this))) . '/' . $this->uuid;
+    }
+
+    public function restorationInProgress()
+    {
+        $this->status()->transitionTo(SiteStatusStateMachine::RESTORATION_IN_PROGRESS);
+    }
+
+    public function scopeFilterByPolygonStatus($query, $status)
+    {
+        if ($status === 'no-polygons') {
+            return $query->whereDoesntHave('sitePolygons');
+        }
+
+        return $query->whereHas('sitePolygons', function ($query) use ($status) {
+            $query->where('is_active', 1)
+                  ->where('status', $status);
+        });
+    }
+
+    public function getTotalHectaresRestoredSumAttribute(): float
+    {
+        return round($this->sitePolygons->where('status', 'approved')->sum('calc_area'));
     }
 }

@@ -33,13 +33,13 @@ class ResetPasswordJob implements ShouldQueue
 
     public function handle()
     {
-        if (! in_array(get_class($this->model), [\App\Models\Admin::class, \App\Models\User::class])) {
+        if (! get_class($this->model) == \App\Models\V2\User::class) {
             throw new Exception();
         }
         $passwordReset = new PasswordResetModel();
         $passwordReset->user_id = $this->model->id;
         $passwordReset->token = Str::random(32);
         $passwordReset->saveOrFail();
-        Mail::to($this->model->email_address)->send(new ResetPasswordMail($passwordReset->token, $this->callbackUrl));
+        Mail::to($this->model->email_address)->send(new ResetPasswordMail($passwordReset->token, $this->callbackUrl, $this->model));
     }
 }

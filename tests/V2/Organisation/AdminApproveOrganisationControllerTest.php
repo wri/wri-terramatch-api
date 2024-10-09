@@ -2,8 +2,8 @@
 
 namespace Tests\V2\Organisation;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
+use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -15,13 +15,14 @@ final class AdminApproveOrganisationControllerTest extends TestCase
 
     public function testInvokeAction(): void
     {
-        $admin = User::factory()->admin()->create();
-        $user = User::factory()->create();
+        $admin = User::factory()->admin()->create(['locale' => 'en-US']);
+        $user = User::factory()->create(['locale' => 'en-US']);
 
         $organisation = Organisation::factory(['status' => Organisation::STATUS_PENDING])->create();
         $owner = User::factory()->create([
             'email_address' => 'test.account@testing.com',
             'organisation_id' => $organisation->id,
+            'locale' => 'en-US',
         ]);
 
         $payload = ['uuid' => $organisation->uuid];

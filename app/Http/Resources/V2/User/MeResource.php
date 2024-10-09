@@ -15,8 +15,15 @@ class MeResource extends JsonResource
             'last_name' => $this->last_name,
             'email_address_verified_at' => $this->email_address_verified_at,
             'email_address' => $this->email_address,
-            'role' => $this->primary_role ? $this->primary_role->name : '',
+            'role' => $this->primary_role->name,
+            'locale' => $this->locale,
             'organisation' => new MyOrganisationLiteResource($this->my_primary_organisation),
+            'frameworks' => $this->my_frameworks->map(function ($framework) {
+                return [
+                    'name' => $framework->name,
+                    'slug' => $framework->slug,
+                ];
+            }),
         ];
     }
 }

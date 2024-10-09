@@ -16,6 +16,9 @@
 /v2/projects/{UUID}/partners:
   get:
     $ref: './Projects/get-v2-projects-uuid-partners.yml'
+/v2/projects/{UUID}/{EMAIL}/remove-partner:
+  delete:
+    $ref: './Projects/delete-v2-projects-uuid-partners.yml'
 /v2/my/projects:
   get:
     $ref: './Projects/get-v2-my-projects.yml'
@@ -96,6 +99,9 @@
 /v2/admin/{ENTITY}/{UUID}/{STATUS}:
   put:
     $ref: './Entity/put-v2-admin-entity-uuid-status.yml'
+/v2/admin/{ENTITY}/{UUID}/reminder:
+  post:
+    $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'
 /v2/update-requests/{UUID}:
   get:
     $ref: './UpdateRequests/get-v2-update-requests-uuid.yml'
@@ -107,47 +113,15 @@
 /v2/workdays/{ENTITY}/{UUID}:
   get:
     $ref: './Workdays/get-v2-workdays-entity-uuid.yml'
-/v2/stratas:
-  post:
-    $ref: './Stratas/post-v2-stratas.yml'
-/v2/stratas/{UUID}:
-  patch:
-    $ref: './Stratas/patch-v2-stratas-uuid.yml'
-  delete:
-    $ref: './Stratas/delete-v2-stratas-uuid.yml'
 /v2/stratas/{ENTITY}/{UUID}:
   get:
     $ref: './Stratas/get-v2-stratas-entity-uuid.yml'
-/v2/seedings:
-  post:
-    $ref: './Seedings/post-v2-seedings.yml'
-/v2/seedings/{UUID}:
-  patch:
-    $ref: './Seedings/patch-v2-seedings-uuid.yml'
-  delete:
-    $ref: './Seedings/delete-v2-seedings-uuid.yml'
 /v2/seedings/{ENTITY}/{UUID}:
   get:
     $ref: './Seedings/get-v2-seedings-entity-uuid.yml'
-/v2/disturbances:
-  post:
-    $ref: './Disturbances/post-v2-disturbances.yml'
-/v2/disturbances/{UUID}:
-  patch:
-    $ref: './Disturbances/patch-v2-disturbances-uuid.yml'
-  delete:
-    $ref: './Disturbances/delete-v2-disturbances-uuid.yml'
 /v2/disturbances/{ENTITY}/{UUID}:
   get:
     $ref: './Disturbances/get-v2-disturbances-entity-uuid.yml'
-/v2/invasives:
-  post:
-    $ref: './Invasives/post-v2-invasives.yml'
-/v2/invasives/{UUID}:
-  patch:
-    $ref: './Invasives/patch-v2-invasives-uuid.yml'
-  delete:
-    $ref: './Invasives/delete-v2-invasives-uuid.yml'
 /v2/invasives/{ENTITY}/{UUID}:
   get:
     $ref: './Invasives/get-v2-invasives-entity-uuid.yml'
@@ -714,6 +688,40 @@
             meta:
               type: object
               $ref: '../definitions/_index.yml#/V2PaginationMeta'
+/v2/admin/users/users-organisation-list/{UUID}:
+  get:
+    summary: Get a collection of users that have been approved for a specific organisation
+    operationId: v2-admin-get-users-organisation-list-uuid
+    tags:
+      - V2 Project Developer
+      - V2 Organisations
+    parameters:
+      - name: UUID
+        type: string
+        in: path
+        required: true
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/V2AdminUserRead'
 /v2/admin/users/{UUID}:
   get:
     summary: Get a user by uuid
@@ -2481,9 +2489,6 @@
     $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
-/v2/sites/{UUID}/geometry:
-  post:
-    $ref: './Sites/post-v2-sites-uuid-geometry.yml'
 /v2/site-monitorings/{UUID}:
   get:
     $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
@@ -2499,12 +2504,29 @@
 /v2/projects/invite/accept:
   post:
     $ref: './Projects/post-v2-projects-invite-accept.yml'
+/v2/projects/{UUID}/managers:
+  post:
+    $ref: './Projects/post-v2-projects-managers-store.yml'
+  get:
+    $ref: './Projects/get-v2-projects-managers.yml'
+/v2/projects/{UUID}/managers/{USER_UUID}:
+  delete:
+    $ref: './Projects/delete-v2-projects-uuid-managers.yml'
 /v2/nurseries/{UUID}:
   delete:
     $ref: './Nurseries/delete-v2-nurseries-uuid.yml'
 /v2/admin/audits/{ENTITY}/{UUID}:
   get:
     $ref: './Audits/get-v2-admin-audits-entity-uuid.yml'
+/v2/export-image:
+  post:
+    $ref: './Exports/post-v2-export-image.yml'
+/v2/media/{uuid}:
+  patch:
+    $ref: './Media/patch-v2-media-uuid.yml'
+/v2/media/project/{project}/{mediaUuid}:
+  patch:
+    $ref: './Media/patch-v2-media-project-mediaUuid.yml'
 /v2/admin/{ENTITY}/export/{FRAMEWORK}:
   get:
     $ref: './Exports/get-v2-admin-entity-export-framework.yml'
@@ -2537,6 +2559,9 @@
 /v2/geometry/{UUID}:
   put:
     $ref: './Geometry/put-v2-geometry-uuid.yml'
+/v2/geometry/{UUID}/new-version:
+  post:
+    $ref: './Geometry/post-v2-geometry-uuid-version.yml'
 /v2/audit-status/{ENTITY}/{UUID}:
   get:
     $ref: './AuditStatus/get-v2-audit-status.yml'
@@ -2579,9 +2604,42 @@
 /v2/terrafund/upload-kml:
   post:
     $ref: './Terrafund/post-v2-terrafund-upload-kml.yml'
+/v2/terrafund/upload-geojson-validate:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-geojson-validate.yml'
+/v2/terrafund/upload-shapefile-validate:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-shapefile-validate.yml'
+/v2/terrafund/upload-kml-validate:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-kml-validate.yml'
+/v2/terrafund/upload-geojson-project:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-geojson-project.yml'
+/v2/terrafund/upload-shapefile-project:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-shapefile-project.yml'
+/v2/terrafund/upload-kml-project:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-kml-project.yml'
 /v2/terrafund/site-polygon/{uuid}:
   put:
     $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
+/v2/terrafund/new-site-polygon/{uuid}/new-version:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-site-polygon-uuid-version.yml'
+/v2/terrafund/project-polygon:
+  get:
+    $ref: './Terrafund/get-v2-terrafund-project-polygon.yml'
+/v2/terrafund/project-polygon/{uuid}:
+  delete:
+    $ref: './Terrafund/delete-v2-terrafund-project-polygon-uuid.yml'
+/v2/terrafund/project-polygon/{uuid}/{entity_uuid}/{entity_type}:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-project-polygon.yml'
+/v2/terrafund/project-polygons:
+  delete:
+    $ref: './Terrafund/delete-v2-terrafund-project-polygons.yml'
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
@@ -2615,6 +2673,42 @@
 /v2/dashboard/project-data/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-project-data-uuid.yml'
+/v2/dashboard/active-projects:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-active-projects.yml'
+/v2/dashboard/volunteers-survival-rate:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-volunteers-survival-rate.yml'
+/v2/dashboard/total-section-header:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-total-section-header.yml'
+/v2/dashboard/active-countries:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-active-countries.yml'
+/v2/dashboard/countries:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-countries.yml'
+/v2/dashboard/get-projects:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-projects.yml'
+/v2/dashboard/project-details/{project}:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-project-details.yml'
+/v2/dashboard/top-trees-planted:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-top-trees-planted.yml'
+/v2/project-pipeline:
+  get:
+    $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
+  post:
+    $ref: './ProjectPipeline/post-v2-project-pipeline.yml'
+/v2/project-pipeline/{id}:
+  get:
+    $ref: './ProjectPipeline/get-v2-project-pipeline-id.yml'
+  put:
+    $ref: './ProjectPipeline/put-v2-project-pipeline-id.yml'
+  delete:
+    $ref: './ProjectPipeline/delete-v2-project-pipeline-id.yml'
 /v2/dashboard/view-project/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-view-project-uuid.yml'
@@ -2627,9 +2721,36 @@
 /v2/{ENTITY}/{UUID}/status:
     put:
       $ref: './Entity/put-v2-entity-uuid-status.yml'
+/v2/{ENTITY}/{UUID}/{ID}/delete:
+  delete:
+    $ref: './AuditStatus/delete-v2-audit-status.yml'
 /v2/projects/{UUID}/site-polygons/all:
   get:
     $ref: './Projects/get-v2-projects-uuid-site-polygons-all.yml'
 /v2/sites/{site}/check-approve:
   get:
     $ref: './Sites/get-v2-sites-uuid-check-approve.yml'
+/v2/site-polygon/status/bulk:
+  put:
+    $ref: './Polygons/get-v2-polygons-uuid-change-status.yml'
+/v2/site-polygon/{uuid}:
+  get:
+    $ref: './Polygons/get-v2-site-polygon-uuid.yml'
+/v2/site-polygon/{uuid}/versions:
+  get:
+    $ref: './Polygons/get-v2-site-polygon-uuid-versions.yml'
+/v2/site-polygon/{uuid}/new-version:
+  post:
+    $ref: './Polygons/post-v2-site-polygon-uuid-new-version.yml'
+/v2/site-polygon/{uuid}/make-active:
+  put:
+    $ref: './Polygons/put-v2-site-polygon-uuid-make-active.yml'
+/v2/users/locale:
+  patch:
+    $ref: './Users/post-v2-users-locale.yml'
+/v2/terrafund/clip-polygons/polygon/{uuid}:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-clip-polygons-polygon-uuid.yml'
+/v2/terrafund/clip-polygons/site/{uuid}:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-clip-polygons-site-uuid.yml'

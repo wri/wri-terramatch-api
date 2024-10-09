@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Mail\SatelliteMapCreated as SatelliteMapCreatedMail;
 use App\Models\Notification as NotificationModel;
 use App\Models\SatelliteMap as SatelliteMapModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -48,7 +48,7 @@ class NotifySatelliteMapCreatedJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new SatelliteMapCreatedMail($satelliteMapId, $name));
+                Mail::to($user->email_address)->send(new SatelliteMapCreatedMail($satelliteMapId, $name, $user));
             }
             /*
             $pushService->sendPush(

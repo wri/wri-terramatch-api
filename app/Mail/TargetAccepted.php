@@ -2,17 +2,17 @@
 
 namespace App\Mail;
 
-class TargetAccepted extends Mail
+class TargetAccepted extends I18nMail
 {
-    public function __construct(Int $monitoringId, String $name)
+    public function __construct(Int $monitoringId, String $name, $user)
     {
-        $this->subject = 'Monitoring Targets Approved';
+        parent::__construct($user);
+        $this->setSubjectKey('target-accepted.subject')
+            ->setTitleKey('target-accepted.title')
+            ->setBodyKey('target-accepted.body')
+            ->setParams(['{name}' => e($name)])
+            ->setCta('target-accepted.cta');
         $this->banner = 'target_accepted';
-        $this->title = 'Monitoring Targets Approved';
-        $this->body =
-            'Monitoring targets have been approved for ' . e($name) . '.<br><br>' .
-            'Click below to view the newly unlocked project dashboard.';
         $this->link = '/monitoring/dashboard/?monitoringId=' . $monitoringId;
-        $this->cta = 'View Monitored Project';
     }
 }

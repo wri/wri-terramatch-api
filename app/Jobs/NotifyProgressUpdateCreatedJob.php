@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Mail\ProgressUpdateCreated as ProgressUpdateCreatedMail;
 use App\Models\Notification as NotificationModel;
 use App\Models\ProgressUpdate as ProgressUpdateModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -44,7 +44,7 @@ class NotifyProgressUpdateCreatedJob implements ShouldQueue
         foreach ($users as $user) {
             if ($user->is_subscribed) {
                 Mail::to($user->email_address)->send(
-                    new ProgressUpdateCreatedMail($progressUpdateId, $pitchName)
+                    new ProgressUpdateCreatedMail($progressUpdateId, $pitchName, $user)
                 );
             }
             /*

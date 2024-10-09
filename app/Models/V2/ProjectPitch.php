@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Tags\HasTags;
@@ -24,7 +23,6 @@ class ProjectPitch extends Model implements MediaModel
     use HasUuid;
     use HasStatus;
     use SoftDeletes;
-    use Searchable;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use HasTags;
@@ -111,8 +109,16 @@ class ProjectPitch extends Model implements MediaModel
     {
         return [
             'project_name' => $this->project_name,
-            'organisation_name' => $this->organisation->name,
+            'organisation_name' => $this->organisation->name ?? null,
         ];
+    }
+
+    public static function searchProjectPitches($query)
+    {
+        return self::select('project_pitches.*')
+            ->join('organisations', 'project_pitches.organisation_id', '=', 'organisations.uuid')
+            ->where('project_pitches.project_name', 'like', "%$query%")
+            ->orwhere('organisations.name', 'like', "%$query%");
     }
 
     public function getRouteKeyName()

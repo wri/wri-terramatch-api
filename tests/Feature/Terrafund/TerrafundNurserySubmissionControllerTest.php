@@ -5,7 +5,7 @@ namespace Tests\Feature\Terrafund;
 use App\Models\Terrafund\TerrafundNursery;
 use App\Models\Terrafund\TerrafundNurserySubmission;
 use App\Models\Terrafund\TerrafundProgramme;
-use App\Models\User;
+use App\Models\V2\User;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;

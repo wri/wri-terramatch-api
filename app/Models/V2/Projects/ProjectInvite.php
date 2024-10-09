@@ -3,7 +3,7 @@
 namespace App\Models\V2\Projects;
 
 use App\Models\Traits\HasUuid;
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

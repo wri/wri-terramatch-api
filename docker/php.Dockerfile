@@ -12,8 +12,7 @@ RUN apt-get install -y \
     libzip-dev \
     gdal-bin \
     libgdal-dev \
-    python3.11-venv \
-    gdal-bin
+    python3.11-venv
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install \
@@ -41,7 +40,11 @@ COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/php.ini /usr/local/etc/php/php.ini
 
 ## Python
-RUN python3 -m venv /root/python
+RUN python3 -m venv /opt/python
 COPY resources/python/polygon-voronoi/requirements.txt /root/voronoi-requirements.txt
-ENV PATH="/root/python/bin:${PATH}"
+ENV PATH="/opt/python/bin:${PATH}"
 RUN pip3 install -r /root/voronoi-requirements.txt
+RUN chmod -R a+rx /opt/python
+USER www-data
+ENV PATH="/opt/python/bin:${PATH}"
+USER root

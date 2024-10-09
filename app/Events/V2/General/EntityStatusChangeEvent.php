@@ -2,8 +2,8 @@
 
 namespace App\Events\V2\General;
 
-use App\Models\User;
 use App\Models\V2\UpdateRequests\ApprovalFlow;
+use App\Models\V2\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

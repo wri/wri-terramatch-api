@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\UpdateRequests\StatusChangeRequest;
 use App\Http\Resources\V2\UpdateRequests\UpdateRequestResource;
 use App\Models\Site;
+use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
@@ -20,15 +21,19 @@ use OwenIt\Auditing\Events\AuditCustom;
 
 class AdminStatusUpdateRequestController extends Controller
 {
+    use SaveAuditStatusTrait;
+
     public function __invoke(StatusChangeRequest $request, UpdateRequest $updateRequest, string $status)
     {
         $data = $request->validated();
         $this->authorize($status, $updateRequest);
+        $entity = $updateRequest->updaterequestable;
 
         switch($status) {
             case 'approve':
                 $this->applyUpdates($updateRequest);
                 $updateRequest->approve(data_get($data, 'feedback'));
+                $this->saveAuditStatusAdminApprove($data, $entity);
 
                 break;
             case 'moreinfo':
@@ -36,6 +41,7 @@ class AdminStatusUpdateRequestController extends Controller
                     data_get($data, 'feedback'),
                     data_get($data, 'feedback_fields')
                 );
+                $this->saveAuditStatusAdminMoreInfo($data, $entity);
 
                 break;
             default:

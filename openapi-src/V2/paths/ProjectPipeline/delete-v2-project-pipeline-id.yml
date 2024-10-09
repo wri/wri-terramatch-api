@@ -1,0 +1,10 @@
+summary: Delete a project from the pipeline by ID
+parameters:
+  - type: string
+    name: id
+    in: path
+    required: true
+    description: delete a specific project pipeline.
+responses:
+  '204':
+    description: No Content

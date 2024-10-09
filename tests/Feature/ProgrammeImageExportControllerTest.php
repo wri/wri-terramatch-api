@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Organisation;
 use App\Models\Programme;
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\CreatesApplication;

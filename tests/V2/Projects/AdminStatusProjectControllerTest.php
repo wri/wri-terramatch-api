@@ -2,12 +2,11 @@
 
 namespace Tests\V2\Projects;
 
-use App\Models\User;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class AdminStatusProjectControllerTest extends TestCase
@@ -16,7 +15,6 @@ class AdminStatusProjectControllerTest extends TestCase
 
     public function test_invoke_action(): void
     {
-        Artisan::call('v2migration:roles');
         $organisation = Organisation::factory()->create();
         $project = Project::factory()->create([
             'framework_key' => 'ppc',
@@ -25,18 +23,11 @@ class AdminStatusProjectControllerTest extends TestCase
         ]);
 
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-        $owner->givePermissionTo('manage-own');
-
         $random = User::factory()->create();
-        $random->givePermissionTo('manage-own');
+        $tfAdmin = User::factory()->terrafundAdmin()->create();
+        $ppcAdmin = User::factory()->ppcAdmin()->create();
 
-        $tfAdmin = User::factory()->admin()->create();
-        $tfAdmin->givePermissionTo('framework-terrafund');
-
-        $ppcAdmin = User::factory()->admin()->create();
-        $ppcAdmin->givePermissionTo('framework-ppc');
-
-        $payload = ['feedback' => 'testing more info'];
+        $payload = ['feedback' => 'testing more info', 'feedback_fields' => []];
         $uri = '/api/v2/admin/projects/' . $project->uuid . '/moreinfo';
 
         $this->actingAs($random)

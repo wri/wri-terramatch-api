@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\IsAdminIndex;
 use App\Http\Resources\V2\ProjectReports\ProjectReportsCollection;
 use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -22,13 +24,12 @@ class AdminIndexProjectReportsController extends Controller
              ->join('v2_projects', function ($join) {
                  $join->on('v2_project_reports.project_id', '=', 'v2_projects.id');
              })
-             ->selectRaw('
-                v2_project_reports.*,
-                (SELECT name FROM organisations WHERE organisations.id = v2_projects.organisation_id) as organisation_name
-            ')
+             ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+             ->select('v2_project_reports.*', 'organisations.name as organisation_name', 'organisations.id as organisation_id')
              ->allowedFilters([
                  AllowedFilter::scope('project_uuid', 'projectUuid'),
                  AllowedFilter::scope('country'),
+                 AllowedFilter::scope('organisation_uuid', 'organisationUuid'),
                  AllowedFilter::exact('status'),
                  AllowedFilter::exact('update_request_status'),
                  AllowedFilter::exact('framework_key'),
@@ -50,7 +51,12 @@ class AdminIndexProjectReportsController extends Controller
             $query->whereIn('v2_project_reports.id', $ids);
         }
 
-        $this->isolateAuthorizedFrameworks($query, 'v2_project_reports');
+        $user = User::find(Auth::user()->id);
+        if ($user->primaryRole?->name == 'project-manager') {
+            $query->whereIn('project_id', $user->managedProjects()->select('v2_projects.id'));
+        } else {
+            $this->isolateAuthorizedFrameworks($query, 'v2_project_reports');
+        }
 
         return new ProjectReportsCollection($this->paginate($query));
     }

@@ -2,7 +2,7 @@
 
 namespace App\Auth;
 
-use App\Models\User;
+use App\Models\V2\User;
 use Illuminate\Auth\GuardHelpers;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;

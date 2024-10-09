@@ -41,7 +41,9 @@ trait UsesLinkedFields
                         'project-pitch' => $this->projectPitch,
                     ]);
                     if (! empty($linkedFieldInfo)) {
-                        $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid));
+                        $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
+                            data_get($input, $question->parent_id) === false;
+                        $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid), $hidden);
                     }
                 }
                 $localAnswers[$question->uuid] = data_get($input, $question->uuid);
@@ -79,7 +81,9 @@ trait UsesLinkedFields
                         $property = data_get($relationsConfig, "$question->linked_field_key.property");
                         if (! empty($property)) {
                             $inputType = data_get($relationsConfig, "$question->linked_field_key.input_type");
-                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)));
+                            $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
+                                $formData[$question->parent_id] === false;
+                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)), $hidden);
                         }
                     }
 
@@ -231,7 +235,7 @@ trait UsesLinkedFields
         }
     }
 
-    private function updateLinkedFieldValue(array $linkedFieldInfo, $answer): void
+    private function updateLinkedFieldValue(array $linkedFieldInfo, $answer, bool $hidden): void
     {
         $class = app($linkedFieldInfo['model']);
         $model = $class::isUuid($linkedFieldInfo['uuid'])->first();
@@ -246,22 +250,21 @@ trait UsesLinkedFields
             $model->save();
         } elseif ($linkedFieldInfo['link-type'] == 'relations') {
             $inputType = data_get($linkedFieldInfo, 'input_type');
-            $this->syncRelation($property, $inputType, collect($answer), $model);
+            $this->syncRelation($property, $inputType, collect($answer), $hidden, $model);
         }
     }
 
-    private function syncRelation(string $property, string $inputType, $data, $entity = null): void
+    private function syncRelation(string $property, string $inputType, $data, bool $hidden, $entity = null): void
     {
         $entity ??= $this;
 
-        // This will expand as we complete more tickets in TM-747, until eventually we support all form relations.
-        if (! in_array($inputType, ['treeSpecies', 'workdays'])) {
+        if (! in_array($inputType, ['treeSpecies', 'disturbances', 'workdays', 'stratas', 'invasive', 'seedings'])) {
             return;
         }
 
         $class = get_class($entity->$property()->make());
         if (is_a($class, HandlesLinkedFieldSync::class, true)) {
-            $class::syncRelation($entity, $property, $data);
+            $class::syncRelation($entity, $property, $data, $hidden);
 
             return;
         }
@@ -273,6 +276,8 @@ trait UsesLinkedFields
         // so doing them one at a time is OK.
         $entries = $entity->$property()->get();
         foreach ($data as $entry) {
+            $entry['hidden'] = $hidden;
+
             $model = null;
             if (! empty($entry['uuid'])) {
                 $model = $entries->firstWhere('uuid', $entry['uuid']);

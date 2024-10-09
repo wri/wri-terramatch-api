@@ -1,0 +1,19 @@
+summary: get a site polygon by uuid
+operationId: get-v2-site-polygon-uuid
+tags:
+  - V2 Polygons
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    type: string
+    format: uuid
+    description: The UUID of the site polygon
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          $ref: '../../definitions/_index.yml#/SitePolygon'

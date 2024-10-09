@@ -26,6 +26,6 @@ class OrganisationUserApprovedSendEmail
         $organisation = $event->organisation;
         $user = $event->user;
 
-        Mail::to($user->email_address)->send(new OrganisationUserApproved($organisation));
+        Mail::to($user->email_address)->send(new OrganisationUserApproved($organisation, $user));
     }
 }

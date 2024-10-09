@@ -4,10 +4,11 @@ namespace App\Mail;
 
 use Exception;
 
-class InterestShown extends Mail
+class InterestShown extends I18nMail
 {
-    public function __construct(String $model, String $name, Int $id)
+    public function __construct(String $model, String $name, Int $id, $user)
     {
+        parent::__construct($user);
         switch ($model) {
             case 'Offer':
                 $link = '/funding/' . $id;
@@ -20,12 +21,12 @@ class InterestShown extends Mail
             default:
                 throw new Exception();
         }
-        $this->subject = 'Someone Has Shown Interest In One Of Your Projects';
-        $this->title = 'Someone Has Shown Interest In One Of Your Projects';
-        $this->body =
-            e($name) . ' has shown interest in one of your projects.<br><br>' .
-            'Follow this link to view their project.';
+        $this->setSubjectKey('interest-shown.subject')
+            ->setTitleKey('interest-shown.title')
+            ->setBodyKey('interest-shown.body')
+            ->setCta('interest-shown.cta')
+            ->setParams(['{name}' => e($name)]);
+
         $this->link = $link;
-        $this->cta = 'View Project';
     }
 }

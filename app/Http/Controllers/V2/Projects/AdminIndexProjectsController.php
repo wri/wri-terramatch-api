@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\IsAdminIndex;
 use App\Http\Resources\V2\Projects\ProjectsCollection;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -42,11 +44,16 @@ class AdminIndexProjectsController extends Controller
         ]);
 
         if (! empty($request->query('search'))) {
-            $ids = Project::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = Project::searchProjects(trim($request->query('search')))->pluck('id')->toArray();
             $query->whereIn('v2_projects.id', $ids);
         }
 
-        $this->isolateAuthorizedFrameworks($query, 'v2_projects');
+        $user = User::find(Auth::user()->id);
+        if ($user->primaryRole?->name == 'project-manager') {
+            $query->whereIn('id', $user->managedProjects()->select('v2_projects.id'));
+        } else {
+            $this->isolateAuthorizedFrameworks($query, 'v2_projects');
+        }
 
         return new ProjectsCollection($this->paginate($query));
     }

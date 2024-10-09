@@ -90,6 +90,11 @@ class CreateProjectWithFormController extends Controller
             'proj_boundary' => $projectPitch->proj_boundary,
             'states' => $projectPitch->states,
             'proj_impact_biodiv' => $projectPitch->biodiversity_impact,
+            'water_source' => $projectPitch->water_source,
+            'baseline_biodiversity' => $projectPitch->baseline_biodiversity,
+            'goal_trees_restored_planting' => $projectPitch->goal_trees_restored_planting,
+            'goal_trees_restored_anr' => $projectPitch->goal_trees_restored_anr,
+            'goal_trees_restored_direct_seeding' => $projectPitch->goal_trees_restored_direct_seeding,
         ]);
 
         foreach ($projectPitch->treeSpecies()->get() as $treeSpecies) {

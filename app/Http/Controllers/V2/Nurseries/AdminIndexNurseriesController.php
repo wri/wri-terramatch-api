@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\IsAdminIndex;
 use App\Http\Resources\V2\Nurseries\NurseriesCollection;
 use App\Models\V2\Nurseries\Nursery;
+use App\Models\V2\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -47,11 +49,16 @@ class AdminIndexNurseriesController extends Controller
         ]);
 
         if (! empty($request->query('search'))) {
-            $ids = Nursery::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = Nursery::searchNurseries(trim($request->query('search')))->pluck('id')->toArray();
             $query->whereIn('v2_nurseries.id', $ids);
         }
 
-        $this->isolateAuthorizedFrameworks($query, 'v2_nurseries');
+        $user = User::find(Auth::user()->id);
+        if ($user->primaryRole?->name == 'project-manager') {
+            $query->whereIn('project_id', $user->managedProjects()->select('v2_projects.id'));
+        } else {
+            $this->isolateAuthorizedFrameworks($query, 'v2_nurseries');
+        }
 
         return new NurseriesCollection($this->paginate($query));
     }

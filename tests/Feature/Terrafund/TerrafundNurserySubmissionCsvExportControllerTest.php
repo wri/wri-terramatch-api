@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Terrafund;
 
-use App\Models\User;
+use App\Models\V2\User;
 use Tests\TestCase;
 
 final class TerrafundNurserySubmissionCsvExportControllerTest extends TestCase

@@ -35,6 +35,7 @@ class SiteResource extends JsonResource
             'a_nat_regeneration_trees_per_hectare' => $this->a_nat_regeneration_trees_per_hectare,
             'a_nat_regeneration' => $this->a_nat_regeneration > 1 ? intval(round($this->a_nat_regeneration)) : $this->a_nat_regeneration,
             'hectares_to_restore_goal' => $this->hectares_to_restore_goal,
+            'total_hectares_restored_sum' => $this->total_hectares_restored_sum,
             'landscape_community_contribution' => $this->landscape_community_contribution,
             'planting_pattern' => $this->planting_pattern,
             'soil_condition' => $this->soil_condition,
@@ -48,8 +49,9 @@ class SiteResource extends JsonResource
             'site_reports_total' => $this->site_reports_total,
             'overdue_site_reports_total' => $this->overdue_site_reports_total,
             'workday_count' => $this->workday_count,
-            // Temporary until we have bulk import completed.
+            // These two are temporary until we have bulk import completed.
             'self_reported_workday_count' => $this->self_reported_workday_count,
+            'combined_workday_count' => $this->combined_workday_count,
             'trees_planted_count' => $this->trees_planted_count,
             'regenerated_trees_count' => $this->regenerated_trees_count,
             'migrated' => ! empty($this->old_model),
@@ -59,6 +61,7 @@ class SiteResource extends JsonResource
             'seeds_planted_count' => $this->seeds_planted_count,
             'siting_strategy' => $this->siting_strategy,
             'description_siting_strategy' => $this->description_siting_strategy,
+            'detailed_intervention_types' => $this->detailed_intervention_types,
         ];
 
         return $this->appendFilesToResource($data);

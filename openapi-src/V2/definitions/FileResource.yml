@@ -1,0 +1,42 @@
+type: object
+properties:
+  id:
+    type: integer
+  model_id:
+    type: integer
+  model_type:
+    type: string
+  collection_name:
+    type: string
+  name:
+    type: string
+  file_name:
+    type: string
+  mime_type:
+    type: string
+  disk:
+    type: string
+  size:
+    type: integer
+  manipulations:
+    type: object
+  custom_properties:
+    type: object
+  responsive_images:
+    type: object
+  order_column:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time
+  description:
+    type: string
+  photographer:
+    type: string
+  is_public:
+    type: boolean
+  is_cover:
+    type: boolean

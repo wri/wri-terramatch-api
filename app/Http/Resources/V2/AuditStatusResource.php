@@ -12,22 +12,16 @@ class AuditStatusResource extends JsonResource
      */
     public function toArray($request)
     {
-        $data = [
+        return [
             'id' => $this->id,
-            'uuid' => $this->uuid,
-            'entity_name' => $this->entity_name,
             'status' => $this->status,
-            'comment' => $this->comment,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
+            'comment' => $this->comment,
             'type' => $this->type,
-            'is_submitted' => $this->is_submitted,
-            'is_active' => $this->is_active,
             'request_removed' => $this->request_removed,
             'date_created' => $this->date_created,
-            'created_by' => $this->created_by,
+            'attachments' => $this->attachments,
         ];
-
-        return $this->appendFilesToResource($data);
     }
 }

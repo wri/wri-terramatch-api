@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\FilterRecord as FilterRecordModel;
-use App\Models\User as UserModel;
+use App\Models\V2\User as UserModel;
 use App\Services\Search\Conditions;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

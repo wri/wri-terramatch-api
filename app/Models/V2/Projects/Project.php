@@ -12,7 +12,6 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
-use App\Models\User;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\EntityModel;
@@ -27,9 +26,9 @@ use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
 use App\Models\V2\Workdays\WorkdayDemographic;
-use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,7 +39,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -51,7 +49,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasFrameworkKey;
     use HasLinkedFields;
     use UsesLinkedFields;
@@ -139,6 +136,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'proj_boundary',
         'states',
         'proj_impact_biodiv',
+        'water_source',
+        'baseline_biodiversity',
+        'goal_trees_restored_planting',
+        'goal_trees_restored_anr',
+        'goal_trees_restored_direct_seeding',
     ];
 
     public $fileConfiguration = [
@@ -295,7 +297,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             'site_id',
             'id',
             'uuid'
-        );
+        )->active();
     }
 
     public function treeSpecies()
@@ -306,6 +308,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'v2_project_users')->withPivot(['status', 'is_monitoring']);
+    }
+
+    public function managers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'v2_project_users')->wherePivot('is_managing', true);
     }
 
     public function fundingProgramme(): BelongsTo
@@ -342,6 +349,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return TreeSpecies::where('speciesable_type', SiteReport::class)
             ->whereIn('speciesable_id', $this->submittedSiteReportIds())
             ->where('collection', TreeSpecies::COLLECTION_PLANTED)
+            ->visible()
             ->sum('amount');
     }
 
@@ -349,6 +357,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     {
         return Seeding::where('seedable_type', SiteReport::class)
             ->whereIn('seedable_id', $this->submittedSiteReportIds())
+            ->visible()
             ->sum('amount');
     }
 
@@ -357,33 +366,59 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $this->submittedSiteReports()->sum('num_trees_regenerating');
     }
 
-    public function getWorkdayCountAttribute(): int
+    public function getWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
+        $projectQuery = $this->reports()->hasBeenSubmitted();
+        $siteQuery = $this->submittedSiteReports();
+        if ($useDemographicsCutoff) {
+            $projectQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+            $siteQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+        }
+
         return WorkdayDemographic::whereIn(
             'workday_id',
             Workday::where('workdayable_type', SiteReport::class)
-                ->whereIn('workdayable_id', $this->submittedSiteReports()->select('v2_site_reports.id'))
+                ->whereIn('workdayable_id', $siteQuery->select('v2_site_reports.id'))
+                ->visible()
                 ->select('id')
         )->orWhereIn(
             'workday_id',
             Workday::where('workdayable_type', ProjectReport::class)
-                ->whereIn('workdayable_id', $this->reports()->hasBeenSubmitted()->select('id'))
+                ->whereIn('workdayable_id', $projectQuery->select('id'))
+                ->visible()
                 ->select('id')
         )->gender()->sum('amount') ?? 0;
     }
 
-    public function getSelfReportedWorkdayCountAttribute(): int
+    public function getSelfReportedWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
         $sumQueries = [
             DB::raw('sum(`workdays_paid`) as paid'),
             DB::raw('sum(`workdays_volunteer`) as volunteer'),
         ];
-        $projectTotals = $this->reports()->hasBeenSubmitted()->get($sumQueries)->first();
+        $projectQuery = $this->reports()->hasBeenSubmitted();
         // The groupBy is superfluous, but required because Laravel adds "v2_sites.project_id as laravel_through_key" to
         // the SQL select.
-        $siteTotals = $this->submittedSiteReports()->groupBy('v2_sites.project_id')->get($sumQueries)->first();
+        $siteQuery = $this->submittedSiteReports()->groupBy('v2_sites.project_id');
+
+        if ($useDemographicsCutoff) {
+            $projectQuery->where('due_at', '<', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+            $siteQuery->where('due_at', '<', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+        }
+
+        $projectTotals = $projectQuery->get($sumQueries)->first();
+        $siteTotals = $siteQuery->get($sumQueries)->first();
 
         return $projectTotals?->paid + $projectTotals?->volunteer + $siteTotals?->paid + $siteTotals?->volunteer;
+    }
+
+    public function getCombinedWorkdayCountAttribute(): int
+    {
+        // this attribute pulls the self reported values from old reports, and the combined demographic values from
+        // new reports to get a (temporary) accurate count of workday totals. This will be removed when the effort to
+        // import old workday data is completed, and we can simply use the demographics-based count for everything.
+        return $this->getWorkdayCountAttribute(true) +
+            $this->getSelfReportedWorkdayCountAttribute(true);
     }
 
     public function getTotalJobsCreatedAttribute(): int
@@ -473,6 +508,12 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         ];
     }
 
+    public static function searchProjects($query)
+    {
+        return self::select('v2_projects.*')
+        ->where('v2_projects.name', 'like', "%$query%");
+    }
+
     public function auditStatuses(): MorphMany
     {
         return $this->morphMany(AuditStatus::class, 'auditable');
@@ -493,7 +534,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         // a status field.
         return $this
             ->siteReports()
-            ->where('v2_sites.status', EntityStatusStateMachine::APPROVED)
+            ->whereIn('v2_sites.status', Site::$approvedStatuses)
             ->whereNotIn('v2_site_reports.status', SiteReport::UNSUBMITTED_STATUSES);
     }
 
@@ -509,5 +550,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function getTotalSitePolygonsAttribute()
     {
         return $this->sitePolygons()->count();
+    }
+
+    public function getTotalHectaresRestoredSumAttribute(): float
+    {
+        return round($this->sitePolygons->where('status', 'approved')->sum('calc_area'));
     }
 }

@@ -11,3 +11,8 @@ items:
     checked:
       type: boolean
       description: Indicates if the polygon has been checked before or not.
+    nonValidCriteria:
+      type: array
+      description: List of criteria that are not valid.
+      items:
+        type: object

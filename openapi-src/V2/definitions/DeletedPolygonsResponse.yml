@@ -1,0 +1,24 @@
+type: object
+properties:
+  message:
+    type: string
+    description: Success message
+  deleted:
+    type: array
+    items:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: UUID of the deleted polygon geometry
+  failed:
+    type: array
+    items:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: UUID of the polygon geometry that failed to delete
+        error:
+          type: string
+          description: Error message for the failed deletion
