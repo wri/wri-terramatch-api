@@ -17,9 +17,16 @@ class TerrafundDashboardQueryHelper
             ->select('v2_projects.*')
             ->allowedFilters([
                 AllowedFilter::exact('framework_key'),
-                AllowedFilter::exact('landscape'),
+                AllowedFilter::callback('landscapes', function ($query, $value) {
+                    $query->whereIn('landscape', $value);
+                }),
                 AllowedFilter::exact('country'),
-                AllowedFilter::exact('organisations.type'),
+                AllowedFilter::callback('organisations.type', function ($query, $value) {
+                    $query->whereIn('organisations.type', $value);
+                }),
+                AllowedFilter::callback('programmes', function ($query, $value) {
+                    $query->whereIn('framework_key', $value);
+                }),
                 AllowedFilter::exact('v2_projects.status'),
                 AllowedFilter::exact('v2_projects.uuid'),
             ]);
