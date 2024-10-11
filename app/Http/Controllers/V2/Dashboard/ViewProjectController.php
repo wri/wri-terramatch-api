@@ -6,6 +6,7 @@ use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
+use App\Models\Framework;
 use App\Models\V2\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -132,5 +133,30 @@ class ViewProjectController extends Controller
 
             return response()->json(['error' => 'An error occurred while fetching the data', 'message' => $errorMessage], 500);
         }
+    }
+
+    public function getFrameworks($request = null)
+    {
+        if ($request === null) {
+            $request = request();
+        }
+    
+        $baseQuery = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
+    
+        $frameworkKeys = $baseQuery->distinct()->pluck('framework_key')->toArray();
+    
+        $frameworks = Framework::whereIn('slug', $frameworkKeys)
+            ->select('name', 'slug')
+            ->get();
+    
+        $frameworksResponse = [];
+        foreach ($frameworks as $framework) {
+            $frameworksResponse[] = [
+                'framework_slug' => $framework->slug,
+                'name' => $framework->name,
+            ];
+        }
+    
+        return $frameworksResponse;
     }
 };
