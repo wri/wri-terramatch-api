@@ -4,9 +4,9 @@ namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
+use App\Models\Framework;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectInvite;
-use App\Models\Framework;
 use App\Models\V2\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -140,15 +140,15 @@ class ViewProjectController extends Controller
         if ($request === null) {
             $request = request();
         }
-    
+
         $baseQuery = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
-    
+
         $frameworkKeys = $baseQuery->distinct()->pluck('framework_key')->toArray();
-    
+
         $frameworks = Framework::whereIn('slug', $frameworkKeys)
             ->select('name', 'slug')
             ->get();
-    
+
         $frameworksResponse = [];
         foreach ($frameworks as $framework) {
             $frameworksResponse[] = [
@@ -156,7 +156,7 @@ class ViewProjectController extends Controller
                 'name' => $framework->name,
             ];
         }
-    
+
         return $frameworksResponse;
     }
 };
