@@ -30,6 +30,25 @@ class TotalTerrafundHeaderDashboardController extends Controller
         return response()->json($response);
     }
 
+    public function getTotalDataForCountry(Request $request)
+    {
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
+        $countryName = '';
+        if ($country = data_get($request, 'filter.country')) {
+            $countryName = WorldCountryGeneralized::where('iso', $country)->first()->country;
+        }
+        $response = (object)[
+            'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
+            'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
+            'total_entries' => $this->getTotalJobsCreatedSum($projects),
+            'total_hectares_restored' => round($this->getTotalHectaresSum($projects)),
+            'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
+            'country_name' => $countryName,
+        ];
+
+        return response()->json($response);
+    }
+
     public function getTotalNonProfitCount($projects)
     {
         $projects = $projects->filter(function ($project) {

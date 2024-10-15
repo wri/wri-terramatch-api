@@ -320,6 +320,8 @@ DashboardActiveProjectsListViewResponse:
   $ref: './DashboardActiveProjectsListViewResponse.yml'
 DashboardTotalSectionHeaderResponse:
   $ref: './DashboardTotalSectionHeaderResponse.yml'
+DashboardTotalSectionHeaderCountryResponse:
+  $ref: './DashboardTotalSectionHeaderCountryResponse.yml'
 DashboardActiveCountriesResponse:
   $ref: './DashboardActiveCountriesResponse.yml'
 DashboardCountriesResponse:
