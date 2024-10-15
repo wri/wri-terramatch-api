@@ -729,6 +729,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
+    Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
     Route::get('/countries', CountriesController::class);
     Route::get('/get-projects', GetProjectsController::class);
