@@ -736,6 +736,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/project-details/{project}', ProjectProfileDetailsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
+    Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
     Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);
 });
 
