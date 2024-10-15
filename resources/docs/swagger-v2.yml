@@ -42732,6 +42732,8 @@ definitions:
           description: List of criteria that are not valid.
           items:
             type: object
+  DashboardProjectAvailableResponse:
+    type: array
   SitePolygon:
     title: SitePolygon
     type: object
@@ -94816,6 +94818,18 @@ paths:
                 properties:
                   allowed:
                     type: boolean
+        '404':
+          description: Polygon not found
+  /v2/dashboard/view-project-list:
+    get:
+      summary: Get allowed to project
+      tags:
+        - Get allowed to project
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
         '404':
           description: Polygon not found
   '/v2/terrafund/polygon/geojson/{uuid}':
