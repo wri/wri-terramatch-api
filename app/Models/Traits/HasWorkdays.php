@@ -15,7 +15,7 @@ trait HasWorkdays
 {
     public static function bootHasWorkdays()
     {
-        collect([static::WORKDAY_COLLECTIONS['paid'], static::WORKDAY_COLLECTIONS['volunteer']])
+        collect([static::WORKDAY_COLLECTIONS['paid'], static::WORKDAY_COLLECTIONS['volunteer'], static::WORKDAY_COLLECTIONS['finance']])
             ->flatten()
             ->each(function ($collection) {
                 self::resolveRelationUsing(
