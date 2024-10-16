@@ -14,7 +14,6 @@ use App\StateMachines\EntityStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ViewTreeRestorationGoalController extends Controller
 {
@@ -38,9 +37,6 @@ class ViewTreeRestorationGoalController extends Controller
         $totalTreesGrownGoal = $query->sum('trees_grown_goal');
 
         $treesUnderRestorationActualTotal = $this->treeCountPerPeriod($siteIds, $distinctDates, $totalTreesGrownGoal);
-
-        Log::info('forProfitSiteIds', $forProfitSiteIds->toArray());
-        Log::info('forProfitProjectIds', $forProfitProjectIds);
         $treesUnderRestorationActualForProfit = $this->treeCountPerPeriod($forProfitSiteIds, $distinctDates, $totalTreesGrownGoal);
         $treesUnderRestorationActualNonProfit = $this->treeCountPerPeriod($nonProfitSiteIds, $distinctDates, $totalTreesGrownGoal);
 
