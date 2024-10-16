@@ -17,6 +17,7 @@ class TerrafundDashboardQueryHelper
             ->select('v2_projects.*')
             ->where('v2_projects.status', 'approved')
             ->whereIn('organisations.type', ['non-profit-organization', 'for-profit-organization'])
+            ->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes'])
             ->allowedFilters([
                 AllowedFilter::exact('framework_key'),
                 AllowedFilter::callback('landscapes', function ($query, $value) {
