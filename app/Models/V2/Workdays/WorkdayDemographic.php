@@ -25,6 +25,7 @@ class WorkdayDemographic extends Model
     public const GENDER = 'gender';
     public const AGE = 'age';
     public const ETHNICITY = 'ethnicity';
+    public const CASTE = 'caste';
 
     public function workday(): BelongsTo
     {
@@ -59,5 +60,10 @@ class WorkdayDemographic extends Model
     public function scopeIsEthnicity(Builder $query, string $ethnicity, string $name = null): Builder
     {
         return $query->where(['type' => self::ETHNICITY, 'subtype' => $ethnicity, 'name' => $name]);
+    }
+
+    public function scopeCaste(Builder $query): Builder
+    {
+        return $query->where('type', self::CASTE);
     }
 }
