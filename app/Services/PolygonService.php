@@ -349,7 +349,7 @@ class PolygonService
             } else {
                 $user = User::find(1);
             }
-            $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid, $submit_polygon_loaded, $properties);
+            $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid, $submit_polygon_loaded, $this->validateSitePolygonProperties($polygonUuid, $properties));
             if (! $newSitePolygon) {
                 return false;
             }
