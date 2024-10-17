@@ -36,8 +36,12 @@ class UpdatePPCDueDatesCommand extends Command
         foreach ($tasks as $task) {
             $project = $task->project;
             if ($project && $project->framework_key == 'ppc') {
-                $task->due_at = Carbon::parse($task->due_at)->setTimezone('UTC')->setHour(5);
-                $task->save();
+                $dueAt = Carbon::parse($task->due_at)->setTimezone('UTC');
+
+                if ($dueAt->hour >= 0 && $dueAt->hour <= 4) {
+                    $task->due_at = $dueAt->setHour(5);
+                    $task->save();
+                }
             }
 
             $reports = collect([$task->projectReport])->concat($task->siteReports)->concat($task->nurseryReports)->filter(function ($report) {
@@ -48,9 +52,11 @@ class UpdatePPCDueDatesCommand extends Command
                 if ($report->framework_key !== 'ppc') {
                     continue;
                 }
-
-                $report->due_at = Carbon::parse($report->due_at)->setTimezone('UTC')->setHour(5);
-                $report->save();
+                $dueAt = Carbon::parse($report->due_at)->setTimezone('UTC');
+                if ($dueAt->hour >= 0 && $dueAt->hour <= 4) {
+                    $report->due_at = $dueAt->setHour(5);
+                    $report->save();
+                }
             }
         }
 
