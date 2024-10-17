@@ -72,7 +72,6 @@ trait HasWorkdays
 
     protected function sumTotalWorkdaysAmounts(array $collections): int
     {
-        // Assume that the types are balanced, and just return the value from `gender`
         // Gender is considered the canonical total value for all current types of workdays, so just pull and sum gender.
         return WorkdayDemographic::whereIn(
             'workday_id',
