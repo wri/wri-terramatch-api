@@ -3,9 +3,9 @@
 namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\Tasks\Task;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class UpdatePPCDueDatesCommand extends Command
 {
@@ -35,7 +35,7 @@ class UpdatePPCDueDatesCommand extends Command
         })->get();
         foreach ($tasks as $task) {
             $project = $task->project;
-            if ($project && $project->framework_key == 'ppc') {                    
+            if ($project && $project->framework_key == 'ppc') {
                 $task->due_at = Carbon::parse($task->due_at)->setTimezone('UTC')->setHour(5);
                 $task->save();
             }
