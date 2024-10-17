@@ -76,6 +76,16 @@ trait HasWorkdays
         return WorkdayDemographic::whereIn(
             'workday_id',
             $this->workdays()->visible()->collections($collections)->select('id')
-        )->gender()->sum('amount');
+        )
+            ->gender()
+            ->with('workday')
+            ->get()
+            ->groupBy(function ($demographic) {
+                return $demographic->workday->collection . '_' . $demographic->name;
+            })
+            ->map(function ($group) {
+                return $group->first();
+            })
+            ->sum('amount');
     }
 }
