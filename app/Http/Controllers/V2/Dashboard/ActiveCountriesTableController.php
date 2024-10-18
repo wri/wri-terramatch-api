@@ -43,6 +43,8 @@ class ActiveCountriesTableController extends Controller
 
             $totalNurseries = $this->numberOfNurseries($country->slug, $projects);
 
+            $totalHectaresRestored = round($this->getTotalHectaresSum($country->slug, $projects));
+
             $activeCountries[] = [
                 'country_slug' => $country->slug,
                 'country' => $country->label,
@@ -51,6 +53,7 @@ class ActiveCountriesTableController extends Controller
                 'total_jobs_created' => $totalJobsCreated,
                 'number_of_sites' => $numberOfSites,
                 'number_of_nurseries' => $totalNurseries,
+                'hectares_restored' => $totalHectaresRestored,
             ];
         }
 
@@ -100,5 +103,14 @@ class ActiveCountriesTableController extends Controller
         $projectIds = $projects->where('country', $country)->pluck('id');
 
         return Nursery::whereIn('project_id', $projectIds)->count();
+    }
+
+    public function getTotalHectaresSum($country, $projects)
+    {
+        $projects = $projects->where('country', $country);
+
+        return $projects->sum(function ($project) {
+            return $project->sitePolygons->sum('calc_area');
+        });
     }
 }

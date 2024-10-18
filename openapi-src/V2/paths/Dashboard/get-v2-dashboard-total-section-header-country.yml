@@ -1,0 +1,21 @@
+summary: Retrieve totals and metrics for total section header
+description: |
+  This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
+parameters:
+  - name: search
+    type: string
+    in: query
+    description: 'search term to use on the collection'
+  - name: filter
+    type: string
+    in: query
+    description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardTotalSectionHeaderCountryResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

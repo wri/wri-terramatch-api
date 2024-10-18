@@ -1,0 +1,17 @@
+type: object
+properties:
+  total_non_profit_count:
+    type: integer
+    description: Total number of non profit projects.
+  total_enterprise_count:
+    type: integer
+    description: Total number of enterprise projects.
+  total_entries:
+    type: integer
+    description: Total number of jobs created.
+  total_hectares_restored:
+    type: integer
+    description: Total number of hectares restored.
+  total_trees_restored:
+    type: integer
+    description: Total number of trees restored.=

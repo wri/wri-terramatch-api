@@ -274,6 +274,8 @@ V2TerrafundCriteriaData:
   $ref: './V2TerrafundCriteriaData.yml'
 V2TerrafundCriteriaSite:
   $ref: './V2TerrafundCriteriaSite.yml'
+DashboardProjectAvailableResponse:
+  $ref: './DashboardProjectAvailableResponse.yml'
 SitePolygon:
   $ref: './SitePolygon.yml'
 GeometryString:
@@ -320,6 +322,8 @@ DashboardActiveProjectsListViewResponse:
   $ref: './DashboardActiveProjectsListViewResponse.yml'
 DashboardTotalSectionHeaderResponse:
   $ref: './DashboardTotalSectionHeaderResponse.yml'
+DashboardTotalSectionHeaderCountryResponse:
+  $ref: './DashboardTotalSectionHeaderCountryResponse.yml'
 DashboardActiveCountriesResponse:
   $ref: './DashboardActiveCountriesResponse.yml'
 DashboardCountriesResponse:

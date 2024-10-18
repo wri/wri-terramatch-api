@@ -42732,6 +42732,8 @@ definitions:
           description: List of criteria that are not valid.
           items:
             type: object
+  DashboardProjectAvailableResponse:
+    type: array
   SitePolygon:
     title: SitePolygon
     type: object
@@ -43304,6 +43306,27 @@ definitions:
           total_trees_restored_goal:
             type: integer
             description: Total number of trees restored goal.
+  DashboardTotalSectionHeaderCountryResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          total_non_profit_count:
+            type: integer
+            description: Total number of non profit projects.
+          total_enterprise_count:
+            type: integer
+            description: Total number of enterprise projects.
+          total_entries:
+            type: integer
+            description: Total number of jobs created.
+          total_hectares_restored:
+            type: integer
+            description: Total number of hectares restored.
+          total_trees_restored:
+            type: integer
+            description: Total number of trees restored.=
   DashboardActiveCountriesResponse:
     properties:
       data:
@@ -94261,6 +94284,48 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /v2/dashboard/total-section-header/country:
+    get:
+      summary: Retrieve totals and metrics for total section header
+      description: |
+        This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  total_non_profit_count:
+                    type: integer
+                    description: Total number of non profit projects.
+                  total_enterprise_count:
+                    type: integer
+                    description: Total number of enterprise projects.
+                  total_entries:
+                    type: integer
+                    description: Total number of jobs created.
+                  total_hectares_restored:
+                    type: integer
+                    description: Total number of hectares restored.
+                  total_trees_restored:
+                    type: integer
+                    description: Total number of trees restored.=
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
   /v2/dashboard/active-countries:
     get:
       summary: Retrieve all active countries.
@@ -94378,6 +94443,37 @@ paths:
                     long:
                       type: number
                       format: double
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/frameworks:
+    get:
+      summary: Get Project Frameworks
+      description: Retrieves distinct frameworks used in projects
+      tags:
+        - Dashboard
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                framework_slug:
+                  type: string
+                name:
+                  type: string
         '400':
           description: Bad request
         '500':
@@ -94722,6 +94818,18 @@ paths:
                 properties:
                   allowed:
                     type: boolean
+        '404':
+          description: Polygon not found
+  /v2/dashboard/view-project-list:
+    get:
+      summary: Get allowed to project
+      tags:
+        - Get allowed to project
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
         '404':
           description: Polygon not found
   '/v2/terrafund/polygon/geojson/{uuid}':
