@@ -15,7 +15,7 @@ trait HasWorkdays
 {
     public static function bootHasWorkdays()
     {
-        collect([static::WORKDAY_COLLECTIONS['paid'], static::WORKDAY_COLLECTIONS['volunteer']])
+        collect([static::WORKDAY_COLLECTIONS['paid'], static::WORKDAY_COLLECTIONS['volunteer'], static::WORKDAY_COLLECTIONS['finance']])
             ->flatten()
             ->each(function ($collection) {
                 self::resolveRelationUsing(
@@ -72,7 +72,7 @@ trait HasWorkdays
 
     protected function sumTotalWorkdaysAmounts(array $collections): int
     {
-        // Assume that the types are balanced, and just return the value from `gender`
+        // Gender is considered the canonical total value for all current types of workdays, so just pull and sum gender.
         return WorkdayDemographic::whereIn(
             'workday_id',
             $this->workdays()->visible()->collections($collections)->select('id')

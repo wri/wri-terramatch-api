@@ -206,6 +206,10 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             Workday::COLLECTION_PROJECT_PAID_OTHER,
             Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
         ],
+        'finance' => [
+            Workday::COLLECTION_PROJECT_DIRECT,
+            Workday::COLLECTION_PROJECT_CONVERGENCE,
+        ],
     ];
 
     public function registerMediaConversions(Media $media = null): void
