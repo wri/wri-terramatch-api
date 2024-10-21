@@ -25,28 +25,28 @@ class GetHectaresRestoredController extends Controller
             return $polygon->uuid;
         }, $projectsPolygons);
         
-        $hectaresRestored = DB::select("
+        $polygonsToOutputHectares = DB::select("
                 SELECT *
                 FROM indicator_output_hectares
                 WHERE indicator_id = '5'
                 AND polygon_id IN (" . implode(',', array_fill(0, count($polygonsUuids), '?')) . ")
             ", $polygonsUuids);
 
-        $groupedValues = [];
+        $HectaresRestored = [];
 
-        foreach ($hectaresRestored as $hectare) {
+        foreach ($polygonsToOutputHectares as $hectare) {
             $decodedValue = json_decode($hectare->value, true);
 
             if ($decodedValue) {
                 foreach ($decodedValue as $key => $value) {
-                    if (!isset($groupedValues[$key])) {
-                        $groupedValues[$key] = 0;
+                    if (!isset($HectaresRestored[$key])) {
+                        $HectaresRestored[$key] = 0;
                     }
-                    $groupedValues[$key] += $value;
+                    $HectaresRestored[$key] += $value;
                 }
             }
         }
 
-        return response()->json($groupedValues);
+        return response()->json($HectaresRestored);
     }
 }
