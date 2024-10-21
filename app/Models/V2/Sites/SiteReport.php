@@ -170,6 +170,10 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
             Workday::COLLECTION_SITE_PAID_OTHER,
             Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
         ],
+        'finance' => [
+            Workday::COLLECTION_PROJECT_DIRECT,
+            Workday::COLLECTION_PROJECT_CONVERGENCE,
+        ],
     ];
 
     public function registerMediaConversions(Media $media = null): void
