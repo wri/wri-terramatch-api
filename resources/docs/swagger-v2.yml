@@ -44127,21 +44127,6 @@ definitions:
           direct-seeding:
             type: number
             description: Total amount for direct seeding projects.
-          mangrove:
-            type: number
-            description: Total amount for mangrove restoration projects.
-          urban-forestry:
-            type: number
-            description: Total amount for urban forestry projects.
-          silvopasture:
-            type: number
-            description: Total amount for silvopasture projects.
-          agroforestry:
-            type: number
-            description: Total amount for agroforestry projects.
-          enrichment-planting:
-            type: number
-            description: Total amount for enrichment planting projects.
           control:
             type: number
             description: Total amount for control projects.
@@ -44166,21 +44151,6 @@ definitions:
       direct-seeding:
         type: number
         description: Total amount for direct seeding projects.
-      mangrove:
-        type: number
-        description: Total amount for mangrove restoration projects.
-      urban-forestry:
-        type: number
-        description: Total amount for urban forestry projects.
-      silvopasture:
-        type: number
-        description: Total amount for silvopasture projects.
-      agroforestry:
-        type: number
-        description: Total amount for agroforestry projects.
-      enrichment-planting:
-        type: number
-        description: Total amount for enrichment planting projects.
       control:
         type: number
         description: Total amount for control projects.
@@ -94700,21 +94670,6 @@ paths:
                   direct-seeding:
                     type: number
                     description: Total amount for direct seeding projects.
-                  mangrove:
-                    type: number
-                    description: Total amount for mangrove restoration projects.
-                  urban-forestry:
-                    type: number
-                    description: Total amount for urban forestry projects.
-                  silvopasture:
-                    type: number
-                    description: Total amount for silvopasture projects.
-                  agroforestry:
-                    type: number
-                    description: Total amount for agroforestry projects.
-                  enrichment-planting:
-                    type: number
-                    description: Total amount for enrichment planting projects.
                   control:
                     type: number
                     description: Total amount for control projects.
