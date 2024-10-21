@@ -44106,6 +44106,45 @@ definitions:
         type: boolean
       is_cover:
         type: boolean
+  DashboardIndicatorHectaresRestorationPracticeResponse:
+    type: object
+    properties:
+      tree-planting:
+        type: number
+        description: Total amount for tree planting projects.
+      'tree-planting,direct-seeding':
+        type: number
+        description: Total amount for projects involving both tree planting and direct seeding.
+      assisted-natural-regeneration:
+        type: number
+        description: Total amount for assisted natural regeneration projects.
+      'tree-planting,assisted-natural-regeneration':
+        type: number
+        description: Total amount for projects involving both tree planting and assisted natural regeneration.
+      direct-seeding:
+        type: number
+        description: Total amount for direct seeding projects.
+      mangrove:
+        type: number
+        description: Total amount for mangrove restoration projects.
+      urban-forestry:
+        type: number
+        description: Total amount for urban forestry projects.
+      silvopasture:
+        type: number
+        description: Total amount for silvopasture projects.
+      agroforestry:
+        type: number
+        description: Total amount for agroforestry projects.
+      enrichment-planting:
+        type: number
+        description: Total amount for enrichment planting projects.
+      control:
+        type: number
+        description: Total amount for control projects.
+      'null':
+        type: number
+        description: Total amount for projects with no specific category.
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -94577,6 +94616,66 @@ paths:
                           type: string
                         amount:
                           type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/indicator/hectares-restoration-practice:
+    get:
+      summary: Retrieve hectares by restoration practice
+      description: |
+        This endpoint returns hectares by restoration practice.
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              tree-planting:
+                type: number
+                description: Total amount for tree planting projects.
+              'tree-planting,direct-seeding':
+                type: number
+                description: Total amount for projects involving both tree planting and direct seeding.
+              assisted-natural-regeneration:
+                type: number
+                description: Total amount for assisted natural regeneration projects.
+              'tree-planting,assisted-natural-regeneration':
+                type: number
+                description: Total amount for projects involving both tree planting and assisted natural regeneration.
+              direct-seeding:
+                type: number
+                description: Total amount for direct seeding projects.
+              mangrove:
+                type: number
+                description: Total amount for mangrove restoration projects.
+              urban-forestry:
+                type: number
+                description: Total amount for urban forestry projects.
+              silvopasture:
+                type: number
+                description: Total amount for silvopasture projects.
+              agroforestry:
+                type: number
+                description: Total amount for agroforestry projects.
+              enrichment-planting:
+                type: number
+                description: Total amount for enrichment planting projects.
+              control:
+                type: number
+                description: Total amount for control projects.
+              'null':
+                type: number
+                description: Total amount for projects with no specific category.
         '400':
           description: Bad request
         '500':
