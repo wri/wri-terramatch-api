@@ -47,6 +47,10 @@ class GetHectaresRestoredController extends Controller
             }
         }
 
+        foreach ($HectaresRestored as $key => $value) {
+            $HectaresRestored[$key] =  round($value, 3);
+        }
+
         return response()->json($HectaresRestored);
     }
 }

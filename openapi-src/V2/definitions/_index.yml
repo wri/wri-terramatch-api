@@ -384,3 +384,5 @@ FileResource:
   $ref: './FileResource.yml'
 DashboardIndicatorHectaresRestorationPracticeResponse:
   $ref: './DashboardIndicatorHectaresRestorationPracticeResponse.yml'
+DashboardIndicatorHectaresRestorationPracticeData:
+  $ref: './DashboardIndicatorHectaresRestorationPracticeData.yml'

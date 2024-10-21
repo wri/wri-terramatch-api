@@ -44109,6 +44109,48 @@ definitions:
   DashboardIndicatorHectaresRestorationPracticeResponse:
     type: object
     properties:
+      data:
+        type: object
+        properties:
+          tree-planting:
+            type: number
+            description: Total amount for tree planting projects.
+          'tree-planting,direct-seeding':
+            type: number
+            description: Total amount for projects involving both tree planting and direct seeding.
+          assisted-natural-regeneration:
+            type: number
+            description: Total amount for assisted natural regeneration projects.
+          'tree-planting,assisted-natural-regeneration':
+            type: number
+            description: Total amount for projects involving both tree planting and assisted natural regeneration.
+          direct-seeding:
+            type: number
+            description: Total amount for direct seeding projects.
+          mangrove:
+            type: number
+            description: Total amount for mangrove restoration projects.
+          urban-forestry:
+            type: number
+            description: Total amount for urban forestry projects.
+          silvopasture:
+            type: number
+            description: Total amount for silvopasture projects.
+          agroforestry:
+            type: number
+            description: Total amount for agroforestry projects.
+          enrichment-planting:
+            type: number
+            description: Total amount for enrichment planting projects.
+          control:
+            type: number
+            description: Total amount for control projects.
+          'null':
+            type: number
+            description: Total amount for projects with no specific category.
+  DashboardIndicatorHectaresRestorationPracticeData:
+    type: object
+    properties:
       tree-planting:
         type: number
         description: Total amount for tree planting projects.
@@ -94640,42 +94682,45 @@ paths:
           schema:
             type: object
             properties:
-              tree-planting:
-                type: number
-                description: Total amount for tree planting projects.
-              'tree-planting,direct-seeding':
-                type: number
-                description: Total amount for projects involving both tree planting and direct seeding.
-              assisted-natural-regeneration:
-                type: number
-                description: Total amount for assisted natural regeneration projects.
-              'tree-planting,assisted-natural-regeneration':
-                type: number
-                description: Total amount for projects involving both tree planting and assisted natural regeneration.
-              direct-seeding:
-                type: number
-                description: Total amount for direct seeding projects.
-              mangrove:
-                type: number
-                description: Total amount for mangrove restoration projects.
-              urban-forestry:
-                type: number
-                description: Total amount for urban forestry projects.
-              silvopasture:
-                type: number
-                description: Total amount for silvopasture projects.
-              agroforestry:
-                type: number
-                description: Total amount for agroforestry projects.
-              enrichment-planting:
-                type: number
-                description: Total amount for enrichment planting projects.
-              control:
-                type: number
-                description: Total amount for control projects.
-              'null':
-                type: number
-                description: Total amount for projects with no specific category.
+              data:
+                type: object
+                properties:
+                  tree-planting:
+                    type: number
+                    description: Total amount for tree planting projects.
+                  'tree-planting,direct-seeding':
+                    type: number
+                    description: Total amount for projects involving both tree planting and direct seeding.
+                  assisted-natural-regeneration:
+                    type: number
+                    description: Total amount for assisted natural regeneration projects.
+                  'tree-planting,assisted-natural-regeneration':
+                    type: number
+                    description: Total amount for projects involving both tree planting and assisted natural regeneration.
+                  direct-seeding:
+                    type: number
+                    description: Total amount for direct seeding projects.
+                  mangrove:
+                    type: number
+                    description: Total amount for mangrove restoration projects.
+                  urban-forestry:
+                    type: number
+                    description: Total amount for urban forestry projects.
+                  silvopasture:
+                    type: number
+                    description: Total amount for silvopasture projects.
+                  agroforestry:
+                    type: number
+                    description: Total amount for agroforestry projects.
+                  enrichment-planting:
+                    type: number
+                    description: Total amount for enrichment planting projects.
+                  control:
+                    type: number
+                    description: Total amount for control projects.
+                  'null':
+                    type: number
+                    description: Total amount for projects with no specific category.
         '400':
           description: Bad request
         '500':
