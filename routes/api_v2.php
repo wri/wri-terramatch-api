@@ -99,6 +99,7 @@ use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
 use App\Http\Controllers\V2\Geometry\GeometryController;
+use App\Http\Controllers\V2\Indicators\GetHectaresRestoredController;
 use App\Http\Controllers\V2\LeadershipTeam\DeleteLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\StoreLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\UpdateLeadershipTeamController;
@@ -738,6 +739,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
     Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);
+    Route::get('/indicator/hectares-restoration', GetHectaresRestoredController::class);
 });
 
 Route::prefix('project-pipeline')->group(function () {

@@ -1,0 +1,60 @@
+type: object
+properties:
+  restoration_strategies_represented:
+    type: object
+    properties:
+      tree-planting:
+        type: number
+        description: Total amount for tree planting projects.
+      tree-planting,direct-seeding:
+        type: number
+        description: Total amount for projects involving both tree planting and direct seeding.
+      assisted-natural-regeneration:
+        type: number
+        description: Total amount for assisted natural regeneration projects.
+      tree-planting,assisted-natural-regeneration:
+        type: number
+        description: Total amount for projects involving both tree planting and assisted natural regeneration.
+      direct-seeding:
+        type: number
+        description: Total amount for direct seeding projects.
+      control:
+        type: number
+        description: Total amount for control projects.
+      null:
+        type: number
+        description: Total amount for projects with no specific restoration category.
+  target_land_use_types_represented:
+    type: object
+    properties:
+      null:
+        type: number
+        description: Total amount for projects without a defined land use type.
+      natural-forest:
+        type: number
+        description: Total amount for projects involving natural forest.
+      agroforest:
+        type: number
+        description: Total amount for agroforest projects.
+      silvopasture:
+        type: number
+        description: Total amount for silvopasture projects.
+      woodlot-or-plantation:
+        type: number
+        description: Total amount for woodlot or plantation projects.
+      riparian-area-or-wetland:
+        type: number
+        description: Total amount for riparian area or wetland projects.
+      agroforest,riparian-area-or-wetland:
+        type: number
+        description: Total amount for projects involving both agroforest and riparian area or wetland.
+      riparian-area-or-wetland,woodlot-or-plantation:
+        type: number
+        description: Total amount for projects involving both riparian area or wetland and woodlot or plantation.
+      'Open natural ecosystem or Grasslands':
+        type: number
+        description: Total amount for projects involving open natural ecosystem or grasslands.
+      urban-forest:
+        type: number
+        description: Total amount for urban forest projects.
+      
