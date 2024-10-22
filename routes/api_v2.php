@@ -739,7 +739,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
     Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);
-    Route::get('/indicator/hectares-restoration-practice', GetHectaresRestoredController::class);
+    Route::get('/indicator/hectares-restoration', GetHectaresRestoredController::class);
 });
 
 Route::prefix('project-pipeline')->group(function () {

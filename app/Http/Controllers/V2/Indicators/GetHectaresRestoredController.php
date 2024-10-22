@@ -32,8 +32,8 @@ class GetHectaresRestoredController extends Controller
             }
 
             return response()->json([
-                'restoration_stategies_represented' => $this->calculateGroupedHectares($restorationStrategiesRepresented),
-                'target_land_use_types-represented' => $this->calculateGroupedHectares($targetLandUseTypesRepresented),
+                'restoration_strategies_represented' => $this->calculateGroupedHectares($restorationStrategiesRepresented),
+                'target_land_use_types_represented' => $this->calculateGroupedHectares($targetLandUseTypesRepresented),
             ]);
         } catch (Exception $e) {
             return response()->json([

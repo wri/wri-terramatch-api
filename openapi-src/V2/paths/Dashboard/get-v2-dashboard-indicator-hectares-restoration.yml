@@ -1,6 +1,6 @@
-summary: Retrieve hectares by restoration practice
+summary: Retrieve hectares by restoration
 description: |
-  This endpoint returns hectares by restoration practice.
+  This endpoint returns hectares restored using data from indicators 5 (restoration strategies) and 6 (target land use types).
 parameters:
   - name: search
     type: string
@@ -14,7 +14,7 @@ responses:
   '200':
     description: Successful response
     schema:
-      $ref: '../../definitions/_index.yml#/DashboardIndicatorHectaresRestorationPracticeResponse'
+      $ref: '../../definitions/_index.yml#/DashboardIndicatorHectaresRestorationResponse'
   '400':
     description: Bad request
   '500':
