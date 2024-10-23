@@ -22,6 +22,8 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public $timeout = 0;
+    
     private const STATUS_PENDING = 'pending';
     private const STATUS_FAILED = 'failed';
     private const STATUS_SUCCEEDED = 'succeeded';
@@ -83,7 +85,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'updated_at' => now(),
-                'statusCode' => $e->getCode() ?? Response::HTTP_INTERNAL_SERVER_ERROR,
+                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }
