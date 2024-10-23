@@ -30,6 +30,8 @@ class FixPolygonOverlapJob implements ShouldQueue
     private const STATUS_FAILED = 'failed';
     private const STATUS_SUCCEEDED = 'succeeded';
 
+    public $timeout = 0;
+    
     protected $polygonService;
 
     protected $polygonUuids;
@@ -83,13 +85,13 @@ class FixPolygonOverlapJob implements ShouldQueue
                 ]);
             }
         } catch (Exception $e) {
-            Log::error('Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
+            Log::error('Error in Fix Polygon Overlap Job: ' . $e->getMessage());
 
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'updated_at' => now(),
-                'statusCode' => $e->getCode() ?? Response::HTTP_INTERNAL_SERVER_ERROR,
+                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         } catch (Throwable $e) {
             Log::error('Throwable Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
@@ -98,7 +100,7 @@ class FixPolygonOverlapJob implements ShouldQueue
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'updated_at' => now(),
-                'statusCode' => $e->getCode() ?? Response::HTTP_INTERNAL_SERVER_ERROR,
+                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }
