@@ -82,6 +82,7 @@ class FixPolygonOverlapJob implements ShouldQueue
                   'status' => self::STATUS_SUCCEEDED,
                   'payload' => json_encode(['updated_polygons' => $polygonsClipped]),
                   'updated_at' => now(),
+                  'statusCode' => Response::HTTP_OK,
                 ]);
             }
         } catch (Exception $e) {

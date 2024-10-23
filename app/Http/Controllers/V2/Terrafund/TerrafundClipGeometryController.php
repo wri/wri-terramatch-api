@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\Log;
 
 class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 {
+  private const MAX_EXECUTION_TIME = 340;
     public function clipOverlappingPolygonsBySite(string $uuid)
     {
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
+        ini_set('memory_limit', '-1');
         $user = Auth::user();
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
         $job = new FixPolygonOverlapJob($polygonUuids, $user->id);
@@ -29,6 +32,8 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
     public function clipOverlappingPolygonsOfProjectBySite(string $uuid)
     {
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
+        ini_set('memory_limit', '-1');
         $user = Auth::user();
         $sitePolygon = Site::isUuid($uuid)->first();
         $projectId = $sitePolygon->project_id ?? null;
@@ -42,6 +47,8 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
     public function clipOverlappingPolygons(Request $request)
     {
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
+        ini_set('memory_limit', '-1');
         $uuids = $request->input('uuids');
         Log::info('Clipping polygons', ['uuids' => $uuids]);
         $jobUUID = null;
