@@ -1,0 +1,21 @@
+summary: Retrieve hectares by restoration
+description: |
+  This endpoint returns hectares restored using data from indicators 5 (restoration strategies) and 6 (target land use types).
+parameters:
+  - name: search
+    type: string
+    in: query
+    description: 'search term to use on the collection'
+  - name: filter
+    type: string
+    in: query
+    description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardIndicatorHectaresRestorationResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

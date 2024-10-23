@@ -60,6 +60,8 @@ class ActiveProjectsTableController extends Controller
                 'country_slug' => $project->country,
                 'number_of_trees_goal' => $project->trees_grown_goal,
                 'date_added' => $project->created_at,
+                'hectares_under_restoration' => round($project->sitePolygons->sum('calc_area')),
+                'programme' => $project->framework_key,
             ];
         });
     }

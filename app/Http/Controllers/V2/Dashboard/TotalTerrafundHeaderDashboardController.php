@@ -13,8 +13,8 @@ class TotalTerrafundHeaderDashboardController extends Controller
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
         $countryName = '';
-        if (data_get($request, 'filter.country')) {
-            $countryName = WorldCountryGeneralized::where('iso', $request['filter']['country'])->first()->country;
+        if ($country = data_get($request, 'filter.country')) {
+            $countryName = WorldCountryGeneralized::where('iso', $country)->first()->country;
         }
         $response = (object)[
             'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
@@ -24,6 +24,25 @@ class TotalTerrafundHeaderDashboardController extends Controller
             'total_hectares_restored_goal' => $this->getTotalHectaresRestoredGoalSum($projects),
             'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
             'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($projects),
+            'country_name' => $countryName,
+        ];
+
+        return response()->json($response);
+    }
+
+    public function getTotalDataForCountry(Request $request)
+    {
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
+        $countryName = '';
+        if ($country = data_get($request, 'filter.country')) {
+            $countryName = WorldCountryGeneralized::where('iso', $country)->first()->country;
+        }
+        $response = (object)[
+            'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
+            'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
+            'total_entries' => $this->getTotalJobsCreatedSum($projects),
+            'total_hectares_restored' => round($this->getTotalHectaresSum($projects)),
+            'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
             'country_name' => $countryName,
         ];
 
