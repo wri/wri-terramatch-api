@@ -1,0 +1,10 @@
+summary: Get polygons for a specific site
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/SitePolygonsDataResponse'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error
