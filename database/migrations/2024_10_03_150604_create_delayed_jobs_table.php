@@ -13,9 +13,9 @@ return new class extends Migration {
         Schema::create('delayed_jobs', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->enum('status', ['pending', 'failed', 'succeeded']);
-            $table->integer('statusCode')->nullable();
-            $table->string('payload');
+            $table->string('status');
+            $table->integer('status_code')->nullable();
+            $table->json('payload')->nullable();
             $table->timestamps();
         });
     }
