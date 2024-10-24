@@ -75,7 +75,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 'status' => self::STATUS_SUCCEEDED,
                 'payload' => 'Validation completed for all site polygons',
                 'updated_at' => now(),
-                'statusCode' => Response::HTTP_OK,
+                'status_code' => Response::HTTP_OK,
             ]);
 
         } catch (Exception $e) {
@@ -85,7 +85,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'updated_at' => now(),
-                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }
