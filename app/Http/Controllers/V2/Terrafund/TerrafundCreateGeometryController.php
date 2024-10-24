@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\DelayedJobResource;
 use App\Jobs\InsertGeojsonToDBJob;
 use App\Jobs\RunSitePolygonsValidationJob;
 use App\Models\V2\PolygonGeometry;
@@ -238,10 +239,9 @@ class TerrafundCreateGeometryController extends Controller
             $job = new InsertGeojsonToDBJob($filename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
         }
 
-        $jobUUID = $job->getJobUuid();
         dispatch($job);
 
-        return response()->json(['message' => 'KML queued to insert', 'job_uuid' => $jobUUID], 200);
+        return (new DelayedJobResource($job))->additional(['message' => 'KML queued to insert']);
 
     }
 
@@ -394,7 +394,8 @@ class TerrafundCreateGeometryController extends Controller
                 $jobUUID = $job->getJobUuid();
                 dispatch($job);
 
-                return response()->json(['message' => 'Shapefile queued to insert', 'job_uuid' => $jobUUID], 200);
+                return (new DelayedJobResource($job))->additional(['message' => 'Shapefile queued to insert']);
+
             } else {
                 return response()->json(['error' => 'Failed to open the ZIP file'], 400);
             }
@@ -602,10 +603,9 @@ class TerrafundCreateGeometryController extends Controller
             $job = new InsertGeojsonToDBJob($filename, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
         }
 
-        $jobUUID = $job->getJobUuid();
         dispatch($job);
 
-        return response()->json(['message' => 'Geojson queued to insert', 'job_uuid' => $jobUUID], 200);
+        return (new DelayedJobResource($job))->additional(['message' => 'Geojson queued to insert']);
 
     }
 
@@ -1191,7 +1191,7 @@ class TerrafundCreateGeometryController extends Controller
             $jobUUID = $job->getJobUuid();
             dispatch($job);
 
-            return response()->json(['message' => 'Validation completed for all site polygons', 'job_uuid' => $jobUUID], 200);
+            return (new DelayedJobResource($job))->additional(['message' => 'Validation completed for all site polygons']);
         } catch (\Exception $e) {
             Log::error('Error during site validation polygon: ' . $e->getMessage());
 
@@ -1207,7 +1207,8 @@ class TerrafundCreateGeometryController extends Controller
             $jobUUID = $job->getJobUuid();
             dispatch($job);
 
-            return response()->json(['message' => 'Validation completed for these polygons', 'job_uuid' => $jobUUID], 200);
+            return (new DelayedJobResource($job))->additional(['message' => 'Validation completed for these polygons']);
+            
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred during validation'], 500);
         }
