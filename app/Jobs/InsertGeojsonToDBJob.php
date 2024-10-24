@@ -88,8 +88,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_SUCCEEDED,
                 'payload' => json_encode($uuids),
-                'updated_at' => now(),
-                'statusCode' => Response::HTTP_OK,
+                'status_code' => Response::HTTP_OK,
             ]);
 
         } catch (Exception $e) {
@@ -97,8 +96,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_FAILED,
                 'payload' => ['error' => $e->getMessage()],
-                'updated_at' => now(),
-                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }

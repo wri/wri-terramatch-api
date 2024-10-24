@@ -82,7 +82,7 @@ class FixPolygonOverlapJob implements ShouldQueue
                   'status' => self::STATUS_SUCCEEDED,
                   'payload' => json_encode(['updated_polygons' => $polygonsClipped]),
                   'updated_at' => now(),
-                  'statusCode' => Response::HTTP_OK,
+                  'status_code' => Response::HTTP_OK,
                 ]);
             }
         } catch (Exception $e) {
@@ -92,7 +92,7 @@ class FixPolygonOverlapJob implements ShouldQueue
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'updated_at' => now(),
-                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         } catch (Throwable $e) {
             Log::error('Throwable Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
@@ -101,7 +101,7 @@ class FixPolygonOverlapJob implements ShouldQueue
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'updated_at' => now(),
-                'statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
     }
