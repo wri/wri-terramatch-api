@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Projects\Project;
 use Illuminate\Http\Request;
+use App\Models\Framework;
 
 class ProjectProfileDetailsController extends Controller
 {
@@ -21,6 +22,7 @@ class ProjectProfileDetailsController extends Controller
             'restorationStrategy' => $project->restoration_strategy,
             'targetLandUse' => $project->land_use_types,
             'landTenure' => $project->land_tenure_project_area,
+            'framework' => $project->framework_key
         ];
 
         return response()->json($response);
