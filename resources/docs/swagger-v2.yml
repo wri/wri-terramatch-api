@@ -44229,6 +44229,18 @@ definitions:
           urban-forest:
             type: number
             description: Total amount for urban forest projects.
+  DelayedJobsResponse:
+    title: DelayedJob
+    type: object
+    properties:
+      message:
+        type: string
+        example: Job dispatched
+        description: Indicates that the job has been dispatched and will be processed asynchronously.
+      job_uuid:
+        type: string
+        example: 123e4567-e89b-12d3-a456-426614174000
+        description: Unique identifier for the delayed job.
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -92151,11 +92163,17 @@ paths:
         '200':
           description: Successful response
           schema:
+            title: DelayedJob
             type: object
             properties:
               message:
                 type: string
-                description: A message indicating the completion of validation for all site polygons.
+                example: Job dispatched
+                description: Indicates that the job has been dispatched and will be processed asynchronously.
+              job_uuid:
+                type: string
+                example: 123e4567-e89b-12d3-a456-426614174000
+                description: Unique identifier for the delayed job.
   /v2/terrafund/validation/site:
     get:
       summary: Get criteria data validation results for all polygons in a site
@@ -93264,12 +93282,17 @@ paths:
         '200':
           description: GeoJSON file processed and inserted successfully
           schema:
+            title: DelayedJob
             type: object
             properties:
               message:
                 type: string
-              uuid:
+                example: Job dispatched
+                description: Indicates that the job has been dispatched and will be processed asynchronously.
+              job_uuid:
                 type: string
+                example: 123e4567-e89b-12d3-a456-426614174000
+                description: Unique identifier for the delayed job.
         '400':
           description: Bad request
         '500':
@@ -93295,12 +93318,17 @@ paths:
         '200':
           description: Shapefile processed and inserted successfully
           schema:
+            title: DelayedJob
             type: object
             properties:
               message:
                 type: string
-              uuid:
+                example: Job dispatched
+                description: Indicates that the job has been dispatched and will be processed asynchronously.
+              job_uuid:
                 type: string
+                example: 123e4567-e89b-12d3-a456-426614174000
+                description: Unique identifier for the delayed job.
         '400':
           description: Bad request
         '500':
@@ -93326,12 +93354,17 @@ paths:
         '200':
           description: KML file processed and inserted successfully
           schema:
+            title: DelayedJob
             type: object
             properties:
               message:
                 type: string
-              uuid:
+                example: Job dispatched
+                description: Indicates that the job has been dispatched and will be processed asynchronously.
+              job_uuid:
                 type: string
+                example: 123e4567-e89b-12d3-a456-426614174000
+                description: Unique identifier for the delayed job.
         '400':
           description: Bad request
         '500':
@@ -95792,20 +95825,19 @@ paths:
           type: string
       responses:
         '200':
-          description: Clipped polygons processed successfully
+          description: Clipped polygons job started succesfully
           schema:
-            title: ClippedPolygonResponse
+            title: DelayedJob
             type: object
             properties:
-              updated_polygons:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    poly_name:
-                      type: string
+              message:
+                type: string
+                example: Job dispatched
+                description: Indicates that the job has been dispatched and will be processed asynchronously.
+              job_uuid:
+                type: string
+                example: 123e4567-e89b-12d3-a456-426614174000
+                description: Unique identifier for the delayed job.
         '400':
           description: Bad request
         '404':
@@ -95832,36 +95864,17 @@ paths:
         '200':
           description: A list of processed and unprocessed polygons
           schema:
+            title: DelayedJob
             type: object
             properties:
-              processed:
-                type: array
-                description: A list of processed polygons
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                      description: The UUID of the unprocessed polygon
-                      example: uuid1
-                    poly_name:
-                      type: string
-                      description: The name of the unprocessed polygon
-                      example: Polygon Name
-              unprocessed:
-                type: array
-                description: A list of polygons that couldn't be processed
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                      description: The UUID of the unprocessed polygon
-                      example: uuid1
-                    poly_name:
-                      type: string
-                      description: The name of the unprocessed polygon
-                      example: Polygon Name
+              message:
+                type: string
+                example: Job dispatched
+                description: Indicates that the job has been dispatched and will be processed asynchronously.
+              job_uuid:
+                type: string
+                example: 123e4567-e89b-12d3-a456-426614174000
+                description: Unique identifier for the delayed job.
   /v2/terrafund/validation/polygons:
     post:
       summary: Validate multiple polygons
@@ -95881,8 +95894,14 @@ paths:
         '200':
           description: Successful response
           schema:
+            title: DelayedJob
             type: object
             properties:
               message:
                 type: string
-                description: A message indicating the completion of validation for all site polygons.
+                example: Job dispatched
+                description: Indicates that the job has been dispatched and will be processed asynchronously.
+              job_uuid:
+                type: string
+                example: 123e4567-e89b-12d3-a456-426614174000
+                description: Unique identifier for the delayed job.

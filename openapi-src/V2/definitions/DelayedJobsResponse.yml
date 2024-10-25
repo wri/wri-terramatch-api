@@ -1,0 +1,11 @@
+title: DelayedJob
+type: object
+properties:
+  message:
+    type: string
+    example: "Job dispatched" # or "file queued to insert"
+    description: Indicates that the job has been dispatched and will be processed asynchronously.
+  job_uuid:
+    type: string
+    example: "123e4567-e89b-12d3-a456-426614174000"
+    description: Unique identifier for the delayed job.
