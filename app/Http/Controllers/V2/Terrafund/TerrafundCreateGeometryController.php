@@ -237,19 +237,24 @@ class TerrafundCreateGeometryController extends Controller
         Redis::set($redis_key, $geojsonContent, 'EX', 7200);
         $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
     
-        $job = new InsertGeojsonToDBJob(
+        if($delayedJob) {
+          $job = new InsertGeojsonToDBJob(
             $redis_key,
             $delayedJob->id,
             $site_id,
             'site',
             $body['primary_uuid'] ?? null,
             $submitPolygonsLoaded
-        );
+          );  
     
-        dispatch($job);
-        
-        return (new DelayedJobResource($delayedJob))
-            ->additional(['message' => 'KML queued to insert']);
+          dispatch($job);
+          
+          return (new DelayedJobResource($delayedJob))
+              ->additional(['message' => 'KML queued to insert']);
+        } else {
+          return response()->json(['error' => 'Failed to create delayed job'], 500);
+        }
+       
 
     }
 
@@ -394,11 +399,24 @@ class TerrafundCreateGeometryController extends Controller
                 $redis_key = 'shapefile_file_' . uniqid();
                 Redis::set($redis_key, $geojsonContent, 'EX', 7200);
                 $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
-                $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id,  $site_id, 'site', $body['primary_uuid'] ?? null, $submitPolygonsLoaded);
-                
-                dispatch($job);
 
-                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Shapefile queued to insert']);
+                if($delayedJob) {
+                  $job = new InsertGeojsonToDBJob(
+                    $redis_key,
+                    $delayedJob->id,
+                    $site_id,
+                    'site',
+                    $body['primary_uuid'] ?? null,
+                    $submitPolygonsLoaded
+                  );  
+            
+                  dispatch($job);
+                  
+                  return (new DelayedJobResource($delayedJob))
+                      ->additional(['message' => 'Shapefile queued to insert']);
+                } else {
+                  return response()->json(['error' => 'Failed to create delayed job'], 500);
+                }
 
             } else {
                 return response()->json(['error' => 'Failed to open the ZIP file'], 400);
@@ -605,11 +623,23 @@ class TerrafundCreateGeometryController extends Controller
         Redis::set($redis_key, $geojson_content, 'EX', 7200);
         $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
 
-        $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null, $submitPolygonsLoaded);
-
-        dispatch($job);
-
-        return (new DelayedJobResource($delayedJob))->additional(['message' => 'Geojson queued to insert']);
+        if($delayedJob) {
+          $job = new InsertGeojsonToDBJob(
+            $redis_key,
+            $delayedJob->id,
+            $site_id,
+            'site',
+            $body['primary_uuid'] ?? null,
+            $submitPolygonsLoaded
+          );  
+    
+          dispatch($job);
+          
+          return (new DelayedJobResource($delayedJob))
+              ->additional(['message' => 'Geojson queued to insert']);
+        } else {
+          return response()->json(['error' => 'Failed to create delayed job'], 500);
+        }
 
     }
 
