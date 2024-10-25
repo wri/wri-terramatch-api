@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Http\Resources\DelayedJobResource;
 use App\Jobs\FixPolygonOverlapJob;
+use App\Models\DelayedJob;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
@@ -23,10 +24,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         ini_set('memory_limit', '-1');
         $user = Auth::user();
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-        $job = new FixPolygonOverlapJob($polygonUuids, $user->id);
+        $delayedJob = DelayedJob::create(['status' => FixPolygonOverlapJob::STATUS_PENDING]);
+        $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
         dispatch($job);
 
-        return new DelayedJobResource($job);
+        return new DelayedJobResource($delayedJob);
 
     }
 
@@ -38,10 +40,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $sitePolygon = Site::isUuid($uuid)->first();
         $projectId = $sitePolygon->project_id ?? null;
         $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
-        $job = new FixPolygonOverlapJob($polygonUuids, $user->id);
+        $delayedJob = DelayedJob::create(['status' => FixPolygonOverlapJob::STATUS_PENDING]);
+        $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
         dispatch($job);
 
-        return new DelayedJobResource($job);
+        return new DelayedJobResource($delayedJob);
     }
 
     public function clipOverlappingPolygons(Request $request)
@@ -50,7 +53,6 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         ini_set('memory_limit', '-1');
         $uuids = $request->input('uuids');
         Log::info('Clipping polygons', ['uuids' => $uuids]);
-        $jobUUID = null;
         if (empty($uuids) || ! is_array($uuids)) {
             return response()->json(['error' => 'Invalid or missing UUIDs'], 400);
         }
@@ -85,11 +87,12 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $uniquePolygonUuids = array_unique($allPolygonUuids);
         if (! empty($uniquePolygonUuids)) {
             $user = Auth::user();
-            $job = new FixPolygonOverlapJob($polygonUuids, $user->id);
+            $delayedJob = DelayedJob::create(['status' => FixPolygonOverlapJob::STATUS_PENDING]);
+            $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
             dispatch($job);
         }
 
-        return new DelayedJobResource($job);
+        return new DelayedJobResource($delayedJob);
     }
 
     public function clipOverlappingPolygon(string $uuid)

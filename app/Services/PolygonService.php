@@ -527,7 +527,6 @@ class PolygonService
             $geojson = json_decode($geojsonData, true);
             SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
             SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
-            Log::info('data in function', ['entity_uuid' => $entity_uuid, 'entity_type' => $entity_type, 'primary_uuid' => $primary_uuid, 'submit_polygon_loaded' => $submit_polygon_loaded]);
             return $this->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
 
         } catch (Exception $e) {

@@ -24,13 +24,13 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
     public $timeout = 0;
     
-    private const STATUS_PENDING = 'pending';
-    private const STATUS_FAILED = 'failed';
-    private const STATUS_SUCCEEDED = 'succeeded';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_FAILED = 'failed';
+    public const STATUS_SUCCEEDED = 'succeeded';
 
     protected $uuid;
 
-    protected $job_uuid;
+    protected $delayed_job_id;
 
     protected $sitePolygonsUuids;
 
@@ -39,10 +39,10 @@ class RunSitePolygonsValidationJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(array $sitePolygonsUuids)
+    public function __construct(string $delayed_job_id, array $sitePolygonsUuids)
     {
         $this->sitePolygonsUuids = $sitePolygonsUuids;
-        $this->job_uuid = Str::uuid()->toString();
+        $this->delayed_job_id = $delayed_job_id;
     }
 
     /**
@@ -53,11 +53,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     public function handle(PolygonValidationService $validationService)
     {
         try {
-            DelayedJob::create([
-                'uuid' => $this->job_uuid,
-                'status' => self::STATUS_PENDING,
-                'created_at' => now(),
-            ]);
+            $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
             foreach ($this->sitePolygonsUuids as $polygonUuid) {
                 $request = new Request(['uuid' => $polygonUuid]);
                 $validationService->validateOverlapping($request);
@@ -71,7 +67,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 $validationService->validateDataInDB($request);
             }
 
-            DelayedJob::where('uuid', $this->job_uuid)->update([
+            $delayedJob->update([
                 'status' => self::STATUS_SUCCEEDED,
                 'payload' => 'Validation completed for all site polygons',
                 'status_code' => Response::HTTP_OK,
@@ -80,16 +76,11 @@ class RunSitePolygonsValidationJob implements ShouldQueue
         } catch (Exception $e) {
             Log::error('Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
 
-            DelayedJob::where('uuid', $this->job_uuid)->update([
+            DelayedJob::where('id', $this->delayed_job_id)->update([
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
-    }
-
-    public function getJobUuid()
-    {
-        return $this->job_uuid;
     }
 }

@@ -1197,11 +1197,11 @@ class TerrafundCreateGeometryController extends Controller
             $uuid = $request->input('uuid');
 
             $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-            $job = new RunSitePolygonsValidationJob($sitePolygonsUuids);
-            $jobUUID = $job->getJobUuid();
+            $delayedJob = DelayedJob::create(['status' => RunSitePolygonsValidationJob::STATUS_PENDING]);
+            $job = new RunSitePolygonsValidationJob($delayedJob->id, $sitePolygonsUuids);
             dispatch($job);
 
-            return (new DelayedJobResource($job))->additional(['message' => 'Validation completed for all site polygons']);
+            return (new DelayedJobResource($delayedJob))->additional(['message' => 'Validation completed for all site polygons']);
         } catch (\Exception $e) {
             Log::error('Error during site validation polygon: ' . $e->getMessage());
 
@@ -1213,11 +1213,11 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuids = $request->input('uuids');
-            $job = new RunSitePolygonsValidationJob($uuids);
-            $jobUUID = $job->getJobUuid();
+            $delayedJob = DelayedJob::create(['status' => RunSitePolygonsValidationJob::STATUS_PENDING]);
+            $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);
 
-            return (new DelayedJobResource($job))->additional(['message' => 'Validation completed for these polygons']);
+            return (new DelayedJobResource($delayedJob))->additional(['message' => 'Validation completed for these polygons']);
             
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred during validation'], 500);
