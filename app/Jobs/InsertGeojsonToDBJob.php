@@ -40,15 +40,21 @@ class InsertGeojsonToDBJob implements ShouldQueue
     }
     public function handle(PolygonService $service)
     {
+        $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
+        
         try {
-            $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
             $geojsonContent = Redis::get($this->redis_key);
             
             if (!$geojsonContent) {
                 Log::error('GeoJSON content not found in Redis for key: ' . $this->redis_key);
+                $delayedJob->update([
+                    'status' => DelayedJob::STATUS_FAILED,
+                    'payload' => ['error' => 'GeoJSON content not found in Redis'],
+                    'status_code' => Response::HTTP_NOT_FOUND,
+                ]);
                 return;
             }
-
+    
             $uuids = $service->insertGeojsonToDBFromContent(
                 $geojsonContent,
                 $this->entity_uuid,
@@ -56,11 +62,11 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 $this->primary_uuid,
                 $this->submit_polygon_loaded
             );
-
+    
             if (isset($uuids['error'])) {
                 throw new \Exception($uuids['error'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-
+    
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
             
             $delayedJob->update([
@@ -68,10 +74,10 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 'payload' => json_encode($uuids),
                 'status_code' => Response::HTTP_OK,
             ]);
-
+    
         } catch (Exception $e) {
             Log::error('Error in InsertGeojsonToDBJob: ' . $e->getMessage());
-            DelayedJob::where('id', $this->delayed_job_id)->update([
+            $delayedJob->update([
                 'status' => DelayedJob::STATUS_FAILED,
                 'payload' => ['error' => $e->getMessage()],
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
