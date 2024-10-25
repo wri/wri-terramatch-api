@@ -14,9 +14,9 @@ class DelayedJobResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-      return [
-        'message' => $this->message ?? 'Job dispatched',
-        'job_uuid' => $this->uuid
-      ];
+        return [
+          'message' => $this->message ?? 'Job dispatched',
+          'job_uuid' => $this->uuid,
+        ];
     }
 }

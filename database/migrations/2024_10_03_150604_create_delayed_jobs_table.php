@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('delayed_jobs', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('status');
+            $table->string('status')->default('pending');
             $table->integer('status_code')->nullable();
             $table->json('payload')->nullable();
             $table->timestamps();
