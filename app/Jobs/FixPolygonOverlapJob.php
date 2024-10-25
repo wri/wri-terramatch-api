@@ -15,7 +15,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Throwable;
 
 class FixPolygonOverlapJob implements ShouldQueue
@@ -26,11 +25,11 @@ class FixPolygonOverlapJob implements ShouldQueue
     use SerializesModels;
 
     public $timeout = 0;
-    
+
     protected $polygonService;
 
     protected $polygonUuids;
-    
+
     public $authUserId;
 
     protected $delayed_job_id;
@@ -71,7 +70,7 @@ class FixPolygonOverlapJob implements ShouldQueue
                 $delayedJob->update([
                   'status' => DelayedJob::STATUS_SUCCEEDED,
                   'payload' => json_encode(['updated_polygons' => $polygonsClipped]),
-                  'status_code' => Response::HTTP_OK
+                  'status_code' => Response::HTTP_OK,
                 ]);
             }
         } catch (Exception $e) {
@@ -92,5 +91,4 @@ class FixPolygonOverlapJob implements ShouldQueue
             ]);
         }
     }
-
 }

@@ -15,7 +15,6 @@ class DelayedJob extends Model
     public const STATUS_FAILED = 'failed';
     public const STATUS_SUCCEEDED = 'succeeded';
 
-
     protected $table = 'delayed_jobs';
 
     protected $fillable = [

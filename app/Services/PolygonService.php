@@ -518,8 +518,9 @@ class PolygonService
             }
         }
     }
-      /**
-      * @throws ValidationException
+
+    /**
+    * @throws ValidationException
     */
     public function insertGeojsonToDBFromContent(string $geojsonData, ?string $entity_uuid = null, ?string $entity_type = null, ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false)
     {
@@ -527,6 +528,7 @@ class PolygonService
             $geojson = json_decode($geojsonData, true);
             SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
             SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
+
             return $this->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
 
         } catch (Exception $e) {
