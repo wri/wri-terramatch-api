@@ -11,6 +11,11 @@ class DelayedJob extends Model
     use HasFactory;
     use HasUuid;
 
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_FAILED = 'failed';
+    public const STATUS_SUCCEEDED = 'succeeded';
+
+
     protected $table = 'delayed_jobs';
 
     protected $fillable = [

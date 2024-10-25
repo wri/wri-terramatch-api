@@ -24,7 +24,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         ini_set('memory_limit', '-1');
         $user = Auth::user();
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-        $delayedJob = DelayedJob::create(['status' => FixPolygonOverlapJob::STATUS_PENDING]);
+        $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
         $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
         dispatch($job);
 
@@ -40,7 +40,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $sitePolygon = Site::isUuid($uuid)->first();
         $projectId = $sitePolygon->project_id ?? null;
         $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
-        $delayedJob = DelayedJob::create(['status' => FixPolygonOverlapJob::STATUS_PENDING]);
+        $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
         $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
         dispatch($job);
 
@@ -87,7 +87,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $uniquePolygonUuids = array_unique($allPolygonUuids);
         if (! empty($uniquePolygonUuids)) {
             $user = Auth::user();
-            $delayedJob = DelayedJob::create(['status' => FixPolygonOverlapJob::STATUS_PENDING]);
+            $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
             $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
             dispatch($job);
         }

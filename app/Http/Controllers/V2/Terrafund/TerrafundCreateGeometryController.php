@@ -235,7 +235,7 @@ class TerrafundCreateGeometryController extends Controller
 
         $redis_key = 'kml_file_' . uniqid();
         Redis::set($redis_key, $geojsonContent, 'EX', 7200);
-        $delayedJob = DelayedJob::create(['status' => InsertGeojsonToDBJob::STATUS_PENDING]);
+        $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
     
         $job = new InsertGeojsonToDBJob(
             $redis_key,
@@ -393,8 +393,8 @@ class TerrafundCreateGeometryController extends Controller
 
                 $redis_key = 'shapefile_file_' . uniqid();
                 Redis::set($redis_key, $geojsonContent, 'EX', 7200);
-                $delayedJob = DelayedJob::create(['status' => InsertGeojsonToDBJob::STATUS_PENDING]);
-                $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id,  $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
+                $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
+                $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id,  $site_id, 'site', $body['primary_uuid'] ?? null, $submitPolygonsLoaded);
                 
                 dispatch($job);
 
@@ -603,7 +603,7 @@ class TerrafundCreateGeometryController extends Controller
             
         $redis_key = 'geojson_file_' . uniqid();
         Redis::set($redis_key, $geojson_content, 'EX', 7200);
-        $delayedJob = DelayedJob::create(['status' => InsertGeojsonToDBJob::STATUS_PENDING]);
+        $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
 
         $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null, $submitPolygonsLoaded);
 
@@ -1191,7 +1191,7 @@ class TerrafundCreateGeometryController extends Controller
             $uuid = $request->input('uuid');
 
             $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-            $delayedJob = DelayedJob::create(['status' => RunSitePolygonsValidationJob::STATUS_PENDING]);
+            $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $sitePolygonsUuids);
             dispatch($job);
 
@@ -1207,7 +1207,7 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuids = $request->input('uuids');
-            $delayedJob = DelayedJob::create(['status' => RunSitePolygonsValidationJob::STATUS_PENDING]);
+            $delayedJob = DelayedJob::create(['status' => DelayedJob::STATUS_PENDING]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);
 
