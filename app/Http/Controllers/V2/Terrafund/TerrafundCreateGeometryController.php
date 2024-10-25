@@ -223,30 +223,33 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
         }
         $geojsonContent = file_get_contents($geojsonPath);
+        $polygonLoadedList = isset($body['polygon_loaded']) && 
+            filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
+        $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && 
+            filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
+    
+        if ($polygonLoadedList) {
+            $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
+            return response()->json($polygonLoaded->original, 200);
+        }
+
         $redis_key = 'kml_file_' . uniqid();
         Redis::set($redis_key, $geojsonContent, 'EX', 7200);
-    
-        $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-        $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-
         $delayedJob = DelayedJob::create(['status' => InsertGeojsonToDBJob::STATUS_PENDING]);
-
-        if (! $polygonLoadedList && !$submitPolygonsLoaded) {
-          $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, null, $body['primary_uuid'] ?? null);
-        }
-
-        if ($polygonLoadedList) {
-          $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
-          return response()->json($polygonLoaded->original, 200);
-        }
-
-        if ($submitPolygonsLoaded) {
-          $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
-        }
-
+    
+        $job = new InsertGeojsonToDBJob(
+            $redis_key,
+            $delayedJob->id,
+            $site_id,
+            'site',
+            $body['primary_uuid'] ?? null,
+            $submitPolygonsLoaded
+        );
+    
         dispatch($job);
-
-        return (new DelayedJobResource($delayedJob))->additional(['message' => 'KML queued to insert']);
+        
+        return (new DelayedJobResource($delayedJob))
+            ->additional(['message' => 'KML queued to insert']);
 
     }
 
@@ -378,25 +381,21 @@ class TerrafundCreateGeometryController extends Controller
                     return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
                 }
                 $geojsonContent = file_get_contents($geojsonPath);
-                $redis_key = 'shapefile_file_' . uniqid();
-                Redis::set($redis_key, $geojsonContent, 'EX', 7200);
-                $delayedJob = DelayedJob::create(['status' => InsertGeojsonToDBJob::STATUS_PENDING]);
-
-                $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-                $submitPolygonsLoaded = $request->input('submit_polygon_loaded') === true || $request->input('submit_polygon_loaded') === 'true';
-
-                if (! $polygonLoadedList && $submitPolygonsLoaded) {
-                  $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null);
-                } 
-
+                $polygonLoadedList = isset($body['polygon_loaded']) && 
+                  filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
+                $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && 
+                  filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
+          
                 if ($polygonLoadedList) {
                     $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
                     return response()->json($polygonLoaded->original, 200);
                 }
 
-                if ($submitPolygonsLoaded) {
-                    $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id,  $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
-                }
+                $redis_key = 'shapefile_file_' . uniqid();
+                Redis::set($redis_key, $geojsonContent, 'EX', 7200);
+                $delayedJob = DelayedJob::create(['status' => InsertGeojsonToDBJob::STATUS_PENDING]);
+                $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id,  $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
+                
                 dispatch($job);
 
                 return (new DelayedJobResource($delayedJob))->additional(['message' => 'Shapefile queued to insert']);
@@ -590,28 +589,23 @@ class TerrafundCreateGeometryController extends Controller
         $file->move($tempDir, $filename);
         $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
         $geojson_content = file_get_contents($filePath);
-        $redis_key = 'geojson_file_' . uniqid();
-        Redis::set($redis_key, $geojson_content, 'EX', 7200);
-
-        $polygonLoadedList = isset($body['polygon_loaded']) && filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-        $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-
-        $delayedJob = DelayedJob::create(['status' => InsertGeojsonToDBJob::STATUS_PENDING]);
-
-        
-        if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
-          $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null);
-        }
+        $polygonLoadedList = isset($body['polygon_loaded']) && 
+            filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
+        $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) && 
+            filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
 
         if ($polygonLoadedList) {
-            $polygonLoaded = $this->GetAllPolygonsLoaded($geojson_content, $site_id);
-
-            return response()->json($polygonLoaded->original, 200);
+              $polygonLoaded = $this->GetAllPolygonsLoaded($geojson_content, $site_id);
+  
+              return response()->json($polygonLoaded->original, 200);
         }
+  
+            
+        $redis_key = 'geojson_file_' . uniqid();
+        Redis::set($redis_key, $geojson_content, 'EX', 7200);
+        $delayedJob = DelayedJob::create(['status' => InsertGeojsonToDBJob::STATUS_PENDING]);
 
-        if ($submitPolygonsLoaded) {
-          $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
-        }
+        $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null, $submitPolygonsLoaded);
 
         dispatch($job);
 
