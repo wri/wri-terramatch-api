@@ -232,7 +232,7 @@ class TerrafundCreateGeometryController extends Controller
         $delayedJob = DelayedJob::create(['status' => InsertGeojsonToDBJob::STATUS_PENDING]);
 
         if (! $polygonLoadedList && !$submitPolygonsLoaded) {
-          $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
+          $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, null, $body['primary_uuid'] ?? null);
         }
 
         if ($polygonLoadedList) {
@@ -386,7 +386,7 @@ class TerrafundCreateGeometryController extends Controller
                 $submitPolygonsLoaded = $request->input('submit_polygon_loaded') === true || $request->input('submit_polygon_loaded') === 'true';
 
                 if (! $polygonLoadedList && $submitPolygonsLoaded) {
-                  $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
+                  $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null);
                 } 
 
                 if ($polygonLoadedList) {
@@ -600,7 +600,7 @@ class TerrafundCreateGeometryController extends Controller
 
         
         if (! $polygonLoadedList && ! $submitPolygonsLoaded) {
-          $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id,  $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
+          $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null);
         }
 
         if ($polygonLoadedList) {
@@ -610,7 +610,7 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         if ($submitPolygonsLoaded) {
-          $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id,  $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
+          $job = new InsertGeojsonToDBJob($redis_key, $delayedJob->id, $site_id, 'site', $body['primary_uuid'] ?? null, $body['submit_polygon_loaded']);
         }
 
         dispatch($job);
