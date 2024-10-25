@@ -25,11 +25,6 @@ class FixPolygonOverlapJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_FAILED = 'failed';
-    public const STATUS_SUCCEEDED = 'succeeded';
-
     public $timeout = 0;
     
     protected $polygonService;
@@ -74,7 +69,7 @@ class FixPolygonOverlapJob implements ShouldQueue
             if ($user) {
                 $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($this->polygonUuids);
                 $delayedJob->update([
-                  'status' => self::STATUS_SUCCEEDED,
+                  'status' => DelayedJob::STATUS_SUCCEEDED,
                   'payload' => json_encode(['updated_polygons' => $polygonsClipped]),
                   'status_code' => Response::HTTP_OK
                 ]);
@@ -83,7 +78,7 @@ class FixPolygonOverlapJob implements ShouldQueue
             Log::error('Error in Fix Polygon Overlap Job: ' . $e->getMessage());
 
             DelayedJob::where('uuid', $this->delayed_job_id)->update([
-                'status' => self::STATUS_FAILED,
+                'status' => DelayedJob::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
@@ -91,7 +86,7 @@ class FixPolygonOverlapJob implements ShouldQueue
             Log::error('Throwable Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
 
             DelayedJob::where('uuid', $this->delayed_job_id)->update([
-                'status' => self::STATUS_FAILED,
+                'status' => DelayedJob::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);

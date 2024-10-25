@@ -22,11 +22,6 @@ class InsertGeojsonToDBJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $timeout = 0;
-
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_FAILED = 'failed';
-    public const STATUS_SUCCEEDED = 'succeeded';
-
     protected $entity_uuid;
     protected $entity_type;
     protected $primary_uuid;
@@ -69,7 +64,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
             Redis::del($this->redis_key);
             $delayedJob->update([
-                'status' => self::STATUS_SUCCEEDED,
+                'status' => DelayedJob::STATUS_SUCCEEDED,
                 'payload' => json_encode($uuids),
                 'status_code' => Response::HTTP_OK,
             ]);
@@ -77,7 +72,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
         } catch (Exception $e) {
             Log::error('Error in InsertGeojsonToDBJob: ' . $e->getMessage());
             DelayedJob::where('id', $this->delayed_job_id)->update([
-                'status' => self::STATUS_FAILED,
+                'status' => DelayedJob::STATUS_FAILED,
                 'payload' => ['error' => $e->getMessage()],
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);

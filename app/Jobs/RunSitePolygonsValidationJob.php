@@ -23,10 +23,6 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     use SerializesModels;
 
     public $timeout = 0;
-    
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_FAILED = 'failed';
-    public const STATUS_SUCCEEDED = 'succeeded';
 
     protected $uuid;
 
@@ -68,7 +64,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
             }
 
             $delayedJob->update([
-                'status' => self::STATUS_SUCCEEDED,
+                'status' => DelayedJob::STATUS_SUCCEEDED,
                 'payload' => 'Validation completed for all site polygons',
                 'status_code' => Response::HTTP_OK,
             ]);
@@ -77,7 +73,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
             Log::error('Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
 
             DelayedJob::where('id', $this->delayed_job_id)->update([
-                'status' => self::STATUS_FAILED,
+                'status' => DelayedJob::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
