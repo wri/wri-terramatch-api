@@ -16,7 +16,7 @@ class DelayedJobResource extends JsonResource
     {
       return [
         'message' => $this->message ?? 'Job dispatched',
-        'job_uuid' => $this->getJobUuid()
+        'job_uuid' => $this->uuid
       ];
     }
 }

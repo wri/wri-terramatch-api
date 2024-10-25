@@ -81,7 +81,6 @@ class FixPolygonOverlapJob implements ShouldQueue
                 DelayedJob::where('uuid', $this->job_uuid)->update([
                   'status' => self::STATUS_SUCCEEDED,
                   'payload' => json_encode(['updated_polygons' => $polygonsClipped]),
-                  'updated_at' => now(),
                   'status_code' => Response::HTTP_OK,
                 ]);
             }
@@ -91,7 +90,6 @@ class FixPolygonOverlapJob implements ShouldQueue
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
-                'updated_at' => now(),
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         } catch (Throwable $e) {
@@ -100,7 +98,6 @@ class FixPolygonOverlapJob implements ShouldQueue
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
-                'updated_at' => now(),
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }

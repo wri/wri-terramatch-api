@@ -15,77 +15,63 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
-
 class InsertGeojsonToDBJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $timeout = 0;
 
-    private const STATUS_PENDING = 'pending';
-    private const STATUS_FAILED = 'failed';
-    private const STATUS_SUCCEEDED = 'succeeded';
-
-    protected $geojsonFilename;
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_FAILED = 'failed';
+    public const STATUS_SUCCEEDED = 'succeeded';
 
     protected $entity_uuid;
-
     protected $entity_type;
-
     protected $primary_uuid;
-
     protected $submit_polygon_loaded;
+    protected $redis_key;
+    protected $delayed_job_id;
 
-    protected $job_uuid;
-
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct(string $geojsonFilename, ?string $entity_uuid = null, ?string $entity_type = null, ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false)
+    public function __construct(string $redis_key, string $delayed_job_id, ?string $entity_uuid = null, ?string $entity_type = null, ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false)
     {
-        $this->geojsonFilename = $geojsonFilename;
+        $this->redis_key = $redis_key;
         $this->entity_uuid = $entity_uuid;
         $this->entity_type = $entity_type;
         $this->primary_uuid = $primary_uuid;
         $this->submit_polygon_loaded = $submit_polygon_loaded;
-        $this->job_uuid = Str::uuid()->toString();
+        $this->delayed_job_id = $delayed_job_id;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle(PolygonService $service)
     {
         try {
-            DelayedJob::create([
-                'uuid' => $this->job_uuid,
-                'status' => self::STATUS_PENDING,
-                'created_at' => now(),
-            ]);
-            $uuids = $service->insertGeojsonToDB(
-                $this->geojsonFilename,
+            $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
+            if(!$delayedJob) {
+                throw new \Exception('DelayedJob not found', Response::HTTP_NOT_FOUND);
+            }
+            $geojsonContent = Redis::get($this->redis_key);
+            if (!$geojsonContent) {
+                Log::error('GeoJSON content not found in Redis for key: ' . $this->redis_key);
+                Redis::del($this->redis_key);
+                return;
+            }
+            $uuids = $service->insertGeojsonToDBFromContent(
+                $geojsonContent,
                 $this->entity_uuid,
                 $this->entity_type,
                 $this->primary_uuid,
                 $this->submit_polygon_loaded
             );
-            if (isset($uuids['error'])) {
-                $errorMessage = is_array($uuids['error'])
-                  ? json_encode($uuids['error'], JSON_PRETTY_PRINT)
-                  : strval($uuids['error']);
 
-                throw new \Exception($errorMessage, Response::HTTP_INTERNAL_SERVER_ERROR);
+            if (isset($uuids['error'])) {
+                throw new \Exception($uuids['error'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
+
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
-            DelayedJob::where('uuid', $this->job_uuid)->update([
+            Redis::del($this->redis_key);
+            $delayedJob->update([
                 'status' => self::STATUS_SUCCEEDED,
                 'payload' => json_encode($uuids),
                 'status_code' => Response::HTTP_OK,
@@ -93,16 +79,12 @@ class InsertGeojsonToDBJob implements ShouldQueue
 
         } catch (Exception $e) {
             Log::error('Error in InsertGeojsonToDBJob: ' . $e->getMessage());
-            DelayedJob::where('uuid', $this->job_uuid)->update([
+            DelayedJob::where('id', $this->delayed_job_id)->update([
                 'status' => self::STATUS_FAILED,
                 'payload' => ['error' => $e->getMessage()],
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
+            Redis::del($this->redis_key);
         }
-    }
-
-    public function getJobUuid()
-    {
-        return $this->job_uuid;
     }
 }

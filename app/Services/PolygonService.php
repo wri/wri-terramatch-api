@@ -518,6 +518,30 @@ class PolygonService
             }
         }
     }
+      /**
+      * @throws ValidationException
+    */
+    public function insertGeojsonToDBFromContent(string $geojsonData, ?string $entity_uuid = null, ?string $entity_type = null, ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false)
+    {
+        try {
+            $geojson = json_decode($geojsonData, true);
+            SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
+            SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
+            Log::info('data in function', ['entity_uuid' => $entity_uuid, 'entity_type' => $entity_type, 'primary_uuid' => $primary_uuid, 'submit_polygon_loaded' => $submit_polygon_loaded]);
+            return $this->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
+
+        } catch (Exception $e) {
+            $errorMessage = $e->getMessage();
+            $decodedErrorMessage = json_decode($errorMessage, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return ['error' => $decodedErrorMessage];
+            } else {
+                Log::info('Error inserting geojson to DB', ['error' => $errorMessage]);
+
+                return ['error' => $errorMessage];
+            }
+        }
+    }
 
     public function processClippedPolygons(array $polygonUuids)
     {

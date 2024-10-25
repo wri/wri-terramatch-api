@@ -74,7 +74,6 @@ class RunSitePolygonsValidationJob implements ShouldQueue
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_SUCCEEDED,
                 'payload' => 'Validation completed for all site polygons',
-                'updated_at' => now(),
                 'status_code' => Response::HTTP_OK,
             ]);
 
@@ -84,7 +83,6 @@ class RunSitePolygonsValidationJob implements ShouldQueue
             DelayedJob::where('uuid', $this->job_uuid)->update([
                 'status' => self::STATUS_FAILED,
                 'payload' => json_encode(['error' => $e->getMessage()]),
-                'updated_at' => now(),
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
