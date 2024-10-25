@@ -17,12 +17,7 @@ responses:
   '200':
     description: GeoJSON file processed and inserted successfully
     schema:
-      type: object
-      properties:
-        message:
-          type: string
-        uuid:
-          type: string
+      $ref: '../../definitions/_index.yml#/DelayedJobsResponse'
   '400':
     description: Bad request
   '500':

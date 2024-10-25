@@ -8,9 +8,9 @@ parameters:
     type: string
 responses:
   '200':
-    description: Clipped polygons processed successfully
+    description: Clipped polygons job started succesfully
     schema:
-      $ref: '../../definitions/_index.yml#/ClippedPolygonResponse'
+      $ref: '../../definitions/_index.yml#/DelayedJobsResponse'
   '400':
     description: Bad request
   '404':
