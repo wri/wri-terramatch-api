@@ -38,17 +38,17 @@ class InsertGeojsonToDBJob implements ShouldQueue
         $this->submit_polygon_loaded = $submit_polygon_loaded;
         $this->delayed_job_id = $delayed_job_id;
     }
-
     public function handle(PolygonService $service)
     {
         try {
             $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
             $geojsonContent = Redis::get($this->redis_key);
+            
             if (!$geojsonContent) {
                 Log::error('GeoJSON content not found in Redis for key: ' . $this->redis_key);
-                Redis::del($this->redis_key);
                 return;
             }
+
             $uuids = $service->insertGeojsonToDBFromContent(
                 $geojsonContent,
                 $this->entity_uuid,
@@ -62,7 +62,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
             }
 
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
-            Redis::del($this->redis_key);
+            
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
                 'payload' => json_encode($uuids),
@@ -76,6 +76,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 'payload' => ['error' => $e->getMessage()],
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
+        } finally {
             Redis::del($this->redis_key);
         }
     }
