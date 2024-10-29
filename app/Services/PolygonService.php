@@ -330,8 +330,8 @@ class PolygonService
             $geometryHelper->updateProjectCentroid($project->uuid);
 
             return null;
-        } catch (\Exception $e) {  
-          return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
