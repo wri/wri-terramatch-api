@@ -58,7 +58,7 @@ class GetHectaresRestoredController extends Controller
         return DB::select('
                 SELECT *
                 FROM indicator_output_hectares
-                WHERE indicator_id = ?
+                WHERE indicator_slug = ?
                 AND polygon_id IN (' . implode(',', array_fill(0, count($polygonsUuids), '?')) . ')
             ', array_merge([$indicatorId], $polygonsUuids));
     }
