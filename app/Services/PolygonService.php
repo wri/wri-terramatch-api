@@ -331,9 +331,7 @@ class PolygonService
 
             return null;
         } catch (\Exception $e) {  
-          if (! $sitePolygon) {
-            throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
-          }
+          return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
