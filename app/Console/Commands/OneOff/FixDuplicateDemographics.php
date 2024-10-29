@@ -77,10 +77,10 @@ class FixDuplicateDemographics extends Command
 
                 $info = [
                     'workday_id' => $workdayId,
-                    'workdayable_type' => $workday ? $workday->workdayable_type : null,
-                    'workdayable_id' => $workday ? $workday->workdayable_id : null,
-                    'workdayable_uuid' => $workday ? ($workday->workdayable ? $workday->workdayable->uuid : null) : null,
-                    'collection' => $workday ? $workday->collection : null,
+                    'workdayable_type' => $workday->workdayable_type,
+                    'workdayable_id' => $workday->workdayable_id ,
+                    'workdayable_uuid' => $workday->workdayable->uuid ,
+                    'collection' => $workday->collection ,
                     'type' => $stat['type'],
                     'subtype' => $stat['subtype'],
                     'name' => $stat['name'],
