@@ -65,6 +65,7 @@ class RestorationPartner extends Model implements HandlesLinkedFieldSync
         'partnerable_type',
         'partnerable_id',
         'collection',
+        'description',
         'hidden',
     ];
 
