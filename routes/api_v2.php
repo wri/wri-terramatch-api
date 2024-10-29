@@ -659,11 +659,11 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/estimated-area-project', [TerrafundCreateGeometryController::class, 'validateEstimatedAreaProject']);
     Route::get('/validation/estimated-area-site', [TerrafundCreateGeometryController::class, 'validateEstimatedAreaSite']);
     Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
-    Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
-    Route::post('/validation/polygons', [TerrafundCreateGeometryController::class, 'getPolygonsValidation']);
-    Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
+    Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'sendRunValidationPolygon']);
+    Route::post('/validation/polygons', [TerrafundCreateGeometryController::class, 'runPolygonsValidation']);
+    Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'runSiteValidationPolygon']);
     Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
-    Route::post('/clip-polygons/site/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygonsBySite']);
+    Route::post('/clip-polygons/site/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygonsOfProjectBySite']);
     Route::post('/clip-polygons/polygon/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygon']);
     Route::post('/clip-polygons/polygons', [TerrafundClipGeometryController::class, 'clipOverlappingPolygons']);
 

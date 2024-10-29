@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
+use App\Helpers\PolygonGeometryHelper;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\ProjectPitch;
@@ -329,9 +331,7 @@ class PolygonService
 
             return null;
         } catch (\Exception $e) {
-            if (! $sitePolygon) {
-                throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
-            }
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -474,5 +474,112 @@ class PolygonService
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    /**
+      * @throws ValidationException
+    */
+    public function insertGeojsonToDB(string $geojsonFilename, ?string $entity_uuid = null, ?string $entity_type = null, ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false)
+    {
+        try {
+            $tempDir = sys_get_temp_dir();
+            $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
+            $geojsonData = file_get_contents($geojsonPath);
+
+            if ($entity_type === 'project' || $entity_type === 'project-pitch') {
+                $entity = $this->getEntity($entity_type, $entity_uuid);
+
+                $hasBeenDeleted = GeometryHelper::deletePolygonWithRelated($entity);
+
+                if ($entity && $hasBeenDeleted) {
+                    return $this->createProjectPolygon($entity, $geojsonData);
+                } else {
+                    return ['error' => 'Entity not found'];
+                }
+            } else {
+                $geojson = json_decode($geojsonData, true);
+
+                SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
+                SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
+
+                return $this->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
+
+            }
+
+        } catch (Exception $e) {
+            $errorMessage = $e->getMessage();
+            $decodedErrorMessage = json_decode($errorMessage, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return ['error' => $decodedErrorMessage];
+            } else {
+                Log::info('Error inserting geojson to DB', ['error' => $errorMessage]);
+
+                return ['error' => $errorMessage];
+            }
+        }
+    }
+
+    /**
+    * @throws ValidationException
+    */
+    public function insertGeojsonToDBFromContent(string $geojsonData, ?string $entity_uuid = null, ?string $entity_type = null, ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false)
+    {
+        try {
+            $geojson = json_decode($geojsonData, true);
+            SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
+            SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
+
+            return $this->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
+
+        } catch (Exception $e) {
+            $errorMessage = $e->getMessage();
+            $decodedErrorMessage = json_decode($errorMessage, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return ['error' => $decodedErrorMessage];
+            } else {
+                Log::info('Error inserting geojson to DB', ['error' => $errorMessage]);
+
+                return ['error' => $errorMessage];
+            }
+        }
+    }
+
+    public function processClippedPolygons(array $polygonUuids)
+    {
+        $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
+
+        $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
+        $uuids = [];
+
+        if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
+            foreach ($clippedPolygons['features'] as $feature) {
+                if (isset($feature['properties']['poly_id'])) {
+                    $poly_id = $feature['properties']['poly_id'];
+                    $result = CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($poly_id, json_encode(['geometry' => $feature]));
+
+                    if (isset($result->original['uuid'])) {
+                        $uuids[] = $result->original['uuid'];
+                    }
+
+                    if (($key = array_search($poly_id, $polygonUuids)) !== false) {
+                        unset($polygonUuids[$key]);
+                    }
+                }
+            }
+            $polygonUuids = array_values($polygonUuids);
+            $newPolygonUuids = array_merge($uuids, $polygonUuids);
+        } else {
+            throw new \Exception('Error processing polygons', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if (! empty($uuids)) {
+            foreach ($newPolygonUuids as $polygonUuid) {
+                App::make(PolygonValidationService::class)->runValidationPolygon($polygonUuid);
+            }
+        }
+
+        $updatedPolygons = PolygonGeometryHelper::getPolygonsProjection($uuids, ['poly_id', 'poly_name']);
+
+        return $updatedPolygons;
     }
 }
