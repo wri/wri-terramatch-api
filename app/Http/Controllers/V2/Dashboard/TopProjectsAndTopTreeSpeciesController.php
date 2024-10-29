@@ -33,6 +33,7 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
             $totalSpeciesAmountForSiteReport = $project->trees_planted_count;
 
             $topProjects[] = [
+                'organization' => $project->organisation->name,
                 'project' => $project->name,
                 'uuid' => $project->uuid,
                 'trees_planted' => $totalSpeciesAmountForSiteReport,

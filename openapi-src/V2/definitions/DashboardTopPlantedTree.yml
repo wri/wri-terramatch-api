@@ -1,5 +1,7 @@
 type: object
 properties:
+  organization:
+    type: string
   project:
     type: string
   uuid:
