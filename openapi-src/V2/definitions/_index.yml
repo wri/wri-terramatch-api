@@ -386,5 +386,3 @@ DashboardIndicatorHectaresRestorationResponse:
   $ref: './DashboardIndicatorHectaresRestorationResponse.yml'
 DashboardIndicatorHectaresRestorationData:
   $ref: './DashboardIndicatorHectaresRestorationData.yml'
-DelayedJobsResponse:
-  $ref: './DelayedJobsResponse.yml'

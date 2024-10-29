@@ -15,4 +15,8 @@ responses:
   '200':
     description: Successful response
     schema:
-      $ref: '../../definitions/_index.yml#/DelayedJobsResponse'
+      type: object
+      properties:
+        message:
+          type: string
+          description: A message indicating the completion of validation for all site polygons.
