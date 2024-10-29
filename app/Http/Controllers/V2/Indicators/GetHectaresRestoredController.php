@@ -14,8 +14,8 @@ class GetHectaresRestoredController extends Controller
     {
         try {
             $projectsToQuery = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->pluck('uuid')->toArray();
-            $HECTAREAS_BY_RESTORATION = '5';
-            $HECTAREAS_BY_TARGET_LAND_USE_TYPES = '6';
+            $HECTAREAS_BY_RESTORATION = 'restorationByStrategy';
+            $HECTAREAS_BY_TARGET_LAND_USE_TYPES = 'restorationByLandUse';
 
             $projectsPolygons = $this->getProjectsPolygons($projectsToQuery);
             $polygonsUuids = array_column($projectsPolygons, 'uuid');
