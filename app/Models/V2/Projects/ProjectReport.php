@@ -7,6 +7,7 @@ use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
+use App\Models\Traits\HasRestorationPartners;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
@@ -55,6 +56,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use HasEntityResources;
     use BelongsToThroughTrait;
     use HasWorkdays;
+    use HasRestorationPartners;
 
     protected $auditInclude = [
         'status',
@@ -213,6 +215,37 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         ],
     ];
 
+    public const RESTORATION_PARTNER_COLLECTIONS = [
+        'direct' => [
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_INCOME,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_BENEFITS,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_CONSERVATION_PAYMENTS,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_MARKET_ACCESS,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_CAPACITY,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_TRAINING,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_LAND_TITLE,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_LIVELIHOODS,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_PRODUCTIVITY,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_OTHER,
+        ],
+        'indirect' => [
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_INCOME,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_BENEFITS,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_CONSERVATION_PAYMENTS,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_MARKET_ACCESS,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_CAPACITY,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_TRAINING,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_LAND_TITLE,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_LIVELIHOODS,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_PRODUCTIVITY,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_OTHER,
+        ],
+        'other' => [
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_OTHER,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_OTHER,
+        ]
+    ];
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumbnail')
@@ -286,11 +319,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function treeSpecies()
     {
         return $this->morphMany(TreeSpecies::class, 'speciesable');
-    }
-
-    public function restorationPartners()
-    {
-        return $this->morphMany(RestorationPartner::class, 'partnerable');
     }
 
     /** Calculated Values */

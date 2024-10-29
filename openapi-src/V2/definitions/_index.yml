@@ -144,6 +144,8 @@ V2SeedingPaginated:
   $ref: './V2SeedingPaginated.yml'
 V2WorkdayRead:
   $ref: './V2WorkdayRead.yml'
+V2RestorationPartnerRead:
+  $ref: './V2RestorationPartnerRead.yml'
 V2DisturbanceRead:
   $ref: './V2DisturbanceRead.yml'
 V2DisturbancePaginated:
