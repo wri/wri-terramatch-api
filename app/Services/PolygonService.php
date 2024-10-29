@@ -330,8 +330,10 @@ class PolygonService
             $geometryHelper->updateProjectCentroid($project->uuid);
 
             return null;
-        } catch (\Exception $e) {
+        } catch (\Exception $e) {  
+          if (! $sitePolygon) {
             throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
+          }
         }
     }
 
