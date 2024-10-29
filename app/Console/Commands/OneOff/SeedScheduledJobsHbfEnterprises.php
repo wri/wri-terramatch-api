@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands\OneOff;
 
-use App\Models\V2\ScheduledJobs\ReportReminderJob;
-use App\Models\V2\ScheduledJobs\SiteAndNurseryReminderJob;
 use App\Models\V2\ScheduledJobs\TaskDueJob;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
