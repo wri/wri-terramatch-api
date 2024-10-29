@@ -2,8 +2,8 @@
 
 namespace App\Models\Traits;
 
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Workdays\Workday;
-use App\Models\V2\Workdays\WorkdayDemographic;
 use Illuminate\Support\Str;
 
 /**
@@ -73,15 +73,16 @@ trait HasWorkdays
     protected function sumTotalWorkdaysAmounts(array $collections): int
     {
         // Gender is considered the canonical total value for all current types of workdays, so just pull and sum gender.
-        return WorkdayDemographic::whereIn(
-            'workday_id',
-            $this->workdays()->visible()->collections($collections)->select('id')
-        )
+        return Demographic::where('demographical_type', Workday::class)
+            ->whereIn(
+                'demographical_id',
+                $this->workdays()->visible()->collections($collections)->select('id')
+            )
             ->gender()
-            ->with('workday')
+            ->with('demographical')
             ->get()
             ->groupBy(function ($demographic) {
-                return $demographic->workday->collection . '_' . $demographic->name;
+                return $demographic->demographical->collection . '_' . $demographic->name;
             })
             ->map(function ($group) {
                 return $group->first();

@@ -10,4 +10,4 @@ properties:
   demographics:
     type: array
     items:
-      $ref: './_index.yml#/WorkdayDemographic'
+      $ref: './_index.yml#/Demographic'

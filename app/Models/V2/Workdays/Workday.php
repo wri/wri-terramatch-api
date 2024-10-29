@@ -5,11 +5,12 @@ namespace App\Models\V2\Workdays;
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\EntityModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
@@ -196,9 +197,9 @@ class Workday extends Model implements HandlesLinkedFieldSync
         return $query->where('hidden', false);
     }
 
-    public function demographics(): HasMany
+    public function demographics(): MorphMany
     {
-        return $this->hasMany(WorkdayDemographic::class);
+        return $this->morphMany(Demographic::class, 'demographical');
     }
 
     public function getReadableCollectionAttribute(): ?string

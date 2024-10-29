@@ -256,8 +256,8 @@ V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
 V2ProjectInviteCreate:
   $ref: './V2ProjectInviteCreate.yml'
-WorkdayDemographic:
-  $ref: './WorkdayDemographic.yml'
+Demographic:
+  $ref: './Demographic.yml'
 GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:

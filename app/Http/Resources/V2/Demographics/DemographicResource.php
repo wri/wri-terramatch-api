@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\V2\Workdays;
+namespace App\Http\Resources\V2\Demographics;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class WorkdayDemographicResource extends JsonResource
+class DemographicResource extends JsonResource
 {
     public function toArray($request)
     {

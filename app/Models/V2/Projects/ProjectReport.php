@@ -14,6 +14,7 @@ use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
@@ -24,7 +25,6 @@ use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
-use App\Models\V2\Workdays\WorkdayDemographic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -388,14 +388,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         }
 
         // Assume that the types are balanced and just return the value from 'gender'
-        $sumTotals = fn ($collectionType) => WorkdayDemographic::whereIn(
-            'workday_id',
-            Workday::where('workdayable_type', SiteReport::class)
-                ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
-                ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
-                ->visible()
-                ->select('id')
-        )->gender()->sum('amount');
+        $sumTotals = fn ($collectionType) => Demographic::where('demographical_type', Workday::class)
+            ->whereIn(
+                'demographical_id',
+                Workday::where('workdayable_type', SiteReport::class)
+                    ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
+                    ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
+                    ->visible()
+                    ->select('id')
+            )->gender()->sum('amount');
 
         return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
     }

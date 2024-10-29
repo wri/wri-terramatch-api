@@ -8662,7 +8662,7 @@ definitions:
       demographics:
         type: array
         items:
-          title: WorkdayDemographic
+          title: Demographic
           type: object
           properties:
             type:
@@ -8671,6 +8671,7 @@ definitions:
                 - gender
                 - age
                 - ethnicity
+                - caste
             subtype:
               type: string
             name:
@@ -42443,8 +42444,8 @@ definitions:
     properties:
       email_address:
         type: string
-  WorkdayDemographic:
-    title: WorkdayDemographic
+  Demographic:
+    title: Demographic
     type: object
     properties:
       type:
@@ -42453,6 +42454,7 @@ definitions:
           - gender
           - age
           - ethnicity
+          - caste
       subtype:
         type: string
       name:
@@ -57892,7 +57894,7 @@ paths:
                     demographics:
                       type: array
                       items:
-                        title: WorkdayDemographic
+                        title: Demographic
                         type: object
                         properties:
                           type:
@@ -57901,6 +57903,7 @@ paths:
                               - gender
                               - age
                               - ethnicity
+                              - caste
                           subtype:
                             type: string
                           name:
