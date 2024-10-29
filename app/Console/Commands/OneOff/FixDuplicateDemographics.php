@@ -54,7 +54,7 @@ class FixDuplicateDemographics extends Command
 
         foreach ($workdays as $workdayId => $stats) {
             foreach ($stats as $stat) {
-                $workday = Workday::find($workdayId);
+                $workday = Workday::withTrashed()->find($workdayId);
 
                 $rows = collect($stat['rows']);
                 $max = $rows->max('amount');
@@ -80,7 +80,7 @@ class FixDuplicateDemographics extends Command
                     'workdayable_type' => $workday ? $workday->workdayable_type : null,
                     'workdayable_id' => $workday ? $workday->workdayable_id : null,
                     'workdayable_uuid' => $workday ? ($workday->workdayable ? $workday->workdayable->uuid : null) : null,
-                    'collection' =>  $workday ? $workday->collection : null,
+                    'collection' => $workday ? $workday->collection : null,
                     'type' => $stat['type'],
                     'subtype' => $stat['subtype'],
                     'name' => $stat['name'],
