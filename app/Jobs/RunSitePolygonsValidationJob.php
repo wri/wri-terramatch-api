@@ -64,7 +64,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
-                'payload' => 'Validation completed for all site polygons',
+                'payload' => ['message' => 'Validation completed for all site polygons'],
                 'status_code' => Response::HTTP_OK,
             ]);
 
