@@ -43,7 +43,7 @@ class GenerateBackDatedReportsEnterprisesCommand extends Command
             });
     }
 
-    public function createTaks($project, $framework_key, $period_key, $due_at)
+    public function createTask($project, $framework_key, $period_key, $due_at)
     {
         $task = Task::create([
             'organisation_id' => $project->organisation_id,
