@@ -456,6 +456,7 @@ return [
                 'pro-rep-indirect-beneficiaries' => ['property' => 'indirect_beneficiaries', 'label' => 'Number of Indirect Beneficiaries', 'input_type' => 'number'],
                 'pro-rep-indirect-beneficiaries-description' => ['property' => 'indirect_beneficiaries_description', 'label' => 'Indirect Beneficiaries Description', 'input_type' => 'long-text'],
                 'pro-rep-other-restoration-partners-description' => ['property' => 'other_restoration_partners_description', 'label' => 'Other Restoration Partners Description', 'input_type' => 'long-text'],
+                'pro-rep-total-unique-restoration-partners' => ['property' => 'total_unique_restoration_partners', 'label' => 'Total Unique Restoration Partners', 'input_type' => 'number'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [

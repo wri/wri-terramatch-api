@@ -158,9 +158,12 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'volunteer_scstobc',
         'beneficiaries_scstobc_farmers',
         'beneficiaries_scstobc',
+        'total_unique_restoration_partners',
 
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
+        // virtual (see HasRestorationPartners trait)
+        'other_restoration_partners_description'
     ];
 
     public $casts = [
