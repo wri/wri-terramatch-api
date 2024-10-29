@@ -520,7 +520,7 @@ class TerrafundCreateGeometryController extends Controller
 
         $geometryType = PolygonGeometry::getGeometryType($uuid);
         if ($geometryType) {
-            $valid = $geometryType === GeometryType::VALID_TYPE;
+            $valid = $geometryType === GeometryType::VALID_TYPE_POLYGON || $geometryType === GeometryType::VALID_TYPE_MULTIPOLYGON;
             $insertionSuccess = App::make(PolygonService::class)
               ->createCriteriaSite($uuid, PolygonService::GEOMETRY_TYPE_CRITERIA_ID, $valid);
 
