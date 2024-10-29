@@ -455,6 +455,7 @@ return [
                 'pro-rep-local-engagement-description' => ['property' => 'local_engagement_description', 'label' => 'Response to Local Priorities', 'input_type' => 'long-text'],
                 'pro-rep-indirect-beneficiaries' => ['property' => 'indirect_beneficiaries', 'label' => 'Number of Indirect Beneficiaries', 'input_type' => 'number'],
                 'pro-rep-indirect-beneficiaries-description' => ['property' => 'indirect_beneficiaries_description', 'label' => 'Indirect Beneficiaries Description', 'input_type' => 'long-text'],
+                'pro-rep-other-restoration-partners-description' => ['property' => 'other_restoration_partners_description', 'label' => 'Other Restoration Partners Description', 'input_type' => 'long-text'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [
@@ -526,6 +527,146 @@ return [
                     'input_type' => 'workdays',
                     'collection' => 'convergence',
                 ],
+                'pro-rep-direct-income-partners' => [
+                    'property' => 'restorationPartnersDirectIncome',
+                    'label' => 'Direct Income Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'direct-income'
+                ],
+                'pro-rep-indirect-income-partners' => [
+                    'property' => 'restorationPartnersIndirectIncome',
+                    'label' => 'Indirect Income Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'indirect-income'
+                ],
+                'pro-rep-direct-benefits-partners' => [
+                    'property' => 'restorationPartnersDirectBenefits',
+                    'label' => 'Direct In-kind Benefits Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'direct-benefits'
+                ],
+                'pro-rep-indirect-benefits-partners' => [
+                    'property' => 'restorationPartnersIndirectBenefits',
+                    'label' => 'Indirect In-kind Benefits Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'indirect-benefits'
+                ],
+                'pro-rep-direct-conservation-payments-partners' => [
+                    'property' => 'restorationPartnersDirectConservationPayments',
+                    'label' => 'Direct Conservation Agreement Payment Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'direct-conservation-payments'
+                ],
+                'pro-rep-indirect-conservation-payments-partners' => [
+                    'property' => 'restorationPartnersIndirectConservationPayments',
+                    'label' => 'Indirect Conservation Agreement Payment Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'indirect-conservation-payments'
+                ],
+                'pro-rep-direct-market-access-partners' => [
+                    'property' => 'restorationPartnersDirectMarketAccess',
+                    'label' => 'Direct Increased Market Access Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'direct-market-access'
+                ],
+                'pro-rep-indirect-market-access-partners' => [
+                    'property' => 'restorationPartnersIndirectMarketAccess',
+                    'label' => 'Indirect Increased Market Access Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'indirect-market-access'
+                ],
+                'pro-rep-direct-capacity-partners' => [
+                    'property' => 'restorationPartnersDirectCapacity',
+                    'label' => 'Direct Increased Capacity Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'direct-capacity'
+                ],
+                'pro-rep-indirect-capacity-partners' => [
+                    'property' => 'restorationPartnersIndirectCapacity',
+                    'label' => 'Indirect Capacity Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'indirect-capacity'
+                ],
+                'pro-rep-direct-training-partners' => [
+                    'property' => 'restorationPartnersDirectTraining',
+                    'label' => 'Direct Training Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'direct-training'
+                ],
+                'pro-rep-indirect-training-partners' => [
+                    'property' => 'restorationPartnersIndirectTraining',
+                    'label' => 'Indirect Training Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'indirect-training'
+                ],
+                'pro-rep-direct-land-title-partners' => [
+                    'property' => 'restorationPartnersDirectLandTitle',
+                    'label' => 'Direct Newly Secured Land Title Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'direct-land-title'
+                ],
+                'pro-rep-indirect-land-title-partners' => [
+                    'property' => 'restorationPartnersIndirectLandTitle',
+                    'label' => 'Indirect Newly Secured Land Title Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'indirect-land-title'
+                ],
+                'pro-rep-direct-livelihoods-partners' => [
+                    'property' => 'restorationPartnersDirectLivelihoods',
+                    'label' => 'Direct Traditional Livelihoods or Customer Rights Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'direct-livelihoods'
+                ],
+                'pro-rep-indirect-livelihoods-partners' => [
+                    'property' => 'restorationPartnersIndirectLivelihoods',
+                    'label' => 'Indirect Traditional Livelihoods or Customer Rights Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'indirect-livelihoods'
+                ],
+                'pro-rep-direct-productivity-partners' => [
+                    'property' => 'restorationPartnersDirectProductivity',
+                    'label' => 'Direct Increased Productivity Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'direct-productivity'
+                ],
+                'pro-rep-indirect-productivity-partners' => [
+                    'property' => 'restorationPartnersIndirectProductivity',
+                    'label' => 'Indirect Increased Productivity Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'indirect-productivity'
+                ],
+                'pro-rep-direct-other-partners' => [
+                    'property' => 'restorationPartnersDirectOther',
+                    'label' => 'Direct Other Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'direct-other'
+                ],
+                'pro-rep-indirect-other-partners' => [
+                    'property' => 'restorationPartnersIndirectOther',
+                    'label' => 'Indirect Other Restoration Partners',
+                    'resource' => 'App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource',
+                    'input_type' => 'restorationPartners',
+                    'collection' => 'indirect-other'
+                ]
             ],
             'file-collections' => [
                 'pro-rep-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],

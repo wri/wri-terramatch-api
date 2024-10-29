@@ -258,7 +258,15 @@ trait UsesLinkedFields
     {
         $entity ??= $this;
 
-        if (! in_array($inputType, ['treeSpecies', 'disturbances', 'workdays', 'stratas', 'invasive', 'seedings'])) {
+        if (! in_array($inputType, [
+            'treeSpecies',
+            'disturbances',
+            'workdays',
+            'restorationPartners',
+            'stratas',
+            'invasive',
+            'seedings',
+        ])) {
             return;
         }
 

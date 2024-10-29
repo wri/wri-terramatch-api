@@ -243,7 +243,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'other' => [
             RestorationPartner::COLLECTION_PROJECT_DIRECT_OTHER,
             RestorationPartner::COLLECTION_PROJECT_INDIRECT_OTHER,
-        ]
+        ],
     ];
 
     public function registerMediaConversions(Media $media = null): void

@@ -13,7 +13,7 @@ trait HasRestorationPartners
             ->flatten()
             ->each(function ($collection) {
                 self::resolveRelationUsing(
-                    'restorationPartner' . Str::studly($collection),
+                    'restorationPartners' . Str::studly($collection),
                     function ($entity) use ($collection) {
                         return $entity->resotrationPartners()->collection($collection);
                     }
