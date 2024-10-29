@@ -6,7 +6,7 @@ use App\Models\V2\ScheduledJobs\TaskDueJob;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class SeedScheduledJobsHbfEnterprises extends Command
+class SeedScheduledJobsHbfEnterprisesCommand extends Command
 {
     /**
      * The name and signature of the console command.
