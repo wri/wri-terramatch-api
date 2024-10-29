@@ -3,9 +3,9 @@
 namespace App\Models\V2\RestorationPartners;
 
 use App\Models\Interfaces\HandlesLinkedFieldSync;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\EntityModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -17,16 +17,22 @@ class RestorationPartner extends Model implements HandlesLinkedFieldSync
     use HasFactory;
     use SoftDeletes;
     use HasUuid;
+    use HasDemographics;
 
     protected $fillable = [
         'partnerable_type',
         'partnerable_id',
         'collection',
+        'hidden',
     ];
 
-    public static function syncRelation(EntityModel $entity, string $property, $data, bool $hidden): void
+    protected $casts = [
+        'hidden' => 'boolean',
+    ];
+
+    public function getRouteKeyName(): string
     {
-        // TODO: Implement syncRelation() method.
+        return 'uuid';
     }
 
     public function partnerable(): MorphTo

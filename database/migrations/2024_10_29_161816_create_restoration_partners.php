@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->uuid();
             $table->morphs('partnerable', 'partner_morph_index');
             $table->string('collection');
+            $table->boolean('hidden')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });
