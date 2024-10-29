@@ -32,13 +32,13 @@ class SeedScheduledJobsHbfEnterprises extends Command
         TaskDueJob::createTaskDue(
             Carbon::createFromFormat('m', 11)->startOfMonth()->setDay(1),
             'hbf',
-            Carbon::createFromFormat('m', 12)->startOfMonth()->setDay(1),
+            Carbon::createFromFormat('m', 12)->startOfMonth()->setDay(1)->setHours(5),
         );
         // November-April, May 1, June 1
         TaskDueJob::createTaskDue(
             Carbon::createFromFormat('m', 5)->startOfMonth()->setDay(1),
             'hbf',
-            Carbon::createFromFormat('m', 6)->startOfMonth()->setDay(3),
+            Carbon::createFromFormat('m', 6)->startOfMonth()->setDay(3)->setHours(5),
         );
 
         // Enterprises reports
@@ -46,13 +46,13 @@ class SeedScheduledJobsHbfEnterprises extends Command
         TaskDueJob::createTaskDue(
             Carbon::createFromFormat('m', 7)->startOfMonth()->setDay(1),
             'enterprises',
-            Carbon::createFromFormat('m', 7)->startOfMonth()->setDay(30),
+            Carbon::createFromFormat('m', 7)->startOfMonth()->setDay(30)->setHours(5),
         );
         // July-December, January 1, January 30
         TaskDueJob::createTaskDue(
             Carbon::createFromFormat('m', 1)->startOfMonth()->setDay(1),
             'enterprises',
-            Carbon::createFromFormat('m', 1)->startOfMonth()->setDay(30),
+            Carbon::createFromFormat('m', 1)->startOfMonth()->setDay(30)->setHours(5),
         );
 
     }
