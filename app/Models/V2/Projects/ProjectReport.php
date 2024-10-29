@@ -19,6 +19,7 @@ use App\Models\V2\MediaModel;
 use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
 use App\Models\V2\ReportModel;
+use App\Models\V2\RestorationPartners\RestorationPartner;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
@@ -285,6 +286,11 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function treeSpecies()
     {
         return $this->morphMany(TreeSpecies::class, 'speciesable');
+    }
+
+    public function restorationPartners()
+    {
+        return $this->morphMany(RestorationPartner::class, 'partnerable');
     }
 
     /** Calculated Values */
