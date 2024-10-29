@@ -43473,6 +43473,8 @@ definitions:
             items:
               type: object
               properties:
+                organization:
+                  type: string
                 project:
                   type: string
                 uuid:
@@ -43491,6 +43493,8 @@ definitions:
   DashboardTopPlantedTree:
     type: object
     properties:
+      organization:
+        type: string
       project:
         type: string
       uuid:
@@ -94685,6 +94689,8 @@ paths:
                     items:
                       type: object
                       properties:
+                        organization:
+                          type: string
                         project:
                           type: string
                         uuid:
