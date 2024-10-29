@@ -151,11 +151,11 @@ class Workday extends Model implements HandlesLinkedFieldSync
         $demographics = $workday->demographics;
         $represented = collect();
         foreach ($syncData as $row) {
-            $demographic = $demographics->firstWhere([
-                'type' => data_get($row, 'type'),
-                'subtype' => data_get($row, 'subtype'),
-                'name' => data_get($row, 'name'),
-            ]);
+            $demographic = $demographics->first(fn ($dbRow) =>
+                data_get($dbRow, 'type') == data_get($row, 'type') &&
+                data_get($dbRow, 'subtype') == data_get($row, 'subtype') &&
+                data_get($dbRow, 'name') == data_get($row, 'name')
+            );
 
             if ($demographic == null) {
                 $workday->demographics()->create($row);
