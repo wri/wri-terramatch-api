@@ -148,28 +148,27 @@ class Workday extends Model implements HandlesLinkedFieldSync
             return $syncData;
         }, []) : [];
 
-        $demographics = $workday->demographics;
         $represented = collect();
         foreach ($syncData as $row) {
-            $demographic = $demographics->firstWhere([
+            // It's not great to fetch these individually, but this does help combat the possibility of a race condition
+            // from two HTTP threads (potentially on different servers) processing an update to this workday at the
+            // same time.
+            $demographic = $workday->demographics()->where([
                 'type' => data_get($row, 'type'),
                 'subtype' => data_get($row, 'subtype'),
                 'name' => data_get($row, 'name'),
-            ]);
+            ])->first();
 
             if ($demographic == null) {
-                $workday->demographics()->create($row);
+                $represented->push($workday->demographics()->create($row)->id);
             } else {
                 $represented->push($demographic->id);
                 $demographic->update(['amount' => data_get($row, 'amount')]);
             }
         }
+
         // Remove any existing demographic that wasn't in the submitted set.
-        foreach ($demographics as $demographic) {
-            if (! $represented->contains($demographic->id)) {
-                $demographic->delete();
-            }
-        }
+        $workday->demographics()->whereNotIn('id', $represented)->delete();
     }
 
     public function workdayable()
