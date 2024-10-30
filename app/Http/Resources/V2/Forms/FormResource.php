@@ -34,7 +34,7 @@ class FormResource extends JsonResource
             'documentation' => $this->documentation,
             'documentation_label' => $this->documentation_label,
             'deadline_at' => $this->deadline_at ? Carbon::parse($this->deadline_at, 'EST')->toISOString() : null,
-            'submission_message' => $this->submission_message,
+            'submission_message' => $this->translated_submission_message,
             'published' => $this->published,
             'stage_id' => $this->stage_id,
             'form_sections' => (new FormSectionCollection($this->sections))

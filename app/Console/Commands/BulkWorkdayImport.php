@@ -122,7 +122,7 @@ class BulkWorkdayImport extends Command
             $parseErrors = [];
             while ($csvRow = fgetcsv($fileHandle)) {
                 try {
-                    $rows->push($this->parseRow($csvRow));
+                    $rows->push($this->parseRow($csvRow, $parseErrors));
                 } catch (AbortException $e) {
                     $parseErrors[] = $e;
                 }
@@ -224,7 +224,7 @@ class BulkWorkdayImport extends Command
     /**
      * @throws AbortException
      */
-    protected function parseRow($csvRow): ?array
+    protected function parseRow($csvRow, &$parseErrors): ?array
     {
         $row = [];
         foreach ($csvRow as $index => $cell) {
@@ -304,7 +304,9 @@ class BulkWorkdayImport extends Command
                     'totals' => $totals,
                 ], JSON_PRETTY_PRINT) . "\n";
 
-                $this->abort($message, ExceptionLevel::Warning);
+                // We've decided go ahead and import unbalanced collections, but we do want to make sure we still
+                // log the error in sequence with the rest.
+                $parseErrors[] = new AbortException(ExceptionLevel::Warning, $message, 1);
             }
         }
 

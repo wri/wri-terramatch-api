@@ -99,6 +99,7 @@ use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
 use App\Http\Controllers\V2\Geometry\GeometryController;
+use App\Http\Controllers\V2\Indicators\GetHectaresRestoredController;
 use App\Http\Controllers\V2\LeadershipTeam\DeleteLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\StoreLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\UpdateLeadershipTeamController;
@@ -658,11 +659,13 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/estimated-area-project', [TerrafundCreateGeometryController::class, 'validateEstimatedAreaProject']);
     Route::get('/validation/estimated-area-site', [TerrafundCreateGeometryController::class, 'validateEstimatedAreaSite']);
     Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
-    Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'getValidationPolygon']);
-    Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'getSiteValidationPolygon']);
+    Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'sendRunValidationPolygon']);
+    Route::post('/validation/polygons', [TerrafundCreateGeometryController::class, 'runPolygonsValidation']);
+    Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'runSiteValidationPolygon']);
     Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
-    Route::post('/clip-polygons/site/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygonsBySite']);
-    Route::post('/clip-polygons/polygon/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygons']);
+    Route::post('/clip-polygons/site/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygonsOfProjectBySite']);
+    Route::post('/clip-polygons/polygon/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygon']);
+    Route::post('/clip-polygons/polygons', [TerrafundClipGeometryController::class, 'clipOverlappingPolygons']);
 
     Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
     Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
@@ -727,12 +730,16 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
+    Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
     Route::get('/countries', CountriesController::class);
     Route::get('/get-projects', GetProjectsController::class);
     Route::get('/project-details/{project}', ProjectProfileDetailsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
+    Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
+    Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);
+    Route::get('/indicator/hectares-restoration', GetHectaresRestoredController::class);
 });
 
 Route::prefix('project-pipeline')->group(function () {

@@ -2682,6 +2682,9 @@
 /v2/dashboard/total-section-header:
   get:
     $ref: './Dashboard/get-v2-dashboard-total-section-header.yml'
+/v2/dashboard/total-section-header/country:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-total-section-header-country.yml'
 /v2/dashboard/active-countries:
   get:
     $ref: './Dashboard/get-v2-dashboard-active-countries.yml'
@@ -2691,12 +2694,18 @@
 /v2/dashboard/get-projects:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-projects.yml'
+/v2/dashboard/frameworks:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-frameworks.yml'
 /v2/dashboard/project-details/{project}:
   get:
     $ref: './Dashboard/get-v2-dashboard-project-details.yml'
 /v2/dashboard/top-trees-planted:
   get:
     $ref: './Dashboard/get-v2-dashboard-top-trees-planted.yml'
+/v2/dashboard/indicator/hectares-restoration:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-indicator-hectares-restoration.yml'
 /v2/project-pipeline:
   get:
     $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
@@ -2712,6 +2721,9 @@
 /v2/dashboard/view-project/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-view-project-uuid.yml'
+/v2/dashboard/view-project-list:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-view-project-list.yml'
 /v2/terrafund/polygon/geojson/{uuid}:
   get:
     $ref: './Terrafund/get-v2-terrafund-polygon-geojson-uuid.yml'
@@ -2754,3 +2766,9 @@
 /v2/terrafund/clip-polygons/site/{uuid}:
   post:
     $ref: './Terrafund/post-v2-terrafund-clip-polygons-site-uuid.yml'
+/v2/terrafund/clip-polygons/polygons:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-clip-polygons-polygons.yml'
+/v2/terrafund/validation/polygons:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-validation-polygons.yml'

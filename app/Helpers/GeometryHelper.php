@@ -357,8 +357,21 @@ class GeometryHelper
         ];
     }
 
+    public static function getProjectPolygonsUuids($projectId)
+    {
+        $project = Project::where('id', $projectId)->firstOrFail();
+        $projectPolygonUuids = $project->sitePolygons()->pluck('poly_id')->toArray();
+
+        return $projectPolygonUuids;
+    }
+
     public static function getSitePolygonsUuids($uuid)
     {
         return SitePolygon::where('site_id', $uuid)->where('is_active', true)->get()->pluck('poly_id');
+    }
+
+    public static function getSitePolygonsOfPolygons(array $polygonUuids)
+    {
+        return SitePolygon::whereIn('poly_id', $polygonUuids)->where('is_active', true)->get()->pluck('uuid');
     }
 }
