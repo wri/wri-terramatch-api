@@ -15,7 +15,7 @@ trait HasRestorationPartners
                 self::resolveRelationUsing(
                     'restorationPartners' . Str::studly($collection),
                     function ($entity) use ($collection) {
-                        return $entity->resotrationPartners()->collection($collection);
+                        return $entity->restorationPartners()->collection($collection);
                     }
                 );
             });
