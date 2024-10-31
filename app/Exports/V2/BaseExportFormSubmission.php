@@ -22,7 +22,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
 
     protected $initialHeadings = [];
 
-    protected function getAnswer(array $field, array $answers, string $frameworkKey): string
+    protected function getAnswer(array $field, array $answers, ?string $frameworkKey): string
     {
         $answer = data_get($answers, $field['uuid']);
 
