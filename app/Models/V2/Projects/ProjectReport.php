@@ -163,7 +163,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
         // virtual (see HasRestorationPartners trait)
-        'other_restoration_partners_description'
+        'other_restoration_partners_description',
     ];
 
     public $casts = [

@@ -139,10 +139,10 @@ class ApplicationExport extends BaseExportFormSubmission implements WithHeadings
          * */
         foreach ($this->fieldMap as $field) {
             if (data_get($field, 'input_type') == 'mapInput') {
-                $mapped[] = substr($this->getAnswer($field, $answers), 0, 32000);
-                $mapped[] = substr($this->getAnswer($field, $answers), 32000, 32000);
+                $mapped[] = substr($this->getAnswer($field, $answers, $this->fundingProgramme->framework_key), 0, 32000);
+                $mapped[] = substr($this->getAnswer($field, $answers, $this->fundingProgramme->framework_key), 32000, 32000);
             } else {
-                $mapped[] = $this->getAnswer($field, $answers);
+                $mapped[] = $this->getAnswer($field, $answers, $this->fundingProgramme->framework_key);
             }
         }
 

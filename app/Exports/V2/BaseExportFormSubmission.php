@@ -22,7 +22,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
 
     protected $initialHeadings = [];
 
-    protected function getAnswer(array $field, array $answers): string
+    protected function getAnswer(array $field, array $answers, string $frameworkKey): string
     {
         $answer = data_get($answers, $field['uuid']);
 
@@ -40,7 +40,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
              */
             $nestedQuestions = data_get($field['additional_props'], 'questions');
             foreach ($nestedQuestions as $question) {
-                $this->getAnswer($question, $answers);
+                $this->getAnswer($question, $answers, $frameworkKey);
             }
         }
 
@@ -69,14 +69,15 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     return $this->stringifyModel($answer, ['name', 'amount']);
 
                 case 'workdays':
+                case 'restorationPartners':
                     $list = [];
-                    $workday = $answer->first();
-                    if ($workday == null) {
+                    $demographical = $answer->first();
+                    if ($demographical == null) {
                         return '';
                     }
 
-                    $types = ['gender' => [], 'age' => [], 'ethnicity' => []];
-                    foreach ($workday->demographics as $demographic) {
+                    $types = ['gender' => [], 'age' => [], 'ethnicity' => [], 'caste' => []];
+                    foreach ($demographical->demographics as $demographic) {
                         $value = match ($demographic->type) {
                             'ethnicity' => [$demographic->amount, $demographic->subtype, $demographic->name],
                             default => [$demographic->amount, $demographic->name],
@@ -85,7 +86,11 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     }
                     $list[] = 'gender:(' . implode(')(', $types['gender']) . ')';
                     $list[] = 'age:(' . implode(')(', $types['age']) . ')';
-                    $list[] = 'ethnicity:(' . implode(')(', $types['ethnicity']) . ')';
+                    if ($frameworkKey == 'hbf') {
+                        $list[] = 'caste:(' . implode(')(', $types['caste']) . ')';
+                    } else {
+                        $list[] = 'ethnicity:(' . implode(')(', $types['ethnicity']) . ')';
+                    }
 
                     return implode('|', $list);
 
