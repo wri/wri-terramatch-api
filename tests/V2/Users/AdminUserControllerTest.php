@@ -237,19 +237,19 @@ final class AdminUserControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();
-        Framework::factory()->create(['slug' => 'ppc']);
-        Framework::factory()->create(['slug' => 'terrafund']);
-        Framework::factory()->create(['slug' => 'hbf']);
+        $slug1 = Framework::factory()->create()->slug;
+        $slug2 = Framework::factory()->create()->slug;
+        $slug3 = Framework::factory()->create()->slug;
 
         $uri = '/api/v2/admin/users/' . $user->uuid;
 
-        $user->frameworks()->sync(Framework::where('slug', 'ppc')->pluck('id'));
+        $user->frameworks()->sync(Framework::where('slug', $slug1)->pluck('id'));
 
         $this->actingAs($admin)
-            ->putJson($uri, ['direct_frameworks' => ['terrafund', 'hbf']])
+            ->putJson($uri, ['direct_frameworks' => [$slug2, $slug3]])
             ->assertSuccessful();
 
-        $this->assertEqualsCanonicalizing(['terrafund', 'hbf'], $user->frameworks()->pluck('slug')->toArray());
+        $this->assertEqualsCanonicalizing([$slug2, $slug3], $user->frameworks()->pluck('slug')->toArray());
     }
 
     public function test_delete_action(): void
