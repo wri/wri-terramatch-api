@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2\Entities;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\V2\SendProjectManagerJob as SendProjectManagerJobs;
+use App\Jobs\V2\SendTaskDigestProjectManagerJob as SendTaskDigestProjectManagerJobs;
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\Action;
 use App\Models\V2\EntityModel;
@@ -37,6 +38,8 @@ class SubmitEntityWithFormController extends Controller
         }
 
         SendProjectManagerJobs::dispatch($entity);
+        SendTaskDigestProjectManagerJobs::dispatch($entity);
+
         Action::forTarget($entity)->delete();
 
         return $entity->createSchemaResource();

@@ -56,6 +56,7 @@ class TaskDigestMail extends I18nMail
         $approvedList = $allReports->filter(function ($report) {
             return $report['status'] === ReportStatusStateMachine::APPROVED;
         });
+
         $types = ['due', 'started', 'awaitingApproval', 'qa', 'approved'];
         $params = [];
         $typeLabels = [
@@ -79,13 +80,15 @@ class TaskDigestMail extends I18nMail
                         $rows .= '<tr>';
                         $rows .= '<td class="border-light-gray" rowspan='.count($list).'>'.$typeLabels[$type].'</td>';
                         $rows .= '<td class="border-light-gray">' .($element['name'] ?? 'n/a') . '</td>';
-                        $rows .= '<td class="border-light-gray">' . ($element['action'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-light-gray">' . ($element['status'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-light-gray">' . ($element['update_request_status'] ?? 'n/a') . '</td>';
                         $rows .= '<td class="border-light-gray">' . ($element['latestComment'] ?? 'n/a') . '</td>';
                         $rows .= '</tr>';
                     } else {
                         $rows .= '<tr>';
                         $rows .= '<td class="border-light-gray">' . ($element['name'] ?? 'n/a') . '</td>';
-                        $rows .= '<td class="border-light-gray">' . ($element['action'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-light-gray">' . ($element['status'] ?? 'n/a') . '</td>';
+                        $rows .= '<td class="border-light-gray">' . ($element['update_request_status'] ?? 'n/a') . '</td>';
                         $rows .= '<td class="border-light-gray">' . ($element['latestComment'] ?? 'n/a') . '</td>';
                         $rows .= '</tr>';
                     }
@@ -93,6 +96,7 @@ class TaskDigestMail extends I18nMail
             } else {
                 $rows .= '<tr>';
                 $rows .= '<td class="border-light-gray" rowspan="1">'.$typeLabels[$type].'</td>';
+                $rows .= '<td class="border-light-gray">n/a</td>';
                 $rows .= '<td class="border-light-gray">n/a</td>';
                 $rows .= '<td class="border-light-gray">n/a</td>';
                 $rows .= '<td class="border-light-gray">n/a</td>';
@@ -118,7 +122,7 @@ class TaskDigestMail extends I18nMail
             $type = 'Nursery';
             $name = $report->nursery()->pluck('name')[0];
         }
-        $mapped['name'] = $type.' Report: '. $name;
+        $mapped['name'] = $report->title ? $type.' Report: '. $report->title : $type.' Report: '. $name;
         $mapped['status'] = $report->status;
         $mapped['update_request_status'] = $report->update_request_status;
         $latestCommentAuditStatus = $report->auditStatuses()->latest()->first();
