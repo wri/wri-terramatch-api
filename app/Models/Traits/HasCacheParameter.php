@@ -9,10 +9,10 @@ trait HasCacheParameter
     public function getParametersFromRequest($request)
     {
         return $this->getCacheParameter(
-            $request->input('filter.programmes'),
-            $request->input('filter.landscapes'),
-            $request->input('filter.country'),
-            $request->input('filter.organisations.type')
+            data_get($request, 'filter.programmes', []),
+            data_get($request, 'filter.landscapes', []),
+            data_get($request, 'filter.country', ''),
+            data_get($request, 'filter.organisations.type', []),
         );
     }
 
@@ -73,7 +73,7 @@ trait HasCacheParameter
 
     private function getCacheParameterForCountry($country)
     {
-        if (is_null($country)) {
+        if (is_null($country) || empty($country)) {
             return 0;
         }
 
