@@ -358,7 +358,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function frameworks()
     {
-        return $this->belongsToMany(Framework::class);
+        return $this->belongsToMany(Framework::class)->withTimestamps();
     }
 
     public function wipeData()
