@@ -19,6 +19,9 @@ class UserResource extends JsonResource
             'country' => $this->country,
             'program' => $this->program,
 
+            'direct_frameworks' => $this->frameworks()->pluck('slug'),
+            'all_frameworks' => $this->my_frameworks_slug,
+
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'email_address' => $this->email_address,
