@@ -20,25 +20,23 @@ class TerrafundDashboardQueryHelper
             ->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes'])
             ->allowedFilters([
                 AllowedFilter::exact('framework_key'),
-                AllowedFilter::callback('landscapes', function ($query, $value) {
-                    $query->whereIn('landscape', $value);
-                }),
+                AllowedFilter::callback('landscapes', fn($query, $value) => 
+                    $query->whereIn('landscape', $value)
+                ),
                 AllowedFilter::exact('country'),
-                AllowedFilter::callback('organisations.type', function ($query, $value) {
-                    $query->whereIn('organisations.type', $value);
-                }),
-                AllowedFilter::callback('programmes', function ($query, $value) {
-                    $query->whereIn('framework_key', $value);
-                }),
+                AllowedFilter::callback('organisations.type', fn($query, $value) => 
+                    $query->whereIn('organisations.type', $value)
+                ),
+                AllowedFilter::callback('programmes', fn($query, $value) => 
+                    $query->whereIn('framework_key', $value)
+                ),
                 AllowedFilter::exact('v2_projects.status'),
                 AllowedFilter::exact('v2_projects.uuid'),
             ]);
 
         if ($request->has('search')) {
             $searchTerm = $request->query('search');
-            $query->where(function ($query) use ($searchTerm) {
-                $query->where('v2_projects.name', 'like', "%$searchTerm%");
-            });
+            $query->where('v2_projects.name', 'LIKE', "%$searchTerm%");
         }
 
         return $query;

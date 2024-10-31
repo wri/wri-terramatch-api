@@ -11,17 +11,22 @@ class TotalTerrafundHeaderDashboardController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+            ->with([
+                'organisation', 
+                'reports', 
+                'sitePolygons'
+            ])
+            ->get();
+
         $countryName = '';
         if ($country = data_get($request, 'filter.country')) {
-            $countryName = WorldCountryGeneralized::where('iso', $country)->first()->country;
+            $countryName = WorldCountryGeneralized::where('iso', $country)->value('country');
         }
+
         $response = (object)[
-            'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
-            'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
             'total_entries' => $this->getTotalJobsCreatedSum($projects),
             'total_hectares_restored' => round($this->getTotalHectaresSum($projects)),
-            'total_hectares_restored_goal' => $this->getTotalHectaresRestoredGoalSum($projects),
             'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
             'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($projects),
             'country_name' => $countryName,
@@ -38,8 +43,6 @@ class TotalTerrafundHeaderDashboardController extends Controller
             $countryName = WorldCountryGeneralized::where('iso', $country)->first()->country;
         }
         $response = (object)[
-            'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
-            'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
             'total_entries' => $this->getTotalJobsCreatedSum($projects),
             'total_hectares_restored' => round($this->getTotalHectaresSum($projects)),
             'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
@@ -48,37 +51,12 @@ class TotalTerrafundHeaderDashboardController extends Controller
 
         return response()->json($response);
     }
-
-    public function getTotalNonProfitCount($projects)
-    {
-        $projects = $projects->filter(function ($project) {
-            return $project->organisation->type === 'non-profit-organization';
-        });
-
-        return $projects->count();
-    }
-
-    public function getTotalEnterpriseCount($projects)
-    {
-        $projects = $projects->filter(function ($project) {
-            return $project->organisation->type === 'for-profit-organization';
-        });
-
-        return $projects->count();
-    }
-
+    
     public function getTotalJobsCreatedSum($projects)
     {
         return $projects->sum(function ($project) {
-            $totalSum = $project->reports()->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')->first();
-
-            return $totalSum->total_ft + $totalSum->total_pt;
+            return $project->reports->sum('ft_total') + $project->reports->sum('pt_total');
         });
-    }
-
-    public function getTotalHectaresRestoredGoalSum($projects)
-    {
-        return $projects->sum('total_hectares_restored_goal');
     }
 
     public function getTotalTreesRestoredSum($projects)
