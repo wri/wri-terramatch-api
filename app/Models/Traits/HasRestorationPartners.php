@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits;
 
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\RestorationPartners\RestorationPartner;
 use Illuminate\Support\Str;
 
@@ -24,6 +25,16 @@ trait HasRestorationPartners
     public function restorationPartners()
     {
         return $this->morphMany(RestorationPartner::class, 'partnerable');
+    }
+
+    public function getDirectRestorationPartnersAttribute(): int
+    {
+        return $this->sumTotalRestorationPartnersAmounts(self::RESTORATION_PARTNER_COLLECTIONS['direct']);
+    }
+
+    public function getIndirectRestorationPartnersAttribute(): int
+    {
+        return $this->sumTotalRestorationPartnersAmounts(self::RESTORATION_PARTNER_COLLECTIONS['indirect']);
     }
 
     public function getOtherRestorationPartnersDescriptionAttribute(): ?string
@@ -52,5 +63,16 @@ trait HasRestorationPartners
         }
 
         $this->restorationPartners()->collections(self::RESTORATION_PARTNER_COLLECTIONS['other'])->update(['description' => $value]);
+    }
+
+    protected function sumTotalRestorationPartnersAmounts(array $collections): int
+    {
+        return Demographic::where('demographical_type', RestorationPartner::class)
+            ->whereIn(
+                'demographical_id',
+                $this->restorationPartners()->visible()->collections($collections)->select('id')
+            )
+            ->gender()
+            ->sum('amount');
     }
 }
