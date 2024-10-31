@@ -2023,10 +2023,11 @@ class WorldCountriesGeneralizedTableSeeder extends Seeder
                 'aff_iso' => 'ZW',
             ],
         ];
+        file_put_contents('database/seeders/processed_countries.json', json_encode($countries, JSON_PRETTY_PRINT));
 
-        foreach ($countries as $country) {
-            $country['geometry'] = DB::raw('ST_GeomFromGeoJSON(' . json_encode($geometry[$country['OGR_FID']]) . ')');
-            DB::table('world_countries_generalized')->insert($country);
-        }
+        // foreach ($countries as $country) {
+        //     $country['geometry'] = DB::raw('ST_GeomFromGeoJSON(' . json_encode($geometry[$country['iso']]) . ')');
+        //     DB::table('world_countries_generalized')->insert($country);
+        // }
     }
 }
