@@ -22,11 +22,12 @@ class UpdateProjectStatusSeeder extends Seeder
 
         if (! File::exists($filePath)) {
             $this->command->error("CSV file not found at {$filePath}");
+
             return;
         }
 
         $data = array_map('str_getcsv', file($filePath));
-        $header = array_shift($data); 
+        $header = array_shift($data);
         $output = new ConsoleOutput();
         $progressBar = new ProgressBar($output, count($data));
         $progressBar->setFormat('Processing: %current% [%bar%] %percent:3s%%');
