@@ -6,14 +6,24 @@ use App\Models\V2\WorldCountryGeneralized;
 
 trait HasCacheParameter
 {
-    public function getCacheParameter($frameworks, $landscapes, $country, $organisations)
+    public function getParametersFromRequest($request)
+    {
+        return $this->getCacheParameter(
+            $request->input('filter.programmes'),
+            $request->input('filter.landscapes'),
+            $request->input('filter.country'),
+            $request->input('filter.organisations.type')
+        );
+    }
+
+    private function getCacheParameter($frameworks, $landscapes, $country, $organisations)
     {
         $frameworkMask = $this->getCacheParameterForFramework($frameworks);
         $landscapeMask = $this->getCacheParameterForLandscapes($landscapes);
         $countryMask = $this->getCacheParameterForCountry($country);
         $organisationMask = $this->getCacheParameterForOrganisations($organisations);
 
-        return $frameworkMask << 12 | $landscapeMask << 10 | $countryMask << 2 | $organisationMask;
+        return $frameworkMask << 13 | $landscapeMask << 10 | $countryMask << 2 | $organisationMask;
     }
 
     private function getCacheParameterForLandscapes($landscapes)
@@ -21,13 +31,29 @@ trait HasCacheParameter
         if (empty($landscapes)) {
             return 0;
         }
-        if (count($landscapes) === 2) {
-            return 3;
+        if (count($landscapes) === 3) {
+            return 7;
         }
-        if (count($landscapes) !== 1) {
+        if (count($landscapes) > 3) {
             throw new \Exception('Invalid number of landscapes');
         }
+        if (count($landscapes) === 1) {
+            return $this->getValueLandscape($landscapes[0]);
+        }
+
+        if (count($landscapes) === 2) {
+            $first = $this->getValueLandscape($landscapes[0]);
+            $second = $this->getValueLandscape($landscapes[1]);
+
+            return $first + $second;
+        }
+
         return $landscapes[0] == 'terrafund-landscapes' ? 1 : 2;
+    }
+
+    private function getValueLandscape($landscape)
+    {
+        return ($landscape == 'ghana_cocoa_belt') ? 1 : ($landscape == 'lake_kivu_rusizi_river_basin' ? 2 : 4);
     }
 
     private function getCacheParameterForOrganisations($organisations)
@@ -41,6 +67,7 @@ trait HasCacheParameter
         if (count($organisations) !== 1) {
             throw new \Exception('Invalid number of organisations');
         }
+
         return $organisations[0] == 'non-profit-organization' ? 1 : 2;
     }
 
@@ -49,6 +76,7 @@ trait HasCacheParameter
         if (is_null($country)) {
             return 0;
         }
+
         return WorldCountryGeneralized::where('iso', $country)->first()->OGR_FID - 252 + 1;
     }
 
@@ -63,6 +91,7 @@ trait HasCacheParameter
         if (count($frameworks) !== 1) {
             throw new \Exception('Invalid number of frameworks');
         }
+
         return $frameworks[0] == 'terrafund-landscapes' ? 1 : 2;
     }
 }

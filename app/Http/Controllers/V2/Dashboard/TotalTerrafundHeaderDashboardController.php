@@ -2,101 +2,50 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
-use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Models\V2\WorldCountryGeneralized;
+use App\Http\Resources\DelayedJobResource;
+use App\Jobs\Dashboard\RunTotalHeaderJob;
+use App\Models\DelayedJob;
+use App\Models\Traits\HasCacheParameter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class TotalTerrafundHeaderDashboardController extends Controller
 {
+    use HasCacheParameter;
+
     public function __invoke(Request $request)
     {
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
-        $countryName = '';
-        if ($country = data_get($request, 'filter.country')) {
-            $countryName = WorldCountryGeneralized::where('iso', $country)->first()->country;
+        try {
+            $cacheParameter = $this->getParametersFromRequest($request);
+            $cacheValue = Redis::get('total-section-header-'.$cacheParameter);
+
+            if (! $cacheValue) {
+                $frameworks = data_get($request, 'filter.programmes', []);
+                $landscapes = data_get($request, 'filter.landscapes', []);
+                $organisations = data_get($request, 'filter.organisations.type', []);
+                $country = data_get($request, 'filter.country', '');
+
+                $delayedJob = DelayedJob::create();
+                $job = new RunTotalHeaderJob(
+                    $delayedJob->id,
+                    $frameworks,
+                    $landscapes,
+                    $organisations,
+                    $country,
+                    $cacheParameter
+                );
+                dispatch($job);
+
+                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Validation completed for all site polygons']);
+            } else {
+                return response()->json(json_decode($cacheValue));
+            }
+        } catch (\Exception $e) {
+            Log::error('Error during total-header : ' . $e->getMessage());
+
+            return response()->json(['error' => 'An error occurred during total-header'], 500);
         }
-        $response = (object)[
-            'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
-            'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
-            'total_entries' => $this->getTotalJobsCreatedSum($projects),
-            'total_hectares_restored' => round($this->getTotalHectaresSum($projects)),
-            'total_hectares_restored_goal' => $this->getTotalHectaresRestoredGoalSum($projects),
-            'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
-            'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($projects),
-            'country_name' => $countryName,
-        ];
-
-        return response()->json($response);
-    }
-
-    public function getTotalDataForCountry(Request $request)
-    {
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
-        $countryName = '';
-        if ($country = data_get($request, 'filter.country')) {
-            $countryName = WorldCountryGeneralized::where('iso', $country)->first()->country;
-        }
-        $response = (object)[
-            'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
-            'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
-            'total_entries' => $this->getTotalJobsCreatedSum($projects),
-            'total_hectares_restored' => round($this->getTotalHectaresSum($projects)),
-            'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
-            'country_name' => $countryName,
-        ];
-
-        return response()->json($response);
-    }
-
-    public function getTotalNonProfitCount($projects)
-    {
-        $projects = $projects->filter(function ($project) {
-            return $project->organisation->type === 'non-profit-organization';
-        });
-
-        return $projects->count();
-    }
-
-    public function getTotalEnterpriseCount($projects)
-    {
-        $projects = $projects->filter(function ($project) {
-            return $project->organisation->type === 'for-profit-organization';
-        });
-
-        return $projects->count();
-    }
-
-    public function getTotalJobsCreatedSum($projects)
-    {
-        return $projects->sum(function ($project) {
-            $totalSum = $project->reports()->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')->first();
-
-            return $totalSum->total_ft + $totalSum->total_pt;
-        });
-    }
-
-    public function getTotalHectaresRestoredGoalSum($projects)
-    {
-        return $projects->sum('total_hectares_restored_goal');
-    }
-
-    public function getTotalTreesRestoredSum($projects)
-    {
-        return $projects->sum(function ($project) {
-            return $project->trees_planted_count;
-        });
-    }
-
-    public function getTotalTreesGrownGoalSum($projects)
-    {
-        return $projects->sum('trees_grown_goal');
-    }
-
-    public function getTotalHectaresSum($projects)
-    {
-        return $projects->sum(function ($project) {
-            return $project->sitePolygons->sum('calc_area');
-        });
     }
 }
