@@ -286,18 +286,24 @@ class User extends Authenticatable implements JWTSubject
 
     public function getMyFrameworksSlugAttribute(): Collection
     {
+        $frameworkSlugs = collect($this->frameworks()->pluck('slug')->toArray());
+
         if ($this->is_admin) {
             $permissions = $this->getPermissionsViaRoles();
             $frameworkPermissions = $permissions->filter(function ($permission) {
                 return Str::startsWith($permission->name, 'framework-');
             });
 
-            return $frameworkPermissions->map(function ($permission) {
+            $frameworkSlugs->push($frameworkPermissions->map(function ($permission) {
                 return Str::after($permission->name, 'framework-');
-            });
+            }));
         } else {
-            return $this->projects()->distinct('framework_key')->pluck('framework_key');
+            $frameworkSlugs->push(
+                $this->projects()->distinct('framework_key')->pluck('framework_key')
+            );
         }
+
+        return $frameworkSlugs->flatten()->unique()->values();
     }
 
     public function getMyFrameworksAttribute(): Collection
