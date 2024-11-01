@@ -7,7 +7,6 @@ use App\Http\Resources\DelayedJobResource;
 use App\Jobs\Dashboard\RunTreeRestorationGoalJob;
 use App\Models\DelayedJob;
 use App\Models\Traits\HasCacheParameter;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
@@ -16,13 +15,13 @@ class ViewTreeRestorationGoalController extends Controller
 {
     use HasCacheParameter;
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request)
     {
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
-            $cacheValue = Redis::get('tree-restoration-goal-'.$cacheParameter);
+            $cacheValue = Redis::get('tree-restoration-goal-' . $cacheParameter);
 
-            if (! $cacheValue) {
+            if (!$cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);
                 $landscapes = data_get($request, 'filter.landscapes', []);
                 $organisations = data_get($request, 'filter.organisations.type', []);
@@ -39,11 +38,11 @@ class ViewTreeRestorationGoalController extends Controller
                 );
                 dispatch($job);
 
-                return response()->json(
+                return
                     (new DelayedJobResource($delayedJob))
-                        ->additional(['message' => 'Data for total-section-header is being processed'])
-                        ->toArray($request)
-                );
+                        ->additional(
+                            ['message' => 'Data for tree restoration goal is being processed']
+                        );
             }
 
             return response()->json(json_decode($cacheValue));
