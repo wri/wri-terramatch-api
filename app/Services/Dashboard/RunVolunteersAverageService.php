@@ -11,7 +11,7 @@ class RunVolunteersAverageService
     {
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
 
-        $response = (object)[
+        return (object)[
             'total_volunteers' => $this->getTotalVolunteerSum($projects),
             'men_volunteers' => $this->getVolunteersSum($projects, 'volunteer_men'),
             'women_volunteers' => $this->getVolunteersSum($projects, 'volunteer_women'),
@@ -22,8 +22,6 @@ class RunVolunteersAverageService
             'number_of_sites' => $this->numberOfSites($projects),
             'number_of_nurseries' => $this->numberOfNurseries($projects),
         ];
-
-        return response()->json($response);
     }
 
     public function getTotalVolunteerSum($projects)

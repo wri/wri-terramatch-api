@@ -20,7 +20,7 @@ class VolunteersAndAverageSurvivalRateController extends Controller
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
             $cacheValue = Redis::get('volunteers-survival-rate-'.$cacheParameter);
-            Log::info($cacheValue);
+
             if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);
                 $landscapes = data_get($request, 'filter.landscapes', []);
@@ -40,7 +40,7 @@ class VolunteersAndAverageSurvivalRateController extends Controller
 
                 return (new DelayedJobResource($delayedJob))->additional(['message' => 'Data for volunteers survival rate is being processed']);
             } else {
-                return response()->json(json_decode($cacheValue)->original);
+                return response()->json(json_decode($cacheValue));
             }
         } catch (\Exception $e) {
             Log::error('Error during volunteers-survival-rate : ' . $e->getMessage());
