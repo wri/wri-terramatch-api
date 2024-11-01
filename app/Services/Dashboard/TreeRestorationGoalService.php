@@ -40,6 +40,7 @@ class TreeRestorationGoalService
         $averageSurvivalRateForProfit = $this->getAverageSurvival($forProfitProjectIds);
         $averageSurvivalRateNonProfit = $this->getAverageSurvival($nonProfitProjectIds);
         Log::info('final');
+
         return [
             'forProfitTreeCount' => (int) $forProfitTreeCount,
             'nonProfitTreeCount' => (int) $nonProfitTreeCount,
