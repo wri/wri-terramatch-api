@@ -51,6 +51,7 @@ use App\Http\Controllers\V2\Exports\ExportAllSiteDataAsProjectDeveloperControlle
 use App\Http\Controllers\V2\Exports\ExportImageController;
 use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
+use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
 use App\Http\Controllers\V2\Files\FilePropertiesController;
 use App\Http\Controllers\V2\Files\Gallery\ViewNurseryGalleryController;
 use App\Http\Controllers\V2\Files\Gallery\ViewNurseryReportGalleryController;
@@ -329,6 +330,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
+    Route::get('/{entity}/presigned-url/{framework}', GeneratePreSignedURLDownloadReportController::class);
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::put('/{entity}/{status}', AdminStatusEntityController::class);
