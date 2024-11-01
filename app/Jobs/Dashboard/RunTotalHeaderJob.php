@@ -54,13 +54,11 @@ class RunTotalHeaderJob implements ShouldQueue
             $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
 
             $request = new Request(
-                [
-                    'filter' => [
-                        'country' => $this->country,
-                        'programmes' => $this->frameworks,
-                        'landscapes' => $this->landscapes,
-                        'organisations.type' => $this->organisations,
-                    ],
+        [
+                    'filter.country' => $this->country,
+                    'filter.programmes' => $this->frameworks,
+                    'filter.landscapes' => $this->landscapes,
+                    'filter.organisations.type' => $this->organisations,
                 ]
             );
             $response = $runTotalHeaderService->runTotalHeaderJob($request);

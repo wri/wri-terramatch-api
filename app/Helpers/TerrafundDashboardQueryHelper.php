@@ -5,41 +5,63 @@ namespace App\Helpers;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Support\Facades\Log;
-use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Http\Request;
 
 class TerrafundDashboardQueryHelper
 {
-    public static function buildQueryFromRequest($request)
+    public static function buildQueryFromRequest(Request $request)
     {
+        $filters = $request->all();
         $query = QueryBuilder::for(Project::class)
             ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
             ->select('v2_projects.*')
-            ->where('v2_projects.status', 'approved')
-            ->whereIn('organisations.type', ['non-profit-organization', 'for-profit-organization'])
-            ->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes'])
-            ->allowedFilters([
-                AllowedFilter::exact('framework_key'),
-                AllowedFilter::callback('landscapes', function ($query, $value) {
-                    $query->whereIn('landscape', $value);
-                }),
-                AllowedFilter::exact('country'),
-                AllowedFilter::callback('organisations.type', function ($query, $value) {
-                    $query->whereIn('organisations.type', $value);
-                }),
-                AllowedFilter::callback('programmes', function ($query, $value) {
-                    $query->whereIn('framework_key', $value);
-                }),
-                AllowedFilter::exact('v2_projects.status'),
-                AllowedFilter::exact('v2_projects.uuid'),
-            ]);
+            ->where('v2_projects.status', 'approved');
 
-        if ($request->has('search')) {
-            $searchTerm = $request->query('search');
-            $query->where(function ($query) use ($searchTerm) {
-                $query->where('v2_projects.name', 'like', "%$searchTerm%");
-            });
-        }
+            if ($filters['filter.country']) {
+                $query->where('v2_projects.country', $filters['filter.country']);
+            }
+
+            if ($filters["filter.programmes"]) {
+                $query->whereIn('v2_projects.framework_key', $filters["filter.programmes"]);
+            } else {
+                $query->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes']);
+            }
+
+            if ($filters['filter.landscapes']) {
+                $query->whereIn('v2_projects.landscape', $filters['filter.landscapes']);
+            }
+
+            if ($filters['filter.organisations.type']) {
+                $query->whereIn('organisations.type', $filters['filter.organisations.type']);
+            } else {
+                $query->whereIn('organisations.type', ['non-profit-organization', 'for-profit-organization']);
+            }
+
+            // ->whereIn('organisations.type', ['non-profit-organization', 'for-profit-organization'])
+            // ->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes'])
+            // ->allowedFilters([
+            //     AllowedFilter::exact('framework_key'),
+            //     AllowedFilter::callback('landscapes', function ($query, $value): void {
+            //         $query->whereIn('landscape', $value);
+            //     }),
+            //     AllowedFilter::exact('country'),
+            //     AllowedFilter::callback('organisations.type', function ($query, $value) {
+            //         $query->whereIn('organisations.type', $value);
+            //     }),
+            //     AllowedFilter::callback('programmes', function ($query, $value) {
+            //         $query->whereIn('framework_key', $value);
+            //     }),
+            //     AllowedFilter::exact('v2_projects.status'),
+            //     AllowedFilter::exact('v2_projects.uuid'),
+            // ]);
+
+        // if ($request->has('search')) {
+        //     $searchTerm = $request->query('search');
+        //     $query->where(function ($query) use ($searchTerm) {
+        //         $query->where('v2_projects.name', 'like', "%$searchTerm%");
+        //     });
+        // }
 
         return $query;
     }
