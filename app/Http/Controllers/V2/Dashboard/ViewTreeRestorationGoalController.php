@@ -39,10 +39,14 @@ class ViewTreeRestorationGoalController extends Controller
                 );
                 dispatch($job);
 
-                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Data for total-section-header is being processed']);
-            } else {
-                return response()->json(json_decode($cacheValue));
+                return response()->json(
+                    (new DelayedJobResource($delayedJob))
+                        ->additional(['message' => 'Data for total-section-header is being processed'])
+                        ->toArray($request)
+                );
             }
+
+            return response()->json(json_decode($cacheValue));
         } catch (\Exception $e) {
             Log::error('Error calculating tree restoration goal: ' . $e->getMessage());
 
