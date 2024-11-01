@@ -11,8 +11,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class WorldCountryGeneralized extends Model
 {
-  use HasFactory;
-    public $timestamps = false; 
+    use HasFactory;
+
+    public $timestamps = false;
+
     protected $table = 'world_countries_generalized';
 
     protected $fillable = [

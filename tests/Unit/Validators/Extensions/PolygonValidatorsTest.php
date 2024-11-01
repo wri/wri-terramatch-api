@@ -8,9 +8,7 @@ use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
 use App\Validators\SitePolygonValidator;
 use Database\Seeders\PolygonValidationSeeder;
-use Database\Seeders\WorldCountriesGeneralizedTableSeeder;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -83,7 +81,7 @@ class PolygonValidatorsTest extends TestCase
             WorldCountryGeneralized::factory()->create();
         }
 
-        $this->readGeojsons($validationName, function ($passGeojson, $failGeojson) use ($validationName) {       
+        $this->readGeojsons($validationName, function ($passGeojson, $failGeojson) use ($validationName) {
             /** @var PolygonService $service */
             $service = App::make(PolygonService::class);
             $passUuids = $service->createGeojsonModels($passGeojson);
