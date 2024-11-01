@@ -2533,6 +2533,9 @@
 /v2/admin/{ENTITY}/export/{FRAMEWORK}:
   get:
     $ref: './Exports/get-v2-admin-entity-export-framework.yml'
+/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}:
+  get:
+    $ref: './Exports/get-v2-admin-entity-presigned-url-framework.yml'
 /v2/projects/{UUID}/{ENTITY}/export:
   get:
     $ref: './Exports/get-v2-projects-uuid-entity-export.yml'
