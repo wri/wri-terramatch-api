@@ -19,8 +19,10 @@ class WorldCountriesGeneralizedTableSeeder extends Seeder
             $s3FilePath = 'world_countries/world_country_geometry.json';
 
             $fileContents = Storage::disk('s3')->get($s3FilePath);
+            if(!$fileContents) {
+                throw new Exception('Failed to get file contents from S3');
+            }
             $geometry = json_decode($fileContents, true);
-
             $countries = [
                 [
                     'OGR_FID' => 252,
