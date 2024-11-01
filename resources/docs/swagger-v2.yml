@@ -43473,6 +43473,8 @@ definitions:
             items:
               type: object
               properties:
+                organization:
+                  type: string
                 project:
                   type: string
                 uuid:
@@ -43491,6 +43493,8 @@ definitions:
   DashboardTopPlantedTree:
     type: object
     properties:
+      organization:
+        type: string
       project:
         type: string
       uuid:
@@ -44106,6 +44110,129 @@ definitions:
         type: boolean
       is_cover:
         type: boolean
+  DashboardIndicatorHectaresRestorationResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        properties:
+          restoration_strategies_represented:
+            type: object
+            properties:
+              tree-planting:
+                type: number
+                description: Total amount for tree planting projects.
+              'tree-planting,direct-seeding':
+                type: number
+                description: Total amount for projects involving both tree planting and direct seeding.
+              assisted-natural-regeneration:
+                type: number
+                description: Total amount for assisted natural regeneration projects.
+              'tree-planting,assisted-natural-regeneration':
+                type: number
+                description: Total amount for projects involving both tree planting and assisted natural regeneration.
+              direct-seeding:
+                type: number
+                description: Total amount for direct seeding projects.
+              control:
+                type: number
+                description: Total amount for control projects.
+              'null':
+                type: number
+                description: Total amount for projects with no specific restoration category.
+          target_land_use_types_represented:
+            type: object
+            properties:
+              'null':
+                type: number
+                description: Total amount for projects without a defined land use type.
+              natural-forest:
+                type: number
+                description: Total amount for projects involving natural forest.
+              agroforest:
+                type: number
+                description: Total amount for agroforest projects.
+              silvopasture:
+                type: number
+                description: Total amount for silvopasture projects.
+              woodlot-or-plantation:
+                type: number
+                description: Total amount for woodlot or plantation projects.
+              riparian-area-or-wetland:
+                type: number
+                description: Total amount for riparian area or wetland projects.
+              'agroforest,riparian-area-or-wetland':
+                type: number
+                description: Total amount for projects involving both agroforest and riparian area or wetland.
+              'riparian-area-or-wetland,woodlot-or-plantation':
+                type: number
+                description: Total amount for projects involving both riparian area or wetland and woodlot or plantation.
+              Open natural ecosystem or Grasslands:
+                type: number
+                description: Total amount for projects involving open natural ecosystem or grasslands.
+              urban-forest:
+                type: number
+                description: Total amount for urban forest projects.
+  DashboardIndicatorHectaresRestorationData:
+    type: object
+    properties:
+      restoration_strategies_represented:
+        type: object
+        properties:
+          tree-planting:
+            type: number
+            description: Total amount for tree planting projects.
+          'tree-planting,direct-seeding':
+            type: number
+            description: Total amount for projects involving both tree planting and direct seeding.
+          assisted-natural-regeneration:
+            type: number
+            description: Total amount for assisted natural regeneration projects.
+          'tree-planting,assisted-natural-regeneration':
+            type: number
+            description: Total amount for projects involving both tree planting and assisted natural regeneration.
+          direct-seeding:
+            type: number
+            description: Total amount for direct seeding projects.
+          control:
+            type: number
+            description: Total amount for control projects.
+          'null':
+            type: number
+            description: Total amount for projects with no specific restoration category.
+      target_land_use_types_represented:
+        type: object
+        properties:
+          'null':
+            type: number
+            description: Total amount for projects without a defined land use type.
+          natural-forest:
+            type: number
+            description: Total amount for projects involving natural forest.
+          agroforest:
+            type: number
+            description: Total amount for agroforest projects.
+          silvopasture:
+            type: number
+            description: Total amount for silvopasture projects.
+          woodlot-or-plantation:
+            type: number
+            description: Total amount for woodlot or plantation projects.
+          riparian-area-or-wetland:
+            type: number
+            description: Total amount for riparian area or wetland projects.
+          'agroforest,riparian-area-or-wetland':
+            type: number
+            description: Total amount for projects involving both agroforest and riparian area or wetland.
+          'riparian-area-or-wetland,woodlot-or-plantation':
+            type: number
+            description: Total amount for projects involving both riparian area or wetland and woodlot or plantation.
+          Open natural ecosystem or Grasslands:
+            type: number
+            description: Total amount for projects involving open natural ecosystem or grasslands.
+          urban-forest:
+            type: number
+            description: Total amount for urban forest projects.
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -91891,6 +92018,37 @@ paths:
           description: OK
           schema:
             type: file
+  '/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}':
+    get:
+      operationId: get-v2-admin-entity-presigned-url-framework.yml
+      summary: Export entities data
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 Nurseries
+        - V2 Project Reports
+        - V2 Site Reports
+        - V2 Nursery Reports
+        - Exports
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+        - type: string
+          name: FRAMEWORK
+          in: path
+          required: true
+          description: allowed values terrafund/ppc
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              url:
+                type: string
   '/v2/projects/{UUID}/{ENTITY}/export':
     get:
       operationId: get-v2-projects-uuid-entity-export.yml
@@ -94562,6 +94720,8 @@ paths:
                     items:
                       type: object
                       properties:
+                        organization:
+                          type: string
                         project:
                           type: string
                         uuid:
@@ -94577,6 +94737,90 @@ paths:
                           type: string
                         amount:
                           type: integer
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v2/dashboard/indicator/hectares-restoration:
+    get:
+      summary: Retrieve hectares by restoration
+      description: |
+        This endpoint returns hectares restored using data from indicators 5 (restoration strategies) and 6 (target land use types).
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  restoration_strategies_represented:
+                    type: object
+                    properties:
+                      tree-planting:
+                        type: number
+                        description: Total amount for tree planting projects.
+                      'tree-planting,direct-seeding':
+                        type: number
+                        description: Total amount for projects involving both tree planting and direct seeding.
+                      assisted-natural-regeneration:
+                        type: number
+                        description: Total amount for assisted natural regeneration projects.
+                      'tree-planting,assisted-natural-regeneration':
+                        type: number
+                        description: Total amount for projects involving both tree planting and assisted natural regeneration.
+                      direct-seeding:
+                        type: number
+                        description: Total amount for direct seeding projects.
+                      control:
+                        type: number
+                        description: Total amount for control projects.
+                      'null':
+                        type: number
+                        description: Total amount for projects with no specific restoration category.
+                  target_land_use_types_represented:
+                    type: object
+                    properties:
+                      'null':
+                        type: number
+                        description: Total amount for projects without a defined land use type.
+                      natural-forest:
+                        type: number
+                        description: Total amount for projects involving natural forest.
+                      agroforest:
+                        type: number
+                        description: Total amount for agroforest projects.
+                      silvopasture:
+                        type: number
+                        description: Total amount for silvopasture projects.
+                      woodlot-or-plantation:
+                        type: number
+                        description: Total amount for woodlot or plantation projects.
+                      riparian-area-or-wetland:
+                        type: number
+                        description: Total amount for riparian area or wetland projects.
+                      'agroforest,riparian-area-or-wetland':
+                        type: number
+                        description: Total amount for projects involving both agroforest and riparian area or wetland.
+                      'riparian-area-or-wetland,woodlot-or-plantation':
+                        type: number
+                        description: Total amount for projects involving both riparian area or wetland and woodlot or plantation.
+                      Open natural ecosystem or Grasslands:
+                        type: number
+                        description: Total amount for projects involving open natural ecosystem or grasslands.
+                      urban-forest:
+                        type: number
+                        description: Total amount for urban forest projects.
         '400':
           description: Bad request
         '500':

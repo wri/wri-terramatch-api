@@ -68,9 +68,11 @@ class WorkdayTest extends TestCase
         ];
         $siteReport = SiteReport::factory()->create();
         Workday::syncRelation($siteReport, 'workdaysVolunteerPlanting', $data, false);
+        Workday::syncRelation($siteReport, 'workdaysVolunteerPlanting', $data, false);
 
         $workday = $siteReport->workdaysVolunteerPlanting()->first();
         $this->assertEquals(3, $workday->demographics()->count());
+        $this->assertEquals(3, $workday->demographics()->withTrashed()->count());
         $this->assertEquals(40, $workday->demographics()->isAge('youth')->first()->amount);
         $this->assertEquals(40, $workday->demographics()->isGender('non-binary')->first()->amount);
         $this->assertEquals(40, $workday->demographics()->isEthnicity('other')->first()->amount);

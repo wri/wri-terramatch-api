@@ -2,35 +2,62 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
-use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
-use App\Helpers\PolygonGeometryHelper;
+use App\Http\Resources\DelayedJobResource;
+use App\Jobs\FixPolygonOverlapJob;
+use App\Models\DelayedJob;
 use App\Models\V2\Sites\CriteriaSite;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
-use App\Services\PythonService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 {
+    private const MAX_EXECUTION_TIME = 340;
+
     public function clipOverlappingPolygonsBySite(string $uuid)
     {
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
+        ini_set('memory_limit', '-1');
+        $user = Auth::user();
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
+        $delayedJob = DelayedJob::create();
+        $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
+        dispatch($job);
 
-        return $this->processClippedPolygons($polygonUuids);
+        return new DelayedJobResource($delayedJob);
+
+    }
+
+    public function clipOverlappingPolygonsOfProjectBySite(string $uuid)
+    {
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
+        ini_set('memory_limit', '-1');
+        $user = Auth::user();
+        $sitePolygon = Site::isUuid($uuid)->first();
+        $projectId = $sitePolygon->project_id ?? null;
+        $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
+        $delayedJob = DelayedJob::create();
+        $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
+        dispatch($job);
+
+        return new DelayedJobResource($delayedJob);
     }
 
     public function clipOverlappingPolygons(Request $request)
     {
+        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
+        ini_set('memory_limit', '-1');
         $uuids = $request->input('uuids');
         Log::info('Clipping polygons', ['uuids' => $uuids]);
         if (empty($uuids) || ! is_array($uuids)) {
             return response()->json(['error' => 'Invalid or missing UUIDs'], 400);
         }
         $allPolygonUuids = [];
-        $unprocessedPolygons = [];
         foreach ($uuids as $uuid) {
             $polygonOverlappingExtraInfo = CriteriaSite::forCriteria(PolygonService::OVERLAPPING_CRITERIA_ID)
                 ->where('polygon_id', $uuid)
@@ -59,19 +86,14 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
         }
         $uniquePolygonUuids = array_unique($allPolygonUuids);
-        $processedPolygons = [];
         if (! empty($uniquePolygonUuids)) {
-            $response = $this->processClippedPolygons($uniquePolygonUuids);
-            $responseData = $response->getData(true);
-            $processedPolygons = $responseData['updated_polygons'] ?? [];
-        } else {
-            $processedPolygons = null;
+            $user = Auth::user();
+            $delayedJob = DelayedJob::create();
+            $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
+            dispatch($job);
         }
 
-        return response()->json([
-            'processed' => $processedPolygons,
-            'unprocessed' => $unprocessedPolygons,
-        ], 200);
+        return new DelayedJobResource($delayedJob);
     }
 
     public function clipOverlappingPolygon(string $uuid)
@@ -93,46 +115,8 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $polygonUuids = array_filter($polygonUuidsOverlapping);
 
         array_unshift($polygonUuids, $uuid);
+        $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($polygonUuids);
 
-        return $this->processClippedPolygons($polygonUuids);
-    }
-
-    private function processClippedPolygons(array $polygonUuids)
-    {
-        $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
-
-        $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
-        $uuids = [];
-
-        if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
-            foreach ($clippedPolygons['features'] as $feature) {
-                if (isset($feature['properties']['poly_id'])) {
-                    $poly_id = $feature['properties']['poly_id'];
-                    $result = CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($poly_id, json_encode(['geometry' => $feature]));
-
-                    if (isset($result->original['uuid'])) {
-                        $uuids[] = $result->original['uuid'];
-                    }
-
-                    if (($key = array_search($poly_id, $polygonUuids)) !== false) {
-                        unset($polygonUuids[$key]);
-                    }
-                }
-            }
-            $polygonUuids = array_values($polygonUuids);
-            $newPolygonUuids = array_merge($uuids, $polygonUuids);
-        } else {
-            Log::error('Error clipping polygons', ['clippedPolygons' => $clippedPolygons]);
-        }
-
-        if (! empty($uuids)) {
-            foreach ($newPolygonUuids as $polygonUuid) {
-                $this->runValidationPolygon($polygonUuid);
-            }
-        }
-
-        $updatedPolygons = PolygonGeometryHelper::getPolygonsProjection($uuids, ['poly_id', 'poly_name']);
-
-        return response()->json(['updated_polygons' => $updatedPolygons]);
+        return response()->json(['updated_polygons' => $polygonsClipped], 200);
     }
 }
