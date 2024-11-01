@@ -2,88 +2,50 @@
 
 namespace App\Http\Controllers\V2\Indicators;
 
-use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use Exception;
+use App\Http\Resources\DelayedJobResource;
+use App\Jobs\Dashboard\RunHectaresRestoredJob;
+use App\Models\DelayedJob;
+use App\Models\Traits\HasCacheParameter;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class GetHectaresRestoredController extends Controller
 {
+    use HasCacheParameter;
+
     public function __invoke(Request $request)
     {
         try {
-            $projectsToQuery = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->pluck('uuid')->toArray();
-            $HECTAREAS_BY_RESTORATION = 'restorationByStrategy';
-            $HECTAREAS_BY_TARGET_LAND_USE_TYPES = 'restorationByLandUse';
+            $cacheParameter = $this->getParametersFromRequest($request);
+            $cacheValue = Redis::get('/indicator/hectares-restoration-'.$cacheParameter);
 
-            $projectsPolygons = $this->getProjectsPolygons($projectsToQuery);
-            $polygonsUuids = array_column($projectsPolygons, 'uuid');
+            if (! $cacheValue) {
+                $frameworks = data_get($request, 'filter.programmes', []);
+                $landscapes = data_get($request, 'filter.landscapes', []);
+                $organisations = data_get($request, 'filter.organisations.type', []);
+                $country = data_get($request, 'filter.country', '');
 
-            $restorationStrategiesRepresented = $this->polygonToOutputHectares($HECTAREAS_BY_RESTORATION, $polygonsUuids);
-            $targetLandUseTypesRepresented = $this->polygonToOutputHectares($HECTAREAS_BY_TARGET_LAND_USE_TYPES, $polygonsUuids);
+                $delayedJob = DelayedJob::create();
+                $job = new RunHectaresRestoredJob(
+                    $delayedJob->id,
+                    $frameworks,
+                    $landscapes,
+                    $organisations,
+                    $country,
+                    $cacheParameter
+                );
+                dispatch($job);
 
-            if (empty($restorationStrategiesRepresented) && empty($targetLandUseTypesRepresented)) {
-                return response()->json([
-                    'restoration_strategies_represented' => [],
-                    'target_land_use_types_represented' => [],
-                    'message' => 'No data available for restoration strategies and target land use types.',
-                ]);
+                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Data for hectares restored rate is being processed']);
+            } else {
+                return response()->json(json_decode($cacheValue));
             }
+        } catch (\Exception $e) {
+            Log::error('Error during /indicator/hectares-restoration : ' . $e->getMessage());
 
-            return response()->json([
-                'restoration_strategies_represented' => $this->calculateGroupedHectares($restorationStrategiesRepresented),
-                'target_land_use_types_represented' => $this->calculateGroupedHectares($targetLandUseTypesRepresented),
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred: ' . $e->getMessage(),
-            ], 500);
+            return response()->json(['error' => 'An error occurred during /indicator/hectares-restoration'. $e->getMessage()], 500);
         }
-    }
-
-    public function getProjectsPolygons($projects)
-    {
-        return DB::select('
-                SELECT sp.uuid
-                FROM site_polygon sp
-                INNER JOIN v2_sites s ON sp.site_id = s.uuid
-                INNER JOIN v2_projects p ON s.project_id = p.id
-                WHERE p.uuid IN ('. implode(',', array_fill(0, count($projects), '?')) .')
-            ', $projects);
-    }
-
-    public function polygonToOutputHectares($indicatorId, $polygonsUuids)
-    {
-        return DB::select('
-                SELECT *
-                FROM indicator_output_hectares
-                WHERE indicator_slug = ?
-                AND polygon_id IN (' . implode(',', array_fill(0, count($polygonsUuids), '?')) . ')
-            ', array_merge([$indicatorId], $polygonsUuids));
-    }
-
-    public function calculateGroupedHectares($polygonsToOutputHectares)
-    {
-        $hectaresRestored = [];
-
-        foreach ($polygonsToOutputHectares as $hectare) {
-            $decodedValue = json_decode($hectare->value, true);
-
-            if ($decodedValue) {
-                foreach ($decodedValue as $key => $value) {
-                    if (! isset($hectaresRestored[$key])) {
-                        $hectaresRestored[$key] = 0;
-                    }
-                    $hectaresRestored[$key] += $value;
-                }
-            }
-        }
-
-        foreach ($hectaresRestored as $key => $value) {
-            $hectaresRestored[$key] = round($value, 3);
-        }
-
-        return $hectaresRestored;
     }
 }
