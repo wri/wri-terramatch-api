@@ -38,7 +38,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
                 );
                 dispatch($job);
 
-                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Validation completed for all site polygons']);
+                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Data for total-section-header is being processed']);
             } else {
                 return response()->json(json_decode($cacheValue));
             }
