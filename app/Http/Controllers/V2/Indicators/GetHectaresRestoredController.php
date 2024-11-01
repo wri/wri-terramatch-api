@@ -44,6 +44,10 @@ class GetHectaresRestoredController extends Controller
 
     public function getProjectsPolygons($projects)
     {
+        if (count($projects) === 0) {
+            return [];
+        }
+
         return DB::select('
                 SELECT sp.uuid
                 FROM site_polygon sp
@@ -55,6 +59,9 @@ class GetHectaresRestoredController extends Controller
 
     public function polygonToOutputHectares($indicatorId, $polygonsUuids)
     {
+        if (count($polygonsUuids) === 0) {
+            return [];
+        }
         return DB::select('
                 SELECT *
                 FROM indicator_output_hectares
