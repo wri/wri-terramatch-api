@@ -25,18 +25,23 @@ class RunJobsCreatedJob implements ShouldQueue
     public $timeout = 0;
 
     protected $delayed_job_id;
+
     protected $frameworks;
+
     protected $landscapes;
+
     protected $organisations;
+
     protected $country;
+
     protected $cacheParameter;
 
     public function __construct(
-        string $delayed_job_id, 
-        array $frameworks, 
-        array $landscapes, 
-        array $organisations, 
-        string $country, 
+        string $delayed_job_id,
+        array $frameworks,
+        array $landscapes,
+        array $organisations,
+        string $country,
         int $cacheParameter
     ) {
         $this->delayed_job_id = $delayed_job_id;
