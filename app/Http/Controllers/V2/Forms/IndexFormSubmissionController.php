@@ -45,7 +45,6 @@ class IndexFormSubmissionController extends Controller
 
         if ($request->query('search')) {
             $ids = FormSubmission::search(trim($request->get('search')) ?? '')
-                    ->get()
                     ->pluck('id')
                     ->toArray();
 

@@ -41,6 +41,7 @@ class ProjectResource extends JsonResource
             'jobs_created_goal' => $this->jobs_created_goal,
             'total_hectares_restored_goal' => $this->total_hectares_restored_goal,
             'total_hectares_restored_count' => $this->total_hectares_restored_count,
+            'total_hectares_restored_sum' => $this->total_hectares_restored_sum,
             'trees_grown_goal' => $this->trees_grown_goal,
             'survival_rate' => $this->survival_rate,
             'year_five_crown_cover' => $this->year_five_crown_cover,
@@ -90,8 +91,17 @@ class ProjectResource extends JsonResource
             'migrated' => ! empty($this->old_model),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'trees_restored_ppc' =>
+                $this->getTreesGrowingThroughAnr($this->sites) + (($this->trees_planted_count + $this->seeds_planted_count) * ($this->survival_rate / 100)),
         ];
 
         return $this->appendFilesToResource($data);
+    }
+
+    public function getTreesGrowingThroughAnr($sites)
+    {
+        return $sites->sum(function ($site) {
+            return $site->reports->sum('num_trees_regenerating');
+        });
     }
 }

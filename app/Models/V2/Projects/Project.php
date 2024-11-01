@@ -39,7 +39,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -50,7 +49,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasFrameworkKey;
     use HasLinkedFields;
     use UsesLinkedFields;
@@ -143,6 +141,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'goal_trees_restored_planting',
         'goal_trees_restored_anr',
         'goal_trees_restored_direct_seeding',
+        'landscape',
     ];
 
     public $fileConfiguration = [
@@ -351,6 +350,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return TreeSpecies::where('speciesable_type', SiteReport::class)
             ->whereIn('speciesable_id', $this->submittedSiteReportIds())
             ->where('collection', TreeSpecies::COLLECTION_PLANTED)
+            ->visible()
             ->sum('amount');
     }
 
@@ -358,6 +358,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     {
         return Seeding::where('seedable_type', SiteReport::class)
             ->whereIn('seedable_id', $this->submittedSiteReportIds())
+            ->visible()
             ->sum('amount');
     }
 
@@ -379,11 +380,13 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             'workday_id',
             Workday::where('workdayable_type', SiteReport::class)
                 ->whereIn('workdayable_id', $siteQuery->select('v2_site_reports.id'))
+                ->visible()
                 ->select('id')
         )->orWhereIn(
             'workday_id',
             Workday::where('workdayable_type', ProjectReport::class)
                 ->whereIn('workdayable_id', $projectQuery->select('id'))
+                ->visible()
                 ->select('id')
         )->gender()->sum('amount') ?? 0;
     }
@@ -506,6 +509,12 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         ];
     }
 
+    public static function search($query)
+    {
+        return self::select('v2_projects.*')
+        ->where('v2_projects.name', 'like', "%$query%");
+    }
+
     public function auditStatuses(): MorphMany
     {
         return $this->morphMany(AuditStatus::class, 'auditable');
@@ -542,5 +551,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function getTotalSitePolygonsAttribute()
     {
         return $this->sitePolygons()->count();
+    }
+
+    public function getTotalHectaresRestoredSumAttribute(): float
+    {
+        return round($this->sitePolygons->where('status', 'approved')->sum('calc_area'));
     }
 }

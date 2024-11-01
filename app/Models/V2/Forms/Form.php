@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -24,7 +23,6 @@ class Form extends Model implements MediaModel
     use HasFactory;
     use SoftDeletes;
     use HasUuid;
-    use Searchable;
     use HasI18nTranslations;
     use HasV2MediaCollections;
     use InteractsWithMedia;
@@ -69,6 +67,7 @@ class Form extends Model implements MediaModel
         'documentation',
         'documentation_label',
         'submission_message',
+        'submission_message_id',
         'framework_key',
         'model',
         'duration',
@@ -128,6 +127,12 @@ class Form extends Model implements MediaModel
         ];
     }
 
+    public static function search($query)
+    {
+        return self::select('forms.*')
+            ->where('forms.title', 'like', "%$query%");
+    }
+
     public function i18nTitle(): BelongsTo
     {
         return $this->belongsTo(I18nItem::class, 'title_id', 'id');
@@ -156,5 +161,15 @@ class Form extends Model implements MediaModel
     public function getTranslatedDescriptionAttribute(): ?string
     {
         return $this->getTranslation('i18nDescription', 'description');
+    }
+
+    public function i18nSubmissionMessage(): BelongsTo
+    {
+        return $this->belongsTo(I18nItem::class, 'submission_message_id', 'id');
+    }
+
+    public function getTranslatedSubmissionMessageAttribute(): ?string
+    {
+        return $this->getTranslation('i18nSubmissionMessage', 'submission_message');
     }
 }

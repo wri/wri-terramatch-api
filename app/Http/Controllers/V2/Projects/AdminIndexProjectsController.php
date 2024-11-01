@@ -44,7 +44,7 @@ class AdminIndexProjectsController extends Controller
         ]);
 
         if (! empty($request->query('search'))) {
-            $ids = Project::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = Project::search(trim($request->query('search')))->pluck('id')->toArray();
             $query->whereIn('v2_projects.id', $ids);
         }
 

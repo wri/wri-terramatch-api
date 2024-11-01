@@ -36,7 +36,7 @@ class ViewProjectNurseriesController extends Controller
         }
 
         if (! empty($request->query('search'))) {
-            $ids = Nursery::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = Nursery::search(trim($request->query('search')))->pluck('id')->toArray();
 
             if (empty($ids)) {
                 return new NurseriesCollection(collect());

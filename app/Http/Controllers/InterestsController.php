@@ -37,8 +37,8 @@ class InterestsController extends Controller
         }
         $initiator = $data['initiator'] == 'offer' ? $offer : $pitch;
         $this->authorize('update', $initiator);
-        $me = Auth::user();
-        $data['organisation_id'] = $me->organisation_id;
+        $user = Auth::user();
+        $data['organisation_id'] = $user->organisation_id;
         $exists = InterestModel::where('organisation_id', '=', $data['organisation_id'])
             ->where('initiator', '=', $data['initiator'])
             ->where('offer_id', '=', $data['offer_id'])
@@ -50,7 +50,7 @@ class InterestsController extends Controller
         $interest = new InterestModel($data);
         $interest->saveOrFail();
         $interest->refresh();
-        NotifyInterestJob::dispatch($interest);
+        NotifyInterestJob::dispatch($interest, $user);
 
         return JsonResponseHelper::success(new InterestResource($interest), 201);
     }
@@ -88,14 +88,14 @@ class InterestsController extends Controller
     public function readAllByTypeAction(Request $request, string $type): JsonResponse
     {
         $this->authorize('readAll', \App\Models\Interest::class);
-        $me = Auth::user();
+        $user = Auth::user();
         switch ($type) {
             case 'initiated':
-                $ids = InterestHelper::findInitiated($me->organisation_id);
+                $ids = InterestHelper::findInitiated($user->organisation_id);
 
                 break;
             case 'received':
-                $ids = InterestHelper::findReceived($me->organisation_id);
+                $ids = InterestHelper::findReceived($user->organisation_id);
 
                 break;
             default:

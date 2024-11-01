@@ -48,7 +48,7 @@ class NotifySatelliteMapCreatedJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new SatelliteMapCreatedMail($satelliteMapId, $name));
+                Mail::to($user->email_address)->send(new SatelliteMapCreatedMail($satelliteMapId, $name, $user));
             }
             /*
             $pushService->sendPush(

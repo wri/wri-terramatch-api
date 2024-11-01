@@ -2,18 +2,16 @@
 
 namespace App\Mail;
 
-class FormSubmissionRejected extends Mail
+class FormSubmissionRejected extends I18nMail
 {
-    public function __construct(String $feedback = null)
+    public function __construct(String $feedback = null, $user)
     {
-        $this->subject = 'Application Status Update';
-        $this->title = 'THANK YOU FOR YOUR APPLICATION';
-        $this->body = 'After careful review, our team has decided your application will not move forward.';
-        if (! is_null($feedback)) {
-            $this->body .=
-                ' Please see the comments below for more details or any follow-up resources.<br><br>' .
-                e($feedback);
-        }
+        parent::__construct($user);
+        $this->setSubjectKey('form-submission-rejected.subject')
+            ->setTitleKey('form-submission-rejected.title')
+            ->setBodyKey(! is_null($feedback) ? 'form-submission-rejected.body-feedback' : 'form-submission-rejected.body')
+            ->setParams(['{feedback}' => e($feedback)]);
+
         $this->transactional = true;
     }
 }

@@ -34,20 +34,20 @@ class SendEntityStatusChangeEmailsJob implements ShouldQueue
             return;
         }
 
-        $emailAddresses = $this->entity->project->users()->pluck('email_address');
-        if (empty($emailAddresses)) {
+        $usersFromProject = $this->entity->project->users;
+        if (empty($usersFromProject)) {
             return;
         }
 
         // TODO: This is a temporary hack to avoid spamming folks that have a funky role right now. In the future,
         // they will have a different role, and we can simply skip sending this email to anybody with that role.
         $skipRecipients = collect(explode(',', getenv('ENTITY_UPDATE_DO_NOT_EMAIL')));
-        foreach ($emailAddresses as $emailAddress) {
-            if ($skipRecipients->contains($emailAddress)) {
+        foreach ($usersFromProject as $user) {
+            if ($skipRecipients->contains($user['email_address'])) {
                 continue;
             }
 
-            Mail::to($emailAddress)->send(new EntityStatusChangeMail($this->entity));
+            Mail::to($user['email_address'])->send(new EntityStatusChangeMail($this->entity, $user));
         }
     }
 }

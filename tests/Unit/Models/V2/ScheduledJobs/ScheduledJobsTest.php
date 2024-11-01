@@ -82,7 +82,7 @@ class ScheduledJobsTest extends TestCase
     public function test_site_and_nursery_reminder()
     {
         Mail::fake();
-        $user = User::factory()->create();
+        $user = User::factory()->create(['locale' => 'en-US']);
         $project = Project::factory()->terrafund()->create();
         $user->projects()->sync([$project->id => ['is_monitoring' => true]]);
         SiteAndNurseryReminderJob::createSiteAndNurseryReminder(Carbon::now()->subDay(), 'terrafund');

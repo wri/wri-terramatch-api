@@ -40,7 +40,7 @@ class AdminOrganisationController extends Controller
         }
 
         if ($request->query('search')) {
-            $ids = Organisation::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = Organisation::search(trim($request->query('search')))->pluck('id')->toArray();
 
             if (empty($ids)) {
                 return new OrganisationsCollection([]);

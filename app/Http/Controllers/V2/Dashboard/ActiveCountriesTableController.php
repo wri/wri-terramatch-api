@@ -2,30 +2,28 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
+use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
+use Illuminate\Http\Request;
 
 class ActiveCountriesTableController extends Controller
 {
-    public function __invoke()
+    public function __invoke(Request $request)
     {
         $response = (object) [
-            'data' => $this->getAllCountries(),
+            'data' => $this->getAllCountries($request),
         ];
 
         return response()->json($response);
     }
 
-    public function getAllCountries()
+    public function getAllCountries($request)
     {
-        $projects = Project::where('framework_key', 'terrafund')
-            ->whereHas('organisation', function ($query) {
-                $query->whereIn('type', ['for-profit-organization', 'non-profit-organization']);
-            })->get();
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
         $countryId = FormOptionList::where('key', 'countries')->value('id');
         $countries = FormOptionListOption::where('form_option_list_id', $countryId)
             ->orderBy('label')
@@ -45,6 +43,8 @@ class ActiveCountriesTableController extends Controller
 
             $totalNurseries = $this->numberOfNurseries($country->slug, $projects);
 
+            $totalHectaresRestored = round($this->getTotalHectaresSum($country->slug, $projects));
+
             $activeCountries[] = [
                 'country_slug' => $country->slug,
                 'country' => $country->label,
@@ -53,6 +53,7 @@ class ActiveCountriesTableController extends Controller
                 'total_jobs_created' => $totalJobsCreated,
                 'number_of_sites' => $numberOfSites,
                 'number_of_nurseries' => $totalNurseries,
+                'hectares_restored' => $totalHectaresRestored,
             ];
         }
 
@@ -102,5 +103,14 @@ class ActiveCountriesTableController extends Controller
         $projectIds = $projects->where('country', $country)->pluck('id');
 
         return Nursery::whereIn('project_id', $projectIds)->count();
+    }
+
+    public function getTotalHectaresSum($country, $projects)
+    {
+        $projects = $projects->where('country', $country);
+
+        return $projects->sum(function ($project) {
+            return $project->sitePolygons->sum('calc_area');
+        });
     }
 }

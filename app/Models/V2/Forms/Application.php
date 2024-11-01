@@ -13,14 +13,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 
 class Application extends Model
 {
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
 
     protected $fillable = [
         'organisation_uuid',
@@ -65,6 +63,13 @@ class Application extends Model
         return [
             'organisation_name' => $this->organisation->name,
         ];
+    }
+
+    public static function search($query)
+    {
+        return self::select('applications.*')
+            ->join('organisations', 'applications.organisation_uuid', '=', 'organisations.uuid')
+            ->where('organisations.name', 'like', "%$query%");
     }
 
     public function getRouteKeyName()

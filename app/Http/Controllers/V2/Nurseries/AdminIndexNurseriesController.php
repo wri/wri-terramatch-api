@@ -49,7 +49,7 @@ class AdminIndexNurseriesController extends Controller
         ]);
 
         if (! empty($request->query('search'))) {
-            $ids = Nursery::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = Nursery::search(trim($request->query('search')))->pluck('id')->toArray();
             $query->whereIn('v2_nurseries.id', $ids);
         }
 

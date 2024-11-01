@@ -31,7 +31,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -44,7 +43,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
@@ -146,6 +144,17 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'local_engagement_description',
         'indirect_beneficiaries',
         'indirect_beneficiaries_description',
+        'resilience_progress',
+        'local_governance',
+        'adaptive_management',
+        'scalability_replicability',
+        'convergence_jobs_description',
+        'convergence_schemes',
+        'convergence_amount',
+        'community_partners_assets_description',
+        'volunteer_scstobc',
+        'beneficiaries_scstobc_farmers',
+        'beneficiaries_scstobc',
 
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
@@ -197,6 +206,10 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             Workday::COLLECTION_PROJECT_PAID_OTHER,
             Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
         ],
+        'finance' => [
+            Workday::COLLECTION_PROJECT_DIRECT,
+            Workday::COLLECTION_PROJECT_CONVERGENCE,
+        ],
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -218,6 +231,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             'project_name' => $this->project->name,
             'organisation_name' => $this->organisation->name,
         ];
+    }
+
+    public static function search($query)
+    {
+        return self::select('v2_project_reports.*')
+            ->join('v2_projects', 'v2_project_reports.project_id', '=', 'v2_projects.id')
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+            ->where('v2_projects.name', 'like', "%$query%")
+            ->orWhere('organisations.name', 'like', "%$query%");
     }
 
     /** RELATIONS */
@@ -294,7 +316,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function getSeedlingsGrownAttribute(): int
     {
         if ($this->framework_key == 'ppc') {
-            return $this->treeSpecies()->sum('amount');
+            return $this->treeSpecies()->visible()->sum('amount');
         }
 
         if ($this->framework_key == 'terrafund') {
@@ -316,6 +338,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
                     'speciesable_id',
                     $this->project->reports()->where('created_at', '<=', $this->created_at)->select('id')
                 )
+                ->visible()
                 ->sum('amount');
         }
 
@@ -332,6 +355,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         return TreeSpecies::where('speciesable_type', SiteReport::class)
             ->whereIn('speciesable_id', $this->task->siteReports()->select('id'))
             ->where('collection', TreeSpecies::COLLECTION_PLANTED)
+            ->visible()
             ->sum('amount');
     }
 
@@ -343,6 +367,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
 
         return Seeding::where('seedable_type', SiteReport::class)
             ->whereIn('seedable_id', $this->task->siteReports()->select('id'))
+            ->visible()
             ->sum('amount');
     }
 
@@ -368,6 +393,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             Workday::where('workdayable_type', SiteReport::class)
                 ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
                 ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
+                ->visible()
                 ->select('id')
         )->gender()->sum('amount');
 
@@ -388,6 +414,13 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     {
         return $query->whereHas('project', function ($qry) use ($projectUuid) {
             $qry->where('uuid', $projectUuid);
+        });
+    }
+
+    public function scopeOrganisationUuid(Builder $query, string $organizationUuid): Builder
+    {
+        return $query->whereHas('organisation', function ($qry) use ($organizationUuid) {
+            $qry->where('organisations.uuid', $organizationUuid);
         });
     }
 

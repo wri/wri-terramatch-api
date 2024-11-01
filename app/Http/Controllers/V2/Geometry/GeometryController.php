@@ -5,14 +5,17 @@ namespace App\Http\Controllers\V2\Geometry;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Geometry\StoreGeometryRequest;
+use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
 use App\Validators\SitePolygonValidator;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use stdClass;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -59,26 +62,90 @@ class GeometryController extends Controller
         /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
         $results = [];
-        foreach ($geometries as $geometry) {
-            $results[] = ['polygon_uuids' => $service->createGeojsonModels($geometry, ['source' => PolygonService::GREENHOUSE_SOURCE])];
-        }
+        $groupedGeometries = $this->groupGeometriesBySiteId($geometries);
 
-        // Do the validation in a separate step so that all of the existing polygons are taken into account
-        // for things like overlapping and estimated area.
-        foreach ($results as $index => $result) {
-            $polygonErrors = [];
-            foreach ($result['polygon_uuids'] as $polygonUuid) {
-                $errors = $this->runStoredGeometryValidations($polygonUuid);
-                if (! empty($errors)) {
-                    $polygonErrors[$polygonUuid] = $errors;
-                }
+        foreach ($groupedGeometries as $siteId => $siteGeometries) {
+            $groupedByType = $this->groupGeometriesByType($siteGeometries);
+
+            foreach ($groupedByType as $type => $typeGeometries) {
+                $polygonUuids = $service->createGeojsonModels($typeGeometries, ['source' => PolygonService::GREENHOUSE_SOURCE]);
+                $polygonErrors = $this->validateStoredGeometries($polygonUuids);
+
+                $results[] = [
+                    'site_id' => $siteId,
+                    'geometry_type' => $type,
+                    'polygon_uuids' => $polygonUuids,
+                    'errors' => empty($polygonErrors) ? new stdClass() : $polygonErrors,
+                ];
             }
-
-            // Send an empty object instead of empty array if there are no errors to keep the response shape consistent.
-            data_set($results, "$index.errors", empty($polygonErrors) ? new stdClass() : $polygonErrors);
         }
 
         return $results;
+    }
+
+    protected function validateStoredGeometries(array $polygonUuids): array
+    {
+        $polygonErrors = [];
+
+        foreach ($polygonUuids as $polygonUuid) {
+            $validationErrors = $this->runStoredGeometryValidations($polygonUuid);
+            $estAreaErrors = $this->runStoredGeometryEstAreaValidation($polygonUuid);
+            $allErrors = array_merge($validationErrors, $estAreaErrors);
+
+            if (! empty($allErrors)) {
+                $polygonErrors[$polygonUuid] = $allErrors;
+            }
+        }
+
+        return $polygonErrors;
+    }
+
+    protected function groupGeometriesByType(array $siteGeometries): array
+    {
+        $groupedByType = [];
+
+        foreach ($siteGeometries['features'] as $feature) {
+            $geometryType = data_get($feature, 'geometry.type');
+
+            if (! isset($groupedByType[$geometryType])) {
+                $groupedByType[$geometryType] = [
+                    'type' => 'FeatureCollection',
+                    'features' => [],
+                ];
+            }
+
+            $groupedByType[$geometryType]['features'][] = $feature;
+        }
+
+        return $groupedByType;
+    }
+
+    protected function groupGeometriesBySiteId(array $geometries): array
+    {
+        $grouped = [];
+
+        foreach ($geometries as $geometryCollection) {
+            if (! isset($geometryCollection['features'])) {
+                Log::warning('No features found in this geometry collection', $geometryCollection);
+
+                continue; // Skip if there are no features
+            }
+
+            foreach ($geometryCollection['features'] as $feature) {
+                $siteId = data_get($feature, 'properties.site_id');
+
+                if (! isset($grouped[$siteId])) {
+                    $grouped[$siteId] = [
+                        'type' => 'FeatureCollection',
+                        'features' => [],
+                    ];
+                }
+
+                $grouped[$siteId]['features'][] = $feature;
+            }
+        }
+
+        return $grouped;
     }
 
     public function validateGeometries(Request $request): JsonResponse
@@ -174,6 +241,28 @@ class GeometryController extends Controller
         $errors = $this->runStoredGeometryValidations($polygon->uuid);
 
         return response()->json(['errors' => $errors], 200);
+    }
+
+    protected function runStoredGeometryEstAreaValidation($polygonUuid): array
+    {
+        $errors = [];
+        $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
+
+        if ($sitePolygon && $sitePolygon->point_id) {
+            $pointGeometry = PointGeometry::isUuid($sitePolygon->point_id)->first();
+
+            if ($pointGeometry && isset($pointGeometry->est_area)) {
+                if ($pointGeometry->est_area > 5) {
+                    $errors[] = [
+                        'key' => 'EXCEEDS_EST_AREA',
+                        'message' => 'The est_area is bigger than 5',
+                        'est_area' => $pointGeometry->est_area,
+                    ];
+                }
+            }
+        }
+
+        return $errors;
     }
 
     protected function runStoredGeometryValidations(string $polygonUuid): array

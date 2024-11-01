@@ -23,7 +23,7 @@ class FundingProgrammeResource extends JsonResource
             'uuid' => $this->uuid,
             'name' => $this->translated_name,
             'description' => $this->translated_description,
-            'location' => $this->location,
+            'location' => $this->translated_location,
             'read_more_url' => $this->read_more_url,
             'framework_key' => $this->framework_key,
             'deadline_at' => $deadline ? Carbon::parse($deadline, 'EST')->toISOString() : null,

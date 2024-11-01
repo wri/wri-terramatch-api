@@ -21,15 +21,14 @@ use App\Models\V2\Organisation as V2Organisation;
 use App\Models\V2\Projects\Project;
 use Database\Factories\V2\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -45,7 +44,6 @@ class User extends Authenticatable implements JWTSubject
     use InvitedAcceptedAndVerifiedScopesTrait;
     use HasFactory;
     use HasUuid;
-    use Searchable;
     use SoftDeletes;
     use HasRoles;
 
@@ -75,6 +73,7 @@ class User extends Authenticatable implements JWTSubject
         'api_key',
         'country',
         'program',
+        'locale',
     ];
 
     protected $casts = [
@@ -119,6 +118,16 @@ class User extends Authenticatable implements JWTSubject
             'email' => $this->email_address,
             'organisation_names' => implode('|', $this->organisations()->pluck('name')->toArray()),
         ];
+    }
+
+    public static function search($query)
+    {
+        return self::select('users.*')
+            ->leftJoin('organisations', 'users.organisation_id', '=', 'organisations.id')
+            ->where('organisations.name', 'like', "%$query%")
+            ->orWhere('users.first_name', 'like', "%$query%")
+            ->orWhere('users.last_name', 'like', "%$query%")
+            ->orWhere('users.email_address', 'like', "%$query%");
     }
 
     public function getJWTIdentifier(): string
@@ -275,6 +284,33 @@ class User extends Authenticatable implements JWTSubject
         return Application::whereIn('organisation_uuid', $orgUuids)->get();
     }
 
+    public function getMyFrameworksSlugAttribute(): Collection
+    {
+        $frameworkSlugs = collect($this->frameworks()->pluck('slug')->toArray());
+
+        if ($this->is_admin) {
+            $permissions = $this->getPermissionsViaRoles();
+            $frameworkPermissions = $permissions->filter(function ($permission) {
+                return Str::startsWith($permission->name, 'framework-');
+            });
+
+            $frameworkSlugs->push($frameworkPermissions->map(function ($permission) {
+                return Str::after($permission->name, 'framework-');
+            }));
+        } else {
+            $frameworkSlugs->push(
+                $this->projects()->distinct('framework_key')->pluck('framework_key')
+            );
+        }
+
+        return $frameworkSlugs->flatten()->unique()->values();
+    }
+
+    public function getMyFrameworksAttribute(): Collection
+    {
+        return Framework::whereIn('slug', $this->my_frameworks_slug)->get(['slug', 'name']);
+    }
+
     public function devices()
     {
         return $this->hasMany(Device::class);
@@ -322,7 +358,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function frameworks()
     {
-        return $this->belongsToMany(Framework::class);
+        return $this->belongsToMany(Framework::class)->withTimestamps();
     }
 
     public function wipeData()

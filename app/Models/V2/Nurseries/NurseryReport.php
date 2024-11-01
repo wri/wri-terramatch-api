@@ -28,7 +28,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -42,7 +41,6 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
@@ -166,7 +164,7 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
         return $this->belongsToThrough(
             Organisation::class,
             [Project::class, Nursery::class],
-            foreignKeyLookup: [Project::class => 'project_id', Nursery::class => 'nurseyr_id']
+            foreignKeyLookup: [Project::class => 'project_id', Nursery::class => 'nursery_id']
         );
     }
 
@@ -191,6 +189,16 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
             'project_name' => $this->project?->name,
             'organisation_name' => $this->organisation?->name,
         ];
+    }
+
+    public static function search($query)
+    {
+        return self::select('v2_nursery_reports.*')
+            ->join('v2_nurseries', 'v2_nursery_reports.project_id', '=', 'v2_nurseries.id')
+            ->join('v2_projects', 'v2_nurseries.project_id', '=', 'v2_projects.id')
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
+            ->where('v2_projects.name', 'like', "%$query%")
+            ->orWhere('organisations.name', 'like', "%$query%");
     }
 
     public function getReportTitleAttribute(): string
@@ -250,6 +258,13 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
             $qry->whereHas('project', function ($qry) use ($country) {
                 $qry->where('country', $country);
             });
+        });
+    }
+
+    public function scopeOrganisationUuid(Builder $query, string $organizationUuid): Builder
+    {
+        return $query->whereHas('organisation', function ($qry) use ($organizationUuid) {
+            $qry->where('organisations.uuid', $organizationUuid);
         });
     }
 

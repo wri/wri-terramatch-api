@@ -7,6 +7,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -76,9 +77,6 @@ class GeometryHelper
                     'lat' => $latitude,
                     'long' => $longitude,
                 ]);
-
-
-            Log::info("Centroid updated for projectUuid: $projectUuid");
 
             return response()->json([
               'message' => 'Centroid updated',
@@ -335,5 +333,45 @@ class GeometryHelper
 
             throw $e;
         }
+    }
+
+    public static function getPolygonsGeojson(array $polygonUuids): array
+    {
+        $features = PolygonGeometry::whereIn('uuid', $polygonUuids)
+            ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
+            ->get()
+            ->map(function ($polygon) {
+                return [
+                    'type' => 'Feature',
+                    'properties' => [
+                        'poly_id' => $polygon->uuid,
+                    ],
+                    'geometry' => json_decode($polygon->geojsonGeometry, true),
+                ];
+            })
+            ->toArray();
+
+        return [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
+    }
+
+    public static function getProjectPolygonsUuids($projectId)
+    {
+        $project = Project::where('id', $projectId)->firstOrFail();
+        $projectPolygonUuids = $project->sitePolygons()->pluck('poly_id')->toArray();
+
+        return $projectPolygonUuids;
+    }
+
+    public static function getSitePolygonsUuids($uuid)
+    {
+        return SitePolygon::where('site_id', $uuid)->where('is_active', true)->get()->pluck('poly_id');
+    }
+
+    public static function getSitePolygonsOfPolygons(array $polygonUuids)
+    {
+        return SitePolygon::whereIn('poly_id', $polygonUuids)->where('is_active', true)->get()->pluck('uuid');
     }
 }

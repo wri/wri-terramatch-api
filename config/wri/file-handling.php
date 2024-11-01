@@ -2,13 +2,13 @@
 
 return [
     'validation-rules' => [
-        'logo-image' => 'file|max:3000|mimes:jpg,png',
-        'cover-image' => 'file|max:20000|mimes:jpg,png',
-        'cover-image-with-svg' => 'file|max:20000|mimes:jpg,png,svg',
-        'photos' => 'file|max:25000|mimes:jpg,png',
-        'pdf' => 'file|max:5000|mimes:pdf',
+        'logo-image' => 'file|mimes:jpg,png',
+        'cover-image' => 'file|mimes:jpg,png',
+        'cover-image-with-svg' => 'file|mimes:jpg,png,svg',
+        'photos' => 'file|mimes:jpg,png,mp4',
+        'pdf' => 'file|mimes:pdf',
         'documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,doc',
-        'general-documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,png,jpg,doc',
+        'general-documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,png,jpg,doc,mp4',
         'spreadsheet' => 'file|mimes:pdf,xls,xlsx,csv,txt',
     ],
     'validation-file-types' => [

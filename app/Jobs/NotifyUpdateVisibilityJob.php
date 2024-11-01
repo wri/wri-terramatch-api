@@ -46,7 +46,7 @@ class NotifyUpdateVisibilityJob implements ShouldQueue
             ->get();
         foreach ($users as $user) {
             if ($user->is_subscribed) {
-                Mail::to($user->email_address)->send(new UpdateVisibility($model, $id));
+                Mail::to($user->email_address)->send(new UpdateVisibility($model, $id, $user));
             }
             $pushService->sendPush(
                 $user,

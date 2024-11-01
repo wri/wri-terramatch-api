@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\V2\Exports;
 
 use App\Http\Controllers\Controller;
-use App\Models\Framework;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
@@ -21,7 +20,6 @@ class ExportAllMonitoredEntitiesController extends Controller
     public function __invoke(Request $request, string $entity, string $framework)
     {
         $modelClass = $this->getModelClass($entity);
-        $framework = $this->getSlug($framework);
         $form = $this->getForm($modelClass, $framework);
         $this->authorize('export', [$modelClass, $form]);
 
@@ -32,17 +30,10 @@ class ExportAllMonitoredEntitiesController extends Controller
         $filename = Str::of(data_get($form, 'title', 'Form'))->replace(['/', '\\'], '-') . ' '.Str::of($entity)->replace('-', ' ')->ucfirst().' - ' . now() . '.csv';
 
         return response()->streamDownload(function () use ($csv) {
-            echo $csv->toString();
+            echo "\xEF\xBB\xBF" . $csv->toString();
         }, $filename, [
             'Content-Type' => 'text/csv',
         ]);
-    }
-
-    private function getSlug(string $framework)
-    {
-        $frameworkModel = Framework::where('access_code', $framework)->firstOrFail();
-
-        return $frameworkModel->slug;
     }
 
     private function getForm(string $modelClass, string $framework)

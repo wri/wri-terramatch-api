@@ -15,6 +15,7 @@ class UpdateUserRequest extends FormRequest
             'type' => 'sometimes|nullable|string',
             'status' => 'sometimes|nullable|string',
             'role' => 'sometimes|nullable|string',
+            'direct_frameworks' => 'sometimes|nullable|array',
 
             'first_name' => 'sometimes|nullable|string|between:1,255',
             'last_name' => 'sometimes|nullable|string|between:1,255',

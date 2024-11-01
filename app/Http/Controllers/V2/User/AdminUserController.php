@@ -8,6 +8,7 @@ use App\Http\Requests\V2\User\StoreUserRequest;
 use App\Http\Requests\V2\User\UpdateUserRequest;
 use App\Http\Resources\V2\User\UserResource;
 use App\Http\Resources\V2\User\UsersCollection;
+use App\Models\Framework;
 use App\Models\V2\Organisation;
 use App\Models\V2\User;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -53,7 +54,7 @@ class AdminUserController extends Controller
         }
 
         if ($request->query('search')) {
-            $ids = User::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = User::search(trim($request->query('search')))->pluck('id')->toArray();
 
             if (empty($ids)) {
                 return new UsersCollection([]);
@@ -108,11 +109,11 @@ class AdminUserController extends Controller
         $user->update($data);
 
         if ($request->get('organisation')) {
-            $organisation_id = Organisation::isUuid($request->get('organisation'))
-                ->pluck('id')
+            $organisation = Organisation::isUuid($request->get('organisation'))
                 ->first();
-            if ($organisation_id) {
-                $user->organisation_id = $organisation_id;
+            if ($organisation) {
+                $organisation->partners()->updateExistingPivot($user, ['status' => 'approved'], false);
+                $user->organisation_id = $organisation->id;
                 $user->save();
             }
         }
@@ -128,6 +129,12 @@ class AdminUserController extends Controller
             } else {
                 $user->organisations()->detach();
             }
+        }
+
+        $frameworkSlugs = $request->get('direct_frameworks');
+        if (is_array($request->get('direct_frameworks'))) {
+            $frameworkIds = Framework::whereIn('slug', $frameworkSlugs)->pluck('id');
+            $user->frameworks()->sync($frameworkIds);
         }
 
         return new UserResource($user);

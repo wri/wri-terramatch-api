@@ -44,7 +44,7 @@ class AdminIndexApplicationController extends Controller
         }
 
         if (! empty($request->query('search'))) {
-            $ids = Application::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = Application::search(trim($request->query('search')))->pluck('id')->toArray();
             $qry->whereIn('id', $ids);
         }
 

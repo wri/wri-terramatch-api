@@ -49,11 +49,6 @@ class GeometryControllerTest extends TestCase
             $this->fakeGeojson([$this->fakePoint(), $this->fakePolygon()]),
         ]);
 
-        // Multiple site ids
-        $this->assertCreateError('site ids must contain 1 item', $service, [
-            $this->fakeGeojson([$this->fakePoint(['site_id' => '123']), $this->fakePoint(['site_id' => '456'])]),
-        ]);
-
         // Missing est area
         $this->assertCreateError('est_area field is required', $service, [
             $this->fakeGeojson([$this->fakePoint(['site_id' => '123'])]),
@@ -62,9 +57,6 @@ class GeometryControllerTest extends TestCase
         // Invalid est area
         $this->assertCreateError('est_area must be at least 0.0001', $service, [
             $this->fakeGeojson([$this->fakePoint(['site_id' => '123', 'est_area' => -1])]),
-        ]);
-        $this->assertCreateError('est_area may not be greater than 5', $service, [
-            $this->fakeGeojson([$this->fakePoint(['site_id' => '123', 'est_area' => 6])]),
         ]);
 
         // Not all sites found

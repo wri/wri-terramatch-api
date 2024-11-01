@@ -35,19 +35,43 @@ trait SaveAuditStatusTrait
     public function saveAuditStatusProjectDeveloperSubmit($entity, $updateRequest)
     {
         $changes = $this->getUpdateRequestChange($entity, $updateRequest);
-        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Awaiting Review: '.$changes->join(', '), 'change-request', true);
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Awaiting Review: '.$changes->join(', '), '-', true);
+    }
+
+    public function saveAuditStatusProjectDeveloperSubmitNotUpdateRequest($entity)
+    {
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, null, '-', true);
     }
 
     public function saveAuditStatusAdminApprove($data, $entity)
     {
         $comment = $this->getApproveComment($data);
-        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment, 'change-request-updated', true);
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment, '-', true);
     }
 
     public function saveAuditStatusAdminMoreInfo($data, $entity)
     {
         $comment = $this->getMoreInfoComment($data, $entity);
-        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment, 'change-request-updated', true);
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment, 'change-request', true);
+    }
+
+    public function saveAuditStatusAdminRestorationInProgress($entity)
+    {
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Restoration In Progress', '-', true);
+    }
+
+    public function saveAuditStatusAdminSendReminder($entity, $feedback)
+    {
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Feedback: '.$feedback, 'reminder-sent', true);
+    }
+
+    public function saveAuditStatusProjectDeveloperSubmitDraft($entity)
+    {
+        if ($entity->status == 'approved' || $entity->status == 'needs-more-information') {
+            $type = 'change-request-updated';
+            $comment = null;
+        }
+        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment ?? 'Updated', $type ?? '-', true);
     }
 
     private function getApproveComment($data)
@@ -57,7 +81,7 @@ trait SaveAuditStatusTrait
 
     private function getMoreInfoComment($data, $entity)
     {
-        $feedbackFields = data_get($data, 'feedback_fields');
+        $feedbackFields = data_get($data, 'feedback_fields', []);
         $feedbackFieldLabels = [];
         foreach ($feedbackFields as $formQuestionUUID) {
             $question = FormQuestion::isUuid($formQuestionUUID)->first();

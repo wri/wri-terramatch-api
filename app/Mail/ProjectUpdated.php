@@ -6,19 +6,20 @@ use App\Models\Offer as OfferModel;
 use App\Models\Pitch as PitchModel;
 use Exception;
 
-class ProjectUpdated extends Mail
+class ProjectUpdated extends I18nMail
 {
-    public function __construct(string $type, string $model, int $id)
+    public function __construct(string $type, string $model, int $id, $user)
     {
+        parent::__construct($user);
         switch ($type) {
             case 'Match':
-                $this->subject = "A Project You've Matched With Has Changed";
-                $this->title = "A Project You've Matched With Has Changed";
+                $this->setSubjectKey('project-updated.subject-match')
+                    ->setTitleKey('project-updated.title-match');
 
                 break;
             case 'Interest':
-                $this->subject = "A Project You're Interested In Has Changed";
-                $this->title = "A Project You're Interested In Has Changed";
+                $this->setSubjectKey('project-updated.subject-interest')
+                    ->setTitleKey('project-updated.title-interest');
 
                 break;
             default:
@@ -51,11 +52,9 @@ class ProjectUpdated extends Mail
             default:
                 throw new Exception();
         }
-        $this->body =
-            e($name) . ' has changed.<br><br>' .
-            "You may want to review the changes to ensure you're still interested.<br><br>" .
-            'Follow this link to view the project.';
+        $this->setBodyKey('project-updated.body')
+            ->setParams(['{name}' => e($name)])
+            ->setCta('project-updated.cta');
         $this->link = $link;
-        $this->cta = 'View Project';
     }
 }

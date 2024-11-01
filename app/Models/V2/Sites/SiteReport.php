@@ -35,7 +35,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -48,7 +47,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-    use Searchable;
     use HasReportStatus;
     use HasLinkedFields;
     use UsesLinkedFields;
@@ -95,6 +93,12 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'paid_other_activity_description',
         'num_trees_regenerating',
         'regeneration_description',
+        'invasive_species_removed',
+        'invasive_species_management',
+        'soil_water_restoration_description',
+        'water_structures',
+        'site_community_partners_description',
+        'site_community_partners_income_increase_description',
 
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
@@ -165,6 +169,10 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'other' => [
             Workday::COLLECTION_SITE_PAID_OTHER,
             Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
+        ],
+        'finance' => [
+            Workday::COLLECTION_PROJECT_DIRECT,
+            Workday::COLLECTION_PROJECT_CONVERGENCE,
         ],
     ];
 
@@ -282,12 +290,12 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
 
     public function getTotalTreesPlantedCountAttribute(): int
     {
-        return $this->treeSpecies()->sum('amount');
+        return $this->treeSpecies()->visible()->sum('amount');
     }
 
     public function getTotalSeedsPlantedCountAttribute(): int
     {
-        return $this->seedings()->sum('amount');
+        return $this->seedings()->visible()->sum('amount');
     }
 
     public function getOrganisationAttribute()
@@ -319,6 +327,13 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
             $qry->whereHas('project', function ($qry) use ($projectUuid) {
                 $qry->where('uuid', $projectUuid);
             });
+        });
+    }
+
+    public function scopeOrganisationUuid(Builder $query, string $organizationUuid): Builder
+    {
+        return $query->whereHas('organisation', function ($qry) use ($organizationUuid) {
+            $qry->where('organisations.uuid', $organizationUuid);
         });
     }
 
@@ -368,7 +383,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         return $this->title ?? '';
     }
 
-    public static function searchReports($query)
+    public static function search($query)
     {
         return self::select('v2_site_reports.*')
             ->join('v2_sites', 'v2_site_reports.site_id', '=', 'v2_sites.id')
@@ -376,6 +391,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
             ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
             ->where('v2_projects.name', 'like', "%$query%")
             ->orWhere('organisations.name', 'like', "%$query%")
-            ->get();
+            ->orWhere('v2_sites.name', 'like', "%$query%");
     }
 }

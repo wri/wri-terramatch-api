@@ -27,6 +27,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
 
     protected $casts = [
         'published' => 'boolean',
+        'hidden' => 'boolean',
     ];
 
     public $table = 'v2_workdays';
@@ -43,6 +44,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
         'indigeneity',
         'migrated_to_demographics',
         'description',
+        'hidden',
     ];
 
     public const COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS = 'paid-nursery-operations';
@@ -51,6 +53,8 @@ class Workday extends Model implements HandlesLinkedFieldSync
     public const COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS = 'volunteer-nursery-operations';
     public const COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT = 'volunteer-project-management';
     public const COLLECTION_PROJECT_VOLUNTEER_OTHER = 'volunteer-other-activities';
+    public const COLLECTION_PROJECT_DIRECT = 'direct';
+    public const COLLECTION_PROJECT_CONVERGENCE = 'convergence';
 
     public const PROJECT_COLLECTION = [
         self::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS => 'Paid Nursery Operations',
@@ -88,7 +92,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
     /**
      * @throws \Exception
      */
-    public static function syncRelation(EntityModel $entity, string $property, $data): void
+    public static function syncRelation(EntityModel $entity, string $property, $data, bool $hidden): void
     {
         if (count($data) == 0) {
             $entity->$property()->delete();
@@ -112,13 +116,16 @@ class Workday extends Model implements HandlesLinkedFieldSync
                 'workdayable_type' => get_class($entity),
                 'workdayable_id' => $entity->id,
                 'collection' => $workdayData['collection'],
+                'hidden' => $hidden,
             ]);
+        } else {
+            $workday->update(['hidden' => $hidden]);
         }
 
         // Make sure the incoming data is clean, and meets our expectations of one row per type/subtype/name combo.
         // The FE is not supposed to send us data with duplicates, but there has been a bug in the past that caused
         // this problem, so this extra check is just covering our bases.
-        $syncData = collect($workdayData['demographics'])->reduce(function ($syncData, $row) {
+        $syncData = isset($workdayData['demographics']) ? collect($workdayData['demographics'])->reduce(function ($syncData, $row) {
             $type = data_get($row, 'type');
             $subtype = data_get($row, 'subtype');
             $name = data_get($row, 'name');
@@ -139,7 +146,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
             $syncData[] = $row;
 
             return $syncData;
-        }, []);
+        }, []) : [];
 
         $demographics = $workday->demographics;
         $represented = collect();
@@ -183,6 +190,11 @@ class Workday extends Model implements HandlesLinkedFieldSync
     public function scopeCollections(Builder $query, array $collections): Builder
     {
         return $query->whereIn('collection', $collections);
+    }
+
+    public function scopeVisible($query): Builder
+    {
+        return $query->where('hidden', false);
     }
 
     public function demographics(): HasMany

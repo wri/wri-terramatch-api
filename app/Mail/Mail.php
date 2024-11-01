@@ -70,7 +70,7 @@ abstract class Mail extends Mailable implements ShouldQueue
         }
 
         $originalRecipients = [];
-        foreach(['to', 'cc', 'bcc'] as $type) {
+        foreach (['to', 'cc', 'bcc'] as $type) {
             $originalRecipients[$type] = $this->{$type};
         }
         $message->getHeaders()->addTextHeader('X-Original-Emails', json_encode($originalRecipients));

@@ -27,6 +27,7 @@ class AdminIndexNurseryReportsController extends Controller
             ->join('v2_projects', function ($join) {
                 $join->on('v2_nurseries.project_id', '=', 'v2_projects.id');
             })
+            ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
             ->selectRaw('
                 v2_nursery_reports.*,
                 v2_projects.name as project_name,
@@ -39,6 +40,7 @@ class AdminIndexNurseryReportsController extends Controller
                 AllowedFilter::exact('status'),
                 AllowedFilter::exact('update_request_status'),
                 AllowedFilter::exact('framework_key'),
+                AllowedFilter::scope('organisation_uuid', 'organisationUuid'),
             ]);
 
         $this->sort($query, [
@@ -53,7 +55,7 @@ class AdminIndexNurseryReportsController extends Controller
         ]);
 
         if (! empty($request->query('search'))) {
-            $ids = NurseryReport::search(trim($request->query('search')))->get()->pluck('id')->toArray();
+            $ids = NurseryReport::search(trim($request->query('search')))->pluck('id')->toArray();
             $query->whereIn('v2_nursery_reports.id', $ids);
         }
 

@@ -42,7 +42,6 @@ class IndexProjectPitchController extends Controller
 
         if ($request->query('search')) {
             $ids = ProjectPitch::search(trim($request->get('search')) ?? '')
-                    ->get()
                     ->pluck('id')
                     ->toArray();
 
