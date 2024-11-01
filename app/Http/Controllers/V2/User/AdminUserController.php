@@ -8,6 +8,7 @@ use App\Http\Requests\V2\User\StoreUserRequest;
 use App\Http\Requests\V2\User\UpdateUserRequest;
 use App\Http\Resources\V2\User\UserResource;
 use App\Http\Resources\V2\User\UsersCollection;
+use App\Models\Framework;
 use App\Models\V2\Organisation;
 use App\Models\V2\User;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -128,6 +129,12 @@ class AdminUserController extends Controller
             } else {
                 $user->organisations()->detach();
             }
+        }
+
+        $frameworkSlugs = $request->get('direct_frameworks');
+        if (is_array($request->get('direct_frameworks'))) {
+            $frameworkIds = Framework::whereIn('slug', $frameworkSlugs)->pluck('id');
+            $user->frameworks()->sync($frameworkIds);
         }
 
         return new UserResource($user);

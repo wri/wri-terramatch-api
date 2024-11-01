@@ -2,6 +2,7 @@
 
 namespace Tests\V2\Users;
 
+use App\Models\Framework;
 use App\Models\V2\Organisation;
 use App\Models\V2\User;
 use App\Models\V2\User as V2User;
@@ -230,6 +231,25 @@ final class AdminUserControllerTest extends TestCase
         $this->actingAs($admin)
             ->putJson($uri,  ['email_address' => 'my_new_email@tesingtest.com'])
             ->assertSuccessful();
+    }
+
+    public function test_update_frameworks(): void
+    {
+        $user = User::factory()->create();
+        $admin = User::factory()->admin()->create();
+        $slug1 = Framework::factory()->create()->slug;
+        $slug2 = Framework::factory()->create()->slug;
+        $slug3 = Framework::factory()->create()->slug;
+
+        $uri = '/api/v2/admin/users/' . $user->uuid;
+
+        $user->frameworks()->sync(Framework::where('slug', $slug1)->pluck('id'));
+
+        $this->actingAs($admin)
+            ->putJson($uri, ['direct_frameworks' => [$slug2, $slug3]])
+            ->assertSuccessful();
+
+        $this->assertEqualsCanonicalizing([$slug2, $slug3], $user->frameworks()->pluck('slug')->toArray());
     }
 
     public function test_delete_action(): void
