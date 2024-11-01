@@ -51,6 +51,7 @@ use App\Http\Controllers\V2\Exports\ExportAllSiteDataAsProjectDeveloperControlle
 use App\Http\Controllers\V2\Exports\ExportImageController;
 use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
+use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
 use App\Http\Controllers\V2\Files\FilePropertiesController;
 use App\Http\Controllers\V2\Files\Gallery\ViewNurseryGalleryController;
 use App\Http\Controllers\V2\Files\Gallery\ViewNurseryReportGalleryController;
@@ -172,6 +173,7 @@ use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkCon
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Reports\NothingToReportReportController;
+use App\Http\Controllers\V2\RestorationPartners\GetRestorationPartnersForEntityController;
 use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
@@ -329,6 +331,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
+    Route::get('/{entity}/presigned-url/{framework}', GeneratePreSignedURLDownloadReportController::class);
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::put('/{entity}/{status}', AdminStatusEntityController::class);
@@ -500,6 +503,10 @@ Route::prefix('{relationType}')
 ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
     Route::get('/{entity}', GetWorkdaysForEntityController::class);
 }, prefix: 'workdays');
+
+ModelInterfaceBindingMiddleware::forSlugs(['project-report'], function () {
+    Route::get('/{entity}', GetRestorationPartnersForEntityController::class);
+}, prefix: 'restoration-partners');
 
 Route::prefix('leadership-team')->group(function () {
     Route::post('/', StoreLeadershipTeamController::class);

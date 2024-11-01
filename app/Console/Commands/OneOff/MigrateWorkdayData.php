@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\OneOff;
 
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Workdays\Workday;
-use App\Models\V2\Workdays\WorkdayDemographic;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -24,9 +24,9 @@ class MigrateWorkdayData extends Command
     protected $description = 'Updates Workday data to use the new workday_demographics table';
 
     private const DEMOGRAPHICS = [
-        WorkdayDemographic::GENDER,
-        WorkdayDemographic::AGE,
-        WorkdayDemographic::ETHNICITY,
+        Demographic::GENDER,
+        Demographic::AGE,
+        Demographic::ETHNICITY,
     ];
 
     private const SUBTYPE_NULL = 'subtype-null';
@@ -76,8 +76,9 @@ class MigrateWorkdayData extends Command
             foreach ($mapping as $demographic => $subTypes) {
                 foreach ($subTypes as $subType => $names) {
                     foreach ($names as $name => $amount) {
-                        WorkdayDemographic::create([
-                            'workday_id' => $workday->id,
+                        Demographic::create([
+                            'demographical_id' => $workday->id,
+                            'demographical_type' => Workday::class,
                             'type' => $demographic,
                             'subtype' => $subType == self::SUBTYPE_NULL ? null : $subType,
                             'name' => $name == self::NAME_NULL ? null : $name,
@@ -119,7 +120,7 @@ class MigrateWorkdayData extends Command
 
     private function getSubtype(string $demographic, Workday $workday): string
     {
-        if ($demographic != WorkdayDemographic::ETHNICITY) {
+        if ($demographic != Demographic::ETHNICITY) {
             return self::SUBTYPE_NULL;
         }
 

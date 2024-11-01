@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\OneOff;
 
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Workdays\Workday;
-use App\Models\V2\Workdays\WorkdayDemographic;
 use Illuminate\Console\Command;
 
 class FixDuplicateDemographics extends Command
@@ -29,10 +29,11 @@ class FixDuplicateDemographics extends Command
     {
         $workdays = [];
 
-        WorkdayDemographic::selectRaw('workday_id, type, subtype, name, count(*) as num, sum(amount) as sum')
+        Demographic::selectRaw('demographical_id, type, subtype, name, count(*) as num, sum(amount) as sum')
             // group by is case insensitive, so in order to avoid turning up false positives, we cast to binary
             // to get the DB to recognize different casing.
-            ->groupByRaw('workday_id, type, subtype, name, Cast(name as binary)')
+            ->groupByRaw('demographical_id, type, subtype, name, Cast(name as binary)')
+            ->where('demographical_type', Workday::class)
             ->orderByRaw('num desc')
             ->chunk(10, function ($chunk) use (&$workdays) {
                 foreach ($chunk as $demographic) {
@@ -40,13 +41,14 @@ class FixDuplicateDemographics extends Command
                         return false;
                     }
 
-                    $demographic['rows'] = WorkdayDemographic::where([
-                        'workday_id' => $demographic->workday_id,
+                    $demographic['rows'] = Demographic::where([
+                        'demographical_id' => $demographic->demographical_id,
+                        'demographical_type' => Workday::class,
                         'type' => $demographic->type,
                         'subtype' => $demographic->subtype,
                         'name' => $demographic->name,
                     ])->select('id', 'amount')->get()->toArray();
-                    $workdays[$demographic->workday_id][] = $demographic->toArray();
+                    $workdays[$demographic->demographical_id][] = $demographic->toArray();
                 }
 
                 return true;
@@ -54,7 +56,7 @@ class FixDuplicateDemographics extends Command
 
         foreach ($workdays as $workdayId => $stats) {
             foreach ($stats as $stat) {
-                $workday = Workday::find($workdayId);
+                $workday = Workday::withTrashed()->find($workdayId);
 
                 $rows = collect($stat['rows']);
                 $max = $rows->max('amount');
@@ -79,7 +81,7 @@ class FixDuplicateDemographics extends Command
                     'workday_id' => $workdayId,
                     'workdayable_type' => $workday->workdayable_type,
                     'workdayable_id' => $workday->workdayable_id,
-                    'workdayable_uuid' => $workday->workdayable->uuid,
+                    'workdayable_uuid' => $workday->workdayable()->withTrashed()->first()->uuid,
                     'collection' => $workday->collection,
                     'type' => $stat['type'],
                     'subtype' => $stat['subtype'],
@@ -95,7 +97,7 @@ class FixDuplicateDemographics extends Command
                 unset($row);
                 foreach ($stat['rows'] as $row) {
                     if ($row['action'] == 'delete') {
-                        WorkdayDemographic::find($row['id'])->delete();
+                        Demographic::find($row['id'])->delete();
                     }
                 }
             }

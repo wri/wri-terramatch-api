@@ -98,7 +98,7 @@ class FormSubmissionsExport extends BaseExportFormSubmission implements FromQuer
         ];
 
         foreach ($fieldMap as $field) {
-            $mapped[] = $this->getAnswer($field, $answers);
+            $mapped[] = $this->getAnswer($field, $answers, $this->form->framework_key);
         }
 
         foreach ($this->auditFields  as $key => $value) {

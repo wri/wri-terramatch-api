@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\V2\Workdays;
+namespace App\Http\Resources\V2\RestorationPartners;
 
 use App\Http\Resources\V2\Demographics\DemographicResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class WorkdayResource extends JsonResource
+class RestorationPartnerResource extends JsonResource
 {
     public function toArray($request)
     {

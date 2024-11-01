@@ -3,13 +3,11 @@
 namespace App\Models\V2\Workdays;
 
 use App\Models\Interfaces\HandlesLinkedFieldSync;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
-use App\Models\V2\EntityModel;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
@@ -22,6 +20,7 @@ class Workday extends Model implements HandlesLinkedFieldSync
     use SoftDeletes;
     use HasUuid;
     use HasTypes;
+    use HasDemographics;
 
     public const DEMOGRAPHICS_COUNT_CUTOFF = '2024-07-05';
 
@@ -89,89 +88,6 @@ class Workday extends Model implements HandlesLinkedFieldSync
         self::COLLECTION_SITE_VOLUNTEER_OTHER => 'Volunteer Other Activities',
     ];
 
-    /**
-     * @throws \Exception
-     */
-    public static function syncRelation(EntityModel $entity, string $property, $data, bool $hidden): void
-    {
-        if (count($data) == 0) {
-            $entity->$property()->delete();
-
-            return;
-        }
-
-        // Workdays only have one instance per collection
-        $workdayData = $data[0];
-        $workday = $entity->$property()->first();
-        if ($workday != null && $workday->collection != $workdayData['collection']) {
-            throw new \Exception(
-                'Workday collection does not match entity property [' .
-                'property collection: ' . $workday->collection . ', ' .
-                'submitted collection: ' . $workdayData['collection'] . ']'
-            );
-        }
-
-        if ($workday == null) {
-            $workday = Workday::create([
-                'workdayable_type' => get_class($entity),
-                'workdayable_id' => $entity->id,
-                'collection' => $workdayData['collection'],
-                'hidden' => $hidden,
-            ]);
-        } else {
-            $workday->update(['hidden' => $hidden]);
-        }
-
-        // Make sure the incoming data is clean, and meets our expectations of one row per type/subtype/name combo.
-        // The FE is not supposed to send us data with duplicates, but there has been a bug in the past that caused
-        // this problem, so this extra check is just covering our bases.
-        $syncData = isset($workdayData['demographics']) ? collect($workdayData['demographics'])->reduce(function ($syncData, $row) {
-            $type = data_get($row, 'type');
-            $subtype = data_get($row, 'subtype');
-            $name = data_get($row, 'name');
-            $amount = data_get($row, 'amount');
-
-            foreach ($syncData as &$syncRow) {
-                if (data_get($syncRow, 'type') === $type &&
-                    data_get($syncRow, 'subtype') === $subtype &&
-                    data_get($syncRow, 'name') === $name) {
-
-                    // Keep the last value for this type/subtype/name in the incoming data set.
-                    $syncRow['amount'] = $amount;
-
-                    return $syncData;
-                }
-            }
-
-            $syncData[] = $row;
-
-            return $syncData;
-        }, []) : [];
-
-        $demographics = $workday->demographics;
-        $represented = collect();
-        foreach ($syncData as $row) {
-            $demographic = $demographics->firstWhere([
-                'type' => data_get($row, 'type'),
-                'subtype' => data_get($row, 'subtype'),
-                'name' => data_get($row, 'name'),
-            ]);
-
-            if ($demographic == null) {
-                $workday->demographics()->create($row);
-            } else {
-                $represented->push($demographic->id);
-                $demographic->update(['amount' => data_get($row, 'amount')]);
-            }
-        }
-        // Remove any existing demographic that wasn't in the submitted set.
-        foreach ($demographics as $demographic) {
-            if (! $represented->contains($demographic->id)) {
-                $demographic->delete();
-            }
-        }
-    }
-
     public function workdayable()
     {
         return $this->morphTo();
@@ -180,26 +96,6 @@ class Workday extends Model implements HandlesLinkedFieldSync
     public function getRouteKeyName()
     {
         return 'uuid';
-    }
-
-    public function scopeCollection(Builder $query, string $collection): Builder
-    {
-        return $query->where('collection', $collection);
-    }
-
-    public function scopeCollections(Builder $query, array $collections): Builder
-    {
-        return $query->whereIn('collection', $collections);
-    }
-
-    public function scopeVisible($query): Builder
-    {
-        return $query->where('hidden', false);
-    }
-
-    public function demographics(): HasMany
-    {
-        return $this->hasMany(WorkdayDemographic::class);
     }
 
     public function getReadableCollectionAttribute(): ?string
