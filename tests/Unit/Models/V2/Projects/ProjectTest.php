@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Models\V2\Projects;
 
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectMonitoring;
@@ -9,7 +10,6 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Workdays\Workday;
-use App\Models\V2\Workdays\WorkdayDemographic;
 use App\StateMachines\EntityStatusStateMachine;
 use Tests\TestCase;
 
@@ -121,31 +121,31 @@ class ProjectTest extends TestCase
         $site = Site::factory()->ppc()->create(['project_id' => $project->id, 'status' => EntityStatusStateMachine::AWAITING_APPROVAL]);
         $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::APPROVED]);
         $workday = Workday::factory()->create(['workdayable_id' => $report->id]);
-        WorkdayDemographic::factory()->create(['workday_id' => $workday->id, 'amount' => 3]);
+        Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 3]);
 
         // Approved site
         $site = Site::factory()->ppc()->create(['project_id' => $project->id, 'status' => EntityStatusStateMachine::APPROVED]);
         $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::APPROVED]);
         $workday = Workday::factory()->create(['workdayable_id' => $report->id]);
-        WorkdayDemographic::factory()->create(['workday_id' => $workday->id, 'amount' => 5]);
+        Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 5]);
         $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::AWAITING_APPROVAL]);
         $workday = Workday::factory()->create(['workdayable_id' => $report->id]);
-        WorkdayDemographic::factory()->create(['workday_id' => $workday->id, 'amount' => 7]);
+        Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 7]);
         // Unsubmitted report (doesn't count toward workday count)
         $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::STARTED]);
         $workday = Workday::factory()->create(['workdayable_id' => $report->id]);
-        WorkdayDemographic::factory()->create(['workday_id' => $workday->id, 'amount' => 11]);
+        Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 11]);
 
         $report = ProjectReport::factory()->ppc()->create(['project_id' => $project->id, 'status' => EntityStatusStateMachine::APPROVED]);
         $workday = Workday::factory()->projectReport()->create(['workdayable_id' => $report->id]);
-        WorkdayDemographic::factory()->create(['workday_id' => $workday->id, 'amount' => 13]);
+        Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 13]);
         $report = ProjectReport::factory()->ppc()->create(['project_id' => $project->id, 'status' => EntityStatusStateMachine::AWAITING_APPROVAL]);
         $workday = Workday::factory()->projectReport()->create(['workdayable_id' => $report->id]);
-        WorkdayDemographic::factory()->create(['workday_id' => $workday->id, 'amount' => 17]);
+        Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 17]);
         // Unsubmitted report (doesn't count toward workday count)
         $report = ProjectReport::factory()->ppc()->create(['project_id' => $project->id, 'status' => EntityStatusStateMachine::STARTED]);
         $workday = Workday::factory()->projectReport()->create(['workdayable_id' => $report->id]);
-        WorkdayDemographic::factory()->create(['workday_id' => $workday->id, 'amount' => 19]);
+        Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 19]);
 
         // 42 = 5 and 7 from the approved site's reports and 13 and 17 from the project reports
         $this->assertEquals(42, $project->workday_count);

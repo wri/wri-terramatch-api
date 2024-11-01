@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Models\V2\Workdays;
+namespace App\Models\V2\Demographics;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class WorkdayDemographic extends Model
+class Demographic extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
-        'workday_id',
+        'demographical_id',
+        'demographical_type',
         'type',
         'subtype',
         'name',
@@ -27,9 +27,9 @@ class WorkdayDemographic extends Model
     public const ETHNICITY = 'ethnicity';
     public const CASTE = 'caste';
 
-    public function workday(): BelongsTo
+    public function demographical()
     {
-        return $this->belongsTo(Workday::class);
+        return $this->morphTo();
     }
 
     public function scopeGender(Builder $query): Builder

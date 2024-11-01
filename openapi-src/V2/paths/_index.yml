@@ -113,6 +113,9 @@
 /v2/workdays/{ENTITY}/{UUID}:
   get:
     $ref: './Workdays/get-v2-workdays-entity-uuid.yml'
+/v2/restoration-partners/{ENTITY}/{UUID}:
+  get:
+    $ref: './RestorationPartners/get-v2-restoration-partners-entity-uuid.yml'
 /v2/stratas/{ENTITY}/{UUID}:
   get:
     $ref: './Stratas/get-v2-stratas-entity-uuid.yml'

@@ -8662,7 +8662,7 @@ definitions:
       demographics:
         type: array
         items:
-          title: WorkdayDemographic
+          title: Demographic
           type: object
           properties:
             type:
@@ -8671,6 +8671,36 @@ definitions:
                 - gender
                 - age
                 - ethnicity
+                - caste
+            subtype:
+              type: string
+            name:
+              type: string
+            amount:
+              type: integer
+  V2RestorationPartnerRead:
+    title: V2RestorationPartnerRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      collection:
+        type: string
+      readable_collection:
+        type: string
+      demographics:
+        type: array
+        items:
+          title: Demographic
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - gender
+                - age
+                - ethnicity
+                - caste
             subtype:
               type: string
             name:
@@ -42443,8 +42473,8 @@ definitions:
     properties:
       email_address:
         type: string
-  WorkdayDemographic:
-    title: WorkdayDemographic
+  Demographic:
+    title: Demographic
     type: object
     properties:
       type:
@@ -42453,6 +42483,7 @@ definitions:
           - gender
           - age
           - ethnicity
+          - caste
       subtype:
         type: string
       name:
@@ -57896,7 +57927,7 @@ paths:
                     demographics:
                       type: array
                       items:
-                        title: WorkdayDemographic
+                        title: Demographic
                         type: object
                         properties:
                           type:
@@ -57905,6 +57936,60 @@ paths:
                               - gender
                               - age
                               - ethnicity
+                              - caste
+                          subtype:
+                            type: string
+                          name:
+                            type: string
+                          amount:
+                            type: integer
+  '/v2/restoration-partners/{ENTITY}/{UUID}':
+    get:
+      operationId: get-v2-restoration-partners-entity-uuid
+      summary: View all restoration partners for a given entity
+      tags:
+        - V2 Restoration Partners
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project-report
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  title: V2RestorationPartnerRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    collection:
+                      type: string
+                    readable_collection:
+                      type: string
+                    demographics:
+                      type: array
+                      items:
+                        title: Demographic
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - gender
+                              - age
+                              - ethnicity
+                              - caste
                           subtype:
                             type: string
                           name:

@@ -1,12 +1,12 @@
 <?php
 
-namespace Database\Factories\V2\Workdays;
+namespace Database\Factories\V2\Demographics;
 
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Workdays\Workday;
-use App\Models\V2\Workdays\WorkdayDemographic;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class WorkdayDemographicFactory extends Factory
+class DemographicFactory extends Factory
 {
     public const GENDERS = ['male', 'female', 'non-binary', 'unknown'];
     public const AGES = ['youth', 'adult', 'elder', 'unknown'];
@@ -20,7 +20,8 @@ class WorkdayDemographicFactory extends Factory
     public function definition()
     {
         return [
-            'workday_id' => Workday::factory()->create()->id,
+            'demographical_type' => Workday::class,
+            'demographical_id' => Workday::factory()->create()->id,
             'type' => 'gender',
             'subtype' => null,
             'name' => $this->faker->randomElement(self::GENDERS),
@@ -32,7 +33,7 @@ class WorkdayDemographicFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => WorkdayDemographic::GENDER,
+                'type' => Demographic::GENDER,
                 'name' => $this->faker->randomElement(self::GENDERS),
             ];
         });
@@ -42,7 +43,7 @@ class WorkdayDemographicFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => WorkdayDemographic::AGE,
+                'type' => Demographic::AGE,
                 'name' => $this->faker->randomElement(self::AGES),
             ];
         });
@@ -52,7 +53,7 @@ class WorkdayDemographicFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => WorkdayDemographic::ETHNICITY,
+                'type' => Demographic::ETHNICITY,
                 'subtype' => $this->faker->randomElement(self::ETHNICITIES),
             ];
         });

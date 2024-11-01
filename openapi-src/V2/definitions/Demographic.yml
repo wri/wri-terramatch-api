@@ -1,9 +1,9 @@
-title: WorkdayDemographic
+title: Demographic
 type: object
 properties:
   type:
     type: string
-    enum: [gender, age, ethnicity]
+    enum: [gender, age, ethnicity, caste]
   subtype:
     type: string
   name:
