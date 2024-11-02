@@ -42,7 +42,7 @@ class RunTreeRestorationGoalJob implements ShouldQueue
         array $landscapes,
         array $organisations,
         string $country,
-        int $cacheParameter
+        string $cacheParameter
     ) {
         $this->delayed_job_id = $delayed_job_id;
         $this->frameworks = $frameworks;
