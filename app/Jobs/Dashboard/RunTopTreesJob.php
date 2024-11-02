@@ -38,7 +38,7 @@ class RunTopTreesJob implements ShouldQueue
 
     protected $cacheParameter;
 
-    public function __construct(string $delayed_job_id, array $frameworks, array $landscapes, array $organisations, string $country, int $cacheParameter)
+    public function __construct(string $delayed_job_id, array $frameworks, array $landscapes, array $organisations, string $country, string $cacheParameter)
     {
         $this->delayed_job_id = $delayed_job_id;
         $this->frameworks = $frameworks;
