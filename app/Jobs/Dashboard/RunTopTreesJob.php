@@ -55,10 +55,12 @@ class RunTopTreesJob implements ShouldQueue
 
             $request = new Request(
                 [
-                    'filter.country' => $this->country,
-                    'filter.programmes' => $this->frameworks,
-                    'filter.landscapes' => $this->landscapes,
-                    'filter.organisations.type' => $this->organisations,
+                    'filter' => [
+                        'country' => $this->country,
+                        'programmes' => $this->frameworks,
+                        'landscapes' => $this->landscapes,
+                        'organisations.type' => $this->organisations,
+                    ]
                 ]
             );
             $response = $runTopTreesService->runTopTreesJob($request);
