@@ -19,7 +19,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
     {
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
-            $cacheValue = Redis::get('total-section-header-'.$cacheParameter);
+            $cacheValue = Redis::get('dashboard:total-section-header|'.$cacheParameter);
 
             if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);
