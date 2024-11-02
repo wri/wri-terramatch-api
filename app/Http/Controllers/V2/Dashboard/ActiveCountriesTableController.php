@@ -19,7 +19,7 @@ class ActiveCountriesTableController extends Controller
     {
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
-            $cacheValue = Redis::get('active-countries-table-'.$cacheParameter);
+            $cacheValue = Redis::get('dashboard:active-countries-table|'.$cacheParameter);
 
             if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);

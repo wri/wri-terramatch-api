@@ -62,6 +62,7 @@ class GetHectaresRestoredController extends Controller
         if (count($polygonsUuids) === 0) {
             return [];
         }
+
         return DB::select('
                 SELECT *
                 FROM indicator_output_hectares

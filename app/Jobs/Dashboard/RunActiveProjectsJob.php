@@ -55,16 +55,14 @@ class RunActiveProjectsJob implements ShouldQueue
 
             $request = new Request(
                 [
-                    'filter' => [
-                        'country' => $this->country,
-                        'programmes' => $this->frameworks,
-                        'landscapes' => $this->landscapes,
-                        'organisations.type' => $this->organisations,
-                    ],
+                    'filter.country' => $this->country,
+                    'filter.programmes' => $this->frameworks,
+                    'filter.landscapes' => $this->landscapes,
+                    'filter.organisations.type' => $this->organisations,
                 ]
             );
             $response = $runActiveProjectsService->runActiveProjectsJob($request);
-            Redis::set('active-projects-' . $this->cacheParameter, json_encode($response));
+            Redis::set('dashboard:active-projects|' . $this->cacheParameter, json_encode($response));
 
 
             $delayedJob->update([

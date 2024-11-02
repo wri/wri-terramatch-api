@@ -19,7 +19,7 @@ class GetJobsCreatedController extends Controller
     {
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
-            $cacheValue = Redis::get('jobs-created-'.$cacheParameter);
+            $cacheValue = Redis::get('dashboard:jobs-created|'.$cacheParameter);
 
             if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);

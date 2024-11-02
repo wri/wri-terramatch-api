@@ -19,9 +19,9 @@ class ViewTreeRestorationGoalController extends Controller
     {
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
-            $cacheValue = Redis::get('tree-restoration-goal-' . $cacheParameter);
+            $cacheValue = Redis::get('dashboard:tree-restoration-goal|' . $cacheParameter);
 
-            if (!$cacheValue) {
+            if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);
                 $landscapes = data_get($request, 'filter.landscapes', []);
                 $organisations = data_get($request, 'filter.organisations.type', []);

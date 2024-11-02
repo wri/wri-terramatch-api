@@ -4,9 +4,9 @@ namespace App\Helpers;
 
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\QueryBuilder;
-use Illuminate\Http\Request;
 
 class TerrafundDashboardQueryHelper
 {
@@ -18,43 +18,42 @@ class TerrafundDashboardQueryHelper
             ->select('v2_projects.*')
             ->where('v2_projects.status', 'approved');
 
-            if ($filters['filter.country']) {
-                $query->where('v2_projects.country', $filters['filter.country']);
-            }
+        if (data_get($filters, 'filter.country')) {
+            $query->where('v2_projects.country', data_get($filters, 'filter.country'));
+        }
+        if (data_get($filters, 'filter.programmes')) {
+            $query->whereIn('v2_projects.framework_key', data_get($filters, 'filter.programmes'));
+        } else {
+            $query->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes']);
+        }
 
-            if ($filters["filter.programmes"]) {
-                $query->whereIn('v2_projects.framework_key', $filters["filter.programmes"]);
-            } else {
-                $query->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes']);
-            }
+        if (data_get($filters, 'filter.landscapes')) {
+            $query->whereIn('v2_projects.landscape', data_get($filters, 'filter.landscapes'));
+        }
 
-            if ($filters['filter.landscapes']) {
-                $query->whereIn('v2_projects.landscape', $filters['filter.landscapes']);
-            }
+        if (data_get($filters, 'filter.organisations.type')) {
+            $query->whereIn('organisations.type', data_get($filters, 'filter.organisations.type'));
+        } else {
+            $query->whereIn('organisations.type', ['non-profit-organization', 'for-profit-organization']);
+        }
 
-            if ($filters['filter.organisations.type']) {
-                $query->whereIn('organisations.type', $filters['filter.organisations.type']);
-            } else {
-                $query->whereIn('organisations.type', ['non-profit-organization', 'for-profit-organization']);
-            }
-
-            // ->whereIn('organisations.type', ['non-profit-organization', 'for-profit-organization'])
-            // ->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes'])
-            // ->allowedFilters([
-            //     AllowedFilter::exact('framework_key'),
-            //     AllowedFilter::callback('landscapes', function ($query, $value): void {
-            //         $query->whereIn('landscape', $value);
-            //     }),
-            //     AllowedFilter::exact('country'),
-            //     AllowedFilter::callback('organisations.type', function ($query, $value) {
-            //         $query->whereIn('organisations.type', $value);
-            //     }),
-            //     AllowedFilter::callback('programmes', function ($query, $value) {
-            //         $query->whereIn('framework_key', $value);
-            //     }),
-            //     AllowedFilter::exact('v2_projects.status'),
-            //     AllowedFilter::exact('v2_projects.uuid'),
-            // ]);
+        // ->whereIn('organisations.type', ['non-profit-organization', 'for-profit-organization'])
+        // ->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes'])
+        // ->allowedFilters([
+        //     AllowedFilter::exact('framework_key'),
+        //     AllowedFilter::callback('landscapes', function ($query, $value): void {
+        //         $query->whereIn('landscape', $value);
+        //     }),
+        //     AllowedFilter::exact('country'),
+        //     AllowedFilter::callback('organisations.type', function ($query, $value) {
+        //         $query->whereIn('organisations.type', $value);
+        //     }),
+        //     AllowedFilter::callback('programmes', function ($query, $value) {
+        //         $query->whereIn('framework_key', $value);
+        //     }),
+        //     AllowedFilter::exact('v2_projects.status'),
+        //     AllowedFilter::exact('v2_projects.uuid'),
+        // ]);
 
         // if ($request->has('search')) {
         //     $searchTerm = $request->query('search');

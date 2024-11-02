@@ -19,7 +19,7 @@ class ActiveProjectsTableController extends Controller
     {
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
-            $cacheValue = Redis::get('active-projects-'.$cacheParameter);
+            $cacheValue = Redis::get('dashboard:active-projects|'.$cacheParameter);
 
             if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);

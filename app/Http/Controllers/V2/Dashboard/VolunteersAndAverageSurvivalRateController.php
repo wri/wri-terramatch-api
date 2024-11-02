@@ -19,7 +19,7 @@ class VolunteersAndAverageSurvivalRateController extends Controller
     {
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
-            $cacheValue = Redis::get('volunteers-survival-rate-'.$cacheParameter);
+            $cacheValue = Redis::get('dashboard:volunteers-survival-rate|'.$cacheParameter);
 
             if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);

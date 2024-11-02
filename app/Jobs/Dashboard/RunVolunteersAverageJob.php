@@ -55,16 +55,14 @@ class RunVolunteersAverageJob implements ShouldQueue
 
             $request = new Request(
                 [
-                    'filter' => [
-                        'country' => $this->country,
-                        'programmes' => $this->frameworks,
-                        'landscapes' => $this->landscapes,
-                        'organisations.type' => $this->organisations,
-                    ],
+                    'filter.country' => $this->country,
+                    'filter.programmes' => $this->frameworks,
+                    'filter.landscapes' => $this->landscapes,
+                    'filter.organisations.type' => $this->organisations,
                 ]
             );
             $response = $runVolunteersAverageService->runVolunteersAverageJob($request);
-            Redis::set('volunteers-survival-rate-' . $this->cacheParameter, json_encode($response));
+            Redis::set('dashboard:volunteers-survival-rate|' . $this->cacheParameter, json_encode($response));
 
 
             $delayedJob->update([

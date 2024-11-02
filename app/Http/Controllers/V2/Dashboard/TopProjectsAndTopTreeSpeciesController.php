@@ -19,7 +19,7 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
     {
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
-            $cacheValue = Redis::get('top-trees-planted-'.$cacheParameter);
+            $cacheValue = Redis::get('dashboard:top-trees-planted|'.$cacheParameter);
 
             if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);
