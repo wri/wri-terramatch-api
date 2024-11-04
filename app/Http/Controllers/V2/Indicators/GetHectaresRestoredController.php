@@ -19,7 +19,7 @@ class GetHectaresRestoredController extends Controller
     {
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
-            $cacheValue = Redis::get('/indicator/hectares-restoration-'.$cacheParameter);
+            $cacheValue = Redis::get('dashboard:indicator/hectares-restoration'.$cacheParameter);
 
             if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);

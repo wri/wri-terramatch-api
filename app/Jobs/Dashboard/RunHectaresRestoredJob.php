@@ -38,7 +38,7 @@ class RunHectaresRestoredJob implements ShouldQueue
 
     protected $cacheParameter;
 
-    public function __construct(string $delayed_job_id, array $frameworks, array $landscapes, array $organisations, string $country, int $cacheParameter)
+    public function __construct(string $delayed_job_id, array $frameworks, array $landscapes, array $organisations, string $country, string $cacheParameter)
     {
         $this->delayed_job_id = $delayed_job_id;
         $this->frameworks = $frameworks;
@@ -64,7 +64,7 @@ class RunHectaresRestoredJob implements ShouldQueue
                 ]
             );
             $response = $runHectaresRestoredService->runHectaresRestoredJob($request);
-            Redis::set('indicator/hectares-restoration-' . $this->cacheParameter, json_encode($response));
+            Redis::set('dashboard:indicator/hectares-restoration' . $this->cacheParameter, json_encode($response));
 
 
             $delayedJob->update([
