@@ -36,6 +36,10 @@ class RunHectaresRestoredService
 
     public function getProjectsPolygons($projects)
     {
+        if (empty($projects)) {
+            return [];
+        }
+
         return DB::select('
                 SELECT sp.uuid
                 FROM site_polygon sp
@@ -47,6 +51,10 @@ class RunHectaresRestoredService
 
     public function polygonToOutputHectares($indicatorId, $polygonsUuids)
     {
+        if (empty($polygonsUuids)) {
+            return [];
+        }
+
         return DB::select('
                 SELECT *
                 FROM indicator_output_hectares
