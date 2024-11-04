@@ -31,6 +31,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('process-scheduled-jobs')->everyFiveMinutes()->onOneServer();
         $schedule->command('generate-application-export')->twiceDaily(13, 20)->onOneServer();
         $schedule->command('generate-admin-all-entity-records-export')->twiceDaily(13, 20)->onOneServer();
+        $schedule->command('send-daily-digest-notifications')->weeklyOn(1, '17:00')->timezone('Europe/Sofia')->onOneServer();
     }
 
     protected function commands()

@@ -4,10 +4,12 @@ namespace App\Http\Controllers\V2\Entities;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\V2\SendProjectManagerJob as SendProjectManagerJobs;
+use App\Jobs\V2\SendTaskDigestProjectManagerJob as SendTaskDigestProjectManagerJobs;
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\Action;
 use App\Models\V2\EntityModel;
 use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -27,6 +29,9 @@ class SubmitEntityWithFormController extends Controller
 
         /** @var UpdateRequest $updateRequest */
         $updateRequest = $entity->updateRequests()->isUnapproved()->first();
+        if ($entity->task && $entity->status == ReportStatusStateMachine::APPROVED && $updateRequest->status == 'approved') {
+            $this->checkAndDispatchTaskDigest($entity);
+        }
         if (! empty($updateRequest)) {
             $updateRequest->submitForApproval();
             $this->saveAuditStatusProjectDeveloperSubmit($entity, $updateRequest);
@@ -40,5 +45,23 @@ class SubmitEntityWithFormController extends Controller
         Action::forTarget($entity)->delete();
 
         return $entity->createSchemaResource();
+    }
+
+    public function checkAndDispatchTaskDigest($entity)
+    {
+        $allReports = collect([
+            $entity->task->projectReport()->get(),
+            $entity->task->siteReports()->get(),
+            $entity->task->nurseryReports()->get(),
+        ])->flatten(1);
+        $otherReports = $allReports->reject(function ($report) use ($entity) {
+            return $report['uuid'] === $entity->uuid;
+        });
+        $otherReportsApproved = $otherReports->filter(function ($report) {
+            return $report['status'] === ReportStatusStateMachine::APPROVED;
+        });
+        if (count($otherReports) == count($otherReportsApproved)) {
+            SendTaskDigestProjectManagerJobs::dispatch($entity);
+        }
     }
 }

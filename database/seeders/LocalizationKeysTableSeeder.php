@@ -303,6 +303,30 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('report-reminder.body', 'This is a reminder that your {entityTypeName} still has the status {entityStatus}. Below you will see a note from your project manager about the report.<br><br> 
             If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>{feedback}');
 
+        // task-digest
+        $this->createLocalizationKey('task-digest.subject', '{projectName} - Report Summary for {date}');
+        $this->createLocalizationKey('task-digest.title', 'Action Items Summary - Task Due {date}');
+        $this->createLocalizationKey('task-digest.body', 'Please note: this digest summarizes any reports that require engagement or were approved in the past week. Any reports already approved will not be mentioned below, since they do not require any action. Once all reports in this task are approved, the task status will be changed to approved, and you’ll no longer receive this digest.
+            <table class="full-width-fixed-table">
+            <tr class="border-light-gray">
+                <th class="border-light-gray" style="width: 25%;">Submission State</th>
+                <th class="border-light-gray" style="width: 25%;">Report Name</th>
+                <th class="border-light-gray" style="width: 25%;">Status</th>
+                <th class="border-light-gray" style="width: 25%;">Change Request</th>
+                <th class="border-light-gray" style="width: 25%;">Latest comments</th>
+            </tr>
+            {reportData}
+            </table>');
+
+        $this->createLocalizationKey('task-digest.cta', 'Access this task here');
+
+        // task-digest project-manager
+        $this->createLocalizationKey('task-digest-project-manager.subject', 'PLEASE REVIEW REPORT UPDATE');
+        $this->createLocalizationKey('task-digest-project-manager.title', 'PLEASE REVIEW REPORT UPDATE');
+        $this->createLocalizationKey('task-digest-project-manager.body', 'The project {projectName} has submitted an update to their report {reportName}, due {reportDueAt}. Please review the update and either approve it or request for more information. 
+            You are receiving this message because you are associated with this project as a Project Manager in TerraMatch. If you wish to no longer receive these messages or have any issues seeing or responding to the changes, please reach out to info@terramatch.org.');
+        $this->createLocalizationKey('task-digest-project-manager.cta', 'View Report');
+
         // //project-manager-project
         $this->createLocalizationKey('project-manager-project.subject', 'Please Review Project Profile Update');
         $this->createLocalizationKey('project-manager-project.title', 'Please Review Project Profile Update');
@@ -328,7 +352,6 @@ class LocalizationKeysTableSeeder extends Seeder
                 'Please review the nursery and either accept the submission or request for more information.<br><br>'.
                 'You are receiving this message because you are associated with this project as a Project Manager in TerraMatch.  If you wish to no longer recieve these messages or have any issues seeing or responding to the changes, please reach out to info@terramatch.org');
         $this->createLocalizationKey('project-manager-nursery.cta', 'View {entityTypeName}');
-
     }
 
     public function createLocalizationKey($key, $value): void
