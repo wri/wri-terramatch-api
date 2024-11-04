@@ -3,7 +3,6 @@
 namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
