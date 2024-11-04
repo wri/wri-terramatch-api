@@ -22,7 +22,6 @@ class TaskDigestProjectNotificationMail extends I18nMail
                 '{reportDueAt}' => $report->due_at,
             ]);
         $this->transactional = true;
-        // $projectUUID = $task->project()->first()->uuid;
         $this->link = '/admin#/' . Str::camel($entity) . '/' . $report->uuid . '/show';
     }
 }
