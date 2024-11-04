@@ -61,7 +61,7 @@ class RunHectaresRestoredJob implements ShouldQueue
                         'programmes' => $this->frameworks,
                         'landscapes' => $this->landscapes,
                         'organisationsType' => $this->organisations,
-                        'projectUuid' => $this->uuid
+                        'projectUuid' => $this->uuid,
                     ],
                 ]
             );
