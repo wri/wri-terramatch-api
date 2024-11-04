@@ -2,7 +2,7 @@
 
 namespace App\Jobs\V2;
 
-use App\Mail\ProjectManager as ProjectManagerMail;
+use App\Mail\TaskDigestProjectManager as TaskDigestProjectManagerMail;
 use App\Models\V2\EntityModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,7 +34,7 @@ class SendTaskDigestProjectManagerJob implements ShouldQueue
         }
 
         foreach ($usersManagers as $manager) {
-            Mail::to($manager['email_address'])->send(new ProjectManagerMail($this->entity, $manager));
+            Mail::to($manager['email_address'])->send(new TaskDigestProjectManagerMail($this->entity, $manager));
         }
     }
 }

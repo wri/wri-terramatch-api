@@ -2,13 +2,8 @@
 
 namespace App\Mail;
 
-use App\Models\V2\Nurseries\NurseryReport;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\Tasks\Task;
-use App\StateMachines\ReportStatusStateMachine;
-use Illuminate\Support\Str;
 use App\Models\V2\EntityModel;
+use Illuminate\Support\Str;
 
 class TaskDigestProjectNotificationMail extends I18nMail
 {

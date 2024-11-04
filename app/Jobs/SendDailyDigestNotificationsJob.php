@@ -4,13 +4,14 @@ namespace App\Jobs;
 
 use App\Mail\TaskDigestMail;
 use App\Models\V2\Tasks\Task;
+use App\StateMachines\ReportStatusStateMachine;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use App\StateMachines\ReportStatusStateMachine;
 
 class SendDailyDigestNotificationsJob implements ShouldQueue
 {
@@ -36,15 +37,18 @@ class SendDailyDigestNotificationsJob implements ShouldQueue
     {
         $users = $this->task->project->users()->get();
         $usersGroupedByLocale = $users->groupBy('locale');
+        $taskDueAt = Carbon::parse($this->task->due_at);
 
-        if (!$this->verifyIfReportsAreApproved($this->task)) {
+        if (! $this->verifyIfReportsAreApproved($this->task) && Carbon::now()->diffInDays($taskDueAt) == 7) {
             foreach ($usersGroupedByLocale as $locale => $users) {
                 $groupedLocale['locale'] = $locale;
                 Mail::to($users->pluck('email_address')->toArray())->queue(new TaskDigestMail($groupedLocale, $this->task));
             }
         }
     }
-    public function verifyIfReportsAreApproved ($task) {
+
+    public function verifyIfReportsAreApproved($task)
+    {
         $allReports = collect([
             $task->projectReport()->get(),
             $task->siteReports()->get(),
