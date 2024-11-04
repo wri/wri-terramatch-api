@@ -34,6 +34,8 @@ class RunActiveCountriesTableJob implements ShouldQueue
 
     protected $country;
 
+    protected $uuid;
+
     protected $cacheParameter;
 
     public function __construct(
@@ -42,6 +44,7 @@ class RunActiveCountriesTableJob implements ShouldQueue
         array $landscapes,
         array $organisations,
         string $country,
+        string $uuid,
         string $cacheParameter
     ) {
         $this->delayed_job_id = $delayed_job_id;
@@ -49,6 +52,7 @@ class RunActiveCountriesTableJob implements ShouldQueue
         $this->landscapes = $landscapes;
         $this->organisations = $organisations;
         $this->country = $country;
+        $this->uuid = $uuid;
         $this->cacheParameter = $cacheParameter;
     }
 
@@ -62,8 +66,9 @@ class RunActiveCountriesTableJob implements ShouldQueue
                     'country' => $this->country,
                     'programmes' => $this->frameworks,
                     'landscapes' => $this->landscapes,
-                    'organisations.type' => $this->organisations,
-                ]
+                    'organisationType' => $this->organisations,
+                    'projectUuid' => $this->uuid,
+                ],
             ]);
 
             $response = $runActiveCountriesTableService->getAllCountries($request);
