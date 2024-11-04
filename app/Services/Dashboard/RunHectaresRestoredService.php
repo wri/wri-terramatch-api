@@ -11,34 +11,28 @@ class RunHectaresRestoredService
 {
     public function runHectaresRestoredJob(Request $request)
     {
-        try {
-            $projectsToQuery = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->pluck('uuid')->toArray();
-            $HECTAREAS_BY_RESTORATION = 'restorationByStrategy';
-            $HECTAREAS_BY_TARGET_LAND_USE_TYPES = 'restorationByLandUse';
+        $projectsToQuery = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->pluck('uuid')->toArray();
+        $HECTAREAS_BY_RESTORATION = 'restorationByStrategy';
+        $HECTAREAS_BY_TARGET_LAND_USE_TYPES = 'restorationByLandUse';
 
-            $projectsPolygons = $this->getProjectsPolygons($projectsToQuery);
-            $polygonsUuids = array_column($projectsPolygons, 'uuid');
+        $projectsPolygons = $this->getProjectsPolygons($projectsToQuery);
+        $polygonsUuids = array_column($projectsPolygons, 'uuid');
 
-            $restorationStrategiesRepresented = $this->polygonToOutputHectares($HECTAREAS_BY_RESTORATION, $polygonsUuids);
-            $targetLandUseTypesRepresented = $this->polygonToOutputHectares($HECTAREAS_BY_TARGET_LAND_USE_TYPES, $polygonsUuids);
+        $restorationStrategiesRepresented = $this->polygonToOutputHectares($HECTAREAS_BY_RESTORATION, $polygonsUuids);
+        $targetLandUseTypesRepresented = $this->polygonToOutputHectares($HECTAREAS_BY_TARGET_LAND_USE_TYPES, $polygonsUuids);
 
-            if (empty($restorationStrategiesRepresented) && empty($targetLandUseTypesRepresented)) {
-                return (object) [
-                    'restoration_strategies_represented' => [],
-                    'target_land_use_types_represented' => [],
-                    'message' => 'No data available for restoration strategies and target land use types.',
-                ];
-            }
-
+        if (empty($restorationStrategiesRepresented) && empty($targetLandUseTypesRepresented)) {
             return (object) [
-                'restoration_strategies_represented' => $this->calculateGroupedHectares($restorationStrategiesRepresented),
-                'target_land_use_types_represented' => $this->calculateGroupedHectares($targetLandUseTypesRepresented),
+                'restoration_strategies_represented' => [],
+                'target_land_use_types_represented' => [],
+                'message' => 'No data available for restoration strategies and target land use types.',
             ];
-        } catch (Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred: ' . $e->getMessage(),
-            ], 500);
         }
+
+        return (object) [
+            'restoration_strategies_represented' => $this->calculateGroupedHectares($restorationStrategiesRepresented),
+            'target_land_use_types_represented' => $this->calculateGroupedHectares($targetLandUseTypesRepresented),
+        ];
     }
 
     public function getProjectsPolygons($projects)
