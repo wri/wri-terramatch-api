@@ -10,7 +10,6 @@ use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class TreeRestorationGoalService
 {
@@ -39,7 +38,6 @@ class TreeRestorationGoalService
         $averageSurvivalRateTotal = $this->getAverageSurvival($allProjectIds);
         $averageSurvivalRateForProfit = $this->getAverageSurvival($forProfitProjectIds);
         $averageSurvivalRateNonProfit = $this->getAverageSurvival($nonProfitProjectIds);
-        Log::info('final');
 
         return [
             'forProfitTreeCount' => (int) $forProfitTreeCount,
