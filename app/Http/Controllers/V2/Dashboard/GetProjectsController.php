@@ -10,6 +10,21 @@ class GetProjectsController extends Controller
 {
     public function __invoke(Request $request)
     {
+        $frameworks = data_get($request, 'filter.programmes', []);
+        $landscapes = data_get($request, 'filter.landscapes', []);
+        $organisations = data_get($request, 'filter.organisationType', []);
+        $country = data_get($request, 'filter.country', '');
+        $uuid = data_get($request, 'filter.projectUuid', '');
+        $request = new Request([
+          'filter' => [
+              'country' => $country,
+              'programmes' => $frameworks,
+              'landscapes' => $landscapes,
+              'organisationType' => $organisations,
+              'projectUuid' => $uuid,
+          ],
+        ]);
+
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->whereNotNull('long')
             ->whereNotNull('lat')

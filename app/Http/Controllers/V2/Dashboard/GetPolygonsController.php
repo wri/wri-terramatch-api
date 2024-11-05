@@ -22,18 +22,9 @@ class GetPolygonsController extends Controller
         ]);
     }
 
-    public function getPolygonsByStatusOfProject(Request $request): GetPolygonsResource
+    public function getPolygonsDataByStatusOfProject(Request $request): GetPolygonsResource
     {
-        $polygonsIds = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProject($request);
-
-        return new GetPolygonsResource([
-          'data' => $polygonsIds,
-        ]);
-    }
-
-    public function getPolygonsUuidsByStatusForProject(Request $request): GetPolygonsResource
-    {
-        $polygonsIds = TerrafundDashboardQueryHelper::getPolygonsUuidsByStatusForProject($request);
+        $polygonsIds = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProjects($request);
 
         return new GetPolygonsResource([
           'data' => $polygonsIds,
