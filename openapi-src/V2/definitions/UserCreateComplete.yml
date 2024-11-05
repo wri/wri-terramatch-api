@@ -1,0 +1,18 @@
+type: object
+properties:
+  token:
+    type: string
+  password:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  email_address:
+    type: string
+  job_role:
+    type: string
+  phone_number:
+    type: string
+  role:
+    type: string

@@ -388,3 +388,5 @@ DashboardIndicatorHectaresRestorationResponse:
   $ref: './DashboardIndicatorHectaresRestorationResponse.yml'
 DashboardIndicatorHectaresRestorationData:
   $ref: './DashboardIndicatorHectaresRestorationData.yml'
+UserCreateComplete:
+  $ref: './UserCreateComplete.yml'

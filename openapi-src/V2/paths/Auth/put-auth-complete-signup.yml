@@ -1,0 +1,20 @@
+operationId: put-auth-complete-signup
+summary: Complete a user's signup process
+tags:
+  - Auth
+security: []
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - name: Body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/UserCreateComplete'
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: '../../definitions/_index.yml#/Empty'

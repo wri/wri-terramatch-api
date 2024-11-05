@@ -116,6 +116,7 @@ Route::withoutMiddleware('auth:service-api-key,api')->group(function () {
         Route::post('/auth/reset', [AuthController::class, 'resetAction']);
         Route::patch('/auth/change', [AuthController::class, 'changeAction']);
         Route::patch('/v2/auth/verify', [AuthController::class, 'verifyUnauthorizedAction']);
+        Route::put('/v2/auth/complete/signup', [AuthController::class, 'completeUserSignup']);
     });
 
     Route::get('/auth/logout', [AuthController::class, 'logoutAction']);

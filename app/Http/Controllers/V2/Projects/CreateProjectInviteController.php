@@ -55,6 +55,9 @@ class CreateProjectInviteController extends Controller
 
             $organisation = Organisation::where('id', $project->organisation_id)->first();
             $projectInvite = $project->invites()->create($data);
+
+            $url = str_replace('/reset-password', '/signup', $url);
+
             Mail::to($data['email_address'])->queue(new V2ProjectInviteReceived($project->name, $organisation->name, $url, $user));
         }
 
