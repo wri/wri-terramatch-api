@@ -107,7 +107,7 @@ class TerrafundEditGeometryController extends Controller
 
             return response()->json(['message' => 'All related polygons and site polygons deleted successfully.', 'uuid' => $primaryUuid]);
         } catch (\Exception $e) {
-            Log::error('An error occurred: ' . $e->getMessage());
+            Log::error('An error occurred at delete function: ' . $e->getMessage());
 
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
@@ -143,7 +143,7 @@ class TerrafundEditGeometryController extends Controller
 
             return response()->json($response);
         } catch (\Exception $e) {
-            Log::error('An error occurred: ' . $e->getMessage());
+            Log::error('An error occurred at delete multiple polygons and sites: ' . $e->getMessage());
 
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
@@ -192,7 +192,7 @@ class TerrafundEditGeometryController extends Controller
 
             return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'An error occurred at update geometry: ' . $e->getMessage()], 500);
         }
     }
 
@@ -231,8 +231,7 @@ class TerrafundEditGeometryController extends Controller
 
             return response()->json(['message' => 'Site polygon updated successfully']);
         } catch (\Exception $e) {
-            // Handle other exceptions
-            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'An error occurred at update site polygons: ' . $e->getMessage()], 500);
         }
     }
 
@@ -263,8 +262,7 @@ class TerrafundEditGeometryController extends Controller
 
             return response()->json(['message' => 'Site polygon version created successfully'], 201);
         } catch (\Exception $e) {
-            // Handle other exceptions
-            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'An error occurred at creating version: ' . $e->getMessage()], 500);
         }
     }
 
@@ -363,8 +361,7 @@ class TerrafundEditGeometryController extends Controller
 
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);
         } catch (\Exception $e) {
-            // Handle other exceptions
-            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'An error occurred at create site polygon: ' . $e->getMessage()], 500);
         }
     }
 
