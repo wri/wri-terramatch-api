@@ -99,36 +99,34 @@ class TerrafundDashboardQueryHelper
             return [];
         }
     }
-    public static function retrievePolygonUuidsByStatusForProjects($projectUuids)
+    public static function retrievePolygonUuidsByStatusForProjects($projectUuids, $requestedStatuses = null)
     {
-      $statuses = ['needs-more-information', 'submitted', 'approved', 'draft'];
-      $polygons = [];
-
-      foreach ($projectUuids as $projectUuid) {
-          $project = Project::where('uuid', $projectUuid)->first();
-          if ($project) {
-              $sitePolygons = $project->sitePolygons;
- 
-              foreach ($statuses as $status) {
-                  $polygonsOfProject = $sitePolygons
-                      ->where('status', $status)
-                      ->pluck('poly_id');
-                  
-                  if (!isset($polygons[$status])) {
-                      $polygons[$status] = [];
-                  }
-                  
-                  $polygons[$status] = array_merge($polygons[$status], $polygonsOfProject->toArray());
-              }
-              
-
-          } else {
-              Log::warning("Project with UUID $projectUuid not found.");
-          }
-      }
+        $statuses = $requestedStatuses ?? ['needs-more-information', 'submitted', 'approved', 'draft'];
+        $polygons = [];
+    
+        foreach ($projectUuids as $projectUuid) {
+            $project = Project::where('uuid', $projectUuid)->first();
+            if ($project) {
+                $sitePolygons = $project->sitePolygons;
+    
+                foreach ($statuses as $status) {
+                    $polygonsOfProject = $sitePolygons
+                        ->where('status', $status)
+                        ->pluck('poly_id');
+    
+                    if (!isset($polygons[$status])) {
+                        $polygons[$status] = [];
+                    }
+    
+                    $polygons[$status] = array_merge($polygons[$status], $polygonsOfProject->toArray());
+                }
+            } else {
+                Log::warning("Project with UUID $projectUuid not found.");
+            }
+        }
+    
         return $polygons;
     }
-    
 
 
 
@@ -136,7 +134,9 @@ class TerrafundDashboardQueryHelper
     {
         $projectUuids = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->pluck('v2_projects.uuid');
-        return self::retrievePolygonUuidsByStatusForProjects($projectUuids);
+    
+        $requestedStatuses = $request->input('statuses');
+        return self::retrievePolygonUuidsByStatusForProjects($projectUuids, $requestedStatuses);
     }
 
 }

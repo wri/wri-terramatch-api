@@ -116,6 +116,7 @@ class ViewProjectController extends Controller
                         'organisationType' => $organisations,
                         'projectUuid' => $projectUuids
                     ],
+                    'statuses' => ['approved']
                 ];
 
 
