@@ -729,7 +729,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
-    Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsByStatusOfProject']);
+    Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
