@@ -31,7 +31,6 @@ class GetPolygonsController extends Controller
         ]);
     }
 
-
     public function getBboxOfCompleteProject(Request $request)
     {
         try {

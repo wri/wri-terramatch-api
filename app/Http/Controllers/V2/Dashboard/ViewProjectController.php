@@ -114,25 +114,25 @@ class ViewProjectController extends Controller
                         'programmes' => $frameworks,
                         'landscapes' => $landscapes,
                         'organisationType' => $organisations,
-                        'projectUuid' => $projectUuids
+                        'projectUuid' => $projectUuids,
                     ],
-                    'statuses' => ['approved']
+                    'statuses' => ['approved'],
                 ];
 
 
-                    $request = new Request($filterWithProjects);
+                $request = new Request($filterWithProjects);
 
-                    try {
-                        $polygonsResource = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProjects($request);
-                        if ($polygonsResource !== null) {
-                            foreach ($polygonsResource as $status => $polygons) {
+                try {
+                    $polygonsResource = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProjects($request);
+                    if ($polygonsResource !== null) {
+                        foreach ($polygonsResource as $status => $polygons) {
                             $polygons = $polygons instanceof \Illuminate\Support\Collection ? $polygons->toArray() : $polygons;
                             $polygonsData[$status] = array_merge($polygonsData[$status], $polygons);
-                            }
-                          }
-                    } catch (\Exception $e) {
-                      Log::error('Error fetching polygons for project UUID ' . json_encode(['projectslist' => $projectUuids]) . ': ' . $e->getMessage());
+                        }
                     }
+                } catch (\Exception $e) {
+                    Log::error('Error fetching polygons for project UUID ' . json_encode(['projectslist' => $projectUuids]) . ': ' . $e->getMessage());
+                }
 
                 return response()->json([
                   'projectsUuids' => $projectUuids,
