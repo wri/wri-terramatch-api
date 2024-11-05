@@ -44264,6 +44264,25 @@ definitions:
           urban-forest:
             type: number
             description: Total amount for urban forest projects.
+  UserCreateComplete:
+    type: object
+    properties:
+      token:
+        type: string
+      password:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      job_role:
+        type: string
+      phone_number:
+        type: string
+      role:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -90282,6 +90301,45 @@ paths:
               token:
                 type: string
               password:
+                type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  /v2/auth/complete/signup:
+    put:
+      operationId: put-auth-complete-signup
+      summary: Complete a user's signup process
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+              password:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              job_role:
+                type: string
+              phone_number:
+                type: string
+              role:
                 type: string
       responses:
         '200':

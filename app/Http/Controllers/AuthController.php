@@ -6,6 +6,7 @@ use App\Exceptions\FailedLoginException;
 use App\Exceptions\SamePasswordException;
 use App\Helpers\JsonResponseHelper;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\ConfirmCreateUserRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResendByEmailRequest;
 use App\Http\Requests\ResendRequest;
@@ -206,5 +207,35 @@ class AuthController extends Controller
         Auth::logout();
 
         return JsonResponseHelper::success((object) ['message' => 'user successfully deleted.'], 200);
+    }
+
+    public function completeUserSignup(ConfirmCreateUserRequest $request): JsonResponse
+    {
+        $this->authorize('change', 'App\\Models\\Auth');
+        $data = $request->json()->all();
+        $passwordReset = PasswordResetModel::where('token', '=', $data['token'])->firstOrFail();
+        $user = UserModel::findOrFail($passwordReset->user_id);
+        $projectInvites = ProjectInvite::where('email_address', $user->email_address)->get();
+        foreach ($projectInvites as $invite) {
+            $invite->email_address = $data['email_address'];
+            $user->projects()->sync([$invite->project_id => ['is_monitoring' => true]]);
+            if ($invite->accepted_at === null) {
+                $invite->accepted_at = now();
+                $invite->saveOrFail();
+            }
+        }
+        $user->first_name = $data['first_name'];
+        $user->last_name = $data['last_name'];
+        $user->job_role = $data['job_role'];
+        $user->phone_number = $data['phone_number'];
+        $user->email_address = $data['email_address'];
+        $user->password = $data['password'];
+        $user->email_address_verified_at = new DateTime('now', new DateTimeZone('UTC'));
+        $role = 'project-developer';
+        $user->assignRole($role);
+        $user->saveOrFail();
+        $passwordReset->delete();
+
+        return JsonResponseHelper::success((object) [], 200);
     }
 }

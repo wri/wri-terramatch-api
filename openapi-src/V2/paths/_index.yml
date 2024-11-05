@@ -2475,6 +2475,9 @@
 /auth/change:
   patch:
     $ref: './Auth/patch-auth-change.yml'
+/v2/auth/complete/signup:
+  put:
+    $ref: './Auth/put-auth-complete-signup.yml'
 /auth/reset:
   post:
     $ref: './Auth/post-auth-reset.yml'
