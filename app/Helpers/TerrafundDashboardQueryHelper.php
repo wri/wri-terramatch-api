@@ -41,6 +41,14 @@ class TerrafundDashboardQueryHelper
             $query->where('v2_projects.uuid', data_get($filters, 'filter.projectUuid'));
         }
 
+        if ($projectUuids = data_get($filters, 'filter.projectUuid')) { 
+            if (is_array($projectUuids)) { 
+                $query->whereIn('v2_projects.uuid', $projectUuids); 
+            } else {
+                 $query->where('v2_projects.uuid', $projectUuids); 
+            } 
+        }
+
         if ($request->has('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
