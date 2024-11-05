@@ -54,7 +54,7 @@ class ViewProjectController extends Controller
         return response()->json($response);
     }
 
-    public function getAllProjectsAllowedToUser()
+    public function getAllProjectsAllowedToUser(Request $request)
     {
         try {
             /** @var User $user */
@@ -105,11 +105,26 @@ class ViewProjectController extends Controller
                   'approved' => [],
                   'draft' => [],
                 ];
-
+                $frameworks = data_get($request, 'filter.programmes', []);
+                $landscapes = data_get($request, 'filter.landscapes', []);
+                $organisations = data_get($request, 'filter.organisationType', []);
+                $country = data_get($request, 'filter.country', '');
+                $baseFilter = [
+                    'filter' => [
+                        'country' => $country,
+                        'programmes' => $frameworks,
+                        'landscapes' => $landscapes,
+                        'organisationType' => $organisations,
+                    ],
+                ];
+                
                 foreach ($projectUuids as $uuid) {
-                    Log::info('Fetching polygons for project UUID ' . $uuid);
-                    $request = new Request(['uuid' => $uuid]);
-
+                  $filterWithProject = array_merge_recursive($baseFilter, [
+                    'filter' => [
+                        'projectUuid' => $uuid
+                    ]
+                ]);
+                $request = new Request($filterWithProject);
                     try {
                         $polygonsResource = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProject($request);
                         foreach ($polygonsResource as $status => $polygons) {
