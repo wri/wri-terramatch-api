@@ -24,7 +24,7 @@ class GetProjectsController extends Controller
               'projectUuid' => $uuid,
           ],
         ]);
-        
+
         $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->whereNotNull('long')
             ->whereNotNull('lat')

@@ -11,9 +11,9 @@ use App\Models\Traits\HasCacheParameter;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\Dashboard\RunTotalHeaderService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\App;
 
 class TotalTerrafundHeaderDashboardController extends Controller
 {
@@ -73,5 +73,4 @@ class TotalTerrafundHeaderDashboardController extends Controller
 
         return response()->json($response);
     }
-
 }

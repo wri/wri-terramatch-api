@@ -117,14 +117,15 @@ class ViewProjectController extends Controller
                         'organisationType' => $organisations,
                     ],
                 ];
-                
+
                 foreach ($projectUuids as $uuid) {
-                  $filterWithProject = array_merge_recursive($baseFilter, [
-                    'filter' => [
-                        'projectUuid' => $uuid
-                    ]
+                    $filterWithProject = array_merge_recursive($baseFilter, [
+                      'filter' => [
+                          'projectUuid' => $uuid,
+                      ],
                 ]);
-                $request = new Request($filterWithProject);
+                    $request = new Request($filterWithProject);
+
                     try {
                         $polygonsResource = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProject($request);
                         foreach ($polygonsResource as $status => $polygons) {
