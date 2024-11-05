@@ -38,13 +38,14 @@ class RunActiveProjectsJob implements ShouldQueue
 
     protected $cacheParameter;
 
-    public function __construct(string $delayed_job_id, array $frameworks, array $landscapes, array $organisations, string $country, int $cacheParameter)
+    public function __construct(string $delayed_job_id, array $frameworks, array $landscapes, array $organisations, string $country, string $uuid, string $cacheParameter)
     {
         $this->delayed_job_id = $delayed_job_id;
         $this->frameworks = $frameworks;
         $this->landscapes = $landscapes;
         $this->organisations = $organisations;
         $this->country = $country;
+        $this->uuid = $uuid;
         $this->cacheParameter = $cacheParameter;
     }
 
@@ -59,17 +60,18 @@ class RunActiveProjectsJob implements ShouldQueue
                         'country' => $this->country,
                         'programmes' => $this->frameworks,
                         'landscapes' => $this->landscapes,
-                        'organisations.type' => $this->organisations,
+                        'organisationType' => $this->organisations,
+                        'projectUuid' => $this->uuid,
                     ],
                 ]
             );
             $response = $runActiveProjectsService->runActiveProjectsJob($request);
-            Redis::set('active-projects-' . $this->cacheParameter, json_encode($response));
+            Redis::set('dashboard:active-projects|' . $this->cacheParameter, json_encode($response));
 
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
-                'payload' => ['message' => 'Active Projects Calculation completed'],
+                'payload' => json_encode($response),
                 'status_code' => Response::HTTP_OK,
             ]);
 

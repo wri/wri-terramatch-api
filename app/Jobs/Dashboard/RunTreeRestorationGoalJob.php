@@ -34,6 +34,8 @@ class RunTreeRestorationGoalJob implements ShouldQueue
 
     protected $country;
 
+    protected $uuid;
+
     protected $cacheParameter;
 
     public function __construct(
@@ -42,13 +44,15 @@ class RunTreeRestorationGoalJob implements ShouldQueue
         array $landscapes,
         array $organisations,
         string $country,
-        int $cacheParameter
+        string $uuid,
+        string $cacheParameter
     ) {
         $this->delayed_job_id = $delayed_job_id;
         $this->frameworks = $frameworks;
         $this->landscapes = $landscapes;
         $this->organisations = $organisations;
         $this->country = $country;
+        $this->uuid = $uuid;
         $this->cacheParameter = $cacheParameter;
     }
 
@@ -62,16 +66,17 @@ class RunTreeRestorationGoalJob implements ShouldQueue
                     'country' => $this->country,
                     'programmes' => $this->frameworks,
                     'landscapes' => $this->landscapes,
-                    'organisations.type' => $this->organisations,
+                    'organisationType' => $this->organisations,
+                    'projectUuid' => $this->uuid,
                 ],
             ]);
 
             $response = $treeRestorationGoalService->calculateTreeRestorationGoal($request);
-            Redis::set('tree-restoration-goal-' . $this->cacheParameter, json_encode($response));
+            Redis::set('dashboard:tree-restoration-goal|' . $this->cacheParameter, json_encode($response));
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
-                'payload' => ['message' => 'Tree Restoration Goal calculation completed'],
+                'payload' => json_encode($response),
                 'status_code' => Response::HTTP_OK,
             ]);
 

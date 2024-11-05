@@ -38,13 +38,14 @@ class RunHectaresRestoredJob implements ShouldQueue
 
     protected $cacheParameter;
 
-    public function __construct(string $delayed_job_id, array $frameworks, array $landscapes, array $organisations, string $country, string $cacheParameter)
+    public function __construct(string $delayed_job_id, array $frameworks, array $landscapes, array $organisations, string $country, string $uuid, string $cacheParameter)
     {
         $this->delayed_job_id = $delayed_job_id;
         $this->frameworks = $frameworks;
         $this->landscapes = $landscapes;
         $this->organisations = $organisations;
         $this->country = $country;
+        $this->uuid = $uuid;
         $this->cacheParameter = $cacheParameter;
     }
 
@@ -59,7 +60,8 @@ class RunHectaresRestoredJob implements ShouldQueue
                         'country' => $this->country,
                         'programmes' => $this->frameworks,
                         'landscapes' => $this->landscapes,
-                        'organisations.type' => $this->organisations,
+                        'organisationsType' => $this->organisations,
+                        'projectUuid' => $this->uuid,
                     ],
                 ]
             );

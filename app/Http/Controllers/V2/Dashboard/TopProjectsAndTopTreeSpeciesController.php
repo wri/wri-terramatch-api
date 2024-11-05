@@ -19,13 +19,14 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
     {
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
-            $cacheValue = Redis::get('top-trees-planted-'.$cacheParameter);
+            $cacheValue = Redis::get('dashboard:top-trees-planted|'.$cacheParameter);
 
             if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);
                 $landscapes = data_get($request, 'filter.landscapes', []);
-                $organisations = data_get($request, 'filter.organisations.type', []);
+                $organisations = data_get($request, 'filter.organisationType', []);
                 $country = data_get($request, 'filter.country', '');
+                $uuid = data_get($request, 'filter.projectUuid', '');
 
                 $delayedJob = DelayedJob::create();
                 $job = new RunTopTreesJob(
@@ -34,6 +35,7 @@ class TopProjectsAndTopTreeSpeciesController extends Controller
                     $landscapes,
                     $organisations,
                     $country,
+                    $uuid,
                     $cacheParameter
                 );
                 dispatch($job);
