@@ -71,7 +71,7 @@ class RunTopTreesJob implements ShouldQueue
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
-                'payload' => ['message' => 'Top projects and Top Tree Species Job completed successfully'],
+                'payload' => json_encode($response),
                 'status_code' => Response::HTTP_OK,
             ]);
 

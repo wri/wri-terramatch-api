@@ -71,7 +71,7 @@ class RunActiveProjectsJob implements ShouldQueue
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
-                'payload' => ['message' => 'Active Projects Calculation completed'],
+                'payload' => json_encode($response),
                 'status_code' => Response::HTTP_OK,
             ]);
 

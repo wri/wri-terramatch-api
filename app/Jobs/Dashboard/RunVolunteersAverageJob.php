@@ -71,7 +71,7 @@ class RunVolunteersAverageJob implements ShouldQueue
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
-                'payload' => ['message' => 'Volunteers Average Calculation completed'],
+                'payload' => json_encode($response),
                 'status_code' => Response::HTTP_OK,
             ]);
 

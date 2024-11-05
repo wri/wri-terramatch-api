@@ -79,7 +79,7 @@ class RunActiveCountriesTableJob implements ShouldQueue
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
-                'payload' => ['message' => 'Active Countries Table Calculation completed'],
+                'payload' => json_encode($response),
                 'status_code' => Response::HTTP_OK,
             ]);
 
