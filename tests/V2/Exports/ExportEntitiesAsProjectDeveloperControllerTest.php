@@ -14,6 +14,7 @@ use App\Models\V2\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Redis;
 use Tests\TestCase;
 
 class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
@@ -170,7 +171,7 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function test_an_user_can_export_all_project_data(string $permission, string $fmKey)
+    public function test_an_user_can_export_all_project_data_gets_a_delayed_job_when_not_cached(string $permission, string $fmKey)
     {
         Carbon::setTestNow(now());
 
@@ -219,6 +220,73 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
         CustomFormHelper::generateFakeForm('site-report', $fmKey);
 
         $uri = '/api/v2/projects/' . $project->uuid . '/export';
+
+        $this->actingAs($owner)
+            ->get($uri)
+            ->assertJsonStructure([
+                'data' => [
+                    'message',
+                    'job_uuid',
+                ],
+                'message',
+            ])
+            ->assertSuccessful();
+    }
+
+    /**
+     * @dataProvider permissionsDataProvider
+     */
+    public function test_an_user_can_export_all_project_data_when_already_cached(string $permission, string $fmKey)
+    {
+        Carbon::setTestNow(now());
+
+        $organisation = Organisation::factory()->create();
+        $owner = User::factory()->create(['organisation_id' => $organisation->id]);
+
+        $project = Project::factory()->create([
+            'framework_key' => $fmKey,
+            'organisation_id' => $organisation->id,
+        ]);
+
+        ProjectReport::factory()->count(5)->create([
+            'framework_key' => $fmKey,
+            'project_id' => $project->id,
+        ]);
+
+        $nurseries = Nursery::factory()->count(5)->create([
+            'framework_key' => $fmKey,
+            'project_id' => $project->id,
+        ]);
+
+        foreach ($nurseries as $nursery) {
+            NurseryReport::factory()->count(5)->create([
+                'framework_key' => $fmKey,
+                'nursery_id' => $nursery->id,
+            ]);
+        }
+
+        $sites = Site::factory()->count(5)->create([
+            'framework_key' => $fmKey,
+            'project_id' => $project->id,
+        ]);
+
+        foreach ($sites as $site) {
+            SiteReport::factory()->count(5)->create([
+                'framework_key' => $fmKey,
+                'site_id' => $site->id,
+            ]);
+        }
+
+        CustomFormHelper::generateFakeForm('project', $fmKey);
+        CustomFormHelper::generateFakeForm('project-report', $fmKey);
+        CustomFormHelper::generateFakeForm('nursery', $fmKey);
+        CustomFormHelper::generateFakeForm('nursery-report', $fmKey);
+        CustomFormHelper::generateFakeForm('site', $fmKey);
+        CustomFormHelper::generateFakeForm('site-report', $fmKey);
+
+        $uri = '/api/v2/projects/' . $project->uuid . '/export';
+
+        Redis::set('exports:project:'.$project->id, 'some text');
 
         $this->actingAs($owner)
             ->get($uri)
