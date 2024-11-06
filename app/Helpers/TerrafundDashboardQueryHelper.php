@@ -136,6 +136,7 @@ class TerrafundDashboardQueryHelper
             ->pluck('v2_projects.uuid');
 
         $approvedStatus = ['approved'];
+
         return self::retrievePolygonUuidsByStatusForProjects($projectUuids, $approvedStatus);
     }
 }
