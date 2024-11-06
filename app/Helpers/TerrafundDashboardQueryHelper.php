@@ -13,44 +13,54 @@ class TerrafundDashboardQueryHelper
     public static function buildQueryFromRequest(Request $request)
     {
         $filters = $request->all();
-        $query = QueryBuilder::for(Project::class)
+        $searchTerm = $request->query('search');
+
+        $query = Project::query()
+            ->select([
+                'v2_projects.id',
+                'v2_projects.uuid',
+                'v2_projects.framework_key',
+                'v2_projects.organisation_id',
+                'v2_projects.status',
+                'v2_projects.name',
+                'v2_projects.country'
+            ])
+            ->with('organisation:id,type,name')
             ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
-            ->select('v2_projects.*')
             ->where('v2_projects.status', 'approved');
 
-        if (data_get($filters, 'filter.country')) {
-            $query->where('v2_projects.country', data_get($filters, 'filter.country'));
-        }
-        if (data_get($filters, 'filter.programmes')) {
-            $query->whereIn('v2_projects.framework_key', data_get($filters, 'filter.programmes'));
-        } else {
+        $query->when(data_get($filters, 'filter.country'), function ($query, $country) {
+            $query->where('v2_projects.country', $country);
+        });
+
+        $query->when(data_get($filters, 'filter.programmes'), function ($query, $programmes) {
+            $query->whereIn('v2_projects.framework_key', $programmes);
+        }, function ($query) {
             $query->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes']);
-        }
+        });
 
-        if (data_get($filters, 'filter.landscapes')) {
-            $query->whereIn('v2_projects.landscape', data_get($filters, 'filter.landscapes'));
-        }
+        $query->when(data_get($filters, 'filter.landscapes'), function ($query, $landscapes) {
+            $query->whereIn('v2_projects.landscape', $landscapes);
+        });
 
-        if (data_get($filters, 'filter.organisationType')) {
-            $query->whereIn('organisations.type', data_get($filters, 'filter.organisationType'));
-        } else {
+        $query->when(data_get($filters, 'filter.organisationType'), function ($query, $organisationType) {
+            $query->whereIn('organisations.type', $organisationType);
+        }, function ($query) {
             $query->whereIn('organisations.type', ['non-profit-organization', 'for-profit-organization']);
-        }
-        if (data_get($filters, 'filter.projectUuid')) {
-            $projectUuids = data_get($filters, 'filter.projectUuid');
-            if (is_array($projectUuids)) {
-                $query->whereIn('v2_projects.uuid', $projectUuids);
-            } else {
-                $query->where('v2_projects.uuid', $projectUuids);
-            }
-        }
-        if ($request->has('search')) {
-            $searchTerm = $request->query('search');
-            $query->where(function ($query) use ($searchTerm) {
-                $query->where('v2_projects.name', 'like', "%$searchTerm%");
-            });
-        }
+        });
 
+        $query->when(data_get($filters, 'filter.projectUuid'), function ($query, $projectUuid) {
+            if (is_array($projectUuid)) {
+                $query->whereIn('v2_projects.uuid', $projectUuid);
+            } else {
+                $query->where('v2_projects.uuid', $projectUuid);
+            }
+        });
+
+        $query->when($searchTerm, function ($query, $searchTerm) {
+            $query->where('v2_projects.name', 'like', "%$searchTerm%");
+        });
+        Log::info('SQL Query: ' . $query->toSql());
         return $query;
     }
 
