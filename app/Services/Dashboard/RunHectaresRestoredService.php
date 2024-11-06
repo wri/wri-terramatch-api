@@ -11,14 +11,14 @@ class RunHectaresRestoredService
     public function runHectaresRestoredJob(Request $request)
     {
         $projectsToQuery = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->pluck('uuid')->toArray();
-        $HECTAREAS_BY_RESTORATION = 'restorationByStrategy';
-        $HECTAREAS_BY_TARGET_LAND_USE_TYPES = 'restorationByLandUse';
+        $HECTARES_BY_RESTORATION = 'restorationByStrategy';
+        $HECTARES_BY_TARGET_LAND_USE_TYPES = 'restorationByLandUse';
 
         $projectsPolygons = $this->getProjectsPolygons($projectsToQuery);
-        $polygonsUuids = array_column($projectsPolygons, 'uuid');
+        $polygonIds = array_column($projectsPolygons, 'id');
 
-        $restorationStrategiesRepresented = $this->polygonToOutputHectares($HECTAREAS_BY_RESTORATION, $polygonsUuids);
-        $targetLandUseTypesRepresented = $this->polygonToOutputHectares($HECTAREAS_BY_TARGET_LAND_USE_TYPES, $polygonsUuids);
+        $restorationStrategiesRepresented = $this->polygonToOutputHectares($HECTARES_BY_RESTORATION, $polygonIds);
+        $targetLandUseTypesRepresented = $this->polygonToOutputHectares($HECTARES_BY_TARGET_LAND_USE_TYPES, $polygonIds);
 
         if (empty($restorationStrategiesRepresented) && empty($targetLandUseTypesRepresented)) {
             return (object) [
@@ -41,7 +41,7 @@ class RunHectaresRestoredService
         }
 
         return DB::select('
-                SELECT sp.uuid
+                SELECT sp.id
                 FROM site_polygon sp
                 INNER JOIN v2_sites s ON sp.site_id = s.uuid
                 INNER JOIN v2_projects p ON s.project_id = p.id
@@ -49,9 +49,9 @@ class RunHectaresRestoredService
             ', $projects);
     }
 
-    public function polygonToOutputHectares($indicatorId, $polygonsUuids)
+    public function polygonToOutputHectares($indicatorId, $polygonIds)
     {
-        if (empty($polygonsUuids)) {
+        if (empty($polygonIds)) {
             return [];
         }
 
@@ -59,8 +59,8 @@ class RunHectaresRestoredService
                 SELECT *
                 FROM indicator_output_hectares
                 WHERE indicator_slug = ?
-                AND polygon_id IN (' . implode(',', array_fill(0, count($polygonsUuids), '?')) . ')
-            ', array_merge([$indicatorId], $polygonsUuids));
+                AND site_polygon_id IN (' . implode(',', array_fill(0, count($polygonIds), '?')) . ')
+            ', array_merge([$indicatorId], $polygonIds));
     }
 
     public function calculateGroupedHectares($polygonsToOutputHectares)
