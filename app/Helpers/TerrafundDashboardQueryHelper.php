@@ -84,7 +84,7 @@ class TerrafundDashboardQueryHelper
 
     public static function getPolygonUuidsOfProject($request)
     {
-        $projectUuId = $request['filter']['v2_projects.uuid'];
+        $projectUuId = $request['filter']['projectUuid'];
 
         return self::retrievePolygonUuidsForProject($projectUuId);
     }
