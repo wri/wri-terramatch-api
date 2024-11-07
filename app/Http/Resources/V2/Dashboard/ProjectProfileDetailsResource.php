@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources\V2\Dashboard;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\V2\Forms\FormOptionListOption;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProjectProfileDetailsResource extends JsonResource
 {
