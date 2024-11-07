@@ -6,7 +6,6 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class TerrafundDashboardQueryHelper
 {
@@ -23,7 +22,7 @@ class TerrafundDashboardQueryHelper
                 'v2_projects.organisation_id',
                 'v2_projects.status',
                 'v2_projects.name',
-                'v2_projects.country'
+                'v2_projects.country',
             ])
             ->with('organisation:id,type,name')
             ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
@@ -61,6 +60,7 @@ class TerrafundDashboardQueryHelper
             $query->where('v2_projects.name', 'like', "%$searchTerm%");
         });
         Log::info('SQL Query: ' . $query->toSql());
+
         return $query;
     }
 

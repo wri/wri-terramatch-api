@@ -5,8 +5,6 @@ namespace App\Services\Dashboard;
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class RunTotalHeaderService
 {
@@ -42,10 +40,10 @@ class RunTotalHeaderService
             ->get()
             ->map(function ($project) {
                 $project->total_hectares_restored = $project->sitePolygons->sum('calc_area');
+
                 return $project;
             });
     }
-
 
     private function getCountryName(Request $request)
     {
@@ -56,6 +54,7 @@ class RunTotalHeaderService
                 ->first()
                 ->country;
         }
+
         return '';
     }
 }
