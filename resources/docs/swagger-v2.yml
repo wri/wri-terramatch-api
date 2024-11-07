@@ -42600,18 +42600,9 @@ definitions:
           non_youth_volunteers:
             type: integer
             description: Total number of non-youth volunteers.
-          non_profit_survival_rate:
-            type: number
-            description: Survival rate for non-profit entities.
-          enterprise_survival_rate:
-            type: number
-            description: Survival rate for enterprise entities.
           number_of_sites:
             type: number
             description: number of sites.
-          number_of_nurseries:
-            type: number
-            description: number of nurseries.
   DashboardVolundteersSurvivalRateData:
     type: object
     properties:
@@ -42630,18 +42621,9 @@ definitions:
       non_youth_volunteers:
         type: integer
         description: Total number of non-youth volunteers.
-      non_profit_survival_rate:
-        type: number
-        description: Survival rate for non-profit entities.
-      enterprise_survival_rate:
-        type: number
-        description: Survival rate for enterprise entities.
       number_of_sites:
         type: number
         description: number of sites.
-      number_of_nurseries:
-        type: number
-        description: number of nurseries.
   AuditStatusCreateRequest:
     title: AuditStatusCreateRequest
     type: object
@@ -43127,6 +43109,8 @@ definitions:
       forProfitTreeCount:
         type: integer
       nonProfitTreeCount:
+        type: integer
+      totalTreesGrownGoal:
         type: integer
       treesUnderRestorationActualTotal:
         type: array
@@ -94121,6 +94105,8 @@ paths:
                 type: integer
               nonProfitTreeCount:
                 type: integer
+              totalTreesGrownGoal:
+                type: integer
               treesUnderRestorationActualTotal:
                 type: array
                 items:
@@ -94489,18 +94475,9 @@ paths:
                   non_youth_volunteers:
                     type: integer
                     description: Total number of non-youth volunteers.
-                  non_profit_survival_rate:
-                    type: number
-                    description: Survival rate for non-profit entities.
-                  enterprise_survival_rate:
-                    type: number
-                    description: Survival rate for enterprise entities.
                   number_of_sites:
                     type: number
                     description: number of sites.
-                  number_of_nurseries:
-                    type: number
-                    description: number of nurseries.
         '400':
           description: Bad request
         '500':

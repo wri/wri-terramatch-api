@@ -4,62 +4,61 @@ namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 
 class RunVolunteersAverageService
 {
-    public function runVolunteersAverageJob(Request $request)
+    public function runVolunteersAverageJob(Request $request): object
     {
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
+        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+            ->with(['reports', 'organisation', 'sites', 'nurseries'])
+            ->get();
 
-        return (object)[
+        return (object) [
             'total_volunteers' => $this->getTotalVolunteerSum($projects),
             'men_volunteers' => $this->getVolunteersSum($projects, 'volunteer_men'),
             'women_volunteers' => $this->getVolunteersSum($projects, 'volunteer_women'),
             'youth_volunteers' => $this->getVolunteersSum($projects, 'volunteer_youth'),
             'non_youth_volunteers' => $this->getVolunteersSum($projects, 'volunteer_non_youth'),
-            'non_profit_survival_rate' => $this->getAverageSurvivalRate($projects, 'non-profit-organization'),
-            'enterprise_survival_rate' => $this->getAverageSurvivalRate($projects, 'for-profit-organization'),
-            'number_of_sites' => $this->numberOfSites($projects),
-            'number_of_nurseries' => $this->numberOfNurseries($projects),
+            'number_of_sites' => $this->numberOfSites($projects)
         ];
     }
 
-    public function getTotalVolunteerSum($projects)
+    /**
+     * Get total volunteer count by summing up volunteer totals from all reports.
+     *
+     * @param Collection $projects
+     * @return int
+     */
+    public function getTotalVolunteerSum(Collection $projects): int
     {
         return $projects->sum(function ($project) {
-            return $project->reports()->sum('volunteer_total');
+            return $project->reports->sum('volunteer_total');
         });
     }
 
-    public function getVolunteersSum($projects, $volunteerType)
+    /**
+     * Get sum of a specific type of volunteer (e.g., men, women, youth).
+     *
+     * @param Collection $projects
+     * @param string $volunteerType
+     * @return int
+     */
+    public function getVolunteersSum(Collection $projects, string $volunteerType): int
     {
         return $projects->sum(function ($project) use ($volunteerType) {
-            return $project->reports()->sum($volunteerType);
+            return $project->reports->sum($volunteerType);
         });
     }
 
-    public function getAverageSurvivalRate($projects, $typeOrganisation)
+    /**
+     * Get total number of sites across all projects.
+     *
+     * @param Collection $projects
+     * @return int
+     */
+    public function numberOfSites(Collection $projects): int
     {
-        $average = $projects->filter(function ($project) use ($typeOrganisation) {
-            return $project->organisation->type === $typeOrganisation;
-        })->flatMap(function ($project) {
-            return $project->reports;
-        })->avg('pct_survival_to_date');
-
-        return intval($average);
-    }
-
-    public function numberOfSites($projects)
-    {
-        return $projects->sum(function ($project) {
-            return $project->sites->count();
-        });
-    }
-
-    public function numberOfNurseries($projects)
-    {
-        return $projects->sum(function ($project) {
-            return $project->nurseries->count();
-        });
+        return $projects->sum(fn($project) => $project->sites->count());
     }
 }
