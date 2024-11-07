@@ -19,11 +19,8 @@ class ViewProjectController extends Controller
         /** @var User $user */
         $user = Auth::user();
         if ($user->hasRole('government')) {
-            $isAllowed = Project::where('uuid', $uuid)
-                ->where('country', $user->country)
-                ->exists();
             $response = (object)[
-                'allowed' => $isAllowed,
+              'allowed' => false,
             ];
         } elseif ($user->hasRole('funder')) {
             $isAllowed = Project::where('uuid', $uuid)
@@ -104,6 +101,7 @@ class ViewProjectController extends Controller
                   'approved' => [],
                   'draft' => [],
                 ];
+                $uuid = data_get($request, 'filter.projectUuid', '');
                 $frameworks = data_get($request, 'filter.programmes', []);
                 $landscapes = data_get($request, 'filter.landscapes', []);
                 $organisations = data_get($request, 'filter.organisationType', []);
