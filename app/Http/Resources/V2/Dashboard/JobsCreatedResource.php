@@ -16,8 +16,6 @@ class JobsCreatedResource extends JsonResource
     {
         return [
             'totalJobsCreated' => (int) $this->totalJobsCreated,
-            'forProfitJobsCreated' => (int) $this->forProfitJobsCreated,
-            'nonProfitJobsCreated' => (int) $this->nonProfitJobsCreated,
             'total_ft' => (int) $this->total_ft,
             'total_pt' => (int) $this->total_pt,
             'total_men' => (int) $this->total_men,

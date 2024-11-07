@@ -2,10 +2,6 @@ type: object
 properties:
   totalJobsCreated:
     type: integer
-  forProfitJobsCreated:
-    type: integer
-  nonProfitJobsCreated:
-    type: integer
   total_ft:
     type: integer
   total_pt:
