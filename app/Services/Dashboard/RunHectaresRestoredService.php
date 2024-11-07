@@ -88,7 +88,7 @@ class RunHectaresRestoredService
 
             if ($decodedValue) {
                 foreach ($decodedValue as $key => $value) {
-                    if (!isset($hectaresRestored[$key])) {
+                    if (! isset($hectaresRestored[$key])) {
                         $hectaresRestored[$key] = 0;
                     }
                     $hectaresRestored[$key] += $value;
@@ -96,6 +96,6 @@ class RunHectaresRestoredService
             }
         });
 
-        return array_map(fn($value) => round($value, 3), $hectaresRestored);
+        return array_map(fn ($value) => round($value, 3), $hectaresRestored);
     }
 }

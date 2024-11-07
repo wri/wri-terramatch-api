@@ -3,8 +3,8 @@
 namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 
 class RunVolunteersAverageService
 {
@@ -20,7 +20,7 @@ class RunVolunteersAverageService
             'women_volunteers' => $this->getVolunteersSum($projects, 'volunteer_women'),
             'youth_volunteers' => $this->getVolunteersSum($projects, 'volunteer_youth'),
             'non_youth_volunteers' => $this->getVolunteersSum($projects, 'volunteer_non_youth'),
-            'number_of_sites' => $this->numberOfSites($projects)
+            'number_of_sites' => $this->numberOfSites($projects),
         ];
     }
 
@@ -59,6 +59,6 @@ class RunVolunteersAverageService
      */
     public function numberOfSites(Collection $projects): int
     {
-        return $projects->sum(fn($project) => $project->sites->count());
+        return $projects->sum(fn ($project) => $project->sites->count());
     }
 }
