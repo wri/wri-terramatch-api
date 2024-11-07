@@ -43367,10 +43367,6 @@ definitions:
               type: integer
             total_jobs_created:
               type: integer
-            number_of_sites:
-              type: integer
-            number_of_nurseries:
-              type: integer
   DashboardCountriesResponse:
     type: object
     properties:
@@ -94648,10 +94644,6 @@ paths:
                     total_trees_planted:
                       type: integer
                     total_jobs_created:
-                      type: integer
-                    number_of_sites:
-                      type: integer
-                    number_of_nurseries:
                       type: integer
         '400':
           description: Bad request
