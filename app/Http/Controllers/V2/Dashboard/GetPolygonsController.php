@@ -34,7 +34,7 @@ class GetPolygonsController extends Controller
     public function getBboxOfCompleteProject(Request $request)
     {
         try {
-            $polygonsIds = TerrafundDashboardQueryHelper::getPolygonIdsOfProject($request);
+            $polygonsIds = TerrafundDashboardQueryHelper::getPolygonUuidsOfProject($request);
             $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsIds);
 
             return response()->json(['bbox' => $bboxCoordinates]);
