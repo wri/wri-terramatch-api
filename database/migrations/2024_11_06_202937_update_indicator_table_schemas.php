@@ -12,17 +12,25 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('indicator_output_tree_cover_loss', function (Blueprint $table) {
+            // To create the column definition correctly, it needs to be created fresh, not via change()
+            $table->dropColumn('value');
+        });
+        Schema::table('indicator_output_tree_cover_loss', function (Blueprint $table) {
             $table->dropIndex('unique_polygon_indicator_year');
             $table->dropColumn('polygon_id');
 
             $table->foreignIdFor(SitePolygon::class);
             $table->string('indicator_slug')->nullable(false)->change();
             $table->integer('year_of_analysis')->nullable(false)->change();
-            $table->json('value')->nullable(false)->change();
+            $table->json('value');
 
             $table->unique(['site_polygon_id', 'indicator_slug', 'year_of_analysis'], 'unique_polygon_indicator_year');
         });
 
+        Schema::table('indicator_output_hectares', function (Blueprint $table) {
+            // To create the column definition correctly, it needs to be created fresh, not via change()
+            $table->dropColumn('value');
+        });
         Schema::table('indicator_output_hectares', function (Blueprint $table) {
             $table->dropIndex('unique_polygon_indicator_year');
             $table->dropColumn('polygon_id');
@@ -30,7 +38,7 @@ return new class extends Migration {
             $table->foreignIdFor(SitePolygon::class);
             $table->string('indicator_slug')->nullable(false)->change();
             $table->integer('year_of_analysis')->nullable(false)->change();
-            $table->json('value')->nullable(false)->change();
+            $table->json('value');
 
             $table->unique(['site_polygon_id', 'indicator_slug', 'year_of_analysis'], 'unique_polygon_indicator_year');
         });
