@@ -4,7 +4,6 @@ namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
@@ -16,9 +15,8 @@ class TreeRestorationGoalService
     public function calculateTreeRestorationGoal(Request $request)
     {
         $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
-
         $rawProjectIds = $this->getRawProjectIds($query);
-        $allProjectIds = $this->getAllProjectIds($rawProjectIds);
+        $allProjectIds = $this->getProjectIdsFromCollection($rawProjectIds);
         $siteIds = $this->getSiteIds($allProjectIds);
         $distinctDates = $this->getDistinctDates($siteIds);
 
@@ -31,42 +29,31 @@ class TreeRestorationGoalService
         $nonProfitTreeCount = $this->treeCountByDueDate($nonProfitProjectIds);
         $totalTreesGrownGoal = $query->sum('trees_grown_goal');
 
-        $treesUnderRestorationActualTotal = $this->treeCountPerPeriod($siteIds, $distinctDates, $totalTreesGrownGoal);
-        $treesUnderRestorationActualForProfit = $this->treeCountPerPeriod($forProfitSiteIds, $distinctDates, $totalTreesGrownGoal);
-        $treesUnderRestorationActualNonProfit = $this->treeCountPerPeriod($nonProfitSiteIds, $distinctDates, $totalTreesGrownGoal);
-
-        $averageSurvivalRateTotal = $this->getAverageSurvival($allProjectIds);
-        $averageSurvivalRateForProfit = $this->getAverageSurvival($forProfitProjectIds);
-        $averageSurvivalRateNonProfit = $this->getAverageSurvival($nonProfitProjectIds);
-
         return [
             'forProfitTreeCount' => (int) $forProfitTreeCount,
             'nonProfitTreeCount' => (int) $nonProfitTreeCount,
             'totalTreesGrownGoal' => (int) $totalTreesGrownGoal,
-            'treesUnderRestorationActualTotal' => $treesUnderRestorationActualTotal,
-            'treesUnderRestorationActualForProfit' => $treesUnderRestorationActualForProfit,
-            'treesUnderRestorationActualNonProfit' => $treesUnderRestorationActualNonProfit,
-            'averageSurvivalRateTotal' => floatval($averageSurvivalRateTotal),
-            'averageSurvivalRateForProfit' => floatval($averageSurvivalRateForProfit),
-            'averageSurvivalRateNonProfit' => floatval($averageSurvivalRateNonProfit),
+            'treesUnderRestorationActualTotal' => $this->treeCountPerPeriod($siteIds, $distinctDates, $totalTreesGrownGoal),
+            'treesUnderRestorationActualForProfit' => $this->treeCountPerPeriod($forProfitSiteIds, $distinctDates, $totalTreesGrownGoal),
+            'treesUnderRestorationActualNonProfit' => $this->treeCountPerPeriod($nonProfitSiteIds, $distinctDates, $totalTreesGrownGoal),
         ];
     }
 
     private function getRawProjectIds($query)
     {
-        return $query
-            ->select('v2_projects.id', 'organisations.type')
-            ->get();
+        return $query->select('v2_projects.id', 'organisations.type')->get();
     }
 
-    private function getAllProjectIds($projectIds)
+    private function getProjectIdsFromCollection($projectIds)
     {
         return $projectIds->pluck('id')->toArray();
     }
 
     private function getSiteIds($projectIds)
     {
-        return Site::whereIn('project_id', $projectIds)->whereIn('status', Site::$approvedStatuses)->pluck('id');
+        return Site::whereIn('project_id', $projectIds)
+            ->whereIn('status', Site::$approvedStatuses)
+            ->pluck('id');
     }
 
     private function getDistinctDates($siteIds)
@@ -81,9 +68,7 @@ class TreeRestorationGoalService
 
     private function filterProjectIdsByType($projectIds, $type)
     {
-        return collect($projectIds)->filter(function ($row) use ($type) {
-            return $row->type === $type;
-        })->pluck('id')->toArray();
+        return collect($projectIds)->filter(fn ($row) => $row->type === $type)->pluck('id')->toArray();
     }
 
     private function treeCountByDueDate(array $projectIds)
@@ -97,43 +82,44 @@ class TreeRestorationGoalService
 
     private function treeCountPerPeriod($siteIds, $distinctDates, $totalTreesGrownGoal)
     {
-        $treesUnderRestorationActual = [];
-        $totalAmount = $totalTreesGrownGoal;
+        $treesUnderRestorationActual = collect();
 
         foreach ($distinctDates as $date) {
             $year = $date['year'];
             $month = $date['month'];
-            $treeSpeciesAmount = 0;
 
-            $reports = SiteReport::whereIn('site_id', $siteIds)
-                ->whereNotIn('v2_site_reports.status', SiteReport::UNSUBMITTED_STATUSES)
-                ->whereYear('v2_site_reports.due_at', $year)
-                ->whereMonth('v2_site_reports.due_at', $month)
-                ->get();
-
-            foreach ($reports as $report) {
-                $treeSpeciesAmount += $report->treeSpecies()->where('collection', TreeSpecies::COLLECTION_PLANTED)->sum('amount');
-            }
+            $treeSpeciesAmount = $this->calculateTreeSpeciesAmountForPeriod($siteIds, $year, $month);
 
             $formattedDate = Carbon::create($year, $month, 1);
 
-            $treesUnderRestorationActual[] = [
+            $treesUnderRestorationActual->push([
                 'dueDate' => $formattedDate,
-                'treeSpeciesAmount' => (int) $treeSpeciesAmount,
-                'treeSpeciesPercentage' => 0,
-            ];
+                'treeSpeciesAmount' => (int)$treeSpeciesAmount,
+                'treeSpeciesPercentage' => $this->calculatePercentage($treeSpeciesAmount, $totalTreesGrownGoal),
+            ]);
         }
 
-        foreach ($treesUnderRestorationActual as &$treeData) {
-            $percentage = ($totalAmount != 0) ? ($treeData['treeSpeciesAmount'] / $totalAmount) * 100 : 0;
-            $treeData['treeSpeciesPercentage'] = floatval(number_format($percentage, 3));
-        }
-
-        return $treesUnderRestorationActual;
+        return $treesUnderRestorationActual->toArray();
     }
 
-    private function getAverageSurvival(array $projectIds)
+    private function calculateTreeSpeciesAmountForPeriod($siteIds, $year, $month)
     {
-        return ProjectReport::isApproved()->whereIn('project_id', $projectIds)->avg('pct_survival_to_date');
+        return SiteReport::whereIn('site_id', $siteIds)
+            ->whereNotIn('v2_site_reports.status', SiteReport::UNSUBMITTED_STATUSES)
+            ->whereYear('v2_site_reports.due_at', $year)
+            ->whereMonth('v2_site_reports.due_at', $month)
+            ->get()
+            ->sum(function ($report) {
+                return $report->treeSpecies()->where('collection', TreeSpecies::COLLECTION_PLANTED)->sum('amount');
+            });
+    }
+
+    private function calculatePercentage($treeSpeciesAmount, $totalTreesGrownGoal)
+    {
+        if ($totalTreesGrownGoal == 0) {
+            return 0;
+        }
+
+        return round(($treeSpeciesAmount / $totalTreesGrownGoal) * 100, 3);
     }
 }

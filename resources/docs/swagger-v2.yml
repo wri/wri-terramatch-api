@@ -43128,8 +43128,6 @@ definitions:
         type: integer
       nonProfitTreeCount:
         type: integer
-      totalTreesGrownGoal:
-        type: integer
       treesUnderRestorationActualTotal:
         type: array
         items:
@@ -43166,12 +43164,6 @@ definitions:
               type: integer
             treeSpeciesPercentage:
               type: number
-      averageSurvivalRateTotal:
-        type: number
-      averageSurvivalRateForProfit:
-        type: number
-      averageSurvivalRateNonProfit:
-        type: number
   DashboardTreesUnderRestorationActual:
     type: object
     properties:
@@ -94129,8 +94121,6 @@ paths:
                 type: integer
               nonProfitTreeCount:
                 type: integer
-              totalTreesGrownGoal:
-                type: integer
               treesUnderRestorationActualTotal:
                 type: array
                 items:
@@ -94167,12 +94157,6 @@ paths:
                       type: integer
                     treeSpeciesPercentage:
                       type: number
-              averageSurvivalRateTotal:
-                type: number
-              averageSurvivalRateForProfit:
-                type: number
-              averageSurvivalRateNonProfit:
-                type: number
         '400':
           description: Bad request
         '500':
