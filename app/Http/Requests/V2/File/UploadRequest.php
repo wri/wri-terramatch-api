@@ -22,7 +22,9 @@ class UploadRequest extends FormRequest
             ],
             'upload_file' => [
                 'sometimes',
-                'mimes:csv,txt,xls,xlsx,jpg,gif,png,pdf,tiff,svg,mp4,doc,docx',
+                'mimes:csv,txt,xls,xlsx,jpg,gif,png,pdf,tiff,svg,mp4',
+                // 'mimes:csv,txt,xls,xlsx,jpg,gif,png,pdf,tiff,svg,mp4,doc,docx',
+                // 'mimetypes:application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/octet-stream',
             ],
             'collection' => [
                 'sometimes',
