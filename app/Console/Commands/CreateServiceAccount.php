@@ -16,14 +16,14 @@ class CreateServiceAccount extends Command
      *
      * @var string
      */
-    protected $signature = 'create-service-account {email}';
+    protected $signature = 'create-service-account';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Creates a service account with the given email address.';
+    protected $description = 'Creates a service account';
 
     /**
      * Execute the console command.
@@ -31,8 +31,8 @@ class CreateServiceAccount extends Command
     public function handle()
     {
         try {
-            $email = $this->argument('email');
-
+            $email = $this->ask('Email address for account');
+            $role = $this->choice('Role for account', ['greenhouse-service-account', 'research-service-account']);
             $apiKey = base64_encode(random_bytes(48));
 
             $data = [
@@ -46,8 +46,7 @@ class CreateServiceAccount extends Command
             $user = new User($data);
             $user->saveOrFail();
 
-            // TODO Allow other types of service account, when/if necessary.
-            $user->assignRole('greenhouse-service-account');
+            $user->assignRole($role);
 
             $this->info("Created service account $email with API Key: $apiKey");
 
