@@ -125,9 +125,50 @@ class GeometryHelper
 
     public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
     {
-        return $polygonGeometry->latestCriteriaSites()
-        ->select(['criteria_id', 'valid', 'created_at as latest_created_at', 'extra_info'])
-        ->get();
+        // testing if removing the latest query improve the query
+        $latestIds = $polygonGeometry->criteriaSite()
+        ->groupBy('criteria_id')
+        ->pluck('id');
+        // ->pluck(DB::raw('max(id) as latest_id'));
+        // to delete on DB this might be the query to use
+        // which is a never ending query 
+        // DELETE cs
+        // FROM criteria_site cs
+        // JOIN (
+        //     SELECT polygon_id, criteria_id, MAX(created_at) AS latest_created
+        //     FROM criteria_site
+        //     GROUP BY polygon_id, criteria_id
+        // ) latest
+        // ON cs.polygon_id = latest.polygon_id
+        // AND cs.criteria_id = latest.criteria_id
+        // AND cs.created_at < latest.latest_created;
+
+        return CriteriaSite::whereIn('id', $latestIds)->get([
+            'criteria_id',
+            'valid',
+            'created_at as latest_created_at',
+            'extra_info',
+        ]);
+        // return $polygonGeometry->latestCriteriaSites()
+        // ->select(['criteria_id', 'valid', 'created_at as latest_created_at', 'extra_info'])
+        // ->get();
+        // QUERY TO see polygons counts by sites:
+        //         SELECT 
+        //     vs.uuid AS site_uuid,
+        //     vs.name AS site_name,
+        //     COUNT(sp.poly_id) AS polygon_count
+        // FROM 
+        //     polygon_geometry pg
+        // JOIN 
+        //     site_polygon sp ON sp.poly_id = pg.uuid
+        // JOIN 
+        //     v2_sites vs ON vs.uuid = sp.site_id
+        // WHERE 
+        //     sp.is_active = 1 AND sp.deleted_at IS NULL
+        // GROUP BY 
+        //     vs.uuid, vs.name
+        // ORDER BY 
+        //     polygon_count DESC
     }
 
     public static function groupFeaturesBySiteId($geojson)

@@ -506,10 +506,10 @@ class TerrafundCreateGeometryController extends Controller
     }
 
     public function getCriteriaDataSite(string $uuid) {
-      $sitePolygons = SitePolygon::where('site_id', $uuid)
-      ->active()
-      ->get();
-      
+        $sitePolygons = SitePolygon::where('site_id', $uuid)
+        ->active()
+        ->get();
+        
       $result = [];
       foreach ($sitePolygons as $sitePolygon) {
           $geometry = $sitePolygon->polygonGeometry;
