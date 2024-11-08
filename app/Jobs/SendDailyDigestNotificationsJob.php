@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Mail\TaskDigestMail;
+use App\Models\Traits\skipRecipientsTrait;
 use App\Models\V2\Tasks\Task;
 use App\StateMachines\ReportStatusStateMachine;
 use Carbon\Carbon;
@@ -19,6 +20,7 @@ class SendDailyDigestNotificationsJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use skipRecipientsTrait;
 
     private $task;
 
@@ -35,11 +37,8 @@ class SendDailyDigestNotificationsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $skipRecipients = collect(explode(',', getenv('ENTITY_UPDATE_DO_NOT_EMAIL')));
         $users = $this->task->project->users()->get();
-        $users = $users->filter(function ($user) use ($skipRecipients) {
-            return ! $skipRecipients->contains($user->email_address);
-        });
+        $users = $this->skipRecipients($users);
         $usersGroupedByLocale = $users->groupBy('locale');
         $taskDueAt = Carbon::parse($this->task->due_at);
 

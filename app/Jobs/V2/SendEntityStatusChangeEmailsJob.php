@@ -3,6 +3,7 @@
 namespace App\Jobs\V2;
 
 use App\Mail\EntityStatusChange as EntityStatusChangeMail;
+use App\Models\Traits\skipRecipientsTrait;
 use App\Models\V2\EntityModel;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Bus\Queueable;
@@ -18,6 +19,7 @@ class SendEntityStatusChangeEmailsJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use skipRecipientsTrait;
 
     private EntityModel $entity;
 
@@ -35,18 +37,14 @@ class SendEntityStatusChangeEmailsJob implements ShouldQueue
         }
 
         $usersFromProject = $this->entity->project->users;
+        $usersFromProject = $this->skipRecipients($usersFromProject);
         if (empty($usersFromProject)) {
             return;
         }
 
         // TODO: This is a temporary hack to avoid spamming folks that have a funky role right now. In the future,
         // they will have a different role, and we can simply skip sending this email to anybody with that role.
-        $skipRecipients = collect(explode(',', getenv('ENTITY_UPDATE_DO_NOT_EMAIL')));
         foreach ($usersFromProject as $user) {
-            if ($skipRecipients->contains($user['email_address'])) {
-                continue;
-            }
-
             Mail::to($user['email_address'])->send(new EntityStatusChangeMail($this->entity, $user));
         }
     }

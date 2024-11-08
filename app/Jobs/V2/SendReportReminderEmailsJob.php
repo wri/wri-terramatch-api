@@ -3,6 +3,7 @@
 namespace App\Jobs\V2;
 
 use App\Mail\ReportReminder as ReportReminderMail;
+use App\Models\Traits\skipRecipientsTrait;
 use App\Models\V2\EntityModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,6 +18,7 @@ class SendReportReminderEmailsJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use skipRecipientsTrait;
 
     private EntityModel $entity;
 
@@ -32,16 +34,13 @@ class SendReportReminderEmailsJob implements ShouldQueue
     {
 
         $users = $this->entity->project->users;
-        $skipRecipients = collect(explode(',', getenv('ENTITY_UPDATE_DO_NOT_EMAIL')));
+        $users = $this->skipRecipients($users);
 
         if (empty($users)) {
             return;
         }
 
         foreach ($users as $user) {
-            if ($skipRecipients->contains($user->email_address)) {
-                continue;
-            }
             Mail::to($user->email_address)->send(new ReportReminderMail($this->entity, $this->feedback, $user));
         }
     }
