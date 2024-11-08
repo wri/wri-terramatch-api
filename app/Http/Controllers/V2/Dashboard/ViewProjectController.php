@@ -19,11 +19,8 @@ class ViewProjectController extends Controller
         /** @var User $user */
         $user = Auth::user();
         if ($user->hasRole('government')) {
-            $isAllowed = Project::where('uuid', $uuid)
-                ->where('country', $user->country)
-                ->exists();
             $response = (object)[
-                'allowed' => $isAllowed,
+              'allowed' => false,
             ];
         } elseif ($user->hasRole('funder')) {
             $isAllowed = Project::where('uuid', $uuid)
@@ -54,7 +51,7 @@ class ViewProjectController extends Controller
         return response()->json($response);
     }
 
-    public function getAllProjectsAllowedToUser()
+    public function getAllProjectsAllowedToUser(Request $request)
     {
         try {
             /** @var User $user */
@@ -68,7 +65,7 @@ class ViewProjectController extends Controller
             } else {
                 if ($user->hasRole('government')) {
                     try {
-                        $projectUuids = Project::where('framework_key', 'terrafund')->where('country', $user->country)->pluck('uuid');
+                        $projectUuids = Project::where('framework_key', 'terrafund')->where('country', $user->country)->pluck('uuid')->toArray();
                     } catch (\Exception $e) {
                         $errorMessage = $e->getMessage();
                         Log::error('Error fetching projects for government: ' . $errorMessage);
@@ -77,7 +74,7 @@ class ViewProjectController extends Controller
                     }
                 } elseif ($user->hasRole('funder')) {
                     try {
-                        $projectUuids = Project::where('framework_key', $user->program)->pluck('uuid');
+                        $projectUuids = Project::where('framework_key', $user->program)->pluck('uuid')->toArray();
                     } catch (\Exception $e) {
                         $errorMessage = $e->getMessage();
                         Log::error('Error fetching projects for funder: ' . $errorMessage);
@@ -87,7 +84,7 @@ class ViewProjectController extends Controller
                 } elseif ($user->hasRole('project-developer')) {
                     try {
                         $projectIds = ProjectInvite::where('email_address', $user->email_address)->pluck('project_id');
-                        $projectUuids = Project::whereIn('id', $projectIds)->where('framework_key', 'terrafund')->pluck('uuid');
+                        $projectUuids = Project::whereIn('id', $projectIds)->where('framework_key', 'terrafund')->pluck('uuid')->toArray();
                     } catch (\Exception $e) {
                         $errorMessage = $e->getMessage();
                         Log::error('Error fetching projects for project developer: ' . $errorMessage);
@@ -98,38 +95,52 @@ class ViewProjectController extends Controller
                     $projectUuids = null;
                 }
 
-                Log::info('Returning this value: ' . json_encode($projectUuids));
                 $polygonsData = [
                   'needs-more-information' => [],
                   'submitted' => [],
                   'approved' => [],
                   'draft' => [],
                 ];
+                $uuid = data_get($request, 'filter.projectUuid', '');
+                $frameworks = data_get($request, 'filter.programmes', []);
+                $landscapes = data_get($request, 'filter.landscapes', []);
+                $organisations = data_get($request, 'filter.organisationType', []);
+                $country = data_get($request, 'filter.country', '');
+                $filterWithProjects = [
+                    'filter' => [
+                        'country' => $country,
+                        'programmes' => $frameworks,
+                        'landscapes' => $landscapes,
+                        'organisationType' => $organisations,
+                        'projectUuid' => $projectUuids,
+                    ],
+                    'statuses' => ['approved'],
+                ];
 
-                foreach ($projectUuids as $uuid) {
-                    Log::info('Fetching polygons for project UUID ' . $uuid);
-                    $request = new Request(['uuid' => $uuid]);
 
-                    try {
-                        $polygonsResource = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProject($request);
+                $request = new Request($filterWithProjects);
+
+                try {
+                    $polygonsResource = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProjects($request);
+                    if ($polygonsResource !== null) {
                         foreach ($polygonsResource as $status => $polygons) {
                             $polygons = $polygons instanceof \Illuminate\Support\Collection ? $polygons->toArray() : $polygons;
                             $polygonsData[$status] = array_merge($polygonsData[$status], $polygons);
                         }
-                    } catch (\Exception $e) {
-                        Log::error('Error fetching polygons for project UUID ' . $uuid . ': ' . $e->getMessage());
                     }
+                } catch (\Exception $e) {
+                    Log::error('Error fetching polygons for project UUID ' . json_encode(['projectslist' => $projectUuids]) . ': ' . $e->getMessage());
                 }
 
                 return response()->json([
-                  'projectsUuids' => $projectUuids->toArray(),
+                  'projectsUuids' => $projectUuids,
                   'polygonsUuids' => $polygonsData,
                 ]);
             }
 
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
-            Log::error('An error occurred: ' . $errorMessage);
+            Log::error('An error occurred at get projects allowed to user: ' . $errorMessage);
 
             return response()->json(['error' => 'An error occurred while fetching the data', 'message' => $errorMessage], 500);
         }

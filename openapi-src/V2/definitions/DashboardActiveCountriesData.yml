@@ -10,7 +10,3 @@ properties:
     type: integer
   total_jobs_created:
     type: integer
-  number_of_sites:
-    type: integer
-  number_of_nurseries:
-    type: integer

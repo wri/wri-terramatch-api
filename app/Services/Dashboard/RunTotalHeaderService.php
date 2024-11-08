@@ -10,92 +10,76 @@ class RunTotalHeaderService
 {
     public function runTotalHeaderJob(Request $request)
     {
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
-        $countryName = '';
-        if ($country = data_get($request, 'filter.country')) {
-            $countryName = WorldCountryGeneralized::where('iso', $country)->first()->country;
-        }
-        $response = (object)[
+        $projects = $this->getProjectsData($request);
+        $countryName = $this->getCountryName($request);
+
+        return (object)[
             'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
             'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
             'total_entries' => $this->getTotalJobsCreatedSum($projects),
             'total_hectares_restored' => round($this->getTotalHectaresSum($projects)),
-            'total_hectares_restored_goal' => $this->getTotalHectaresRestoredGoalSum($projects),
+            'total_hectares_restored_goal' => $projects->sum('total_hectares_restored_goal'),
             'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
-            'total_trees_restored_goal' => $this->getTotalTreesGrownGoalSum($projects),
+            'total_trees_restored_goal' => $projects->sum('trees_grown_goal'),
             'country_name' => $countryName,
         ];
 
         return $response;
     }
 
-    public function getTotalDataForCountry(Request $request)
+    private function getProjectsData(Request $request)
     {
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
-        $countryName = '';
-        if ($country = data_get($request, 'filter.country')) {
-            $countryName = WorldCountryGeneralized::where('iso', $country)->first()->country;
-        }
-        $response = (object)[
-            'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
-            'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
-            'total_entries' => $this->getTotalJobsCreatedSum($projects),
-            'total_hectares_restored' => round($this->getTotalHectaresSum($projects)),
-            'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
-            'country_name' => $countryName,
-        ];
+        return TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
+            ->with(['organisation:id,type,name'])
+            ->select([
+                'v2_projects.id',
+                'v2_projects.organisation_id',
+                'v2_projects.total_hectares_restored_goal',
+                'v2_projects.trees_grown_goal',
+            ])
+            ->get()
+            ->map(function ($project) {
+                $project->total_hectares_restored = $project->sitePolygons->sum('calc_area');
 
-        return response()->json($response);
+                return $project;
+            });
+    }
+
+    private function getCountryName(Request $request)
+    {
+        $country = data_get($request, 'filter.country');
+        if ($country) {
+            return WorldCountryGeneralized::where('iso', $country)
+                ->select('country')
+                ->first()
+                ->country;
+        }
+
+        return '';
     }
 
     public function getTotalNonProfitCount($projects)
     {
-        $projects = $projects->filter(function ($project) {
-            return $project->organisation->type === 'non-profit-organization';
-        });
-
-        return $projects->count();
+        return $projects->where('organisation.type', 'non-profit-organization')->count();
     }
 
     public function getTotalEnterpriseCount($projects)
     {
-        $projects = $projects->filter(function ($project) {
-            return $project->organisation->type === 'for-profit-organization';
-        });
-
-        return $projects->count();
+        return $projects->where('organisation.type', 'for-profit-organization')->count();
     }
 
     public function getTotalJobsCreatedSum($projects)
     {
-        return $projects->sum(function ($project) {
-            $totalSum = $project->reports()->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')->first();
-
-            return $totalSum->total_ft + $totalSum->total_pt;
-        });
-    }
-
-    public function getTotalHectaresRestoredGoalSum($projects)
-    {
-        return $projects->sum('total_hectares_restored_goal');
-    }
-
-    public function getTotalTreesRestoredSum($projects)
-    {
-        return $projects->sum(function ($project) {
-            return $project->trees_planted_count;
-        });
-    }
-
-    public function getTotalTreesGrownGoalSum($projects)
-    {
-        return $projects->sum('trees_grown_goal');
+        return $projects->sum('total_jobs_created');
     }
 
     public function getTotalHectaresSum($projects)
     {
-        return $projects->sum(function ($project) {
-            return $project->sitePolygons->sum('calc_area');
-        });
+        return $projects->sum('total_hectares_restored');
+    }
+
+    public function getTotalTreesRestoredSum($projects)
+    {
+        return $projects->sum('trees_planted_count');
     }
 }

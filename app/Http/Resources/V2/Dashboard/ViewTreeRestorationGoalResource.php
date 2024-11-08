@@ -21,9 +21,6 @@ class ViewTreeRestorationGoalResource extends JsonResource
             'treesUnderRestorationActualTotal' => $this->resource['treesUnderRestorationActualTotal'],
             'treesUnderRestorationActualForProfit' => $this->resource['treesUnderRestorationActualForProfit'],
             'treesUnderRestorationActualNonProfit' => $this->resource['treesUnderRestorationActualNonProfit'],
-            'averageSurvivalRateTotal' => floatval($this->resource['averageSurvivalRateTotal']),
-            'averageSurvivalRateForProfit' => floatval($this->resource['averageSurvivalRateForProfit']),
-            'averageSurvivalRateNonProfit' => floatval($this->resource['averageSurvivalRateNonProfit']),
         ];
     }
 }
