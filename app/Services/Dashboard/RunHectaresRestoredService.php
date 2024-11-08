@@ -15,7 +15,7 @@ class RunHectaresRestoredService
         $HECTARES_BY_TARGET_LAND_USE_TYPES = 'restorationByLandUse';
 
         $projectsPolygons = $this->getProjectsPolygons($projectsToQuery);
-        $polygonsIds = $projectsPolygons->pluck('id')->toArray();
+        $polygonIds = $projectsPolygons->pluck('id')->toArray();
 
         $restorationStrategiesRepresented = $this->polygonToOutputHectares($HECTARES_BY_RESTORATION, $polygonIds);
         $targetLandUseTypesRepresented = $this->polygonToOutputHectares($HECTARES_BY_TARGET_LAND_USE_TYPES, $polygonIds);
@@ -61,15 +61,15 @@ class RunHectaresRestoredService
      * @param array $polygonsUuids
      * @return \Illuminate\Support\Collection
      */
-    public function polygonToOutputHectares($indicatorId, $polygonsIds)
+    public function polygonToOutputHectares($indicatorId, $polygonIds)
     {
-        if (empty($polygonsIds)) {
+        if (empty($polygonIds)) {
             return collect();
         }
 
         return DB::table('indicator_output_hectares')
             ->where('indicator_slug', $indicatorId)
-            ->whereIn('site_polygon_id', $polygonsIds)
+            ->whereIn('site_polygon_id', $polygonIds)
             ->get();
     }
 
