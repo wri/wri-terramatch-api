@@ -59,7 +59,6 @@ class TerrafundDashboardQueryHelper
         $query->when($searchTerm, function ($query, $searchTerm) {
             $query->where('v2_projects.name', 'like', "%$searchTerm%");
         });
-        Log::info('SQL Query: ' . $query->toSql());
 
         return $query;
     }

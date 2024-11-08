@@ -13,13 +13,13 @@ class RunTotalHeaderService
         $projects = $this->getProjectsData($request);
         $countryName = $this->getCountryName($request);
 
-        $response = (object) [
-            'total_non_profit_count' => $projects->where('organisation.type', 'non-profit-organization')->count(),
-            'total_enterprise_count' => $projects->where('organisation.type', 'for-profit-organization')->count(),
-            'total_entries' => $projects->sum('total_jobs_created'),
-            'total_hectares_restored' => round($projects->sum('total_hectares_restored')),
+        return (object)[
+            'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
+            'total_enterprise_count' => $this->getTotalEnterpriseCount($projects),
+            'total_entries' => $this->getTotalJobsCreatedSum($projects),
+            'total_hectares_restored' => round($this->getTotalHectaresSum($projects)),
             'total_hectares_restored_goal' => $projects->sum('total_hectares_restored_goal'),
-            'total_trees_restored' => $projects->sum('trees_planted_count'),
+            'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
             'total_trees_restored_goal' => $projects->sum('trees_grown_goal'),
             'country_name' => $countryName,
         ];
@@ -56,5 +56,30 @@ class RunTotalHeaderService
         }
 
         return '';
+    }
+
+    public function getTotalNonProfitCount($projects)
+    {
+        return $projects->where('organisation.type', 'non-profit-organization')->count();
+    }
+
+    public function getTotalEnterpriseCount($projects)
+    {
+        return $projects->where('organisation.type', 'for-profit-organization')->count();
+    }
+
+    public function getTotalJobsCreatedSum($projects)
+    {
+        return $projects->sum('total_jobs_created');
+    }
+
+    public function getTotalHectaresSum($projects)
+    {
+        return $projects->sum('total_hectares_restored');
+    }
+
+    public function getTotalTreesRestoredSum($projects)
+    {
+        return $projects->sum('trees_planted_count');
     }
 }
