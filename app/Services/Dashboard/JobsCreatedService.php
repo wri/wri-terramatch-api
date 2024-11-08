@@ -16,19 +16,13 @@ class JobsCreatedService
             ->select('v2_projects.id', 'organisations.type')
             ->get();
 
-        $forProfitProjectIds = $this->filterProjectIdsByType($rawProjectIds, 'for-profit-organization');
-        $nonProfitProjectIds = $this->filterProjectIdsByType($rawProjectIds, 'non-profit-organization');
         $allProjectIds = $this->getAllProjectIds($rawProjectIds);
 
-        $forProfitJobsCreated = $this->getTotalJobsCreated($forProfitProjectIds);
-        $nonProfitJobsCreated = $this->getTotalJobsCreated($nonProfitProjectIds);
         $totalJobsCreated = $this->getTotalJobsCreated($allProjectIds);
         $jobsCreatedDetailed = $this->getJobsCreatedDetailed($allProjectIds);
 
         return (object) [
             'totalJobsCreated' => $totalJobsCreated,
-            'forProfitJobsCreated' => $forProfitJobsCreated,
-            'nonProfitJobsCreated' => $nonProfitJobsCreated,
             'total_ft' => (int) $jobsCreatedDetailed->total_ft,
             'total_pt' => (int) $jobsCreatedDetailed->total_pt,
             'total_men' => $this->calculateTotalMen($jobsCreatedDetailed),
@@ -44,13 +38,6 @@ class JobsCreatedService
             'total_pt_non_youth' => (int) $jobsCreatedDetailed->total_pt_non_youth,
             'total_ft_non_youth' => (int) $jobsCreatedDetailed->total_ft_non_youth,
         ];
-    }
-
-    private function filterProjectIdsByType($projectIds, $type)
-    {
-        return $projectIds->filter(function ($row) use ($type) {
-            return $row->type === $type;
-        })->pluck('id')->toArray();
     }
 
     private function getAllProjectIds($projectIds)

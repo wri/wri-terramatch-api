@@ -42600,18 +42600,9 @@ definitions:
           non_youth_volunteers:
             type: integer
             description: Total number of non-youth volunteers.
-          non_profit_survival_rate:
-            type: number
-            description: Survival rate for non-profit entities.
-          enterprise_survival_rate:
-            type: number
-            description: Survival rate for enterprise entities.
           number_of_sites:
             type: number
             description: number of sites.
-          number_of_nurseries:
-            type: number
-            description: number of nurseries.
   DashboardVolundteersSurvivalRateData:
     type: object
     properties:
@@ -42630,18 +42621,9 @@ definitions:
       non_youth_volunteers:
         type: integer
         description: Total number of non-youth volunteers.
-      non_profit_survival_rate:
-        type: number
-        description: Survival rate for non-profit entities.
-      enterprise_survival_rate:
-        type: number
-        description: Survival rate for enterprise entities.
       number_of_sites:
         type: number
         description: number of sites.
-      number_of_nurseries:
-        type: number
-        description: number of nurseries.
   AuditStatusCreateRequest:
     title: AuditStatusCreateRequest
     type: object
@@ -43012,10 +42994,6 @@ definitions:
         properties:
           totalJobsCreated:
             type: integer
-          forProfitJobsCreated:
-            type: integer
-          nonProfitJobsCreated:
-            type: integer
           total_ft:
             type: integer
           total_pt:
@@ -43048,10 +43026,6 @@ definitions:
     type: object
     properties:
       totalJobsCreated:
-        type: integer
-      forProfitJobsCreated:
-        type: integer
-      nonProfitJobsCreated:
         type: integer
       total_ft:
         type: integer
@@ -43174,12 +43148,6 @@ definitions:
               type: integer
             treeSpeciesPercentage:
               type: number
-      averageSurvivalRateTotal:
-        type: number
-      averageSurvivalRateForProfit:
-        type: number
-      averageSurvivalRateNonProfit:
-        type: number
   DashboardTreesUnderRestorationActual:
     type: object
     properties:
@@ -43374,10 +43342,6 @@ definitions:
             total_trees_planted:
               type: integer
             total_jobs_created:
-              type: integer
-            number_of_sites:
-              type: integer
-            number_of_nurseries:
               type: integer
   DashboardCountriesResponse:
     type: object
@@ -94020,10 +93984,6 @@ paths:
                 properties:
                   totalJobsCreated:
                     type: integer
-                  forProfitJobsCreated:
-                    type: integer
-                  nonProfitJobsCreated:
-                    type: integer
                   total_ft:
                     type: integer
                   total_pt:
@@ -94183,12 +94143,6 @@ paths:
                       type: integer
                     treeSpeciesPercentage:
                       type: number
-              averageSurvivalRateTotal:
-                type: number
-              averageSurvivalRateForProfit:
-                type: number
-              averageSurvivalRateNonProfit:
-                type: number
         '400':
           description: Bad request
         '500':
@@ -94521,18 +94475,9 @@ paths:
                   non_youth_volunteers:
                     type: integer
                     description: Total number of non-youth volunteers.
-                  non_profit_survival_rate:
-                    type: number
-                    description: Survival rate for non-profit entities.
-                  enterprise_survival_rate:
-                    type: number
-                    description: Survival rate for enterprise entities.
                   number_of_sites:
                     type: number
                     description: number of sites.
-                  number_of_nurseries:
-                    type: number
-                    description: number of nurseries.
         '400':
           description: Bad request
         '500':
@@ -94660,10 +94605,6 @@ paths:
                     total_trees_planted:
                       type: integer
                     total_jobs_created:
-                      type: integer
-                    number_of_sites:
-                      type: integer
-                    number_of_nurseries:
                       type: integer
         '400':
           description: Bad request
