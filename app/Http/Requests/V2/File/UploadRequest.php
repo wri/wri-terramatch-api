@@ -3,7 +3,10 @@
 namespace App\Http\Requests\V2\File;
 
 use App\Rules\CheckMimeTypeRule;
+use App\Rules\CheckMimeTypeRuleDoc;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class UploadRequest extends FormRequest
 {
@@ -22,9 +25,9 @@ class UploadRequest extends FormRequest
             ],
             'upload_file' => [
                 'sometimes',
-                // 'mimes:csv,txt,xls,xlsx,jpg,gif,png,pdf,tiff,svg,mp4',
+                // new CheckMimeTypeRuleDoc(),
                 'mimes:csv,txt,xls,xlsx,jpg,gif,png,pdf,tiff,svg,mp4,doc,docx',
-                // 'mimetypes:application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/octet-stream',
+                // 'mimeTypes:application/octet-stream'
             ],
             'collection' => [
                 'sometimes',
