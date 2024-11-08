@@ -35,7 +35,11 @@ class SendDailyDigestNotificationsJob implements ShouldQueue
      */
     public function handle(): void
     {
+        $skipRecipients = collect(explode(',', getenv('ENTITY_UPDATE_DO_NOT_EMAIL')));
         $users = $this->task->project->users()->get();
+        $users = $users->filter(function ($user) use ($skipRecipients) {
+            return ! $skipRecipients->contains($user->email_address);
+        });
         $usersGroupedByLocale = $users->groupBy('locale');
         $taskDueAt = Carbon::parse($this->task->due_at);
 

@@ -32,11 +32,16 @@ class SendReportReminderEmailsJob implements ShouldQueue
     {
 
         $users = $this->entity->project->users;
+        $skipRecipients = collect(explode(',', getenv('ENTITY_UPDATE_DO_NOT_EMAIL')));
+
         if (empty($users)) {
             return;
         }
 
         foreach ($users as $user) {
+            if ($skipRecipients->contains($user->email_address)) {
+                continue;
+            }
             Mail::to($user->email_address)->send(new ReportReminderMail($this->entity, $this->feedback, $user));
         }
     }
