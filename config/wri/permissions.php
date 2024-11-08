@@ -64,6 +64,9 @@ return [
             'polygons-manage',
             'media-manage',
         ],
+        'research-service-account' => [
+            'polygons-manage',
+        ],
         'government' => [
             'view-dashboard',
         ],
