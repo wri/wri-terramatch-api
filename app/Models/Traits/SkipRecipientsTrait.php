@@ -4,7 +4,7 @@ namespace App\Models\Traits;
 
 use Illuminate\Support\Collection;
 
-trait skipRecipientsTrait
+trait SkipRecipientsTrait
 {
     public function skipRecipients(Collection $users): Collection
     {

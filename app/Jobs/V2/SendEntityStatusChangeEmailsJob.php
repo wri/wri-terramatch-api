@@ -3,7 +3,7 @@
 namespace App\Jobs\V2;
 
 use App\Mail\EntityStatusChange as EntityStatusChangeMail;
-use App\Models\Traits\skipRecipientsTrait;
+use App\Models\Traits\SkipRecipientsTrait;
 use App\Models\V2\EntityModel;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Bus\Queueable;
@@ -19,7 +19,7 @@ class SendEntityStatusChangeEmailsJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    use skipRecipientsTrait;
+    use SkipRecipientsTrait;
 
     private EntityModel $entity;
 

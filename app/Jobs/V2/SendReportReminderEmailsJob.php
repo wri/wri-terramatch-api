@@ -3,7 +3,7 @@
 namespace App\Jobs\V2;
 
 use App\Mail\ReportReminder as ReportReminderMail;
-use App\Models\Traits\skipRecipientsTrait;
+use App\Models\Traits\SkipRecipientsTrait;
 use App\Models\V2\EntityModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,7 +18,7 @@ class SendReportReminderEmailsJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    use skipRecipientsTrait;
+    use SkipRecipientsTrait;
 
     private EntityModel $entity;
 
