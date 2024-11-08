@@ -352,6 +352,12 @@ class LocalizationKeysTableSeeder extends Seeder
                 'Please review the nursery and either accept the submission or request for more information.<br><br>'.
                 'You are receiving this message because you are associated with this project as a Project Manager in TerraMatch.  If you wish to no longer recieve these messages or have any issues seeing or responding to the changes, please reach out to info@terramatch.org');
         $this->createLocalizationKey('project-manager-nursery.cta', 'View {entityTypeName}');
+
+        $this->createLocalizationKey('v2-project-invite-received-create.subject', 'YOU HAVE BEEN INVITED TO JOIN TERRAMATCH');
+        $this->createLocalizationKey('v2-project-invite-received-create.title', 'YOU HAVE BEEN INVITED TO JOIN TERRAMATCH');
+        $this->createLocalizationKey('v2-project-invite-received-create.body', '{organisationName} has invited you to join TerraMatch as a monitoring partner on {projectName}
+            Click the link below to create your account and set your password so you can see the project’s progress and access its reports.');
+        $this->createLocalizationKey('v2-project-invite-received-create.cta', 'CREATE ACCOUNT');
     }
 
     public function createLocalizationKey($key, $value): void
