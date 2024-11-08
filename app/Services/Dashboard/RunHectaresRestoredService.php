@@ -11,14 +11,14 @@ class RunHectaresRestoredService
     public function runHectaresRestoredJob(Request $request)
     {
         $projectsToQuery = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->pluck('uuid');
-        $HECTAREAS_BY_RESTORATION = 'restorationByStrategy';
-        $HECTAREAS_BY_TARGET_LAND_USE_TYPES = 'restorationByLandUse';
+        $HECTARES_BY_RESTORATION = 'restorationByStrategy';
+        $HECTARES_BY_TARGET_LAND_USE_TYPES = 'restorationByLandUse';
 
         $projectsPolygons = $this->getProjectsPolygons($projectsToQuery);
-        $polygonsUuids = $projectsPolygons->pluck('uuid')->toArray();
+        $polygonIds = $projectsPolygons->pluck('id')->toArray();
 
-        $restorationStrategiesRepresented = $this->polygonToOutputHectares($HECTAREAS_BY_RESTORATION, $polygonsUuids);
-        $targetLandUseTypesRepresented = $this->polygonToOutputHectares($HECTAREAS_BY_TARGET_LAND_USE_TYPES, $polygonsUuids);
+        $restorationStrategiesRepresented = $this->polygonToOutputHectares($HECTARES_BY_RESTORATION, $polygonIds);
+        $targetLandUseTypesRepresented = $this->polygonToOutputHectares($HECTARES_BY_TARGET_LAND_USE_TYPES, $polygonIds);
 
         if ($restorationStrategiesRepresented->isEmpty() && $targetLandUseTypesRepresented->isEmpty()) {
             return (object) [
@@ -50,7 +50,7 @@ class RunHectaresRestoredService
             ->join('v2_sites as s', 'sp.site_id', '=', 's.uuid')
             ->join('v2_projects as p', 's.project_id', '=', 'p.id')
             ->whereIn('p.uuid', $projects)
-            ->select('sp.uuid')
+            ->select('sp.id')
             ->get();
     }
 
@@ -61,15 +61,15 @@ class RunHectaresRestoredService
      * @param array $polygonsUuids
      * @return \Illuminate\Support\Collection
      */
-    public function polygonToOutputHectares($indicatorId, $polygonsUuids)
+    public function polygonToOutputHectares($indicatorId, $polygonIds)
     {
-        if (empty($polygonsUuids)) {
+        if (empty($polygonIds)) {
             return collect();
         }
 
         return DB::table('indicator_output_hectares')
             ->where('indicator_slug', $indicatorId)
-            ->whereIn('polygon_id', $polygonsUuids)
+            ->whereIn('site_polygon_id', $polygonIds)
             ->get();
     }
 
