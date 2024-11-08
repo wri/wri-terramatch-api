@@ -42726,6 +42726,35 @@ definitions:
             extra_info:
               type: object
               description: Extra information about the polygon validation
+  V2TerrafundListCriteriaData:
+    type: array
+    description: An array of polygons with their validation criteria
+    items:
+      type: object
+      properties:
+        polygon_id:
+          type: string
+          description: The ID of the polygon
+        criteria_list:
+          type: array
+          description: List of validation criteria
+          items:
+            type: object
+            properties:
+              criteria_id:
+                type: integer
+                description: The ID of the criteria
+              latest_created_at:
+                type: string
+                format: date-time
+                description: The latest created at timestamp of the criteria
+              valid:
+                type: integer
+                description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
+              extra_info:
+                type: object
+                description: Extra information about the polygon validation
+                additionalProperties: true;
   V2TerrafundCriteriaSite:
     type: array
     items:
@@ -92280,6 +92309,47 @@ paths:
                     extra_info:
                       type: object
                       description: Extra information about the polygon validation
+  '/v2/terrafund/validation/criteria-data/{uuid}':
+    get:
+      summary: Get criteria data validation results for a polygon
+      parameters:
+        - in: query
+          name: uuid
+          required: true
+          description: The UUID of the polygon
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
+            description: An array of polygons with their validation criteria
+            items:
+              type: object
+              properties:
+                polygon_id:
+                  type: string
+                  description: The ID of the polygon
+                criteria_list:
+                  type: array
+                  description: List of validation criteria
+                  items:
+                    type: object
+                    properties:
+                      criteria_id:
+                        type: integer
+                        description: The ID of the criteria
+                      latest_created_at:
+                        type: string
+                        format: date-time
+                        description: The latest created at timestamp of the criteria
+                      valid:
+                        type: integer
+                        description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
+                      extra_info:
+                        type: object
+                        description: Extra information about the polygon validation
+                        additionalProperties: true;
   /v2/terrafund/validation/sitePolygons:
     post:
       summary: Run validation for all polygons in a site

@@ -505,6 +505,30 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
+    public function getCriteriaDataSite(string $uuid) {
+      $sitePolygons = SitePolygon::where('site_id', $uuid)
+      ->active()
+      ->get();
+      
+      $result = [];
+      foreach ($sitePolygons as $sitePolygon) {
+          $geometry = $sitePolygon->polygonGeometry;
+          if ($geometry === null) {
+            continue;
+          }
+          $criteriaList = GeometryHelper::getCriteriaDataForPolygonGeometry($geometry);
+
+          if (empty($criteriaList)) {
+              $unprocessed[] = ['uuid' => $uuid, 'error' => 'Criteria data not found for the given polygon'];
+
+              continue;
+          }
+          $result[] = ['polygon_id' => $geometry->uuid, 'criteria_list' => $criteriaList];
+      }
+  
+      return $result;
+    }
+  
     public function getCriteriaData(Request $request)
     {
         $uuid = $request->input('uuid');

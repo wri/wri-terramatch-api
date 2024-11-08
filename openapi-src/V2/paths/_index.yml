@@ -2551,6 +2551,9 @@
 '/v2/terrafund/validation/criteria-data':
   get:
     $ref: './Terrafund/get-v2-terrafund-validation-criteria-data.yml'
+'/v2/terrafund/validation/criteria-data/{uuid}':
+  get:
+    $ref: './Terrafund/get-v2-terrafund-validation-criteria-data-uuid.yml'
 '/v2/terrafund/validation/sitePolygons':
   post:
     $ref: './Terrafund/get-v2-terrafund-validation-sitepolygons.yml'

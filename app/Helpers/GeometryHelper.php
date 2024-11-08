@@ -125,18 +125,9 @@ class GeometryHelper
 
     public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
     {
-        return CriteriaSite::whereIn(
-            'id',
-            $polygonGeometry
-                ->criteriaSite()
-                ->groupBy('criteria_id')
-                ->selectRaw('max(id) as latest_id')
-        )->get([
-            'criteria_id',
-            'valid',
-            'created_at as latest_created_at',
-            'extra_info',
-        ]);
+        return $polygonGeometry->latestCriteriaSites()
+        ->select(['criteria_id', 'valid', 'created_at as latest_created_at', 'extra_info'])
+        ->get();
     }
 
     public static function groupFeaturesBySiteId($geojson)

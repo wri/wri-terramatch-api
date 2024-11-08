@@ -40,6 +40,13 @@ class PolygonGeometry extends Model
     {
         return $this->hasMany(CriteriaSite::class, 'polygon_id', 'uuid');
     }
+    public function latestCriteriaSites()
+    {
+        return $this->hasMany(CriteriaSite::class, 'polygon_id', 'uuid')
+            ->latest()
+            ->distinct('criteria_id');
+    }
+    
 
     public function sitePolygon(): BelongsTo
     {
