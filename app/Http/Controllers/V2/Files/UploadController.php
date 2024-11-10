@@ -10,10 +10,8 @@ use App\Models\V2\MediaModel;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Http\Request;
 
 class UploadController extends Controller
 {
@@ -99,12 +97,7 @@ class UploadController extends Controller
         $validator = Validator::make($request->all(), [
             'upload_file' => $rules,
         ]);
-        $fileExtension = strtolower($request->file('upload_file')->getClientOriginalExtension());
-        if ($validator->fails() && ($fileExtension == 'doc' || $fileExtension == 'docx')) {
-            $validator = Validator::make($request->all(), [
-                'upload_file' => 'mimeTypes:application/octet-stream',
-            ]);
-        }
+
         $validator->validate();
     }
 
@@ -147,7 +140,7 @@ class UploadController extends Controller
 
     private function getType($media, $config)
     {
-        $documents = ['application/pdf', 'application/vnd.ms-excel', 'text/plain', 'application/msword', 'application/octet-stream'];
+        $documents = ['application/pdf', 'application/vnd.ms-excel', 'text/plain', 'application/msword'];
         $images = ['image/png', 'image/jpeg', 'image/svg+xml'];
         $videos = ['video/mp4'];
 

@@ -25,9 +25,7 @@ class UploadRequest extends FormRequest
             ],
             'upload_file' => [
                 'sometimes',
-                // new CheckMimeTypeRuleDoc(),
-                'mimes:csv,txt,xls,xlsx,jpg,gif,png,pdf,tiff,svg,mp4,doc,docx',
-                // 'mimeTypes:application/octet-stream'
+                'mimes:csv,txt,xls,xlsx,jpg,gif,png,pdf,tiff,svg,mp4,doc',
             ],
             'collection' => [
                 'sometimes',
