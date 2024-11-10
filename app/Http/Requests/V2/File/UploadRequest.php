@@ -3,10 +3,7 @@
 namespace App\Http\Requests\V2\File;
 
 use App\Rules\CheckMimeTypeRule;
-use App\Rules\CheckMimeTypeRuleDoc;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
 
 class UploadRequest extends FormRequest
 {
