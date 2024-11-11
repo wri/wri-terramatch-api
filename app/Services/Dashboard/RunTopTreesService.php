@@ -27,7 +27,7 @@ class RunTopTreesService
                 'organization' => $project->organisation->name,
                 'project' => $project->name,
                 'uuid' => $project->uuid,
-                'trees_planted' => $project->trees_planted_count,
+                'trees_planted' => $project->approved_trees_planted_count,
             ];
         }));
 

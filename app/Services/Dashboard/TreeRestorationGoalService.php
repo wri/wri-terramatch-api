@@ -7,6 +7,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\StateMachines\ReportStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -59,6 +60,7 @@ class TreeRestorationGoalService
     private function getDistinctDates($siteIds)
     {
         return SiteReport::selectRaw('YEAR(due_at) as year, MONTH(due_at) as month')
+            ->where('status', ReportStatusStateMachine::APPROVED)
             ->whereNotNull('due_at')
             ->whereIn('site_id', $siteIds)
             ->groupBy('year', 'month')
@@ -75,9 +77,7 @@ class TreeRestorationGoalService
     {
         $projects = Project::whereIn('id', $projectIds)->get();
 
-        return $projects->sum(function ($project) {
-            return $project->trees_planted_count;
-        });
+        return $projects->sum('approved_trees_planted_count');
     }
 
     private function treeCountPerPeriod($siteIds, $distinctDates, $totalTreesGrownGoal)
@@ -105,7 +105,7 @@ class TreeRestorationGoalService
     private function calculateTreeSpeciesAmountForPeriod($siteIds, $year, $month)
     {
         return SiteReport::whereIn('site_id', $siteIds)
-            ->whereNotIn('v2_site_reports.status', SiteReport::UNSUBMITTED_STATUSES)
+            ->where('v2_site_reports.status', ReportStatusStateMachine::APPROVED)
             ->whereYear('v2_site_reports.due_at', $year)
             ->whereMonth('v2_site_reports.due_at', $month)
             ->get()
