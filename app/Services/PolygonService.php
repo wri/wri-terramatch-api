@@ -221,21 +221,25 @@ class PolygonService
 
     public function createCriteriaSite($polygonId, $criteriaId, $valid, $extraInfo = null): bool|string
     {
+        CriteriaSite::where('polygon_id', $polygonId)
+            ->where('criteria_id', $criteriaId)
+            ->update(['is_active' => 0]);
+    
         $criteriaSite = new CriteriaSite();
         $criteriaSite->polygon_id = $polygonId;
         $criteriaSite->criteria_id = $criteriaId;
         $criteriaSite->valid = $valid;
         $criteriaSite->extra_info = $extraInfo ? json_encode($extraInfo) : null;
-
+        $criteriaSite->is_active = true;
+    
         try {
             $criteriaSite->save();
-
             return true;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
-
+    
     /**
      * Note: At this time, this method assumes that the geometry is a single polygon.
      */
