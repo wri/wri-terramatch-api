@@ -3,9 +3,9 @@
 namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
+use App\Models\V2\Sites\Site;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\V2\Sites\Site;
 
 class RunHectaresRestoredService
 {
