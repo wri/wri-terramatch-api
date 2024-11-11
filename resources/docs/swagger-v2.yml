@@ -43254,21 +43254,13 @@ definitions:
               type: integer
             volunteers:
               type: integer
-            beneficiaries:
-              type: integer
-            survival_rate:
-              type: integer
-            number_of_sites:
-              type: integer
-            number_of_nurseries:
-              type: integer
             project_country:
               type: string
             country_slug:
               type: string
-            number_of_trees_goal:
+            hectares_under_restoration:
               type: integer
-            date_added:
+            programme:
               type: string
       current_page:
         type: integer
@@ -94542,21 +94534,13 @@ paths:
                       type: integer
                     volunteers:
                       type: integer
-                    beneficiaries:
-                      type: integer
-                    survival_rate:
-                      type: integer
-                    number_of_sites:
-                      type: integer
-                    number_of_nurseries:
-                      type: integer
                     project_country:
                       type: string
                     country_slug:
                       type: string
-                    number_of_trees_goal:
+                    hectares_under_restoration:
                       type: integer
-                    date_added:
+                    programme:
                       type: string
               current_page:
                 type: integer

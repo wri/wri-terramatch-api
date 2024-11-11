@@ -33,7 +33,7 @@ class RunVolunteersAverageService
     public function getTotalVolunteerSum(Collection $projects): int
     {
         return $projects->sum(function ($project) {
-            return $project->reports->sum('volunteer_total');
+            return $project->reports()->approved()->sum('volunteer_total');
         });
     }
 
@@ -47,7 +47,7 @@ class RunVolunteersAverageService
     public function getVolunteersSum(Collection $projects, string $volunteerType): int
     {
         return $projects->sum(function ($project) use ($volunteerType) {
-            return $project->reports->sum($volunteerType);
+            return $project->reports()->approved()->sum($volunteerType);
         });
     }
 
@@ -59,6 +59,6 @@ class RunVolunteersAverageService
      */
     public function numberOfSites(Collection $projects): int
     {
-        return $projects->sum(fn ($project) => $project->sites->count());
+        return $projects->sum('total_sites');
     }
 }

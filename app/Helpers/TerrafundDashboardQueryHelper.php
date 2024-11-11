@@ -66,7 +66,7 @@ class TerrafundDashboardQueryHelper
     public static function retrievePolygonUuidsForProject($projectUuId)
     {
         $project = Project::where('uuid', $projectUuId)->first();
-        $sitePolygons = $project->sitePolygons;
+        $sitePolygons = $project->sitePolygons->where('status', 'approved');
 
         $polygonsIds = $sitePolygons->pluck('poly_id');
 
