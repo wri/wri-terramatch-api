@@ -5,6 +5,7 @@ namespace App\Services\Dashboard;
 use App\Helpers\TerrafundDashboardQueryHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\V2\Sites\Site;
 
 class RunHectaresRestoredService
 {
@@ -49,7 +50,7 @@ class RunHectaresRestoredService
         return DB::table('site_polygon as sp')
             ->join('v2_sites as s', 'sp.site_id', '=', 's.uuid')
             ->join('v2_projects as p', 's.project_id', '=', 'p.id')
-            ->where('s.status', 'approved')
+            ->whereIn('s.status', Site::$approvedStatuses)
             ->where('sp.status', 'approved')
             ->whereIn('p.uuid', $projects)
             ->select('sp.id')
