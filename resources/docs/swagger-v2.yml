@@ -47217,6 +47217,115 @@ paths:
                 has_monitoring_data:
                   type: boolean
       operationId: get-v2-admin-sites-multi
+  '/v2/admin/sites/{UUID}/polygons':
+    get:
+      summary: Get polygons for a specific site
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the site
+        - in: query
+          name: limit
+          required: true
+          description: The maximum number of polygons to return
+          type: number
+        - in: query
+          name: offset
+          required: true
+          description: The number of polygons to skip
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
+            items:
+              title: SitePolygon
+              type: object
+              properties:
+                id:
+                  type: integer
+                uuid:
+                  type: string
+                primary_uuid:
+                  type: string
+                project_id:
+                  type: string
+                proj_name:
+                  type: string
+                org_name:
+                  type: string
+                poly_id:
+                  type: string
+                poly_name:
+                  type: string
+                site_id:
+                  type: string
+                site_name:
+                  type: string
+                plantstart:
+                  type: string
+                  format: date
+                plantend:
+                  type: string
+                  format: date
+                practice:
+                  type: string
+                target_sys:
+                  type: string
+                distr:
+                  type: string
+                num_trees:
+                  type: integer
+                calc_area:
+                  type: number
+                  format: float
+                created_by:
+                  type: string
+                last_modified_by:
+                  type: string
+                deleted_at:
+                  type: string
+                  format: date-time
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+                status:
+                  type: string
+                source:
+                  type: string
+                country:
+                  type: string
+                is_active:
+                  type: boolean
+                version_name:
+                  type: string
+        '500':
+          description: Internal server error
+  '/v2/admin/sites/{UUID}/polygons/count':
+    get:
+      summary: Get polygons for a specific site
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the site
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              count:
+                type: number
+        '500':
+          description: Internal server error
   /users:
     post:
       summary: Create a user
@@ -93047,6 +93156,34 @@ paths:
                   type: number
         '400':
           description: Bad request
+        '500':
+          description: Internal server error
+  '/v2/sites/{site}/bbox-and-count':
+    get:
+      summary: Get bbox for polygons and count for a specific site
+      parameters:
+        - in: path
+          name: site
+          required: true
+          type: string
+          description: The UUID of the site
+        - in: query
+          name: status
+          required: false
+          description: Comma-separated list of status values to filter by
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              count:
+                type: number
+              bbox:
+                type: array
+                items:
+                  type: number
         '500':
           description: Internal server error
   '/v2/terrafund/site-polygon/{uuid}/{siteUuid}':

@@ -113,6 +113,9 @@ class EntityTypeController extends Controller
                 $sitePolygonsQuery->orderBy($field, $direction);
             }
         }
+        $limit = $request->input('limit', 3);
+        $offset = $request->input('offset', 0);
+        $sitePolygonsQuery->limit($limit)->offset($offset);
 
         return $sitePolygonsQuery->get();
     }
