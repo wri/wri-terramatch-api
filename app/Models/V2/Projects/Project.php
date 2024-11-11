@@ -453,7 +453,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     {
         return $this->reports()
             ->approved()
-            ->select(DB::raw('SUM(ft_total + pt_total) as total_jobs'))
+            ->select(DB::raw('SUM(COALESCE(ft_total, 0) + COALESCE(pt_total, 0)) as total_jobs'))
             ->value('total_jobs') ?? 0;
     }
 
