@@ -52,8 +52,6 @@ class RunActiveCountriesTableService
 
     private function sumHectares($projects)
     {
-        return $projects->sum(function ($project) {
-            return $project->sitePolygons->sum('calc_area');
-        });
+        return $projects->sum('total_hectares_restored_sum');
     }
 }
