@@ -70,7 +70,7 @@ class RunTotalHeaderService
 
     public function getTotalJobsCreatedSum($projects)
     {
-        return $projects->sum('total_jobs_created');
+        return $projects->sum('total_approved_jobs_created');
     }
 
     public function getTotalHectaresSum($projects)

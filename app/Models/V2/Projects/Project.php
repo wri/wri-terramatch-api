@@ -434,6 +434,31 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $ftTotal + $ptTotal;
     }
 
+    /**
+     * Get the total number of approved jobs created (both full-time and part-time)
+     *
+     * @return int
+     */
+    public function getTotalApprovedJobsCreatedAttribute(): int
+    {
+        return $this->reports()
+            ->approved()
+            ->select(DB::raw('SUM(ft_total + pt_total) as total_jobs'))
+            ->value('total_jobs') ?? 0;
+    }
+
+    /**
+     * Get the total number of approved volunteers
+     *
+     * @return int
+     */
+    public function getApprovedVolunteersCountAttribute(): int
+    {
+        return $this->reports()
+            ->approved()
+            ->sum('volunteer_total') ?? 0;
+    }
+
     public function getTotalSitesAttribute(): int
     {
         return $this->sites()->isApproved()->count();

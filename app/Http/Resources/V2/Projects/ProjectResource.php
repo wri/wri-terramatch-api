@@ -57,6 +57,8 @@ class ProjectResource extends JsonResource
             'self_reported_workday_count' => $this->self_reported_workday_count,
             'combined_workday_count' => $this->combined_workday_count,
             'total_jobs_created' => $this->total_jobs_created,
+            'total_approved_jobs_created' => $this->total_approved_jobs_created,
+            'approved_volunteers_count' => $this->approved_volunteers_count,
             'total_sites' => $this->total_sites,
             'total_nurseries' => $this->total_nurseries,
             'total_project_reports' => $this->total_project_reports,
