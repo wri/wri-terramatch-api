@@ -49,6 +49,8 @@ class RunHectaresRestoredService
         return DB::table('site_polygon as sp')
             ->join('v2_sites as s', 'sp.site_id', '=', 's.uuid')
             ->join('v2_projects as p', 's.project_id', '=', 'p.id')
+            ->where('s.status', 'approved')
+            ->where('sp.status', 'approved')
             ->whereIn('p.uuid', $projects)
             ->select('sp.id')
             ->get();
