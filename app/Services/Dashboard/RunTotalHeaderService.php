@@ -37,12 +37,7 @@ class RunTotalHeaderService
                 'v2_projects.total_hectares_restored_goal',
                 'v2_projects.trees_grown_goal',
             ])
-            ->get()
-            ->map(function ($project) {
-                $project->total_hectares_restored = $project->sitePolygons->sum('calc_area');
-
-                return $project;
-            });
+            ->get();
     }
 
     private function getCountryName(Request $request)
@@ -75,7 +70,7 @@ class RunTotalHeaderService
 
     public function getTotalHectaresSum($projects)
     {
-        return $projects->sum('total_hectares_restored');
+        return $projects->sum('total_hectares_restored_sum');
     }
 
     public function getTotalTreesRestoredSum($projects)
