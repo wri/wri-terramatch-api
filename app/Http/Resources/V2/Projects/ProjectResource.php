@@ -50,6 +50,7 @@ class ProjectResource extends JsonResource
             'restoration_strategy' => $this->restoration_strategy,
             'trees_restored_count' => $this->trees_restored_count,
             'trees_planted_count' => $this->trees_planted_count,
+            'approved_trees_planted_count' => $this->approved_trees_planted_count,
             'seeds_planted_count' => $this->seeds_planted_count,
             'regenerated_trees_count' => $this->regenerated_trees_count,
             'workday_count' => $this->workday_count,

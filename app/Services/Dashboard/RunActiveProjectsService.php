@@ -48,7 +48,7 @@ class RunActiveProjectsService
                 'uuid' => $project->uuid,
                 'name' => $project->name,
                 'organisation' => $project->organisation->name,
-                'trees_under_restoration' => $project->trees_planted_count,
+                'trees_under_restoration' => $project->approved_trees_planted_count,
                 'jobs_created' => $project->total_approved_jobs_created ?? 0,
                 'volunteers' => $project->approved_volunteers_count ?? 0,
                 'project_country' => $this->projectCountry($project->country),

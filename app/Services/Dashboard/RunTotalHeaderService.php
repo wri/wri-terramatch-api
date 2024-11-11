@@ -75,6 +75,6 @@ class RunTotalHeaderService
 
     public function getTotalTreesRestoredSum($projects)
     {
-        return $projects->sum('trees_planted_count');
+        return $projects->sum('approved_trees_planted_count');
     }
 }

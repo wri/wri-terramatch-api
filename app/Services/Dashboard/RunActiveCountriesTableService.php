@@ -34,7 +34,7 @@ class RunActiveCountriesTableService
                 'country_slug' => $country->slug,
                 'country' => $country->label,
                 'number_of_projects' => $countryProjects->count(),
-                'total_trees_planted' => $this->sumField($countryProjects, 'trees_planted_count'),
+                'total_trees_planted' => $this->sumField($countryProjects, 'approved_trees_planted_count'),
                 'total_jobs_created' => $this->sumField($countryProjects, 'total_approved_jobs_created'),
                 'hectares_restored' => round($this->sumHectares($countryProjects)),
             ];
