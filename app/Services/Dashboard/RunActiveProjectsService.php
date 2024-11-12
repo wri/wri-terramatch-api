@@ -48,54 +48,15 @@ class RunActiveProjectsService
                 'uuid' => $project->uuid,
                 'name' => $project->name,
                 'organisation' => $project->organisation->name,
-                'trees_under_restoration' => $this->treesUnderRestoration($project),
-                'jobs_created' => $this->jobsCreated($project),
-                'volunteers' => $this->volunteers($project),
-                'beneficiaries' => $this->beneficiaries($project),
-                'survival_rate' => $project->survival_rate,
-                'number_of_sites' => $project->sites_count,
-                'number_of_nurseries' => $project->nurseries_count,
+                'trees_under_restoration' => $project->approved_trees_planted_count,
+                'jobs_created' => $project->total_approved_jobs_created ?? 0,
+                'volunteers' => $project->approved_volunteers_count ?? 0,
                 'project_country' => $this->projectCountry($project->country),
                 'country_slug' => $project->country,
-                'number_of_trees_goal' => $project->trees_grown_goal,
-                'date_added' => $project->created_at,
-                'hectares_under_restoration' => round($project->sitePolygons->sum('calc_area')),
+                'hectares_under_restoration' => $project->total_hectares_restored_sum,
                 'programme' => $project->framework_key,
             ];
         });
-    }
-
-    public function treesUnderRestoration($project)
-    {
-        return $project->trees_planted_count;
-    }
-
-    public function jobsCreated($project)
-    {
-        $projectReport = $project->reports()
-            ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
-            ->groupBy('project_id')
-            ->first();
-
-        if ($projectReport) {
-            return $projectReport->total_ft + $projectReport->total_pt;
-        } else {
-            return 0;
-        }
-    }
-
-    public function volunteers($project)
-    {
-        $totalVolunteers = $project->reports()->selectRaw('SUM(volunteer_total) as total')->first();
-
-        return $totalVolunteers ? intval($totalVolunteers->total) : 0;
-    }
-
-    public function beneficiaries($project)
-    {
-        $totalBeneficiaries = $project->reports()->selectRaw('SUM(beneficiaries) as total')->first();
-
-        return $totalBeneficiaries ? intval($totalBeneficiaries->total) : 0;
     }
 
     public function projectCountry($slug)

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\DelayedJobResource;
 use App\Jobs\InsertGeojsonToDBJob;
 use App\Jobs\RunSitePolygonsValidationJob;
+use App\Jobs\SiteValidationJob;
 use App\Models\DelayedJob;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\Site;
@@ -1269,51 +1270,26 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuid = $request->input('uuid');
-            $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid);
-            $checkedPolygons = [];
+            $cacheValue = Redis::get('dashboard:sitevalidation|'.$uuid);
 
-            foreach ($sitePolygonsUuids as $polygonUuid) {
-                $criteriaData = $this->fetchCriteriaData($polygonUuid);
+            if (! $cacheValue) {
 
-                if (isset($criteriaData['error'])) {
-                    Log::error('Error fetching criteria data', ['polygon_uuid' => $polygonUuid, 'error' => $criteriaData['error']]);
-                    $checkedPolygons[] = [
-                      'uuid' => $polygonUuid,
-                      'valid' => false,
-                      'checked' => false,
-                      'nonValidCriteria' => [],
-                    ];
+                $delayedJob = DelayedJob::create();
+                $job = new SiteValidationJob(
+                    $uuid
+                );
+                dispatch($job);
 
-                    continue;
-                }
-
-                $isValid = true;
-                $nonValidCriteria = [];
-                if (empty($criteriaData['criteria_list'])) {
-                    $isValid = false;
-                } else {
-                    foreach ($criteriaData['criteria_list'] as $criteria) {
-                        if ($criteria['valid'] == 0) {
-                            $isValid = false;
-                            $nonValidCriteria[] = $criteria;
-                        }
-                    }
-                }
-
-                $checkedPolygons[] = [
-                  'uuid' => $polygonUuid,
-                  'valid' => $isValid,
-                  'checked' => ! empty($criteriaData['criteria_list']),
-                  'nonValidCriteria' => $nonValidCriteria,
-                ];
+                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Site validation is being processed']);
+            } else {
+                return response()->json(json_decode($cacheValue));
             }
-
-            return $checkedPolygons;
         } catch (\Exception $e) {
-            Log::error('Error during current site validation: ' . $e->getMessage());
+            Log::error('Error during site validation delayed : ' . $e->getMessage());
 
-            return response()->json(['error' => 'An error occurred during current site validation'], 500);
+            return response()->json(['error' => 'An error occurred during site validation delayed'. $e->getMessage()], 500);
         }
+
     }
 
     private function fetchCriteriaData($polygonUuid)

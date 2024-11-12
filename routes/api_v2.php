@@ -178,6 +178,8 @@ use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
+use App\Http\Controllers\V2\Sites\AdminSitesPolygonController;
+use App\Http\Controllers\V2\Sites\AdminSitesPolygonCountController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
@@ -186,6 +188,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\ShowSitePolygonController;
 use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
+use App\Http\Controllers\V2\Sites\SitePolygonBBoxAndCountController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
@@ -317,6 +320,8 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('sites')->group(function () {
         Route::get('/', AdminIndexSitesController::class);
         Route::get('/multi', AdminSitesMultiController::class);
+        Route::get('/{site}/polygons/count', AdminSitesPolygonCountController::class);
+        Route::get('/{site}/polygons', AdminSitesPolygonController::class);
     });
 
     Route::prefix('site-monitorings')->group(function () {
@@ -579,6 +584,7 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
     Route::get('/check-approve', SiteCheckApproveController::class);
+    Route::get('/bbox-and-count', SitePolygonBBoxAndCountController::class);
 });
 
 Route::prefix('geometry')->group(function () {

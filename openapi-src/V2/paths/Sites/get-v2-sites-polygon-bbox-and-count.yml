@@ -1,0 +1,26 @@
+summary: Get bbox for polygons and count for a specific site
+parameters:
+  - in: path
+    name: site
+    required: true
+    type: string
+    description: The UUID of the site
+  - in: query
+    name: status
+    required: false
+    description: Comma-separated list of status values to filter by
+    type: string
+responses:
+  '200':
+    description: Successful response
+    schema:
+      type: object
+      properties:
+        count:
+          type: number
+        bbox:
+          type: array
+          items:
+            type: number
+  '500':
+    description: Internal server error

@@ -29,6 +29,7 @@ use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -354,6 +355,15 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             ->sum('amount');
     }
 
+    public function getApprovedTreesPlantedCountAttribute(): int
+    {
+        return TreeSpecies::where('speciesable_type', SiteReport::class)
+            ->whereIn('speciesable_id', $this->approvedSiteReportIds())
+            ->where('collection', TreeSpecies::COLLECTION_PLANTED)
+            ->visible()
+            ->sum('amount');
+    }
+
     public function getSeedsPlantedCountAttribute(): int
     {
         return Seeding::where('seedable_type', SiteReport::class)
@@ -432,6 +442,31 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             ->sum('pt_total');
 
         return $ftTotal + $ptTotal;
+    }
+
+    /**
+     * Get the total number of approved jobs created (both full-time and part-time)
+     *
+     * @return int
+     */
+    public function getTotalApprovedJobsCreatedAttribute(): int
+    {
+        return $this->reports()
+            ->approved()
+            ->select(DB::raw('SUM(COALESCE(ft_total, 0) + COALESCE(pt_total, 0)) as total_jobs'))
+            ->value('total_jobs') ?? 0;
+    }
+
+    /**
+     * Get the total number of approved volunteers
+     *
+     * @return int
+     */
+    public function getApprovedVolunteersCountAttribute(): int
+    {
+        return $this->reports()
+            ->approved()
+            ->sum('volunteer_total') ?? 0;
     }
 
     public function getTotalSitesAttribute(): int
@@ -549,9 +584,28 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $this->submittedSiteReports()->select('v2_site_reports.id');
     }
 
+    private function approvedSiteReports(): HasManyThrough
+    {
+        // scopes that use status don't work on the HasManyThrough because both Site and SiteReport have
+        // a status field.
+        return $this
+            ->siteReports()
+            ->whereIn('v2_sites.status', Site::$approvedStatuses)
+            ->where('v2_site_reports.status', ReportStatusStateMachine::APPROVED);
+    }
+
+    /**
+     * @return HasManyThrough The query of site report IDs for all reports associated with sites that have been
+     * approved, and have a report status approved.
+     */
+    private function approvedSiteReportIds(): HasManyThrough
+    {
+        return $this->approvedSiteReports()->select('v2_site_reports.id');
+    }
+
     public function getTotalSitePolygonsAttribute()
     {
-        return $this->sitePolygons()->count();
+        return $this->sitePolygons->where('status', 'approved')->count();
     }
 
     public function getTotalHectaresRestoredSumAttribute(): float

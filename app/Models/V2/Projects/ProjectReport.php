@@ -27,6 +27,7 @@ use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -487,5 +488,10 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function getAuditableNameAttribute(): string
     {
         return $this->title ?? '';
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', ReportStatusStateMachine::APPROVED);
     }
 }

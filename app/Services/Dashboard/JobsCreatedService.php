@@ -68,6 +68,7 @@ class JobsCreatedService
     private function getTotalJobsCreated($projectIds)
     {
         $sumData = ProjectReport::whereIn('project_id', $projectIds)
+            ->where('status', 'approved')
             ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
             ->first();
 
@@ -77,6 +78,7 @@ class JobsCreatedService
     private function getJobsCreatedDetailed($projectIds)
     {
         return ProjectReport::whereIn('project_id', $projectIds)
+            ->where('status', 'approved')
             ->selectRaw(
                 'SUM(ft_total) as total_ft, 
                  SUM(pt_total) as total_pt, 

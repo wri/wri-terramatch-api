@@ -10,6 +10,12 @@
 /v2/admin/sites/multi:
   get:
     $ref: './Sites/get-v2-admin-sites-multi.yml'
+/v2/admin/sites/{UUID}/polygons:
+  get:
+    $ref: './Sites/get-v2-admin-sites-uuid-polygons.yml'
+/v2/admin/sites/{UUID}/polygons/count:
+  get:
+    $ref: './Sites/get-v2-admin-sites-uuid-polygons-count.yml'
 /users:
   post:
     $ref: './Users/post-users.yml'
@@ -2582,6 +2588,9 @@
 /v2/sites/{site}/bbox:
   get:
     $ref: './Sites/get-v2-sites-polygon-bbox.yml'
+/v2/sites/{site}/bbox-and-count:
+  get:
+    $ref: './Sites/get-v2-sites-polygon-bbox-and-count.yml'
 /v2/terrafund/site-polygon/{uuid}/{siteUuid}:
   post:
     $ref: './Terrafund/post-v2-site-polygon-data.yml'

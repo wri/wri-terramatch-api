@@ -92,8 +92,8 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
             dispatch($job);
         }
-
-        return new DelayedJobResource($delayedJob);
+        // Jorge review this
+        return new DelayedJobResource(resource: $delayedJob);
     }
 
     public function clipOverlappingPolygon(string $uuid)
