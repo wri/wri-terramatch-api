@@ -11,6 +11,7 @@ use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
+use App\Models\V2\Sites\CriteriaSiteHistoric;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
@@ -221,25 +222,42 @@ class PolygonService
 
     public function createCriteriaSite($polygonId, $criteriaId, $valid, $extraInfo = null): bool|string
     {
-        CriteriaSite::where('polygon_id', $polygonId)
+        $criteriaSite = CriteriaSite::where('polygon_id', $polygonId)
             ->where('criteria_id', $criteriaId)
-            ->update(['is_active' => 0]);
-    
-        $criteriaSite = new CriteriaSite();
-        $criteriaSite->polygon_id = $polygonId;
-        $criteriaSite->criteria_id = $criteriaId;
-        $criteriaSite->valid = $valid;
-        $criteriaSite->extra_info = $extraInfo ? json_encode($extraInfo) : null;
-        $criteriaSite->is_active = true;
-    
+            ->first();
+
+        if ($criteriaSite) {
+            $historicCriteriaSite = $criteriaSite->replicate();
+            CriteriaSiteHistoric::create($historicCriteriaSite->toArray());
+            $criteriaSite->delete();
+        }
+
+        $newCriteriaSite = new CriteriaSite();
+        $newCriteriaSite->polygon_id = $polygonId;
+        $newCriteriaSite->criteria_id = $criteriaId;
+        $newCriteriaSite->valid = $valid;
+        $newCriteriaSite->extra_info = $extraInfo ? json_encode($extraInfo) : null;
+
         try {
-            $criteriaSite->save();
+            // Save the new active record
+            $newCriteriaSite->save();
+
             return true;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
-    
+
+    public function moveAllCriteriaSite($polygonUuid)
+    {
+        $criteriaSites = CriteriaSite::where('polygon_id', $polygonUuid)->get();
+        foreach ($criteriaSites as $criteriaSite) {
+            $historicCriteriaSite = $criteriaSite->replicate();
+            CriteriaSiteHistoric::create($historicCriteriaSite->toArray());
+            $criteriaSite->delete();
+        }
+    }
+
     /**
      * Note: At this time, this method assumes that the geometry is a single polygon.
      */

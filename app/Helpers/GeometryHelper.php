@@ -5,7 +5,6 @@ namespace App\Helpers;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
-use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use Exception;
@@ -126,7 +125,6 @@ class GeometryHelper
     public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
     {
         return $polygonGeometry->criteriaSite()
-            ->active()
             ->get([
                 'criteria_id',
                 'valid',
@@ -134,7 +132,7 @@ class GeometryHelper
                 'extra_info',
             ]);
     }
-    
+
     public static function groupFeaturesBySiteId($geojson)
     {
         if (! isset($geojson['features']) || ! is_array($geojson['features'])) {
