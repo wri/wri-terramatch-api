@@ -221,6 +221,10 @@ class PolygonService
 
     public function createCriteriaSite($polygonId, $criteriaId, $valid, $extraInfo = null): bool|string
     {
+        // $criteriaSite = CriteriaSite::where('polygon_id', $polygonId)
+        //     ->where('criteria_id', $criteriaId)
+        //     ->delete();
+
         $criteriaSite = new CriteriaSite();
         $criteriaSite->polygon_id = $polygonId;
         $criteriaSite->criteria_id = $criteriaId;

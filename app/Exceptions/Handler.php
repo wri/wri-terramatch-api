@@ -351,6 +351,7 @@ class Handler extends ExceptionHandler
             case UnreachableUrl::class:
                 return JsonResponseHelper::error([[$exception->getMessage()]], 422);
             default:
+                Log::info($exception->getMessage());
                 if (config('app.env') == 'local') {
                     return new Response($this->renderExceptionContent($exception), 500, ['Content-Type' => 'text/html']);
                 } else {
