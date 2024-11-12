@@ -4,17 +4,19 @@ namespace App\Models\V2\Sites;
 
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CriteriaSite extends Model
+class CriteriaSiteHistoric extends Model
 {
     use HasUuid;
+    use SoftDeletes;
 
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'criteria_site';
+    protected $table = 'criteria_site_historic';
 
     /**
      * The attributes that are mass assignable.
@@ -34,6 +36,7 @@ class CriteriaSite extends Model
      * @var array
      */
     protected $dates = [
+        'deleted_at',
         'date_created',
     ];
 

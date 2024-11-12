@@ -9,6 +9,7 @@ use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
+use App\Services\PolygonService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -139,7 +141,7 @@ class SitePolygon extends Model implements AuditableModel
                 return null;
             }
         }
-
+        App::make(PolygonService::class)->moveAllCriteriaSite($geometry->uuid);
         if (! $poly_id) {
             $copyGeometry = PolygonGeometry::create([
                 'geom' => $geometry->geom,
