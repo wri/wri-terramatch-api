@@ -63,6 +63,7 @@ class SiteReportResource extends JsonResource
             'migrated' => ! empty($this->old_model),
             'approved_by' => new UserLiteResource($this->approvedBy),
             'created_by' => $this->handleCreatedBy(),
+            'regeneration_description' => $this->regeneration_description,
         ];
 
         return $this->appendFilesToResource($data);

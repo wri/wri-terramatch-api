@@ -42,6 +42,21 @@ trait HasWorkdays
         return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['volunteer']);
     }
 
+    public function getWorkdaysDirectAttribute(): int
+    {
+        return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['direct']);
+    }
+
+    public function getWorkdaysConvergenceAttribute(): int
+    {
+        return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['convergence']);
+    }
+
+    public function getWorkdaysNonTreeAttribute(): int
+    {
+        return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['non-tree']);
+    }
+
     public function getOtherWorkdaysDescriptionAttribute(): ?string
     {
         return $this

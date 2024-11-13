@@ -217,6 +217,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             Workday::COLLECTION_PROJECT_DIRECT,
             Workday::COLLECTION_PROJECT_CONVERGENCE,
         ],
+        'direct' => [
+            Workday::COLLECTION_PROJECT_DIRECT,
+        ],
+        'convergence' => [
+            Workday::COLLECTION_PROJECT_CONVERGENCE,
+        ],
+        'non-tree' => [
+            Workday::COLLECTION_PROJECT_NON_TREE,
+        ],
     ];
 
     public const RESTORATION_PARTNER_COLLECTIONS = [
@@ -425,6 +434,11 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             return $projectReportTotal;
         }
 
+        return $projectReportTotal + $this->sumWorkdaysTotal('paid') + $this->sumWorkdaysTotal('volunteer');
+    }
+
+    public function sumWorkdaysTotal(string $collection): int
+    {
         // Assume that the types are balanced and just return the value from 'gender'
         $sumTotals = fn ($collectionType) => Demographic::where('demographical_type', Workday::class)
             ->whereIn(
@@ -436,12 +450,47 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
                     ->select('id')
             )->gender()->sum('amount');
 
-        return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
+        return $sumTotals($collection) ?? 0;
+    }
+
+    public function getWorkdaysDirectTotalAttribute(): int
+    {
+        return $this->workdays_direct + $this->sumWorkdaysTotal('direct');
+    }
+
+    public function getWorkdaysConvergenceTotalAttribute(): int
+    {
+        return $this->workdays_convergence + $this->sumWorkdaysTotal('convergence');
+    }
+
+    public function getWorkdaysNonTreeTotalAttribute(): int
+    {
+        return $this->workdays_non_tree + $this->sumWorkdaysTotal('non-tree');
+    }
+
+    public function getTreesRegeneratingCountAttribute(): int
+    {
+        if (empty($this->task_id)) {
+            return 0;
+        }
+
+        return $this->task->siteReports()->sum('num_trees_regenerating');
     }
 
     public function getSiteReportsCountAttribute(): int
     {
         return $this->task?->siteReports()->count() ?? 0;
+    }
+
+    public function getTotalCommunityPartnersAttribute(): int
+    {
+        return $this->beneficiaries_men +
+            $this->beneficiaries_women +
+            $this->beneficiaries_youth +
+            $this->beneficiaries_scstobc +
+            $this->beneficiaries_scstobc_farmers +
+            $this->beneficiaries_smallholder +
+            $this->beneficiaries_large_scale;
     }
 
     public function getNurseryReportsCountAttribute(): ?int
