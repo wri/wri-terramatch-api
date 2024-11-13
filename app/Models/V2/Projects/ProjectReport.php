@@ -460,7 +460,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
 
     public function getWorkdaysConvergenceTotalAttribute(): int
     {
-        return $this->workdays_convergence  ?? 0 + $this->sumWorkdaysTotal('convergence');
+        return $this->workdays_convergence ?? 0 + $this->sumWorkdaysTotal('convergence');
     }
 
     public function getWorkdaysNonTreeTotalAttribute(): int
