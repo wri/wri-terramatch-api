@@ -455,17 +455,17 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
 
     public function getWorkdaysDirectTotalAttribute(): int
     {
-        return $this->workdays_direct + $this->sumWorkdaysTotal('direct');
+        return $this->workdays_direct ?? 0 + $this->sumWorkdaysTotal('direct');
     }
 
     public function getWorkdaysConvergenceTotalAttribute(): int
     {
-        return $this->workdays_convergence + $this->sumWorkdaysTotal('convergence');
+        return $this->workdays_convergence  ?? 0 + $this->sumWorkdaysTotal('convergence');
     }
 
     public function getWorkdaysNonTreeTotalAttribute(): int
     {
-        return $this->workdays_non_tree + $this->sumWorkdaysTotal('non-tree');
+        return $this->workdays_non_tree ?? 0 + $this->sumWorkdaysTotal('non-tree');
     }
 
     public function getTreesRegeneratingCountAttribute(): int
@@ -484,13 +484,13 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
 
     public function getTotalCommunityPartnersAttribute(): int
     {
-        return $this->beneficiaries_men +
-            $this->beneficiaries_women +
-            $this->beneficiaries_youth +
-            $this->beneficiaries_scstobc +
-            $this->beneficiaries_scstobc_farmers +
-            $this->beneficiaries_smallholder +
-            $this->beneficiaries_large_scale;
+        return $this->beneficiaries_men ?? 0 +
+            $this->beneficiaries_women ?? 0 +
+            $this->beneficiaries_youth ?? 0 +
+            $this->beneficiaries_scstobc ?? 0 +
+            $this->beneficiaries_scstobc_farmers ?? 0 +
+            $this->beneficiaries_smallholder ?? 0 +
+            $this->beneficiaries_large_scale ?? 0;
     }
 
     public function getNurseryReportsCountAttribute(): ?int
