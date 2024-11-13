@@ -180,9 +180,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'convergence' => [
             Workday::COLLECTION_PROJECT_CONVERGENCE,
         ],
-        'non-tree' => [
-            Workday::COLLECTION_PROJECT_NON_TREE,
-        ],
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -300,6 +297,11 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function getTotalTreesPlantedCountAttribute(): int
     {
         return $this->treeSpecies()->visible()->sum('amount');
+    }
+
+    public function getTotalNonTreeSpeciesPlantedCountAttribute(): int
+    {
+        return $this->nonTreeSpecies()->visible()->sum('amount');
     }
 
     public function getTotalSeedsPlantedCountAttribute(): int

@@ -223,9 +223,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'convergence' => [
             Workday::COLLECTION_PROJECT_CONVERGENCE,
         ],
-        'non-tree' => [
-            Workday::COLLECTION_PROJECT_NON_TREE,
-        ],
     ];
 
     public const RESTORATION_PARTNER_COLLECTIONS = [
@@ -463,9 +460,17 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         return $this->workdays_convergence ?? 0 + $this->sumWorkdaysTotal('convergence');
     }
 
-    public function getWorkdaysNonTreeTotalAttribute(): int
+    public function getNonTreeTotalAttribute(): int
     {
-        return $this->workdays_non_tree ?? 0 + $this->sumWorkdaysTotal('non-tree');
+        if (empty($this->task_id)) {
+            return 0;
+        }
+
+        return TreeSpecies::where('speciesable_type', SiteReport::class)
+            ->whereIn('speciesable_id', $this->task->siteReports()->select('id'))
+            ->where('collection', TreeSpecies::COLLECTION_NON_TREE)
+            ->visible()
+            ->sum('amount');
     }
 
     public function getTreesRegeneratingCountAttribute(): int

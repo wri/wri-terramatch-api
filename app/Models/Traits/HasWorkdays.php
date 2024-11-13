@@ -52,11 +52,6 @@ trait HasWorkdays
         return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['convergence']);
     }
 
-    public function getWorkdaysNonTreeAttribute(): int
-    {
-        return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['non-tree']);
-    }
-
     public function getOtherWorkdaysDescriptionAttribute(): ?string
     {
         return $this

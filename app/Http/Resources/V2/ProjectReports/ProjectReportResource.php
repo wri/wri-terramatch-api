@@ -120,7 +120,7 @@ class ProjectReportResource extends JsonResource
             'indirect_beneficiaries_description' => $this->indirect_beneficiaries_description,
             'workdays_direct_total' => $this->workdays_direct_total,
             'workdays_convergence_total' => $this->workdays_convergence_total,
-            'workdays_non_tree_total' => $this->workdays_non_tree_total,
+            'non_tree_total' => $this->non_tree_total,
             'trees_regenerating_count' => $this->trees_regenerating_count,
             'total_community_partners' => $this->total_community_partners,
         ];
