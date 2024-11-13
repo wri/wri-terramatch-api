@@ -1,10 +1,8 @@
 <?php
+
 namespace App\Console\Commands;
 
-use App\Models\V2\Projects\Project;
-use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\Tasks\Task;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -14,13 +12,15 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class BulkUpdateSiteReportDates extends Command
 {
     protected $signature = 'sitereports:bulk-update-dates {file}';
+
     protected $description = 'Bulk update site report due dates from a CSV file';
 
     public function handle(): void
     {
         $filePath = $this->argument('file');
-        if (!File::exists($filePath)) {
+        if (! File::exists($filePath)) {
             $this->error("CSV file not found at {$filePath}");
+
             return;
         }
 
@@ -33,9 +33,9 @@ class BulkUpdateSiteReportDates extends Command
         $header = fgetcsv($handle);
 
         while (($row = fgetcsv($handle)) !== false) {
-          if (empty(array_filter($row))) {
-            continue;
-        }
+            if (empty(array_filter($row))) {
+                continue;
+            }
             $uuid = $row[1];
             $dueDateString = $row[2];
             $dueDate = $this->parseDateString($dueDateString);
