@@ -35,6 +35,7 @@ class CreateProjectWithFormController extends Controller
             'organisation_id' => $application->organisation->id,
             'application_id' => $application->id,
             'status' => EntityStatusStateMachine::STARTED,
+            'is_test' => $application->organisation->is_test,
             'project_status' => null,
             'name' => $projectPitch->project_name,
             'boundary_geojson' => $projectPitch->proj_boundary,
