@@ -12,6 +12,7 @@ class OrganisationLiteResource extends JsonResource
             'uuid' => $this->uuid,
             'name' => $this->name,
             'status' => $this->status,
+            'is_test' => $this->is_test,
             'readable_status' => $this->readable_status,
             'type' => $this->type,
             'updated_at' => $this->updated_at,

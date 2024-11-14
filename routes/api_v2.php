@@ -286,6 +286,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::put('{framework}', AdminUpdateReportingFrameworkController::class);
     });
 
+    Route::resource('organisations', AdminOrganisationController::class)->except('create');
     Route::prefix('organisations')->group(function () {
         Route::get('multi', AdminOrganisationMultiController::class);
         Route::put('approve', AdminApproveOrganisationController::class);
@@ -343,7 +344,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('site-reports', AdminIndexSiteReportsController::class);
     Route::get('project-reports', AdminIndexProjectReportsController::class);
 
-    Route::resource('organisations', AdminOrganisationController::class)->except('create');
     Route::prefix('funding-programme/stage')->group(function () {
         Route::post('/', StoreStageController::class);
         Route::patch('/{stage}', UpdateStageController::class);

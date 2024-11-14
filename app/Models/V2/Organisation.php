@@ -158,6 +158,7 @@ class Organisation extends Model implements MediaModel
     ];
 
     public $casts = [
+        'is_test' => 'boolean',
         'private' => 'boolean',
         'founding_date' => 'date',
         'fin_start_month' => 'integer',
