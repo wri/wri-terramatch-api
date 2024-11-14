@@ -17,6 +17,7 @@ class OrganisationResource extends JsonResource
     {
         $data = [
             'uuid' => $this->uuid,
+            'is_test' => $this->is_test,
             'status' => $this->status,
             'readable_status' => $this->readable_status,
             'type' => $this->type,

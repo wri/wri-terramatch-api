@@ -15,6 +15,7 @@ class ProjectResource extends JsonResource
             'ppc_external_id' => $this->ppc_external_id ?? $this->id,
             'name' => $this->name,
             'status' => $this->status,
+            'is_test' => $this->is_test,
             'readable_status' => $this->readable_status,
             'project_status' => $this->project_status,
             'update_request_status' => $this->update_request_status,
