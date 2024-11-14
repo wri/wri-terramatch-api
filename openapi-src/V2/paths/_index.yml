@@ -10,6 +10,12 @@
 /v2/admin/sites/multi:
   get:
     $ref: './Sites/get-v2-admin-sites-multi.yml'
+/v2/admin/sites/{UUID}/polygons:
+  get:
+    $ref: './Sites/get-v2-admin-sites-uuid-polygons.yml'
+/v2/admin/sites/{UUID}/polygons/count:
+  get:
+    $ref: './Sites/get-v2-admin-sites-uuid-polygons-count.yml'
 /users:
   post:
     $ref: './Users/post-users.yml'
