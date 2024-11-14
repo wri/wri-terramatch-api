@@ -2,13 +2,13 @@
 
 namespace Tests\V2\Workdays;
 
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
-use App\Models\V2\Workdays\WorkdayDemographic;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -83,24 +83,24 @@ class GetWorkdaysForEntityControllerTest extends TestCase
         $workday = Workday::factory()->create([
             'workdayable_id' => $report->id,
         ]);
-        $femaleCount = WorkdayDemographic::factory()->gender()->create([
-            'workday_id' => $workday->id,
+        $femaleCount = Demographic::factory()->gender()->create([
+            'demographical_id' => $workday->id,
             'name' => 'female',
         ])->amount;
-        $nonBinaryCount = WorkdayDemographic::factory()->gender()->create([
-            'workday_id' => $workday->id,
+        $nonBinaryCount = Demographic::factory()->gender()->create([
+            'demographical_id' => $workday->id,
             'name' => 'non-binary',
         ])->amount;
-        $youthCount = WorkdayDemographic::factory()->age()->create([
-            'workday_id' => $workday->id,
+        $youthCount = Demographic::factory()->age()->create([
+            'demographical_id' => $workday->id,
             'name' => 'youth',
         ])->amount;
-        $otherAgeCount = WorkdayDemographic::factory()->age()->create([
-            'workday_id' => $workday->id,
+        $otherAgeCount = Demographic::factory()->age()->create([
+            'demographical_id' => $workday->id,
             'name' => 'other',
         ])->amount;
-        $indigenousCount = WorkdayDemographic::factory()->ethnicity()->create([
-            'workday_id' => $workday->id,
+        $indigenousCount = Demographic::factory()->ethnicity()->create([
+            'demographical_id' => $workday->id,
             'subtype' => 'indigenous',
             'name' => 'Ohlone',
         ])->amount;

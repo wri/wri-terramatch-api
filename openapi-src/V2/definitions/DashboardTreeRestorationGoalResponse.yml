@@ -18,9 +18,3 @@ properties:
     type: array
     items:
       $ref: './_index.yml#/DashboardTreesUnderRestorationActual'
-  averageSurvivalRateTotal:
-    type: number
-  averageSurvivalRateForProfit:
-    type: number
-  averageSurvivalRateNonProfit:
-    type: number

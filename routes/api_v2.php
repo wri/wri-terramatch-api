@@ -173,6 +173,7 @@ use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkCon
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Reports\NothingToReportReportController;
+use App\Http\Controllers\V2\RestorationPartners\GetRestorationPartnersForEntityController;
 use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
@@ -503,6 +504,10 @@ ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], fun
     Route::get('/{entity}', GetWorkdaysForEntityController::class);
 }, prefix: 'workdays');
 
+ModelInterfaceBindingMiddleware::forSlugs(['project-report'], function () {
+    Route::get('/{entity}', GetRestorationPartnersForEntityController::class);
+}, prefix: 'restoration-partners');
+
 Route::prefix('leadership-team')->group(function () {
     Route::post('/', StoreLeadershipTeamController::class);
     Route::patch('/{leadershipTeam}', UpdateLeadershipTeamController::class);
@@ -724,7 +729,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
-    Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsByStatusOfProject']);
+    Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);

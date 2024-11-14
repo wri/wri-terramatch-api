@@ -2,115 +2,52 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
-use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Models\V2\Forms\FormOptionList;
-use App\Models\V2\Forms\FormOptionListOption;
-use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Sites\Site;
+use App\Http\Resources\DelayedJobResource;
+use App\Jobs\Dashboard\RunActiveCountriesTableJob;
+use App\Models\DelayedJob;
+use App\Models\Traits\HasCacheParameter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class ActiveCountriesTableController extends Controller
 {
+    use HasCacheParameter;
+
     public function __invoke(Request $request)
     {
-        $response = (object) [
-            'data' => $this->getAllCountries($request),
-        ];
+        try {
+            $cacheParameter = $this->getParametersFromRequest($request);
+            $cacheValue = Redis::get('dashboard:active-countries-table|'.$cacheParameter);
 
-        return response()->json($response);
-    }
+            if (! $cacheValue) {
+                $frameworks = data_get($request, 'filter.programmes', []);
+                $landscapes = data_get($request, 'filter.landscapes', []);
+                $organisations = data_get($request, 'filter.organisationType', []);
+                $country = data_get($request, 'filter.country', '');
+                $uuid = data_get($request, 'filter.projectUuid', '');
 
-    public function getAllCountries($request)
-    {
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
-        $countryId = FormOptionList::where('key', 'countries')->value('id');
-        $countries = FormOptionListOption::where('form_option_list_id', $countryId)
-            ->orderBy('label')
-            ->get(['slug', 'label']);
-        $activeCountries = [];
-        foreach ($countries as $country) {
-            $totalProjects = $this->numberOfProjects($country->slug, $projects);
-            if ($totalProjects <= 0) {
-                continue;
-            }
+                $delayedJob = DelayedJob::create();
+                $job = new RunActiveCountriesTableJob(
+                    $delayedJob->id,
+                    $frameworks,
+                    $landscapes,
+                    $organisations,
+                    $country,
+                    $uuid,
+                    $cacheParameter
+                );
+                dispatch($job);
 
-            $totalSpeciesAmount = $this->totalSpeciesAmount($country->slug, $projects);
-
-            $totalJobsCreated = $this->totalJobsCreated($country->slug, $projects);
-
-            $numberOfSites = $this->numberOfSites($country->slug, $projects);
-
-            $totalNurseries = $this->numberOfNurseries($country->slug, $projects);
-
-            $totalHectaresRestored = round($this->getTotalHectaresSum($country->slug, $projects));
-
-            $activeCountries[] = [
-                'country_slug' => $country->slug,
-                'country' => $country->label,
-                'number_of_projects' => $totalProjects,
-                'total_trees_planted' => $totalSpeciesAmount,
-                'total_jobs_created' => $totalJobsCreated,
-                'number_of_sites' => $numberOfSites,
-                'number_of_nurseries' => $totalNurseries,
-                'hectares_restored' => $totalHectaresRestored,
-            ];
-        }
-
-        return $activeCountries;
-    }
-
-    public function numberOfProjects($country, $projects)
-    {
-        return $projects->where('country', $country)->count();
-    }
-
-    public function totalSpeciesAmount($country, $projects)
-    {
-        $projects = $projects->where('country', $country);
-
-        return $projects->sum(function ($project) {
-            return $project->trees_planted_count;
-        });
-    }
-
-    public function totalJobsCreated($country, $projects)
-    {
-        $projects = $projects->where('country', $country);
-
-        return $projects->sum(function ($project) {
-            $totalSum = $project->reports()
-                ->groupBy('project_id')
-                ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')->first();
-
-            if ($totalSum) {
-                return $totalSum->total_ft + $totalSum->total_pt;
+                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Data for active-countries-table is being processed']);
             } else {
-                return 0;
+                return response()->json(json_decode($cacheValue));
             }
-        });
-    }
+        } catch (\Exception $e) {
+            Log::error('Error during active-countries-table : ' . $e->getMessage());
 
-    public function numberOfSites($country, $projects)
-    {
-        $projectIds = $projects->where('country', $country)->pluck('id');
-
-        return Site::whereIn('project_id', $projectIds)->count();
-    }
-
-    public function numberOfNurseries($country, $projects)
-    {
-        $projectIds = $projects->where('country', $country)->pluck('id');
-
-        return Nursery::whereIn('project_id', $projectIds)->count();
-    }
-
-    public function getTotalHectaresSum($country, $projects)
-    {
-        $projects = $projects->where('country', $country);
-
-        return $projects->sum(function ($project) {
-            return $project->sitePolygons->sum('calc_area');
-        });
+            return response()->json(['error' => 'An error occurred during active-countries-table'], 500);
+        }
     }
 }

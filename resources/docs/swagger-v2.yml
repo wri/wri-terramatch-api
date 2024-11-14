@@ -8662,7 +8662,7 @@ definitions:
       demographics:
         type: array
         items:
-          title: WorkdayDemographic
+          title: Demographic
           type: object
           properties:
             type:
@@ -8671,6 +8671,36 @@ definitions:
                 - gender
                 - age
                 - ethnicity
+                - caste
+            subtype:
+              type: string
+            name:
+              type: string
+            amount:
+              type: integer
+  V2RestorationPartnerRead:
+    title: V2RestorationPartnerRead
+    type: object
+    properties:
+      uuid:
+        type: string
+      collection:
+        type: string
+      readable_collection:
+        type: string
+      demographics:
+        type: array
+        items:
+          title: Demographic
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - gender
+                - age
+                - ethnicity
+                - caste
             subtype:
               type: string
             name:
@@ -42443,8 +42473,8 @@ definitions:
     properties:
       email_address:
         type: string
-  WorkdayDemographic:
-    title: WorkdayDemographic
+  Demographic:
+    title: Demographic
     type: object
     properties:
       type:
@@ -42453,6 +42483,7 @@ definitions:
           - gender
           - age
           - ethnicity
+          - caste
       subtype:
         type: string
       name:
@@ -42569,18 +42600,9 @@ definitions:
           non_youth_volunteers:
             type: integer
             description: Total number of non-youth volunteers.
-          non_profit_survival_rate:
-            type: number
-            description: Survival rate for non-profit entities.
-          enterprise_survival_rate:
-            type: number
-            description: Survival rate for enterprise entities.
           number_of_sites:
             type: number
             description: number of sites.
-          number_of_nurseries:
-            type: number
-            description: number of nurseries.
   DashboardVolundteersSurvivalRateData:
     type: object
     properties:
@@ -42599,18 +42621,9 @@ definitions:
       non_youth_volunteers:
         type: integer
         description: Total number of non-youth volunteers.
-      non_profit_survival_rate:
-        type: number
-        description: Survival rate for non-profit entities.
-      enterprise_survival_rate:
-        type: number
-        description: Survival rate for enterprise entities.
       number_of_sites:
         type: number
         description: number of sites.
-      number_of_nurseries:
-        type: number
-        description: number of nurseries.
   AuditStatusCreateRequest:
     title: AuditStatusCreateRequest
     type: object
@@ -42981,10 +42994,6 @@ definitions:
         properties:
           totalJobsCreated:
             type: integer
-          forProfitJobsCreated:
-            type: integer
-          nonProfitJobsCreated:
-            type: integer
           total_ft:
             type: integer
           total_pt:
@@ -43017,10 +43026,6 @@ definitions:
     type: object
     properties:
       totalJobsCreated:
-        type: integer
-      forProfitJobsCreated:
-        type: integer
-      nonProfitJobsCreated:
         type: integer
       total_ft:
         type: integer
@@ -43143,12 +43148,6 @@ definitions:
               type: integer
             treeSpeciesPercentage:
               type: number
-      averageSurvivalRateTotal:
-        type: number
-      averageSurvivalRateForProfit:
-        type: number
-      averageSurvivalRateNonProfit:
-        type: number
   DashboardTreesUnderRestorationActual:
     type: object
     properties:
@@ -43255,21 +43254,13 @@ definitions:
               type: integer
             volunteers:
               type: integer
-            beneficiaries:
-              type: integer
-            survival_rate:
-              type: integer
-            number_of_sites:
-              type: integer
-            number_of_nurseries:
-              type: integer
             project_country:
               type: string
             country_slug:
               type: string
-            number_of_trees_goal:
+            hectares_under_restoration:
               type: integer
-            date_added:
+            programme:
               type: string
       current_page:
         type: integer
@@ -43343,10 +43334,6 @@ definitions:
             total_trees_planted:
               type: integer
             total_jobs_created:
-              type: integer
-            number_of_sites:
-              type: integer
-            number_of_nurseries:
               type: integer
   DashboardCountriesResponse:
     type: object
@@ -44233,6 +44220,25 @@ definitions:
           urban-forest:
             type: number
             description: Total amount for urban forest projects.
+  UserCreateComplete:
+    type: object
+    properties:
+      token:
+        type: string
+      password:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      job_role:
+        type: string
+      phone_number:
+        type: string
+      role:
+        type: string
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -57896,7 +57902,7 @@ paths:
                     demographics:
                       type: array
                       items:
-                        title: WorkdayDemographic
+                        title: Demographic
                         type: object
                         properties:
                           type:
@@ -57905,6 +57911,60 @@ paths:
                               - gender
                               - age
                               - ethnicity
+                              - caste
+                          subtype:
+                            type: string
+                          name:
+                            type: string
+                          amount:
+                            type: integer
+  '/v2/restoration-partners/{ENTITY}/{UUID}':
+    get:
+      operationId: get-v2-restoration-partners-entity-uuid
+      summary: View all restoration partners for a given entity
+      tags:
+        - V2 Restoration Partners
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project-report
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  title: V2RestorationPartnerRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    collection:
+                      type: string
+                    readable_collection:
+                      type: string
+                    demographics:
+                      type: array
+                      items:
+                        title: Demographic
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - gender
+                              - age
+                              - ethnicity
+                              - caste
                           subtype:
                             type: string
                           name:
@@ -90203,6 +90263,45 @@ paths:
           description: OK
           schema:
             type: object
+  /v2/auth/complete/signup:
+    put:
+      operationId: put-auth-complete-signup
+      summary: Complete a user's signup process
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+              password:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              job_role:
+                type: string
+              phone_number:
+                type: string
+              role:
+                type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
   /auth/reset:
     post:
       operationId: post-auth-reset
@@ -93877,10 +93976,6 @@ paths:
                 properties:
                   totalJobsCreated:
                     type: integer
-                  forProfitJobsCreated:
-                    type: integer
-                  nonProfitJobsCreated:
-                    type: integer
                   total_ft:
                     type: integer
                   total_pt:
@@ -94040,12 +94135,6 @@ paths:
                       type: integer
                     treeSpeciesPercentage:
                       type: number
-              averageSurvivalRateTotal:
-                type: number
-              averageSurvivalRateForProfit:
-                type: number
-              averageSurvivalRateNonProfit:
-                type: number
         '400':
           description: Bad request
         '500':
@@ -94308,21 +94397,13 @@ paths:
                       type: integer
                     volunteers:
                       type: integer
-                    beneficiaries:
-                      type: integer
-                    survival_rate:
-                      type: integer
-                    number_of_sites:
-                      type: integer
-                    number_of_nurseries:
-                      type: integer
                     project_country:
                       type: string
                     country_slug:
                       type: string
-                    number_of_trees_goal:
+                    hectares_under_restoration:
                       type: integer
-                    date_added:
+                    programme:
                       type: string
               current_page:
                 type: integer
@@ -94378,18 +94459,9 @@ paths:
                   non_youth_volunteers:
                     type: integer
                     description: Total number of non-youth volunteers.
-                  non_profit_survival_rate:
-                    type: number
-                    description: Survival rate for non-profit entities.
-                  enterprise_survival_rate:
-                    type: number
-                    description: Survival rate for enterprise entities.
                   number_of_sites:
                     type: number
                     description: number of sites.
-                  number_of_nurseries:
-                    type: number
-                    description: number of nurseries.
         '400':
           description: Bad request
         '500':
@@ -94517,10 +94589,6 @@ paths:
                     total_trees_planted:
                       type: integer
                     total_jobs_created:
-                      type: integer
-                    number_of_sites:
-                      type: integer
-                    number_of_nurseries:
                       type: integer
         '400':
           description: Bad request

@@ -2,67 +2,52 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
-use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\DelayedJobResource;
+use App\Jobs\Dashboard\RunVolunteersAverageJob;
+use App\Models\DelayedJob;
+use App\Models\Traits\HasCacheParameter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class VolunteersAndAverageSurvivalRateController extends Controller
 {
+    use HasCacheParameter;
+
     public function __invoke(Request $request)
     {
-        $projects = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)->get();
+        try {
+            $cacheParameter = $this->getParametersFromRequest($request);
+            $cacheValue = Redis::get('dashboard:volunteers-survival-rate|'.$cacheParameter);
 
-        $response = (object)[
-            'total_volunteers' => $this->getTotalVolunteerSum($projects),
-            'men_volunteers' => $this->getVolunteersSum($projects, 'volunteer_men'),
-            'women_volunteers' => $this->getVolunteersSum($projects, 'volunteer_women'),
-            'youth_volunteers' => $this->getVolunteersSum($projects, 'volunteer_youth'),
-            'non_youth_volunteers' => $this->getVolunteersSum($projects, 'volunteer_non_youth'),
-            'non_profit_survival_rate' => $this->getAverageSurvivalRate($projects, 'non-profit-organization'),
-            'enterprise_survival_rate' => $this->getAverageSurvivalRate($projects, 'for-profit-organization'),
-            'number_of_sites' => $this->numberOfSites($projects),
-            'number_of_nurseries' => $this->numberOfNurseries($projects),
-        ];
+            if (! $cacheValue) {
+                $frameworks = data_get($request, 'filter.programmes', []);
+                $landscapes = data_get($request, 'filter.landscapes', []);
+                $organisations = data_get($request, 'filter.organisationType', []);
+                $country = data_get($request, 'filter.country', '');
+                $uuid = data_get($request, 'filter.projectUuid', '');
 
-        return response()->json($response);
-    }
+                $delayedJob = DelayedJob::create();
+                $job = new RunVolunteersAverageJob(
+                    $delayedJob->id,
+                    $frameworks,
+                    $landscapes,
+                    $organisations,
+                    $country,
+                    $uuid,
+                    $cacheParameter
+                );
+                dispatch($job);
 
-    public function getTotalVolunteerSum($projects)
-    {
-        return $projects->sum(function ($project) {
-            return $project->reports()->sum('volunteer_total');
-        });
-    }
+                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Data for volunteers survival rate is being processed']);
+            } else {
+                return response()->json(json_decode($cacheValue));
+            }
+        } catch (\Exception $e) {
+            Log::error('Error during volunteers-survival-rate : ' . $e->getMessage());
 
-    public function getVolunteersSum($projects, $volunteerType)
-    {
-        return $projects->sum(function ($project) use ($volunteerType) {
-            return $project->reports()->sum($volunteerType);
-        });
-    }
-
-    public function getAverageSurvivalRate($projects, $typeOrganisation)
-    {
-        $average = $projects->filter(function ($project) use ($typeOrganisation) {
-            return $project->organisation->type === $typeOrganisation;
-        })->flatMap(function ($project) {
-            return $project->reports;
-        })->avg('pct_survival_to_date');
-
-        return intval($average);
-    }
-
-    public function numberOfSites($projects)
-    {
-        return $projects->sum(function ($project) {
-            return $project->sites->count();
-        });
-    }
-
-    public function numberOfNurseries($projects)
-    {
-        return $projects->sum(function ($project) {
-            return $project->nurseries->count();
-        });
+            return response()->json(['error' => 'An error occurred during volunteers-survival-rate'. $e->getMessage()], 500);
+        }
     }
 }

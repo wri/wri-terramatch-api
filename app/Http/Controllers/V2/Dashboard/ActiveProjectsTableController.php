@@ -2,117 +2,52 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
-use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Models\V2\Forms\FormOptionList;
-use App\Models\V2\Forms\FormOptionListOption;
+use App\Http\Resources\DelayedJobResource;
+use App\Jobs\Dashboard\RunActiveProjectsJob;
+use App\Models\DelayedJob;
+use App\Models\Traits\HasCacheParameter;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class ActiveProjectsTableController extends Controller
 {
+    use HasCacheParameter;
+
     public function __invoke(Request $request)
     {
-        $perPage = $request->input('per_page', PHP_INT_MAX);
-        $page = $request->input('page', 1);
+        try {
+            $cacheParameter = $this->getParametersFromRequest($request);
+            $cacheValue = Redis::get('dashboard:active-projects|'.$cacheParameter);
 
-        $projects = $this->getAllProjects($request, $perPage, $page);
-        $count = $this->getQuery($request)->count();
+            if (! $cacheValue) {
+                $frameworks = data_get($request, 'filter.programmes', []);
+                $landscapes = data_get($request, 'filter.landscapes', []);
+                $organisations = data_get($request, 'filter.organisationType', []);
+                $country = data_get($request, 'filter.country', '');
+                $uuid = data_get($request, 'filter.projectUuid', '');
 
-        return response()->json([
-            'current_page' => $page,
-            'data' => $projects,
-            'per_page' => $perPage,
-            'last_page' => ceil($count / $perPage),
-            'total' => $count,
-        ]);
-    }
+                $delayedJob = DelayedJob::create();
+                $job = new RunActiveProjectsJob(
+                    $delayedJob->id,
+                    $frameworks,
+                    $landscapes,
+                    $organisations,
+                    $country,
+                    $uuid,
+                    $cacheParameter
+                );
+                dispatch($job);
 
-    public function getQuery($request)
-    {
-        return TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
-            ->with('organisation')
-            ->withCount(['sites', 'nurseries']);
-    }
+                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Data for active projects is being processed']);
+            } else {
+                return response()->json(json_decode($cacheValue));
+            }
+        } catch (\Exception $e) {
+            Log::error('Error during active-projects : ' . $e->getMessage());
 
-    public function getAllProjects($request, $perPage, $page)
-    {
-        $query = $this->getQuery($request)
-            ->skip(($page - 1) * $perPage)
-            ->take($perPage);
-
-        $projects = $query->get();
-
-        return $projects->map(function ($project) {
-            return [
-                'uuid' => $project->uuid,
-                'name' => $project->name,
-                'organisation' => $project->organisation->name,
-                'trees_under_restoration' => $this->treesUnderRestoration($project),
-                'jobs_created' => $this->jobsCreated($project),
-                'volunteers' => $this->volunteers($project),
-                'beneficiaries' => $this->beneficiaries($project),
-                'survival_rate' => $project->survival_rate,
-                'number_of_sites' => $project->sites_count,
-                'number_of_nurseries' => $project->nurseries_count,
-                'project_country' => $this->projectCountry($project->country),
-                'country_slug' => $project->country,
-                'number_of_trees_goal' => $project->trees_grown_goal,
-                'date_added' => $project->created_at,
-                'hectares_under_restoration' => round($project->sitePolygons->sum('calc_area')),
-                'programme' => $project->framework_key,
-            ];
-        });
-    }
-
-    public function treesUnderRestoration($project)
-    {
-        return $project->trees_planted_count;
-    }
-
-    public function jobsCreated($project)
-    {
-        $projectReport = $project->reports()
-            ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
-            ->groupBy('project_id')
-            ->first();
-
-        if ($projectReport) {
-            return $projectReport->total_ft + $projectReport->total_pt;
-        } else {
-            return 0;
+            return response()->json(['error' => 'An error occurred during active-projects'. $e->getMessage()], 500);
         }
-    }
-
-    public function volunteers($project)
-    {
-        $totalVolunteers = $project->reports()->selectRaw('SUM(volunteer_total) as total')->first();
-
-        return $totalVolunteers ? intval($totalVolunteers->total) : 0;
-    }
-
-    public function beneficiaries($project)
-    {
-        $totalBeneficiaries = $project->reports()->selectRaw('SUM(beneficiaries) as total')->first();
-
-        return $totalBeneficiaries ? intval($totalBeneficiaries->total) : 0;
-    }
-
-    public function projectCountry($slug)
-    {
-        $countryId = FormOptionList::where('key', 'countries')->value('id');
-
-        return FormOptionListOption::where('form_option_list_id', $countryId)
-            ->where('slug', $slug)
-            ->value('label');
-    }
-
-    public function paginate($items, $perPage = 10, $page = null, $options = [])
-    {
-        $page = $page ?: (LengthAwarePaginator::resolveCurrentPage() ?: 1);
-        $items = $items instanceof Collection ? $items : Collection::make($items);
-
-        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }

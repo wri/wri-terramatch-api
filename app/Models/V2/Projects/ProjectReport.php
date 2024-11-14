@@ -7,6 +7,7 @@ use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
+use App\Models\Traits\HasRestorationPartners;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
@@ -14,17 +15,19 @@ use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
 use App\Models\V2\ReportModel;
+use App\Models\V2\RestorationPartners\RestorationPartner;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
-use App\Models\V2\Workdays\WorkdayDemographic;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -54,6 +57,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use HasEntityResources;
     use BelongsToThroughTrait;
     use HasWorkdays;
+    use HasRestorationPartners;
 
     protected $auditInclude = [
         'status',
@@ -155,9 +159,12 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'volunteer_scstobc',
         'beneficiaries_scstobc_farmers',
         'beneficiaries_scstobc',
+        'total_unique_restoration_partners',
 
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
+        // virtual (see HasRestorationPartners trait)
+        'other_restoration_partners_description',
     ];
 
     public $casts = [
@@ -209,6 +216,37 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'finance' => [
             Workday::COLLECTION_PROJECT_DIRECT,
             Workday::COLLECTION_PROJECT_CONVERGENCE,
+        ],
+    ];
+
+    public const RESTORATION_PARTNER_COLLECTIONS = [
+        'direct' => [
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_INCOME,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_BENEFITS,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_CONSERVATION_PAYMENTS,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_MARKET_ACCESS,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_CAPACITY,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_TRAINING,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_LAND_TITLE,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_LIVELIHOODS,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_PRODUCTIVITY,
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_OTHER,
+        ],
+        'indirect' => [
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_INCOME,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_BENEFITS,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_CONSERVATION_PAYMENTS,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_MARKET_ACCESS,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_CAPACITY,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_TRAINING,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_LAND_TITLE,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_LIVELIHOODS,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_PRODUCTIVITY,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_OTHER,
+        ],
+        'other' => [
+            RestorationPartner::COLLECTION_PROJECT_DIRECT_OTHER,
+            RestorationPartner::COLLECTION_PROJECT_INDIRECT_OTHER,
         ],
     ];
 
@@ -388,14 +426,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         }
 
         // Assume that the types are balanced and just return the value from 'gender'
-        $sumTotals = fn ($collectionType) => WorkdayDemographic::whereIn(
-            'workday_id',
-            Workday::where('workdayable_type', SiteReport::class)
-                ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
-                ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
-                ->visible()
-                ->select('id')
-        )->gender()->sum('amount');
+        $sumTotals = fn ($collectionType) => Demographic::where('demographical_type', Workday::class)
+            ->whereIn(
+                'demographical_id',
+                Workday::where('workdayable_type', SiteReport::class)
+                    ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
+                    ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
+                    ->visible()
+                    ->select('id')
+            )->gender()->sum('amount');
 
         return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
     }
@@ -449,5 +488,10 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function getAuditableNameAttribute(): string
     {
         return $this->title ?? '';
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', ReportStatusStateMachine::APPROVED);
     }
 }

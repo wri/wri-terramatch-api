@@ -7,6 +7,7 @@ return [
         'framework-enterprises' => 'Framework Terrafund Enterprises',
         'framework-terrafund-landscapes' => 'Framework Terrafund Landscapes',
         'framework-hbf' => 'Framework Harit Bharat Fund',
+        'framework-epa-ghana-pilot' => 'Framework EPA Ghana Pilot',
         'custom-forms-manage' => 'Manage custom forms',
         'users-manage' => 'Manage users',
         'monitoring-manage' => 'Manage monitoring',
@@ -25,6 +26,7 @@ return [
             'framework-enterprises',
             'framework-terrafund-landscapes',
             'framework-hbf',
+            'framework-epa-ghana-pilot',
             'custom-forms-manage',
             'users-manage',
             'monitoring-manage',
@@ -53,6 +55,13 @@ return [
             'monitoring-manage',
             'reports-manage',
         ],
+        'admin-epa-ghana-pilot' => [
+            'framework-epa-ghana-pilot',
+            'custom-forms-manage',
+            'users-manage',
+            'monitoring-manage',
+            'reports-manage',
+        ],
         'project-developer' => [
             'manage-own',
         ],
@@ -63,6 +72,9 @@ return [
             'projects-read',
             'polygons-manage',
             'media-manage',
+        ],
+        'research-service-account' => [
+            'polygons-manage',
         ],
         'government' => [
             'view-dashboard',

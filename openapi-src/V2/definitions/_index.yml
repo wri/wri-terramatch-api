@@ -144,6 +144,8 @@ V2SeedingPaginated:
   $ref: './V2SeedingPaginated.yml'
 V2WorkdayRead:
   $ref: './V2WorkdayRead.yml'
+V2RestorationPartnerRead:
+  $ref: './V2RestorationPartnerRead.yml'
 V2DisturbanceRead:
   $ref: './V2DisturbanceRead.yml'
 V2DisturbancePaginated:
@@ -256,8 +258,8 @@ V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
 V2ProjectInviteCreate:
   $ref: './V2ProjectInviteCreate.yml'
-WorkdayDemographic:
-  $ref: './WorkdayDemographic.yml'
+Demographic:
+  $ref: './Demographic.yml'
 GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
@@ -386,3 +388,5 @@ DashboardIndicatorHectaresRestorationResponse:
   $ref: './DashboardIndicatorHectaresRestorationResponse.yml'
 DashboardIndicatorHectaresRestorationData:
   $ref: './DashboardIndicatorHectaresRestorationData.yml'
+UserCreateComplete:
+  $ref: './UserCreateComplete.yml'

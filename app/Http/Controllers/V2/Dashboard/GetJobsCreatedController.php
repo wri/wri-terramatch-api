@@ -2,111 +2,52 @@
 
 namespace App\Http\Controllers\V2\Dashboard;
 
-use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\Dashboard\JobsCreatedResource;
-use App\Models\V2\Projects\ProjectReport;
+use App\Http\Resources\DelayedJobResource;
+use App\Jobs\Dashboard\RunJobsCreatedJob;
+use App\Models\DelayedJob;
+use App\Models\Traits\HasCacheParameter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class GetJobsCreatedController extends Controller
 {
-    public function __invoke(Request $request): JobsCreatedResource
+    use HasCacheParameter;
+
+    public function __invoke(Request $request)
     {
+        try {
+            $cacheParameter = $this->getParametersFromRequest($request);
+            $cacheValue = Redis::get('dashboard:jobs-created|'.$cacheParameter);
 
-        $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
+            if (! $cacheValue) {
+                $frameworks = data_get($request, 'filter.programmes', []);
+                $landscapes = data_get($request, 'filter.landscapes', []);
+                $organisations = data_get($request, 'filter.organisationType', []);
+                $country = data_get($request, 'filter.country', '');
+                $uuid = data_get($request, 'filter.projectUuid', '');
 
-        $rawProjectIds = $query
-        ->select('v2_projects.id', 'organisations.type')
-        ->get();
+                $delayedJob = DelayedJob::create();
+                $job = new RunJobsCreatedJob(
+                    $delayedJob->id,
+                    $frameworks,
+                    $landscapes,
+                    $organisations,
+                    $country,
+                    $uuid,
+                    $cacheParameter
+                );
+                dispatch($job);
 
-        $forProfitProjectIds = $this->filterProjectIdsByType($rawProjectIds, 'for-profit-organization');
-        $nonProfitProjectIds = $this->filterProjectIdsByType($rawProjectIds, 'non-profit-organization');
-        $allProjectIds = $this->getAllProjectIds($rawProjectIds);
+                return (new DelayedJobResource($delayedJob))->additional(['message' => 'Jobs created data is being processed']);
+            } else {
+                return response()->json(json_decode($cacheValue));
+            }
+        } catch (\Exception $e) {
+            Log::error('Error during jobs-created calculation: ' . $e->getMessage());
 
-        $forProfitJobsCreated = $this->getTotalJobsCreated($forProfitProjectIds);
-        $nonProfitJobsCreated = $this->getTotalJobsCreated($nonProfitProjectIds);
-        $totalJobsCreated = $this->getTotalJobsCreated($allProjectIds);
-        $jobsCreatedDetailed = $this->getJobsCreatedDetailed($allProjectIds);
-
-        $finalResult = (object) [
-            'totalJobsCreated' => $totalJobsCreated,
-            'forProfitJobsCreated' => $forProfitJobsCreated,
-            'nonProfitJobsCreated' => $nonProfitJobsCreated,
-            'total_ft' => $jobsCreatedDetailed->total_ft,
-            'total_pt' => $jobsCreatedDetailed->total_pt,
-            'total_men' => $this->calculateTotalMen($jobsCreatedDetailed),
-            'total_pt_men' => $jobsCreatedDetailed->total_pt_men,
-            'total_ft_men' => $jobsCreatedDetailed->total_ft_men,
-            'total_women' => $this->calculateTotalWomen($jobsCreatedDetailed),
-            'total_pt_women' => $jobsCreatedDetailed->total_pt_women,
-            'total_ft_women' => $jobsCreatedDetailed->total_ft_women,
-            'total_youth' => $this->calculateTotalYouth($jobsCreatedDetailed),
-            'total_pt_youth' => $jobsCreatedDetailed->total_pt_youth,
-            'total_ft_youth' => $jobsCreatedDetailed->total_ft_youth,
-            'total_non_youth' => $this->calculateTotalNonYouth($jobsCreatedDetailed),
-            'total_pt_non_youth' => $jobsCreatedDetailed->total_pt_non_youth,
-            'total_ft_non_youth' => $jobsCreatedDetailed->total_ft_non_youth,
-        ];
-
-        return new JobsCreatedResource($finalResult);
-    }
-
-    private function filterProjectIdsByType($projectIds, $type)
-    {
-        return $projectIds->filter(function ($row) use ($type) {
-            return $row->type === $type;
-        })->pluck('id')->toArray();
-    }
-
-    private function getAllProjectIds($projectIds)
-    {
-        return $projectIds->pluck('id')->toArray();
-    }
-
-    private function calculateTotalMen($jobsCreatedDetailed)
-    {
-        return $jobsCreatedDetailed->total_pt_men + $jobsCreatedDetailed->total_ft_men;
-    }
-
-    private function calculateTotalWomen($jobsCreatedDetailed)
-    {
-        return $jobsCreatedDetailed->total_pt_women + $jobsCreatedDetailed->total_ft_women;
-    }
-
-    private function calculateTotalYouth($jobsCreatedDetailed)
-    {
-        return $jobsCreatedDetailed->total_pt_youth + $jobsCreatedDetailed->total_ft_youth;
-    }
-
-    private function calculateTotalNonYouth($jobsCreatedDetailed)
-    {
-        return $jobsCreatedDetailed->total_pt_non_youth + $jobsCreatedDetailed->total_ft_non_youth;
-    }
-
-    private function getTotalJobsCreated($projectIds)
-    {
-        $sumData = ProjectReport::whereIn('project_id', $projectIds)
-            ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
-            ->first();
-
-        return $sumData->total_ft + $sumData->total_pt;
-    }
-
-    private function getJobsCreatedDetailed($projectIds)
-    {
-        return ProjectReport::whereIn('project_id', $projectIds)
-            ->selectRaw(
-                'SUM(ft_total) as total_ft, 
-                 SUM(pt_total) as total_pt, 
-                 SUM(pt_men) as total_pt_men, 
-                 SUM(ft_men) as total_ft_men, 
-                 SUM(pt_women) as total_pt_women, 
-                 SUM(ft_women) as total_ft_women, 
-                 SUM(pt_youth) as total_pt_youth, 
-                 SUM(ft_youth) as total_ft_youth, 
-                 SUM(pt_non_youth) as total_pt_non_youth, 
-                 SUM(ft_jobs_non_youth) as total_ft_non_youth'
-            )
-            ->first();
+            return response()->json(['error' => 'An error occurred during jobs-created calculation'], 500);
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V2\Workdays;
 
+use App\Http\Resources\V2\Demographics\DemographicResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class WorkdayResource extends JsonResource
@@ -12,7 +13,7 @@ class WorkdayResource extends JsonResource
             'uuid' => $this->uuid,
             'collection' => $this->collection,
             'readable_collection' => $this->readable_collection,
-            'demographics' => empty($this->demographics) ? [] : WorkdayDemographicResource::collection($this->demographics),
+            'demographics' => empty($this->demographics) ? [] : DemographicResource::collection($this->demographics),
         ];
     }
 }
