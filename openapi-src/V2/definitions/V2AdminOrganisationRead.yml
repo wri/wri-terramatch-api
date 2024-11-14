@@ -9,6 +9,8 @@ properties:
     type: string
   type:
     type: string
+  is_test:
+    type: boolean
   private:
     type: boolean
   name:

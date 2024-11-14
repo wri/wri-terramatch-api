@@ -149,6 +149,7 @@ use App\Http\Controllers\V2\ProjectReports\AdminIndexProjectReportsController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
 use App\Http\Controllers\V2\Projects\AdminIndexProjectsController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
+use App\Http\Controllers\V2\Projects\AdminUpdateProjectController;
 use App\Http\Controllers\V2\Projects\CreateBlankProjectWithFormController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\CreateProjectWithFormController;
@@ -306,6 +307,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('projects')->group(function () {
         Route::get('', AdminIndexProjectsController::class);
+        Route::put('/{project}', AdminUpdateProjectController::class);
         Route::get('/multi', AdminProjectMultiController::class);
     });
 
