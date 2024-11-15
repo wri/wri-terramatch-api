@@ -431,11 +431,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             return $projectReportTotal;
         }
 
-        return $projectReportTotal + $this->sumWorkdaysTotal('paid') + $this->sumWorkdaysTotal('volunteer');
-    }
-
-    public function sumWorkdaysTotal(string $collection): int
-    {
         // Assume that the types are balanced and just return the value from 'gender'
         $sumTotals = fn ($collectionType) => Demographic::where('demographical_type', Workday::class)
             ->whereIn(
@@ -447,17 +442,17 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
                     ->select('id')
             )->gender()->sum('amount');
 
-        return $sumTotals($collection) ?? 0;
+        return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
     }
 
     public function getWorkdaysDirectTotalAttribute(): int
     {
-        return $this->workdays_direct ?? 0 + $this->sumWorkdaysTotal('direct');
+        return $this->workdays_direct ?? 0;
     }
 
     public function getWorkdaysConvergenceTotalAttribute(): int
     {
-        return $this->workdays_convergence ?? 0 + $this->sumWorkdaysTotal('convergence');
+        return $this->workdays_convergence ?? 0;
     }
 
     public function getNonTreeTotalAttribute(): int
@@ -471,15 +466,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             ->where('collection', TreeSpecies::COLLECTION_NON_TREE)
             ->visible()
             ->sum('amount');
-    }
-
-    public function getTreesRegeneratingCountAttribute(): int
-    {
-        if (empty($this->task_id)) {
-            return 0;
-        }
-
-        return $this->task->siteReports()->sum('num_trees_regenerating');
     }
 
     public function getSiteReportsCountAttribute(): int
