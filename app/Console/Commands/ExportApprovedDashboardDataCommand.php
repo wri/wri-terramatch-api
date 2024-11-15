@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Helpers\TerrafundDashboardQueryHelper;
-use App\Services\Dashboard\RunTotalHeaderService;
+use Illuminate\Console\Command;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 
 class ExportApprovedDashboardDataCommand extends Command
 {
@@ -41,7 +39,7 @@ class ExportApprovedDashboardDataCommand extends Command
             ->get();
         $csvFile = fopen('projects_report.csv', 'w');
         fputcsv($csvFile, ['Project UUID', 'Trees Planted to Date', 'Hectares Under Restoration', 'Jobs Created']);
-        
+
         foreach ($projects as $project) {
             fputcsv($csvFile, [
                 $project->uuid,
@@ -51,10 +49,7 @@ class ExportApprovedDashboardDataCommand extends Command
             ]);
         }
         fclose($csvFile);
-    
+
         echo "CSV file 'projects_report.csv' created successfully.";
     }
-
-    
-    
 }
