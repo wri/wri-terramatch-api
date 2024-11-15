@@ -33,8 +33,6 @@ class ExportApprovedDashboardDataCommand extends Command
             ->select([
                 'v2_projects.uuid',
                 'v2_projects.id',
-                'v2_projects.total_hectares_restored_goal',
-                'v2_projects.trees_grown_goal',
             ])
             ->get();
         $csvFile = fopen('projects_report.csv', 'w');
