@@ -11,6 +11,7 @@ class ProjectLiteResource extends JsonResource
     {
         $data = [
             'uuid' => $this->uuid,
+            'is_test' => $this->is_test,
             'ppc_external_id' => $this->ppc_external_id ?? $this->id,
             'framework_key' => $this->framework_key,
             'framework_uuid' => $this->framework_uuid,
