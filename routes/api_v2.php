@@ -287,13 +287,13 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::put('{framework}', AdminUpdateReportingFrameworkController::class);
     });
 
-    Route::resource('organisations', AdminOrganisationController::class)->except('create');
     Route::prefix('organisations')->group(function () {
         Route::get('multi', AdminOrganisationMultiController::class);
         Route::put('approve', AdminApproveOrganisationController::class);
         Route::put('reject', AdminRejectOrganisationController::class);
         Route::get('export', AdminExportOrganisationsController::class);
     });
+    Route::resource('organisations', AdminOrganisationController::class)->except('create');
 
     Route::prefix('update-requests')->group(function () {
         Route::get('', AdminIndexUpdateRequestsController::class);
