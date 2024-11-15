@@ -475,13 +475,10 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
 
     public function getTotalCommunityPartnersAttribute(): int
     {
-        return $this->beneficiaries_men ?? 0 +
-            $this->beneficiaries_women ?? 0 +
-            $this->beneficiaries_youth ?? 0 +
-            $this->beneficiaries_scstobc ?? 0 +
-            $this->beneficiaries_scstobc_farmers ?? 0 +
-            $this->beneficiaries_smallholder ?? 0 +
-            $this->beneficiaries_large_scale ?? 0;
+        $beneficiaries = ['men', 'women', 'youth', 'scstobc', 'scstobc_farmers', 'smallholder', 'large_scale'];
+        return collect($beneficiaries)->reduce(function ($sum, $beneficiary) {
+            return $sum + ($this->{"beneficiaries_$beneficiary"} ?? 0);
+        }, 0);        
     }
 
     public function getNurseryReportsCountAttribute(): ?int
