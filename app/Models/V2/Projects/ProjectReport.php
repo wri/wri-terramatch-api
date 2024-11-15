@@ -445,16 +445,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
     }
 
-    public function getWorkdaysDirectTotalAttribute(): int
-    {
-        return $this->workdays_direct ?? 0;
-    }
-
-    public function getWorkdaysConvergenceTotalAttribute(): int
-    {
-        return $this->workdays_convergence ?? 0;
-    }
-
     public function getNonTreeTotalAttribute(): int
     {
         if (empty($this->task_id)) {
@@ -462,7 +452,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         }
 
         return TreeSpecies::where('speciesable_type', SiteReport::class)
-            ->whereIn('speciesable_id', $this->task->siteReports()->select('id'))
+            ->whereIn('speciesable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
             ->where('collection', TreeSpecies::COLLECTION_NON_TREE)
             ->visible()
             ->sum('amount');

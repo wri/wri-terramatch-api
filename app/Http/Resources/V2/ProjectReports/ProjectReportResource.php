@@ -118,8 +118,8 @@ class ProjectReportResource extends JsonResource
             'people_knowledge_skills_increased' => $this->people_knowledge_skills_increased,
             'indirect_beneficiaries' => $this->indirect_beneficiaries,
             'indirect_beneficiaries_description' => $this->indirect_beneficiaries_description,
-            'workdays_direct_total' => $this->workdays_direct_total,
-            'workdays_convergence_total' => $this->workdays_convergence_total,
+            'workdays_direct_total' => $this->workdays_direct,
+            'workdays_convergence_total' => $this->workdays_convergence,
             'non_tree_total' => $this->non_tree_total,
             'total_community_partners' => $this->total_community_partners,
         ];
