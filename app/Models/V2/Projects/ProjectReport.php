@@ -217,6 +217,12 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             Workday::COLLECTION_PROJECT_DIRECT,
             Workday::COLLECTION_PROJECT_CONVERGENCE,
         ],
+        'direct' => [
+            Workday::COLLECTION_PROJECT_DIRECT,
+        ],
+        'convergence' => [
+            Workday::COLLECTION_PROJECT_CONVERGENCE,
+        ],
     ];
 
     public const RESTORATION_PARTNER_COLLECTIONS = [
@@ -439,9 +445,31 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
     }
 
+    public function getNonTreeTotalAttribute(): int
+    {
+        if (empty($this->task_id)) {
+            return 0;
+        }
+
+        return TreeSpecies::where('speciesable_type', SiteReport::class)
+            ->whereIn('speciesable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
+            ->where('collection', TreeSpecies::COLLECTION_NON_TREE)
+            ->visible()
+            ->sum('amount');
+    }
+
     public function getSiteReportsCountAttribute(): int
     {
         return $this->task?->siteReports()->count() ?? 0;
+    }
+
+    public function getTotalCommunityPartnersAttribute(): int
+    {
+        $beneficiaries = ['men', 'women', 'youth', 'scstobc', 'scstobc_farmers', 'smallholder', 'large_scale'];
+
+        return collect($beneficiaries)->reduce(function ($sum, $beneficiary) {
+            return $sum + ($this->{"beneficiaries_$beneficiary"} ?? 0);
+        }, 0);
     }
 
     public function getNurseryReportsCountAttribute(): ?int
