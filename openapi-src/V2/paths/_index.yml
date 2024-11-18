@@ -10,12 +10,6 @@
 /v2/admin/sites/multi:
   get:
     $ref: './Sites/get-v2-admin-sites-multi.yml'
-/v2/admin/sites/{UUID}/polygons:
-  get:
-    $ref: './Sites/get-v2-admin-sites-uuid-polygons.yml'
-/v2/admin/sites/{UUID}/polygons/count:
-  get:
-    $ref: './Sites/get-v2-admin-sites-uuid-polygons-count.yml'
 /users:
   post:
     $ref: './Users/post-users.yml'
@@ -2501,6 +2495,12 @@
     $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
+/v2/sites/{UUID}/polygons:
+  get:
+    $ref: './Sites/get-v2-admin-sites-uuid-polygons.yml'
+/v2/sites/{UUID}/polygons/count:
+  get:
+    $ref: './Sites/get-v2-admin-sites-uuid-polygons-count.yml'
 /v2/site-monitorings/{UUID}:
   get:
     $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'

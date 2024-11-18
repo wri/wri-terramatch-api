@@ -319,8 +319,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('sites')->group(function () {
         Route::get('/', AdminIndexSitesController::class);
         Route::get('/multi', AdminSitesMultiController::class);
-        Route::get('/{site}/polygons/count', AdminSitesPolygonCountController::class);
-        Route::get('/{site}/polygons', AdminSitesPolygonController::class);
     });
 
     Route::prefix('site-monitorings')->group(function () {
@@ -583,6 +581,8 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
     Route::get('/check-approve', SiteCheckApproveController::class);
+    Route::get('/{site}/polygons/count', AdminSitesPolygonCountController::class);
+    Route::get('/{site}/polygons', AdminSitesPolygonController::class);
 });
 
 Route::prefix('geometry')->group(function () {
