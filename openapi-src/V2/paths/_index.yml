@@ -2747,9 +2747,15 @@
 /v2/type-entity:
   get:
     $ref: './Entity/get-v2-type-entity.yml'
+/v2/entity/polygons/count:
+  get:
+    $ref: './Entity/get-v2-entity-count.yml'
+/v2/entity/polygons:
+  get:
+    $ref: './Entity/get-v2-type-entity.yml'
 /v2/{ENTITY}/{UUID}/status:
-    put:
-      $ref: './Entity/put-v2-entity-uuid-status.yml'
+  put:
+    $ref: './Entity/put-v2-entity-uuid-status.yml'
 /v2/{ENTITY}/{UUID}/{ID}/delete:
   delete:
     $ref: './AuditStatus/delete-v2-audit-status.yml'

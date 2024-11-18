@@ -583,8 +583,10 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
     Route::get('/check-approve', SiteCheckApproveController::class);
-    Route::get('/polygons/count', AdminSitesPolygonCountController::class);
-    Route::get('/polygons', AdminSitesPolygonController::class);
+});
+Route::prefix('entity')->group(function() {
+  Route::get('/polygons/count', AdminSitesPolygonCountController::class);
+  Route::get('/polygons', AdminSitesPolygonController::class);
 });
 
 Route::prefix('geometry')->group(function () {

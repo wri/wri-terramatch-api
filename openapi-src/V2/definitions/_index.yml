@@ -352,6 +352,8 @@ GeojsonData:
   $ref: './GeojsonData.yml'
 EntityTypeResponse:
   $ref: './EntityTypeResponse.yml'
+EntityPolygonResponse:
+  $ref: './EntityPolygonResponse.yml'
 AuditStatusUpdateRequest:
   $ref: './AuditStatusUpdateRequest.yml'
 SitePolygonResource:

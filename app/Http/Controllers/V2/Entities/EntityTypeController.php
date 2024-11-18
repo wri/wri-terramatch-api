@@ -95,14 +95,13 @@ class EntityTypeController extends Controller
             ], 500);
         }
     }
-
     private function getSitePolygonsWithFiltersAndSorts($sitePolygonsQuery, Request $request)
     {
         if ($request->has('status') && $request->input('status')) {
             $statusValues = explode(',', $request->input('status'));
             $sitePolygonsQuery->whereIn('site_polygon.status', $statusValues);
         }
-
+    
         $sortFields = $request->input('sort', []);
         foreach ($sortFields as $field => $direction) {
             if ($field === 'status') {
@@ -113,7 +112,8 @@ class EntityTypeController extends Controller
                 $sitePolygonsQuery->orderBy($field, $direction);
             }
         }
-
-        return $sitePolygonsQuery->get();
+  
+        return $sitePolygonsQuery;
     }
+    
 }

@@ -20,20 +20,15 @@ parameters:
   - in: query
     name: sort
     required: false
-    description: Sort criteria in the format `sort[field]=direction`, e.g. `sort[poly_name]=asc or sort[status]=desc`
+    description: Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`
     type: string
 responses:
   '200':
     description: Successful response
     schema:
-      $ref: '../../definitions/_index.yml#/EntityPolygonResponse'
-  '400':
-    description: Bad request, UUID parameter is missing
-  '500':
-    description: Internal server error
-    schema:
       type: object
       properties:
-        error:
-          type: string
-          description: Error message
+        count:
+          type: number
+  '500':
+    description: Internal server error
