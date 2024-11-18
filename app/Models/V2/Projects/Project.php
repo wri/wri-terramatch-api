@@ -74,6 +74,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     protected $fillable = [
         'name',
         'status',
+        'is_test',
         'update_request_status',
         'project_status',
         'framework_key',
@@ -185,6 +186,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     ];
 
     public $casts = [
+        'is_test' => 'boolean',
         'land_tenures' => 'array',
         'land_tenure_project_area' => 'array',
         'land_use_types' => 'array',
