@@ -396,10 +396,10 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function hasDashboardAdminAccess(): bool
-{
-    return in_array($this->primaryRole->name, [
-               'admin-super', 
-               'admin-terrafund'
-           ]);
-}
+    {
+        return in_array($this->primaryRole->name, [
+                   'admin-super',
+                   'admin-terrafund',
+               ]);
+    }
 }
