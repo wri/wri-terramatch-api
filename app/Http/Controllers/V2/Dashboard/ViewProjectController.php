@@ -38,7 +38,7 @@ class ViewProjectController extends Controller
             $response = (object)[
                 'allowed' => $isInvite,
             ];
-        } elseif ($user->isAdmin) {
+        } elseif ($user->hasDashboardAdminAccess()) {
             $response = (object)[
                 'allowed' => true,
             ];
