@@ -2,14 +2,13 @@
 
 namespace App\Services;
 
-use Maatwebsite\Excel\Excel;
 use App\Exports\V2\OrganisationsExport;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ExportAllOrganisationsService
 {
-    public function run($filename): BinaryFileResponse
+    public function run()
     {
-        return (new OrganisationsExport())->download($filename, Excel::CSV)->deleteFileAfterSend(true);
+        return new OrganisationsExport();
+        // return file_get_contents($filename);
     }
 }

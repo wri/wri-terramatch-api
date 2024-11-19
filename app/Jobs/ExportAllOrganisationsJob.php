@@ -3,8 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\DelayedJob;
-use App\Models\V2\Forms\Form;
-use App\Models\V2\Projects\Project;
 use App\Services\ExportAllOrganisationsService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -15,6 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExportAllOrganisationsJob implements ShouldQueue
 {
@@ -24,6 +23,8 @@ class ExportAllOrganisationsJob implements ShouldQueue
     use SerializesModels;
 
     public $timeout = 0;
+
+    protected $uuid;
 
     protected $delayed_job_id;
 
@@ -39,16 +40,19 @@ class ExportAllOrganisationsJob implements ShouldQueue
     {
         try {
             $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
+            $relativePath = 'exports/' . $this->file_name;
 
-            $binary_data = $exportAllOrganisationsService->run($this->file_name);
+            Excel::store($exportAllOrganisationsService->run(), $relativePath);
+
+            $absolutePath = storage_path('app/' . $relativePath);
+            $binary_data = file_get_contents($absolutePath);
+
             Redis::set('exports:organisations:'.$this->file_name, $binary_data, 'EX', 7200);
-
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
                 'payload' => ['message' => 'All Organisations Export completed'],
                 'status_code' => Response::HTTP_OK,
             ]);
-
         } catch (Exception $e) {
             Log::error('Error in ExportAllOrganisationsJob: ' . $e->getMessage());
 
