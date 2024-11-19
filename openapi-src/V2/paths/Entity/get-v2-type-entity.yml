@@ -26,7 +26,7 @@ responses:
   '200':
     description: Successful response
     schema:
-      $ref: '../../definitions/_index.yml#/EntityPolygonResponse'
+      $ref: '../../definitions/_index.yml#/EntityTypeResponse'
   '400':
     description: Bad request, UUID parameter is missing
   '500':

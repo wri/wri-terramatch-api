@@ -2752,7 +2752,7 @@
     $ref: './Entity/get-v2-entity-count.yml'
 /v2/entity/polygons:
   get:
-    $ref: './Entity/get-v2-type-entity.yml'
+    $ref: './Entity/get-v2-entity-polygon.yml'
 /v2/{ENTITY}/{UUID}/status:
   put:
     $ref: './Entity/put-v2-entity-uuid-status.yml'

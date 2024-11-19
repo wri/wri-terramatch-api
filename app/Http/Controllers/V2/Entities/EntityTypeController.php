@@ -113,7 +113,7 @@ class EntityTypeController extends Controller
             }
         }
   
-        return $sitePolygonsQuery;
+        return $sitePolygonsQuery->get();
     }
     
 }

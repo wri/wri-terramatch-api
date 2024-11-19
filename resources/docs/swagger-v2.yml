@@ -98166,6 +98166,11 @@ paths:
                       type: boolean
                     version_name:
                       type: string
+              bbox:
+                type: array
+                items:
+                  type: number
+                description: Bounding box of the entity
         '400':
           description: 'Bad request, UUID parameter is missing'
         '500':
@@ -98236,7 +98241,7 @@ paths:
         - in: query
           name: sort
           required: false
-          description: 'Sort criteria in the format `sort[field]=direction`, e.g. `sort[poly_name]=asc or sort[status]=desc`'
+          description: 'Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`'
           type: string
       responses:
         '200':

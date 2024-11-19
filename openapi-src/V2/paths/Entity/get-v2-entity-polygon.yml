@@ -26,9 +26,14 @@ responses:
   '200':
     description: Successful response
     schema:
-      type: object
-      properties:
-        count:
-          type: number
+      $ref: '../../definitions/_index.yml#/EntityPolygonResponse'
+  '400':
+    description: Bad request, UUID parameter is missing
   '500':
     description: Internal server error
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
