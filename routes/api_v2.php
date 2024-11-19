@@ -722,7 +722,7 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::delete('/{auditable}/{uuid}/delete', DeleteAuditStatusController::class);
 });
 
-Route::prefix('dashboard')->group(function () {
+Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group(function () {
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
     Route::get('/jobs-created', GetJobsCreatedController::class);
     Route::get('/volunteers-survival-rate', VolunteersAndAverageSurvivalRateController::class);
