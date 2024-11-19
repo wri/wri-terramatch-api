@@ -9,6 +9,5 @@ class ExportAllOrganisationsService
     public function run()
     {
         return new OrganisationsExport();
-        // return file_get_contents($filename);
     }
 }
