@@ -18,16 +18,13 @@ class ViewProjectController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        if ($user->hasRole('government')) {
+        if (is_null($user)) {
             $response = (object)[
               'allowed' => false,
             ];
-        } elseif ($user->hasRole('funder')) {
-            $isAllowed = Project::where('uuid', $uuid)
-                ->where('framework_key', $user->program)
-                ->exists();
+        } elseif ($user->hasRole('government') || $user->hasRole('funder')) {
             $response = (object)[
-                'allowed' => $isAllowed,
+              'allowed' => true,
             ];
         } elseif ($user->hasRole('project-developer')) {
             $projectId = Project::where('uuid', $uuid)
