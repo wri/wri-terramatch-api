@@ -1050,12 +1050,18 @@ class TerrafundCreateGeometryController extends Controller
     {
         ini_set('max_execution_time', '-1');
         ini_set('memory_limit', '-1');
+        ini_set('post_max_size', '300M');
+        ini_set('upload_max_filesize', '300M');
+        if (! ini_set('max_execution_time', 60)) {
+            Log::info('Failed to set max_execution_time');
+        }
+
         $framework = $request->query('framework');
 
         try {
             $sitesFromFramework = Site::where('framework_key', $framework)->pluck('uuid');
 
-            $activePolygonIds = SitePolygon::wherein('site_id', $sitesFromFramework)->active()->pluck('poly_id');
+            $activePolygonIds = SitePolygon::wherein('site_id', $sitesFromFramework)->where('status', 'approved')->active()->pluck('poly_id');
             Log::info('count of active polygons: ', ['count' => count($activePolygonIds)]);
             $features = [];
             foreach ($activePolygonIds as $polygonUuid) {
@@ -1095,7 +1101,7 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('memory_limit', '-1');
 
         try {
-            $activePolygonIds = SitePolygon::active()->pluck('poly_id');
+            $activePolygonIds = SitePolygon::active()->where('status', 'approved')->pluck('poly_id');
 
             $features = [];
             foreach ($activePolygonIds as $polygonUuid) {
@@ -1110,7 +1116,7 @@ class TerrafundCreateGeometryController extends Controller
                     continue;
                 }
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
-                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
+                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid', 'id']) : [];
                 $feature = [
                     'type' => 'Feature',
                     'geometry' => json_decode($polygonGeometry->geojsonGeom),

@@ -394,4 +394,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasAnyRole(self::adminRoles());
     }
+
+    public function hasDashboardAdminAccess(): bool
+    {
+        return in_array($this->primaryRole->name, [
+                   'admin-super',
+                   'admin-terrafund',
+               ]);
+    }
 }
