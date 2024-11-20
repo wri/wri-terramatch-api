@@ -262,6 +262,7 @@ return [
                 'pro-pit-goal-trees-restored-planting' => ['property' => 'goal_trees_restored_planting', 'label' => 'Trees Restored Goal - Planting', 'input_type' => 'number'],
                 'pro-pit-goal-trees-restored-anr' => ['property' => 'goal_trees_restored_anr', 'label' => 'Trees Restored Goal - ANR', 'input_type' => 'number'],
                 'pro-pit-goal-trees-restored-direct-seeding' => ['property' => 'goal_trees_restored_direct_seeding', 'label' => 'Trees Restored Goal - Direct Seeding', 'input_type' => 'number'],
+                'pro-pit-direct-seeding-survival-rate' => ['property' => 'direct_seeding_survival_rate', 'label' => 'Direct Seeding Survival Rate', 'input_type' => 'number-percentage'],
             ],
             'file-collections' => [
                 'pro-pit-fcol-cover' => ['property' =>  'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],
@@ -343,6 +344,7 @@ return [
                 'pro-goal-trees-restored-planting' => ['property' => 'goal_trees_restored_planting', 'label' => 'Trees Restored Goal - Planting', 'input_type' => 'number'],
                 'pro-goal-trees-restored-anr' => ['property' => 'goal_trees_restored_anr', 'label' => 'Trees Restored Goal - ANR', 'input_type' => 'number'],
                 'pro-goal-trees-restored-direct-seeding' => ['property' => 'goal_trees_restored_direct_seeding', 'label' => 'Trees Restored Goal - Direct Seeding', 'input_type' => 'number'],
+                'pro-direct-seeding-survival-rate' => ['property' => 'direct_seeding_survival_rate', 'label' => 'Direct Seeding Survival Rate', 'input_type' => 'number-percentage'],
             ],
             'file-collections' => [
                 'pro-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
