@@ -14,7 +14,10 @@ class GetProjectsController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        if ($user->hasRole('government') && data_get($request, 'filter.projectUuid', '')) {
+
+        if (is_null($user)) {
+            $request = new Request(['filter' => []]);
+        } elseif ($user->hasRole('government') && data_get($request, 'filter.projectUuid', '')) {
             $request = new Request(['filter' => []]);
         } else {
             $frameworks = data_get($request, 'filter.programmes', []);
