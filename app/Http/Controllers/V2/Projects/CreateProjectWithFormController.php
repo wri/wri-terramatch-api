@@ -96,6 +96,7 @@ class CreateProjectWithFormController extends Controller
             'goal_trees_restored_planting' => $projectPitch->goal_trees_restored_planting,
             'goal_trees_restored_anr' => $projectPitch->goal_trees_restored_anr,
             'goal_trees_restored_direct_seeding' => $projectPitch->goal_trees_restored_direct_seeding,
+            'direct_seeding_survival_rate' => $projectPitch->direct_seeding_survival_rate,
         ]);
 
         foreach ($projectPitch->treeSpecies()->get() as $treeSpecies) {
