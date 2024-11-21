@@ -4,12 +4,12 @@ namespace App\Http\Controllers\V2\Sites;
 
 use App\Http\Controllers\Controller;
 use App\Models\V2\Projects\Project;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class AdminSitesPolygonController extends Controller
 {
@@ -24,11 +24,11 @@ class AdminSitesPolygonController extends Controller
 
 
             if ($type === 'projects') {
-              $project = Project::where('uuid', $uuid)->firstOrFail();
-              $finalEntityQuery = App::make(PolygonService::class)->getSitePolygonsWithFiltersAndSorts($project->sitePolygons(), $request);
+                $project = Project::where('uuid', $uuid)->firstOrFail();
+                $finalEntityQuery = App::make(PolygonService::class)->getSitePolygonsWithFiltersAndSorts($project->sitePolygons(), $request);
             } elseif ($type === 'sites') {
-              $sitePolygonsQuery = SitePolygon::active()->where('site_id', $uuid);
-              $finalEntityQuery = App::make(PolygonService::class)->getSitePolygonsWithFiltersAndSorts($sitePolygonsQuery, $request);
+                $sitePolygonsQuery = SitePolygon::active()->where('site_id', $uuid);
+                $finalEntityQuery = App::make(PolygonService::class)->getSitePolygonsWithFiltersAndSorts($sitePolygonsQuery, $request);
             }
             $sitePolygons = $finalEntityQuery
                 ->offset($offset)
@@ -42,5 +42,4 @@ class AdminSitesPolygonController extends Controller
             return response()->json(['error' => 'An error occurred while fetching site polygons'], 500);
         }
     }
-    
 }

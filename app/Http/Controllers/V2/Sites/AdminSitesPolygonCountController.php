@@ -4,12 +4,12 @@ namespace App\Http\Controllers\V2\Sites;
 
 use App\Http\Controllers\Controller;
 use App\Models\V2\Projects\Project;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class AdminSitesPolygonCountController extends Controller
 {
@@ -20,16 +20,17 @@ class AdminSitesPolygonCountController extends Controller
             $type = $request->input('type');
             $request = request();
             if ($type === 'projects') {
-              $project = Project::where('uuid', $uuid)->firstOrFail();
-              $countSitePolygons = App::make(PolygonService::class)->getSitePolygonsWithFiltersAndSorts($project->sitePolygons(), $request);
+                $project = Project::where('uuid', $uuid)->firstOrFail();
+                $countSitePolygons = App::make(PolygonService::class)->getSitePolygonsWithFiltersAndSorts($project->sitePolygons(), $request);
             } elseif ($type === 'sites') {
-              $sitePolygonsQuery = SitePolygon::active()->where('site_id', $uuid);
-              $countSitePolygons = App::make(PolygonService::class)->getSitePolygonsWithFiltersAndSorts($sitePolygonsQuery, $request);
+                $sitePolygonsQuery = SitePolygon::active()->where('site_id', $uuid);
+                $countSitePolygons = App::make(PolygonService::class)->getSitePolygonsWithFiltersAndSorts($sitePolygonsQuery, $request);
             }
 
             $totalCount = $countSitePolygons->count();
+
             return response()->json([
-                'count' => $totalCount
+                'count' => $totalCount,
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());

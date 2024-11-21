@@ -590,7 +590,7 @@ class PolygonService
             $statusValues = explode(',', $request->input('status'));
             $sitePolygonsQuery->whereIn('site_polygon.status', $statusValues);
         }
-    
+
         $sortFields = $request->input('sort', []);
         foreach ($sortFields as $field => $direction) {
             if ($field === 'status') {
@@ -601,7 +601,7 @@ class PolygonService
                 $sitePolygonsQuery->orderBy($field, $direction);
             }
         }
-  
+
         return $sitePolygonsQuery;
     }
 }

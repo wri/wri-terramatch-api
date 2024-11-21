@@ -179,10 +179,10 @@ use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
-use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
-use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\AdminSitesPolygonController;
 use App\Http\Controllers\V2\Sites\AdminSitesPolygonCountController;
+use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
+use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
@@ -584,9 +584,9 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
     Route::get('/check-approve', SiteCheckApproveController::class);
 });
-Route::prefix('entity')->group(function() {
-  Route::get('/polygons/count', AdminSitesPolygonCountController::class);
-  Route::get('/polygons', AdminSitesPolygonController::class);
+Route::prefix('entity')->group(function () {
+    Route::get('/polygons/count', AdminSitesPolygonCountController::class);
+    Route::get('/polygons', AdminSitesPolygonController::class);
 });
 
 Route::prefix('geometry')->group(function () {
