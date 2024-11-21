@@ -54,6 +54,11 @@ class OrganisationsExport implements FromCollection, WithHeadings, WithMapping
         ])->get();
     }
 
+    public function chunkSize(): int
+    {
+        return 1000;
+    }
+
     public function headings(): array
     {
         $headings = [
