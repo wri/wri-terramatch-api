@@ -2497,6 +2497,12 @@
     $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
+/v2/sites/{UUID}/polygons:
+  get:
+    $ref: './Sites/get-v2-admin-sites-uuid-polygons.yml'
+/v2/sites/{UUID}/polygons/count:
+  get:
+    $ref: './Sites/get-v2-admin-sites-uuid-polygons-count.yml'
 /v2/site-monitorings/{UUID}:
   get:
     $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
@@ -2741,9 +2747,15 @@
 /v2/type-entity:
   get:
     $ref: './Entity/get-v2-type-entity.yml'
+/v2/entity/polygons/count:
+  get:
+    $ref: './Entity/get-v2-entity-count.yml'
+/v2/entity/polygons:
+  get:
+    $ref: './Entity/get-v2-entity-polygon.yml'
 /v2/{ENTITY}/{UUID}/status:
-    put:
-      $ref: './Entity/put-v2-entity-uuid-status.yml'
+  put:
+    $ref: './Entity/put-v2-entity-uuid-status.yml'
 /v2/{ENTITY}/{UUID}/{ID}/delete:
   delete:
     $ref: './AuditStatus/delete-v2-audit-status.yml'

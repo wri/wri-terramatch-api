@@ -1,0 +1,26 @@
+summary: Get polygons for a specific site
+parameters:
+  - in: path
+    name: UUID
+    required: true
+    type: string
+    description: The UUID of the site
+  - in: query
+    name: limit
+    required: true
+    description: The maximum number of polygons to return
+    type: number
+  - in: query
+    name: offset
+    required: true
+    description: The number of polygons to skip
+    type: string
+responses:
+  '200':
+    description: Successful response
+    schema:
+      type: array
+      items:
+        $ref: '../../definitions/_index.yml#/SitePolygon'
+  '500':
+    description: Internal server error

@@ -17,6 +17,7 @@ use App\Models\V2\User;
 use App\Validators\SitePolygonValidator;
 use DateTime;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
@@ -581,5 +582,26 @@ class PolygonService
         $updatedPolygons = PolygonGeometryHelper::getPolygonsProjection($uuids, ['poly_id', 'poly_name']);
 
         return $updatedPolygons;
+    }
+
+    public function getSitePolygonsWithFiltersAndSorts($sitePolygonsQuery, Request $request)
+    {
+        if ($request->has('status') && $request->input('status')) {
+            $statusValues = explode(',', $request->input('status'));
+            $sitePolygonsQuery->whereIn('site_polygon.status', $statusValues);
+        }
+
+        $sortFields = $request->input('sort', []);
+        foreach ($sortFields as $field => $direction) {
+            if ($field === 'status') {
+                $sitePolygonsQuery->orderByRaw('FIELD(site_polygon.status, "draft", "submitted", "needs-more-information", "approved") ' . $direction);
+            } elseif ($field === 'poly_name') {
+                $sitePolygonsQuery->orderByRaw('site_polygon.poly_name IS NULL, site_polygon.poly_name ' . $direction);
+            } else {
+                $sitePolygonsQuery->orderBy($field, $direction);
+            }
+        }
+
+        return $sitePolygonsQuery;
     }
 }
