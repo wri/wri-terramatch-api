@@ -147,8 +147,6 @@ class ProjectTest extends TestCase
         $workday = Workday::factory()->projectReport()->create(['workdayable_id' => $report->id]);
         Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 19]);
 
-        // 42 = 5 and 7 from the approved site's reports and 13 and 17 from the project reports
-
         //Only the count of approved reports is being taken.
         $this->assertEquals(18, $project->workday_count);
     }
