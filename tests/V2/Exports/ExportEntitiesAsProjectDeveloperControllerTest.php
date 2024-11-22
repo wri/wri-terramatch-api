@@ -238,7 +238,7 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
      */
     public function test_an_user_can_export_all_project_data_when_already_cached(string $permission, string $fmKey)
     {
-        Carbon::setTestNow(now());
+        Carbon::setTestNow(now()->format('d-m-Y'));
 
         $organisation = Organisation::factory()->create();
         $owner = User::factory()->create(['organisation_id' => $organisation->id]);
@@ -290,7 +290,7 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
 
         $this->actingAs($owner)
             ->get($uri)
-            ->assertDownload($project->name . ' full export - ' . now() . '.zip')
+            ->assertDownload($project->name . ' full export - ' . now()->format('d-m-Y') . '.zip')
             ->assertSuccessful();
     }
 
