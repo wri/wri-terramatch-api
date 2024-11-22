@@ -17,7 +17,7 @@ class ExportAllProjectDataAsProjectDeveloperService
 {
     public function run($form, $project)
     {
-        $filename = storage_path('./'.Str::of($project->name)->replace(['/', '\\'], '-') . ' full export - ' . now() . '.zip');
+        $filename = storage_path('./'.Str::of($project->name)->replace(['/', '\\'], '-') . ' full export - ' . now()->format('d-m-Y') . '.zip');
 
         $zip = new \ZipArchive();
         $zip->open($filename, \ZipArchive::CREATE);
