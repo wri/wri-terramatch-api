@@ -27,6 +27,7 @@ use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -397,5 +398,10 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
             ->where('v2_projects.name', 'like', "%$query%")
             ->orWhere('organisations.name', 'like', "%$query%")
             ->orWhere('v2_sites.name', 'like', "%$query%");
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', ReportStatusStateMachine::APPROVED);
     }
 }
