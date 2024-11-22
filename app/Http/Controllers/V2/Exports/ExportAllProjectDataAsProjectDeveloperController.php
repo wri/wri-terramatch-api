@@ -35,7 +35,7 @@ class ExportAllProjectDataAsProjectDeveloperController extends Controller
 
                 return (new DelayedJobResource($delayedJob))->additional(['message' => "Export for project $project->id is being processed"]);
             } else {
-                $filename = storage_path('./'.Str::of($project->name)->replace(['/', '\\'], '-') . ' full export - ' . now() . '.zip');
+                $filename = storage_path('./'.Str::of($project->name)->replace(['/', '\\'], '-') . ' full export - ' . now()->format('d-m-Y') . '.zip');
                 file_put_contents($filename, $binary_data);
 
                 return response()->download($filename)->deleteFileAfterSend();
