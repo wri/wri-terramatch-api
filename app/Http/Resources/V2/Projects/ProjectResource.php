@@ -96,7 +96,7 @@ class ProjectResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'trees_restored_ppc' =>
-                $this->getTreesGrowingThroughAnr($this->sites) + (($this->trees_planted_count + $this->seeds_planted_count) * ($this->survival_rate / 100)),
+                $this->getTreesGrowingThroughAnr($this->sites()->IsApproved()->get()) + (($this->trees_planted_count + $this->seeds_planted_count) * ($this->survival_rate / 100)),
             'direct_seeding_survival_rate' => $this->direct_seeding_survival_rate,
         ];
 
@@ -106,7 +106,7 @@ class ProjectResource extends JsonResource
     public function getTreesGrowingThroughAnr($sites)
     {
         return $sites->sum(function ($site) {
-            return $site->reports->sum('num_trees_regenerating');
+            return $site->reports()->Approved()->sum('num_trees_regenerating');
         });
     }
 }

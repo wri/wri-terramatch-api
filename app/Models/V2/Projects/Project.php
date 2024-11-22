@@ -352,7 +352,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function getTreesPlantedCountAttribute(): int
     {
         return TreeSpecies::where('speciesable_type', SiteReport::class)
-            ->whereIn('speciesable_id', $this->submittedSiteReportIds())
+            ->whereIn('speciesable_id', $this->approvedSiteReportIds())
             ->where('collection', TreeSpecies::COLLECTION_PLANTED)
             ->visible()
             ->sum('amount');
@@ -370,7 +370,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function getSeedsPlantedCountAttribute(): int
     {
         return Seeding::where('seedable_type', SiteReport::class)
-            ->whereIn('seedable_id', $this->submittedSiteReportIds())
+            ->whereIn('seedable_id', $this->approvedSiteReportIds())
             ->visible()
             ->sum('amount');
     }
@@ -382,8 +382,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
 
     public function getWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
-        $projectQuery = $this->reports()->hasBeenSubmitted();
-        $siteQuery = $this->submittedSiteReports();
+        $projectQuery = $this->reports()->Approved();
+        $siteQuery = $this->approvedSiteReports();
         if ($useDemographicsCutoff) {
             $projectQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
             $siteQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
@@ -411,10 +411,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             DB::raw('sum(`workdays_paid`) as paid'),
             DB::raw('sum(`workdays_volunteer`) as volunteer'),
         ];
-        $projectQuery = $this->reports()->hasBeenSubmitted();
+        $projectQuery = $this->reports()->Approved();
         // The groupBy is superfluous, but required because Laravel adds "v2_sites.project_id as laravel_through_key" to
         // the SQL select.
-        $siteQuery = $this->submittedSiteReports()->groupBy('v2_sites.project_id');
+        $siteQuery = $this->approvedSiteReports()->groupBy('v2_sites.project_id');
 
         if ($useDemographicsCutoff) {
             $projectQuery->where('due_at', '<', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
@@ -439,9 +439,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function getTotalJobsCreatedAttribute(): int
     {
         $ftTotal = ProjectReport::where('project_id', $this->id)
+            ->approved()
             ->sum('ft_total');
 
         $ptTotal = ProjectReport::where('project_id', $this->id)
+            ->approved()
             ->sum('pt_total');
 
         return $ftTotal + $ptTotal;
