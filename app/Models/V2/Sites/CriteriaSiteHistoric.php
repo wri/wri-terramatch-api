@@ -25,7 +25,7 @@ class CriteriaSiteHistoric extends Model
         'criteria_id',
         'polygon_id',
         'valid',
-        'extra_info'
+        'extra_info',
     ];
 
     /**

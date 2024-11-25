@@ -227,7 +227,7 @@ class PolygonService
             $existingCriteriaSite = CriteriaSite::where('polygon_id', $polygonId)
                                                 ->where('criteria_id', $criteriaId)
                                                 ->first();
-    
+
             if ($existingCriteriaSite) {
                 CriteriaSiteHistoric::create([
                     'polygon_id' => $existingCriteriaSite->polygon_id,
@@ -237,23 +237,22 @@ class PolygonService
                     'created_at' => $existingCriteriaSite->created_at,
                     'updated_at' => $existingCriteriaSite->updated_at,
                 ]);
-    
+
                 $existingCriteriaSite->delete();
             }
-    
+
             $criteriaSite = new CriteriaSite();
             $criteriaSite->polygon_id = $polygonId;
             $criteriaSite->criteria_id = $criteriaId;
             $criteriaSite->valid = $valid;
             $criteriaSite->extra_info = $extraInfo ? json_encode($extraInfo) : null;
             $criteriaSite->save();
-    
+
             return true;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
-    
 
     /**
      * Note: At this time, this method assumes that the geometry is a single polygon.
