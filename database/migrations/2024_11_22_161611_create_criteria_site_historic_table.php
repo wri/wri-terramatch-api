@@ -20,7 +20,6 @@ class CreateCriteriaSiteHistoricTable extends Migration
             $table->string('polygon_id')->nullable();
             $table->integer('valid')->nullable();
             $table->json('extra_info')->nullable();
-            $table->date('date_created')->nullable();
             $table->timestamps();
         });
     }

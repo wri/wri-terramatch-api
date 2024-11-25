@@ -4,9 +4,8 @@ namespace App\Models\V2\Sites;
 
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CriteriaSite extends Model
+class CriteriaSiteHistoric extends Model
 {
     use HasUuid;
 
@@ -15,7 +14,7 @@ class CriteriaSite extends Model
      *
      * @var string
      */
-    protected $table = 'criteria_site';
+    protected $table = 'criteria_site_historic';
 
     /**
      * The attributes that are mass assignable.
@@ -26,7 +25,7 @@ class CriteriaSite extends Model
         'criteria_id',
         'polygon_id',
         'valid',
-        'date_created',
+        'extra_info'
     ];
 
     /**
@@ -41,6 +40,6 @@ class CriteriaSite extends Model
 
     public function scopeForCriteria($query, $criteriaId)
     {
-        return $query->where('criteria_id', $criteriaId);
+        return $query->where('criteria_id', $criteriaId)->latest();
     }
 }
