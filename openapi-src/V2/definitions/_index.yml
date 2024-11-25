@@ -238,6 +238,8 @@ ProjectReportRead:
   $ref: './ProjectReportRead.yml'
 UserCreate:
   $ref: './UserCreate.yml'
+AdminUserCreate:
+  $ref: './AdminUserCreate.yml'
 UpdateRequestsPaginated:
   $ref: './UpdateRequestsPaginated.yml'
 UpdateRequestRead:

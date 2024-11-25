@@ -793,6 +793,23 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/V2AdminUserRead'
+/v2/admin/users/create:
+  post:
+    summary: Create a user
+    operationId: v2-admin-post-user
+    tags:
+      - V2 Admin
+      - V2 Users
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/AdminUserCreate'
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminUserRead'
 /v2/admin/users/export:
   get:
     summary: Export CSV document of all users
