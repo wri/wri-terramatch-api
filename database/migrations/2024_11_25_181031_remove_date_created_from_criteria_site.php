@@ -26,7 +26,7 @@ class RemoveDateCreatedFromCriteriaSite extends Migration
     public function down()
     {
         Schema::table('criteria_site', function (Blueprint $table) {
-            $table->timestamp('date_created')->nullable(); // Adjust as necessary
+            $table->timestamp('date_created')->nullable();
         });
     }
 }
