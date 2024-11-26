@@ -86,6 +86,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
         }
         $uniquePolygonUuids = array_unique($allPolygonUuids);
+        $delayedJob = null;
         if (! empty($uniquePolygonUuids)) {
             $user = Auth::user();
             $delayedJob = DelayedJob::create();
@@ -93,7 +94,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             dispatch($job);
         }
 
-        return new DelayedJobResource($delayedJob);
+        if ($delayedJob) {
+            return new DelayedJobResource($delayedJob);
+        } else {
+            return response()->json(['message' => 'No overlapping polygons found or processed.'], 204); // No content
+        }
     }
 
     public function clipOverlappingPolygon(string $uuid)
