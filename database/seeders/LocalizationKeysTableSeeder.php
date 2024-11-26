@@ -165,6 +165,20 @@ class LocalizationKeysTableSeeder extends Seeder
             'If you have any questions, feel free to message us at info@terramatch.org.');
         $this->createLocalizationKey('reset-password.cta', 'Reset Password');
 
+        // send-login-details
+        $this->createLocalizationKey('send-login-details.subject', 'Welcome to TerraMatch!');
+        $this->createLocalizationKey('send-login-details.title', 'Welcome to TerraMatch 🌱 !');
+        $this->createLocalizationKey('send-login-details.body', 'Hi {userName},<br><br>' .
+            'We\'re thrilled to let you know that your access to TerraMatch is now active!<br><br>' .
+            'Your user email used for your account is {mail}<br><br>' .
+            'Please click on the button below to set your new password. This link is valid for 7 days from the day you received this email.<br><br>' .
+            'If you have any questions or require assistance, our support team is ready to help at info@terramatch.org or +44 7456 289369 (WhatsApp only).<br><br>'.
+            'We look forward to working with you!<br><br>' .
+            '<br><br>' .
+            'Best regards,' .
+            'TerraMatch Support');
+        $this->createLocalizationKey('send-login-details.cta', 'Set Password');
+
         // satellite-map-created
         $this->createLocalizationKey('satellite-map-created.subject', 'Remote Sensing Map Received');
         $this->createLocalizationKey('satellite-map-created.title', 'Remote Sensing Map Received');

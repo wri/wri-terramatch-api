@@ -2500,6 +2500,9 @@
 /auth/reset:
   post:
     $ref: './Auth/post-auth-reset.yml'
+/auth/send-login-details:
+  post:
+    $ref: './Auth/post-auth-reset.yml'
 /v2/auth/verify:
   patch:
     $ref: './Auth/patch-v2-auth-verify.yml'

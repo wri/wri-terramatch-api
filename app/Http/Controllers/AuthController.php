@@ -11,9 +11,11 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResendByEmailRequest;
 use App\Http\Requests\ResendRequest;
 use App\Http\Requests\ResetRequest;
+use App\Http\Requests\SendLoginDetailsRequest;
 use App\Http\Requests\VerifyRequest;
 use App\Http\Resources\V2\User\MeResource;
 use App\Jobs\ResetPasswordJob;
+use App\Jobs\SendLoginDetailsJob;
 use App\Jobs\UserVerificationJob;
 use App\Models\PasswordReset as PasswordResetModel;
 use App\Models\V2\Projects\ProjectInvite;
@@ -159,6 +161,56 @@ class AuthController extends Controller
 
         return JsonResponseHelper::success((object) [], 200);
     }
+
+    public function sendLoginDetailsAction(SendLoginDetailsRequest $request): JsonResponse
+    {
+        $this->authorize('reset', 'App\\Models\\Auth');
+        $data = $request->json()->all();
+
+        try {
+            $user = UserModel::where('email_address', '=', $data['email_address'])
+                ->whereNull('password')
+                ->firstOrFail();
+        } catch (Exception $exception) {
+            return JsonResponseHelper::success((object) [], 200);
+        }
+
+        // Delete any existing reset tokens for this user
+        // PasswordResetModel::where('user_id', $user->id)->delete();
+
+        SendLoginDetailsJob::dispatch($user, isset($data['callback_url']) ? $data['callback_url'] : null);
+
+        return JsonResponseHelper::success((object) [], 200);
+    }
+
+    // public function setPasswordAction(SetPasswordRequest $request): JsonResponse
+    // {
+    //     $data = $request->json()->all();
+
+    //     try {
+    //         $passwordReset = PasswordResetModel::where('token', $data['token'])
+    //             ->with('user')
+    //             ->firstOrFail();
+
+    //         // Check if token is expired (older than 7 days)
+    //         if (Carbon::parse($passwordReset->created_at)->addDays(7)->isPast()) {
+    //             $passwordReset->delete();
+    //             throw new Exception('Token expired');
+    //         }
+
+    //         // Update user password
+    //         $user = $passwordReset->user;
+    //         $user->password = bcrypt($data['password']);
+    //         $user->saveOrFail();
+
+    //         // Delete the token to ensure one-time use
+    //         $passwordReset->delete();
+
+    //         return JsonResponseHelper::success((object) [], 200);
+    //     } catch (Exception $exception) {
+    //         return JsonResponseHelper::error('Invalid or expired token', 400);
+    //     }
+    // }
 
     public function changeAction(ChangePasswordRequest $request): JsonResponse
     {

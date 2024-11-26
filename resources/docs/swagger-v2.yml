@@ -93200,6 +93200,33 @@ paths:
           description: OK
           schema:
             type: object
+  /auth/send-login-details:
+    post:
+      operationId: post-auth-reset
+      summary: Send a password reset email to a user or admin
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email_address:
+                type: string
+              callback_url:
+                type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
   /v2/auth/verify:
     patch:
       operationId: patch-v2-auth-verify
