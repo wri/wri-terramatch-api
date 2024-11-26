@@ -175,7 +175,7 @@ class LocalizationKeysTableSeeder extends Seeder
             'If you have any questions or require assistance, our support team is ready to help at info@terramatch.org or +44 7456 289369 (WhatsApp only).<br><br>'.
             'We look forward to working with you!<br><br>' .
             '<br><br>' .
-            'Best regards,' .
+            'Best regards,<br><br>' .
             'TerraMatch Support');
         $this->createLocalizationKey('send-login-details.cta', 'Set Password');
 

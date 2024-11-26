@@ -2503,6 +2503,12 @@
 /auth/send-login-details:
   post:
     $ref: './Auth/post-auth-reset.yml'
+/auth/mail:
+  get:
+    $ref: './Auth/get-auth-mail.yml'
+/auth/store:
+  post:
+    $ref: './Auth/post-auth-store.yml'
 /v2/auth/verify:
   patch:
     $ref: './Auth/patch-v2-auth-verify.yml'

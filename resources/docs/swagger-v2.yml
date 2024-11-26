@@ -93227,6 +93227,86 @@ paths:
           description: OK
           schema:
             type: object
+  /auth/mail:
+    get:
+      summary: Get email address by reset token
+      description: 'Retrieves the email address associated with a reset token. If the token has already been used or does not exist, indicates that the token is used.'
+      parameters:
+        - in: query
+          name: token
+          required: true
+          description: The reset token
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  email_address:
+                    type: string
+                    nullable: true
+                    example: user@example.com
+                    description: 'The email address associated with the reset token, or null if the token is already used.'
+                  token_used:
+                    type: boolean
+                    example: false
+                    description: 'Indicates whether the token has already been used. `true` if the token was used or does not exist, and `false` otherwise.'
+        '404':
+          description: User not found for the associated token
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: User not found
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Internal Server Error
+  /auth/store:
+    post:
+      operationId: post-auth-store
+      summary: set a user's or admin's password
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+              password:
+                type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
   /v2/auth/verify:
     patch:
       operationId: patch-v2-auth-verify
