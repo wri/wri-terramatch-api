@@ -97,7 +97,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         if ($delayedJob) {
             return new DelayedJobResource($delayedJob);
         } else {
-            return response()->json(['message' => 'No overlapping polygons found or processed.'], 204); // No content
+            return response()->json(['message' => 'No overlapping polygons found or processed.'], 204);
         }
     }
 
