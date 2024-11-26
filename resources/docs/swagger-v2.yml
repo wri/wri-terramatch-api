@@ -93202,7 +93202,7 @@ paths:
             type: object
   /auth/send-login-details:
     post:
-      operationId: post-auth-reset
+      operationId: post-auth-send-login-details
       summary: Send a password reset email to a user or admin
       tags:
         - Auth
