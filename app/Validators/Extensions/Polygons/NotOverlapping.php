@@ -35,7 +35,7 @@ class NotOverlapping extends Extension
             ->where('polygon_geometry.uuid', '!=', $polygonUuid)
             ->whereRaw('ST_Envelope(polygon_geometry.geom) && (SELECT ST_Envelope(geom) FROM polygon_geometry WHERE uuid = ?)', [$polygonUuid])
             ->pluck('polygon_geometry.uuid');
-    
+
         $intersects = PolygonGeometry::join('site_polygon', 'polygon_geometry.uuid', '=', 'site_polygon.poly_id')
             ->whereIn('polygon_geometry.uuid', $bboxFilteredPolyIds)
             ->select([
@@ -48,10 +48,10 @@ class NotOverlapping extends Extension
             ->addBinding($polygonUuid, 'select')
             ->addBinding($polygonUuid, 'select')
             ->get();
-    
+
         $mainPolygonArea = PolygonGeometry::where('uuid', $polygonUuid)
             ->value(DB::raw('ST_Area(geom)'));
-    
+
         $extra_info = [];
         foreach ($intersects as $intersect) {
             if ($intersect->intersects) {
@@ -65,7 +65,7 @@ class NotOverlapping extends Extension
                 ];
             }
         }
-    
+
         return [
             'valid' => ! $intersects->contains('intersects', 1),
             'uuid' => $polygonUuid,
@@ -73,7 +73,6 @@ class NotOverlapping extends Extension
             'extra_info' => $extra_info,
         ];
     }
-    
 
     public static function checkFeatureIntersections($geojsonFeatures): array
     {
