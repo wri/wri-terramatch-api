@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->id();
             $table->uuid('uuid')->unique();
             $table->geometry('geom')->nullable();
+            ;
             $table->softDeletes();
             $table->timestamps();
         });

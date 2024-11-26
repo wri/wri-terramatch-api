@@ -31,12 +31,13 @@ class NotOverlapping extends Extension
                 'status' => 404,
             ];
         }
-
-        $relatedPolyIds = $sitePolygon->project->sitePolygons()
-            ->where('poly_id', '!=', $polygonUuid)
-            ->pluck('poly_id');
+        $bboxFilteredPolyIds = PolygonGeometry::join('site_polygon', 'polygon_geometry.uuid', '=', 'site_polygon.poly_id')
+            ->where('polygon_geometry.uuid', '!=', $polygonUuid)
+            ->whereRaw('ST_Envelope(polygon_geometry.geom) && (SELECT ST_Envelope(geom) FROM polygon_geometry WHERE uuid = ?)', [$polygonUuid])
+            ->pluck('polygon_geometry.uuid');
+    
         $intersects = PolygonGeometry::join('site_polygon', 'polygon_geometry.uuid', '=', 'site_polygon.poly_id')
-            ->whereIn('polygon_geometry.uuid', $relatedPolyIds)
+            ->whereIn('polygon_geometry.uuid', $bboxFilteredPolyIds)
             ->select([
                 'polygon_geometry.uuid',
                 'site_polygon.poly_name',
@@ -47,19 +48,15 @@ class NotOverlapping extends Extension
             ->addBinding($polygonUuid, 'select')
             ->addBinding($polygonUuid, 'select')
             ->get();
-
+    
         $mainPolygonArea = PolygonGeometry::where('uuid', $polygonUuid)
             ->value(DB::raw('ST_Area(geom)'));
+    
         $extra_info = [];
         foreach ($intersects as $intersect) {
             if ($intersect->intersects) {
                 $minArea = min($mainPolygonArea, $intersect->area);
-                if ($minArea > 0) {
-                    $percentage = ($intersect->intersection_area / $minArea) * 100;
-                    $percentage = round($percentage, 2);
-                } else {
-                    $percentage = 100;
-                }
+                $percentage = $minArea > 0 ? round(($intersect->intersection_area / $minArea) * 100, 2) : 100;
                 $extra_info[] = [
                     'poly_uuid' => $intersect->uuid,
                     'poly_name' => $intersect->poly_name,
@@ -68,8 +65,7 @@ class NotOverlapping extends Extension
                 ];
             }
         }
-
-
+    
         return [
             'valid' => ! $intersects->contains('intersects', 1),
             'uuid' => $polygonUuid,
@@ -77,6 +73,7 @@ class NotOverlapping extends Extension
             'extra_info' => $extra_info,
         ];
     }
+    
 
     public static function checkFeatureIntersections($geojsonFeatures): array
     {

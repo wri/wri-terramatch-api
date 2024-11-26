@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class AddSpatialIndexToPolygonGeometry extends Migration
@@ -12,23 +13,19 @@ class AddSpatialIndexToPolygonGeometry extends Migration
        * @return void
        */
     public function up()
-    {
-        Schema::table('polygon_geometry', function (Blueprint $table) {
-            $table->geometry('geom')->nullable(false)->change();
-            // $table->spatialIndex('geom', 'polygon_geometry_geom_spatial_idx');
-        });
-    }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
     {
-        Schema::table('polygon_geometry', function (Blueprint $table) {
-            // $table->dropIndex('polygon_geometry_geom_spatial_idx');
-            $table->geometry('geom')->nullable()->change();
-        });
-    }
+      Schema::table('polygon_geometry', function (Blueprint $table) {
+          DB::statement('ALTER TABLE polygon_geometry MODIFY COLUMN geom GEOMETRY NOT NULL');         
+          DB::statement('CREATE SPATIAL INDEX polygon_geometry_geom_spatial_idx ON polygon_geometry (geom)');
+      });
+  }
+  
+  public function down()
+  {
+      Schema::table('polygon_geometry', function (Blueprint $table) {
+          DB::statement('DROP INDEX polygon_geometry_geom_spatial_idx ON polygon_geometry');
+          DB::statement('ALTER TABLE polygon_geometry MODIFY COLUMN geom GEOMETRY NULL');
+      });
+  }
 }
