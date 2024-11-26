@@ -24,6 +24,18 @@ return new class extends Migration {
             $table->string('taxon_id')->nullable();
             $table->index('taxon_id');
         });
+
+        Schema::table('v2_seedings', function (Blueprint $table): void {
+            if (Schema::hasColumn('v2_seedings', 'old_model')) {
+                $table->dropColumn('old_model');
+            }
+            if (Schema::hasColumn('v2_seedings', 'old_id')) {
+                $table->dropColumn('old_id');
+            }
+
+            $table->string('taxon_id')->nullable();
+            $table->index('taxon_id');
+        });
     }
 
     /**
@@ -32,6 +44,9 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('v2_tree_species', function (Blueprint $table): void {
+            $table->dropColumn('taxon_id');
+        });
+        Schema::table('v2_seedings', function (Blueprint $table): void {
             $table->dropColumn('taxon_id');
         });
     }
