@@ -47,7 +47,7 @@ class TreeSpecies extends Model implements EntityRelationModel
     public const COLLECTION_PLANTED = 'tree-planted';
     public const COLLECTION_NON_TREE = 'non-tree';
     public const COLLECTION_NURSERY = 'nursery-seedling';
-    public const COLLECTION_RESTORED = 'restored';
+    public const COLLECTION_HISTORICAL = 'historical-tree-species';
     public const COLLECTION_PRIMARY = 'primary';
 
     public static $collections = [
@@ -55,7 +55,7 @@ class TreeSpecies extends Model implements EntityRelationModel
         self::COLLECTION_PLANTED => 'Planted',
         self::COLLECTION_NON_TREE => 'Non Tree',
         self::COLLECTION_NURSERY => 'Nursery Seedling',
-        self::COLLECTION_RESTORED => 'Restored',
+        self::COLLECTION_HISTORICAL => 'Historical Tree Species',
         self::COLLECTION_PRIMARY => 'Primary',
     ];
 

@@ -225,16 +225,10 @@ class Organisation extends Model implements MediaModel
             ->where('organisations.name', 'like', "%$query%");
     }
 
-    public function treeSpecies(): MorphMany
+    public function treeSpeciesHistorical(): MorphMany
     {
         return $this->morphMany(TreeSpecies::class, 'speciesable')
-            ->whereNull('collection');
-    }
-
-    public function treeSpeciesRestored(): MorphMany
-    {
-        return $this->morphMany(TreeSpecies::class, 'speciesable')
-            ->where('collection', TreeSpecies::COLLECTION_RESTORED);
+            ->where('collection', TreeSpecies::COLLECTION_HISTORICAL);
     }
 
     public function owners(): HasMany

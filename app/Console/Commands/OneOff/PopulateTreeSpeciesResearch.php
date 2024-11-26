@@ -81,7 +81,7 @@ class PopulateTreeSpeciesResearch extends Command
 
         $this->assert(
             count(self::COLUMN_MAPPING) === count($this->columns),
-            "Not all required columns were found"
+            'Not all required columns were found'
         );
     }
 }
