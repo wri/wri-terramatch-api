@@ -42333,6 +42333,29 @@ definitions:
         type: string
       program:
         type: string
+  AdminUserCreate:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      job_role:
+        type: string
+      phone_number:
+        type: string
+      organisation:
+        type: string
+      role:
+        type: string
+      country:
+        type: string
+      program:
+        type: string
+      direct_frameworks:
+        type: boolean
   UpdateRequestsPaginated:
     title: UpdateRequestsPaginated
     type: object
@@ -69086,6 +69109,74 @@ paths:
                 type: string
               date_added:
                 type: string
+  /v2/admin/users/create:
+    post:
+      summary: Create a user
+      operationId: v2-admin-post-user
+      tags:
+        - V2 Admin
+        - V2 Users
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              job_role:
+                type: string
+              phone_number:
+                type: string
+              organisation:
+                type: string
+              role:
+                type: string
+              country:
+                type: string
+              program:
+                type: string
+              direct_frameworks:
+                type: boolean
+      responses:
+        '201':
+          description: Created
+          schema:
+            title: AdminUserRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              status:
+                type: string
+              readable_status:
+                type: string
+              type:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              job_role:
+                type: string
+              facebook:
+                type: string
+              instagram:
+                type: string
+              linkedin:
+                type: string
+              twitter:
+                type: string
+              whatsapp_phone:
+                type: string
+              date_added:
+                type: string
   /v2/admin/users/export:
     get:
       summary: Export CSV document of all users
@@ -93103,6 +93194,113 @@ paths:
               email_address:
                 type: string
               callback_url:
+                type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  /auth/send-login-details:
+    post:
+      operationId: post-auth-send-login-details
+      summary: Send a password reset email to a user or admin
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email_address:
+                type: string
+              callback_url:
+                type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  /auth/mail:
+    get:
+      summary: Get email address by reset token
+      description: 'Retrieves the email address associated with a reset token. If the token has already been used or does not exist, indicates that the token is used.'
+      parameters:
+        - in: query
+          name: token
+          required: true
+          description: The reset token
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  email_address:
+                    type: string
+                    nullable: true
+                    example: user@example.com
+                    description: 'The email address associated with the reset token, or null if the token is already used.'
+                  token_used:
+                    type: boolean
+                    example: false
+                    description: 'Indicates whether the token has already been used. `true` if the token was used or does not exist, and `false` otherwise.'
+        '404':
+          description: User not found for the associated token
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: User not found
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Internal Server Error
+  /auth/store:
+    post:
+      operationId: post-auth-store
+      summary: set a user's or admin's password
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+              password:
                 type: string
       responses:
         '200':
