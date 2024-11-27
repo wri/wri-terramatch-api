@@ -49,6 +49,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     {
         try {
             $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
+            $startOld = microtime(true);
             foreach ($this->sitePolygonsUuids as $polygonUuid) {
                 $request = new Request(['uuid' => $polygonUuid]);
                 $validationService->validateOverlapping($request);
@@ -61,6 +62,9 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 $validationService->validateEstimatedArea($request);
                 $validationService->validateDataInDB($request);
             }
+            $timeOld = microtime(true) - $startOld;
+
+            Log::info("Approach took {$timeOld} seconds");
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,

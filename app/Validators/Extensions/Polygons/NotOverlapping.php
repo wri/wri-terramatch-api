@@ -6,6 +6,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Extension;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class NotOverlapping extends Extension
 {
@@ -31,23 +32,26 @@ class NotOverlapping extends Extension
                 'status' => 404,
             ];
         }
+        $relatedPolyIds = $sitePolygon->project->sitePolygons()
+            ->where('poly_id', '!=', $polygonUuid)
+            ->pluck('poly_id');
         $bboxFilteredPolyIds = PolygonGeometry::join('site_polygon', 'polygon_geometry.uuid', '=', 'site_polygon.poly_id')
-            ->where('polygon_geometry.uuid', '!=', $polygonUuid)
-            ->whereRaw('ST_Envelope(polygon_geometry.geom) && (SELECT ST_Envelope(geom) FROM polygon_geometry WHERE uuid = ?)', [$polygonUuid])
-            ->pluck('polygon_geometry.uuid');
+        ->whereIn('polygon_geometry.uuid', $relatedPolyIds)
+        ->whereRaw('ST_Intersects(ST_Envelope(polygon_geometry.geom), (SELECT ST_Envelope(geom) FROM polygon_geometry WHERE uuid = ?))', [$polygonUuid])
+        ->pluck('polygon_geometry.uuid');
 
         $intersects = PolygonGeometry::join('site_polygon', 'polygon_geometry.uuid', '=', 'site_polygon.poly_id')
-            ->whereIn('polygon_geometry.uuid', $bboxFilteredPolyIds)
-            ->select([
-                'polygon_geometry.uuid',
-                'site_polygon.poly_name',
-                DB::raw('ST_Intersects(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?)) as intersects'),
-                DB::raw('ST_Area(ST_Intersection(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) as intersection_area'),
-                DB::raw('ST_Area(polygon_geometry.geom) as area'),
-            ])
-            ->addBinding($polygonUuid, 'select')
-            ->addBinding($polygonUuid, 'select')
-            ->get();
+        ->whereIn('polygon_geometry.uuid', $bboxFilteredPolyIds)
+        ->select([
+            'polygon_geometry.uuid',
+            'site_polygon.poly_name',
+            DB::raw('ST_Intersects(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?)) as intersects'),
+            DB::raw('ST_Area(ST_Intersection(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) as intersection_area'),
+            DB::raw('ST_Area(polygon_geometry.geom) as area'),
+        ])
+        ->addBinding($polygonUuid, 'select')
+        ->addBinding($polygonUuid, 'select')
+        ->get();
 
         $mainPolygonArea = PolygonGeometry::where('uuid', $polygonUuid)
             ->value(DB::raw('ST_Area(geom)'));
