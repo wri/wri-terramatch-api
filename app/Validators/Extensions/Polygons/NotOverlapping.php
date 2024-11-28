@@ -6,7 +6,6 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Extension;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class NotOverlapping extends Extension
 {
@@ -25,53 +24,55 @@ class NotOverlapping extends Extension
     public static function getIntersectionData(string $polygonUuid): array
     {
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
-        if ($sitePolygon === null) {
-            return [
-                'valid' => false,
-                'error' => 'Site polygon not found for the given polygon ID',
-                'status' => 404,
-            ];
+        if (! $sitePolygon) {
+            return ['valid' => false, 'error' => 'Site polygon not found', 'status' => 404];
         }
+
         $relatedPolyIds = $sitePolygon->project->sitePolygons()
             ->where('poly_id', '!=', $polygonUuid)
             ->pluck('poly_id');
+
         $bboxFilteredPolyIds = PolygonGeometry::join('site_polygon', 'polygon_geometry.uuid', '=', 'site_polygon.poly_id')
-        ->whereIn('polygon_geometry.uuid', $relatedPolyIds)
-        ->whereRaw('ST_Intersects(ST_Envelope(polygon_geometry.geom), (SELECT ST_Envelope(geom) FROM polygon_geometry WHERE uuid = ?))', [$polygonUuid])
-        ->pluck('polygon_geometry.uuid');
+            ->whereIn('polygon_geometry.uuid', $relatedPolyIds)
+            ->whereRaw('ST_Intersects(ST_Envelope(polygon_geometry.geom), (SELECT ST_Envelope(geom) FROM polygon_geometry WHERE uuid = ?))', [$polygonUuid])
+            ->pluck('polygon_geometry.uuid');
 
         $intersects = PolygonGeometry::join('site_polygon', 'polygon_geometry.uuid', '=', 'site_polygon.poly_id')
-        ->whereIn('polygon_geometry.uuid', $bboxFilteredPolyIds)
-        ->select([
-            'polygon_geometry.uuid',
-            'site_polygon.poly_name',
-            DB::raw('ST_Intersects(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?)) as intersects'),
-            DB::raw('ST_Area(ST_Intersection(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) as intersection_area'),
-            DB::raw('ST_Area(polygon_geometry.geom) as area'),
-        ])
-        ->addBinding($polygonUuid, 'select')
-        ->addBinding($polygonUuid, 'select')
-        ->get();
+            ->whereIn('polygon_geometry.uuid', $bboxFilteredPolyIds)
+            ->select([
+                'polygon_geometry.uuid',
+                'site_polygon.poly_name',
+                DB::raw('ST_Intersects(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?)) as intersects'),
+                DB::raw('ST_Area(ST_Intersection(polygon_geometry.geom, (SELECT geom FROM polygon_geometry WHERE uuid = ?))) as intersection_area'),
+                DB::raw('ST_Area(polygon_geometry.geom) as area'),
+            ])
+            ->addBinding($polygonUuid, 'select')
+            ->addBinding($polygonUuid, 'select')
+            ->get();
 
         $mainPolygonArea = PolygonGeometry::where('uuid', $polygonUuid)
             ->value(DB::raw('ST_Area(geom)'));
 
-        $extra_info = [];
-        foreach ($intersects as $intersect) {
-            if ($intersect->intersects) {
+        $extra_info = $intersects
+            ->filter(fn ($intersect) => $intersect->intersects)
+            ->map(function ($intersect) use ($mainPolygonArea) {
                 $minArea = min($mainPolygonArea, $intersect->area);
-                $percentage = $minArea > 0 ? round(($intersect->intersection_area / $minArea) * 100, 2) : 100;
-                $extra_info[] = [
+                $percentage = $minArea > 0
+                    ? round(($intersect->intersection_area / $minArea) * 100, 2)
+                    : 100;
+
+                return [
                     'poly_uuid' => $intersect->uuid,
                     'poly_name' => $intersect->poly_name,
                     'percentage' => $percentage,
                     'intersectSmaller' => ($intersect->area < $mainPolygonArea),
                 ];
-            }
-        }
+            })
+            ->values()
+            ->toArray();
 
         return [
-            'valid' => ! $intersects->contains('intersects', 1),
+            'valid' => empty($extra_info),
             'uuid' => $polygonUuid,
             'project_id' => $sitePolygon->project_id,
             'extra_info' => $extra_info,
