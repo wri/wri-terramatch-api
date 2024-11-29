@@ -4,7 +4,6 @@ namespace Database\Factories\V2;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class PolygonGeometryFactory extends Factory
 {
@@ -21,11 +20,11 @@ class PolygonGeometryFactory extends Factory
             $geojson = json_encode($geojson);
         }
         $geomExpression = DB::raw("ST_GeomFromGeoJSON('$geojson')");
+
         return $this->state(function (array $attributes) use ($geomExpression) {
             return [
                 'geom' => $geomExpression,
             ];
         });
     }
-    
 }
