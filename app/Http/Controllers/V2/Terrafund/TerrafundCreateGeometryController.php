@@ -8,6 +8,7 @@ use App\Http\Resources\DelayedJobResource;
 use App\Jobs\InsertGeojsonToDBJob;
 use App\Jobs\RunSitePolygonsValidationJob;
 use App\Models\DelayedJob;
+use App\Models\DelayedJobProgress;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
@@ -892,6 +893,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function validateOverlapping(Request $request)
     {
+        Log::info('overlapping validation request');
         $uuid = $request->input('uuid');
 
         return $this->handlePolygonValidation(
@@ -1205,7 +1207,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function sendRunValidationPolygon(Request $request)
     {
-
+        Log::info("here criteria data");
         $uuid = $request->input('uuid');
         $this->runValidationPolygon($uuid);
         $criteriaData = $this->getCriteriaData($request);
@@ -1219,7 +1221,11 @@ class TerrafundCreateGeometryController extends Controller
             $uuid = $request->input('uuid');
 
             $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-            $delayedJob = DelayedJob::create();
+            $delayedJob = DelayedJobProgress::create([
+                'total_content' => count($sitePolygonsUuids),
+                'processed_content' => 0,
+                'progress' => 0,
+            ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $sitePolygonsUuids);
             dispatch($job);
 
@@ -1235,7 +1241,11 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuids = $request->input('uuids');
-            $delayedJob = DelayedJob::create();
+            $delayedJob = DelayedJobProgress::create([
+                'total_content' => count($uuids),
+                'processed_content' => 0,
+                'progress' => 0,
+            ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);
 

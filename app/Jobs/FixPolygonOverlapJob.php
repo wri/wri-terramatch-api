@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Http\Middleware\SetAuthenticatedUserForJob;
 use App\Models\DelayedJob;
+use App\Models\DelayedJobProgress;
 use App\Services\PolygonService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -63,14 +64,15 @@ class FixPolygonOverlapJob implements ShouldQueue
     {
 
         try {
-            $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
+            $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
             $user = Auth::user();
             if ($user) {
-                $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($this->polygonUuids);
+                $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($this->polygonUuids, $this->delayed_job_id);
                 $delayedJob->update([
-                  'status' => DelayedJob::STATUS_SUCCEEDED,
+                  'status' => DelayedJobProgress::STATUS_SUCCEEDED,
                   'payload' => json_encode(['updated_polygons' => $polygonsClipped]),
                   'status_code' => Response::HTTP_OK,
+                  'progress' => 100,
                 ]);
             }
         } catch (Exception $e) {

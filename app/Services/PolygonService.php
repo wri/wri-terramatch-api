@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
+use App\Models\DelayedJobProgress;
 
 class PolygonService
 {
@@ -562,13 +563,16 @@ class PolygonService
         }
     }
 
-    public function processClippedPolygons(array $polygonUuids)
+    public function processClippedPolygons(array $polygonUuids, $delayed_job_id = null)
     {
         $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
 
         $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
         $uuids = [];
 
+        $delayedJob = DelayedJobProgress::findOrFail($delayed_job_id);
+
+        Log::info("test");
         if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
             foreach ($clippedPolygons['features'] as $feature) {
                 if (isset($feature['properties']['poly_id'])) {
@@ -593,6 +597,9 @@ class PolygonService
         if (! empty($uuids)) {
             foreach ($newPolygonUuids as $polygonUuid) {
                 App::make(PolygonValidationService::class)->runValidationPolygon($polygonUuid);
+                $delayedJob->increment('processed_content');
+                $delayedJob->calculateProgress();
+                $delayedJob->save();
             }
         }
 
