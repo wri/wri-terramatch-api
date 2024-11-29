@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\V2\Dashboard;
 
+use App\Models\Traits\HasProjectCoverImage;
 use App\Models\V2\Forms\FormOptionListOption;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Models\Traits\HasProjectCoverImage;
 
 class ProjectProfileDetailsResource extends JsonResource
 {
@@ -13,7 +13,7 @@ class ProjectProfileDetailsResource extends JsonResource
     public function toArray($request)
     {
         $coverImage = $this->getProjectCoverImage($this->resource);
-        
+
         $data = [
             'name' => $this->name,
             'descriptionObjetive' => $this->objectives,
@@ -33,7 +33,7 @@ class ProjectProfileDetailsResource extends JsonResource
                 'mime_type' => $coverImage->mime_type,
             ] : null,
         ];
-        
+
         return $data;
     }
 

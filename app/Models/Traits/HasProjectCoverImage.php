@@ -20,7 +20,7 @@ trait HasProjectCoverImage
             ['type' => Nursery::class, 'ids' => $project->nurseries->pluck('id')->toArray()],
             ['type' => ProjectReport::class, 'ids' => $project->reports->pluck('id')->toArray()],
             ['type' => SiteReport::class, 'ids' => $project->siteReports->pluck('id')->toArray()],
-            ['type' => NurseryReport::class, 'ids' => $project->nurseryReports->pluck('id')->toArray()]
+            ['type' => NurseryReport::class, 'ids' => $project->nurseryReports->pluck('id')->toArray()],
         ];
 
         $coverMedia = Media::where(function ($query) use ($models) {
