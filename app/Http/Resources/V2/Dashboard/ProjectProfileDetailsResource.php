@@ -4,17 +4,16 @@ namespace App\Http\Resources\V2\Dashboard;
 
 use App\Models\V2\Forms\FormOptionListOption;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Traits\HasProjectCoverImage;
 
 class ProjectProfileDetailsResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
+    use HasProjectCoverImage;
+
     public function toArray($request)
     {
+        $coverImage = $this->getProjectCoverImage($this->resource);
+        
         $data = [
             'name' => $this->name,
             'descriptionObjetive' => $this->objectives,
@@ -26,9 +25,16 @@ class ProjectProfileDetailsResource extends JsonResource
             'targetLandUse' => $this->land_use_types,
             'landTenure' => $this->land_tenure_project_area,
             'framework' => $this->framework_key,
+            'cover_image' => $coverImage ? [
+                'id' => $coverImage->id,
+                'url' => $coverImage->getUrl(),
+                'thumbnail' => $coverImage->getUrl('thumbnail'),
+                'is_cover' => $coverImage->is_cover,
+                'mime_type' => $coverImage->mime_type,
+            ] : null,
         ];
-
-        return $this->appendFilesToResource($data);
+        
+        return $data;
     }
 
     public function getCountryLabel($slug)
