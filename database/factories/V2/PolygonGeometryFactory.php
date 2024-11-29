@@ -4,6 +4,7 @@ namespace Database\Factories\V2;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PolygonGeometryFactory extends Factory
 {
@@ -16,12 +17,15 @@ class PolygonGeometryFactory extends Factory
 
     public function geojson(string|array $geojson)
     {
-        $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
-
-        return $this->state(function (array $attributes) use ($geom) {
+        if (is_array($geojson)) {
+            $geojson = json_encode($geojson);
+        }
+        $geomExpression = DB::raw("ST_GeomFromGeoJSON('$geojson')");
+        return $this->state(function (array $attributes) use ($geomExpression) {
             return [
-                'geom' => $geom,
+                'geom' => $geomExpression,
             ];
         });
     }
+    
 }

@@ -8,15 +8,30 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SitePolygonFactory extends Factory
 {
-    public function definition()
-    {
-        return [
-            'poly_id' => PolygonGeometry::factory()->create()->uuid,
-            'site_id' => Site::factory()->create()->uuid,
-            'calc_area' => $this->faker->numberBetween(2.0, 50.0),
-        ];
-    }
-
+  public function definition()
+  {
+      $geojson = [
+          'type' => 'Polygon',
+          'coordinates' => [
+              [
+                  [0, 0],
+                  [1, 0],
+                  [1, 1],
+                  [0, 1],
+                  [0, 0]
+              ]
+          ]
+      ];
+  
+      return [
+          'poly_id' => PolygonGeometry::factory()
+              ->geojson($geojson)
+              ->create()
+              ->uuid,
+          'site_id' => Site::factory()->create()->uuid,
+          'calc_area' => $this->faker->numberBetween(2.0, 50.0),
+      ];
+  }
     public function site(Site $site)
     {
         return $this->state(function (array $attributes) use ($site) {
