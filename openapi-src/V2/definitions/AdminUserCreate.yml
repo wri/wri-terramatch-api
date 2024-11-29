@@ -1,0 +1,22 @@
+type: object
+properties:
+  first_name:
+    type: string
+  last_name:
+    type: string
+  email_address:
+    type: string
+  job_role:
+    type: string
+  phone_number:
+    type: string
+  organisation:
+    type: string
+  role:
+    type: string
+  country:
+    type: string
+  program:
+    type: string
+  direct_frameworks:
+    type: boolean

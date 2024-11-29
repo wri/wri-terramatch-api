@@ -11,9 +11,12 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResendByEmailRequest;
 use App\Http\Requests\ResendRequest;
 use App\Http\Requests\ResetRequest;
+use App\Http\Requests\SendLoginDetailsRequest;
+use App\Http\Requests\SetPasswordRequest;
 use App\Http\Requests\VerifyRequest;
 use App\Http\Resources\V2\User\MeResource;
 use App\Jobs\ResetPasswordJob;
+use App\Jobs\SendLoginDetailsJob;
 use App\Jobs\UserVerificationJob;
 use App\Models\PasswordReset as PasswordResetModel;
 use App\Models\V2\Projects\ProjectInvite;
@@ -24,6 +27,7 @@ use DateTimeZone;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -156,6 +160,74 @@ class AuthController extends Controller
             return JsonResponseHelper::success((object) [], 200);
         }
         ResetPasswordJob::dispatch($user, isset($data['callback_url']) ? $data['callback_url'] : null);
+
+        return JsonResponseHelper::success((object) [], 200);
+    }
+
+    public function sendLoginDetailsAction(SendLoginDetailsRequest $request): JsonResponse
+    {
+        $this->authorize('reset', 'App\\Models\\Auth');
+        $data = $request->json()->all();
+
+        try {
+            $user = UserModel::where('email_address', '=', $data['email_address'])
+                ->whereNull('password')
+                ->firstOrFail();
+        } catch (Exception $exception) {
+            return JsonResponseHelper::success((object) [], 200);
+        }
+
+        SendLoginDetailsJob::dispatch($user, isset($data['callback_url']) ? $data['callback_url'] : null);
+
+        return JsonResponseHelper::success((object) [], 200);
+    }
+
+    public function getEmailByResetTokenAction(Request $request): JsonResponse
+    {
+        $data = $request->query();
+
+        $passwordReset = PasswordResetModel::where('token', '=', $data['token'])->first();
+
+        if (! $passwordReset) {
+            return JsonResponseHelper::success((object) [
+                'email_address' => null,
+                'token_used' => true,
+            ], 200);
+        }
+        if (Carbon::parse($passwordReset->created_at)->addDays(7)->isPast()) {
+            $passwordReset->delete();
+
+            return JsonResponseHelper::success((object) [
+                'email_address' => null,
+                'token_used' => true,
+            ], 200);
+        }
+
+        $user = UserModel::findOrFail($passwordReset->user_id);
+
+        return JsonResponseHelper::success((object) [
+            'email_address' => $user->email_address,
+            'token_used' => false,
+        ], 200);
+    }
+
+    public function setNewPasswordAction(SetPasswordRequest $request): JsonResponse
+    {
+        $this->authorize('change', 'App\\Models\\Auth');
+        $data = $request->json()->all();
+        $passwordReset = PasswordResetModel::where('token', '=', $data['token'])->firstOrFail();
+        $user = UserModel::findOrFail($passwordReset->user_id);
+        if (Hash::check($data['password'], $user->password)) {
+            throw new SamePasswordException();
+        }
+        $user->password = $data['password'];
+
+        if (empty($user->email_address_verified_at)) {
+            $user->email_address_verified_at = new DateTime('now', new DateTimeZone('UTC'));
+        }
+
+        $user->saveOrFail();
+        $passwordReset->delete();
 
         return JsonResponseHelper::success((object) [], 200);
     }
