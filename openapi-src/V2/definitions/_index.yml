@@ -238,6 +238,8 @@ ProjectReportRead:
   $ref: './ProjectReportRead.yml'
 UserCreate:
   $ref: './UserCreate.yml'
+AdminUserCreate:
+  $ref: './AdminUserCreate.yml'
 UpdateRequestsPaginated:
   $ref: './UpdateRequestsPaginated.yml'
 UpdateRequestRead:
@@ -352,6 +354,8 @@ GeojsonData:
   $ref: './GeojsonData.yml'
 EntityTypeResponse:
   $ref: './EntityTypeResponse.yml'
+EntityPolygonResponse:
+  $ref: './EntityPolygonResponse.yml'
 AuditStatusUpdateRequest:
   $ref: './AuditStatusUpdateRequest.yml'
 SitePolygonResource:
@@ -390,3 +394,5 @@ DashboardIndicatorHectaresRestorationData:
   $ref: './DashboardIndicatorHectaresRestorationData.yml'
 UserCreateComplete:
   $ref: './UserCreateComplete.yml'
+V2AdminProjectUpdate:
+  $ref: './V2AdminProjectUpdate.yml'

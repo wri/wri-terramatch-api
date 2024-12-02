@@ -15,6 +15,7 @@ class UpdateOrganisationRequest extends FormRequest
             'type' => 'sometimes|nullable|string',
             'subtype' => 'sometimes|nullable|string',
             'private' => 'sometimes|boolean',
+            'is_test' => 'sometimes|boolean',
             'name' => 'sometimes|nullable|string',
             'phone' => 'sometimes|nullable|string',
             'hq_address' => 'sometimes|nullable|string',

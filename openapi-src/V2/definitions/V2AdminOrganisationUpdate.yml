@@ -5,6 +5,8 @@ properties:
     type: string
   private:
     type: boolean
+  is_test:
+    type: boolean
   name:
     type: string
   phone:

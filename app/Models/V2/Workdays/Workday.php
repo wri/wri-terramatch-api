@@ -62,6 +62,8 @@ class Workday extends Model implements HandlesLinkedFieldSync
         self::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS => 'Volunteer Nursery Operations',
         self::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT => 'Volunteer Project Management',
         self::COLLECTION_PROJECT_VOLUNTEER_OTHER => 'Volunteer Other Activities',
+        self::COLLECTION_PROJECT_DIRECT => 'Direct Workdays',
+        self::COLLECTION_PROJECT_CONVERGENCE => 'Convergence Workdays',
     ];
 
     public const COLLECTION_SITE_PAID_SITE_ESTABLISHMENT = 'paid-site-establishment';

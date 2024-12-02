@@ -793,6 +793,23 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/V2AdminUserRead'
+/v2/admin/users/create:
+  post:
+    summary: Create a user
+    operationId: v2-admin-post-user
+    tags:
+      - V2 Admin
+      - V2 Users
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/AdminUserCreate'
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/V2AdminUserRead'
 /v2/admin/users/export:
   get:
     summary: Export CSV document of all users
@@ -2422,6 +2439,8 @@
   delete:
     $ref: './Sites/Monitoring/delete-v2-admin-site-monitorings-uuid.yml'
 '/v2/admin/projects/{UUID}':
+  put:
+    $ref: './Projects/put-v2-admin-project.yml'
   delete:
     summary: Delete a project
     operationId: delete-v2-admin-projects-UUID
@@ -2481,6 +2500,15 @@
 /auth/reset:
   post:
     $ref: './Auth/post-auth-reset.yml'
+/auth/send-login-details:
+  post:
+    $ref: './Auth/post-auth-send-login-details.yml'
+/auth/mail:
+  get:
+    $ref: './Auth/get-auth-mail.yml'
+/auth/store:
+  post:
+    $ref: './Auth/post-auth-store.yml'
 /v2/auth/verify:
   patch:
     $ref: './Auth/patch-v2-auth-verify.yml'
@@ -2495,6 +2523,12 @@
     $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
+/v2/sites/{UUID}/polygons:
+  get:
+    $ref: './Sites/get-v2-admin-sites-uuid-polygons.yml'
+/v2/sites/{UUID}/polygons/count:
+  get:
+    $ref: './Sites/get-v2-admin-sites-uuid-polygons-count.yml'
 /v2/site-monitorings/{UUID}:
   get:
     $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
@@ -2739,9 +2773,15 @@
 /v2/type-entity:
   get:
     $ref: './Entity/get-v2-type-entity.yml'
+/v2/entity/polygons/count:
+  get:
+    $ref: './Entity/get-v2-entity-count.yml'
+/v2/entity/polygons:
+  get:
+    $ref: './Entity/get-v2-entity-polygon.yml'
 /v2/{ENTITY}/{UUID}/status:
-    put:
-      $ref: './Entity/put-v2-entity-uuid-status.yml'
+  put:
+    $ref: './Entity/put-v2-entity-uuid-status.yml'
 /v2/{ENTITY}/{UUID}/{ID}/delete:
   delete:
     $ref: './AuditStatus/delete-v2-audit-status.yml'

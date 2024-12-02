@@ -5,7 +5,6 @@ namespace App\Helpers;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
-use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use Exception;
@@ -125,18 +124,14 @@ class GeometryHelper
 
     public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
     {
-        return CriteriaSite::whereIn(
-            'id',
-            $polygonGeometry
-                ->criteriaSite()
-                ->groupBy('criteria_id')
-                ->selectRaw('max(id) as latest_id')
-        )->get([
-            'criteria_id',
-            'valid',
-            'created_at as latest_created_at',
-            'extra_info',
-        ]);
+        return $polygonGeometry
+            ->criteriaSite()
+            ->get([
+                'criteria_id',
+                'valid',
+                'created_at as latest_created_at',
+                'extra_info',
+            ]);
     }
 
     public static function groupFeaturesBySiteId($geojson)

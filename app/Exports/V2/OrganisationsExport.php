@@ -17,7 +17,46 @@ class OrganisationsExport implements FromCollection, WithHeadings, WithMapping
     {
         ini_set('max_execution_time', 60);
 
-        return Organisation::all();
+        return  Organisation::query()->select([
+            'uuid',
+            'status',
+            'type',
+            'name',
+            'phone',
+            'hq_street_1',
+            'hq_street_2',
+            'hq_city',
+            'hq_state',
+            'hq_zipcode',
+            'hq_country',
+            'countries',
+            'languages',
+            'founding_date',
+            'description',
+            'web_url',
+            'facebook_url',
+            'instagram_url',
+            'linkedin_url',
+            'twitter_url',
+            'fin_start_month',
+            'fin_budget_3year',
+            'fin_budget_2year',
+            'fin_budget_1year',
+            'fin_budget_current_year',
+            'ha_restored_total',
+            'ha_restored_3year',
+            'trees_grown_total',
+            'trees_grown_3year',
+            'tree_care_approach',
+            'relevant_experience_years',
+            'updated_at',
+            'created_at',
+        ])->get();
+    }
+
+    public function chunkSize(): int
+    {
+        return 1000;
     }
 
     public function headings(): array
@@ -108,6 +147,7 @@ class OrganisationsExport implements FromCollection, WithHeadings, WithMapping
 
     private function addFileCollectionValues(Organisation $organisation, array  $mapped): array
     {
+        $organisation = Organisation::where('uuid', $organisation->uuid)->first();
         foreach ($organisation->fileConfiguration as $key => $config) {
             if ($config['multiple'] == true) {
                 $medias = $organisation->getMedia($key);
@@ -141,7 +181,8 @@ class OrganisationsExport implements FromCollection, WithHeadings, WithMapping
     private function buildTreeSpecies(Organisation $organisation): string
     {
         $list = [];
-        foreach ($organisation->treeSpecies as $treeSpecies) {
+        $treeSpecies = $organisation->treeSpecies()->select('name', 'amount')->get();
+        foreach ($treeSpecies as $treeSpecies) {
             $list[] = $treeSpecies->name . '(' . $treeSpecies->amount . ')';
         }
 

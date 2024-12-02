@@ -115,6 +115,13 @@ class ProjectReportResource extends JsonResource
             'volunteer_scstobc' => $this->volunteer_scstobc,
             'beneficiaries_scstobc_farmers' => $this->beneficiaries_scstobc_farmers,
             'beneficiaries_scstobc' => $this->beneficiaries_scstobc,
+            'people_knowledge_skills_increased' => $this->people_knowledge_skills_increased,
+            'indirect_beneficiaries' => $this->indirect_beneficiaries,
+            'indirect_beneficiaries_description' => $this->indirect_beneficiaries_description,
+            'workdays_direct_total' => $this->workdays_direct,
+            'workdays_convergence_total' => $this->workdays_convergence,
+            'non_tree_total' => $this->non_tree_total,
+            'total_community_partners' => $this->total_community_partners,
         ];
 
         return $this->appendFilesToResource($data);

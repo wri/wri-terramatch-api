@@ -149,6 +149,7 @@ use App\Http\Controllers\V2\ProjectReports\AdminIndexProjectReportsController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
 use App\Http\Controllers\V2\Projects\AdminIndexProjectsController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
+use App\Http\Controllers\V2\Projects\AdminUpdateProjectController;
 use App\Http\Controllers\V2\Projects\CreateBlankProjectWithFormController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\CreateProjectWithFormController;
@@ -178,6 +179,8 @@ use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
+use App\Http\Controllers\V2\Sites\AdminSitesPolygonController;
+use App\Http\Controllers\V2\Sites\AdminSitesPolygonCountController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
@@ -211,6 +214,7 @@ use App\Http\Controllers\V2\UpdateRequests\EntityUpdateRequestsController;
 use App\Http\Controllers\V2\User\AdminExportUsersController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
 use App\Http\Controllers\V2\User\AdminUserController;
+use App\Http\Controllers\V2\User\AdminUserCreationController;
 use App\Http\Controllers\V2\User\AdminUserMultiController;
 use App\Http\Controllers\V2\User\AdminUsersOrganizationController;
 use App\Http\Controllers\V2\User\AdminVerifyUserController;
@@ -292,6 +296,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::put('reject', AdminRejectOrganisationController::class);
         Route::get('export', AdminExportOrganisationsController::class);
     });
+    Route::resource('organisations', AdminOrganisationController::class)->except('create');
 
     Route::prefix('update-requests')->group(function () {
         Route::get('', AdminIndexUpdateRequestsController::class);
@@ -305,6 +310,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('projects')->group(function () {
         Route::get('', AdminIndexProjectsController::class);
+        Route::put('/{project}', AdminUpdateProjectController::class);
         Route::get('/multi', AdminProjectMultiController::class);
     });
 
@@ -343,7 +349,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('site-reports', AdminIndexSiteReportsController::class);
     Route::get('project-reports', AdminIndexProjectReportsController::class);
 
-    Route::resource('organisations', AdminOrganisationController::class)->except('create');
     Route::prefix('funding-programme/stage')->group(function () {
         Route::post('/', StoreStageController::class);
         Route::patch('/{stage}', UpdateStageController::class);
@@ -359,6 +364,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::put('reset-password/{user}', AdminResetPasswordController::class);
         Route::patch('verify/{user}', AdminVerifyUserController::class);
         Route::get('users-organisation-list/{organisation}', AdminUsersOrganizationController::class);
+        Route::post('/create', [AdminUserCreationController::class, 'store']);
     });
     Route::resource('users', AdminUserController::class);
 
@@ -579,6 +585,10 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
     Route::get('/check-approve', SiteCheckApproveController::class);
+});
+Route::prefix('entity')->group(function () {
+    Route::get('/polygons/count', AdminSitesPolygonCountController::class);
+    Route::get('/polygons', AdminSitesPolygonController::class);
 });
 
 Route::prefix('geometry')->group(function () {

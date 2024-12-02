@@ -7,8 +7,8 @@ return [
         'cover-image-with-svg' => 'file|mimes:jpg,png,svg',
         'photos' => 'file|mimes:jpg,png,mp4',
         'pdf' => 'file|mimes:pdf',
-        'documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,doc',
-        'general-documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,png,jpg,doc,mp4',
+        'documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,doc,docx,bin',
+        'general-documents' => 'file|mimes:pdf,xls,xlsx,csv,txt,png,jpg,doc,mp4,docx,bin',
         'spreadsheet' => 'file|mimes:pdf,xls,xlsx,csv,txt',
     ],
     'validation-file-types' => [

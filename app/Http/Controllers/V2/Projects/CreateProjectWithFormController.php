@@ -35,6 +35,7 @@ class CreateProjectWithFormController extends Controller
             'organisation_id' => $application->organisation->id,
             'application_id' => $application->id,
             'status' => EntityStatusStateMachine::STARTED,
+            'is_test' => $application->organisation->is_test,
             'project_status' => null,
             'name' => $projectPitch->project_name,
             'boundary_geojson' => $projectPitch->proj_boundary,
@@ -95,6 +96,7 @@ class CreateProjectWithFormController extends Controller
             'goal_trees_restored_planting' => $projectPitch->goal_trees_restored_planting,
             'goal_trees_restored_anr' => $projectPitch->goal_trees_restored_anr,
             'goal_trees_restored_direct_seeding' => $projectPitch->goal_trees_restored_direct_seeding,
+            'direct_seeding_survival_rate' => $projectPitch->direct_seeding_survival_rate,
         ]);
 
         foreach ($projectPitch->treeSpecies()->get() as $treeSpecies) {

@@ -4,12 +4,10 @@ namespace App\Models\V2\Sites;
 
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CriteriaSite extends Model
 {
     use HasUuid;
-    use SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -42,6 +40,6 @@ class CriteriaSite extends Model
 
     public function scopeForCriteria($query, $criteriaId)
     {
-        return $query->where('criteria_id', $criteriaId)->latest();
+        return $query->where('criteria_id', $criteriaId);
     }
 }

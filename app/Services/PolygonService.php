@@ -11,12 +11,14 @@ use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
+use App\Models\V2\Sites\CriteriaSiteHistoric;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
 use App\Validators\SitePolygonValidator;
 use DateTime;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
@@ -221,13 +223,29 @@ class PolygonService
 
     public function createCriteriaSite($polygonId, $criteriaId, $valid, $extraInfo = null): bool|string
     {
-        $criteriaSite = new CriteriaSite();
-        $criteriaSite->polygon_id = $polygonId;
-        $criteriaSite->criteria_id = $criteriaId;
-        $criteriaSite->valid = $valid;
-        $criteriaSite->extra_info = $extraInfo ? json_encode($extraInfo) : null;
-
         try {
+            $existingCriteriaSite = CriteriaSite::where('polygon_id', $polygonId)
+                                                ->where('criteria_id', $criteriaId)
+                                                ->first();
+
+            if ($existingCriteriaSite) {
+                CriteriaSiteHistoric::create([
+                    'polygon_id' => $existingCriteriaSite->polygon_id,
+                    'criteria_id' => $existingCriteriaSite->criteria_id,
+                    'valid' => $existingCriteriaSite->valid,
+                    'extra_info' => $existingCriteriaSite->extra_info,
+                    'created_at' => $existingCriteriaSite->created_at,
+                    'updated_at' => $existingCriteriaSite->updated_at,
+                ]);
+
+                $existingCriteriaSite->delete();
+            }
+
+            $criteriaSite = new CriteriaSite();
+            $criteriaSite->polygon_id = $polygonId;
+            $criteriaSite->criteria_id = $criteriaId;
+            $criteriaSite->valid = $valid;
+            $criteriaSite->extra_info = $extraInfo ? json_encode($extraInfo) : null;
             $criteriaSite->save();
 
             return true;
@@ -581,5 +599,26 @@ class PolygonService
         $updatedPolygons = PolygonGeometryHelper::getPolygonsProjection($uuids, ['poly_id', 'poly_name']);
 
         return $updatedPolygons;
+    }
+
+    public function getSitePolygonsWithFiltersAndSorts($sitePolygonsQuery, Request $request)
+    {
+        if ($request->has('status') && $request->input('status')) {
+            $statusValues = explode(',', $request->input('status'));
+            $sitePolygonsQuery->whereIn('site_polygon.status', $statusValues);
+        }
+
+        $sortFields = $request->input('sort', []);
+        foreach ($sortFields as $field => $direction) {
+            if ($field === 'status') {
+                $sitePolygonsQuery->orderByRaw('FIELD(site_polygon.status, "draft", "submitted", "needs-more-information", "approved") ' . $direction);
+            } elseif ($field === 'poly_name') {
+                $sitePolygonsQuery->orderByRaw('site_polygon.poly_name IS NULL, site_polygon.poly_name ' . $direction);
+            } else {
+                $sitePolygonsQuery->orderBy($field, $direction);
+            }
+        }
+
+        return $sitePolygonsQuery;
     }
 }

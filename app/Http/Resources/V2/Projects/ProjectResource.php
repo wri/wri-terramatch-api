@@ -15,6 +15,7 @@ class ProjectResource extends JsonResource
             'ppc_external_id' => $this->ppc_external_id ?? $this->id,
             'name' => $this->name,
             'status' => $this->status,
+            'is_test' => $this->is_test,
             'readable_status' => $this->readable_status,
             'project_status' => $this->project_status,
             'update_request_status' => $this->update_request_status,
@@ -95,7 +96,8 @@ class ProjectResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'trees_restored_ppc' =>
-                $this->getTreesGrowingThroughAnr($this->sites) + (($this->trees_planted_count + $this->seeds_planted_count) * ($this->survival_rate / 100)),
+                $this->getTreesGrowingThroughAnr($this->sites()->IsApproved()->get()) + (($this->trees_planted_count + $this->seeds_planted_count) * ($this->survival_rate / 100)),
+            'direct_seeding_survival_rate' => $this->direct_seeding_survival_rate,
         ];
 
         return $this->appendFilesToResource($data);
@@ -104,7 +106,7 @@ class ProjectResource extends JsonResource
     public function getTreesGrowingThroughAnr($sites)
     {
         return $sites->sum(function ($site) {
-            return $site->reports->sum('num_trees_regenerating');
+            return $site->reports()->Approved()->sum('num_trees_regenerating');
         });
     }
 }

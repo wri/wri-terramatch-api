@@ -228,6 +228,8 @@ definitions:
             type: string
           type:
             type: string
+          is_test:
+            type: boolean
           private:
             type: boolean
           name:
@@ -1141,6 +1143,8 @@ definitions:
               type: string
             type:
               type: string
+            is_test:
+              type: boolean
             private:
               type: boolean
             name:
@@ -3614,6 +3618,8 @@ definitions:
         type: string
       type:
         type: string
+      is_test:
+        type: boolean
       private:
         type: boolean
       name:
@@ -4873,6 +4879,8 @@ definitions:
       type:
         type: string
       private:
+        type: boolean
+      is_test:
         type: boolean
       name:
         type: string
@@ -7595,6 +7603,8 @@ definitions:
             type: string
           uuid:
             type: string
+          is_test:
+            type: boolean
           status:
             type: string
           name:
@@ -8817,6 +8827,8 @@ definitions:
         type: string
       uuid:
         type: string
+      is_test:
+        type: boolean
       status:
         type: string
       name:
@@ -9758,6 +9770,8 @@ definitions:
         type: string
       uuid:
         type: string
+      is_test:
+        type: boolean
       status:
         type: string
       organisation:
@@ -11446,6 +11460,8 @@ definitions:
                 type: string
               type:
                 type: string
+              is_test:
+                type: boolean
               private:
                 type: boolean
               name:
@@ -16306,6 +16322,8 @@ definitions:
             type: string
           type:
             type: string
+          is_test:
+            type: boolean
           private:
             type: boolean
           name:
@@ -18216,6 +18234,8 @@ definitions:
             type: string
           uuid:
             type: string
+          is_test:
+            type: boolean
           status:
             type: string
           name:
@@ -19165,6 +19185,8 @@ definitions:
                 type: string
               uuid:
                 type: string
+              is_test:
+                type: boolean
               status:
                 type: string
               name:
@@ -21062,6 +21084,8 @@ definitions:
                   type: string
                 uuid:
                   type: string
+                is_test:
+                  type: boolean
                 status:
                   type: string
                 name:
@@ -22011,6 +22035,8 @@ definitions:
                       type: string
                     uuid:
                       type: string
+                    is_test:
+                      type: boolean
                     status:
                       type: string
                     name:
@@ -23925,6 +23951,8 @@ definitions:
             type: string
           uuid:
             type: string
+          is_test:
+            type: boolean
           status:
             type: string
           name:
@@ -24874,6 +24902,8 @@ definitions:
                 type: string
               uuid:
                 type: string
+              is_test:
+                type: boolean
               status:
                 type: string
               name:
@@ -26769,6 +26799,8 @@ definitions:
                   type: string
                 uuid:
                   type: string
+                is_test:
+                  type: boolean
                 status:
                   type: string
                 name:
@@ -27718,6 +27750,8 @@ definitions:
                       type: string
                     uuid:
                       type: string
+                    is_test:
+                      type: boolean
                     status:
                       type: string
                     name:
@@ -30648,6 +30682,8 @@ definitions:
             type: string
           uuid:
             type: string
+          is_test:
+            type: boolean
           status:
             type: string
           name:
@@ -31605,6 +31641,8 @@ definitions:
             type: string
           uuid:
             type: string
+          is_test:
+            type: boolean
           status:
             type: string
           name:
@@ -32574,6 +32612,8 @@ definitions:
                 type: string
               uuid:
                 type: string
+              is_test:
+                type: boolean
               status:
                 type: string
               name:
@@ -33564,6 +33604,8 @@ definitions:
                 type: string
               type:
                 type: string
+              is_test:
+                type: boolean
               private:
                 type: boolean
               name:
@@ -34475,6 +34517,8 @@ definitions:
                 type: string
               type:
                 type: string
+              is_test:
+                type: boolean
               private:
                 type: boolean
               name:
@@ -36304,6 +36348,8 @@ definitions:
                 type: string
               uuid:
                 type: string
+              is_test:
+                type: boolean
               status:
                 type: string
               name:
@@ -37286,6 +37332,8 @@ definitions:
                 type: string
               type:
                 type: string
+              is_test:
+                type: boolean
               private:
                 type: boolean
               name:
@@ -38197,6 +38245,8 @@ definitions:
                 type: string
               type:
                 type: string
+              is_test:
+                type: boolean
               private:
                 type: boolean
               name:
@@ -41368,6 +41418,8 @@ definitions:
                 type: string
               type:
                 type: string
+              is_test:
+                type: boolean
               private:
                 type: boolean
               name:
@@ -42281,6 +42333,29 @@ definitions:
         type: string
       program:
         type: string
+  AdminUserCreate:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email_address:
+        type: string
+      job_role:
+        type: string
+      phone_number:
+        type: string
+      organisation:
+        type: string
+      role:
+        type: string
+      country:
+        type: string
+      program:
+        type: string
+      direct_frameworks:
+        type: boolean
   UpdateRequestsPaginated:
     title: UpdateRequestsPaginated
     type: object
@@ -43634,6 +43709,82 @@ definitions:
         items:
           type: number
         description: Bounding box of the entity
+  EntityPolygonResponse:
+    type: object
+    properties:
+      type:
+        type: string
+        description: 'Type of the entity (''project'', ''site'', ''unknown'')'
+      uuid:
+        type: string
+        format: uuid
+        description: UUID of the entity
+      polygonsData:
+        type: array
+        items:
+          title: SitePolygon
+          type: object
+          properties:
+            id:
+              type: integer
+            uuid:
+              type: string
+            primary_uuid:
+              type: string
+            project_id:
+              type: string
+            proj_name:
+              type: string
+            org_name:
+              type: string
+            poly_id:
+              type: string
+            poly_name:
+              type: string
+            site_id:
+              type: string
+            site_name:
+              type: string
+            plantstart:
+              type: string
+              format: date
+            plantend:
+              type: string
+              format: date
+            practice:
+              type: string
+            target_sys:
+              type: string
+            distr:
+              type: string
+            num_trees:
+              type: integer
+            calc_area:
+              type: number
+              format: float
+            created_by:
+              type: string
+            last_modified_by:
+              type: string
+            deleted_at:
+              type: string
+              format: date-time
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+            status:
+              type: string
+            source:
+              type: string
+            country:
+              type: string
+            is_active:
+              type: boolean
+            version_name:
+              type: string
   AuditStatusUpdateRequest:
     title: AuditStatusUpdateRequest
     type: object
@@ -44239,6 +44390,12 @@ definitions:
         type: string
       role:
         type: string
+  V2AdminProjectUpdate:
+    title: V2AdminProjectUpdate
+    type: object
+    properties:
+      is_test:
+        type: boolean
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -44325,6 +44482,8 @@ paths:
                   type: string
                 uuid:
                   type: string
+                is_test:
+                  type: boolean
                 status:
                   type: string
                 name:
@@ -45291,6 +45450,8 @@ paths:
                       type: string
                     uuid:
                       type: string
+                    is_test:
+                      type: boolean
                     status:
                       type: string
                     name:
@@ -46265,6 +46426,8 @@ paths:
                       type: string
                     uuid:
                       type: string
+                    is_test:
+                      type: boolean
                     status:
                       type: string
                     name:
@@ -47292,6 +47455,8 @@ paths:
                     type: string
                   type:
                     type: string
+                  is_test:
+                    type: boolean
                   private:
                     type: boolean
                   name:
@@ -48241,6 +48406,8 @@ paths:
                   type: string
                 uuid:
                   type: string
+                is_test:
+                  type: boolean
                 status:
                   type: string
                 name:
@@ -50370,6 +50537,8 @@ paths:
                           type: string
                         uuid:
                           type: string
+                        is_test:
+                          type: boolean
                         status:
                           type: string
                         name:
@@ -51319,6 +51488,8 @@ paths:
                               type: string
                             uuid:
                               type: string
+                            is_test:
+                              type: boolean
                             status:
                               type: string
                             name:
@@ -53267,6 +53438,8 @@ paths:
                           type: string
                         uuid:
                           type: string
+                        is_test:
+                          type: boolean
                         status:
                           type: string
                         name:
@@ -54216,6 +54389,8 @@ paths:
                               type: string
                             uuid:
                               type: string
+                            is_test:
+                              type: boolean
                             status:
                               type: string
                             name:
@@ -59670,6 +59845,8 @@ paths:
                       type: string
                     type:
                       type: string
+                    is_test:
+                      type: boolean
                     private:
                       type: boolean
                     name:
@@ -60601,6 +60778,8 @@ paths:
                 type: string
               type:
                 type: string
+              is_test:
+                type: boolean
               private:
                 type: boolean
               name:
@@ -61487,6 +61666,8 @@ paths:
                 type: string
               type:
                 type: string
+              is_test:
+                type: boolean
               private:
                 type: boolean
               name:
@@ -62363,6 +62544,8 @@ paths:
                 type: string
               private:
                 type: boolean
+              is_test:
+                type: boolean
               name:
                 type: string
               phone:
@@ -62556,6 +62739,8 @@ paths:
                 type: string
               type:
                 type: string
+              is_test:
+                type: boolean
               private:
                 type: boolean
               name:
@@ -63457,6 +63642,8 @@ paths:
                 type: string
               private:
                 type: boolean
+              is_test:
+                type: boolean
               name:
                 type: string
               phone:
@@ -63658,6 +63845,8 @@ paths:
               type:
                 type: string
               private:
+                type: boolean
+              is_test:
                 type: boolean
               name:
                 type: string
@@ -66282,6 +66471,8 @@ paths:
                       type: string
                     type:
                       type: string
+                    is_test:
+                      type: boolean
                     private:
                       type: boolean
                     name:
@@ -67210,6 +67401,8 @@ paths:
                       type: string
                     type:
                       type: string
+                    is_test:
+                      type: boolean
                     private:
                       type: boolean
                     name:
@@ -68916,6 +69109,74 @@ paths:
                 type: string
               date_added:
                 type: string
+  /v2/admin/users/create:
+    post:
+      summary: Create a user
+      operationId: v2-admin-post-user
+      tags:
+        - V2 Admin
+        - V2 Users
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              job_role:
+                type: string
+              phone_number:
+                type: string
+              organisation:
+                type: string
+              role:
+                type: string
+              country:
+                type: string
+              program:
+                type: string
+              direct_frameworks:
+                type: boolean
+      responses:
+        '201':
+          description: Created
+          schema:
+            title: AdminUserRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              status:
+                type: string
+              readable_status:
+                type: string
+              type:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email_address:
+                type: string
+              job_role:
+                type: string
+              facebook:
+                type: string
+              instagram:
+                type: string
+              linkedin:
+                type: string
+              twitter:
+                type: string
+              whatsapp_phone:
+                type: string
+              date_added:
+                type: string
   /v2/admin/users/export:
     get:
       summary: Export CSV document of all users
@@ -70424,6 +70685,8 @@ paths:
                       type: string
                     uuid:
                       type: string
+                    is_test:
+                      type: boolean
                     status:
                       type: string
                     name:
@@ -71407,6 +71670,8 @@ paths:
                       type: string
                     uuid:
                       type: string
+                    is_test:
+                      type: boolean
                     status:
                       type: string
                     organisation:
@@ -73095,6 +73360,8 @@ paths:
                               type: string
                             type:
                               type: string
+                            is_test:
+                              type: boolean
                             private:
                               type: boolean
                             name:
@@ -74143,6 +74410,8 @@ paths:
                           type: string
                         uuid:
                           type: string
+                        is_test:
+                          type: boolean
                         status:
                           type: string
                         name:
@@ -84239,6 +84508,8 @@ paths:
                     type: string
                   type:
                     type: string
+                  is_test:
+                    type: boolean
                   private:
                     type: boolean
                   name:
@@ -86480,6 +86751,8 @@ paths:
                     type: string
                   type:
                     type: string
+                  is_test:
+                    type: boolean
                   private:
                     type: boolean
                   name:
@@ -88709,6 +88982,8 @@ paths:
                     type: string
                   type:
                     type: string
+                  is_test:
+                    type: boolean
                   private:
                     type: boolean
                   name:
@@ -89785,6 +90060,2602 @@ paths:
         '200':
           description: OK
   '/v2/admin/projects/{UUID}':
+    put:
+      summary: Updates a specific project
+      operationId: put-v2-admin-project
+      tags:
+        - V2 Projects
+      parameters:
+        - in: body
+          name: body
+          schema:
+            title: V2AdminProjectUpdate
+            type: object
+            properties:
+              is_test:
+                type: boolean
+        - type: string
+          in: path
+          name: UUID
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              title: ProjectLiteRead
+              type: object
+              properties:
+                id:
+                  type: string
+                uuid:
+                  type: string
+                is_test:
+                  type: boolean
+                status:
+                  type: string
+                organisation:
+                  title: OrganisationRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    type:
+                      type: string
+                    private:
+                      type: boolean
+                    name:
+                      type: string
+                    phone:
+                      type: string
+                    currency:
+                      type: string
+                    states:
+                      type: array
+                      items:
+                        type: string
+                    loan_status_types:
+                      type: array
+                      items:
+                        type: string
+                    land_systems:
+                      type: array
+                      items:
+                        type: string
+                    fund_utilisation:
+                      type: array
+                      items:
+                        type: string
+                    detailed_intervention_types:
+                      type: array
+                      items:
+                        type: string
+                    account_number_1:
+                      type: string
+                    account_number_2:
+                      type: string
+                    approach_of_marginalized_communities:
+                      type: string
+                    community_engagement_numbers_marginalized:
+                      type: string
+                    founding_date:
+                      type: string
+                    description:
+                      type: string
+                    leadership_team:
+                      type: string
+                    countries:
+                      type: array
+                      items:
+                        type: string
+                    languages:
+                      type: array
+                      items:
+                        type: string
+                    project_pitches:
+                      type: array
+                      items:
+                        title: ProjectPitchRead
+                        x-stoplight:
+                          id: rsuskf5on1pya
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          uuid:
+                            type: string
+                          status:
+                            type: string
+                          readable_status:
+                            type: string
+                          organisation_id:
+                            type: string
+                          funding_programmes:
+                            title: LimitedFundingProgrammeRead
+                            x-stoplight:
+                              id: uh5oce75en4za
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              uuid:
+                                type: string
+                              name:
+                                type: string
+                              description:
+                                type: string
+                              read_more_url:
+                                type: string
+                              organisation_types:
+                                type: array
+                                items:
+                                  type: string
+                              location:
+                                type: string
+                              status:
+                                type: string
+                          tree_species:
+                            type: array
+                            items:
+                              title: V2TreeSpeciesRead
+                              x-stoplight:
+                                id: 04vvsvyndvy8n
+                              type: object
+                              properties:
+                                uuid:
+                                  type: string
+                                name:
+                                  type: string
+                                amount:
+                                  type: integer
+                                type:
+                                  type: string
+                                collection:
+                                  type: string
+                          project_name:
+                            type: string
+                          how_discovered:
+                            type: string
+                          project_objectives:
+                            type: string
+                          project_country:
+                            type: array
+                            items:
+                              type: string
+                          project_county_district:
+                            type: string
+                          restoration_intervention_types:
+                            type: array
+                            items:
+                              type: string
+                          land_systems:
+                            type: array
+                            items:
+                              type: string
+                          tree_restoration_practices:
+                            type: array
+                            items:
+                              type: string
+                          total_hectares:
+                            type: integer
+                          project_budget:
+                            type: integer
+                          total_trees:
+                            type: integer
+                          capacity_building_needs:
+                            type: array
+                            items:
+                              type: string
+                          additional:
+                            type: array
+                            items:
+                              title: V2FileRead
+                              type: object
+                              properties:
+                                uuid:
+                                  type: string
+                                url:
+                                  type: string
+                                thumb_url:
+                                  type: string
+                                collection_name:
+                                  type: string
+                                title:
+                                  type: string
+                                file_name:
+                                  type: string
+                                mime_type:
+                                  type: string
+                                size:
+                                  type: integer
+                                lat:
+                                  type: integer
+                                lng:
+                                  type: integer
+                                is_public:
+                                  type: boolean
+                                is_cover:
+                                  type: boolean
+                                created_at:
+                                  type: string
+                          restoration_photos:
+                            type: array
+                            items:
+                              title: V2FileRead
+                              type: object
+                              properties:
+                                uuid:
+                                  type: string
+                                url:
+                                  type: string
+                                thumb_url:
+                                  type: string
+                                collection_name:
+                                  type: string
+                                title:
+                                  type: string
+                                file_name:
+                                  type: string
+                                mime_type:
+                                  type: string
+                                size:
+                                  type: integer
+                                lat:
+                                  type: integer
+                                lng:
+                                  type: integer
+                                is_public:
+                                  type: boolean
+                                is_cover:
+                                  type: boolean
+                                created_at:
+                                  type: string
+                          cover:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                          proof_of_land_tenure_mou:
+                            type: array
+                            items:
+                              title: V2FileRead
+                              type: object
+                              properties:
+                                uuid:
+                                  type: string
+                                url:
+                                  type: string
+                                thumb_url:
+                                  type: string
+                                collection_name:
+                                  type: string
+                                title:
+                                  type: string
+                                file_name:
+                                  type: string
+                                mime_type:
+                                  type: string
+                                size:
+                                  type: integer
+                                lat:
+                                  type: integer
+                                lng:
+                                  type: integer
+                                is_public:
+                                  type: boolean
+                                is_cover:
+                                  type: boolean
+                                created_at:
+                                  type: string
+                          detailed_project_budget:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                          expected_active_restoration_start_date:
+                            type: string
+                          expected_active_restoration_end_date:
+                            type: string
+                          description_of_project_timeline:
+                            type: string
+                          proj_partner_info:
+                            type: string
+                          land_tenure_proj_area:
+                            type: array
+                            items:
+                              type: string
+                          landholder_comm_engage:
+                            type: string
+                          proj_success_risks:
+                            type: string
+                          monitor_eval_plan:
+                            type: string
+                          proj_boundary:
+                            type: string
+                          sustainable_dev_goals:
+                            type: array
+                            items:
+                              type: string
+                          proj_area_description:
+                            type: string
+                          proposed_num_sites:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          environmental_goals:
+                            type: string
+                          main_degradation_causes:
+                            type: string
+                          seedlings_source:
+                            type: string
+                          proposed_num_nurseries:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          curr_land_degradation:
+                            type: string
+                          proj_impact_socieconom:
+                            type: string
+                          proj_impact_foodsec:
+                            type: string
+                          proj_impact_watersec:
+                            type: string
+                          proj_impact_jobtypes:
+                            type: string
+                          num_jobs_created:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          pct_employees_men:
+                            type: integer
+                            minimum: 0
+                            maximum: 100
+                          pct_employees_women:
+                            type: integer
+                            minimum: 0
+                            maximum: 100
+                          pct_employees_18to35:
+                            type: integer
+                            minimum: 0
+                            maximum: 100
+                          pct_employees_older35:
+                            type: integer
+                            minimum: 0
+                            maximum: 100
+                          proj_beneficiaries:
+                            type: integer
+                          pct_beneficiaries_women:
+                            type: integer
+                            minimum: 0
+                            maximum: 100
+                          pct_beneficiaries_small:
+                            type: integer
+                            minimum: 0
+                            maximum: 100
+                          pct_beneficiaries_large:
+                            type: integer
+                            minimum: 0
+                            maximum: 100
+                          pct_beneficiaries_youth:
+                            type: integer
+                            minimum: 0
+                            maximum: 100
+                          pct_beneficiaries_scheduled_classes:
+                            type: integer
+                            minimum: 0
+                            maximum: 100
+                          pct_beneficiaries_scheduled_tribes:
+                            type: integer
+                            minimum: 0
+                            maximum: 100
+                          monitoring_evaluation_plan:
+                            type: string
+                          main_causes_of_degradation:
+                            type: string
+                          deleted_at:
+                            type: string
+                          created_at:
+                            type: string
+                          updated_at:
+                            type: string
+                    tree_species:
+                      type: array
+                      items:
+                        title: V2TreeSpeciesRead
+                        x-stoplight:
+                          id: 04vvsvyndvy8n
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          name:
+                            type: string
+                          amount:
+                            type: integer
+                          type:
+                            type: string
+                          collection:
+                            type: string
+                    web_url:
+                      type: string
+                    facebook_url:
+                      type: string
+                    instagram_url:
+                      type: string
+                    linkedin_url:
+                      type: string
+                    twitter_url:
+                      type: string
+                    hq_street_1:
+                      type: string
+                    hq_street_2:
+                      type: string
+                    hq_city:
+                      type: string
+                    hq_state:
+                      type: string
+                    hq_zipcode:
+                      type: string
+                    hq_country:
+                      type: string
+                    fin_start_month:
+                      type: integer
+                    fin_budget_3year:
+                      type: number
+                      format: float
+                    fin_budget_2year:
+                      type: number
+                      format: float
+                    fin_budget_1year:
+                      type: number
+                      format: float
+                    fin_budget_current_year:
+                      type: number
+                      format: float
+                    ha_restored_total:
+                      type: number
+                      format: float
+                    ha_restored_3year:
+                      type: number
+                      format: float
+                    relevant_experience_years:
+                      type: integer
+                    trees_grown_total:
+                      type: integer
+                    trees_grown_3year:
+                      type: integer
+                    tree_care_approach:
+                      type: string
+                    ft_permanent_employees:
+                      type: integer
+                    pt_permanent_employees:
+                      type: integer
+                    temp_employees:
+                      type: integer
+                    female_employees:
+                      type: integer
+                    male_employees:
+                      type: integer
+                    young_employees:
+                      type: integer
+                    additional_funding_details:
+                      type: string
+                    community_experience:
+                      type: string
+                    total_engaged_community_members_3yr:
+                      type: integer
+                    percent_engaged_women_3yr:
+                      type: integer
+                    percent_engaged_men_3yr:
+                      type: integer
+                    percent_engaged_under_35_3yr:
+                      type: integer
+                    percent_engaged_over_35_3yr:
+                      type: integer
+                    percent_engaged_smallholder_3yr:
+                      type: integer
+                    total_trees_grown:
+                      type: integer
+                    avg_tree_survival_rate:
+                      type: integer
+                    tree_maintenance_aftercare_approach:
+                      type: string
+                    restored_areas_description:
+                      type: string
+                    monitoring_evaluation_experience:
+                      type: string
+                    funding_history:
+                      type: string
+                    engagement_farmers:
+                      type: array
+                      items:
+                        type: string
+                    engagement_women:
+                      type: array
+                      items:
+                        type: string
+                    engagement_youth:
+                      type: array
+                      items:
+                        type: string
+                    engagement_non_youth:
+                      type: array
+                      items:
+                        type: string
+                    tree_restoration_practices:
+                      type: array
+                      items:
+                        type: string
+                    business_model:
+                      type: string
+                    subtype:
+                      type: string
+                    organisation_revenue_this_year:
+                      type: number
+                    shapefiles:
+                      type: array
+                      items:
+                        title: ShapefileRead
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          shapefileable_type:
+                            type: string
+                          shapefileable_id:
+                            type: integer
+                          geojson:
+                            type: string
+                          created_at:
+                            type: string
+                          updated_at:
+                            type: string
+                          deleted_at:
+                            type: string
+                    bank_statements:
+                      type: array
+                      items:
+                        title: V2FileRead
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          url:
+                            type: string
+                          thumb_url:
+                            type: string
+                          collection_name:
+                            type: string
+                          title:
+                            type: string
+                          file_name:
+                            type: string
+                          mime_type:
+                            type: string
+                          size:
+                            type: integer
+                          lat:
+                            type: integer
+                          lng:
+                            type: integer
+                          is_public:
+                            type: boolean
+                          is_cover:
+                            type: boolean
+                          created_at:
+                            type: string
+                    previous_annual_reports:
+                      type: array
+                      items:
+                        title: V2FileRead
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          url:
+                            type: string
+                          thumb_url:
+                            type: string
+                          collection_name:
+                            type: string
+                          title:
+                            type: string
+                          file_name:
+                            type: string
+                          mime_type:
+                            type: string
+                          size:
+                            type: integer
+                          lat:
+                            type: integer
+                          lng:
+                            type: integer
+                          is_public:
+                            type: boolean
+                          is_cover:
+                            type: boolean
+                          created_at:
+                            type: string
+                    logo:
+                      title: V2FileRead
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        url:
+                          type: string
+                        thumb_url:
+                          type: string
+                        collection_name:
+                          type: string
+                        title:
+                          type: string
+                        file_name:
+                          type: string
+                        mime_type:
+                          type: string
+                        size:
+                          type: integer
+                        lat:
+                          type: integer
+                        lng:
+                          type: integer
+                        is_public:
+                          type: boolean
+                        is_cover:
+                          type: boolean
+                        created_at:
+                          type: string
+                    cover:
+                      title: V2FileRead
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        url:
+                          type: string
+                        thumb_url:
+                          type: string
+                        collection_name:
+                          type: string
+                        title:
+                          type: string
+                        file_name:
+                          type: string
+                        mime_type:
+                          type: string
+                        size:
+                          type: integer
+                        lat:
+                          type: integer
+                        lng:
+                          type: integer
+                        is_public:
+                          type: boolean
+                        is_cover:
+                          type: boolean
+                        created_at:
+                          type: string
+                    reference:
+                      type: array
+                      items:
+                        title: V2FileRead
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          url:
+                            type: string
+                          thumb_url:
+                            type: string
+                          collection_name:
+                            type: string
+                          title:
+                            type: string
+                          file_name:
+                            type: string
+                          mime_type:
+                            type: string
+                          size:
+                            type: integer
+                          lat:
+                            type: integer
+                          lng:
+                            type: integer
+                          is_public:
+                            type: boolean
+                          is_cover:
+                            type: boolean
+                          created_at:
+                            type: string
+                    additional:
+                      type: array
+                      items:
+                        title: V2FileRead
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          url:
+                            type: string
+                          thumb_url:
+                            type: string
+                          collection_name:
+                            type: string
+                          title:
+                            type: string
+                          file_name:
+                            type: string
+                          mime_type:
+                            type: string
+                          size:
+                            type: integer
+                          lat:
+                            type: integer
+                          lng:
+                            type: integer
+                          is_public:
+                            type: boolean
+                          is_cover:
+                            type: boolean
+                          created_at:
+                            type: string
+                    op_budget_2year:
+                      type: array
+                      items:
+                        title: V2FileRead
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          url:
+                            type: string
+                          thumb_url:
+                            type: string
+                          collection_name:
+                            type: string
+                          title:
+                            type: string
+                          file_name:
+                            type: string
+                          mime_type:
+                            type: string
+                          size:
+                            type: integer
+                          lat:
+                            type: integer
+                          lng:
+                            type: integer
+                          is_public:
+                            type: boolean
+                          is_cover:
+                            type: boolean
+                          created_at:
+                            type: string
+                    op_budget_last_year:
+                      type: array
+                      items:
+                        title: V2FileRead
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          url:
+                            type: string
+                          thumb_url:
+                            type: string
+                          collection_name:
+                            type: string
+                          title:
+                            type: string
+                          file_name:
+                            type: string
+                          mime_type:
+                            type: string
+                          size:
+                            type: integer
+                          lat:
+                            type: integer
+                          lng:
+                            type: integer
+                          is_public:
+                            type: boolean
+                          is_cover:
+                            type: boolean
+                          created_at:
+                            type: string
+                    op_budget_this_year:
+                      type: array
+                      items:
+                        title: V2FileRead
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          url:
+                            type: string
+                          thumb_url:
+                            type: string
+                          collection_name:
+                            type: string
+                          title:
+                            type: string
+                          file_name:
+                            type: string
+                          mime_type:
+                            type: string
+                          size:
+                            type: integer
+                          lat:
+                            type: integer
+                          lng:
+                            type: integer
+                          is_public:
+                            type: boolean
+                          is_cover:
+                            type: boolean
+                          created_at:
+                            type: string
+                    op_budget_next_year:
+                      type: array
+                      items:
+                        title: V2FileRead
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          url:
+                            type: string
+                          thumb_url:
+                            type: string
+                          collection_name:
+                            type: string
+                          title:
+                            type: string
+                          file_name:
+                            type: string
+                          mime_type:
+                            type: string
+                          size:
+                            type: integer
+                          lat:
+                            type: integer
+                          lng:
+                            type: integer
+                          is_public:
+                            type: boolean
+                          is_cover:
+                            type: boolean
+                          created_at:
+                            type: string
+                    legal_registration:
+                      type: array
+                      items:
+                        title: V2FileRead
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          url:
+                            type: string
+                          thumb_url:
+                            type: string
+                          collection_name:
+                            type: string
+                          title:
+                            type: string
+                          file_name:
+                            type: string
+                          mime_type:
+                            type: string
+                          size:
+                            type: integer
+                          lat:
+                            type: integer
+                          lng:
+                            type: integer
+                          is_public:
+                            type: boolean
+                          is_cover:
+                            type: boolean
+                          created_at:
+                            type: string
+                    tags:
+                      type: array
+                      description: 'this is a list of key value pairs eg slug: name '
+                      items:
+                        type: string
+                application:
+                  title: ApplicationLiteRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    form_submissions:
+                      type: array
+                      items:
+                        type: object
+                        title: FormSubmissionRead
+                        x-stoplight:
+                          id: u7ul6m0rkvj6m
+                        properties:
+                          id:
+                            type: string
+                          uuid:
+                            type: string
+                          name:
+                            type: string
+                          form:
+                            title: FormRead
+                            x-stoplight:
+                              id: e0u0etkn01z17
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              uuid:
+                                type: string
+                              type:
+                                type: string
+                              version:
+                                type: integer
+                              title:
+                                type: string
+                              subtitle:
+                                type: string
+                              description:
+                                type: string
+                              framework_key:
+                                type: string
+                              duration:
+                                type: string
+                              deadline_at:
+                                type: string
+                              documentation:
+                                type: string
+                              documentation_label:
+                                type: string
+                              submission_message:
+                                type: string
+                              published:
+                                type: boolean
+                              stage_id:
+                                type: string
+                              options_other:
+                                type: boolean
+                              form_sections:
+                                type: array
+                                items:
+                                  title: FormSectionRead
+                                  x-stoplight:
+                                    id: scpnof2zuz3q3
+                                  type: object
+                                  properties:
+                                    order:
+                                      type: integer
+                                    form_id:
+                                      type: integer
+                                    form_questions:
+                                      type: array
+                                      items:
+                                        title: FormQuestionRead
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: integer
+                                          uuid:
+                                            type: string
+                                          form_section_id:
+                                            type: integer
+                                          label:
+                                            type: string
+                                          validation:
+                                            type: array
+                                            items:
+                                              type: string
+                                          parent_id:
+                                            type: string
+                                          linked_field_key:
+                                            type: string
+                                          children:
+                                            type: array
+                                            items:
+                                              type: object
+                                          multichoice:
+                                            type: boolean
+                                          order:
+                                            type: integer
+                                          options:
+                                            type: array
+                                            items:
+                                              title: FormQuestionOptionRead
+                                              x-stoplight:
+                                                id: ihpffrpq780e4
+                                              type: object
+                                              properties:
+                                                id:
+                                                  type: integer
+                                                uuid:
+                                                  type: string
+                                                form_question_id:
+                                                  type: integer
+                                                label:
+                                                  type: string
+                                                order:
+                                                  type: integer
+                                                created_at:
+                                                  type: string
+                                                updated_at:
+                                                  type: string
+                                                deleted_at:
+                                                  type: string
+                                          table_headers:
+                                            type: array
+                                            items:
+                                              title: FormTableHeaderRead
+                                              type: object
+                                              properties:
+                                                id:
+                                                  type: integer
+                                                uuid:
+                                                  type: string
+                                                form_question_id:
+                                                  type: integer
+                                                label:
+                                                  type: string
+                                                order:
+                                                  type: integer
+                                                created_at:
+                                                  type: string
+                                                updated_at:
+                                                  type: string
+                                                deleted_at:
+                                                  type: string
+                                          additional_text:
+                                            type: string
+                                          additional_url:
+                                            type: string
+                                          show_on_parent_condition:
+                                            type: boolean
+                                          input_type:
+                                            type: string
+                                            enum:
+                                              - date
+                                              - text
+                                              - long-text
+                                              - select
+                                              - checkboxes
+                                              - radio
+                                              - number
+                                              - image
+                                              - file
+                                              - conditional
+                                          created_at:
+                                            type: string
+                                          updated_at:
+                                            type: string
+                                          deleted_at:
+                                            type: string
+                                    created_at:
+                                      type: string
+                                    updated_at:
+                                      type: string
+                                    deleted_at:
+                                      type: string
+                              tags:
+                                type: array
+                                description: 'this is a list of key value pairs eg. slug: name'
+                                items:
+                                  type: string
+                              updated_by:
+                                type: integer
+                              deleted_at:
+                                type: string
+                              created_at:
+                                type: string
+                              updated_at:
+                                type: string
+                          stage:
+                            title: StageLiteRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              name:
+                                type: string
+                              status:
+                                type: string
+                              readable_status:
+                                type: string
+                          answers:
+                            type: string
+                          status:
+                            type: string
+                          readable_status:
+                            type: string
+                          audits:
+                            type: array
+                            items:
+                              title: AuditRead
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                event:
+                                  type: string
+                                user_id:
+                                  type: integer
+                                user_uuid:
+                                  type: string
+                                old_values:
+                                  type: object
+                                new_values:
+                                  type: object
+                                created_at:
+                                  type: string
+                                updated_at:
+                                  type: string
+                          tags:
+                            type: array
+                            description: 'this is a list of key value pairs eg slug: name '
+                            items:
+                              type: string
+                          project_pitch_uuid:
+                            type: string
+                          updated_by:
+                            type: string
+                          deleted_at:
+                            type: string
+                          created_at:
+                            type: string
+                          updated_at:
+                            type: string
+                    current_submission:
+                      type: object
+                      title: FormSubmissionRead
+                      x-stoplight:
+                        id: u7ul6m0rkvj6m
+                      properties:
+                        id:
+                          type: string
+                        uuid:
+                          type: string
+                        name:
+                          type: string
+                        form:
+                          title: FormRead
+                          x-stoplight:
+                            id: e0u0etkn01z17
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            uuid:
+                              type: string
+                            type:
+                              type: string
+                            version:
+                              type: integer
+                            title:
+                              type: string
+                            subtitle:
+                              type: string
+                            description:
+                              type: string
+                            framework_key:
+                              type: string
+                            duration:
+                              type: string
+                            deadline_at:
+                              type: string
+                            documentation:
+                              type: string
+                            documentation_label:
+                              type: string
+                            submission_message:
+                              type: string
+                            published:
+                              type: boolean
+                            stage_id:
+                              type: string
+                            options_other:
+                              type: boolean
+                            form_sections:
+                              type: array
+                              items:
+                                title: FormSectionRead
+                                x-stoplight:
+                                  id: scpnof2zuz3q3
+                                type: object
+                                properties:
+                                  order:
+                                    type: integer
+                                  form_id:
+                                    type: integer
+                                  form_questions:
+                                    type: array
+                                    items:
+                                      title: FormQuestionRead
+                                      type: object
+                                      properties:
+                                        id:
+                                          type: integer
+                                        uuid:
+                                          type: string
+                                        form_section_id:
+                                          type: integer
+                                        label:
+                                          type: string
+                                        validation:
+                                          type: array
+                                          items:
+                                            type: string
+                                        parent_id:
+                                          type: string
+                                        linked_field_key:
+                                          type: string
+                                        children:
+                                          type: array
+                                          items:
+                                            type: object
+                                        multichoice:
+                                          type: boolean
+                                        order:
+                                          type: integer
+                                        options:
+                                          type: array
+                                          items:
+                                            title: FormQuestionOptionRead
+                                            x-stoplight:
+                                              id: ihpffrpq780e4
+                                            type: object
+                                            properties:
+                                              id:
+                                                type: integer
+                                              uuid:
+                                                type: string
+                                              form_question_id:
+                                                type: integer
+                                              label:
+                                                type: string
+                                              order:
+                                                type: integer
+                                              created_at:
+                                                type: string
+                                              updated_at:
+                                                type: string
+                                              deleted_at:
+                                                type: string
+                                        table_headers:
+                                          type: array
+                                          items:
+                                            title: FormTableHeaderRead
+                                            type: object
+                                            properties:
+                                              id:
+                                                type: integer
+                                              uuid:
+                                                type: string
+                                              form_question_id:
+                                                type: integer
+                                              label:
+                                                type: string
+                                              order:
+                                                type: integer
+                                              created_at:
+                                                type: string
+                                              updated_at:
+                                                type: string
+                                              deleted_at:
+                                                type: string
+                                        additional_text:
+                                          type: string
+                                        additional_url:
+                                          type: string
+                                        show_on_parent_condition:
+                                          type: boolean
+                                        input_type:
+                                          type: string
+                                          enum:
+                                            - date
+                                            - text
+                                            - long-text
+                                            - select
+                                            - checkboxes
+                                            - radio
+                                            - number
+                                            - image
+                                            - file
+                                            - conditional
+                                        created_at:
+                                          type: string
+                                        updated_at:
+                                          type: string
+                                        deleted_at:
+                                          type: string
+                                  created_at:
+                                    type: string
+                                  updated_at:
+                                    type: string
+                                  deleted_at:
+                                    type: string
+                            tags:
+                              type: array
+                              description: 'this is a list of key value pairs eg. slug: name'
+                              items:
+                                type: string
+                            updated_by:
+                              type: integer
+                            deleted_at:
+                              type: string
+                            created_at:
+                              type: string
+                            updated_at:
+                              type: string
+                        stage:
+                          title: StageLiteRead
+                          type: object
+                          properties:
+                            uuid:
+                              type: string
+                            name:
+                              type: string
+                            status:
+                              type: string
+                            readable_status:
+                              type: string
+                        answers:
+                          type: string
+                        status:
+                          type: string
+                        readable_status:
+                          type: string
+                        audits:
+                          type: array
+                          items:
+                            title: AuditRead
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              event:
+                                type: string
+                              user_id:
+                                type: integer
+                              user_uuid:
+                                type: string
+                              old_values:
+                                type: object
+                              new_values:
+                                type: object
+                              created_at:
+                                type: string
+                              updated_at:
+                                type: string
+                        tags:
+                          type: array
+                          description: 'this is a list of key value pairs eg slug: name '
+                          items:
+                            type: string
+                        project_pitch_uuid:
+                          type: string
+                        updated_by:
+                          type: string
+                        deleted_at:
+                          type: string
+                        created_at:
+                          type: string
+                        updated_at:
+                          type: string
+                    funding_programme:
+                      type: object
+                      title: FundingProgrammeRead
+                      x-stoplight:
+                        id: uh5oce75en4za
+                      properties:
+                        id:
+                          type: integer
+                        uuid:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        location:
+                          type: string
+                        read_more_url:
+                          type: string
+                        framework_key:
+                          type: string
+                        status:
+                          type: string
+                        organisation_types:
+                          type: array
+                          items:
+                            type: string
+                        stages:
+                          type: array
+                          items:
+                            title: StageRead
+                            x-stoplight:
+                              id: qtkhrj889wvwc
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              uuid:
+                                type: string
+                              status:
+                                type: string
+                              deadline_at:
+                                type: string
+                              readable_status:
+                                type: string
+                              funding_programme_id:
+                                type: integer
+                              name:
+                                type: string
+                              order:
+                                type: integer
+                              forms:
+                                title: FormRead
+                                x-stoplight:
+                                  id: e0u0etkn01z17
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  uuid:
+                                    type: string
+                                  type:
+                                    type: string
+                                  version:
+                                    type: integer
+                                  title:
+                                    type: string
+                                  subtitle:
+                                    type: string
+                                  description:
+                                    type: string
+                                  framework_key:
+                                    type: string
+                                  duration:
+                                    type: string
+                                  deadline_at:
+                                    type: string
+                                  documentation:
+                                    type: string
+                                  documentation_label:
+                                    type: string
+                                  submission_message:
+                                    type: string
+                                  published:
+                                    type: boolean
+                                  stage_id:
+                                    type: string
+                                  options_other:
+                                    type: boolean
+                                  form_sections:
+                                    type: array
+                                    items:
+                                      title: FormSectionRead
+                                      x-stoplight:
+                                        id: scpnof2zuz3q3
+                                      type: object
+                                      properties:
+                                        order:
+                                          type: integer
+                                        form_id:
+                                          type: integer
+                                        form_questions:
+                                          type: array
+                                          items:
+                                            title: FormQuestionRead
+                                            type: object
+                                            properties:
+                                              id:
+                                                type: integer
+                                              uuid:
+                                                type: string
+                                              form_section_id:
+                                                type: integer
+                                              label:
+                                                type: string
+                                              validation:
+                                                type: array
+                                                items:
+                                                  type: string
+                                              parent_id:
+                                                type: string
+                                              linked_field_key:
+                                                type: string
+                                              children:
+                                                type: array
+                                                items:
+                                                  type: object
+                                              multichoice:
+                                                type: boolean
+                                              order:
+                                                type: integer
+                                              options:
+                                                type: array
+                                                items:
+                                                  title: FormQuestionOptionRead
+                                                  x-stoplight:
+                                                    id: ihpffrpq780e4
+                                                  type: object
+                                                  properties:
+                                                    id:
+                                                      type: integer
+                                                    uuid:
+                                                      type: string
+                                                    form_question_id:
+                                                      type: integer
+                                                    label:
+                                                      type: string
+                                                    order:
+                                                      type: integer
+                                                    created_at:
+                                                      type: string
+                                                    updated_at:
+                                                      type: string
+                                                    deleted_at:
+                                                      type: string
+                                              table_headers:
+                                                type: array
+                                                items:
+                                                  title: FormTableHeaderRead
+                                                  type: object
+                                                  properties:
+                                                    id:
+                                                      type: integer
+                                                    uuid:
+                                                      type: string
+                                                    form_question_id:
+                                                      type: integer
+                                                    label:
+                                                      type: string
+                                                    order:
+                                                      type: integer
+                                                    created_at:
+                                                      type: string
+                                                    updated_at:
+                                                      type: string
+                                                    deleted_at:
+                                                      type: string
+                                              additional_text:
+                                                type: string
+                                              additional_url:
+                                                type: string
+                                              show_on_parent_condition:
+                                                type: boolean
+                                              input_type:
+                                                type: string
+                                                enum:
+                                                  - date
+                                                  - text
+                                                  - long-text
+                                                  - select
+                                                  - checkboxes
+                                                  - radio
+                                                  - number
+                                                  - image
+                                                  - file
+                                                  - conditional
+                                              created_at:
+                                                type: string
+                                              updated_at:
+                                                type: string
+                                              deleted_at:
+                                                type: string
+                                        created_at:
+                                          type: string
+                                        updated_at:
+                                          type: string
+                                        deleted_at:
+                                          type: string
+                                  tags:
+                                    type: array
+                                    description: 'this is a list of key value pairs eg. slug: name'
+                                    items:
+                                      type: string
+                                  updated_by:
+                                    type: integer
+                                  deleted_at:
+                                    type: string
+                                  created_at:
+                                    type: string
+                                  updated_at:
+                                    type: string
+                              deleted_at:
+                                type: string
+                              created_at:
+                                type: string
+                              updated_at:
+                                type: string
+                        organisations:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              name:
+                                type: string
+                        cover:
+                          title: V2FileRead
+                          type: object
+                          properties:
+                            uuid:
+                              type: string
+                            url:
+                              type: string
+                            thumb_url:
+                              type: string
+                            collection_name:
+                              type: string
+                            title:
+                              type: string
+                            file_name:
+                              type: string
+                            mime_type:
+                              type: string
+                            size:
+                              type: integer
+                            lat:
+                              type: integer
+                            lng:
+                              type: integer
+                            is_public:
+                              type: boolean
+                            is_cover:
+                              type: boolean
+                            created_at:
+                              type: string
+                        deleted_at:
+                          type: string
+                        created_at:
+                          type: string
+                        updated_at:
+                          type: string
+                    organisation:
+                      type: object
+                      title: AdminOrganisationRead
+                      properties:
+                        uuid:
+                          type: string
+                        status:
+                          type: string
+                        readable_status:
+                          type: string
+                        type:
+                          type: string
+                        is_test:
+                          type: boolean
+                        private:
+                          type: boolean
+                        name:
+                          type: string
+                        phone:
+                          type: string
+                        founding_date:
+                          type: string
+                        description:
+                          type: string
+                        countries:
+                          type: array
+                          items:
+                            type: string
+                        languages:
+                          type: array
+                          items:
+                            type: string
+                        tree_species:
+                          type: array
+                          items:
+                            title: V2TreeSpeciesRead
+                            x-stoplight:
+                              id: 04vvsvyndvy8n
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              name:
+                                type: string
+                              amount:
+                                type: integer
+                              type:
+                                type: string
+                              collection:
+                                type: string
+                        project_pitches:
+                          type: array
+                          items:
+                            title: ProjectPitchRead
+                            x-stoplight:
+                              id: rsuskf5on1pya
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              uuid:
+                                type: string
+                              status:
+                                type: string
+                              readable_status:
+                                type: string
+                              organisation_id:
+                                type: string
+                              funding_programmes:
+                                title: LimitedFundingProgrammeRead
+                                x-stoplight:
+                                  id: uh5oce75en4za
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  uuid:
+                                    type: string
+                                  name:
+                                    type: string
+                                  description:
+                                    type: string
+                                  read_more_url:
+                                    type: string
+                                  organisation_types:
+                                    type: array
+                                    items:
+                                      type: string
+                                  location:
+                                    type: string
+                                  status:
+                                    type: string
+                              tree_species:
+                                type: array
+                                items:
+                                  title: V2TreeSpeciesRead
+                                  x-stoplight:
+                                    id: 04vvsvyndvy8n
+                                  type: object
+                                  properties:
+                                    uuid:
+                                      type: string
+                                    name:
+                                      type: string
+                                    amount:
+                                      type: integer
+                                    type:
+                                      type: string
+                                    collection:
+                                      type: string
+                              project_name:
+                                type: string
+                              how_discovered:
+                                type: string
+                              project_objectives:
+                                type: string
+                              project_country:
+                                type: array
+                                items:
+                                  type: string
+                              project_county_district:
+                                type: string
+                              restoration_intervention_types:
+                                type: array
+                                items:
+                                  type: string
+                              land_systems:
+                                type: array
+                                items:
+                                  type: string
+                              tree_restoration_practices:
+                                type: array
+                                items:
+                                  type: string
+                              total_hectares:
+                                type: integer
+                              project_budget:
+                                type: integer
+                              total_trees:
+                                type: integer
+                              capacity_building_needs:
+                                type: array
+                                items:
+                                  type: string
+                              additional:
+                                type: array
+                                items:
+                                  title: V2FileRead
+                                  type: object
+                                  properties:
+                                    uuid:
+                                      type: string
+                                    url:
+                                      type: string
+                                    thumb_url:
+                                      type: string
+                                    collection_name:
+                                      type: string
+                                    title:
+                                      type: string
+                                    file_name:
+                                      type: string
+                                    mime_type:
+                                      type: string
+                                    size:
+                                      type: integer
+                                    lat:
+                                      type: integer
+                                    lng:
+                                      type: integer
+                                    is_public:
+                                      type: boolean
+                                    is_cover:
+                                      type: boolean
+                                    created_at:
+                                      type: string
+                              restoration_photos:
+                                type: array
+                                items:
+                                  title: V2FileRead
+                                  type: object
+                                  properties:
+                                    uuid:
+                                      type: string
+                                    url:
+                                      type: string
+                                    thumb_url:
+                                      type: string
+                                    collection_name:
+                                      type: string
+                                    title:
+                                      type: string
+                                    file_name:
+                                      type: string
+                                    mime_type:
+                                      type: string
+                                    size:
+                                      type: integer
+                                    lat:
+                                      type: integer
+                                    lng:
+                                      type: integer
+                                    is_public:
+                                      type: boolean
+                                    is_cover:
+                                      type: boolean
+                                    created_at:
+                                      type: string
+                              cover:
+                                title: V2FileRead
+                                type: object
+                                properties:
+                                  uuid:
+                                    type: string
+                                  url:
+                                    type: string
+                                  thumb_url:
+                                    type: string
+                                  collection_name:
+                                    type: string
+                                  title:
+                                    type: string
+                                  file_name:
+                                    type: string
+                                  mime_type:
+                                    type: string
+                                  size:
+                                    type: integer
+                                  lat:
+                                    type: integer
+                                  lng:
+                                    type: integer
+                                  is_public:
+                                    type: boolean
+                                  is_cover:
+                                    type: boolean
+                                  created_at:
+                                    type: string
+                              proof_of_land_tenure_mou:
+                                type: array
+                                items:
+                                  title: V2FileRead
+                                  type: object
+                                  properties:
+                                    uuid:
+                                      type: string
+                                    url:
+                                      type: string
+                                    thumb_url:
+                                      type: string
+                                    collection_name:
+                                      type: string
+                                    title:
+                                      type: string
+                                    file_name:
+                                      type: string
+                                    mime_type:
+                                      type: string
+                                    size:
+                                      type: integer
+                                    lat:
+                                      type: integer
+                                    lng:
+                                      type: integer
+                                    is_public:
+                                      type: boolean
+                                    is_cover:
+                                      type: boolean
+                                    created_at:
+                                      type: string
+                              detailed_project_budget:
+                                title: V2FileRead
+                                type: object
+                                properties:
+                                  uuid:
+                                    type: string
+                                  url:
+                                    type: string
+                                  thumb_url:
+                                    type: string
+                                  collection_name:
+                                    type: string
+                                  title:
+                                    type: string
+                                  file_name:
+                                    type: string
+                                  mime_type:
+                                    type: string
+                                  size:
+                                    type: integer
+                                  lat:
+                                    type: integer
+                                  lng:
+                                    type: integer
+                                  is_public:
+                                    type: boolean
+                                  is_cover:
+                                    type: boolean
+                                  created_at:
+                                    type: string
+                              expected_active_restoration_start_date:
+                                type: string
+                              expected_active_restoration_end_date:
+                                type: string
+                              description_of_project_timeline:
+                                type: string
+                              proj_partner_info:
+                                type: string
+                              land_tenure_proj_area:
+                                type: array
+                                items:
+                                  type: string
+                              landholder_comm_engage:
+                                type: string
+                              proj_success_risks:
+                                type: string
+                              monitor_eval_plan:
+                                type: string
+                              proj_boundary:
+                                type: string
+                              sustainable_dev_goals:
+                                type: array
+                                items:
+                                  type: string
+                              proj_area_description:
+                                type: string
+                              proposed_num_sites:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              environmental_goals:
+                                type: string
+                              main_degradation_causes:
+                                type: string
+                              seedlings_source:
+                                type: string
+                              proposed_num_nurseries:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              curr_land_degradation:
+                                type: string
+                              proj_impact_socieconom:
+                                type: string
+                              proj_impact_foodsec:
+                                type: string
+                              proj_impact_watersec:
+                                type: string
+                              proj_impact_jobtypes:
+                                type: string
+                              num_jobs_created:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              pct_employees_men:
+                                type: integer
+                                minimum: 0
+                                maximum: 100
+                              pct_employees_women:
+                                type: integer
+                                minimum: 0
+                                maximum: 100
+                              pct_employees_18to35:
+                                type: integer
+                                minimum: 0
+                                maximum: 100
+                              pct_employees_older35:
+                                type: integer
+                                minimum: 0
+                                maximum: 100
+                              proj_beneficiaries:
+                                type: integer
+                              pct_beneficiaries_women:
+                                type: integer
+                                minimum: 0
+                                maximum: 100
+                              pct_beneficiaries_small:
+                                type: integer
+                                minimum: 0
+                                maximum: 100
+                              pct_beneficiaries_large:
+                                type: integer
+                                minimum: 0
+                                maximum: 100
+                              pct_beneficiaries_youth:
+                                type: integer
+                                minimum: 0
+                                maximum: 100
+                              pct_beneficiaries_scheduled_classes:
+                                type: integer
+                                minimum: 0
+                                maximum: 100
+                              pct_beneficiaries_scheduled_tribes:
+                                type: integer
+                                minimum: 0
+                                maximum: 100
+                              monitoring_evaluation_plan:
+                                type: string
+                              main_causes_of_degradation:
+                                type: string
+                              deleted_at:
+                                type: string
+                              created_at:
+                                type: string
+                              updated_at:
+                                type: string
+                        web_url:
+                          type: string
+                        facebook_url:
+                          type: string
+                        instagram_url:
+                          type: string
+                        linkedin_url:
+                          type: string
+                        twitter_url:
+                          type: string
+                        hq_street_1:
+                          type: string
+                        hq_street_2:
+                          type: string
+                        hq_city:
+                          type: string
+                        hq_state:
+                          type: string
+                        hq_zipcode:
+                          type: string
+                        hq_country:
+                          type: string
+                        fin_start_month:
+                          type: integer
+                        fin_budget_3year:
+                          type: number
+                          format: float
+                        fin_budget_2year:
+                          type: number
+                          format: float
+                        fin_budget_1year:
+                          type: number
+                          format: float
+                        fin_budget_current_year:
+                          type: number
+                          format: float
+                        ha_restored_total:
+                          type: number
+                          format: float
+                        ha_restored_3year:
+                          type: number
+                          format: float
+                        relevant_experience_years:
+                          type: integer
+                        trees_grown_total:
+                          type: integer
+                        trees_grown_3year:
+                          type: integer
+                        tree_care_approach:
+                          type: string
+                        ft_permanent_employees:
+                          type: integer
+                        pt_permanent_employees:
+                          type: integer
+                        temp_employees:
+                          type: integer
+                        female_employees:
+                          type: integer
+                        male_employees:
+                          type: integer
+                        young_employees:
+                          type: integer
+                        additional_funding_details:
+                          type: string
+                        community_experience:
+                          type: string
+                        total_engaged_community_members_3yr:
+                          type: integer
+                        percent_engaged_women_3yr:
+                          type: integer
+                        percent_engaged_men_3yr:
+                          type: integer
+                        percent_engaged_under_35_3yr:
+                          type: integer
+                        percent_engaged_over_35_3yr:
+                          type: integer
+                        percent_engaged_smallholder_3yr:
+                          type: integer
+                        total_trees_grown:
+                          type: integer
+                        avg_tree_survival_rate:
+                          type: integer
+                        tree_maintenance_aftercare_approach:
+                          type: string
+                        restored_areas_description:
+                          type: string
+                        monitoring_evaluation_experience:
+                          type: string
+                        funding_history:
+                          type: string
+                        shapefiles:
+                          type: array
+                          items:
+                            title: ShapefileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              shapefileable_type:
+                                type: string
+                              shapefileable_id:
+                                type: integer
+                              geojson:
+                                type: string
+                              created_at:
+                                type: string
+                              updated_at:
+                                type: string
+                              deleted_at:
+                                type: string
+                        bank_statements:
+                          type: array
+                          items:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                        previous_annual_reports:
+                          type: array
+                          items:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                        logo:
+                          title: V2FileRead
+                          type: object
+                          properties:
+                            uuid:
+                              type: string
+                            url:
+                              type: string
+                            thumb_url:
+                              type: string
+                            collection_name:
+                              type: string
+                            title:
+                              type: string
+                            file_name:
+                              type: string
+                            mime_type:
+                              type: string
+                            size:
+                              type: integer
+                            lat:
+                              type: integer
+                            lng:
+                              type: integer
+                            is_public:
+                              type: boolean
+                            is_cover:
+                              type: boolean
+                            created_at:
+                              type: string
+                        cover:
+                          title: V2FileRead
+                          type: object
+                          properties:
+                            uuid:
+                              type: string
+                            url:
+                              type: string
+                            thumb_url:
+                              type: string
+                            collection_name:
+                              type: string
+                            title:
+                              type: string
+                            file_name:
+                              type: string
+                            mime_type:
+                              type: string
+                            size:
+                              type: integer
+                            lat:
+                              type: integer
+                            lng:
+                              type: integer
+                            is_public:
+                              type: boolean
+                            is_cover:
+                              type: boolean
+                            created_at:
+                              type: string
+                        reference:
+                          type: array
+                          items:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                        additional:
+                          type: array
+                          items:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                        op_budget_2year:
+                          type: array
+                          items:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                        op_budget_last_year:
+                          type: array
+                          items:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                        op_budget_this_year:
+                          type: array
+                          items:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                        op_budget_next_year:
+                          type: array
+                          items:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                        legal_registration:
+                          type: array
+                          items:
+                            title: V2FileRead
+                            type: object
+                            properties:
+                              uuid:
+                                type: string
+                              url:
+                                type: string
+                              thumb_url:
+                                type: string
+                              collection_name:
+                                type: string
+                              title:
+                                type: string
+                              file_name:
+                                type: string
+                              mime_type:
+                                type: string
+                              size:
+                                type: integer
+                              lat:
+                                type: integer
+                              lng:
+                                type: integer
+                              is_public:
+                                type: boolean
+                              is_cover:
+                                type: boolean
+                              created_at:
+                                type: string
+                        tags:
+                          type: array
+                          description: 'this is a list of key value pairs eg. slug: name'
+                          items:
+                            type: string
+                        created_at:
+                          type: string
+                        updated_at:
+                          type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                planting_start_date:
+                  type: string
+                framework_key:
+                  type: string
+                framework_uuid:
+                  type: string
+                has_monitoring_data:
+                  type: boolean
     delete:
       summary: Delete a project
       operationId: delete-v2-admin-projects-UUID
@@ -90323,6 +93194,113 @@ paths:
               email_address:
                 type: string
               callback_url:
+                type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  /auth/send-login-details:
+    post:
+      operationId: post-auth-send-login-details
+      summary: Send a password reset email to a user or admin
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email_address:
+                type: string
+              callback_url:
+                type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+  /auth/mail:
+    get:
+      summary: Get email address by reset token
+      description: 'Retrieves the email address associated with a reset token. If the token has already been used or does not exist, indicates that the token is used.'
+      parameters:
+        - in: query
+          name: token
+          required: true
+          description: The reset token
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  email_address:
+                    type: string
+                    nullable: true
+                    example: user@example.com
+                    description: 'The email address associated with the reset token, or null if the token is already used.'
+                  token_used:
+                    type: boolean
+                    example: false
+                    description: 'Indicates whether the token has already been used. `true` if the token was used or does not exist, and `false` otherwise.'
+        '404':
+          description: User not found for the associated token
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: User not found
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Internal Server Error
+  /auth/store:
+    post:
+      operationId: post-auth-store
+      summary: set a user's or admin's password
+      tags:
+        - Auth
+      security: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+              password:
                 type: string
       responses:
         '200':
@@ -91371,6 +94349,115 @@ paths:
                           description: 'this is a list of key value pairs eg slug: name '
                           items:
                             type: string
+  '/v2/sites/{UUID}/polygons':
+    get:
+      summary: Get polygons for a specific site
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the site
+        - in: query
+          name: limit
+          required: true
+          description: The maximum number of polygons to return
+          type: number
+        - in: query
+          name: offset
+          required: true
+          description: The number of polygons to skip
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
+            items:
+              title: SitePolygon
+              type: object
+              properties:
+                id:
+                  type: integer
+                uuid:
+                  type: string
+                primary_uuid:
+                  type: string
+                project_id:
+                  type: string
+                proj_name:
+                  type: string
+                org_name:
+                  type: string
+                poly_id:
+                  type: string
+                poly_name:
+                  type: string
+                site_id:
+                  type: string
+                site_name:
+                  type: string
+                plantstart:
+                  type: string
+                  format: date
+                plantend:
+                  type: string
+                  format: date
+                practice:
+                  type: string
+                target_sys:
+                  type: string
+                distr:
+                  type: string
+                num_trees:
+                  type: integer
+                calc_area:
+                  type: number
+                  format: float
+                created_by:
+                  type: string
+                last_modified_by:
+                  type: string
+                deleted_at:
+                  type: string
+                  format: date-time
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+                status:
+                  type: string
+                source:
+                  type: string
+                country:
+                  type: string
+                is_active:
+                  type: boolean
+                version_name:
+                  type: string
+        '500':
+          description: Internal server error
+  '/v2/sites/{UUID}/polygons/count':
+    get:
+      summary: Get count polygons for a specific site
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          type: string
+          description: The UUID of the site
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              count:
+                type: number
+        '500':
+          description: Internal server error
   '/v2/site-monitorings/{UUID}':
     get:
       summary: View a specific site monitoring
@@ -95282,6 +98369,157 @@ paths:
                 items:
                   type: number
                 description: Bounding box of the entity
+        '400':
+          description: 'Bad request, UUID parameter is missing'
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Error message
+  /v2/entity/polygons/count:
+    get:
+      summary: Get Entity Type
+      description: |
+        Determine the type of entity based on UUID.
+      parameters:
+        - in: query
+          name: uuid
+          required: true
+          description: UUID of the entity
+          type: string
+        - in: query
+          name: type
+          required: true
+          description: type of the entity
+          type: string
+        - in: query
+          name: status
+          required: false
+          description: Comma-separated list of status values to filter by
+          type: string
+        - in: query
+          name: sort
+          required: false
+          description: 'Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`'
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              count:
+                type: number
+        '500':
+          description: Internal server error
+  /v2/entity/polygons:
+    get:
+      summary: Get Entity Type
+      description: |
+        Determine the type of entity based on UUID.
+      parameters:
+        - in: query
+          name: uuid
+          required: true
+          description: UUID of the entity
+          type: string
+        - in: query
+          name: type
+          required: true
+          description: type of the entity
+          type: string
+        - in: query
+          name: status
+          required: false
+          description: Comma-separated list of status values to filter by
+          type: string
+        - in: query
+          name: sort
+          required: false
+          description: 'Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`'
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+                description: 'Type of the entity (''project'', ''site'', ''unknown'')'
+              uuid:
+                type: string
+                format: uuid
+                description: UUID of the entity
+              polygonsData:
+                type: array
+                items:
+                  title: SitePolygon
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    uuid:
+                      type: string
+                    primary_uuid:
+                      type: string
+                    project_id:
+                      type: string
+                    proj_name:
+                      type: string
+                    org_name:
+                      type: string
+                    poly_id:
+                      type: string
+                    poly_name:
+                      type: string
+                    site_id:
+                      type: string
+                    site_name:
+                      type: string
+                    plantstart:
+                      type: string
+                      format: date
+                    plantend:
+                      type: string
+                      format: date
+                    practice:
+                      type: string
+                    target_sys:
+                      type: string
+                    distr:
+                      type: string
+                    num_trees:
+                      type: integer
+                    calc_area:
+                      type: number
+                      format: float
+                    created_by:
+                      type: string
+                    last_modified_by:
+                      type: string
+                    deleted_at:
+                      type: string
+                      format: date-time
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    status:
+                      type: string
+                    source:
+                      type: string
+                    country:
+                      type: string
+                    is_active:
+                      type: boolean
+                    version_name:
+                      type: string
         '400':
           description: 'Bad request, UUID parameter is missing'
         '500':
