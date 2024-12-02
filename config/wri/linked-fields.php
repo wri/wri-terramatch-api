@@ -165,11 +165,11 @@ return [
                     'input_type' => 'coreTeamLeaders',
                 ],
                 'org-tree-species-restored' => [
-                    'property' => 'treeSpeciesRestored',
+                    'property' => 'treeSpeciesHistorical',
                     'label' => 'Tree species restored in landscape',
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
-                    'collection' => 'restored'
+                    'collection' => 'historical-tree-species'
                 ],
                 'org-ownership-stake' => [
                     'property' => 'ownershipStake',
@@ -277,7 +277,7 @@ return [
                     'label' => 'Tree Species',
                     'resource' => App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource::class,
                     'input_type' => 'treeSpecies',
-                    'collection' => 'primary',
+                    'collection' => 'tree-planted',
                 ],
             ],
         ],
@@ -364,7 +364,7 @@ return [
                     'label' => 'Tree Species',
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
-                    'collection' => 'primary',
+                    'collection' => 'tree-planted',
                 ],
             ],
         ],

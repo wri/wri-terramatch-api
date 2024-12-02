@@ -101,7 +101,7 @@ class CreateProjectWithFormController extends Controller
 
         foreach ($projectPitch->treeSpecies()->get() as $treeSpecies) {
             $project->treeSpecies()->create([
-                'collection' => $treeSpecies->collection ?? TreeSpecies::COLLECTION_PRIMARY,
+                'collection' => $treeSpecies->collection ?? TreeSpecies::COLLECTION_PLANTED,
                 'name' => $treeSpecies->name,
                 'amount' => $treeSpecies->amount,
             ]);

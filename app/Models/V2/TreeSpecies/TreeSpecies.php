@@ -47,16 +47,14 @@ class TreeSpecies extends Model implements EntityRelationModel
     public const COLLECTION_PLANTED = 'tree-planted';
     public const COLLECTION_NON_TREE = 'non-tree';
     public const COLLECTION_NURSERY = 'nursery-seedling';
-    public const COLLECTION_RESTORED = 'restored';
-    public const COLLECTION_PRIMARY = 'primary';
+    public const COLLECTION_HISTORICAL = 'historical-tree-species';
 
     public static $collections = [
         self::COLLECTION_DIRECT_SEEDING => 'Direct Seeding',
         self::COLLECTION_PLANTED => 'Planted',
         self::COLLECTION_NON_TREE => 'Non Tree',
         self::COLLECTION_NURSERY => 'Nursery Seedling',
-        self::COLLECTION_RESTORED => 'Restored',
-        self::COLLECTION_PRIMARY => 'Primary',
+        self::COLLECTION_HISTORICAL => 'Historical Tree Species',
     ];
 
     public static function createResourceCollection(EntityModel $entity): JsonResource
