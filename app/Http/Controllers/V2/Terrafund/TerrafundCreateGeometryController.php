@@ -1206,6 +1206,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function sendRunValidationPolygon(Request $request)
     {
+
         $uuid = $request->input('uuid');
         $this->runValidationPolygon($uuid);
         $criteriaData = $this->getCriteriaData($request);

@@ -62,7 +62,6 @@ class FixPolygonOverlapJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::info('all plygon fix');
 
         try {
             $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
