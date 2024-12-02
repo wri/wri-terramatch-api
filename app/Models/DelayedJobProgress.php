@@ -11,13 +11,13 @@ class DelayedJobProgress extends DelayedJob
         $this->fillable = array_merge($this->fillable, [
             'processed_content',
             'total_content',
-            'proccess_message'
+            'proccess_message',
         ]);
 
         $this->casts = array_merge($this->casts, [
             'processed_content' => 'integer',
             'total_content' => 'integer',
-            'proccess_message' => 'string'
+            'proccess_message' => 'string',
         ]);
     }
 
@@ -29,7 +29,8 @@ class DelayedJobProgress extends DelayedJob
         } else {
             $progress = 0;
         }
-        return $this->proccess_message = 'Running '. $this->processed_content .' out of ' 
+
+        return $this->proccess_message = 'Running '. $this->processed_content .' out of '
             .$this->total_content. ' polygons ('.$progress.'%)' ;
     }
 }
