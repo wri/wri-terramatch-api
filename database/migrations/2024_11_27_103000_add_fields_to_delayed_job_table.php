@@ -15,6 +15,7 @@ return new class extends Migration {
         Schema::table('delayed_jobs', function (Blueprint $table) {
             $table->unsignedInteger('processed_content')->nullable()->after('payload');
             $table->unsignedInteger('total_content')->nullable()->after('processed_content');
+            $table->string('proccess_message')->nullable()->after('total_content');
         });
     }
 
@@ -26,7 +27,7 @@ return new class extends Migration {
     public function down()
     {
         Schema::table('delayed_jobs', function (Blueprint $table) {
-            $table->dropColumn(['proccessed_content', 'total_content']);
+            $table->dropColumn(['proccessed_content', 'total_content', 'proccess_message']);
         });
     }
 };

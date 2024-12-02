@@ -63,6 +63,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 $validationService->validateDataInDB($request);
 
                 $delayedJob->increment('processed_content');
+                $delayedJob->processMessage();
                 $delayedJob->save();
             }
 
