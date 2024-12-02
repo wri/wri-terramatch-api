@@ -563,7 +563,7 @@ class PolygonService
         }
     }
 
-    public function processClippedPolygons(array $polygonUuids, $delayed_job_id = null)
+    public function processClippedPolygons(array $polygonUuids, ?string $delayed_job_id = null)
     {
         $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
 
