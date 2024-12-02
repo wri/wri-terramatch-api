@@ -893,7 +893,6 @@ class TerrafundCreateGeometryController extends Controller
 
     public function validateOverlapping(Request $request)
     {
-        Log::info('overlapping validation request');
         $uuid = $request->input('uuid');
 
         return $this->handlePolygonValidation(
@@ -1207,7 +1206,6 @@ class TerrafundCreateGeometryController extends Controller
 
     public function sendRunValidationPolygon(Request $request)
     {
-        Log::info('here criteria data');
         $uuid = $request->input('uuid');
         $this->runValidationPolygon($uuid);
         $criteriaData = $this->getCriteriaData($request);

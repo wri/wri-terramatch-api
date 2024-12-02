@@ -21,7 +21,6 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
     public function clipOverlappingPolygonsBySite(string $uuid)
     {
-        Log::info('Clipping polygons by site', ['uuid' => $uuid]);
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $user = Auth::user();
