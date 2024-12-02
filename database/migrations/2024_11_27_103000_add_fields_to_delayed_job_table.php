@@ -13,8 +13,7 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('delayed_jobs', function (Blueprint $table) {
-            $table->unsignedTinyInteger('progress')->nullable()->after('payload');
-            $table->unsignedInteger('processed_content')->nullable()->after('progress');
+            $table->unsignedInteger('processed_content')->nullable()->after('payload');
             $table->unsignedInteger('total_content')->nullable()->after('processed_content');
         });
     }
@@ -27,7 +26,7 @@ return new class extends Migration {
     public function down()
     {
         Schema::table('delayed_jobs', function (Blueprint $table) {
-            $table->dropColumn(['progress', 'proccessed_content', 'total_content']);
+            $table->dropColumn(['proccessed_content', 'total_content']);
         });
     }
 };

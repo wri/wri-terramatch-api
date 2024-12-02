@@ -598,7 +598,6 @@ class PolygonService
             foreach ($newPolygonUuids as $polygonUuid) {
                 App::make(PolygonValidationService::class)->runValidationPolygon($polygonUuid);
                 $delayedJob->increment('processed_content');
-                $delayedJob->calculateProgress();
                 $delayedJob->save();
             }
         }
