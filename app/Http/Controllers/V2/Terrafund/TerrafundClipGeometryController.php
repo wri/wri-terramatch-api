@@ -5,7 +5,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Http\Resources\DelayedJobResource;
 use App\Jobs\FixPolygonOverlapJob;
-use App\Models\DelayedJob;
+use App\Models\DelayedJobProgress;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
@@ -25,7 +25,9 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         ini_set('memory_limit', '-1');
         $user = Auth::user();
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-        $delayedJob = DelayedJob::create();
+        $delayedJob = DelayedJobProgress::create([
+            'processed_content' => 0,
+        ]);
         $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
         dispatch($job);
 
@@ -75,7 +77,10 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         if (empty($uniquePolygonUuids)) {
             return response()->json(['message' => 'No overlapping polygons found for the project.'], 204);
         }
-        $delayedJob = DelayedJob::create();
+
+        $delayedJob = DelayedJobProgress::create([
+            'processed_content' => 0,
+        ]);
         $job = new FixPolygonOverlapJob($delayedJob->id, $uniquePolygonUuids, $user->id);
         dispatch($job);
 
@@ -123,7 +128,9 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $delayedJob = null;
         if (! empty($uniquePolygonUuids)) {
             $user = Auth::user();
-            $delayedJob = DelayedJob::create();
+            $delayedJob = DelayedJobProgress::create([
+                'processed_content' => 0,
+            ]);
             $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
             dispatch($job);
         }

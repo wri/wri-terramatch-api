@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\DelayedJob;
+use App\Models\DelayedJobProgress;
 use App\Services\PolygonValidationService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -48,7 +49,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     public function handle(PolygonValidationService $validationService)
     {
         try {
-            $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
+            $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
             foreach ($this->sitePolygonsUuids as $polygonUuid) {
                 $request = new Request(['uuid' => $polygonUuid]);
                 $validationService->validateOverlapping($request);
@@ -60,12 +61,17 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 $validationService->getGeometryType($request);
                 $validationService->validateEstimatedArea($request);
                 $validationService->validateDataInDB($request);
+
+                $delayedJob->increment('processed_content');
+                $delayedJob->processMessage();
+                $delayedJob->save();
             }
 
             $delayedJob->update([
-                'status' => DelayedJob::STATUS_SUCCEEDED,
+                'status' => DelayedJobProgress::STATUS_SUCCEEDED,
                 'payload' => ['message' => 'Validation completed for all site polygons'],
                 'status_code' => Response::HTTP_OK,
+                'progress' => 100,
             ]);
 
         } catch (Exception $e) {

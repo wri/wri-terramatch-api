@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
+use App\Models\DelayedJobProgress;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\ProjectPitch;
@@ -562,13 +563,16 @@ class PolygonService
         }
     }
 
-    public function processClippedPolygons(array $polygonUuids)
+    public function processClippedPolygons(array $polygonUuids, $delayed_job_id = null)
     {
         $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
 
         $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
         $uuids = [];
 
+        $delayedJob = DelayedJobProgress::findOrFail($delayed_job_id);
+
+        Log::info('test now selected plygons');
         if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
             foreach ($clippedPolygons['features'] as $feature) {
                 if (isset($feature['properties']['poly_id'])) {
@@ -591,8 +595,13 @@ class PolygonService
         }
 
         if (! empty($uuids)) {
+            $delayedJob->total_content = count($newPolygonUuids);
+            $delayedJob->save();
             foreach ($newPolygonUuids as $polygonUuid) {
                 App::make(PolygonValidationService::class)->runValidationPolygon($polygonUuid);
+                $delayedJob->increment('processed_content');
+                $delayedJob->processMessage();
+                $delayedJob->save();
             }
         }
 
