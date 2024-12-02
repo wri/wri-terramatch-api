@@ -1207,7 +1207,7 @@ class TerrafundCreateGeometryController extends Controller
 
     public function sendRunValidationPolygon(Request $request)
     {
-        Log::info("here criteria data");
+        Log::info('here criteria data');
         $uuid = $request->input('uuid');
         $this->runValidationPolygon($uuid);
         $criteriaData = $this->getCriteriaData($request);
@@ -1224,7 +1224,6 @@ class TerrafundCreateGeometryController extends Controller
             $delayedJob = DelayedJobProgress::create([
                 'total_content' => count($sitePolygonsUuids),
                 'processed_content' => 0,
-                'progress' => 0,
             ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $sitePolygonsUuids);
             dispatch($job);
@@ -1244,7 +1243,6 @@ class TerrafundCreateGeometryController extends Controller
             $delayedJob = DelayedJobProgress::create([
                 'total_content' => count($uuids),
                 'processed_content' => 0,
-                'progress' => 0,
             ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);

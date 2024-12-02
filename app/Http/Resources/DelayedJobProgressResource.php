@@ -18,7 +18,7 @@ class DelayedJobProgressResource extends JsonResource
           'message' => $this->message ?? 'Job dispatched',
           'job_uuid' => $this->uuid,
           'proccessed_content' => $this->processed_content,
-          'total_content' => $this->total_content, 
+          'total_content' => $this->total_content,
         ];
     }
 }

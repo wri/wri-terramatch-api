@@ -4,9 +4,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 
 use App\Helpers\GeometryHelper;
 use App\Http\Resources\DelayedJobResource;
-use App\Http\Resources\DelayedJobProgressResource;
 use App\Jobs\FixPolygonOverlapJob;
-use App\Models\DelayedJob;
 use App\Models\DelayedJobProgress;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
@@ -29,9 +27,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $user = Auth::user();
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
         $delayedJob = DelayedJobProgress::create([
-            'total_content' => count($polygonUuids),
             'processed_content' => 0,
-            'progress' => 0,
         ]);
         $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
         dispatch($job);
@@ -49,9 +45,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $projectId = $sitePolygon->project_id ?? null;
         $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
         $delayedJob = DelayedJobProgress::create([
-                'total_content' => count($polygonUuids),
                 'processed_content' => 0,
-                'progress' => 0,
             ]);
         $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
         dispatch($job);
@@ -101,9 +95,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         if (! empty($uniquePolygonUuids)) {
             $user = Auth::user();
             $delayedJob = DelayedJobProgress::create([
-                'total_content' => count($uniquePolygonUuids),
                 'processed_content' => 0,
-                'progress' => 0,
             ]);
             $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
             dispatch($job);
