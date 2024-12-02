@@ -42,11 +42,46 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $user = Auth::user();
         $sitePolygon = Site::isUuid($uuid)->first();
         $projectId = $sitePolygon->project_id ?? null;
+
+        if (! $projectId) {
+            return response()->json(['error' => 'Project not found for the given site UUID.'], 404);
+        }
+
         $polygonUuids = GeometryHelper::getProjectPolygonsUuids($projectId);
+
+        if (empty($polygonUuids)) {
+            return response()->json(['message' => 'No polygons found for the project.'], 204);
+        }
+
+        $allPolygonUuids = [];
+        foreach ($polygonUuids as $uuid) {
+            $polygonOverlappingExtraInfo = CriteriaSite::forCriteria(PolygonService::OVERLAPPING_CRITERIA_ID)
+                ->where('polygon_id', $uuid)
+                ->first()
+                ->extra_info ?? null;
+
+            if ($polygonOverlappingExtraInfo) {
+                $decodedInfo = json_decode($polygonOverlappingExtraInfo, true);
+                $polygonUuidsOverlapping = array_map(function ($item) {
+                    return $item['poly_uuid'] ?? null;
+                }, $decodedInfo);
+                $polygonUuidsFiltered = array_filter($polygonUuidsOverlapping);
+
+                array_unshift($polygonUuidsFiltered, $uuid);
+                $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuidsFiltered);
+            }
+        }
+
+        $uniquePolygonUuids = array_unique($allPolygonUuids);
+
+        if (empty($uniquePolygonUuids)) {
+            return response()->json(['message' => 'No overlapping polygons found for the project.'], 204);
+        }
+
         $delayedJob = DelayedJobProgress::create([
-                'processed_content' => 0,
-            ]);
-        $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
+            'processed_content' => 0,
+        ]);
+        $job = new FixPolygonOverlapJob($delayedJob->id, $uniquePolygonUuids, $user->id);
         dispatch($job);
 
         return new DelayedJobResource($delayedJob);
