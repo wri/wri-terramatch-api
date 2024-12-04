@@ -1244,9 +1244,11 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuids = $request->input('uuids');
+            $user = Auth::user();
             $delayedJob = DelayedJobProgress::create([
                 'total_content' => count($uuids),
                 'processed_content' => 0,
+                'created_by' => $user->id,
             ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);
