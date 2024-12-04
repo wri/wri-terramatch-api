@@ -225,7 +225,7 @@ trait UsesLinkedFields
                 if (empty($resource)) {
                     return $model->$relation;
                 }
-                if (empty($model->$relation)) {
+                if (empty($model->$relation) || !is_iterable($model->$relation)) {
                     return [];
                 }
 
