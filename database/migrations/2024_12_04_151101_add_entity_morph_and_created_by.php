@@ -4,16 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::table('delayed_jobs', function (Blueprint $table) {
-          $table->nullableMorphs('entity');
-          $table->string('created_by')->nullable();
+            $table->nullableMorphs('entity');
+            $table->string('created_by')->nullable();
         });
     }
 
@@ -23,8 +22,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('delayed_jobs', function (Blueprint $table) {
-          $table->dropMorphs('entity');
-          $table->dropColumn('created_by');
+            $table->dropMorphs('entity');
+            $table->dropColumn('created_by');
         });
     }
 };
