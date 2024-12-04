@@ -84,7 +84,7 @@ class FixPolygonOverlapJob implements ShouldQueue
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         } catch (Throwable $e) {
-            Log::error('Throwable Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
+            Log::error('Throwable Error in Fix overlap job: ' . $e->getMessage());
 
             DelayedJob::where('uuid', $this->delayed_job_id)->update([
                 'status' => DelayedJob::STATUS_FAILED,
