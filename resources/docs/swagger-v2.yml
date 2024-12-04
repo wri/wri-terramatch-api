@@ -99220,6 +99220,10 @@ paths:
                 items:
                   type: string
                   description: UUIDs of the polygon geometries to be validated
+              entity_uuid:
+                type: string
+              entity_type:
+                type: string
       responses:
         '200':
           description: Successful response

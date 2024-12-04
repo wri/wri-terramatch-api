@@ -1227,7 +1227,7 @@ class TerrafundCreateGeometryController extends Controller
                 'processed_content' => 0,
                 'created_by' => $user->id,
                 'entity_id' => $entity->id,
-                'entity_type' => get_class($entity)
+                'entity_type' => get_class($entity),
             ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $sitePolygonsUuids);
             dispatch($job);
@@ -1244,11 +1244,18 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuids = $request->input('uuids');
+            $uuid = $request->input('entity_uuid');
+            $type = $request->input('entity_type');
+            if ($type === 'sites') {
+                $entity = Site::where('uuid', $uuid)->firstOrFail();
+            }
             $user = Auth::user();
             $delayedJob = DelayedJobProgress::create([
                 'total_content' => count($uuids),
                 'processed_content' => 0,
                 'created_by' => $user->id,
+                'entity_id' => $entity->id,
+                'entity_type' => get_class($entity),
             ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);

@@ -23,10 +23,12 @@ class DelayedJob extends Model
     protected $casts = [
         'uuid' => 'string',
     ];
+
     public function entity()
     {
         return $this->morphTo();
     }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
