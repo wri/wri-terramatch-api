@@ -26,6 +26,7 @@ class ImportTreeSpeciesAssociations extends Command
     protected $description = 'Imports a CSV that links UUIDs from v2_tree_species to taxon_ids from tree_species_research';
 
     protected int $treeSpeciesUuidColumn;
+
     protected int $taxonIdColumn;
 
     /**
@@ -38,9 +39,9 @@ class ImportTreeSpeciesAssociations extends Command
             $process->run();
             $this->assert($process->isSuccessful(), "WC failed {$process->getErrorOutput()}");
 
-            $lines = ((int)explode(" ", $process->getOutput())[0]) - 1;
+            $lines = ((int)explode(' ', $process->getOutput())[0]) - 1;
 
-            $fileHandle = fopen($this->argument('file'), "r");
+            $fileHandle = fopen($this->argument('file'), 'r');
             $this->parseHeaders(fgetcsv($fileHandle));
 
             $this->withProgressBar($lines, function ($progressBar) use ($fileHandle) {
@@ -66,7 +67,7 @@ class ImportTreeSpeciesAssociations extends Command
         foreach ($headerRow as $index => $header) {
             if ($header == 'tree_species_uuid') {
                 $this->treeSpeciesUuidColumn = $index;
-            } else if ($header == 'taxon_id') {
+            } elseif ($header == 'taxon_id') {
                 $this->taxonIdColumn = $index;
             }
         }
