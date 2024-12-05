@@ -86,7 +86,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             'processed_content' => 0,
             'entity_id' => $sitePolygon->id,
             'entity_type' => get_class($sitePolygon),
-            'created_by' => $user->id
+            'created_by' => $user->id,
         ]);
         $job = new FixPolygonOverlapJob($delayedJob->id, $uniquePolygonUuids, $user->id);
         dispatch($job);
@@ -144,7 +144,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
                 'processed_content' => 0,
                 'entity_id' => $entity->id,
                 'entity_type' => get_class($entity),
-                'created_by' => $user->id
+                'created_by' => $user->id,
             ]);
             $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
             dispatch($job);
