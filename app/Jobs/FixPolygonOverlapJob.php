@@ -69,6 +69,7 @@ class FixPolygonOverlapJob implements ShouldQueue
             $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
             $user = Auth::user();
             $site = $delayedJob->entity;
+            $userForMail = $delayedJob->creator;
             if ($user) {
                 $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($this->polygonUuids, $this->delayed_job_id);
                 $delayedJob->update([
@@ -82,7 +83,7 @@ class FixPolygonOverlapJob implements ShouldQueue
                 ->send(new PolygonOperationsComplete(
                     $site,
                     'Fix',
-                    $user,
+                    $userForMail,
                     now()
                 ));
             }
