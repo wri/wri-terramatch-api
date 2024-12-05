@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::table('delayed_jobs', function (Blueprint $table) {
             $table->nullableMorphs('entity');
             $table->string('created_by')->nullable();
+            $table->boolean('is_cleared')->default(false);
         });
     }
 
@@ -24,6 +25,7 @@ return new class extends Migration {
         Schema::table('delayed_jobs', function (Blueprint $table) {
             $table->dropMorphs('entity');
             $table->dropColumn('created_by');
+            $table->dropColumn('is_cleared');
         });
     }
 };
