@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\V2\MonitoredData;
 
 use App\Http\Controllers\Controller;
-use App\Models\V2\Sites\SitePolygon;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SitePolygon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GetPolygonsIndicatorAnalysisController extends Controller
 {
@@ -32,6 +32,7 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                 'relation_name' => 'hectaresIndicator',
             ],
         ];
+
         // $slugMappings = [
         //     'treeCoverLoss' => [
         //         'table_name' => 'indicator_output_tree_cover_loss',
@@ -48,9 +49,9 @@ class GetPolygonsIndicatorAnalysisController extends Controller
         // ];
         try {
             return SitePolygon::whereHas($slugMappings[$slug]['relation_name'], function ($query) use ($slug) {
-                    $query->where('indicator_slug', $slug)
-                        ->where('year_of_analysis', date('Y'));
-                })
+                $query->where('indicator_slug', $slug)
+                    ->where('year_of_analysis', date('Y'));
+            })
                 ->whereHas('site', function ($query) use ($entity) {
                     if (get_class($entity) == Site::class) {
                         $query->where('uuid', $entity->uuid);
@@ -65,7 +66,7 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                     'plantstart',
                     'site_id',
                     'is_active',
-                    'poly_id'
+                    'poly_id',
                 ])
                 // ->where('is_active', 1)
                 ->get()
@@ -108,6 +109,7 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                         $values = json_decode($indicator->value, true);
                         $results = array_merge($results, $this->processValuesHectares($values));
                     }
+
                     return $results;
                 });
             // return DB::table($slugMappings[$slug]['table_name'].' as i')
@@ -143,6 +145,7 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                 $separateKeys[$item] = $value;
             }
         }
+
         return $separateKeys;
     }
 }
