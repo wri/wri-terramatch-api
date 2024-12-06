@@ -28,9 +28,40 @@ class PolygonValidationService
         );
     }
 
+    public function validateOverlappings($uuid)
+    {
+        return $this->handlePolygonValidation(
+            $uuid,
+            NotOverlapping::getIntersectionData($uuid),
+            PolygonService::OVERLAPPING_CRITERIA_ID
+        );
+    }
+
     public function checkSelfIntersection(Request $request)
     {
         $uuid = $request->query('uuid');
+        $geometry = PolygonGeometry::where('uuid', $uuid)->first();
+
+        if (! $geometry) {
+            return ['error' => 'Geometry not found', 'status' => 404];
+        }
+
+        $isSimple = SelfIntersection::uuidValid($uuid);
+        $message = $isSimple ? 'The geometry is valid' : 'The geometry has self-intersections';
+        $insertionSuccess = App::make(PolygonService::class)
+            ->createCriteriaSite($uuid, PolygonService::SELF_CRITERIA_ID, $isSimple);
+
+        return [
+            'selfintersects' => $message,
+            'geometry_id' => $geometry->id,
+            'insertion_success' => $insertionSuccess,
+            'valid' => $isSimple,
+            'status' => 200,
+        ];
+    }
+
+    public function checkSelfIntersections($uuid)
+    {
         $geometry = PolygonGeometry::where('uuid', $uuid)->first();
 
         if (! $geometry) {
@@ -62,9 +93,17 @@ class PolygonValidationService
         );
     }
 
-    public function validatePolygonSize(Request $request)
+    public function validateCoordinateSystems($uuid)
     {
-        $uuid = $request->query('uuid');
+        return $this->handlePolygonValidation(
+            $uuid,
+            ['valid' => FeatureBounds::uuidValid($uuid)],
+            PolygonService::COORDINATE_SYSTEM_CRITERIA_ID
+        );
+    }
+
+    public function validatePolygonSizes($uuid)
+    {
         $geometry = PolygonGeometry::isUuid($uuid)->first();
 
         if (! $geometry) {
@@ -97,9 +136,39 @@ class PolygonValidationService
         );
     }
 
+    public function checkWithinCountrys($polygonUuid)
+    {
+        return $this->handlePolygonValidation(
+            $polygonUuid,
+            WithinCountry::getIntersectionData($polygonUuid),
+            PolygonService::WITHIN_COUNTRY_CRITERIA_ID
+        );
+    }
+
     public function checkBoundarySegments(Request $request)
     {
         $uuid = $request->query('uuid');
+        $geometry = PolygonGeometry::isUuid($uuid)->first();
+
+        if (! $geometry) {
+            return ['error' => 'Geometry not found', 'status' => 404];
+        }
+        $spikes = Spikes::detectSpikes($geometry->geo_json);
+        $valid = count($spikes) === 0;
+        $insertionSuccess = App::make(PolygonService::class)
+            ->createCriteriaSite($uuid, PolygonService::SPIKE_CRITERIA_ID, $valid);
+
+        return [
+            'spikes' => $spikes,
+            'geometry_id' => $uuid,
+            'insertion_success' => $insertionSuccess,
+            'valid' => $valid,
+            'status' => 200,
+        ];
+    }
+
+    public function checkBoundarySegment($uuid)
+    {
         $geometry = PolygonGeometry::isUuid($uuid)->first();
 
         if (! $geometry) {
@@ -141,6 +210,26 @@ class PolygonValidationService
         }
     }
 
+    public function getGeometryTypes($uuid)
+    {
+        $geometryType = PolygonGeometry::getGeometryType($uuid);
+        if ($geometryType) {
+            $valid = $geometryType === GeometryType::VALID_TYPE_MULTIPOLYGON || $geometryType === GeometryType::VALID_TYPE_POLYGON;
+            $insertionSuccess = App::make(PolygonService::class)
+                ->createCriteriaSite($uuid, PolygonService::GEOMETRY_TYPE_CRITERIA_ID, $valid);
+
+            return [
+                'uuid' => $uuid,
+                'geometry_type' => $geometryType,
+                'valid' => $valid,
+                'insertion_success' => $insertionSuccess,
+                'status' => 200,
+            ];
+        } else {
+            return ['error' => 'Geometry not found for the given UUID', 'status' => 404];
+        }
+    }
+
     public function validateEstimatedArea(Request $request)
     {
         $uuid = $request->input('uuid');
@@ -152,9 +241,51 @@ class PolygonValidationService
         );
     }
 
+    public function validateEstimatedAreas($uuid)
+    {
+        return $this->handlePolygonValidation(
+            $uuid,
+            EstimatedArea::getAreaData($uuid),
+            PolygonService::ESTIMATED_AREA_CRITERIA_ID
+        );
+    }
+
     public function validateDataInDB(Request $request)
     {
         $polygonUuid = $request->input('uuid');
+        $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
+
+        $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
+        if (! $sitePolygon) {
+            return ['valid' => false, 'message' => 'No site polygon found with the specified UUID.', 'status' => 404];
+        }
+
+        $validationErrors = [];
+        $polygonService = App::make(PolygonService::class);
+        foreach ($fieldsToValidate as $field) {
+            $value = $sitePolygon->$field;
+            if ($polygonService->isInvalidField($field, $value)) {
+                $validationErrors[] = [
+                    'field' => $field,
+                    'error' => $value,
+                    'exists' => ! is_null($value) && $value !== '',
+                ];
+            }
+        }
+
+        $isValid = empty($validationErrors);
+        $responseData = ['valid' => $isValid];
+        if (! $isValid) {
+            $responseData['message'] = 'Some attributes of the site polygon are invalid.';
+        }
+
+        $polygonService->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $isValid, $validationErrors);
+
+        return array_merge($responseData, ['status' => 200]);
+    }
+
+    public function validateDataInDBs($polygonUuid)
+    {
         $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
 
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();

@@ -8,7 +8,6 @@ use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -50,16 +49,15 @@ class RunSitePolygonsValidationJob implements ShouldQueue
         try {
             $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
             foreach ($this->sitePolygonsUuids as $polygonUuid) {
-                $request = new Request(['uuid' => $polygonUuid]);
-                $validationService->validateOverlapping($request);
-                $validationService->checkSelfIntersection($request);
-                $validationService->validateCoordinateSystem($request);
-                $validationService->validatePolygonSize($request);
-                $validationService->checkWithinCountry($request);
-                $validationService->checkBoundarySegments($request);
-                $validationService->getGeometryType($request);
-                $validationService->validateEstimatedArea($request);
-                $validationService->validateDataInDB($request);
+                $validationService->validateOverlappings($polygonUuid);
+                $validationService->checkSelfIntersections($polygonUuid);
+                $validationService->validateCoordinateSystems($polygonUuid);
+                $validationService->validatePolygonSizes($polygonUuid);
+                $validationService->checkWithinCountrys($polygonUuid);
+                $validationService->checkBoundarySegment($polygonUuid);
+                $validationService->getGeometryTypes($polygonUuid);
+                $validationService->validateEstimatedAreas($polygonUuid);
+                $validationService->validateDataInDBs($polygonUuid);
             }
 
             $delayedJob->update([
