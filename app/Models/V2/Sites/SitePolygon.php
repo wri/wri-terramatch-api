@@ -9,6 +9,8 @@ use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
+use App\Models\V2\MonitoredData\IndicatorHectares;
+use App\Models\V2\MonitoredData\IndicatorTreeCoverLoss;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -96,6 +98,16 @@ class SitePolygon extends Model implements AuditableModel
     public function auditStatuses(): MorphMany
     {
         return $this->morphMany(AuditStatus::class, 'auditable');
+    }
+
+    public function hectaresIndicator()
+    {
+        return $this->hasMany(IndicatorHectares::class, 'site_polygon_id');
+    }
+
+    public function treeCoverLossIndicator()
+    {
+        return $this->hasMany(IndicatorTreeCoverLoss::class, 'site_polygon_id');
     }
 
     public function getAuditableNameAttribute(): string

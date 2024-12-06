@@ -35,6 +35,10 @@ use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
+use App\Http\Controllers\V2\MonitoredData\RunIndicatorAnalysisController;
+use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisController;
+use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisVerifyController;
+use App\Http\Controllers\V2\MonitoredData\GetIndicatorPolygonStatusController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
@@ -229,6 +233,7 @@ use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -757,6 +762,19 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
     Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);
     Route::get('/indicator/hectares-restoration', GetHectaresRestoredController::class);
+});
+
+Route::prefix('indicators')->group(function () {
+    Route::post('/{slug}', RunIndicatorAnalysisController::class);
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::get('/{entity}/{slug}', GetPolygonsIndicatorAnalysisController::class);
+        Route::get('/{entity}/{slug}/verify', GetPolygonsIndicatorAnalysisVerifyController::class);
+        Route::get('/{entity}', GetIndicatorPolygonStatusController::class);
+    });
+    // Route::get('/{indicator}/data', ViewIndicatorDataController::class);
+    // Route::get('/{indicator}/data/{country}', ViewIndicatorDataController::class);
+    // Route::get('/{indicator}/data/{country}/{region}', ViewIndicatorDataController::class);
+    // Route::get('/{indicator}/data/{country}/{region}/{subRegion}', ViewIndicatorDataController::class);
 });
 
 Route::prefix('project-pipeline')->group(function () {
