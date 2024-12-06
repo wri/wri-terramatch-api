@@ -91,6 +91,7 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                         'indicator_slug' => $indicator->indicator_slug,
                         'year_of_analysis' => $indicator->year_of_analysis,
                         'created_at' => $indicator->created_at,
+                        'base_line' => $indicator->created_at,
                     ];
                     if (str_contains($slug, 'treeCoverLoss')) {
                         $valueYears = json_decode($indicator->value, true);
