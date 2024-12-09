@@ -87,5 +87,16 @@ services:
           - "6379:6379"
         environment:
           REDIS_PASSWORD: "test_redis"
+    geoserver:
+        build:
+            context: "."
+            dockerfile: "docker/geoserver.Dockerfile"
+        networks:
+            - "default"
+        ports:
+            - "8081:8080"
+        environment:
+            INSTALL_EXTENSIONS: true
+            STABLE_EXTENSIONS: "mysql,vectortiles"
 networks:
     default:
