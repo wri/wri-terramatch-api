@@ -70,6 +70,7 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                         'id' => $polygon->id,
                         'poly_name' => $polygon->poly_name,
                         'poly_id' => $polygon->poly_id,
+                        'site_id' => $polygon->site_id,
                         'status' => $polygon->status,
                         'plantstart' => $polygon->plantstart,
                         'site_name' => $polygon->site->name ?? '',
@@ -78,7 +79,7 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                         'year_of_analysis' => $indicator->year_of_analysis,
                         'created_at' => $indicator->created_at,
                         'base_line' => $indicator->created_at,
-                        'data'  => [],
+                        'data' => [],
                     ];
                     if (str_contains($slug, 'treeCoverLoss')) {
                         $valueYears = json_decode($indicator->value, true);
