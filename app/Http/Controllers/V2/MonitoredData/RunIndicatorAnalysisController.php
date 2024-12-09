@@ -16,7 +16,7 @@ class RunIndicatorAnalysisController extends Controller
     {
         try {
             $requestData = $request->all();
-            $binary_data = Redis::get('run:indicator|'.$slug);
+            $binary_data = Redis::get('run:indicator|'.$slug.'|'.json_encode($requestData['uuids']));
             Log::info($binary_data);
             if (! $binary_data) {
                 $delayedJob = DelayedJob::create();

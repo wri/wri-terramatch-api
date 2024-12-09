@@ -42,7 +42,7 @@ class RunIndicatorAnalysisJob implements ShouldQueue
             $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
 
             $binary_data = $runIndicatorAnalysisService->run($this->request, $this->slug);
-            Redis::set('run:indicator|'.$this->slug, $binary_data);
+            Redis::set('run:indicator|'.$this->slug.'|'.json_encode($this->request['uuids']), $binary_data);
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
