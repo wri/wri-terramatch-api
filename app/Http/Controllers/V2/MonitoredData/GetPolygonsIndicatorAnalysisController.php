@@ -83,16 +83,16 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                     ];
                     if (str_contains($slug, 'treeCoverLoss')) {
                         $valueYears = json_decode($indicator->value, true);
-                        $results['2015'] = round((float) $valueYears['2015'], 3);
-                        $results['2016'] = round((float) $valueYears['2016'], 3);
-                        $results['2017'] = round((float) $valueYears['2017'], 3);
-                        $results['2018'] = round((float) $valueYears['2018'], 3);
-                        $results['2019'] = round((float) $valueYears['2019'], 3);
-                        $results['2020'] = round((float) $valueYears['2020'], 3);
-                        $results['2021'] = round((float) $valueYears['2021'], 3);
-                        $results['2022'] = round((float) $valueYears['2022'], 3);
-                        $results['2023'] = round((float) $valueYears['2023'], 3);
-                        $results['2024'] = round((float) $valueYears['2024'], 3);
+                        $results['data']['2015'] = round((float) $valueYears['2015'], 3);
+                        $results['data']['2016'] = round((float) $valueYears['2016'], 3);
+                        $results['data']['2017'] = round((float) $valueYears['2017'], 3);
+                        $results['data']['2018'] = round((float) $valueYears['2018'], 3);
+                        $results['data']['2019'] = round((float) $valueYears['2019'], 3);
+                        $results['data']['2020'] = round((float) $valueYears['2020'], 3);
+                        $results['data']['2021'] = round((float) $valueYears['2021'], 3);
+                        $results['data']['2022'] = round((float) $valueYears['2022'], 3);
+                        $results['data']['2023'] = round((float) $valueYears['2023'], 3);
+                        $results['data']['2024'] = round((float) $valueYears['2024'], 3);
                     }
                     if (str_contains($slug, 'restorationBy')) {
                         $values = json_decode($indicator->value, true);
