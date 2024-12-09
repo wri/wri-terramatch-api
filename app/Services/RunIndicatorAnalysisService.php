@@ -38,7 +38,7 @@ class RunIndicatorAnalysisService
                     'table_name' => 'indicator_output_hectares',
                 ],
             ];
-    
+
             if (! isset($slugMappings[$slug])) {
                 return response()->json(['message' => 'Slug Not Found'], 400);
             }
