@@ -19,7 +19,7 @@ class DelayedJobProgressResource extends JsonResource
           'job_uuid' => $this->uuid,
           'proccessed_content' => $this->processed_content,
           'total_content' => $this->total_content,
-          'proccess_message' => $this->proccess_message,
+          'progress_message' => $this->progress_message,
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\PolygonOperationsComplete;
 use App\Models\DelayedJob;
 use App\Models\DelayedJobProgress;
 use App\Services\PolygonValidationService;
@@ -14,6 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class RunSitePolygonsValidationJob implements ShouldQueue
 {
@@ -50,6 +52,8 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     {
         try {
             $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
+            $user = $delayedJob->creator;
+            $site = $delayedJob->entity;
             foreach ($this->sitePolygonsUuids as $polygonUuid) {
                 $request = new Request(['uuid' => $polygonUuid]);
                 $validationService->validateOverlapping($request);
@@ -73,6 +77,14 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 'status_code' => Response::HTTP_OK,
                 'progress' => 100,
             ]);
+
+            Mail::to($user->email_address)
+                ->send(new PolygonOperationsComplete(
+                    $site,
+                    'Check',
+                    $user,
+                    now()
+                ));
 
         } catch (Exception $e) {
             Log::error('Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
