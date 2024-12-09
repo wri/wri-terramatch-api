@@ -45,7 +45,7 @@ class GetPolygonsIndicatorAnalysisVerifyController extends Controller
                 }
             })
                 ->select(['id', 'poly_id', 'is_active'])
-                // ->where('is_active', 1)
+                ->where('is_active', 1)
                 ->get()
                 ->map(function ($polygon) use ($slugMappings, $slug) {
                     $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()

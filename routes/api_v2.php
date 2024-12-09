@@ -770,10 +770,6 @@ Route::prefix('indicators')->group(function () {
         Route::get('/{entity}/{slug}/verify', GetPolygonsIndicatorAnalysisVerifyController::class);
         Route::get('/{entity}', GetIndicatorPolygonStatusController::class);
     });
-    // Route::get('/{indicator}/data', ViewIndicatorDataController::class);
-    // Route::get('/{indicator}/data/{country}', ViewIndicatorDataController::class);
-    // Route::get('/{indicator}/data/{country}/{region}', ViewIndicatorDataController::class);
-    // Route::get('/{indicator}/data/{country}/{region}/{subRegion}', ViewIndicatorDataController::class);
 });
 
 Route::prefix('project-pipeline')->group(function () {
