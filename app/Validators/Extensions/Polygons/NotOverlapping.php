@@ -6,6 +6,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Extension;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class NotOverlapping extends Extension
 {
@@ -70,12 +71,16 @@ class NotOverlapping extends Extension
         }
 
 
-        return [
+        $return = [
             'valid' => ! $intersects->contains('intersects', 1),
             'uuid' => $polygonUuid,
             'project_id' => $sitePolygon->project_id,
             'extra_info' => $extra_info,
         ];
+
+        Log::info('NotOverlapping validation result: ' . json_encode($return));
+        Log::info(now());
+        return $return;
     }
 
     public static function checkFeatureIntersections($geojsonFeatures): array

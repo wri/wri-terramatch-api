@@ -49,14 +49,32 @@ class RunSitePolygonsValidationJob implements ShouldQueue
         try {
             $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
             foreach ($this->sitePolygonsUuids as $polygonUuid) {
+                Log::info("Before validation validateOverlappings");
+                Log::info(now());
                 $validationService->validateOverlappings($polygonUuid);
+                Log::info("Before validation checkSelfIntersections");
+                Log::info(now());
                 $validationService->checkSelfIntersections($polygonUuid);
+                Log::info("Before validation validateCoordinateSystems");
+                Log::info(now());
                 $validationService->validateCoordinateSystems($polygonUuid);
+                Log::info("Before validation validatePolygonSizes");
+                Log::info(now());
                 $validationService->validatePolygonSizes($polygonUuid);
+                Log::info("Before validation checkWithinCountrys");
+                Log::info(now());
                 $validationService->checkWithinCountrys($polygonUuid);
+                Log::info("Before validation checkBoundarySegment");
+                Log::info(now());
                 $validationService->checkBoundarySegment($polygonUuid);
+                Log::info("Before validation getGeometryTypes");
+                Log::info(now());
                 $validationService->getGeometryTypes($polygonUuid);
+                Log::info("Before validation validateEstimatedAreas");
+                Log::info(now());
                 $validationService->validateEstimatedAreas($polygonUuid);
+                Log::info("Before validation validateDataInDBs");
+                Log::info(now());
                 $validationService->validateDataInDBs($polygonUuid);
             }
 

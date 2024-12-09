@@ -14,6 +14,7 @@ use App\Validators\Extensions\Polygons\Spikes;
 use App\Validators\Extensions\Polygons\WithinCountry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class PolygonValidationService
 {
@@ -73,13 +74,17 @@ class PolygonValidationService
         $insertionSuccess = App::make(PolygonService::class)
             ->createCriteriaSite($uuid, PolygonService::SELF_CRITERIA_ID, $isSimple);
 
-        return [
+        $return = [
             'selfintersects' => $message,
             'geometry_id' => $geometry->id,
             'insertion_success' => $insertionSuccess,
             'valid' => $isSimple,
             'status' => 200,
         ];
+
+        Log::info($return);
+        Log::info(now());
+        return $return;
     }
 
     public function validateCoordinateSystem(Request $request)
