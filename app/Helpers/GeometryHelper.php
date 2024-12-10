@@ -369,4 +369,16 @@ class GeometryHelper
     {
         return SitePolygon::whereIn('poly_id', $polygonUuids)->where('is_active', true)->get()->pluck('uuid');
     }
+
+    public static function getMonitoredPolygonsGeojson($polygonUuid)
+    {
+        $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
+            ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
+            ->first();
+
+        return [
+            'geometry' => $polygonGeometry,
+            'site_polygon_id' => $polygonGeometry->sitePolygon->id,
+        ];
+    }
 }
