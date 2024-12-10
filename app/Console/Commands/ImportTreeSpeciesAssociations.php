@@ -3,7 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Console\Commands\Traits\Abortable;
+use App\Console\Commands\Traits\AbortException;
+use App\Console\Commands\Traits\ExceptionLevel;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\Models\V2\TreeSpecies\TreeSpeciesResearch;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 
@@ -45,17 +48,36 @@ class ImportTreeSpeciesAssociations extends Command
             $this->parseHeaders(fgetcsv($fileHandle));
 
             $this->withProgressBar($lines, function ($progressBar) use ($fileHandle) {
+                $abortExceptions = [];
                 while ($csvRow = fgetcsv($fileHandle)) {
                     $treeSpeciesUuid = $csvRow[$this->treeSpeciesUuidColumn];
                     $taxonId = $csvRow[$this->taxonIdColumn];
 
                     if ($taxonId != 'NA') {
-                        TreeSpecies::isUuid($treeSpeciesUuid)->update(['taxon_id' => $taxonId]);
+                        try {
+                            $research = TreeSpeciesResearch::find($taxonId);
+                            $this->assert($research != null, "Taxon ID not found: $taxonId", ExceptionLevel::Warning);
+
+                            TreeSpecies::isUuid($treeSpeciesUuid)->update([
+                                'taxon_id' => $taxonId,
+                                'name' => $research->name,
+                            ]);
+                        } catch (AbortException $e) {
+                            $abortExceptions[] = $e;
+                        }
                     }
+
                     $progressBar->advance();
                 }
 
                 $progressBar->finish();
+
+                if (! empty($abortExceptions)) {
+                    $this->warn("Errors and warnings encountered during parsing CSV Rows:\n");
+                    foreach ($abortExceptions as $error) {
+                        $this->logException($error);
+                    }
+                }
             });
 
             fclose($fileHandle);
