@@ -44401,6 +44401,8 @@ definitions:
     properties:
       uuids:
         type: array
+        items:
+          type: string
   Indicators:
     type: object
     properties:
@@ -99386,6 +99388,8 @@ paths:
             properties:
               uuids:
                 type: array
+                items:
+                  type: string
       responses:
         '201':
           description: Created
