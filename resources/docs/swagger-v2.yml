@@ -99398,7 +99398,9 @@ paths:
             properties:
               uuids:
                 type: array
-                description: A list of processed polygons
+                items:
+                  type: string
+                  description: A list of processed polygons
   '/v2/indicators/{entity}/{uuid}':
     get:
       operationId: get-v2-indicators-polygon-indicator-status

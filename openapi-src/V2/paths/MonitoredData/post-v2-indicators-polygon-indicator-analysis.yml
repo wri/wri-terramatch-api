@@ -21,4 +21,6 @@ responses:
       properties:
         uuids:
           type: array
-          description: A list of processed polygons
+          items:
+            type: string
+            description: A list of processed polygons
