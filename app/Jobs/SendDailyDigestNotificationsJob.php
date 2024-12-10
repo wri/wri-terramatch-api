@@ -42,7 +42,7 @@ class SendDailyDigestNotificationsJob implements ShouldQueue
         $usersGroupedByLocale = $users->groupBy('locale');
         $taskDueAt = Carbon::parse($this->task->due_at);
 
-        if (! $this->verifyIfReportsAreApproved($this->task) && Carbon::now()->diffInDays($taskDueAt) == 7) {
+        if (! $this->verifyIfReportsAreApproved($this->task) && Carbon::now()->diffInDays($taskDueAt) <= 7) {
             foreach ($usersGroupedByLocale as $locale => $users) {
                 $groupedLocale['locale'] = $locale;
                 Mail::to($users->pluck('email_address')->toArray())->queue(new TaskDigestMail($groupedLocale, $this->task));
