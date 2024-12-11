@@ -381,4 +381,29 @@ class GeometryHelper
             'site_polygon_id' => $polygonGeometry->sitePolygon->id,
         ];
     }
+
+    public static function getPolygonGeojson($uuid)
+    {
+        $polygonGeometry = PolygonGeometry::where('uuid', $uuid)
+            ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
+            ->first();
+        $geometry = json_decode($polygonGeometry->geojsonGeometry, true);
+        $polygonData = $polygonGeometry->sitePolygon;
+
+        return [
+            'type' => 'Feature',
+            'properties' => [
+                'poly_id' => $polygonData->poly_id,
+                'poly_name' => $polygonData->poly_name ?? '',
+                'plantstart' => $polygonData->plantstart ?? '',
+                'plantend' => $polygonData->plantend ?? '',
+                'practice' => $polygonData->practice ?? '',
+                'target_sys' => $polygonData->target_sys ?? '',
+                'distr' => $polygonData->distr ?? '',
+                'num_trees' => $polygonData->num_trees ?? '',
+                'site_id' => $polygonData->site_id ?? '',
+            ],
+            'geometry' => $geometry,
+        ];
+    }
 }

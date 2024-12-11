@@ -6,6 +6,7 @@ use App\Helpers\GeometryHelper;
 use App\Models\V2\MonitoredData\IndicatorHectares;
 use App\Models\V2\MonitoredData\IndicatorTreeCoverLoss;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -31,9 +32,17 @@ class RunIndicatorAnalysisService
                     'table_name' => 'indicator_output_tree_cover_loss',
                 ],
                 'restorationByEcoRegion' => [
-                    'sql' => 'SELECT eco_name FROM results',
-                    'query_url' => '/dataset/wwf_terrestrial_ecoregions/latest/query',
                     'indicator' => 'wwf_terrestrial_ecoregions',
+                    'model' => IndicatorHectares::class,
+                    'table_name' => 'indicator_output_hectares',
+                ],
+                'restorationByStrategy' => [
+                    'indicator' => 'restoration_practice',
+                    'model' => IndicatorHectares::class,
+                    'table_name' => 'indicator_output_hectares',
+                ],
+                'restorationByLandUse' => [
+                    'indicator' => 'target_system',
                     'model' => IndicatorHectares::class,
                     'table_name' => 'indicator_output_hectares',
                 ],
@@ -49,9 +58,26 @@ class RunIndicatorAnalysisService
                     ->where('i.indicator_slug', $slug)
                     ->where('i.year_of_analysis', Carbon::now()->year)
                     ->exists();
+
                 if ($registerExist) {
                     continue;
                 }
+
+                if (str_contains($slug, 'restorationBy')) {
+                    $geojson = GeometryHelper::getPolygonGeojson($uuid);
+                    $indicatorRestorationResponse = App::make(PythonService::class)->IndicatorPolygon($geojson, $slugMappings[$slug]['indicator'], getenv('GFW_SECRET_KEY'));
+
+                    $data = [
+                        'indicator_slug' => $slug,
+                        'site_polygon_id' => $polygonGeometry['site_polygon_id'],
+                        'year_of_analysis' => Carbon::now()->year,
+                        'value' => $this->formatKeysValues($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]),
+                    ];
+                    $slugMappings[$slug]['model']::create($data);
+
+                    continue;
+                }
+
                 $response = $this->sendApiRequestIndicator(getenv('GFW_SECRET_KEY'), $slugMappings[$slug]['query_url'], $slugMappings[$slug]['sql'], $polygonGeometry['geo']);
                 if (str_contains($slug, 'treeCoverLoss')) {
                     $processedTreeCoverLossValue = $this->processTreeCoverLossValue($response->json()['data']);
@@ -139,5 +165,16 @@ class RunIndicatorAnalysisService
             'year_of_analysis' => Carbon::now()->year,
             'value' => json_encode($responseData),
         ];
+    }
+
+    public function formatKeysValues($data)
+    {
+        $formattedData = [];
+        foreach ($data as $key => $value) {
+            $formattedKey = strtolower(str_replace(' ', '-', $key));
+            $formattedData[$formattedKey] = $value;
+        }
+
+        return json_encode($formattedData);
     }
 }
