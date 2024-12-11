@@ -1,0 +1,26 @@
+operationId: get-v2-indicators-polygon-indicator-status
+summary: get all indicators from the polygon indicator status
+tags: 
+  - V2 Indicators
+parameters:
+  - in: path
+    name: entity
+    type: string
+    description: Filter counts and metrics by entity.
+    required: true
+  - in: path
+    name: uuid
+    type: string
+    description: Filter counts and metrics by entity uuid.
+    required: true
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: '../../definitions/_index.yml#/IndicatorPolygonsStatus'
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error
