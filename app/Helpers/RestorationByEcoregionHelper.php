@@ -4,7 +4,8 @@ namespace App\Helpers;
 
 class RestorationByEcoregionHelper
 {
-    public static function getCategoryEcoRegion($value, ?bool $isExport = false) {
+    public static function getCategoryEcoRegion($value, ?bool $isExport = false)
+    {
         $categoriesFromEcoRegion = [
             'australasian' => [
                 'Southeast Australia temperate forests',
@@ -47,7 +48,7 @@ class RestorationByEcoregionHelper
             ],
             'paleartic' => [
                 'southern-zanzibar-inhambane-coastal-forest-mosaic',
-            ]
+            ],
         ];
         $formatedValue = [];
         foreach ($categoriesFromEcoRegion as $category => $values) {
@@ -55,12 +56,13 @@ class RestorationByEcoregionHelper
             foreach ($value as $key => $val) {
                 if (in_array($key, $values)) {
                     $formatedValue[$category] = round((float) $val, 3);
+
                     break;
                 }
             }
         }
-    
-        $result = array_filter($formatedValue, function($val) {
+
+        $result = array_filter($formatedValue, function ($val) {
             return $val !== 0;
         });
 
