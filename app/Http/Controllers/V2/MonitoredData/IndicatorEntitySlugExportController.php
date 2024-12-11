@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\MonitoredData;
 
+use App\Helpers\RestorationByEcoregionHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Projects\Project;
@@ -141,7 +142,11 @@ class IndicatorEntitySlugExportController extends Controller
                     $results['2023'] = $valueYears['2023'];
                     $results['2024'] = $valueYears['2024'];
                 }
-                if (str_contains($slug, 'restorationBy')) {
+                if ($slug == 'restorationByEcoRegion') {
+                    $values = json_decode($indicator->value, true);
+                    $results = array_merge($results, RestorationByEcoregionHelper::getCategoryEcoRegion($values, true));
+                }
+                if ($slug == 'restorationByLandUse' || $slug == 'restorationByStrategy') {
                     $values = json_decode($indicator->value, true);
                     $results = array_merge($results, $this->processValuesHectares($values));
                 }

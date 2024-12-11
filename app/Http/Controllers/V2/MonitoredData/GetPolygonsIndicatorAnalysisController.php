@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\MonitoredData;
 
+use App\Helpers\RestorationByEcoregionHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Projects\Project;
@@ -94,7 +95,13 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                         $results['data']['2023'] = round((float) $valueYears['2023'], 3);
                         $results['data']['2024'] = round((float) $valueYears['2024'], 3);
                     }
-                    if (str_contains($slug, 'restorationBy')) {
+
+                    if ($slug == 'restorationByEcoRegion') {
+                        $values = json_decode($indicator->value, true);
+                        $results = array_merge($results, RestorationByEcoregionHelper::getCategoryEcoRegion($values));
+                    }
+
+                    if ($slug == 'restorationByLandUse' || $slug == 'restorationByStrategy') {
                         $values = json_decode($indicator->value, true);
                         $results = array_merge($results, $this->processValuesHectares($values));
                     }

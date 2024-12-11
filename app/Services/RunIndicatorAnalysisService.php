@@ -67,11 +67,16 @@ class RunIndicatorAnalysisService
                     $geojson = GeometryHelper::getPolygonGeojson($uuid);
                     $indicatorRestorationResponse = App::make(PythonService::class)->IndicatorPolygon($geojson, $slugMappings[$slug]['indicator'], getenv('GFW_SECRET_KEY'));
 
+                    if ($slug == 'restorationByEcoRegion') {
+                        $value = json_encode($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
+                    } else {
+                        $value = $this->formatKeysValues($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
+                    }
                     $data = [
                         'indicator_slug' => $slug,
                         'site_polygon_id' => $polygonGeometry['site_polygon_id'],
                         'year_of_analysis' => Carbon::now()->year,
-                        'value' => $this->formatKeysValues($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]),
+                        'value' => $value,
                     ];
                     $slugMappings[$slug]['model']::create($data);
 
