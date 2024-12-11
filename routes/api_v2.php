@@ -108,6 +108,7 @@ use App\Http\Controllers\V2\MediaController;
 use App\Http\Controllers\V2\MonitoredData\GetIndicatorPolygonStatusController;
 use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisController;
 use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisVerifyController;
+use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
 use App\Http\Controllers\V2\MonitoredData\RunIndicatorAnalysisController;
 use App\Http\Controllers\V2\Nurseries\AdminIndexNurseriesController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
@@ -768,6 +769,7 @@ Route::prefix('indicators')->group(function () {
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::get('/{entity}/{slug}', GetPolygonsIndicatorAnalysisController::class);
         Route::get('/{entity}/{slug}/verify', GetPolygonsIndicatorAnalysisVerifyController::class);
+        Route::get('/{entity}/{slug}/export', IndicatorEntitySlugExportController::class);
         Route::get('/{entity}', GetIndicatorPolygonStatusController::class);
     });
 });
