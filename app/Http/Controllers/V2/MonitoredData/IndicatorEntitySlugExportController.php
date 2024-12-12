@@ -14,6 +14,10 @@ class IndicatorEntitySlugExportController extends Controller
 {
     public function __invoke(EntityModel $entity, string $slug)
     {
+        if (! isset($slugMappings[$slug])) {
+            return response()->json(['message' => 'Indicator not found'], 404);
+        }
+
         return $this->exportCsv($entity, $slug);
     }
 

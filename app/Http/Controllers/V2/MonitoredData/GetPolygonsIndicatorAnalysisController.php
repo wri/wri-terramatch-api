@@ -32,6 +32,9 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                 'relation_name' => 'hectaresIndicator',
             ],
         ];
+        if (! isset($slugMappings[$slug])) {
+            return response()->json([]);
+        }
 
         try {
             return SitePolygon::whereHas($slugMappings[$slug]['relation_name'], function ($query) use ($slug) {
