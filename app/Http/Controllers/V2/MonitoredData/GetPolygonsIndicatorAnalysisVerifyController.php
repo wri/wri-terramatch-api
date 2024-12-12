@@ -35,6 +35,9 @@ class GetPolygonsIndicatorAnalysisVerifyController extends Controller
                 'indicator_title' => 'Hectares Under Restoration By WWF EcoRegion',
             ],
         ];
+        if (! isset($slugMappings[$slug])) {
+            return response()->json([]);
+        }
 
         try {
             $polygonUuids = SitePolygon::whereHas('site', function ($query) use ($entity) {
