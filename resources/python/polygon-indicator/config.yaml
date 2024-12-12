@@ -1,0 +1,164 @@
+base:
+  config_path: "secrets.yaml"
+  temp_path: "temp/"
+  log_level: DEBUG
+  data_path: "data/"
+
+polygons:
+  intervention_key: IntervType
+  area_key: Area_ha
+
+gfw_api:
+  base_url: https://data-api.globalforestwatch.org
+
+s3:
+  tile_bucket: tof-output
+  tile_year: 2020
+  tile_prefix: /tiles/
+  lookup_bucket: tof-output
+  lookup_prefix: tile-databases
+  lookup_filelist:
+    - "tile-databases/america-africa-europe-corrected.csv"
+    - "tile-databases/asia.csv"
+
+gdal:
+  outfile: temp/tiles/mosaic
+  outfile_suffix: 2020
+
+indicators:
+  umd_tree_cover_loss:
+    data_source: gfw
+    start_year: 2018
+    end_year: 2024
+    query_url: /dataset/umd_tree_cover_loss/latest/query
+    sql: "SELECT umd_tree_cover_loss__year, SUM(area__ha) FROM results GROUP BY umd_tree_cover_loss__year"
+    key_label: umd_tree_cover_loss__year
+    key_value: area__ha
+    area_source: gfw
+    zero_fill: True
+  umd_tree_cover_loss_from_fires:
+    data_source: gfw
+    start_year: 2018
+    end_year: 2024
+    query_url: /dataset/umd_tree_cover_loss_from_fires/latest/query
+    sql: "SELECT umd_tree_cover_loss_from_fires__year, SUM(area__ha) FROM results GROUP BY umd_tree_cover_loss_from_fires__year"
+    key_label: umd_tree_cover_loss_from_fires__year
+    key_value: area__ha
+    area_source: gfw
+    zero_fill: True
+  wwf_terrestrial_ecoregions:
+    data_source: gfw
+    query_url: /dataset/wwf_terrestrial_ecoregions/latest/query
+    sql: "SELECT eco_name FROM results"
+    key_label: eco_name
+    area_source: polygon
+    zero_fill: False
+  wri_tropical_tree_cover:
+    data_source: tiles
+    data_year: 2020
+    query_url: /dataset/wri_tropical_tree_cover/latest/query
+    sql: "SELECT AVG(wri_tropical_tree_cover__percent) FROM results"
+    key_label: wri_tropical_tree_cover__percent
+    download_tile_lookup: False
+    small_sites_area_thresh: 0.5
+    shift_value: 0.0001081081
+    lulc:
+      input_path: C3S-LC-L4-LCCS-Map-300m-P1Y-2020-v2.1.1.tif
+      temp_output_prefix: temp-lulc-
+      target_crs: 4326
+      default_initial_crs: "EPSG:4326"
+      reproj_crs: 3857
+      buffer_size: 500
+      gdf_project_key: "Project"
+      zonal_stats: "count majority"
+    small_sites_error:
+      zeroToNine:
+        min: 0.0
+        max: 10.0
+        error: 3.6386
+      tenToThirtyNine:
+        min: 10.0
+        max: 40.0
+        error: 16.68
+      fortyTo1Hundred:
+        min: 40.0
+        max: 100.0
+        error: 23.468
+    land_cover_data:
+      source: geotiff
+      query_url: /dataset/esa_land_cover_2015/latest/query
+      sql: SELECT esa_land_cover_2015__class, esa_land_cover_2015__uint16, Count(*) FROM results GROUP BY esa_land_cover_2015__uint16, esa_land_cover_2015__class ORDER BY count DESC LIMIT 1
+      key_label: count
+    admin_boundary_data:
+      source: gfw
+      query_url: /dataset/wri_tropical_tree_cover/latest/query
+      sql: SELECT gadm_administrative_boundaries__adm0, Count(*) FROM results GROUP BY gadm_administrative_boundaries__adm0 ORDER BY count DESC LIMIT 1
+      key_label: gadm_administrative_boundaries__adm0
+    lulc_ci_data:
+      source: csv
+      path: ttc_supporting_data/lulc_ci.csv
+    subregion_ci_data:
+      source: geojson
+      path: ttc_supporting_data/subregions_conf.geojson
+    esa_lulc_conversions:
+      urban:
+        - 190
+      grassland:
+        - 130
+      cropland:
+        - 10
+        - 11
+        - 12
+        - 20
+      agriculture:
+        - 10
+        - 11
+        - 12
+        - 20
+      forest:
+        - 50
+        - 60
+        - 61
+        - 62
+        - 70
+        - 71
+        - 80
+        - 81
+        - 82
+        - 90
+        - 160
+        - 170
+      mosaic vegetation:
+        - 30
+        - 40
+        - 100
+        - 110
+      mosaic:
+        - 30
+        - 40
+        - 100
+        - 110
+      shrub/scrub/otherland:
+        - 120
+        - 121
+        - 122
+        - 140
+        - 150
+        - 151
+        - 152
+        - 153
+        - 200
+        - 201
+        - 202
+        - 0
+        - 220
+  target_system:
+    data_source: polygon
+    area_source: polygon
+    polygon_key: target_sys
+    zero_fill: False
+  restoration_practice:
+    data_source: polygon
+    area_source: polygon
+    polygon_key: practice
+    zero_fill: False
