@@ -37,7 +37,7 @@ class SendDailyDigestNotificationsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        if (!$this->task->project) {
+        if (! $this->task->project) {
             return;
         }
         $users = $this->task->project->users()->get();
