@@ -796,7 +796,7 @@ return [
                 'site-rep-num-trees-regenerating' => ['property' => 'num_trees_regenerating', 'label' => 'Estimate Number of Trees Restored via ANR', 'input_type' => 'number'],
                 'site-rep-regeneration-description' => ['property' => 'regeneration_description', 'label' => 'Description of ANR Activities', 'input_type' => 'long-text'],
                 // New fields TM-1542 
-                'site-rep-pct-survival-to-date' => ['property' => 'pct_survival_to_date', 'label' => 'Survival Rate', 'input_type' => 'number'],
+                'site-rep-pct-survival-to-date' => ['property' => 'pct_survival_to_date', 'label' => 'Survival Rate', 'input_type' => 'number-percentage'],
                 'site-rep-survival-calculation' => ['property' => 'survival_calculation', 'label' => 'Description of Survival Rate Calculation', 'input_type' => 'long-text'],
                 'site-rep-survival-description' => ['property' => 'survival_description', 'label' => 'Explanation of Survival Rate', 'input_type' => 'long-text'],
                 'site-rep-maintenance-activities' => ['property' => 'maintenance_activities', 'label' => 'Maintenance Activities', 'input_type' => 'long-text'],
