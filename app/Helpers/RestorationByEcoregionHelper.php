@@ -9,13 +9,13 @@ class RestorationByEcoregionHelper
         $categoriesFromEcoRegion = [
             'australasian' => [
                 'Southeast Australia temperate forests',
-                'Tocantins/Pindare moist forests', 
+                'Tocantins/Pindare moist forests',
                 'Tapajós-Xingu moist forests',
                 'Mato Grosso seasonal forests',
                 'Mato Grosso seasonal forests, Xingu-Tocantins-Araguaia moist forests',
                 'Bahia coastal forests',
                 'Southern Miombo woodlands',
-                'Palawan rain forests'
+                'Palawan rain forests',
             ],
             'afrotropical' => [
                 'Atlantic mixed forests',
@@ -56,11 +56,11 @@ class RestorationByEcoregionHelper
                 'Southern Congolian forest-savanna mosaic',
                 'East African montane forests',
                 'East African montane forests, Northern Acacia-Commiphora bushlands and thickets',
-                'Albertine Rift montane forests, Lake'
+                'Albertine Rift montane forests, Lake',
             ],
             'paleartic' => [
-                "Southwest Iberian Mediterranean sclerophyllous and mixed forests",
-                "Narmada Valley dry deciduous forests",
+                'Southwest Iberian Mediterranean sclerophyllous and mixed forests',
+                'Narmada Valley dry deciduous forests',
                 'East African montane moorlands',
                 'Cameroonian Highlands forests',
                 'Celtic broadleaf forests',
