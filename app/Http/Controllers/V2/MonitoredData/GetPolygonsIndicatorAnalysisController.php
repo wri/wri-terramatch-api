@@ -72,12 +72,12 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                         ->first();
                     $results = [
                         'id' => $polygon->id,
-                        'poly_name' => $polygon->poly_name,
+                        'poly_name' => $polygon->poly_name ?? '-',
                         'poly_id' => $polygon->poly_id,
                         'site_id' => $polygon->site_id,
                         'status' => $polygon->status,
-                        'plantstart' => $polygon->plantstart,
-                        'site_name' => $polygon->site->name ?? '',
+                        'plantstart' => $polygon->plantstart ?? '-',
+                        'site_name' => $polygon->site->name ?? '-',
                         'size' => round($polygon->calc_area ?? 0, 3),
                         'indicator_slug' => $indicator->indicator_slug,
                         'year_of_analysis' => $indicator->year_of_analysis,
