@@ -5,6 +5,8 @@ namespace App\Models\V2\Sites;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\MonitoredData\IndicatorHectares;
+use App\Models\V2\MonitoredData\IndicatorTreeCoverLoss;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
@@ -96,6 +98,16 @@ class SitePolygon extends Model implements AuditableModel
     public function auditStatuses(): MorphMany
     {
         return $this->morphMany(AuditStatus::class, 'auditable');
+    }
+
+    public function hectaresIndicator()
+    {
+        return $this->hasMany(IndicatorHectares::class, 'site_polygon_id');
+    }
+
+    public function treeCoverLossIndicator()
+    {
+        return $this->hasMany(IndicatorTreeCoverLoss::class, 'site_polygon_id');
     }
 
     public function getAuditableNameAttribute(): string

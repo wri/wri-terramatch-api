@@ -24,9 +24,14 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $user = Auth::user();
+        $site = Site::isUuid($uuid)->first();
         $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
         $delayedJob = DelayedJobProgress::create([
             'processed_content' => 0,
+            'created_by' => $user->id,
+            'entity_id' => $site->id,
+            'entity_type' => get_class($site),
+            'is_acknowledged' => false,
         ]);
         $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
         dispatch($job);
@@ -80,6 +85,10 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
         $delayedJob = DelayedJobProgress::create([
             'processed_content' => 0,
+            'entity_id' => $sitePolygon->id,
+            'entity_type' => get_class($sitePolygon),
+            'created_by' => $user->id,
+            'is_acknowledged' => false,
         ]);
         $job = new FixPolygonOverlapJob($delayedJob->id, $uniquePolygonUuids, $user->id);
         dispatch($job);
@@ -92,6 +101,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $uuids = $request->input('uuids');
+        $uuid = $request->input('entity_uuid');
+        $type = $request->input('entity_type');
+        if ($type === 'sites') {
+            $entity = Site::where('uuid', $uuid)->firstOrFail();
+        }
         Log::info('Clipping polygons', ['uuids' => $uuids]);
         if (empty($uuids) || ! is_array($uuids)) {
             return response()->json(['error' => 'Invalid or missing UUIDs'], 400);
@@ -130,6 +144,10 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             $user = Auth::user();
             $delayedJob = DelayedJobProgress::create([
                 'processed_content' => 0,
+                'entity_id' => $entity->id,
+                'entity_type' => get_class($entity),
+                'created_by' => $user->id,
+                'is_acknowledged' => false,
             ]);
             $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
             dispatch($job);

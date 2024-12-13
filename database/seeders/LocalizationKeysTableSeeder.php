@@ -179,6 +179,12 @@ class LocalizationKeysTableSeeder extends Seeder
             'TerraMatch Support');
         $this->createLocalizationKey('send-login-details.cta', 'Set Password');
 
+        // polygon-operations-complete
+        $this->createLocalizationKey('polygon-validation.subject', 'Your TerraMatch Polygon {operation} is Complete');
+        $this->createLocalizationKey('polygon-validation.title', 'YOUR POLYGON {operationUpper} IS COMPLETE');
+        $this->createLocalizationKey('polygon-validation.body', 'Your {operation} for Site {siteName} completed at {completedTime} GMT.');
+        $this->createLocalizationKey('polygon-validation.cta', 'OPEN SITE');
+
         // satellite-map-created
         $this->createLocalizationKey('satellite-map-created.subject', 'Remote Sensing Map Received');
         $this->createLocalizationKey('satellite-map-created.title', 'Remote Sensing Map Received');

@@ -1,0 +1,11 @@
+shapely==2.0.1
+geopandas==1.9.0
+pandas==2.1.2
+requests==2.32.3
+fiona==1.10.1
+exactextract==0.2.0
+rasterio==1.4.3
+boto3==1.35.77
+gdal==3.6.2
+pyyaml==6.0.1
+rasterstats==0.20.0
