@@ -38,9 +38,7 @@ class TreeSpecies extends Model implements EntityRelationModel
         'speciesable_id',
         'collection',
         'hidden',
-
-        'old_id',
-        'old_model',
+        'taxon_id',
     ];
 
     public const COLLECTION_DIRECT_SEEDING = 'direct-seeding';
@@ -80,6 +78,11 @@ class TreeSpecies extends Model implements EntityRelationModel
     public function speciesable()
     {
         return $this->morphTo();
+    }
+
+    public function taxonomicSpecies()
+    {
+        return $this->belongsTo(TreeSpeciesResearch::class, 'taxon_id');
     }
 
     public function getRouteKeyName()

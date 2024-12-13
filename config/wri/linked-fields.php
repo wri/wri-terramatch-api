@@ -151,6 +151,7 @@ return [
                     'label' => 'Tree Species',
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
+                    'collection' => 'historical-tree-species'
                 ],
                 'org-leadership-team' => [
                     'property' => 'leadershipTeam',
