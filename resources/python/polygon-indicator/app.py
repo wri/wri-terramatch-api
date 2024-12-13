@@ -8,7 +8,7 @@ import tree_cover_indicator as ttc
 from fiona.model import Geometry, Feature, Properties
 
 
-def generate_indicator(feature, indicator_name, params, session=None):
+def generate_indicator(feature, indicator_name, params, session):
     if params["indicators"][indicator_name]["data_source"] == "gfw":
         supported_layers = gfw.get_supported_gfw_layer()
         if indicator_name not in supported_layers.keys():
@@ -73,11 +73,8 @@ def main():
         ),
         properties=Properties(**geojson_data["properties"])
     )
-    if (indicator_name == "wwf_terrestrial_ecoregions"):
-        result = generate_indicator(fiona_feature, indicator_name, config, session)
-    else:
-        result = generate_indicator(fiona_feature, indicator_name, config)
-    
+    result = generate_indicator(fiona_feature, indicator_name, config, session)
+
     with open(output_geojson, 'w') as f:
         json.dump({'area': result}, f)
 

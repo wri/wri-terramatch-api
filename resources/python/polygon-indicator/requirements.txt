@@ -5,7 +5,7 @@ requests==2.32.3
 fiona==1.10.1
 exactextract==0.2.0
 rasterio==1.4.1
-gdal==3.10.0
+gdal==3.4.1
 pyyaml==6.0.2
 rasterstats==0.20.0
 boto3==1.35.43
