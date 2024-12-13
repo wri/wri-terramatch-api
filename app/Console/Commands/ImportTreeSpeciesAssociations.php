@@ -87,6 +87,7 @@ class ImportTreeSpeciesAssociations extends Command
     protected function parseHeaders(array $headerRow): void
     {
         foreach ($headerRow as $index => $header) {
+            $header = trim($header, "\xEF\xBB\xBF\"");
             if ($header == 'tree_species_uuid') {
                 $this->treeSpeciesUuidColumn = $index;
             } elseif ($header == 'taxon_id') {
@@ -95,7 +96,7 @@ class ImportTreeSpeciesAssociations extends Command
         }
 
         $this->assert(
-            $this->treeSpeciesUuidColumn != null && $this->taxonIdColumn != null,
+            is_numeric($this->treeSpeciesUuidColumn) && is_numeric($this->taxonIdColumn),
             'Not all required columns were found'
         );
     }

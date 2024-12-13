@@ -69,7 +69,7 @@ class PopulateTreeSpeciesResearch extends Command
                         $existing = TreeSpeciesResearch::where('scientific_name', $data['scientific_name'])->first();
                         $this->assert(
                             $existing == null,
-                            "Scientific name already exists, skipping: " . json_encode([
+                            'Scientific name already exists, skipping: ' . json_encode([
                                 'existing_id' => $existing?->taxon_id,
                                 'new_id' => $data['taxon_id'],
                                 'scientific_name' => $data['scientific_name'],
@@ -85,7 +85,7 @@ class PopulateTreeSpeciesResearch extends Command
 
                 $progressBar->finish();
 
-                if (!empty($abortExceptions)) {
+                if (! empty($abortExceptions)) {
                     $this->warn("Errors and warnings encountered during parsing CSV Rows:\n");
                     foreach ($abortExceptions as $error) {
                         $this->logException($error);
