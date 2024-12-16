@@ -63,13 +63,14 @@ class PopulateTreeSpeciesResearch extends Command
                 $bulkInsert = [];
                 while ($csvRow = fgetcsv($fileHandle)) {
                     $data = [];
-                    $now = Carbon::now();
                     foreach ($this->columns as $column => $index) {
-                        $data[$column] = $csvRow[$index];
-                        // These don't get set automatically with bulk insert
-                        $data['created_at'] = $now;
-                        $data['updated_at'] = $now;
+                        $data[$column] = $csvRow[$index] == 'NA' ? null : $csvRow[$index];
                     }
+
+                    // These don't get set automatically with bulk insert
+                    $now = Carbon::now();
+                    $data['created_at'] = $now;
+                    $data['updated_at'] = $now;
 
                     try {
                         $existing = TreeSpeciesResearch::where('scientific_name', $data['scientific_name'])->first();
