@@ -60,7 +60,7 @@ class ImportTreeSpeciesAssociations extends Command
 
                             TreeSpecies::isUuid($treeSpeciesUuid)->update([
                                 'taxon_id' => $taxonId,
-                                'name' => $research->name,
+                                'name' => $research->scientific_name,
                             ]);
                         } catch (AbortException $e) {
                             $abortExceptions[] = $e;
