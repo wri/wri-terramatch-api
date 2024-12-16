@@ -85,7 +85,7 @@ class PopulateTreeSpeciesResearch extends Command
                         );
 
                         $bulkInsert[] = $data;
-                        if (count($bulkInsert) >= 100) {
+                        if (count($bulkInsert) >= 1000) {
                             TreeSpeciesResearch::insert($bulkInsert);
                             $bulkInsert = [];
                         }
