@@ -7,6 +7,7 @@ use App\Console\Commands\Traits\AbortException;
 use App\Console\Commands\Traits\ExceptionLevel;
 use App\Models\V2\TreeSpecies\TreeSpeciesResearch;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Symfony\Component\Process\Process;
 
 class PopulateTreeSpeciesResearch extends Command
@@ -59,10 +60,15 @@ class PopulateTreeSpeciesResearch extends Command
 
             $this->withProgressBar($lines, function ($progressBar) use ($fileHandle) {
                 $abortExceptions = [];
+                $bulkInsert = [];
                 while ($csvRow = fgetcsv($fileHandle)) {
                     $data = [];
+                    $now = Carbon::now();
                     foreach ($this->columns as $column => $index) {
                         $data[$column] = $csvRow[$index];
+                        // These don't get set automatically with bulk insert
+                        $data['created_at'] = $now;
+                        $data['updated_at'] = $now;
                     }
 
                     try {
@@ -73,10 +79,16 @@ class PopulateTreeSpeciesResearch extends Command
                                 'existing_id' => $existing?->taxon_id,
                                 'new_id' => $data['taxon_id'],
                                 'scientific_name' => $data['scientific_name'],
+                                'infraspecific_epithet' => $data['infraspecific_epithet'],
                             ], JSON_PRETTY_PRINT),
                             ExceptionLevel::Warning
                         );
-                        TreeSpeciesResearch::create($data);
+
+                        $bulkInsert[] = $data;
+                        if (count($bulkInsert) >= 100) {
+                            TreeSpeciesResearch::insert($bulkInsert);
+                            $bulkInsert = [];
+                        }
                     } catch (AbortException $e) {
                         $abortExceptions[] = $e;
                     }
