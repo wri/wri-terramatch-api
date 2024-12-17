@@ -245,7 +245,7 @@ class TerrafundCreateGeometryController extends Controller
           'entity_id' => $entity->id,
           'entity_type' => get_class($entity),
           'is_acknowledged' => false,
-          'name' => "Polygon Upload"
+          'name' => 'Polygon Upload',
         ]);
 
         $job = new InsertGeojsonToDBJob(
@@ -413,7 +413,7 @@ class TerrafundCreateGeometryController extends Controller
                   'entity_id' => $entity->id,
                   'entity_type' => get_class($entity),
                   'is_acknowledged' => false,
-                  'name' => "Polygon Upload"
+                  'name' => 'Polygon Upload',
                 ]);
 
                 $job = new InsertGeojsonToDBJob(
@@ -641,7 +641,7 @@ class TerrafundCreateGeometryController extends Controller
           'entity_id' => $entity->id,
           'entity_type' => get_class($entity),
           'is_acknowledged' => false,
-          'name' => "Polygon Upload"
+          'name' => 'Polygon Upload',
         ]);
 
         $job = new InsertGeojsonToDBJob(
@@ -1254,7 +1254,7 @@ class TerrafundCreateGeometryController extends Controller
                 'entity_id' => $entity->id,
                 'entity_type' => get_class($entity),
                 'is_acknowledged' => false,
-                'name' => "Polygon validation"
+                'name' => 'Polygon validation',
             ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $sitePolygonsUuids);
             dispatch($job);
@@ -1284,7 +1284,7 @@ class TerrafundCreateGeometryController extends Controller
                 'entity_id' => $entity->id,
                 'entity_type' => get_class($entity),
                 'is_acknowledged' => false,
-                'name' => "Polygon validation"
+                'name' => 'Polygon validation',
             ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);

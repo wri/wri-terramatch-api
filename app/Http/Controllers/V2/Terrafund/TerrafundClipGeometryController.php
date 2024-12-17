@@ -90,7 +90,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             'entity_type' => get_class($sitePolygon),
             'created_by' => $user->id,
             'is_acknowledged' => false,
-            'name' => 'Polygon Fix'
+            'name' => 'Polygon Fix',
         ]);
         $job = new FixPolygonOverlapJob($delayedJob->id, $uniquePolygonUuids, $user->id);
         dispatch($job);
