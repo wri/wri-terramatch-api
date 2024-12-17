@@ -18,7 +18,7 @@ class DelayedJob extends Model
 
     protected $table = 'delayed_jobs';
 
-    protected $fillable = ['uuid', 'status', 'status_code', 'payload', 'entity_type', 'entity_id', 'created_by', 'is_acknowledged'];
+    protected $fillable = ['uuid', 'status', 'status_code', 'payload', 'entity_type', 'entity_id', 'created_by', 'is_acknowledged', 'name'];
 
     protected $casts = [
         'uuid' => 'string',
