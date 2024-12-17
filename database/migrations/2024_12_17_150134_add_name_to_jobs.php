@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('delayed_jobs', function (Blueprint $table) {
-            $table->string('name')->nullable()->after('id'); // Adjust 'after' based on the desired column position
+            $table->string('name')->nullable()->after('id');
         });
     }
 
