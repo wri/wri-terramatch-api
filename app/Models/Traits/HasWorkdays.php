@@ -42,12 +42,12 @@ trait HasWorkdays
         return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['volunteer']);
     }
 
-    public function getWorkdaysDirectAttribute(): int
+    public function getWorkdaysDirectTotalAttribute(): int
     {
         return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['direct']);
     }
 
-    public function getWorkdaysConvergenceAttribute(): int
+    public function getWorkdaysConvergenceTotalAttribute(): int
     {
         return $this->sumTotalWorkdaysAmounts(self::WORKDAY_COLLECTIONS['convergence']);
     }

@@ -151,6 +151,7 @@ return [
                     'label' => 'Tree Species',
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
+                    'collection' => 'historical-tree-species'
                 ],
                 'org-leadership-team' => [
                     'property' => 'leadershipTeam',
@@ -459,6 +460,17 @@ return [
                 'pro-rep-indirect-beneficiaries-description' => ['property' => 'indirect_beneficiaries_description', 'label' => 'Indirect Beneficiaries Description', 'input_type' => 'long-text'],
                 'pro-rep-other-restoration-partners-description' => ['property' => 'other_restoration_partners_description', 'label' => 'Other Restoration Partners Description', 'input_type' => 'long-text'],
                 'pro-rep-total-unique-restoration-partners' => ['property' => 'total_unique_restoration_partners', 'label' => 'Total Unique Restoration Partners', 'input_type' => 'number'],
+                // New fields TM-1542 
+                'pro-rep-business-milestones' => ['property' => 'business_milestones', 'label' => 'Business Milestones', 'input_type' => 'long-text'],
+                'pro-rep-ft-other' => ['property' => 'ft_other', 'label' => 'Full Time Other Gender', 'input_type' => 'number'],
+                'pro-rep-pt-other' => ['property' => 'pt_other', 'label' => 'Part Time Other Gender', 'input_type' => 'number'],
+                'pro-rep-volunteer_other' => ['property' => 'volunteer_other', 'label' => 'Volunteer Other Gender', 'input_type' => 'number'],
+                'pro-rep-beneficiaries-other' => ['property' => 'beneficiaries_other', 'label' => 'Other Gender Beneficiary', 'input_type' => 'number'],
+                'pro-rep-beneficiaries-training-women' => ['property' => 'beneficiaries_training_women', 'label' => 'Women Trained', 'input_type' => 'number'],
+                'pro-rep-beneficiaries-training-men' => ['property' => 'beneficiaries_training_men', 'label' => 'Men Trained', 'input_type' => 'number'],
+                'pro-rep-beneficiaries-training-other' => ['property' => 'beneficiaries_training_other', 'label' => 'Other Gender Trained', 'input_type' => 'number'],
+                'pro-rep-beneficiaries-training-youth' => ['property' => 'beneficiaries_training_youth', 'label' => 'Youth Trained', 'input_type' => 'number'],
+                'pro-rep-beneficiaries-training-non-youth' => ['property' => 'beneficiaries_training_non_youth', 'label' => 'Non Youth Trained', 'input_type' => 'number'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [
@@ -784,6 +796,11 @@ return [
                 'site-rep-other-workdays-description' => ['property' => 'other_workdays_description', 'label' => 'Other Activities Description', 'input_type' => 'long-text'],
                 'site-rep-num-trees-regenerating' => ['property' => 'num_trees_regenerating', 'label' => 'Estimate Number of Trees Restored via ANR', 'input_type' => 'number'],
                 'site-rep-regeneration-description' => ['property' => 'regeneration_description', 'label' => 'Description of ANR Activities', 'input_type' => 'long-text'],
+                // New fields TM-1542 
+                'site-rep-pct-survival-to-date' => ['property' => 'pct_survival_to_date', 'label' => 'Survival Rate', 'input_type' => 'number-percentage'],
+                'site-rep-survival-calculation' => ['property' => 'survival_calculation', 'label' => 'Description of Survival Rate Calculation', 'input_type' => 'long-text'],
+                'site-rep-survival-description' => ['property' => 'survival_description', 'label' => 'Explanation of Survival Rate', 'input_type' => 'long-text'],
+                'site-rep-maintenance-activities' => ['property' => 'maintenance_activities', 'label' => 'Maintenance Activities', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'site-rep-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
@@ -796,6 +813,13 @@ return [
                 'site-rep-col-site-submission' => ['property' =>  'site_submission', 'label' => 'Site submission', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
+                'site-rep-rel-replanting-tree-species' => [
+                    'property' => 'replantingTreeSpecies',
+                    'label' => 'Replanting Species + Count',
+                    'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
+                    'input_type' => 'treeSpecies',
+                    'collection' => 'replanting',
+                ],
                 'site-rep-rel-tree-species' => [
                     'property' => 'treeSpecies',
                     'label' => 'Tree Species',

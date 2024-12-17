@@ -2821,3 +2821,18 @@
 /v2/terrafund/validation/polygons:
   post:
     $ref: './Terrafund/post-v2-terrafund-validation-polygons.yml'
+/v2/indicators/{entity}/{uuid}/{slug}:
+  get:
+    $ref: './MonitoredData/get-v2-indicators-polygon-indicator-analysis.yml'
+/v2/indicators/{slug}:
+  post:
+    $ref: './MonitoredData/post-v2-indicators-polygon-indicator-analysis.yml'
+/v2/indicators/{entity}/{uuid}:
+  get:
+    $ref: './MonitoredData/get-v2-indicators-polygon-indicator-status.yml'
+/v2/indicators/{entity}/{uuid}/{slug}/verify:
+  get:
+    $ref: './MonitoredData/get-v2-indicators-polygon-indicator-verify.yml'
+/v2/indicators/{entity}/{uuid}/{slug}/export:
+  get:
+    $ref: './MonitoredData/get-v2-indicators-entity-slug-export.yml'
