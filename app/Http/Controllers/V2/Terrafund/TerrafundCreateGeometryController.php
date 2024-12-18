@@ -1254,7 +1254,7 @@ class TerrafundCreateGeometryController extends Controller
                 'entity_id' => $entity->id,
                 'entity_type' => get_class($entity),
                 'is_acknowledged' => false,
-                'name' => 'Polygon validation',
+                'name' => 'Polygon Validation',
             ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $sitePolygonsUuids);
             dispatch($job);
@@ -1284,7 +1284,7 @@ class TerrafundCreateGeometryController extends Controller
                 'entity_id' => $entity->id,
                 'entity_type' => get_class($entity),
                 'is_acknowledged' => false,
-                'name' => 'Polygon validation',
+                'name' => 'Polygon Validation',
             ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);
