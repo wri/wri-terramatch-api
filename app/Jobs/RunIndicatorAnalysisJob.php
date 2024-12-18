@@ -12,7 +12,6 @@ use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 
 class RunIndicatorAnalysisJob implements ShouldQueue
 {
@@ -40,9 +39,7 @@ class RunIndicatorAnalysisJob implements ShouldQueue
     {
         try {
             $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
-
-            $binary_data = $runIndicatorAnalysisService->run($this->request, $this->slug);
-            Redis::set('run:indicator|'.$this->slug.'|'.json_encode($this->request['uuids']), $binary_data);
+            $runIndicatorAnalysisService->run($this->request, $this->slug);
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,

@@ -85,7 +85,7 @@ class RunIndicatorAnalysisService
 
                 $response = $this->sendApiRequestIndicator(getenv('GFW_SECRET_KEY'), $slugMappings[$slug]['query_url'], $slugMappings[$slug]['sql'], $polygonGeometry['geo']);
                 if (str_contains($slug, 'treeCoverLoss')) {
-                    $processedTreeCoverLossValue = $this->processTreeCoverLossValue($response->json()['data']);
+                    $processedTreeCoverLossValue = $this->processTreeCoverLossValue($response->json()['data'], $slugMappings[$slug]['indicator']);
                 }
 
                 if ($response->successful()) {
@@ -142,11 +142,11 @@ class RunIndicatorAnalysisService
         ]);
     }
 
-    public function processTreeCoverLossValue($data)
+    public function processTreeCoverLossValue($data, $indicator)
     {
         $processedTreeCoverLossValue = [];
         foreach ($data as $i) {
-            $processedTreeCoverLossValue[$i['umd_tree_cover_loss__year']] = $i['area__ha'];
+            $processedTreeCoverLossValue[$i[$indicator . '__year']] = $i['area__ha'];
         }
 
         return $processedTreeCoverLossValue;
