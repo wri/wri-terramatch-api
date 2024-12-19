@@ -547,22 +547,26 @@ class PolygonService
             $geojson = json_decode($geojsonData, true);
             SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
             SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
-
+    
             return $this->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
-
+    
         } catch (Exception $e) {
             $errorMessage = $e->getMessage();
-            $decodedErrorMessage = json_decode($errorMessage, true);
+            $decodedError = json_decode($errorMessage, true);
+            
             if (json_last_error() === JSON_ERROR_NONE) {
-                return ['error' => $decodedErrorMessage];
+                Log::error('Validation error', ['error' => $decodedError]);
+                return [
+                    'error' => json_encode($decodedError)
+                ];
             } else {
-                Log::info('Error inserting geojson to DB', ['error' => $errorMessage]);
-
-                return ['error' => $errorMessage];
+                Log::error('Validation error', ['error' => $errorMessage]);
+                return [
+                    'error' => $errorMessage
+                ];
             }
         }
     }
-
     public function processClippedPolygons(array $polygonUuids, $delayed_job_id = null)
     {
         $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
