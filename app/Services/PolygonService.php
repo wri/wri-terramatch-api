@@ -552,13 +552,20 @@ class PolygonService
 
         } catch (Exception $e) {
             $errorMessage = $e->getMessage();
-            $decodedErrorMessage = json_decode($errorMessage, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                return ['error' => $decodedErrorMessage];
-            } else {
-                Log::info('Error inserting geojson to DB', ['error' => $errorMessage]);
+            $decodedError = json_decode($errorMessage, true);
 
-                return ['error' => $errorMessage];
+            if (json_last_error() === JSON_ERROR_NONE) {
+                Log::error('Validation error', ['error' => $decodedError]);
+
+                return [
+                    'error' => json_encode($decodedError),
+                ];
+            } else {
+                Log::error('Validation error', ['error' => $errorMessage]);
+
+                return [
+                    'error' => $errorMessage,
+                ];
             }
         }
     }
