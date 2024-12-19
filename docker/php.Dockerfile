@@ -27,7 +27,7 @@ RUN apt-get install -y \
 # Add GDAL specific environment variables
 ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
 ENV C_INCLUDE_PATH=/usr/include/gdal
-ENV GDAL_VERSION=3.6.1
+ENV GDAL_VERSION=3.4.1
 
 # PHP Extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
