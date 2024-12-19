@@ -1,5 +1,5 @@
-## PHP
 FROM php:8.2-apache AS php
+
 RUN apt-get update
 RUN apt-get install -y \
     libxml2-dev \
@@ -20,6 +20,15 @@ RUN apt-get install -y \
     build-essential \
     libproj-dev \
     exiftool 
+
+# Add these lines to set GDAL environment variables
+ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
+ENV C_INCLUDE_PATH=/usr/include/gdal
+
+# Get GDAL version and set it as an environment variable
+RUN GDAL_VERSION=$(gdal-config --version) && \
+    echo "GDAL version: ${GDAL_VERSION}" && \
+    export GDAL_VERSION
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install \
@@ -50,7 +59,12 @@ COPY docker/php.ini /usr/local/etc/php/php.ini
 RUN python3 -m venv /opt/python
 COPY resources/python/polygon-voronoi/requirements.txt /root/voronoi-requirements.txt
 ENV PATH="/opt/python/bin:${PATH}"
+
+# Install GDAL before other requirements
+RUN pip3 install --no-cache-dir numpy 
+RUN pip3 install --no-cache-dir GDAL==$(gdal-config --version)
 RUN pip3 install -r /root/voronoi-requirements.txt
+
 RUN chmod -R a+rx /opt/python
 USER www-data
 ENV PATH="/opt/python/bin:${PATH}"
