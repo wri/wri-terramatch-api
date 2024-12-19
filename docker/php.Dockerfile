@@ -1,7 +1,9 @@
 FROM php:8.2-apache AS php
 
-RUN apt-get update
-RUN apt-get install -y \
+# Add backports for more recent GDAL version
+RUN echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list
+
+RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libonig-dev \
     libpng-dev \
@@ -24,16 +26,9 @@ RUN apt-get install -y \
     g++ \
     python3-gdal \
     proj-data \
-    proj-bin
-
-# Add GDAL specific environment variables
-ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
-ENV C_INCLUDE_PATH=/usr/include/gdal
-ENV GDAL_VERSION=3.4.1
-
-# Set GDAL configuration
-RUN export CPLUS_INCLUDE_PATH=/usr/include/gdal
-RUN export C_INCLUDE_PATH=/usr/include/gdal
+    proj-bin \
+    libgdal28 \
+    python3-gdal
 
 # PHP Extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
@@ -70,14 +65,18 @@ ENV PATH="/opt/python/bin:${PATH}"
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir numpy wheel setuptools
 
-# Install GDAL and its dependencies
-RUN apt-get install -y python3-gdal
-RUN gdal-config --version
-ENV GDAL_CONFIG=/usr/bin/gdal-config
-RUN pip3 install --no-binary :all: GDAL==${GDAL_VERSION}
-
-# Install remaining requirements
-RUN pip3 install -r /root/voronoi-requirements.txt
+# Install remaining requirements EXCEPT GDAL (since we're using system GDAL)
+RUN pip3 install pyproj==3.4.1 \
+    shapely==2.0.1 \
+    geopandas==1.0.1 \
+    pandas==2.1.3 \
+    requests==2.32.3 \
+    fiona==1.10.1 \
+    exactextract==0.2.0 \
+    rasterio==1.4.1 \
+    pyyaml==6.0.2 \
+    rasterstats==0.20.0 \
+    boto3==1.35.43
 
 RUN chmod -R a+rx /opt/python
 USER www-data
