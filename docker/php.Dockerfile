@@ -1,8 +1,5 @@
 FROM php:8.2-apache AS php
 
-# Add backports for more recent GDAL version
-RUN echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list
-
 RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libonig-dev \
@@ -12,23 +9,31 @@ RUN apt-get update && apt-get install -y \
     libmagickwand-dev \
     mariadb-client \
     libzip-dev \
-    gdal-bin \
-    libgdal-dev \
-    python3.11-venv \
-    python3-dev \
-    python3-venv \
-    python3-pip \
-    python3-numpy \
     build-essential \
-    libproj-dev \
-    exiftool \
+    software-properties-common \
+    wget \
+    curl \
     gcc \
     g++ \
-    python3-gdal \
+    python3.11-dev \
+    python3.11-venv \
+    python3-pip \
+    python3-numpy \
+    libproj-dev \
     proj-data \
     proj-bin \
-    libgdal28 \
-    python3-gdal
+    exiftool
+
+# Install GDAL 3.4.3 from source
+RUN wget https://github.com/OSGeo/gdal/releases/download/v3.4.3/gdal-3.4.3.tar.gz && \
+    tar -xvf gdal-3.4.3.tar.gz && \
+    cd gdal-3.4.3 && \
+    ./configure --with-python=/usr/bin/python3.11 && \
+    make -j$(nproc) && \
+    make install && \
+    ldconfig && \
+    cd .. && \
+    rm -rf gdal-3.4.3 gdal-3.4.3.tar.gz
 
 # PHP Extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
@@ -56,27 +61,26 @@ RUN a2enmod rewrite
 COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/php.ini /usr/local/etc/php/php.ini
 
-## Python
-RUN python3 -m venv /opt/python
+## Python setup
+RUN python3.11 -m venv /opt/python
 COPY resources/python/polygon-voronoi/requirements.txt /root/voronoi-requirements.txt
 ENV PATH="/opt/python/bin:${PATH}"
+
+# Set GDAL environment variables
+ENV CPLUS_INCLUDE_PATH=/usr/local/include
+ENV C_INCLUDE_PATH=/usr/local/include
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+ENV GDAL_VERSION=3.4.3
 
 # Install Python packages
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir numpy wheel setuptools
 
-# Install remaining requirements EXCEPT GDAL (since we're using system GDAL)
-RUN pip3 install pyproj==3.4.1 \
-    shapely==2.0.1 \
-    geopandas==1.0.1 \
-    pandas==2.1.3 \
-    requests==2.32.3 \
-    fiona==1.10.1 \
-    exactextract==0.2.0 \
-    rasterio==1.4.1 \
-    pyyaml==6.0.2 \
-    rasterstats==0.20.0 \
-    boto3==1.35.43
+# Install GDAL with specific version
+RUN pip3 install GDAL==${GDAL_VERSION}
+
+# Install remaining requirements
+RUN pip3 install -r /root/voronoi-requirements.txt
 
 RUN chmod -R a+rx /opt/python
 USER www-data
