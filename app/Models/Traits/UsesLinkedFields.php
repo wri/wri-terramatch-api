@@ -293,8 +293,10 @@ trait UsesLinkedFields
             if ($model != null) {
                 $model->update($entry);
             } else {
-                // protection against updating a deleted entry
-                unset($entry['uuid']);
+                // protection against clashing with a deleted entry
+                if (! empty($entry['uuid']) && $entity->$property()->onlyTrashed()->where('uuid', $entry['uuid'])->exists()) {
+                    unset($entry['uuid']);
+                }
                 $entity->$property()->create($entry);
             }
         }

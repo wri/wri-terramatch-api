@@ -160,7 +160,16 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'beneficiaries_scstobc_farmers',
         'beneficiaries_scstobc',
         'total_unique_restoration_partners',
-
+        'business_milestones',
+        'ft_other',
+        'pt_other',
+        'volunteer_other',
+        'beneficiaries_other',
+        'beneficiaries_training_women',
+        'beneficiaries_training_men',
+        'beneficiaries_training_other',
+        'beneficiaries_training_youth',
+        'beneficiaries_training_non_youth',
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
         // virtual (see HasRestorationPartners trait)

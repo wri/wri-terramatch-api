@@ -122,6 +122,16 @@ class ProjectReportResource extends JsonResource
             'workdays_convergence_total' => $this->workdays_convergence_total,
             'non_tree_total' => $this->non_tree_total,
             'total_community_partners' => $this->total_community_partners,
+            'business_milestones' => $this->business_milestones,
+            'ft_other' => $this->ft_other,
+            'pt_other' => $this->pt_other,
+            'volunteer_other' => $this->volunteer_other,
+            'beneficiaries_other' => $this->beneficiaries_other,
+            'beneficiaries_training_women' => $this->beneficiaries_training_women,
+            'beneficiaries_training_men' => $this->beneficiaries_training_men,
+            'beneficiaries_training_other' => $this->beneficiaries_training_other,
+            'beneficiaries_training_youth' => $this->beneficiaries_training_youth,
+            'beneficiaries_training_non_youth' => $this->beneficiaries_training_non_youth,
         ];
 
         return $this->appendFilesToResource($data);

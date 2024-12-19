@@ -105,6 +105,11 @@ use App\Http\Controllers\V2\LeadershipTeam\DeleteLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\StoreLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\UpdateLeadershipTeamController;
 use App\Http\Controllers\V2\MediaController;
+use App\Http\Controllers\V2\MonitoredData\GetIndicatorPolygonStatusController;
+use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisController;
+use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisVerifyController;
+use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
+use App\Http\Controllers\V2\MonitoredData\RunIndicatorAnalysisController;
 use App\Http\Controllers\V2\Nurseries\AdminIndexNurseriesController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
 use App\Http\Controllers\V2\Nurseries\CreateNurseryWithFormController;
@@ -757,6 +762,16 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
     Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);
     Route::get('/indicator/hectares-restoration', GetHectaresRestoredController::class);
+});
+
+Route::prefix('indicators')->group(function () {
+    Route::post('/{slug}', RunIndicatorAnalysisController::class);
+    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+        Route::get('/{entity}/{slug}', GetPolygonsIndicatorAnalysisController::class);
+        Route::get('/{entity}/{slug}/verify', GetPolygonsIndicatorAnalysisVerifyController::class);
+        Route::get('/{entity}/{slug}/export', IndicatorEntitySlugExportController::class);
+        Route::get('/{entity}', GetIndicatorPolygonStatusController::class);
+    });
 });
 
 Route::prefix('project-pipeline')->group(function () {

@@ -65,6 +65,11 @@ class SiteReportResource extends JsonResource
             'created_by' => $this->handleCreatedBy(),
             'regeneration_description' => $this->regeneration_description,
             'total_non_tree_species_planted_count' => $this->total_non_tree_species_planted_count,
+
+            'pct_survival_to_date' => $this->pct_survival_to_date,
+            'survival_calculation' => $this->survival_calculation,
+            'survival_description' => $this->survival_description,
+            'maintenance_activities' => $this->maintenance_activities,
         ];
 
         return $this->appendFilesToResource($data);

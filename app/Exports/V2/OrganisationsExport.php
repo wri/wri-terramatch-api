@@ -181,9 +181,9 @@ class OrganisationsExport implements FromCollection, WithHeadings, WithMapping
     private function buildTreeSpecies(Organisation $organisation): string
     {
         $list = [];
-        $treeSpecies = $organisation->treeSpecies()->select('name', 'amount')->get();
-        foreach ($treeSpecies as $treeSpecies) {
-            $list[] = $treeSpecies->name . '(' . $treeSpecies->amount . ')';
+        $treeSpecies = $organisation->treeSpeciesHistorical()->select('name', 'amount')->get();
+        foreach ($treeSpecies as $instance) {
+            $list[] = $instance->name . '(' . $instance->amount . ')';
         }
 
         return '[ ' . implode(',', $list) . ' ]';

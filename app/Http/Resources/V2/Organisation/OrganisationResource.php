@@ -39,8 +39,7 @@ class OrganisationResource extends JsonResource
             'founding_date' => $this->founding_date,
             'description' => $this->description,
 
-            'tree_species' => TreeSpeciesResource::collection($this->treeSpecies),
-            'tree_species_restored' => TreeSpeciesResource::collection($this->treeSpeciesRestored),
+            'tree_species_historical' => TreeSpeciesResource::collection($this->treeSpeciesHistorical),
             'project_pitches' => ProjectPitchResource::collection($this->projectPitches),
             'leadership_team' => LeadershipTeamResource::collection($this->leadershipTeam),
             'core_team_leaders' => CoreTeamLeaderResource::collection($this->coreTeamLeaders),
