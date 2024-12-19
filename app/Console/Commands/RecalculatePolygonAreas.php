@@ -16,7 +16,8 @@ class RecalculatePolygonAreas extends Command
      * @var string
      */
     protected $signature = 'polygons:recalculate-areas 
-                            {--batch-size=100 : Number of records to process in each batch}';
+                            {--batch-size=100 : Number of records to process in each batch}
+                            {--only-active : Process only active polygons}';
 
     /**
      * The console command description.
@@ -33,7 +34,13 @@ class RecalculatePolygonAreas extends Command
         DB::beginTransaction();
 
         try {
-            $sitePolygons = SitePolygon::query()->cursor();
+            $query = SitePolygon::query();
+
+            if ($this->option('only-active')) {
+                $query->active();
+            }
+
+            $sitePolygons = $query->cursor();
 
             $processedCount = 0;
             $errorCount = 0;
