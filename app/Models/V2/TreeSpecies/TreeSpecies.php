@@ -32,6 +32,7 @@ class TreeSpecies extends Model implements EntityRelationModel
     public $table = 'v2_tree_species';
 
     protected $fillable = [
+        'uuid',
         'name',
         'amount',
         'speciesable_type',
