@@ -12,7 +12,12 @@ RUN apt-get install -y \
     libzip-dev \
     gdal-bin \
     libgdal-dev \
-    python3.11-venv \
+    python3-dev \
+    python3-venv \
+    python3-pip \
+    python3-numpy \
+    build-essential \
+    libproj-dev \
     exiftool 
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
