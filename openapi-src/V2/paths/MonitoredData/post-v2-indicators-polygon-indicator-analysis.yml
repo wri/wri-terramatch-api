@@ -1,0 +1,26 @@
+operationId: post-v2-indicators-polygon-indicator-analysis
+summary: Create a new indicator in the polygon indicator analysis
+tags: 
+  - V2 Indicators
+parameters:
+  - in: path
+    name: slug
+    type: string
+    description: Optional. Filter counts and metrics by slug.
+    required: true
+  - name: body
+    in: body
+    required: true
+    schema:
+      $ref: '../../definitions/_index.yml#/IndicatorPost'
+responses:
+  '201':
+    description: Created
+    schema:
+      type: object
+      properties:
+        uuids:
+          type: array
+          items:
+            type: string
+            description: A list of processed polygons

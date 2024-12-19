@@ -85,6 +85,50 @@ class PythonService
         return $result;
     }
 
+    public function IndicatorPolygon($geojson, $indicator_name, $api_key)
+    {
+        $inputGeojson = $this->getTemporaryFile('input.geojson');
+        $outputGeojson = $this->getTemporaryFile('output.geojson');
+
+        $writeHandle = fopen($inputGeojson, 'w');
+
+        try {
+            fwrite($writeHandle, json_encode($geojson));
+        } finally {
+            fclose($writeHandle);
+        }
+
+        $process = new Process(['python3', base_path() . '/resources/python/polygon-indicator/app.py', $inputGeojson, $outputGeojson, $indicator_name, $api_key]);
+
+        $stdout = '';
+        $stderr = '';
+
+        $process->run(function ($type, $buffer) use (&$stdout, &$stderr) {
+            if (Process::ERR === $type) {
+                $stderr .= $buffer;
+            } else {
+                $stdout .= $buffer;
+            }
+        });
+
+        if (! $process->isSuccessful()) {
+            Log::error('Error running indicator script: ' . $stderr);
+
+            return null;
+        }
+
+        if (! empty($stderr)) {
+            Log::warning('Python script warnings/errors: ' . $stderr);
+        }
+
+        $result = json_decode(file_get_contents($outputGeojson), true);
+
+        unlink($inputGeojson);
+        unlink($outputGeojson);
+
+        return $result;
+    }
+
     protected function getTemporaryFile(string $prefix): string
     {
         return tempnam(sys_get_temp_dir(), $prefix);

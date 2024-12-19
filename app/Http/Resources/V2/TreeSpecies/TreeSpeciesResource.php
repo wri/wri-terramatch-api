@@ -18,6 +18,7 @@ class TreeSpeciesResource extends JsonResource
             'amount' => $this->amount,
             'type' => $this->type,
             'collection' => $this->collection,
+            'taxon_id' => $this->taxon_id,
         ];
     }
 }

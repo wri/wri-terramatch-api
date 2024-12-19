@@ -1,0 +1,32 @@
+operationId: get-v2-indicators-entity-slug-export
+summary: Export CSV document of indicators for a specific entity and slug
+tags:
+  - Export
+  - V2 Indicators
+parameters:
+  - in: path
+    name: entity
+    type: string
+    description: Filter counts and metrics by entity.
+    required: true
+  - in: path
+    name: uuid
+    type: string
+    description: Filter counts and metrics by entity uuid.
+    required: true
+  - in: path
+    name: slug
+    type: string
+    description: Filter counts and metrics by slug.
+    required: true
+produces:
+  - text/plain
+responses:
+  '200':
+    description: OK
+    schema:
+      type: file
+  '400':
+    description: Bad request
+  '500':
+    description: Internal server error

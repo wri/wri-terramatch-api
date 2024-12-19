@@ -100,7 +100,10 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'water_structures',
         'site_community_partners_description',
         'site_community_partners_income_increase_description',
-
+        'pct_survival_to_date',
+        'survival_calculation',
+        'survival_description',
+        'maintenance_activities',
         // virtual (see HasWorkdays trait)
         'other_workdays_description',
     ];
@@ -237,6 +240,11 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function nonTreeSpecies()
     {
         return $this->morphMany(TreeSpecies::class, 'speciesable')->where('collection', 'non-tree');
+    }
+
+    public function replantingTreeSpecies()
+    {
+        return $this->morphMany(TreeSpecies::class, 'speciesable')->where('collection', 'replanting');
     }
 
     public function seedings(): MorphMany
