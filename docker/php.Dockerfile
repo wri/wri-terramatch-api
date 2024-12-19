@@ -19,17 +19,17 @@ RUN apt-get install -y \
     python3-numpy \
     build-essential \
     libproj-dev \
-    exiftool 
+    exiftool \
+    gcc \
+    g++ \
+    python3-gdal  # Add this package
 
-# Add these lines to set GDAL environment variables
+# Add GDAL specific environment variables
 ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
 ENV C_INCLUDE_PATH=/usr/include/gdal
+ENV GDAL_VERSION=3.6.1
 
-# Get GDAL version and set it as an environment variable
-RUN GDAL_VERSION=$(gdal-config --version) && \
-    echo "GDAL version: ${GDAL_VERSION}" && \
-    export GDAL_VERSION
-
+# PHP Extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install \
     bcmath \
@@ -60,9 +60,14 @@ RUN python3 -m venv /opt/python
 COPY resources/python/polygon-voronoi/requirements.txt /root/voronoi-requirements.txt
 ENV PATH="/opt/python/bin:${PATH}"
 
-# Install GDAL before other requirements
-RUN pip3 install --no-cache-dir numpy 
-RUN pip3 install --no-cache-dir GDAL==$(gdal-config --version)
+# Install Python packages
+RUN pip3 install --upgrade pip
+RUN pip3 install --no-cache-dir numpy wheel
+# Try installing GDAL with apt package first
+RUN apt-get install -y python3-gdal
+# If you still need to install via pip, use the specific version
+RUN pip3 install --no-binary :all: GDAL==${GDAL_VERSION}
+# Install remaining requirements
 RUN pip3 install -r /root/voronoi-requirements.txt
 
 RUN chmod -R a+rx /opt/python
