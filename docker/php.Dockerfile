@@ -1,3 +1,4 @@
+## PHP
 FROM php:8.2-apache AS php
 
 # Set GDAL version
@@ -44,7 +45,6 @@ ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
 ENV C_INCLUDE_PATH=/usr/include/gdal
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
-# Your existing PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install \
     bcmath \
@@ -65,7 +65,7 @@ RUN docker-php-ext-install exif
 RUN docker-php-ext-enable exif
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
-# Apache configuration
+## APACHE
 RUN a2enmod rewrite
 COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/php.ini /usr/local/etc/php/php.ini
@@ -77,19 +77,7 @@ ENV PATH="/opt/python/bin:${PATH}"
 # Install Python dependencies in the correct order
 COPY resources/python/polygon-voronoi/requirements.txt /root/voronoi-requirements.txt
 RUN pip3 install --upgrade pip wheel setuptools
-RUN pip3 install numpy==1.26.4
-RUN pip3 install pyproj==3.4.1
-RUN pip3 install GDAL==${GDAL_VERSION}
-RUN pip3 install fiona==1.10.1
-RUN pip3 install shapely==2.0.1
-RUN pip3 install pandas==2.1.3
-RUN pip3 install geopandas==1.0.1
-RUN pip3 install rasterio==1.4.1
-RUN pip3 install exactextract==0.2.0
-RUN pip3 install rasterstats==0.20.0
-RUN pip3 install pyyaml==6.0.2
-RUN pip3 install requests==2.32.3
-RUN pip3 install boto3==1.35.43
+RUN pip3 install -r /root/voronoi-requirements.txt
 
 RUN chmod -R a+rx /opt/python
 USER www-data
