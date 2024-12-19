@@ -5,7 +5,7 @@ namespace App\Helpers;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
-use Illuminate\Support\Facades\DB;
+use App\Services\AreaCalculationService;
 use Illuminate\Support\Facades\Log;
 
 class PolygonGeometryHelper
@@ -16,12 +16,8 @@ class PolygonGeometryHelper
             $sitePolygon = SitePolygon::where('poly_id', $polygonGeometry->uuid)->first();
 
             if ($sitePolygon) {
-                $geojson = json_encode($geometry);
-                $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
-                $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
-                $unitLatitude = 111320;
-                $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
-                $areaHectares = $areaSqMeters / 10000;
+                $areaCalculationService = app(AreaCalculationService::class);
+                $areaHectares = $areaCalculationService->getArea((array) $geometry->geometry);
 
                 $sitePolygon->calc_area = $areaHectares;
                 $sitePolygon->save();
