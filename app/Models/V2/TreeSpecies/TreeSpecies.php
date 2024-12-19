@@ -44,6 +44,7 @@ class TreeSpecies extends Model implements EntityRelationModel
     public const COLLECTION_DIRECT_SEEDING = 'direct-seeding';
     public const COLLECTION_PLANTED = 'tree-planted';
     public const COLLECTION_NON_TREE = 'non-tree';
+    public const COLLECTION_REPLANTING = 'replanting';
     public const COLLECTION_NURSERY = 'nursery-seedling';
     public const COLLECTION_HISTORICAL = 'historical-tree-species';
 
@@ -51,6 +52,7 @@ class TreeSpecies extends Model implements EntityRelationModel
         self::COLLECTION_DIRECT_SEEDING => 'Direct Seeding',
         self::COLLECTION_PLANTED => 'Planted',
         self::COLLECTION_NON_TREE => 'Non Tree',
+        self::COLLECTION_REPLANTING => 'Replanting',
         self::COLLECTION_NURSERY => 'Nursery Seedling',
         self::COLLECTION_HISTORICAL => 'Historical Tree Species',
     ];

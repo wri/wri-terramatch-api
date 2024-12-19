@@ -307,6 +307,11 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         return $this->nonTreeSpecies()->visible()->sum('amount');
     }
 
+    public function getTotalTreeReplantingCountAttribute(): int
+    {
+        return $this->replantingTreeSpecies()->visible()->sum('amount');
+    }
+
     public function getTotalSeedsPlantedCountAttribute(): int
     {
         return $this->seedings()->visible()->sum('amount');
