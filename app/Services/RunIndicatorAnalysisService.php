@@ -141,16 +141,16 @@ class RunIndicatorAnalysisService
             'sql' => $query_sql,
             'geometry' => $geometry,
         ]);
-    
+
         if ($response->successful()) {
             $gfwDataFile = tempnam(sys_get_temp_dir(), 'gfw_') . '.json';
             $geometryFile = tempnam(sys_get_temp_dir(), 'geom_') . '.json';
             $outputFile = tempnam(sys_get_temp_dir(), 'output_') . '.json';
-    
+
             try {
                 file_put_contents($gfwDataFile, json_encode($response->json()));
                 file_put_contents($geometryFile, json_encode($geometry));
-    
+
                 $process = new Process([
                     'python3',
                     base_path() . '/resources/python/gfw-area-adjustment/app.py',
@@ -158,14 +158,15 @@ class RunIndicatorAnalysisService
                     $geometryFile,
                     $outputFile,
                 ]);
-    
+
                 $process->run();
-    
-                if (!$process->isSuccessful()) {
+
+                if (! $process->isSuccessful()) {
                     Log::error('Area adjustment failed: ' . $process->getErrorOutput());
+
                     return $response;
                 }
-    
+
                 $adjustedData = json_decode(file_get_contents($outputFile), true);
 
                 return new \Illuminate\Http\Client\Response(
@@ -175,9 +176,10 @@ class RunIndicatorAnalysisService
                         json_encode($adjustedData)
                     )
                 );
-    
+
             } catch (\Exception $e) {
                 Log::error('Error adjusting areas: ' . $e->getMessage());
+
                 return $response;
             } finally {
                 @unlink($gfwDataFile);
@@ -185,7 +187,7 @@ class RunIndicatorAnalysisService
                 @unlink($outputFile);
             }
         }
-    
+
         return $response;
     }
 
