@@ -65,6 +65,11 @@ class UpdateValuesForIndicatorsCommand extends Command
 
         foreach ($slugMappings as $slug => $slugMapping) {
             $uuids = [];
+            $processedCount = 0;
+            $errorCount = 0;
+            $this->info('Processing ' . $slug . '...');
+            $progressBar = $this->output->createProgressBar();
+            $progressBar->start();
             $data = $slugMapping['model']::with('sitePolygon')
                 ->where('indicator_slug', $slug)
                 ->select('id', 'site_polygon_id')->get();
@@ -73,63 +78,74 @@ class UpdateValuesForIndicatorsCommand extends Command
             })->filter()->toArray();
 
             foreach ($uuids as $uuid) {
-                $polygonGeometry = $this->getGeometry($uuid);
-                $registerExist = DB::table($slugMappings[$slug]['table_name'].' as i')
-                    ->where('i.site_polygon_id', $polygonGeometry['site_polygon_id'])
-                    ->where('i.indicator_slug', $slug)
-                    ->where('i.year_of_analysis', Carbon::now()->year)
-                    ->exists();
+                try {
+                    $polygonGeometry = $this->getGeometry($uuid);
+                    $registerExist = DB::table($slugMappings[$slug]['table_name'].' as i')
+                        ->where('i.site_polygon_id', $polygonGeometry['site_polygon_id'])
+                        ->where('i.indicator_slug', $slug)
+                        ->where('i.year_of_analysis', Carbon::now()->year)
+                        ->exists();
 
-                if (! $registerExist) {
-                    continue;
-                }
-
-                if (str_contains($slug, 'restorationBy')) {
-                    $geojson = GeometryHelper::getPolygonGeojson($uuid);
-                    $indicatorRestorationResponse = App::make(PythonService::class)->IndicatorPolygon($geojson, $slugMappings[$slug]['indicator'], getenv('GFW_SECRET_KEY'));
-
-                    if ($slug == 'restorationByEcoRegion') {
-                        $value = json_encode($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
-                    } else {
-                        $value = $this->formatKeysValues($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
+                    if (! $registerExist) {
+                        continue;
                     }
-                    $data = [
-                        'value' => $value,
-                    ];
-                    $slugMappings[$slug]['model']::where('site_polygon_id', $polygonGeometry['site_polygon_id'])
-                        ->where('indicator_slug', $slug)
-                        ->where('year_of_analysis', Carbon::now()->year)
-                        ->update($data);
 
-                    continue;
-                }
+                    if (str_contains($slug, 'restorationBy')) {
+                        $geojson = GeometryHelper::getPolygonGeojson($uuid);
+                        $indicatorRestorationResponse = App::make(PythonService::class)->IndicatorPolygon($geojson, $slugMappings[$slug]['indicator'], getenv('GFW_SECRET_KEY'));
 
-                $response = $this->sendApiRequestIndicator(getenv('GFW_SECRET_KEY'), $slugMappings[$slug]['query_url'], $slugMappings[$slug]['sql'], $polygonGeometry['geo']);
-                if (str_contains($slug, 'treeCoverLoss')) {
-                    $processedTreeCoverLossValue = $this->processTreeCoverLossValue($response->json()['data'], $slugMappings[$slug]['indicator']);
-                }
-
-                if ($response->successful()) {
-                    if (str_contains($slug, 'treeCoverLoss')) {
-                        $data = $this->generateTreeCoverLossData($processedTreeCoverLossValue);
-                    } else {
+                        if ($slug == 'restorationByEcoRegion') {
+                            $value = json_encode($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
+                        } else {
+                            $value = $this->formatKeysValues($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
+                        }
                         $data = [
-                            'value' => json_encode($response->json()['data']),
+                            'value' => $value,
                         ];
+                        $slugMappings[$slug]['model']::where('site_polygon_id', $polygonGeometry['site_polygon_id'])
+                            ->where('indicator_slug', $slug)
+                            ->where('year_of_analysis', Carbon::now()->year)
+                            ->update($data);
+
+                        $processedCount++;
+                        $progressBar->advance();
+
+                        continue;
                     }
 
-                    $slugMappings[$slug]['model']::where('site_polygon_id', $polygonGeometry['site_polygon_id'])
-                        ->where('indicator_slug', $slug)
-                        ->where('year_of_analysis', Carbon::now()->year)
-                        ->update($data);
-                } else {
-                    Log::error('A problem occurred during the analysis of the geometry for the polygon: ' . $uuid);
+                    $response = $this->sendApiRequestIndicator(getenv('GFW_SECRET_KEY'), $slugMappings[$slug]['query_url'], $slugMappings[$slug]['sql'], $polygonGeometry['geo']);
+                    if (str_contains($slug, 'treeCoverLoss')) {
+                        $processedTreeCoverLossValue = $this->processTreeCoverLossValue($response->json()['data'], $slugMappings[$slug]['indicator']);
+                    }
+
+                    if ($response->successful()) {
+                        if (str_contains($slug, 'treeCoverLoss')) {
+                            $data = $this->generateTreeCoverLossData($processedTreeCoverLossValue);
+                        } else {
+                            $data = [
+                                'value' => json_encode($response->json()['data']),
+                            ];
+                        }
+
+                        $slugMappings[$slug]['model']::where('site_polygon_id', $polygonGeometry['site_polygon_id'])
+                            ->where('indicator_slug', $slug)
+                            ->where('year_of_analysis', Carbon::now()->year)
+                            ->update($data);
+                        $processedCount++;
+                        $progressBar->advance();
+                    } else {
+                        Log::error('A problem occurred during the analysis of the geometry for the polygon: ' . $uuid);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Error in the analysis: ' . $e->getMessage());
+                    $errorCount++;
                 }
             }
+            $progressBar->finish();
+            $this->info("\n\n{$slug} updated successfully.");
+            $this->info("Processed: {$processedCount} polygons");
+            $this->info("Errors: {$errorCount}");
         }
-
-
-        $this->info('Due dates updated successfully.');
 
         return 0;
     }
