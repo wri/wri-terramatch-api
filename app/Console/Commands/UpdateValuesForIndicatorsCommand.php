@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class UpdateValuesForoIndicatorsCommand extends Command
+class UpdateValuesForIndicatorsCommand extends Command
 {
     /**
      * The name and signature of the console command.
