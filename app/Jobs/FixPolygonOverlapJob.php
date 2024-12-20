@@ -69,7 +69,7 @@ class FixPolygonOverlapJob implements ShouldQueue
         try {
             $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
             $user = Auth::user();
-            $metadata = json_decode($delayedJob->metadata, true);
+            $metadata = $delayedJob->metadata;
             $entityId = $metadata['entity_id'] ?? null;
             $site = Site::findOrFail($entityId);
             $userForMail = $delayedJob->creator;

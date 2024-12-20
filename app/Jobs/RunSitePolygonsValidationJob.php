@@ -54,10 +54,15 @@ class RunSitePolygonsValidationJob implements ShouldQueue
         try {
             $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
             $user = $delayedJob->creator;
-            $metadata = json_decode($delayedJob->metadata, true);
+            $metadata = $delayedJob->metadata;
+
             $entityId = $metadata['entity_id'] ?? null;
 
-            $site = Site::findOrFail($entityId);
+            if ($entityId) {
+                $site = Site::findOrFail($entityId);
+            } else {
+                Log::error('entityId is null, unable to find site');
+            }
 
             if (! $site) {
                 throw new Exception('Site not found for the given site UUID.');

@@ -29,11 +29,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $delayedJob = DelayedJobProgress::create([
             'processed_content' => 0,
             'created_by' => $user->id,
-            'metadata' => json_encode([
+            'metadata' => [
                 'entity_id' => $site->id,
                 'entity_type' => get_class($site),
                 'entity_name' => $site->name,
-            ]),
+            ],
             'is_acknowledged' => false,
             'name' => 'Polygon Fix',
         ]);
@@ -89,11 +89,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
         $delayedJob = DelayedJobProgress::create([
             'processed_content' => 0,
-            'metadata' => json_encode([
+            'metadata' => [
               'entity_id' => $site->id,
               'entity_type' => get_class($site),
               'entity_name' => $site->name,
-          ]),
+          ],
             'created_by' => $user->id,
             'is_acknowledged' => false,
             'name' => 'Polygon Fix',
@@ -152,11 +152,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             $user = Auth::user();
             $delayedJob = DelayedJobProgress::create([
                 'processed_content' => 0,
-                'metadata' => json_encode([
+                'metadata' => [
                   'entity_id' => $entity->id,
                   'entity_type' => get_class($entity),
                   'entity_name' => $entity->name,
-                ]),
+                ],
                 'created_by' => $user->id,
                 'is_acknowledged' => false,
                 'name' => 'Polygon Fix',

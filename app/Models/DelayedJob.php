@@ -22,6 +22,7 @@ class DelayedJob extends Model
 
     protected $casts = [
         'uuid' => 'string',
+        'metadata' => 'array',
     ];
 
     public function creator()

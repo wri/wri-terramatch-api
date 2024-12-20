@@ -55,7 +55,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
     {
         $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
         $user = $delayedJob->creator;
-        $metadata = json_decode($delayedJob->metadata, true);
+        $metadata = $delayedJob->metadata;
         $entityId = $metadata['entity_id'] ?? null;
 
         $site = Site::findOrFail($entityId);
