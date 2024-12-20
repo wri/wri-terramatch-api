@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Process\Process;
 
 class RunIndicatorAnalysisService
 {
@@ -133,13 +134,61 @@ class RunIndicatorAnalysisService
 
     public function sendApiRequestIndicator($secret_key, $query_url, $query_sql, $geometry)
     {
-        return Http::withHeaders([
+        $response = Http::withHeaders([
             'content-type' => 'application/json',
             'x-api-key' => $secret_key,
         ])->post('https://data-api.globalforestwatch.org' . $query_url, [
             'sql' => $query_sql,
             'geometry' => $geometry,
         ]);
+
+        if ($response->successful()) {
+            $gfwDataFile = tempnam(sys_get_temp_dir(), 'gfw_') . '.json';
+            $geometryFile = tempnam(sys_get_temp_dir(), 'geom_') . '.json';
+            $outputFile = tempnam(sys_get_temp_dir(), 'output_') . '.json';
+
+            try {
+                file_put_contents($gfwDataFile, json_encode($response->json()));
+                file_put_contents($geometryFile, json_encode($geometry));
+
+                $process = new Process([
+                    'python3',
+                    base_path() . '/resources/python/gfw-area-adjustment/app.py',
+                    $gfwDataFile,
+                    $geometryFile,
+                    $outputFile,
+                ]);
+
+                $process->run();
+
+                if (! $process->isSuccessful()) {
+                    Log::error('Area adjustment failed: ' . $process->getErrorOutput());
+
+                    return $response;
+                }
+
+                $adjustedData = json_decode(file_get_contents($outputFile), true);
+
+                return new \Illuminate\Http\Client\Response(
+                    new \GuzzleHttp\Psr7\Response(
+                        200,
+                        ['Content-Type' => 'application/json'],
+                        json_encode($adjustedData)
+                    )
+                );
+
+            } catch (\Exception $e) {
+                Log::error('Error adjusting areas: ' . $e->getMessage());
+
+                return $response;
+            } finally {
+                @unlink($gfwDataFile);
+                @unlink($geometryFile);
+                @unlink($outputFile);
+            }
+        }
+
+        return $response;
     }
 
     public function processTreeCoverLossValue($data, $indicator)

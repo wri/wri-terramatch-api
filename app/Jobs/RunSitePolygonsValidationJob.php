@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Mail\PolygonOperationsComplete;
 use App\Models\DelayedJob;
 use App\Models\DelayedJobProgress;
+use App\Models\V2\Sites\Site;
 use App\Services\PolygonValidationService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -53,7 +54,20 @@ class RunSitePolygonsValidationJob implements ShouldQueue
         try {
             $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
             $user = $delayedJob->creator;
-            $site = $delayedJob->entity;
+            $metadata = $delayedJob->metadata;
+
+            $entityId = $metadata['entity_id'] ?? null;
+
+            if ($entityId) {
+                $site = Site::findOrFail($entityId);
+            } else {
+                Log::error('entityId is null, unable to find site');
+            }
+
+            if (! $site) {
+                throw new Exception('Site not found for the given site UUID.');
+            }
+
             foreach ($this->sitePolygonsUuids as $polygonUuid) {
                 $request = new Request(['uuid' => $polygonUuid]);
                 $validationService->validateOverlapping($request);
@@ -78,6 +92,8 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 'progress' => 100,
             ]);
 
+            Log::info('site available? ' . $site);
+
             Mail::to($user->email_address)
                 ->send(new PolygonOperationsComplete(
                     $site,
@@ -95,5 +111,6 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
+
     }
 }

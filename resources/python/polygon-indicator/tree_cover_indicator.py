@@ -25,11 +25,9 @@ def get_gfw_data(geometry, session, dataset, params):
 def calculate_area(feature):
     geometry = shape(feature["geometry"])
     gdf = gpd.GeoDataFrame(geometry=[geometry], crs="EPSG:4326")
-    gdf = gdf.to_crs("EPSG:3857")
-    area_m2 = gdf.geometry.area.values[
-        0
-    ]  # Directly get the area in square meters as a float
-    area_ha = area_m2 / 10**4  # Convert to hectares
+    gdf_projected = gdf.to_crs('ESRI:54009')
+        
+    area_ha = gdf_projected.geometry.area[0] / 10000
     return area_ha
 
 
