@@ -2,19 +2,22 @@
 
 namespace App\Jobs;
 
+use App\Mail\PolygonOperationsComplete;
 use App\Models\DelayedJob;
+use App\Models\V2\Sites\Site;
 use App\Services\PolygonService;
 use App\Services\SiteService;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 
 class InsertGeojsonToDBJob implements ShouldQueue
@@ -51,6 +54,11 @@ class InsertGeojsonToDBJob implements ShouldQueue
     public function handle(PolygonService $service)
     {
         $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
+        $user = $delayedJob->creator;
+        $metadata = $delayedJob->metadata;
+        $entityId = $metadata['entity_id'] ?? null;
+
+        $site = Site::findOrFail($entityId);
 
         try {
             $geojsonContent = Redis::get($this->redis_key);
@@ -85,6 +93,14 @@ class InsertGeojsonToDBJob implements ShouldQueue
                 'payload' => json_encode($uuids),
                 'status_code' => Response::HTTP_OK,
             ]);
+
+            Mail::to($user->email_address)
+            ->send(new PolygonOperationsComplete(
+                $site,
+                'Upload',
+                $user,
+                now()
+            ));
 
         } catch (Exception $e) {
             Log::error('Error in InsertGeojsonToDBJob: ' . $e->getMessage());

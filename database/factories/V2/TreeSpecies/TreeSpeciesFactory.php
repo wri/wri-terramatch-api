@@ -18,7 +18,6 @@ class TreeSpeciesFactory extends Factory
             'speciesable_id' => Project::factory()->create(),
             'name' => $this->faker->word(),
             'amount' => $this->faker->numberBetween(0, 2147483647),
-            'type' => 'tree',
             'collection' => $this->faker->randomElement(TreeSpecies::$collections),
         ];
     }

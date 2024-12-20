@@ -1,0 +1,12 @@
+
+type: object
+properties:
+  draft:
+    type: integer
+  submitted:
+    type: integer
+  approved:
+    type: integer
+  needs-more-information:
+    type: integer
+  

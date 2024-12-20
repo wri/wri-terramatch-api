@@ -9,6 +9,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
+use App\Services\AreaCalculationService;
 use App\Services\PolygonService;
 use App\Services\SiteService;
 use Illuminate\Http\Request;
@@ -329,10 +330,12 @@ class TerrafundEditGeometryController extends Controller
             if (! $polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
-            $areaSqDegrees = DB::selectOne('SELECT ST_Area(geom) AS area FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->area;
-            $latitude = DB::selectOne('SELECT ST_Y(ST_Centroid(geom)) AS latitude FROM polygon_geometry WHERE uuid = :uuid', ['uuid' => $uuid])->latitude;
-            $areaSqMeters = $areaSqDegrees * pow(111320 * cos(deg2rad($latitude)), 2);
-            $areaHectares = $areaSqMeters / 10000;
+            $polygonGeom = PolygonGeometry::where('uuid', $uuid)
+            ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
+            ->first();
+            $geometry = json_decode($polygonGeom->geojsonGeometry, true);
+            $areaCalculationService = app(AreaCalculationService::class);
+            $areaHectares = $areaCalculationService->getArea($geometry);
             $sitePolygon = new SitePolygon([
                 'poly_name' => $validatedData['poly_name'],
                 'plantstart' => $validatedData['plantstart'],

@@ -8,6 +8,7 @@ use App\Http\Resources\DelayedJobResource;
 use App\Jobs\InsertGeojsonToDBJob;
 use App\Jobs\RunSitePolygonsValidationJob;
 use App\Models\DelayedJob;
+use App\Models\DelayedJobProgress;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
@@ -234,9 +235,21 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json($polygonLoaded->original, 200);
         }
 
+        $user = Auth::user();
+        $entity = Site::where('uuid', $site_id)->firstOrFail();
+
         $redis_key = 'kml_file_' . uniqid();
         Redis::set($redis_key, $geojsonContent, 'EX', 7200);
-        $delayedJob = DelayedJob::create();
+        $delayedJob = DelayedJob::create([
+          'created_by' => $user->id,
+          'metadata' => [
+            'entity_id' => $entity->id,
+            'entity_type' => get_class($entity),
+            'entity_name' => $entity->name,
+          ],
+          'is_acknowledged' => false,
+          'name' => 'Polygon Upload',
+        ]);
 
         $job = new InsertGeojsonToDBJob(
             $redis_key,
@@ -393,10 +406,21 @@ class TerrafundCreateGeometryController extends Controller
 
                     return response()->json($polygonLoaded->original, 200);
                 }
+                $user = Auth::user();
+                $entity = Site::where('uuid', $site_id)->firstOrFail();
 
                 $redis_key = 'shapefile_file_' . uniqid();
                 Redis::set($redis_key, $geojsonContent, 'EX', 7200);
-                $delayedJob = DelayedJob::create();
+                $delayedJob = DelayedJob::create([
+                  'created_by' => $user->id,
+                  'metadata' => [
+                    'entity_id' => $entity->id,
+                    'entity_type' => get_class($entity),
+                    'entity_name' => $entity->name,
+                  ],
+                  'is_acknowledged' => false,
+                  'name' => 'Polygon Upload',
+                ]);
 
                 $job = new InsertGeojsonToDBJob(
                     $redis_key,
@@ -613,10 +637,21 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json($polygonLoaded->original, 200);
         }
 
+        $user = Auth::user();
+        $entity = Site::where('uuid', $site_id)->firstOrFail();
 
         $redis_key = 'geojson_file_' . uniqid();
         Redis::set($redis_key, $geojson_content, 'EX', 7200);
-        $delayedJob = DelayedJob::create();
+        $delayedJob = DelayedJob::create([
+          'created_by' => $user->id,
+          'metadata' => [
+            'entity_id' => $entity->id,
+            'entity_type' => get_class($entity),
+            'entity_name' => $entity->name,
+          ],
+          'is_acknowledged' => false,
+          'name' => 'Polygon Upload',
+        ]);
 
         $job = new InsertGeojsonToDBJob(
             $redis_key,
@@ -1218,8 +1253,21 @@ class TerrafundCreateGeometryController extends Controller
         try {
             $uuid = $request->input('uuid');
 
+            $user = Auth::user();
+            $entity = Site::where('uuid', $uuid)->firstOrFail();
             $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
-            $delayedJob = DelayedJob::create();
+            $delayedJob = DelayedJobProgress::create([
+              'total_content' => count($sitePolygonsUuids),
+              'processed_content' => 0,
+              'created_by' => $user->id,
+              'metadata' => [
+                'entity_id' => $entity->id,
+                'entity_type' => get_class($entity),
+                'entity_name' => $entity->name,
+              ],
+              'is_acknowledged' => false,
+              'name' => 'Polygon Validation',
+          ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $sitePolygonsUuids);
             dispatch($job);
 
@@ -1235,7 +1283,24 @@ class TerrafundCreateGeometryController extends Controller
     {
         try {
             $uuids = $request->input('uuids');
-            $delayedJob = DelayedJob::create();
+            $uuid = $request->input('entity_uuid');
+            $type = $request->input('entity_type');
+            if ($type === 'sites') {
+                $entity = Site::where('uuid', $uuid)->firstOrFail();
+            }
+            $user = Auth::user();
+            $delayedJob = DelayedJobProgress::create([
+                'total_content' => count($uuids),
+                'processed_content' => 0,
+                'created_by' => $user->id,
+                'metadata' => [
+                  'entity_id' => $entity->id,
+                  'entity_type' => get_class($entity),
+                  'entity_name' => $entity->name,
+                ],
+                'is_acknowledged' => false,
+                'name' => 'Polygon Validation',
+            ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);
 

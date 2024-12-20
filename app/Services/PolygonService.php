@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
+use App\Models\DelayedJobProgress;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\ProjectPitch;
@@ -283,20 +284,9 @@ class PolygonService
 
     protected function getGeomAndArea(array $geometry): array
     {
-        // Convert geometry to GeoJSON string
-        $geojson = json_encode(['type' => 'Feature', 'geometry' => $geometry, 'crs' => ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']]]);
+        $areaCalculationService = app(AreaCalculationService::class);
 
-        // Get GeoJSON data in the database
-        $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
-        $areaSqDegrees = DB::selectOne("SELECT ST_Area(ST_GeomFromGeoJSON('$geojson')) AS area")->area;
-        $latitude = DB::selectOne("SELECT ST_Y(ST_Centroid(ST_GeomFromGeoJSON('$geojson'))) AS latitude")->latitude;
-        // 111320 is the length of one degree of latitude in meters at the equator
-        $unitLatitude = 111320;
-        $areaSqMeters = $areaSqDegrees * pow($unitLatitude * cos(deg2rad($latitude)), 2);
-
-        $areaHectares = $areaSqMeters / 10000;
-
-        return ['geom' => $geom, 'area' => $areaHectares];
+        return $areaCalculationService->getGeomAndArea($geometry);
     }
 
     protected function insertSinglePolygon(array $geometry): array
@@ -551,24 +541,34 @@ class PolygonService
 
         } catch (Exception $e) {
             $errorMessage = $e->getMessage();
-            $decodedErrorMessage = json_decode($errorMessage, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                return ['error' => $decodedErrorMessage];
-            } else {
-                Log::info('Error inserting geojson to DB', ['error' => $errorMessage]);
+            $decodedError = json_decode($errorMessage, true);
 
-                return ['error' => $errorMessage];
+            if (json_last_error() === JSON_ERROR_NONE) {
+                Log::error('Validation error', ['error' => $decodedError]);
+
+                return [
+                    'error' => json_encode($decodedError),
+                ];
+            } else {
+                Log::error('Validation error', ['error' => $errorMessage]);
+
+                return [
+                    'error' => $errorMessage,
+                ];
             }
         }
     }
 
-    public function processClippedPolygons(array $polygonUuids)
+    public function processClippedPolygons(array $polygonUuids, $delayed_job_id = null)
     {
         $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
 
         $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
         $uuids = [];
 
+        $delayedJob = DelayedJobProgress::findOrFail($delayed_job_id);
+
+        Log::info('test now selected plygons');
         if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
             foreach ($clippedPolygons['features'] as $feature) {
                 if (isset($feature['properties']['poly_id'])) {
@@ -591,8 +591,13 @@ class PolygonService
         }
 
         if (! empty($uuids)) {
+            $delayedJob->total_content = count($newPolygonUuids);
+            $delayedJob->save();
             foreach ($newPolygonUuids as $polygonUuid) {
                 App::make(PolygonValidationService::class)->runValidationPolygon($polygonUuid);
+                $delayedJob->increment('processed_content');
+                $delayedJob->processMessage();
+                $delayedJob->save();
             }
         }
 

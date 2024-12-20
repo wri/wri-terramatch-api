@@ -40,7 +40,7 @@ class MonitoringOrganisationResource extends JsonResource
             'founding_date' => $this->founding_date,
             'description' => $this->description,
 
-            'tree_species' => TreeSpeciesResource::collection($this->treeSpecies),
+            'tree_species' => TreeSpeciesResource::collection($this->treeSpeciesHistorical),
 
             'web_url' => $this->web_url,
             'facebook_url' => $this->facebook_url,

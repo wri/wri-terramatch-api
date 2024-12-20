@@ -2,7 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Mail\PolygonOperationsComplete;
 use App\Models\DelayedJob;
+use App\Models\DelayedJobProgress;
+use App\Models\V2\Sites\Site;
 use App\Services\PolygonValidationService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -13,6 +16,7 @@ use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class RunSitePolygonsValidationJob implements ShouldQueue
 {
@@ -48,7 +52,22 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     public function handle(PolygonValidationService $validationService)
     {
         try {
-            $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
+            $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
+            $user = $delayedJob->creator;
+            $metadata = $delayedJob->metadata;
+
+            $entityId = $metadata['entity_id'] ?? null;
+
+            if ($entityId) {
+                $site = Site::findOrFail($entityId);
+            } else {
+                Log::error('entityId is null, unable to find site');
+            }
+
+            if (! $site) {
+                throw new Exception('Site not found for the given site UUID.');
+            }
+
             foreach ($this->sitePolygonsUuids as $polygonUuid) {
                 $request = new Request(['uuid' => $polygonUuid]);
                 $validationService->validateOverlapping($request);
@@ -60,13 +79,28 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 $validationService->getGeometryType($request);
                 $validationService->validateEstimatedArea($request);
                 $validationService->validateDataInDB($request);
+
+                $delayedJob->increment('processed_content');
+                $delayedJob->processMessage();
+                $delayedJob->save();
             }
 
             $delayedJob->update([
-                'status' => DelayedJob::STATUS_SUCCEEDED,
+                'status' => DelayedJobProgress::STATUS_SUCCEEDED,
                 'payload' => ['message' => 'Validation completed for all site polygons'],
                 'status_code' => Response::HTTP_OK,
+                'progress' => 100,
             ]);
+
+            Log::info('site available? ' . $site);
+
+            Mail::to($user->email_address)
+                ->send(new PolygonOperationsComplete(
+                    $site,
+                    'Check',
+                    $user,
+                    now()
+                ));
 
         } catch (Exception $e) {
             Log::error('Error in RunSitePolygonsValidationJob: ' . $e->getMessage());
@@ -77,5 +111,6 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             ]);
         }
+
     }
 }
