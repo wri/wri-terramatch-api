@@ -6,6 +6,7 @@ use App\Http\Middleware\SetAuthenticatedUserForJob;
 use App\Mail\PolygonOperationsComplete;
 use App\Models\DelayedJob;
 use App\Models\DelayedJobProgress;
+use App\Models\V2\Sites\Site;
 use App\Services\PolygonService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -68,7 +69,9 @@ class FixPolygonOverlapJob implements ShouldQueue
         try {
             $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
             $user = Auth::user();
-            $site = $delayedJob->entity;
+            $metadata = json_decode($delayedJob->metadata, true);
+            $entityId = $metadata['entity_id'] ?? null;
+            $site = Site::findOrFail($entityId);
             $userForMail = $delayedJob->creator;
             if ($user) {
                 $polygonsClipped = App::make(PolygonService::class)->processClippedPolygons($this->polygonUuids, $this->delayed_job_id);

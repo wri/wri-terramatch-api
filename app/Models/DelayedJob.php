@@ -18,16 +18,11 @@ class DelayedJob extends Model
 
     protected $table = 'delayed_jobs';
 
-    protected $fillable = ['uuid', 'status', 'status_code', 'payload', 'entity_type', 'entity_id', 'created_by', 'is_acknowledged', 'name'];
+    protected $fillable = ['uuid', 'status', 'status_code', 'payload', 'metadata', 'created_by', 'is_acknowledged', 'name'];
 
     protected $casts = [
         'uuid' => 'string',
     ];
-
-    public function entity()
-    {
-        return $this->morphTo();
-    }
 
     public function creator()
     {

@@ -242,8 +242,11 @@ class TerrafundCreateGeometryController extends Controller
         Redis::set($redis_key, $geojsonContent, 'EX', 7200);
         $delayedJob = DelayedJob::create([
           'created_by' => $user->id,
-          'entity_id' => $entity->id,
-          'entity_type' => get_class($entity),
+          'metadata' => json_encode([
+            'entity_id' => $entity->id,
+            'entity_type' => get_class($entity),
+            'entity_name' => $entity->name,
+          ]),
           'is_acknowledged' => false,
           'name' => 'Polygon Upload',
         ]);
@@ -410,8 +413,11 @@ class TerrafundCreateGeometryController extends Controller
                 Redis::set($redis_key, $geojsonContent, 'EX', 7200);
                 $delayedJob = DelayedJob::create([
                   'created_by' => $user->id,
-                  'entity_id' => $entity->id,
-                  'entity_type' => get_class($entity),
+                  'metadata' => json_encode([
+                    'entity_id' => $entity->id,
+                    'entity_type' => get_class($entity),
+                    'entity_name' => $entity->name,
+                  ]),
                   'is_acknowledged' => false,
                   'name' => 'Polygon Upload',
                 ]);
@@ -638,8 +644,11 @@ class TerrafundCreateGeometryController extends Controller
         Redis::set($redis_key, $geojson_content, 'EX', 7200);
         $delayedJob = DelayedJob::create([
           'created_by' => $user->id,
-          'entity_id' => $entity->id,
-          'entity_type' => get_class($entity),
+          'metadata' => json_encode([
+            'entity_id' => $entity->id,
+            'entity_type' => get_class($entity),
+            'entity_name' => $entity->name,
+          ]),
           'is_acknowledged' => false,
           'name' => 'Polygon Upload',
         ]);
@@ -1248,14 +1257,17 @@ class TerrafundCreateGeometryController extends Controller
             $entity = Site::where('uuid', $uuid)->firstOrFail();
             $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
             $delayedJob = DelayedJobProgress::create([
-                'total_content' => count($sitePolygonsUuids),
-                'processed_content' => 0,
-                'created_by' => $user->id,
+              'total_content' => count($sitePolygonsUuids),
+              'processed_content' => 0,
+              'created_by' => $user->id,
+              'metadata' => json_encode([
                 'entity_id' => $entity->id,
                 'entity_type' => get_class($entity),
-                'is_acknowledged' => false,
-                'name' => 'Polygon Validation',
-            ]);
+                'entity_name' => $entity->name,
+              ]),
+              'is_acknowledged' => false,
+              'name' => 'Polygon Validation',
+          ]);
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $sitePolygonsUuids);
             dispatch($job);
 
@@ -1281,8 +1293,11 @@ class TerrafundCreateGeometryController extends Controller
                 'total_content' => count($uuids),
                 'processed_content' => 0,
                 'created_by' => $user->id,
-                'entity_id' => $entity->id,
-                'entity_type' => get_class($entity),
+                'metadata' => json_encode([
+                  'entity_id' => $entity->id,
+                  'entity_type' => get_class($entity),
+                  'entity_name' => $entity->name,
+                ]),
                 'is_acknowledged' => false,
                 'name' => 'Polygon Validation',
             ]);

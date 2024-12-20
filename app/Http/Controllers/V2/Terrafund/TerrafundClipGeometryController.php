@@ -29,8 +29,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         $delayedJob = DelayedJobProgress::create([
             'processed_content' => 0,
             'created_by' => $user->id,
-            'entity_id' => $site->id,
-            'entity_type' => get_class($site),
+            'metadata' => json_encode([
+                'entity_id' => $site->id,
+                'entity_type' => get_class($site),
+                'entity_name' => $site->name,
+            ]),
             'is_acknowledged' => false,
             'name' => 'Polygon Fix',
         ]);
@@ -46,8 +49,8 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $user = Auth::user();
-        $sitePolygon = Site::isUuid($uuid)->first();
-        $projectId = $sitePolygon->project_id ?? null;
+        $site = Site::isUuid($uuid)->first();
+        $projectId = $site->project_id ?? null;
 
         if (! $projectId) {
             return response()->json(['error' => 'Project not found for the given site UUID.'], 404);
@@ -86,8 +89,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
         $delayedJob = DelayedJobProgress::create([
             'processed_content' => 0,
-            'entity_id' => $sitePolygon->id,
-            'entity_type' => get_class($sitePolygon),
+            'metadata' => json_encode([
+              'entity_id' => $site->id,
+              'entity_type' => get_class($site),
+              'entity_name' => $site->name,
+          ]),
             'created_by' => $user->id,
             'is_acknowledged' => false,
             'name' => 'Polygon Fix',
@@ -146,8 +152,11 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
             $user = Auth::user();
             $delayedJob = DelayedJobProgress::create([
                 'processed_content' => 0,
-                'entity_id' => $entity->id,
-                'entity_type' => get_class($entity),
+                'metadata' => json_encode([
+                  'entity_id' => $entity->id,
+                  'entity_type' => get_class($entity),
+                  'entity_name' => $entity->name,
+                ]),
                 'created_by' => $user->id,
                 'is_acknowledged' => false,
                 'name' => 'Polygon Fix',

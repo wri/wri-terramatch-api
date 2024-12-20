@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\PolygonOperationsComplete;
 use App\Models\DelayedJob;
+use App\Models\V2\Sites\Site;
 use App\Services\PolygonService;
 use App\Services\SiteService;
 use Exception;
@@ -54,7 +55,10 @@ class InsertGeojsonToDBJob implements ShouldQueue
     {
         $delayedJob = DelayedJob::findOrFail($this->delayed_job_id);
         $user = $delayedJob->creator;
-        $site = $delayedJob->entity;
+        $metadata = json_decode($delayedJob->metadata, true);
+        $entityId = $metadata['entity_id'] ?? null;
+
+        $site = Site::findOrFail($entityId);
 
         try {
             $geojsonContent = Redis::get($this->redis_key);
