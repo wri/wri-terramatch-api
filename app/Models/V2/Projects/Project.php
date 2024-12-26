@@ -315,7 +315,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             'id',
             'uuid'
         )
-        ->whereHas('site', function($query) {
+        ->whereHas('site', function ($query) {
             $query->whereIn('status', Site::$approvedStatuses);
         })
         ->active();
