@@ -305,6 +305,22 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         )->active();
     }
 
+    public function approvedSitePolygons(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            SitePolygon::class,
+            Site::class,
+            'project_id',
+            'site_id',
+            'id',
+            'uuid'
+        )
+        ->whereHas('site', function($query) {
+            $query->whereIn('status', Site::$approvedStatuses);
+        })
+        ->active();
+    }
+
     public function treeSpecies()
     {
         return $this->morphMany(TreeSpecies::class, 'speciesable');
@@ -615,6 +631,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
 
     public function getTotalHectaresRestoredSumAttribute(): float
     {
-        return round($this->sitePolygons->where('status', 'approved')->sum('calc_area'));
+        return $this->approvedSitePolygons->where('status', 'approved')->sum('calc_area');
     }
 }
