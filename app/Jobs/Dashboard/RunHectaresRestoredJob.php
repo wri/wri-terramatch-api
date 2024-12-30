@@ -66,7 +66,7 @@ class RunHectaresRestoredJob implements ShouldQueue
                 ]
             );
             $response = $runHectaresRestoredService->runHectaresRestoredJob($request);
-            Redis::set('dashboard:indicator/hectares-restoration' . $this->cacheParameter, json_encode($response));
+            Redis::set('dashboard:indicator/hectares-restoration' . $this->cacheParameter, json_encode($response), 'EX', config('cache.ttl.dashboard'));
 
 
             $delayedJob->update([
