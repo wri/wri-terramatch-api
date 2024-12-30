@@ -72,7 +72,7 @@ class RunTreeRestorationGoalJob implements ShouldQueue
             ]);
 
             $response = $treeRestorationGoalService->calculateTreeRestorationGoal($request);
-            Redis::set('dashboard:tree-restoration-goal|' . $this->cacheParameter, json_encode($response));
+            Redis::set('dashboard:tree-restoration-goal|' . $this->cacheParameter, json_encode($response), 'EX', config('cache.ttl.dashboard'));
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,

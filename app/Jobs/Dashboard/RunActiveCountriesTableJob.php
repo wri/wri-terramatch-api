@@ -75,7 +75,7 @@ class RunActiveCountriesTableJob implements ShouldQueue
 
             Redis::set('dashboard:active-countries-table|' . $this->cacheParameter, json_encode([
                 'data' => $response,
-            ]));
+            ]), 'EX', config('cache.ttl.dashboard'));
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
