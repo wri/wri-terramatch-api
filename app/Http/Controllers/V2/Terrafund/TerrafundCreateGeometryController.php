@@ -550,37 +550,38 @@ class TerrafundCreateGeometryController extends Controller
     public function getCriteriaDataForMultiple(Request $request)
     {
         $uuids = $request->input('uuids');
-    
-        if (empty($uuids) || !is_array($uuids)) {
+
+        if (empty($uuids) || ! is_array($uuids)) {
             return response()->json(['error' => 'Invalid or missing UUIDs array'], 400);
         }
-    
+
         $response = [];
-    
+
         foreach ($uuids as $uuid) {
             $geometry = PolygonGeometry::isUuid($uuid)->first();
-    
+
             if ($geometry === null) {
                 $response[$uuid] = ['error' => 'Polygon not found for the given UUID'];
+
                 continue;
             }
-    
+
             $criteriaList = GeometryHelper::getCriteriaDataForPolygonGeometry($geometry);
-    
+
             if (empty($criteriaList)) {
                 $response[$uuid] = ['error' => 'Criteria data not found for the given polygon ID'];
+
                 continue;
             }
-    
+
             $response[$uuid] = [
                 'polygon_id' => $uuid,
-                'criteria_list' => $criteriaList
+                'criteria_list' => $criteriaList,
             ];
         }
-    
+
         return response()->json($response);
     }
-    
 
     public function getCriteriaDataForMultiplePolygons(array $uuids)
     {
