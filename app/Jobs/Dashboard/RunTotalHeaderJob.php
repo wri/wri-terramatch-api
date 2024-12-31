@@ -66,7 +66,7 @@ class RunTotalHeaderJob implements ShouldQueue
                 ]
             );
             $response = $runTotalHeaderService->runTotalHeaderJob($request);
-            Redis::set('dashboard:total-section-header|' . $this->cacheParameter, json_encode($response));
+            Redis::set('dashboard:total-section-header|' . $this->cacheParameter, json_encode($response), 'EX', config('cache.ttl.dashboard'));
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,

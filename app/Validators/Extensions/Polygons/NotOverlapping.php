@@ -52,14 +52,15 @@ class NotOverlapping extends Extension
 
         $mainPolygonArea = PolygonGeometry::where('uuid', $polygonUuid)
             ->value(DB::raw('ST_Area(geom)'));
-
         $extra_info = $intersects
-            ->filter(fn ($intersect) => $intersect->intersects)
-            ->map(function ($intersect) use ($mainPolygonArea) {
+            ->filter(function ($intersect) {
+                return $intersect->intersects && $intersect->intersection_area > 1e-10;
+            })
+            ->map(function ($intersect) use ($mainPolygonArea, $sitePolygon) {
                 $minArea = min($mainPolygonArea, $intersect->area);
                 $percentage = $minArea > 0
-                    ? round(($intersect->intersection_area / $minArea) * 100, 2)
-                    : 100;
+                  ? round(($intersect->intersection_area / $minArea) * 100, 2)
+                  : 100;
 
                 return [
                     'poly_uuid' => $intersect->uuid,
