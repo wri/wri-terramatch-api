@@ -95465,12 +95465,16 @@ paths:
       parameters:
         - in: body
           name: body
-          description: Polygon to create
+          required: true
+          description: A JSON object containing the list of UUIDs of the polygons
           schema:
             type: object
             properties:
-              geometry:
-                type: string
+              uuids:
+                type: array
+                description: A list of UUIDs of the polygons
+                items:
+                  type: string
       responses:
         '200':
           description: Successful response
