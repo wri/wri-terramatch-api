@@ -25,18 +25,18 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         ini_set('memory_limit', '-1');
         $user = Auth::user();
         $site = Site::isUuid($uuid)->first();
-        $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
         $delayedJob = DelayedJobProgress::create([
-            'processed_content' => 0,
-            'created_by' => $user->id,
-            'metadata' => [
-                'entity_id' => $site->id,
-                'entity_type' => get_class($site),
-                'entity_name' => $site->name,
-            ],
-            'is_acknowledged' => false,
-            'name' => 'Polygon Fix',
-        ]);
+          'processed_content' => 0,
+          'created_by' => $user->id,
+          'metadata' => [
+              'entity_id' => $site->id,
+              'entity_type' => get_class($site),
+              'entity_name' => $site->name,
+          ],
+          'is_acknowledged' => false,
+          'name' => 'Polygon Fix',
+      ]);
+        $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
         $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
         dispatch($job);
 

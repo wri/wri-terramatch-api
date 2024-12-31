@@ -1,0 +1,30 @@
+summary: Get criteria data validation results for multiple polygons
+parameters:
+  - in: query
+    name: uuids
+    required: true
+    description: A list of UUIDs of the polygons
+    type: array
+    items:
+      type: string
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/V2TerrafundCriteriaDataMultiple'
+  '400':
+    description: Invalid or missing UUIDs array
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: 'Invalid or missing UUIDs array'
+  '404':
+    description: No criteria data found for the given UUIDs
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: 'Criteria data not found for the given polygon IDs'
