@@ -11,7 +11,7 @@ EntityFormCreate:
 EntityFormUpdate:
   $ref: './EntityFormUpdate.yml'
 EntityFormRead:
-    $ref: './EntityFormRead.yml'
+  $ref: './EntityFormRead.yml'
 UserRead:
   $ref: './UserRead.yml'
 UserReadAll:
@@ -276,6 +276,8 @@ AuditStatusResponse:
   $ref: './AuditStatusResponse.yml'
 V2TerrafundCriteriaData:
   $ref: './V2TerrafundCriteriaData.yml'
+V2TerrafundCriteriaDataMultiple:
+  $ref: './V2TerrafundCriteriaDataMultiple.yml'
 V2TerrafundCriteriaSite:
   $ref: './V2TerrafundCriteriaSite.yml'
 DashboardProjectAvailableResponse:
@@ -312,7 +314,7 @@ DashboardTreesUnderRestorationActual:
   $ref: './DashboardTreesUnderRestorationActual.yml'
 DashboardGetProjectsResponse:
   $ref: './DashboardGetProjectsResponse.yml'
-DashboardGetProjectsData: 
+DashboardGetProjectsData:
   $ref: './DashboardGetProjectsData.yml'
 DashboardGetPolygonStatusResponse:
   $ref: './DashboardGetPolygonStatusResponse.yml'

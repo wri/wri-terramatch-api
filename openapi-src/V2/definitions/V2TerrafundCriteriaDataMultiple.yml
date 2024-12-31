@@ -1,0 +1,37 @@
+type: object
+additionalProperties:
+  oneOf:
+    - type: object
+      properties:
+        polygon_id:
+          type: string
+          description: The ID of the polygon
+        criteria_list:
+          type: array
+          description: List of validation criteria
+          items:
+            type: object
+            properties:
+              criteria_id:
+                type: integer
+                description: The ID of the criteria
+              latest_created_at:
+                type: string
+                format: date-time
+                description: The latest created at timestamp of the criteria
+              valid:
+                type: integer
+                description: Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+              extra_info:
+                type: object
+                description: Extra information about the polygon validation
+      required:
+        - polygon_id
+        - criteria_list
+    - type: object
+      properties:
+        error:
+          type: string
+          description: Error message if the polygon or criteria data is not found
+      required:
+        - error
