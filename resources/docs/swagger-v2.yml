@@ -95463,13 +95463,14 @@ paths:
     post:
       summary: Get criteria data validation results for multiple polygons
       parameters:
-        - in: query
-          name: uuids
-          required: true
-          description: A list of UUIDs of the polygons
-          type: array
-          items:
-            type: string
+        - in: body
+          name: body
+          description: Polygon to create
+          schema:
+            type: object
+            properties:
+              geometry:
+                type: string
       responses:
         '200':
           description: Successful response
