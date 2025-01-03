@@ -50,6 +50,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
             } else {
                 $data = json_decode($cacheValue);
                 $data->last_updated_at = $lastUpdatedAt;
+
                 return response()->json($data);
             }
         } catch (\Exception $e) {
