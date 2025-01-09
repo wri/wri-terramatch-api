@@ -66,6 +66,7 @@ class GeometryType extends Extension
 
         return $result->geometry_type;
     }
+
     public static function geoJsonValid($geojson): bool
     {
         $result = DB::selectOne(
