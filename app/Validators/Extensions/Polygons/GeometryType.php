@@ -5,7 +5,6 @@ namespace App\Validators\Extensions\Polygons;
 use App\Models\V2\PolygonGeometry;
 use App\Validators\Extensions\Extension;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class GeometryType extends Extension
 {
@@ -13,7 +12,7 @@ class GeometryType extends Extension
 
     public static $message = [
         'key' => 'GEOMETRY_TYPE',
-        'message' => 'All geometries in the collection must be either all points OR all polygons/multipolygons'
+        'message' => 'All geometries in the collection must be either all points OR all polygons/multipolygons',
     ];
 
     public const VALID_TYPE_POLYGON = 'POLYGON';
@@ -22,28 +21,29 @@ class GeometryType extends Extension
 
     public static function passes($attribute, $value, $parameters, $validator): bool
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return false;
         }
 
         $types = [];
         foreach ($value as $feature) {
             $type = self::getGeometryType($feature);
-            if (!in_array($type, [
+            if (! in_array($type, [
                 self::VALID_TYPE_POLYGON,
                 self::VALID_TYPE_MULTIPOLYGON,
-                self::VALID_TYPE_POINT
+                self::VALID_TYPE_POINT,
             ])) {
                 return false;
             }
-            
+
             $types[] = $type;
         }
 
         $hasPoints = in_array(self::VALID_TYPE_POINT, $types);
-        $hasPolygons = in_array(self::VALID_TYPE_POLYGON, $types) || 
+        $hasPolygons = in_array(self::VALID_TYPE_POLYGON, $types) ||
                       in_array(self::VALID_TYPE_MULTIPOLYGON, $types);
-        return !($hasPoints && $hasPolygons);
+
+        return ! ($hasPoints && $hasPolygons);
     }
 
     public static function uuidValid($uuid): bool
