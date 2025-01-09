@@ -66,4 +66,13 @@ class GeometryType extends Extension
 
         return $result->geometry_type;
     }
+    public static function geoJsonValid($geojson): bool
+    {
+        $result = DB::selectOne(
+            'SELECT ST_GeometryType(ST_GeomFromGeoJSON(:geojson)) AS geometry_type',
+            ['geojson' => json_encode($geojson)]
+        );
+
+        return $result->geometry_type === self::VALID_TYPE_POLYGON || $result->geometry_type === self::VALID_TYPE_MULTIPOLYGON;
+    }
 }
