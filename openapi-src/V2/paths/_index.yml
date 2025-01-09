@@ -2161,7 +2161,7 @@
         schema:
           $ref: '../definitions/_index.yml#/FormSubmissionUpdate'
   delete:
-    summary: "Deletes a specific form submission"
+    summary: 'Deletes a specific form submission'
     operationId: delete-v2-form-submission-UUID
     tags:
       - Forms
@@ -2585,6 +2585,8 @@
 '/v2/terrafund/validation/criteria-data':
   get:
     $ref: './Terrafund/get-v2-terrafund-validation-criteria-data.yml'
+  post:
+    $ref: './Terrafund/post-v2-terrafund-validation-criteria-data.yml'
 '/v2/terrafund/validation/sitePolygons':
   post:
     $ref: './Terrafund/get-v2-terrafund-validation-sitepolygons.yml'
