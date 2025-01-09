@@ -53,8 +53,8 @@ class SitePolygonValidator extends Validator
     ];
 
     public const GEOMETRY_TYPE = [
-        'features' => 'required|array',
-        'features.*' => 'geometry_type',
+      'type' => 'required|in:FeatureCollection',
+      'features' => 'required|array|geometry_type'
     ];
 
     public const GEOMETRY_TYPE_UUID = [
