@@ -54,8 +54,12 @@ class PolygonValidatorsTest extends TestCase
     public function test_geometry_type()
     {
         $this->runValidationTest('GEOMETRY_TYPE');
+        $mixedGeojsonPath = self::FILES_DIR . 'geometry_type_mixed.geojson';
+        $mixedGeojson = json_decode(file_get_contents($mixedGeojsonPath), true);
+        $this->assertFalse(
+            SitePolygonValidator::isValid('GEOMETRY_TYPE', $mixedGeojson, false)
+        );
     }
-
     public function test_schema()
     {
         $this->runValidationTest('SCHEMA');
