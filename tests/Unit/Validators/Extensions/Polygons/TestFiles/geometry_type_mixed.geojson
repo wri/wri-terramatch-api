@@ -1,0 +1,64 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "poly_name": "Point Feature"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30,
+          10
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "poly_name": "Polygon Feature"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              30,
+              10
+            ],
+            [
+              40,
+              40
+            ],
+            [
+              20,
+              40
+            ],
+            [
+              10,
+              20
+            ],
+            [
+              30,
+              10
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "poly_name": "Another Point Feature"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15,
+          15
+        ]
+      }
+    }
+  ]
+}
