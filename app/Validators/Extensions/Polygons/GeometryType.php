@@ -5,7 +5,6 @@ namespace App\Validators\Extensions\Polygons;
 use App\Models\V2\PolygonGeometry;
 use App\Validators\Extensions\Extension;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class GeometryType extends Extension
 {
