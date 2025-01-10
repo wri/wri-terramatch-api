@@ -60,6 +60,7 @@ class PolygonValidatorsTest extends TestCase
             SitePolygonValidator::isValid('GEOMETRY_TYPE', $mixedGeojson, false)
         );
     }
+
     public function test_schema()
     {
         $this->runValidationTest('SCHEMA');

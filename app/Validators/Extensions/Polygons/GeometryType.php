@@ -55,7 +55,7 @@ class GeometryType extends Extension
         return $geometryType === self::VALID_TYPE_POLYGON || $geometryType === self::VALID_TYPE_MULTIPOLYGON;
     }
 
-    static function getGeometryType($feature): string
+    public static function getGeometryType($feature): string
     {
         if (is_string($feature)) {
             return PolygonGeometry::getGeometryType($feature);
@@ -65,6 +65,7 @@ class GeometryType extends Extension
             'SELECT ST_GeometryType(ST_GeomFromGeoJSON(:geojson)) AS geometry_type',
             ['geojson' => json_encode($feature)]
         );
+
         return $result->geometry_type;
     }
 
