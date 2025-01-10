@@ -55,7 +55,7 @@ class GeometryType extends Extension
         return $geometryType === self::VALID_TYPE_POLYGON || $geometryType === self::VALID_TYPE_MULTIPOLYGON;
     }
 
-    private static function getGeometryType($feature): string
+    static function getGeometryType($feature): string
     {
         if (is_string($feature)) {
             return PolygonGeometry::getGeometryType($feature);
