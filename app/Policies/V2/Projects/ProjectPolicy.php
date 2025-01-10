@@ -186,7 +186,7 @@ class ProjectPolicy extends Policy
 
     public function export(?User $user, ?Form $form = null, ?Project $project = null): bool
     {
-        if ($user->primaryRole?->name == 'project-manager') {
+        if ($user->hasRole('project-manager')) {
             return $user->my_frameworks_slug->contains($form->framework_key);
         }
 
