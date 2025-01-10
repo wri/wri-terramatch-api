@@ -29,7 +29,6 @@ class GeometryType extends Extension
         $types = [];
         foreach ($value as $feature) {
             $type = self::getGeometryType($feature);
-            Log::info("Geometry type: $type");
             if (! in_array($type, [
                 self::VALID_TYPE_POLYGON,
                 self::VALID_TYPE_MULTIPOLYGON,
