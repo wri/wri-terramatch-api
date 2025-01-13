@@ -24,6 +24,7 @@ class GetProjectsController extends Controller
             $landscapes = data_get($request, 'filter.landscapes', []);
             $organisations = data_get($request, 'filter.organisationType', []);
             $country = data_get($request, 'filter.country', '');
+            $cohort = data_get($request, 'filter.cohort', '');
             $uuid = data_get($request, 'filter.projectUuid', '');
 
             $request = new Request([
@@ -33,6 +34,7 @@ class GetProjectsController extends Controller
                     'landscapes' => $landscapes,
                     'organisationType' => $organisations,
                     'projectUuid' => $uuid,
+                    'cohort' => $cohort,
                 ],
             ]);
         }

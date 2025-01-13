@@ -34,6 +34,8 @@ class RunActiveCountriesTableJob implements ShouldQueue
 
     protected $country;
 
+    protected $cohort;
+
     protected $uuid;
 
     protected $cacheParameter;
@@ -44,6 +46,7 @@ class RunActiveCountriesTableJob implements ShouldQueue
         array $landscapes,
         array $organisations,
         string $country,
+        string $cohort,
         string $uuid,
         string $cacheParameter
     ) {
@@ -52,6 +55,7 @@ class RunActiveCountriesTableJob implements ShouldQueue
         $this->landscapes = $landscapes;
         $this->organisations = $organisations;
         $this->country = $country;
+        $this->cohort = $cohort;
         $this->uuid = $uuid;
         $this->cacheParameter = $cacheParameter;
     }
@@ -68,6 +72,7 @@ class RunActiveCountriesTableJob implements ShouldQueue
                     'landscapes' => $this->landscapes,
                     'organisationType' => $this->organisations,
                     'projectUuid' => $this->uuid,
+                    'cohort' => $this->cohort,
                 ],
             ]);
 

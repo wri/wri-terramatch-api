@@ -36,15 +36,18 @@ class RunTotalHeaderJob implements ShouldQueue
 
     protected $country;
 
+    protected $cohort;
+
     protected $cacheParameter;
 
-    public function __construct(string $delayed_job_id, array $frameworks, array $landscapes, array $organisations, string $country, string $uuid, string $cacheParameter)
+    public function __construct(string $delayed_job_id, array $frameworks, array $landscapes, array $organisations, string $country, string $cohort, string $uuid, string $cacheParameter)
     {
         $this->delayed_job_id = $delayed_job_id;
         $this->frameworks = $frameworks;
         $this->landscapes = $landscapes;
         $this->organisations = $organisations;
         $this->country = $country;
+        $this->cohort = $cohort;
         $this->uuid = $uuid;
         $this->cacheParameter = $cacheParameter;
     }
@@ -62,6 +65,7 @@ class RunTotalHeaderJob implements ShouldQueue
                         'landscapes' => $this->landscapes,
                         'organisationType' => $this->organisations,
                         'projectUuid' => $this->uuid,
+                        'cohort' => $this->cohort,
                     ],
                 ]
             );
