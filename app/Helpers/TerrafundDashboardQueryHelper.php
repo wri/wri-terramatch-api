@@ -35,7 +35,13 @@ class TerrafundDashboardQueryHelper
         $query->when(data_get($filters, 'filter.programmes'), function ($query, $programmes) {
             $query->whereIn('v2_projects.framework_key', $programmes);
         }, function ($query) {
-            $query->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes']);
+            $query->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes', 'enterprises']);
+        });
+
+        $query->when(data_get($filters, 'filter.cohort'), function ($query, $cohort) {
+            $query->where('v2_projects.cohort', $cohort);
+        }, function ($query) {
+            $query->whereIn('v2_projects.cohort', ['terrafund', 'terrafund-landscapes', 'enterprises']);
         });
 
         $query->when(data_get($filters, 'filter.landscapes'), function ($query, $landscapes) {
