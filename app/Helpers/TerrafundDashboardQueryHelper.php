@@ -41,7 +41,7 @@ class TerrafundDashboardQueryHelper
         $query->when(data_get($filters, 'filter.cohort'), function ($query, $cohort) {
             $query->where('v2_projects.cohort', $cohort);
         }, function ($query) {
-            $query->whereIn('v2_projects.cohort', ['top-100', 'landscapes']);
+            $query->whereIn('v2_projects.cohort', ['terrafund', 'terrafund-landscapes', 'enterprises']);
         });
 
         $query->when(data_get($filters, 'filter.landscapes'), function ($query, $landscapes) {
