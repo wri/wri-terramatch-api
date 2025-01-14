@@ -65,9 +65,6 @@ class TaskDueJob extends ScheduledJob
 
     protected function createTask(Project $project): void
     {
-        if (isset($this->due_at)) {
-            return;
-        }
         $existTask = Task::where('project_id', $project->id)
             ->where('due_at', $this->due_at)
             ->exists();
