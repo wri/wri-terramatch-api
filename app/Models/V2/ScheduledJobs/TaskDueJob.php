@@ -10,7 +10,6 @@ use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\TaskStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-
 use Parental\HasParent;
 
 /**
@@ -66,6 +65,12 @@ class TaskDueJob extends ScheduledJob
 
     protected function createTask(Project $project): void
     {
+        $existTask = Task::where('project_id', $project->id)
+            ->where('due_at', $this->due_at)
+            ->exists();
+        if ($existTask) {
+            return;
+        }
         $task = Task::create([
             'organisation_id' => $project->organisation_id,
             'project_id' => $project->id,
