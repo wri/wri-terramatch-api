@@ -3,7 +3,7 @@
 namespace Database\Factories\V2\Projects;
 
 use App\Models\V2\Organisation;
-use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProjectFactory extends Factory
@@ -31,7 +31,7 @@ class ProjectFactory extends Factory
         return [
             'framework_key' => $this->faker->randomElement($frameworks),
             'name' => $this->faker->words(3, true),
-            'status' => array_keys(Project::$statuses)[0],
+            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
             'project_status' => $this->faker->randomElement($projStatus),
             'organisation_id' => Organisation::factory()->create()->id,
             'boundary_geojson' => $geojson,
