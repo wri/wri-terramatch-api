@@ -44524,6 +44524,11 @@ paths:
           in: query
           required: false
           description: The number of items per page. Defaults to 15.
+        - type: string
+          name: 'filter[collection]'
+          in: query
+          required: false
+          description: The collection to filter tree species by.
       responses:
         '200':
           description: OK
