@@ -6,6 +6,7 @@ use App\Models\V2\Action;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Tasks\Task;
+use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\TaskStatusStateMachine;
 use Carbon\Carbon;
@@ -36,6 +37,7 @@ class GenerateBackDatedReportsEnterprisesCommand extends Command
         $period_key = $due_at->year . '-' . $due_at->month;
         $framework_key = 'enterprises';
         Project::where('framework_key', $framework_key)
+            ->where('status', '!=', EntityStatusStateMachine::STARTED)
             ->chunkById(100, function ($projects) use ($framework_key, $period_key, $due_at) {
                 foreach ($projects as $project) {
                     $this->createTask($project, $framework_key, $period_key, $due_at);
@@ -61,7 +63,7 @@ class GenerateBackDatedReportsEnterprisesCommand extends Command
         ]);
 
         $hasSite = false;
-        foreach ($project->sites as $site) {
+        foreach ($project->nonDraftSites as $site) {
             $hasSite = true;
             $task->siteReports()->create([
                 'framework_key' => $framework_key,
@@ -72,7 +74,7 @@ class GenerateBackDatedReportsEnterprisesCommand extends Command
         }
 
         $hasNursery = false;
-        foreach ($project->nurseries as $nursery) {
+        foreach ($project->nonDraftNurseries as $nursery) {
             $hasNursery = true;
             $task->nurseryReports()->create([
                 'framework_key' => $framework_key,
