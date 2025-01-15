@@ -13,6 +13,7 @@ use App\Models\V2\ScheduledJobs\SiteAndNurseryReminderJob;
 use App\Models\V2\ScheduledJobs\TaskDueJob;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\User;
+use App\StateMachines\EntityStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -59,6 +60,33 @@ class ScheduledJobsTest extends TestCase
         $this->assertEquals($dueAt, $site->reports()->first()->due_at);
         $this->assertEquals(1, $nursery->reports()->count());
         $this->assertEquals($dueAt, $nursery->reports()->first()->due_at);
+    }
+
+    public function test_task_due_ignore_started_entities()
+    {
+        $dueAt = Carbon::now()->startOfDay()->addMonth();
+        $project = Project::factory()->terrafund()->create([
+            'status' => EntityStatusStateMachine::STARTED,
+        ]);
+        $this->assertEquals(0, $project->tasks()->count());
+        $site = Site::factory()->terrafund()->create([
+            'project_id' => $project->id,
+            'status' => EntityStatusStateMachine::STARTED,
+        ]);
+        $nursery = Nursery::factory()->terrafund()->create([
+            'project_id' => $project->id,
+            'status' => EntityStatusStateMachine::STARTED
+        ]);
+        TaskDueJob::createTaskDue(Carbon::now()->subDay(), 'terrafund', $dueAt);
+
+        $this->assertEquals(0, $project->tasks()->count());
+
+        ScheduledJob::readyToExecute()->first()->execute();
+
+        $this->assertEquals(0, $project->tasks()->count());
+        $this->assertEquals(0, $project->reports()->count());
+        $this->assertEquals(0, $site->reports()->count());
+        $this->assertEquals(0, $nursery->reports()->count());
     }
 
     public function test_report_reminder()

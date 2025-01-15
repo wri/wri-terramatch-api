@@ -3,7 +3,7 @@
 namespace Database\Factories\V2\Sites;
 
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\Site;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SiteFactory extends Factory
@@ -52,7 +52,7 @@ class SiteFactory extends Factory
             'framework_key' => $this->faker->randomElement($frameworks),
             'project_id' => Project::factory()->create()->id,
             'name' => $this->faker->words(3, true),
-            'status' => array_keys(Site::$statuses)[0],
+            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
             'control_site' => $this->faker->boolean(15),
             'boundary_geojson' => '{"type":"Polygon","coordinates":[[[-1.864006519317627,50.7219083651253],[-1.8627190589904783,50.7219083651253],[-1.8627190589904783,50.72276418262861],[-1.864006519317627,50.72276418262861],[-1.864006519317627,50.7219083651253]]]}',
             'land_use_types' => $this->faker->randomElements(
