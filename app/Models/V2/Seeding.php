@@ -42,7 +42,9 @@ class Seeding extends Model implements EntityRelationModel
             ->where('seedable_id', $entity->id)
             ->visible();
 
-        return new SeedingsCollection($query->paginate());
+        $perPage = request()->query('per_page', 15);
+
+        return new SeedingsCollection($query->paginate($perPage));
     }
 
     public function getRouteKeyName()
