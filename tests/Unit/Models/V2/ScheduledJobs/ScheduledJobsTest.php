@@ -75,7 +75,7 @@ class ScheduledJobsTest extends TestCase
         ]);
         $nursery = Nursery::factory()->terrafund()->create([
             'project_id' => $project->id,
-            'status' => EntityStatusStateMachine::STARTED
+            'status' => EntityStatusStateMachine::STARTED,
         ]);
         TaskDueJob::createTaskDue(Carbon::now()->subDay(), 'terrafund', $dueAt);
 
