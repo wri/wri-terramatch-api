@@ -29,6 +29,7 @@ use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
+use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -241,6 +242,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $this->hasMany(Site::class);
     }
 
+    public function nonDraftSites(): HasMany
+    {
+        return $this->hasMany(Site::class)->where('status', '!=', EntityStatusStateMachine::STARTED);
+    }
+
     public function controlSites(): HasMany
     {
         return $this->hasMany(Site::class)->where('control_site', true);
@@ -249,6 +255,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function nurseries(): HasMany
     {
         return $this->hasMany(Nursery::class);
+    }
+
+    public function nonDraftNurseries(): HasMany
+    {
+        return $this->hasMany(Nursery::class)->where('status', '!=', EntityStatusStateMachine::STARTED);
     }
 
     public function reports(): HasMany
