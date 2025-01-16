@@ -43,7 +43,7 @@ return new class extends Migration
     'organisation_documents',
     'organisation_files',
     'organisation_photos',
-    'organisation_user',
+    // 'organisation_user',
     'organisation_versions',
     'pitch_contacts',
     'pitch_document_versions',
