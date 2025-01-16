@@ -69,9 +69,8 @@ class TreeSpecies extends Model implements EntityRelationModel
         if (! empty($filter['collection'])) {
             $query->where('collection', $filter['collection']);
         }
-        $perPage = request()->query('per_page', 15);
 
-        return new TreeSpeciesCollection($query->paginate($perPage));
+        return new TreeSpeciesCollection($query->get());
     }
 
     public function scopeVisible($query): Builder
