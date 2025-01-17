@@ -531,4 +531,9 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     {
         return $query->where('status', ReportStatusStateMachine::APPROVED);
     }
+
+    public function getParentNameAttribute(): string
+    {
+        return $this->project?->name ?? '';
+    }
 }

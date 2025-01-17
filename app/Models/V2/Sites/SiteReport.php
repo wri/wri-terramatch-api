@@ -402,6 +402,11 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         return $this->title ?? '';
     }
 
+    public function getParentNameAttribute(): string
+    {
+        return $this->site?->name ?? '';
+    }
+
     public static function search($query)
     {
         return self::select('v2_site_reports.*')
