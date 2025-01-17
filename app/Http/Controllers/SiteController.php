@@ -9,7 +9,6 @@ use App\Http\Requests\StoreAimsRequest;
 use App\Http\Requests\StoreControlAimsRequest;
 use App\Http\Requests\StoreDocumentFileRequest;
 use App\Http\Requests\StoreNarrativeRequest;
-use App\Http\Requests\StoreSeedsRequest;
 use App\Http\Requests\StoreSiteBoundaryRequest;
 use App\Http\Requests\StoreSiteRequest;
 use App\Http\Requests\UpdateSiteRequest;

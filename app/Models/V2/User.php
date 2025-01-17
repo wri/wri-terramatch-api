@@ -11,7 +11,6 @@ use App\Models\Notification;
 use App\Models\OfferContact;
 use App\Models\Organisation;
 use App\Models\Programme;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\InvitedAcceptedAndVerifiedScopesTrait;
 use App\Models\Traits\NamedEntityTrait;

@@ -8,7 +8,6 @@ use App\Resources\DocumentFileResource;
 use App\Resources\InvasiveResource;
 use App\Resources\LandTenureResource;
 use App\Resources\MediaUploadResource;
-use App\Resources\SeedDetailResource;
 use App\Resources\SiteRestorationMethodResource;
 use App\Resources\Terrafund\TerrafundFileResource;
 use Illuminate\Http\Resources\Json\JsonResource;
