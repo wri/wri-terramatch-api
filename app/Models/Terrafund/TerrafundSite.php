@@ -34,11 +34,6 @@ class TerrafundSite extends Model
         'land_tenures' => 'array',
     ];
 
-    public function terrafundProgramme()
-    {
-        return $this->belongsTo(TerrafundProgramme::class, 'terrafund_programme_id');
-    }
-
     public function terrafundDueSubmissions()
     {
         return $this->morphMany(TerrafundDueSubmission::class, 'terrafund_due_Submissionable');

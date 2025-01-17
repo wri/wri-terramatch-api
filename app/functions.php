@@ -8,7 +8,6 @@ use App\Models\SiteSubmission;
 use App\Models\Submission;
 use App\Models\Terrafund\TerrafundNursery;
 use App\Models\Terrafund\TerrafundNurserySubmission;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundProgrammeSubmission;
 use App\Models\Terrafund\TerrafundSite;
 use App\Models\Terrafund\TerrafundSiteSubmission;
@@ -76,11 +75,6 @@ function get_controller_and_action_from_trace(array $stack): array
 function getTerrafundModelDataFromMorphable(string $type, int $id)
 {
     switch ($type) {
-        case 'programme':
-            return [
-                'model' => TerrafundProgramme::findOrFail($id),
-                'files' => UploadHelper::FILES_PDF,
-            ];
         case 'nursery':
             return [
                 'model' => TerrafundNursery::findOrFail($id),

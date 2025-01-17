@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands\Migration;
 
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Console\Command;
@@ -76,13 +74,6 @@ class SiteTerrafundMigrationCommand extends Command
             'landscape_community_contribution' => data_get($site, 'landscape_community_contribution'),
         ];
 
-        $project = Project::where('old_model', TerrafundProgramme::class)
-            ->where('old_id', $site->terrafund_programme_id)
-            ->first();
-
-        if (! empty($project)) {
-            $data['project_id'] = $project->id;
-        }
 
         return $data;
     }

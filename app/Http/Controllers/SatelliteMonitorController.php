@@ -10,7 +10,6 @@ use App\Jobs\ConvertSatelliteMonitorJob;
 use App\Models\Programme;
 use App\Models\SatelliteMonitor;
 use App\Models\Site;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Resources\SatelliteMonitorResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -55,23 +54,6 @@ class SatelliteMonitorController extends Controller
         return JsonResponseHelper::success($resources, 200);
     }
 
-    public function readAllByTerrafundProgramme(TerrafundProgramme $terrafundProgramme): JsonResponse
-    {
-        $this->authorize('read', SatelliteMonitor::class);
-        $this->authorize('read', $terrafundProgramme);
-
-        $satelliteMonitors = SatelliteMonitor::where('satellite_monitorable_type', TerrafundProgramme::class)
-            ->where('satellite_monitorable_id', $terrafundProgramme->id)
-            ->get();
-
-        $resources = [];
-        foreach ($satelliteMonitors as $satelliteMonitor) {
-            $resources[] = new SatelliteMonitorResource($satelliteMonitor);
-        }
-
-        return JsonResponseHelper::success($resources, 200);
-    }
-
     public function readLatestByProgramme(Programme $programme): JsonResponse
     {
         $this->authorize('read', SatelliteMonitor::class);
@@ -79,19 +61,6 @@ class SatelliteMonitorController extends Controller
 
         $satelliteMonitor = SatelliteMonitor::where('satellite_monitorable_type', \App\Models\Programme::class)
             ->where('satellite_monitorable_id', $programme->id)
-            ->orderByDesc('created_at')
-            ->firstOrFail();
-
-        return JsonResponseHelper::success(new SatelliteMonitorResource($satelliteMonitor), 200);
-    }
-
-    public function readLatestByTerrafundProgramme(TerrafundProgramme $terrafundProgramme): JsonResponse
-    {
-        $this->authorize('read', SatelliteMonitor::class);
-        $this->authorize('read', $terrafundProgramme);
-
-        $satelliteMonitor = SatelliteMonitor::where('satellite_monitorable_type', TerrafundProgramme::class)
-            ->where('satellite_monitorable_id', $terrafundProgramme->id)
             ->orderByDesc('created_at')
             ->firstOrFail();
 

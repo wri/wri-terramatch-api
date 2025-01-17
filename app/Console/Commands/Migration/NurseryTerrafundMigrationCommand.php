@@ -3,9 +3,7 @@
 namespace App\Console\Commands\Migration;
 
 use App\Models\Terrafund\TerrafundNursery;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Projects\Project;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Console\Command;
 
@@ -70,14 +68,6 @@ class NurseryTerrafundMigrationCommand extends Command
             'planting_contribution' => data_get($nursery, 'planting_contribution'),
             'type' => data_get($nursery, 'nursery_type'),
         ];
-
-        $project = Project::where('old_model', TerrafundProgramme::class)
-            ->where('old_id', $nursery->terrafund_programme_id)
-            ->first();
-
-        if (! empty($project)) {
-            $data['project_id'] = $project->id;
-        }
 
         return $data;
     }

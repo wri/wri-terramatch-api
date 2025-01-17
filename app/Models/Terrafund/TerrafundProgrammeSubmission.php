@@ -16,11 +16,6 @@ class TerrafundProgrammeSubmission extends Model implements TerrafundSubmissionI
 
     public $guarded = [];
 
-    public function terrafundProgramme()
-    {
-        return $this->belongsTo(TerrafundProgramme::class);
-    }
-
     public function terrafundDueSubmissionable()
     {
         return  $this->terrafundProgramme()->first();

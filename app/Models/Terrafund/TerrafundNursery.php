@@ -43,9 +43,4 @@ class TerrafundNursery extends Model
     {
         return $this->hasMany(TerrafundNurserySubmission::class);
     }
-
-    public function terrafundProgramme()
-    {
-        return $this->belongsTo(TerrafundProgramme::class, 'terrafund_programme_id');
-    }
 }

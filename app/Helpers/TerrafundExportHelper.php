@@ -2,9 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Models\Terrafund\TerrafundFile;
 use App\Models\Terrafund\TerrafundNurserySubmission;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundProgrammeSubmission;
 use App\Models\Terrafund\TerrafundSiteSubmission;
 use Illuminate\Database\Eloquent\Builder;
@@ -237,49 +235,5 @@ class TerrafundExportHelper
         $csv->insertAll($records);
 
         return $csv;
-    }
-
-    public static function generateProgrammeImagesZip(TerrafundProgramme $terrafundProgramme): Object
-    {
-        $terrafundSiteIds = $terrafundProgramme->terrafundSites->pluck('id');
-        $terrafundNurseryIds = $terrafundProgramme->terrafundNurseries->pluck('id');
-        $terrafundProgrammeSubmissionIds = $terrafundProgramme->terrafundProgrammeSubmissions->pluck('id');
-        $terrafundSiteSubmissionIds = TerrafundSiteSubmission::whereIn('terrafund_site_id', $terrafundSiteIds)->pluck('id');
-        $terrafundNurserySubmissionIds = TerrafundNurserySubmission::whereIn('terrafund_nursery_id', $terrafundNurseryIds)->pluck('id');
-
-        $files = TerrafundFile::query()
-            ->where(function ($query) use ($terrafundProgramme) {
-                $query
-                    ->terrafundProgramme()
-                    ->where('fileable_id', $terrafundProgramme->id);
-            })
-            ->orWhere(function ($query) use ($terrafundProgrammeSubmissionIds) {
-                $query
-                    ->terrafundProgrammeSubmission()
-                    ->whereIn('fileable_id', $terrafundProgrammeSubmissionIds);
-            })
-            ->orWhere(function ($query) use ($terrafundSiteIds) {
-                $query
-                    ->terrafundSite()
-                    ->whereIn('fileable_id', $terrafundSiteIds);
-            })
-            ->orWhere(function ($query) use ($terrafundSiteSubmissionIds) {
-                $query
-                    ->terrafundSiteSubmission()
-                    ->whereIn('fileable_id', $terrafundSiteSubmissionIds);
-            })
-            ->orWhere(function ($query) use ($terrafundNurseryIds) {
-                $query
-                    ->terrafundNursery()
-                    ->whereIn('fileable_id', $terrafundNurseryIds);
-            })
-            ->orWhere(function ($query) use ($terrafundNurserySubmissionIds) {
-                $query
-                    ->terrafundNurserySubmission()
-                    ->whereIn('fileable_id', $terrafundNurserySubmissionIds);
-            })
-            ->get();
-
-        return $files;
     }
 }

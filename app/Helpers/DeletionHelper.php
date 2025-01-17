@@ -10,7 +10,6 @@ use App\Models\Submission;
 use App\Models\Terrafund\TerrafundDueSubmission;
 use App\Models\Terrafund\TerrafundNursery;
 use App\Models\Terrafund\TerrafundNurserySubmission;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundProgrammeSubmission;
 use App\Models\Terrafund\TerrafundSite;
 use App\Models\Terrafund\TerrafundSiteSubmission;
@@ -96,36 +95,6 @@ class DeletionHelper
         $submission->delete();
 
         return $submission;
-    }
-
-    public static function deleteTerrafundProgrammeAndRelations(TerrafundProgramme $terrafundProgramme): TerrafundProgramme
-    {
-        $terrafundProgramme->terrafundTreeSpecies()->delete();
-        $terrafundProgramme->terrafundCsvImports()->delete();
-        $terrafundProgramme->terrafundFiles()->delete();
-        $terrafundProgramme->terrafundProgrammeInvites()->delete();
-        $terrafundProgramme->satelliteMonitors()->delete();
-        $terrafundProgramme->editHistories()->delete();
-        $terrafundProgramme->terrafundDueSubmissions()->each(function (TerrafundDueSubmission $dueSubmission) {
-            DeletionHelper::deleteTerrafundDueSubmissionAndRelations($dueSubmission);
-        });
-        $terrafundProgramme->users()->detach();
-
-        $terrafundProgramme->terrafundSites()->each(function (TerrafundSite $site) {
-            DeletionHelper::deleteTerrafundSiteAndRelations($site);
-        });
-
-        $terrafundProgramme->terrafundNurseries()->each(function (TerrafundNursery $nursery) {
-            DeletionHelper::deleteTerrafundNurseryAndRelations($nursery);
-        });
-
-        $terrafundProgramme->terrafundProgrammeSubmissions()->each(function (TerrafundProgrammeSubmission $submission) {
-            DeletionHelper::deleteTerrafundProgrammeSubmissionAndRelations($submission);
-        });
-
-        $terrafundProgramme->delete();
-
-        return $terrafundProgramme;
     }
 
     public static function deleteTerrafundDueSubmissionAndRelations(TerrafundDueSubmission $terrafundDueSubmission): TerrafundDueSubmission

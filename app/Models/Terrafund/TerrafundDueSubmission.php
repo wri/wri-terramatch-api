@@ -50,11 +50,6 @@ class TerrafundDueSubmission extends Model
         return $this->hasMany(Draft::class);
     }
 
-    public function terrafundProgramme()
-    {
-        return $this->belongsTo(TerrafundProgramme::class);
-    }
-
     public function scopeForTerrafundNursery($query)
     {
         return $query->where('terrafund_due_submissionable_type', TerrafundNursery::class);
@@ -63,11 +58,6 @@ class TerrafundDueSubmission extends Model
     public function scopeForTerrafundSite($query)
     {
         return $query->where('terrafund_due_submissionable_type', TerrafundSite::class);
-    }
-
-    public function scopeForTerrafundProgramme($query)
-    {
-        return $query->where('terrafund_due_submissionable_type', TerrafundProgramme::class);
     }
 
     public function scopeUnsubmitted($query)

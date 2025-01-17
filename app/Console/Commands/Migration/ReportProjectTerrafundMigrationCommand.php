@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands\Migration;
 
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundProgrammeSubmission;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Console\Command;
@@ -122,14 +120,6 @@ class ReportProjectTerrafundMigrationCommand extends Command
             'submitted_at' => data_get($submission, 'created_at'),
 
         ];
-
-        $project = Project::where('old_model', TerrafundProgramme::class)
-            ->where('old_id', $submission->terrafund_programme_id)
-            ->first();
-
-        if (! empty($project)) {
-            $data['project_id'] = $project->id;
-        }
 
         return $data;
     }

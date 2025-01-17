@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasVersions;
 use App\Models\Traits\NamedEntityTrait;
@@ -53,10 +52,5 @@ class Organisation extends Model
     public function interests()
     {
         return $this->hasMany(Interest::class);
-    }
-
-    public function terrafundProgrammes()
-    {
-        return $this->hasMany(TerrafundProgramme::class);
     }
 }
