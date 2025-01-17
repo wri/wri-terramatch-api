@@ -351,11 +351,6 @@ class User extends Authenticatable implements JWTSubject
         return $this->projects()->wherePivot('is_managing', true);
     }
 
-    public function terrafundProgrammes()
-    {
-        return $this->belongsToMany(TerrafundProgramme::class);
-    }
-
     public function frameworks()
     {
         return $this->belongsToMany(Framework::class)->withTimestamps();

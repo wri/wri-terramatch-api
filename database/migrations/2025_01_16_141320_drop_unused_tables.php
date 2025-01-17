@@ -50,7 +50,7 @@ return new class extends Migration {
       'pitches',
       'programme_invites',
       'programme_tree_species',
-      'programme_user',
+      // 'programme_user',
       'programmes',
       'progress_updates',
       'restoration_method_metric_versions',
