@@ -287,4 +287,9 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
     {
         return $this->title ?? '';
     }
+
+    public function getParentNameAttribute(): string
+    {
+        return $this->nursery?->name ?? '';
+    }
 }
