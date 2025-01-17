@@ -104,16 +104,6 @@ class V2SiteResource extends JsonResource
         return $restorationMethodResources;
     }
 
-    private function getSeedDetails()
-    {
-        $seedDetailResources = [];
-        foreach ($this->seedDetails as $seedDetail) {
-            $seedDetailResources[] = new SeedDetailResource($seedDetail);
-        }
-
-        return $seedDetailResources;
-    }
-
     private function getInvasives()
     {
         $invasiveResources = [];

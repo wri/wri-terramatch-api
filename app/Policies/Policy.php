@@ -177,8 +177,6 @@ abstract class Policy
                 return $user->programmes->contains($model->id);
             case \App\Models\Terrafund\TerrafundDueSubmission::class:
                 return $user->terrafundProgrammes->contains($model->terrafund_programme_id);
-            case \App\Models\Terrafund\TerrafundProgramme::class:
-                return $user->terrafundProgrammes->contains($model->id);
             case \App\Models\Terrafund\TerrafundNursery::class:
                 return $user->terrafundProgrammes->contains($model->terrafund_programme_id);
             case \App\Models\Terrafund\TerrafundSite::class:
@@ -198,7 +196,6 @@ abstract class Policy
                 return $user->programmes->contains($model->programme_id);
             case \App\Models\SiteCsvImport::class:
             case \App\Models\SiteTreeSpecies::class:
-            case \App\Models\SeedDetail::class:
             case \App\Models\Invasive::class:
                 return $user->programmes->contains($model->site->programme_id);
             case 'App\\Models\\SubmissionCsvImport':

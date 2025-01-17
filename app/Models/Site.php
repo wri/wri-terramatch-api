@@ -101,11 +101,6 @@ class Site extends Model
         return $this->morphMany(SatelliteMonitor::class, 'satellite_monitorable');
     }
 
-    public function seedDetails()
-    {
-        return $this->hasMany(SeedDetail::class);
-    }
-
     public function invasives()
     {
         return $this->hasMany(Invasive::class, 'site_id', 'id');

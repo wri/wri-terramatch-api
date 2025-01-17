@@ -18,7 +18,6 @@ use App\Jobs\CreateDueSubmissionForSiteJob;
 use App\Models\Invasive;
 use App\Models\LandTenure;
 use App\Models\Programme;
-use App\Models\SeedDetail;
 use App\Models\Site;
 use App\Models\SiteRestorationMethod;
 use App\Resources\SiteResource;
@@ -112,19 +111,6 @@ class SiteController extends Controller
             $ids = SiteRestorationMethod::whereIn('key', $data['site_restoration_methods'])->pluck('id')->toArray();
             if (count($ids) > 0) {
                 $site->siteRestorationMethods()->sync($ids);
-            }
-        }
-
-        if (isset($data['seeds'])) {
-            SeedDetail::where('site_id', $site->id)->delete();
-            $seedDetailController = new SeedDetailController();
-            foreach ($data['seeds'] as $seed) {
-                $seedDetailController->callAction('createAction', [new StoreSeedsRequest([
-                    'site_id' => $site->id,
-                    'name' => data_get($seed, 'name'),
-                    'weight_of_sample' => data_get($seed, 'weight_of_sample'),
-                    'seeds_in_sample' => data_get($seed, 'seeds_in_sample'),
-                ]), $site]);
             }
         }
 
