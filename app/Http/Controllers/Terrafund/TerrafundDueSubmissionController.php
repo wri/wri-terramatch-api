@@ -8,7 +8,6 @@ use App\Http\Requests\Terrafund\UnableToReportRequest;
 use App\Models\Terrafund\TerrafundDueSubmission;
 use App\Models\Terrafund\TerrafundNursery;
 use App\Models\Terrafund\TerrafundSite;
-use App\Resources\Terrafund\TerrafundDueSubmissionByProgrammeResource;
 use App\Resources\Terrafund\TerrafundDueSubmissionResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,32 +36,6 @@ class TerrafundDueSubmissionController extends Controller
 
         foreach ($dueSubmissions as $dueSubmission) {
             $resources[] = new TerrafundDueSubmissionResource($dueSubmission);
-        }
-
-        return JsonResponseHelper::success($resources, 200);
-    }
-
-    public function readAllDueSubmissionsForUserAction(Request $request): JsonResponse
-    {
-        $this->authorize('readAllForUser', TerrafundDueSubmission::class);
-
-        $me = Auth::user();
-        $resources = [];
-
-        foreach ($me->terrafundProgrammes as $terrafundProgramme) {
-            $dueSubmissions = TerrafundDueSubmission::where('terrafund_programme_id', '=', $terrafundProgramme->id)
-                ->unsubmitted()
-                ->orderBy('terrafund_programme_id')
-                ->orderByDesc('due_at')
-                ->whereNotNull('terrafund_due_submissionable_type')
-                ->whereNotNull('terrafund_due_submissionable_id')
-                ->with('terrafund_due_submissionable')
-                ->get();
-            $dueSubmissionResources = [];
-            foreach ($dueSubmissions as $dueSubmission) {
-                $dueSubmissionResources[] = new TerrafundDueSubmissionResource($dueSubmission);
-            }
-            $resources[] = new TerrafundDueSubmissionByProgrammeResource($terrafundProgramme, $dueSubmissionResources);
         }
 
         return JsonResponseHelper::success($resources, 200);

@@ -7,7 +7,6 @@ use App\Http\Controllers\CarbonCertificationVersionsController;
 use App\Http\Controllers\CustomExportController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\DevicesController;
-use App\Http\Controllers\DirectSeedingController;
 use App\Http\Controllers\DocumentFileController;
 use App\Http\Controllers\DraftsController;
 use App\Http\Controllers\DueSubmissionController;
@@ -50,7 +49,6 @@ use App\Http\Controllers\RestorationMethodMetricsController;
 use App\Http\Controllers\RestorationMethodMetricVersionsController;
 use App\Http\Controllers\SatelliteMapsController;
 use App\Http\Controllers\SatelliteMonitorController;
-use App\Http\Controllers\SeedDetailController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\SiteRestorationMethodsController;
 use App\Http\Controllers\SiteSubmissionAdminCsvExportController;
@@ -66,7 +64,6 @@ use App\Http\Controllers\SubmissionMediaUploadController;
 use App\Http\Controllers\TargetsController;
 use App\Http\Controllers\TasksController;
 use App\Http\Controllers\TeamMembersController;
-use App\Http\Controllers\Terrafund\TerrafundAimsController;
 use App\Http\Controllers\Terrafund\TerrafundCsvImportController;
 use App\Http\Controllers\Terrafund\TerrafundDisturbanceController;
 use App\Http\Controllers\Terrafund\TerrafundDueSubmissionController;
@@ -76,12 +73,6 @@ use App\Http\Controllers\Terrafund\TerrafundNurseryController;
 use App\Http\Controllers\Terrafund\TerrafundNurserySingleSubmissionCsvExportController;
 use App\Http\Controllers\Terrafund\TerrafundNurserySubmissionController;
 use App\Http\Controllers\Terrafund\TerrafundNurserySubmissionCsvExportController;
-use App\Http\Controllers\Terrafund\TerrafundProgrammeController;
-use App\Http\Controllers\Terrafund\TerrafundProgrammeImageExportController;
-use App\Http\Controllers\Terrafund\TerrafundProgrammeNurseriesController;
-use App\Http\Controllers\Terrafund\TerrafundProgrammeSitesController;
-use App\Http\Controllers\Terrafund\TerrafundProgrammeSubmissionController;
-use App\Http\Controllers\Terrafund\TerrafundProgrammeSubmissionCsvExportController;
 use App\Http\Controllers\Terrafund\TerrafundSingleNurserySubmissionCsvExportController;
 use App\Http\Controllers\Terrafund\TerrafundSingleSiteSubmissionCsvExportController;
 use App\Http\Controllers\Terrafund\TerrafundSiteController;
@@ -89,7 +80,6 @@ use App\Http\Controllers\Terrafund\TerrafundSiteSingleSubmissionCsvExportControl
 use App\Http\Controllers\Terrafund\TerrafundSiteSubmissionController;
 use App\Http\Controllers\Terrafund\TerrafundSiteSubmissionCsvExportController;
 use App\Http\Controllers\Terrafund\TerrafundTreeSpeciesController;
-use App\Http\Controllers\TerrafundProgrammeShapefileExportController;
 use App\Http\Controllers\TreeSpeciesController;
 use App\Http\Controllers\TreeSpeciesVersionsController;
 use App\Http\Controllers\UploadsController;
@@ -162,8 +152,6 @@ Route::patch('/organisation_versions/{id}/approve', [OrganisationVersionsControl
 Route::patch('/organisation_versions/{id}/reject', [OrganisationVersionsController::class, 'rejectAction']);
 Route::patch('/organisation_versions/{id}/revive', [OrganisationVersionsController::class, 'reviveAction']);
 Route::delete('/organisation_versions/{id}', [OrganisationVersionsController::class, 'deleteAction']);
-
-Route::get('/organisations/{organisation}/terrafund/programmes', [TerrafundProgrammeController::class, 'readAllForOrgAction']);
 
 Route::get('/organisation_types', [DataController::class, 'readAllOrganisationTypesAction']);
 
@@ -475,8 +463,6 @@ Route::prefix('site')->group(function () {
     Route::post('/{site}/narrative', [SiteController::class, 'createNarrativeAction']);
     Route::post('/{site}/land_tenure', [SiteController::class, 'attachLandTenureAction']);
     Route::post('/{site?}/aims', [SiteController::class, 'createAimAction']);
-    Route::post('/{site?}/seeds', [SeedDetailController::class, 'createAction']);
-    Route::post('/{site}/seeds/bulk', [SeedDetailController::class, 'createBulkAction']);
     Route::post('/{site?}/invasives', [InvasiveController::class, 'createAction']);
 
     Route::get('/tree_species/template/csv', [SiteTreeSpeciesCsvController::class, 'downloadCsvTemplateAction']);
@@ -500,8 +486,6 @@ Route::prefix('site')->group(function () {
     Route::put('/submission/disturbance_information/{siteSubmission}', [SiteSubmissionDisturbanceController::class, 'updateDisturbanceInformationAction']);
     Route::delete('/submission/disturbance_information/{siteSubmission}', [SiteSubmissionDisturbanceController::class, 'deleteDisturbanceInformationAction']);
 
-    Route::post('/submission/{siteSubmission}/direct_seeding', [DirectSeedingController::class, 'createAction']);
-    Route::delete('/submission/direct_seeding/{directSeeding}', [DirectSeedingController::class, 'deleteAction']);
 });
 
 Route::prefix('submission')->group(function () {
@@ -534,33 +518,6 @@ Route::prefix('ppc')->group(function () {
 });
 
 Route::prefix('terrafund')->group(function () {
-    Route::get('/programmes', [TerrafundProgrammeController::class, 'readAllAction']);
-    Route::prefix('programmes')->group(function () {
-        Route::get('/personal', [TerrafundProgrammeController::class, 'readAllPersonalAction']);
-    });
-    Route::post('/programme', [TerrafundProgrammeController::class, 'createAction']);
-    Route::prefix('programme')->group(function () {
-        Route::get('/{terrafundProgramme}', [TerrafundProgrammeController::class, 'readAction']);
-        Route::patch('/{terrafundProgramme}', [TerrafundProgrammeController::class, 'updateAction']);
-        Route::get('/{terrafundProgramme}/aims', [TerrafundAimsController::class, 'readAction']);
-        Route::get('/{terrafundProgramme}/partners', [TerrafundProgrammeController::class, 'readAllPartnersAction']);
-        Route::delete('/{terrafundProgramme}/partners/{user}', [TerrafundProgrammeController::class, 'deletePartnerAction']);
-        Route::get('/{terrafundProgramme}/sites', [TerrafundProgrammeSitesController::class, 'readAllProgrammeSites']);
-        Route::get('/{terrafundProgramme}/all-sites', [TerrafundProgrammeSitesController::class, 'readAllNonPaginatedProgrammeSites']);
-        Route::get('/{terrafundProgramme}/site-metrics', [TerrafundProgrammeSitesController::class, 'readAllProgrammeSiteMetrics']);
-        Route::get('/{terrafundProgramme}/has_sites', [TerrafundProgrammeSitesController::class, 'checkHasProgrammeSites']);
-        Route::get('/{terrafundProgramme}/nurseries', [TerrafundProgrammeNurseriesController::class, 'readAllProgrammeNurseries']);
-        Route::get('/{terrafundProgramme}/has_nurseries', [TerrafundProgrammeNurseriesController::class, 'checkHasProgrammeNurseries']);
-        Route::get('/{terrafundProgramme}/submissions', [TerrafundProgrammeSubmissionController::class, 'readAllProgrammeSubmissions']);
-
-        Route::prefix('/submission')->group(function () {
-            Route::post('/', [TerrafundProgrammeSubmissionController::class, 'createAction']);
-            Route::post('/filter', [TerrafundProgrammeSubmissionController::class, 'filterByDateAction']);
-            Route::get('/{terrafundProgrammeSubmission}', [TerrafundProgrammeSubmissionController::class, 'readAction']);
-            Route::patch('/{terrafundProgrammeSubmission}', [TerrafundProgrammeSubmissionController::class, 'updateAction']);
-        });
-    });
-
     Route::post('/file', [TerrafundFileController::class, 'createAction']);
     Route::post('/file/bulk', [TerrafundFileController::class, 'bulkCreateAction']);
 
@@ -624,7 +581,7 @@ Route::prefix('terrafund')->group(function () {
     Route::prefix('/submission')->group(function () {
         Route::post('/{terrafundDueSubmission}/unable', [TerrafundDueSubmissionController::class, 'unableToReportOnDueSubmissionAction']);
     });
-    Route::get('/submissions/due', [TerrafundDueSubmissionController::class, 'readAllDueSubmissionsForUserAction']);
+    // Route::get('/submissions/due', [TerrafundDueSubmissionController::class, 'readAllDueSubmissionsForUserAction']);
 
     Route::prefix('my')->group(function () {
         Route::get('/nurseries', [TerrafundNurseryController::class, 'readMyNurseriesAction']);
@@ -632,12 +589,6 @@ Route::prefix('terrafund')->group(function () {
     });
 
     Route::prefix('export')->group(function () {
-        Route::prefix('programme')->group(function () {
-            Route::get('/submissions', [TerrafundProgrammeSubmissionCsvExportController::class, 'allProgrammesAction']);
-            Route::get('/{terrafundProgramme}/shapefiles', TerrafundProgrammeShapefileExportController::class);
-            Route::get('/{terrafundProgramme}/images', TerrafundProgrammeImageExportController::class);
-            Route::get('/{terrafundProgramme}/submissions', [TerrafundProgrammeSubmissionCsvExportController::class, 'singleProgrammeAction']);
-        });
         Route::prefix('site')->group(function () {
             Route::get('/submissions', TerrafundSiteSubmissionCsvExportController::class);
             Route::get('/{terrafundSite}/submissions', TerrafundSingleSiteSubmissionCsvExportController::class);

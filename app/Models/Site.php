@@ -40,7 +40,7 @@ class Site extends Model
         'aim_natural_regeneration_hectares',
     ];
 
-    protected $with = ['programme', 'seedDetails', 'invasives'];
+    protected $with = ['programme', 'invasives'];
 
     public $casts = [
         'control_site' => 'boolean',

@@ -2,7 +2,6 @@
 
 namespace Tests\V2\BaselineMonitoring;
 
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\V2\User;
 use App\Models\V2\BaselineMonitoring\ProjectMetric;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -33,31 +32,6 @@ final class BaselineMonitoringProjectControllerTest extends TestCase
             ->assertStatus(200)
             ->assertJsonCount(3 , 'data');
 
-    }
-
-    public function testCreateAction(): void
-    {
-        $user = User::factory()->create();
-        $admin = User::factory()->admin()->create();
-        $project = TerrafundProgramme::factory()->create();
-
-        $payload = [
-            'monitorable_type' => 'terrafund_programme',
-            'monitorable_id' => $project->id
-        ];
-
-        $this->actingAs($user)
-            ->postJson('/api/v2/project-metrics', $payload)
-            ->assertStatus(403);
-
-        $this->actingAs($admin)
-            ->postJson('/api/v2/project-metrics', $payload)
-            ->assertStatus(201)
-            ->assertJsonFragment([
-                'tree_count' => null,
-                'tree_cover' => null,
-                'tree_cover_loss' => null
-            ]);
     }
 
     public function testViewAction(): void

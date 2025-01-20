@@ -8,7 +8,6 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('terrafund_due_submissions', function (Blueprint $table) {
-            $table->foreignIdFor(\App\Models\Terrafund\TerrafundProgramme::class);
         });
     }
 };

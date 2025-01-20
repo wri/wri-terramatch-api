@@ -98,16 +98,6 @@ class AddIndexes extends Migration
             $table->index('terrafund_due_submission_id');
             $table->index('terrafund_nursery_id');
         });
-
-        Schema::table('terrafund_programme_submissions', function (Blueprint $table) {
-            $table->index('terrafund_due_submission_id', 'due_submission_index');
-            $table->index('terrafund_programme_id');
-        });
-
-        Schema::table('terrafund_programmes', function (Blueprint $table) {
-            $table->index('organisation_id');
-        });
-
         Schema::table('terrafund_site_submissions', function (Blueprint $table) {
             $table->index('terrafund_due_submission_id');
             $table->index('terrafund_site_id');
@@ -125,8 +115,6 @@ class AddIndexes extends Migration
 
         Schema::table('v2_temporary_sites', function (Blueprint $table) {
             $table->unique('uuid');
-            $table->index('programme_id');
-            $table->index('terrafund_programme_id');
             $table->index('site_id');
             $table->index('terrafund_site_id');
         });

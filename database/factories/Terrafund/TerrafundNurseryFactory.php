@@ -2,7 +2,6 @@
 
 namespace Database\Factories\Terrafund;
 
-use App\Models\Terrafund\TerrafundProgramme;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TerrafundNurseryFactory extends Factory
@@ -19,7 +18,6 @@ class TerrafundNurseryFactory extends Factory
             'seedling_grown' => $this->faker->randomNumber(5, false),
             'planting_contribution' => $this->faker->paragraph(),
             'nursery_type' => 'managing',
-            'terrafund_programme_id' => TerrafundProgramme::factory()->create()->id,
         ];
     }
 }

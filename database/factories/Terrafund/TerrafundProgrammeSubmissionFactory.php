@@ -3,7 +3,6 @@
 namespace Database\Factories\Terrafund;
 
 use App\Models\Terrafund\TerrafundDueSubmission;
-use App\Models\Terrafund\TerrafundProgramme;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TerrafundProgrammeSubmissionFactory extends Factory
@@ -14,7 +13,6 @@ class TerrafundProgrammeSubmissionFactory extends Factory
     public function definition()
     {
         return [
-            'terrafund_programme_id' => TerrafundProgramme::factory()->create()->id,
             'landscape_community_contribution' => $this->faker->paragraph(),
             'top_three_successes' => $this->faker->paragraph(),
             'challenges_and_lessons' => $this->faker->paragraph(),

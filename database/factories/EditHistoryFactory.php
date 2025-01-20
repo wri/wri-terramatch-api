@@ -7,7 +7,6 @@ use App\Models\OrganisationVersion;
 use App\Models\Programme;
 use App\Models\Site;
 use App\Models\Terrafund\TerrafundNursery;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
 use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -82,62 +81,41 @@ class EditHistoryFactory extends Factory
         });
     }
 
-    public function terrafundProgramme(array $override = null)
-    {
-        return $this->state(function (array $attributes) use ($override) {
-            $orgVersion = OrganisationVersion::factory()->create();
-            $orgPart = ['organisation_id' => $orgVersion->organisation_id];
-            $project = TerrafundProgramme::factory()->create($override ? array_merge($override, $orgPart) : $orgPart);
+    // public function terrafundSite()
+    // {
+    //     return $this->state(function (array $attributes) {
+    //         $orgVersion = OrganisationVersion::factory()->create();
+    //         $project = TerrafundProgramme::factory()->create(['organisation_id' => $orgVersion->organisation_id]);
+    //         $site = TerrafundSite::factory()->create(['terrafund_programme_id' => $project->id]);
 
-            $programme = TerrafundProgramme::factory()->make($override ?? []);
+    //         return [
+    //             'framework_id' => $project->framework_id,
+    //             'projectable_type' => get_class($project),
+    //             'projectable_id' => $project->id,
+    //             'project_name' => $project->name,
+    //             'editable_type' => get_class($site),
+    //             'editable_id' => $site->id,
+    //             'content' => json_encode((array) TerrafundSite::factory()->make()),
+    //         ];
+    //     });
+    // }
 
-            return [
-                'framework_id' => $project->framework_id,
-                'projectable_type' => get_class($project),
-                'projectable_id' => $project->id,
-                'project_name' => $project->name,
-                'editable_type' => get_class($project),
-                'editable_id' => $project->id,
-                'content' => json_encode(Arr::except((array) $programme, ['planting_end_date', 'planting_start_date'])),
-            ];
-        });
-    }
+    // public function terrafundNursery()
+    // {
+    //     return $this->state(function (array $attributes) {
+    //         $orgVersion = OrganisationVersion::factory()->create();
+    //         $project = TerrafundProgramme::factory()->create(['organisation_id' => $orgVersion->organisation_id]);
+    //         $nursery = TerrafundNursery::factory()->create(['terrafund_programme_id' => $project->id]);
 
-    public function terrafundSite()
-    {
-        return $this->state(function (array $attributes) {
-            $orgVersion = OrganisationVersion::factory()->create();
-            $project = TerrafundProgramme::factory()->create(['organisation_id' => $orgVersion->organisation_id]);
-            $site = TerrafundSite::factory()->create(['terrafund_programme_id' => $project->id]);
-
-            return [
-                'framework_id' => $project->framework_id,
-                'projectable_type' => get_class($project),
-                'projectable_id' => $project->id,
-                'project_name' => $project->name,
-                'editable_type' => get_class($site),
-                'editable_id' => $site->id,
-                'content' => json_encode((array) TerrafundSite::factory()->make()),
-            ];
-        });
-    }
-
-    public function terrafundNursery()
-    {
-        return $this->state(function (array $attributes) {
-            $orgVersion = OrganisationVersion::factory()->create();
-            $project = TerrafundProgramme::factory()->create(['organisation_id' => $orgVersion->organisation_id]);
-            $nursery = TerrafundNursery::factory()->create(['terrafund_programme_id' => $project->id]);
-
-            return [
-                'framework_id' => $project->framework_id,
-                'projectable_type' => get_class($project),
-                'projectable_id' => $project->id,
-                'project_name' => $project->name,
-                'editable_type' => get_class($nursery),
-                'editable_id' => $nursery->id,
-                'content' => json_encode((array) TerrafundNursery::factory()->make()),
-            ];
-        });
-    }
+    //         return [
+    //             'framework_id' => $project->framework_id,
+    //             'projectable_type' => get_class($project),
+    //             'projectable_id' => $project->id,
+    //             'project_name' => $project->name,
+    //             'editable_type' => get_class($nursery),
+    //             'editable_id' => $nursery->id,
+    //             'content' => json_encode((array) TerrafundNursery::factory()->make()),
+    //         ];
+    //     });
+    // }
 }
