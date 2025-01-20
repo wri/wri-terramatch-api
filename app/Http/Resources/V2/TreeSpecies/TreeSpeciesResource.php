@@ -19,6 +19,8 @@ class TreeSpeciesResource extends JsonResource
             'type' => $this->type,
             'collection' => $this->collection,
             'taxon_id' => $this->taxon_id,
+            'report_amount' => $this->report_amount ?? 0,
+            'is_new_species' => $this->is_new_species ?? false,
         ];
     }
 }
