@@ -4,49 +4,86 @@ namespace App\Http\Resources\V2\TreeSpecies;
 
 use App\Models\V2\EntityModel;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 
 class TreeSpeciesTransformer
 {
-    private Project $project;
-    private Collection $projectTreeSpecies;
+    private EntityModel $entity;
+
+    private Collection $entityTreeSpecies;
+
     private SupportCollection $siteReportTreeSpecies;
 
-    public function __construct(EntityModel $entity, Collection $projectTreeSpecies)
+    private string $collectionType;
+
+    public function __construct(EntityModel $entity, Collection $entityTreeSpecies, string $collectionType)
     {
-        if (!($entity instanceof Project)) {
-            throw new \InvalidArgumentException('Entity must be an instance of Project');
+        $validEntityTypes = [Project::class, Site::class, ProjectReport::class];
+
+        if (! in_array(get_class($entity), $validEntityTypes)) {
+            throw new \InvalidArgumentException(
+                'Entity must be an instance of Project, Site, or ProjectReport'
+            );
         }
 
-        $this->project = $entity;
-        $this->projectTreeSpecies = $projectTreeSpecies;
+        $this->entity = $entity;
+        $this->entityTreeSpecies = $entityTreeSpecies;
+        $this->collectionType = $collectionType;
         $this->siteReportTreeSpecies = $this->getSiteReportTreeSpecies();
     }
 
     public function transform(): Collection
     {
-        $this->projectTreeSpecies->each(function ($species) {
+        if ($this->entity instanceof ProjectReport) {
+            return $this->transformProjectReport();
+        }
+
+        // For Project and Site entities
+        $this->entityTreeSpecies->each(function ($species) {
             $identifier = $species->taxon_id ?? $species->name;
             $reportAmount = $this->getReportAmount($identifier);
-            
+
             $species->report_amount = $reportAmount;
             $species->is_new_species = false;
         });
 
         $newSpecies = $this->getNewSpecies();
-        
+
         return new Collection(
-            $this->projectTreeSpecies->concat($newSpecies)
+            $this->entityTreeSpecies->concat($newSpecies)
+        );
+    }
+
+    private function transformProjectReport(): Collection
+    {
+        return new Collection(
+            $this->siteReportTreeSpecies->map(function ($reportSpecies) {
+                $species = new TreeSpecies([
+                    'name' => $reportSpecies['name'],
+                    'amount' => $reportSpecies['amount'],
+                    'collection' => $reportSpecies['collection'],
+                    'taxon_id' => $reportSpecies['taxon_id'],
+                ]);
+
+                $species->report_amount = $reportSpecies['amount'];
+                $species->is_new_species = false;
+
+                return $species;
+            })
         );
     }
 
     private function getSiteReportTreeSpecies(): SupportCollection
     {
-        $ids = $this->project->submittedSiteReportIds()->pluck('id');
-        return TreeSpecies::whereIn('speciesable_id',$ids)
-            ->where('collection', 'tree-planted')
+        $ids = $this->getSiteReportIds();
+
+        return TreeSpecies::whereIn('speciesable_id', $ids)
+            ->where('collection', $this->collectionType)
             ->where('hidden', false)
             ->get()
             ->groupBy(function ($species) {
@@ -61,6 +98,16 @@ class TreeSpeciesTransformer
                 ];
             })
             ->values();
+    }
+
+    private function getSiteReportIds(): array
+    {
+        return match (true) {
+            $this->entity instanceof Project => $this->entity->submittedSiteReportIds()->pluck('id')->toArray(),
+            $this->entity instanceof Site => $this->entity->submittedReportIds()->pluck('id')->toArray(),
+            $this->entity instanceof ProjectReport => $this->entity->task->siteReports()->whereNotIn('status', SiteReport::UNSUBMITTED_STATUSES)->pluck('id')->toArray(),
+            default => [],
+        };
     }
 
     private function getReportAmount(string $identifier): int
@@ -78,22 +125,22 @@ class TreeSpeciesTransformer
 
         foreach ($this->siteReportTreeSpecies as $reportSpecies) {
             $identifier = $reportSpecies['taxon_id'] ?? $reportSpecies['name'];
-            
-            $existsInProject = $this->projectTreeSpecies->contains(function ($species) use ($identifier) {
+
+            $existsInEntity = $this->entityTreeSpecies->contains(function ($species) use ($identifier) {
                 return ($species->taxon_id ?? $species->name) === $identifier;
             });
 
-            if (!$existsInProject) {
+            if (! $existsInEntity) {
                 $species = new TreeSpecies([
                     'name' => $reportSpecies['name'],
                     'amount' => $reportSpecies['amount'],
                     'collection' => $reportSpecies['collection'],
                     'taxon_id' => $reportSpecies['taxon_id'],
                 ]);
-                
+
                 $species->report_amount = $reportSpecies['amount'];
                 $species->is_new_species = true;
-                
+
                 $newSpecies->push($species);
             }
         }

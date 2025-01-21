@@ -471,4 +471,15 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     {
         return round($this->sitePolygons->where('status', 'approved')->sum('calc_area'));
     }
+
+    public function submittedReports(): HasMany
+    {
+        return $this->reports()
+            ->whereNotIn('status', SiteReport::UNSUBMITTED_STATUSES);
+    }
+
+    public function submittedReportIds(): HasMany
+    {
+        return $this->submittedReports()->select('id');
+    }
 }
