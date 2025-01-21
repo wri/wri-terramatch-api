@@ -47,7 +47,7 @@ return new class extends Migration {
       'pitch_document_versions',
       'pitch_documents',
       'pitch_versions',
-      'pitches',
+      // 'pitches',
       'programme_invites',
       'programme_tree_species',
       // 'programme_user',
