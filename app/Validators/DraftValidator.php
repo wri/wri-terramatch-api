@@ -289,7 +289,6 @@ class DraftValidator extends Validator
         'terrafund_nursery.name' => 'present',
         'terrafund_nursery.start_date' => 'present',
         'terrafund_nursery.end_date' => 'present',
-        'terrafund_nursery.terrafund_programme_id' => 'present',
         'terrafund_nursery.seedling_grown' => 'present',
         'terrafund_nursery.planting_contribution' => 'present',
         'terrafund_nursery.nursery_type' => 'present',
@@ -304,7 +303,6 @@ class DraftValidator extends Validator
         'terrafund_site.start_date' => 'present',
         'terrafund_site.end_date' => 'present',
         'terrafund_site.boundary_geojson' => 'present',
-        'terrafund_site.terrafund_programme_id' => 'present',
         'terrafund_site.restoration_methods' => 'present|array',
         'terrafund_site.land_tenures' => 'present|array',
         'terrafund_site.hectares_to_restore' => 'present',
@@ -383,7 +381,6 @@ class DraftValidator extends Validator
 
     public const UPDATE_DATA_TERRAFUND_PROGRAMME_SUBMISSION = [
         'terrafund_programme_submission' => 'present|array|array_object',
-        'terrafund_programme_submission.terrafund_programme_id' => 'present',
         'terrafund_programme_submission.shared_drive_link' => 'present',
         'terrafund_programme_submission.landscape_community_contribution' => 'present',
         'terrafund_programme_submission.top_three_successes' => 'present',

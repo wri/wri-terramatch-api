@@ -11,7 +11,6 @@ class DraftTerrafundNursery extends Drafting
             'name' => null,
             'start_date' => null,
             'end_date' => null,
-            'terrafund_programme_id' => null,
             'seedling_grown' => null,
             'planting_contribution' => null,
             'nursery_type' => null,

@@ -16,7 +16,6 @@ class TerrafundSitesTableSeeder extends Seeder
         $terrafundSite->name = 'Terrafund Site';
         $terrafundSite->start_date = '2020-01-01';
         $terrafundSite->end_date = '2021-01-01';
-        $terrafundSite->terrafund_programme_id = 1;
         $terrafundSite->saveOrFail();
     }
 }

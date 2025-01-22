@@ -349,7 +349,6 @@ class DraftsTableSeeder extends Seeder
         $data['terrafund_nursery']['name'] = 'draft terrafund nursery';
         $data['terrafund_nursery']['start_date'] = '2021-08-07';
         $data['terrafund_nursery']['end_date'] = '2021-11-06';
-        $data['terrafund_nursery']['terrafund_programme_id'] = 1;
         $data['terrafund_nursery']['seedling_grown'] = 1;
         $data['terrafund_nursery']['planting_contribution'] = 'planting contribution';
         $data['terrafund_nursery']['nursery_type'] = 'building';
@@ -426,7 +425,6 @@ class DraftsTableSeeder extends Seeder
         $data['terrafund_site']['start_date'] = '2021-08-07';
         $data['terrafund_site']['end_date'] = '2021-11-06';
         $data['terrafund_site']['boundary_geojson'] = '{"type":"Polygon","coordinates":[[[-1.864006519317627,50.7219083651253],[-1.8627190589904783,50.7219083651253],[-1.8627190589904783,50.72276418262861],[-1.864006519317627,50.72276418262861],[-1.864006519317627,50.7219083651253]]]}';
-        $data['terrafund_site']['terrafund_programme_id'] = 1;
         $data['terrafund_site']['restoration_methods'] = ['plantations', 'agroforestry'];
         $data['terrafund_site']['land_tenures'] = ['public'];
         $data['terrafund_site']['hectares_to_restore'] = 100;
@@ -490,7 +488,6 @@ class DraftsTableSeeder extends Seeder
         $draft->name = 'Terrafund Programme Submission Draft';
         $draft->type = 'terrafund_programme_submission';
         $data = DraftTerrafundProgrammeSubmission::BLUEPRINT;
-        $data['terrafund_programme_submission']['terrafund_programme_id'] = 1;
         $data['terrafund_programme_submission']['shared_drive_link'] = 'https://www.google.com/';
         $data['terrafund_programme_submission']['landscape_community_contribution'] = 'option_1';
         $data['terrafund_programme_submission']['top_three_successes'] = 'Successes';

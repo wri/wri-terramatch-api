@@ -22,7 +22,6 @@ class TerrafundDueSubmission extends Model
         'due_at',
         'submitted_at',
         'unable_report_reason',
-        'terrafund_programme_id',
     ];
 
     protected $casts = [

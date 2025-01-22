@@ -15,7 +15,6 @@ class TerrafundNursery extends Model
         'name',
         'start_date',
         'end_date',
-        'terrafund_programme_id',
         'seedling_grown',
         'planting_contribution',
         'nursery_type',

@@ -148,7 +148,7 @@ class TerrafundExportHelper
         $submissionQuery->chunkById(100, function ($submissions) use (&$records) {
             $submissions->each(function (TerrafundProgrammeSubmission $submission) use (&$records) {
                 $records[] = [
-                    $submission->terrafund_programme_id,
+                    // $submission->terrafund_programme_id,
                     $submission->terrafundProgramme->name,
                     $submission->terrafundProgramme->project_country,
                     $submission->terrafundProgramme->organisation->approved_version ?

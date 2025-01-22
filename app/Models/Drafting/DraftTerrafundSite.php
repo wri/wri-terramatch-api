@@ -12,7 +12,6 @@ class DraftTerrafundSite extends Drafting
             'start_date' => null,
             'end_date' => null,
             'boundary_geojson' => null,
-            'terrafund_programme_id' => null,
             'restoration_methods' => [],
             'land_tenures' => [],
             'hectares_to_restore' => null,

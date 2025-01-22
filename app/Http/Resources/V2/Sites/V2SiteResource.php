@@ -2,14 +2,6 @@
 
 namespace App\Http\Resources\V2\Sites;
 
-use App\Http\Resources\V2\BaselineMonitoring\SiteMetricResource;
-use App\Resources\DocumentFileLightResource;
-use App\Resources\DocumentFileResource;
-use App\Resources\InvasiveResource;
-use App\Resources\LandTenureResource;
-use App\Resources\MediaUploadResource;
-use App\Resources\SiteRestorationMethodResource;
-use App\Resources\Terrafund\TerrafundFileResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class V2SiteResource extends JsonResource
@@ -26,7 +18,6 @@ class V2SiteResource extends JsonResource
             'site_id' => $this->site_id,
             'terrafund_site_id' => $this->terrafund_site_id,
             'programme_id' => $this->programme_id,
-            'terrafund_programme_id' => $this->terrafund_programme_id,
             'control_site' => $this->control_site,
             'name' => $this->name,
             'status' => $this->status,
@@ -73,94 +64,5 @@ class V2SiteResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
-    }
-
-    private function getLandTenures()
-    {
-        if ($this->terrafund_programme_id) {
-            return $this->land_tenures;
-        }
-
-        $landTenureResources = [];
-        foreach ($this->landTenures as $landTenure) {
-            $landTenureResources[] = new LandTenureResource($landTenure);
-        }
-
-        return $landTenureResources;
-    }
-
-    private function getRestorationMethods()
-    {
-        if ($this->terrafund_programme_id) {
-            return $this->restoration_methods;
-        }
-
-        $restorationMethodResources = [];
-        foreach ($this->siteRestorationMethods as $siteRestorationMethod) {
-            $restorationMethodResources[] = new SiteRestorationMethodResource($siteRestorationMethod);
-        }
-
-        return $restorationMethodResources;
-    }
-
-    private function getInvasives()
-    {
-        $invasiveResources = [];
-        foreach ($this->invasives as $invasive) {
-            $invasiveResources[] = new InvasiveResource($invasive);
-        }
-
-        return $invasiveResources;
-    }
-
-    private function getMedia()
-    {
-        $resources = [];
-        foreach ($this->media as $media) {
-            $resources[] = new MediaUploadResource($media);
-        }
-
-        return $resources;
-    }
-
-    private function getDocumentFiles()
-    {
-        $resources = [];
-        foreach ($this->getDocumentFileExcludingCollection(['tree_species']) as $documentFile) {
-            $resources[] = new DocumentFileResource($documentFile);
-        }
-
-        return $resources;
-    }
-
-    private function getAdditionalTreeSpecies(): ?DocumentFileLightResource
-    {
-        $treeSpeciesFile = $this->getDocumentFileCollection(['tree_species'])->first();
-
-        if (empty($treeSpeciesFile)) {
-            return null;
-        }
-
-        return new DocumentFileLightResource($treeSpeciesFile);
-    }
-
-    private function getPhotos()
-    {
-        $resources = [];
-        foreach ($this->terrafundFiles as $terrafundFile) {
-            $resources[] = new TerrafundFileResource($terrafundFile);
-        }
-
-        return $resources;
-    }
-
-    private function getBaselineMonitoring(): ?SiteMetricResource
-    {
-        $siteMetric = $this->baselineMonitoring->first();
-        if (empty($siteMetric)) {
-            return null;
-        }
-
-        return new SiteMetricResource($siteMetric);
-    }
+      }
 }

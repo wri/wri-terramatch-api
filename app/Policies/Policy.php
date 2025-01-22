@@ -175,18 +175,6 @@ abstract class Policy
                 return $this->isOwner($user, $parent);
             case \App\Models\Programme::class:
                 return $user->programmes->contains($model->id);
-            case \App\Models\Terrafund\TerrafundDueSubmission::class:
-                return $user->terrafundProgrammes->contains($model->terrafund_programme_id);
-            case \App\Models\Terrafund\TerrafundNursery::class:
-                return $user->terrafundProgrammes->contains($model->terrafund_programme_id);
-            case \App\Models\Terrafund\TerrafundSite::class:
-                return $user->terrafundProgrammes->contains($model->terrafund_programme_id);
-            case \App\Models\Terrafund\TerrafundNurserySubmission::class:
-                return $user->terrafundProgrammes->contains($model->terrafundNursery->terrafund_programme_id);
-            case \App\Models\Terrafund\TerrafundProgrammeSubmission::class:
-                return $user->terrafundProgrammes->contains($model->terrafundProgramme->id);
-            case \App\Models\Terrafund\TerrafundSiteSubmission::class:
-                return $user->terrafundProgrammes->contains($model->terrafundSite->terrafund_programme_id);
             case \App\Models\ProgrammeTreeSpecies::class:
             case \App\Models\Site::class:
             case \App\Models\CsvImport::class:

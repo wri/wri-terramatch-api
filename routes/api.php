@@ -66,20 +66,14 @@ use App\Http\Controllers\TasksController;
 use App\Http\Controllers\TeamMembersController;
 use App\Http\Controllers\Terrafund\TerrafundCsvImportController;
 use App\Http\Controllers\Terrafund\TerrafundDisturbanceController;
-use App\Http\Controllers\Terrafund\TerrafundDueSubmissionController;
 use App\Http\Controllers\Terrafund\TerrafundFileController;
 use App\Http\Controllers\Terrafund\TerrafundNoneTreeSpeciesController;
-use App\Http\Controllers\Terrafund\TerrafundNurseryController;
 use App\Http\Controllers\Terrafund\TerrafundNurserySingleSubmissionCsvExportController;
-use App\Http\Controllers\Terrafund\TerrafundNurserySubmissionController;
 use App\Http\Controllers\Terrafund\TerrafundNurserySubmissionCsvExportController;
 use App\Http\Controllers\Terrafund\TerrafundSingleNurserySubmissionCsvExportController;
 use App\Http\Controllers\Terrafund\TerrafundSingleSiteSubmissionCsvExportController;
-use App\Http\Controllers\Terrafund\TerrafundSiteController;
 use App\Http\Controllers\Terrafund\TerrafundSiteSingleSubmissionCsvExportController;
-use App\Http\Controllers\Terrafund\TerrafundSiteSubmissionController;
 use App\Http\Controllers\Terrafund\TerrafundSiteSubmissionCsvExportController;
-use App\Http\Controllers\Terrafund\TerrafundTreeSpeciesController;
 use App\Http\Controllers\TreeSpeciesController;
 use App\Http\Controllers\TreeSpeciesVersionsController;
 use App\Http\Controllers\UploadsController;
@@ -530,11 +524,8 @@ Route::prefix('terrafund')->group(function () {
     Route::patch('/disturbance/{terrafundDisturbance}', [TerrafundDisturbanceController::class, 'updateAction']);
     Route::delete('/disturbance/{terrafundDisturbance}', [TerrafundDisturbanceController::class, 'deleteAction']);
 
-    Route::post('/tree_species', [TerrafundTreeSpeciesController::class, 'createAction']);
-    Route::post('/tree_species_bulk', [TerrafundTreeSpeciesController::class, 'createBulkAction']);
     Route::prefix('tree_species')->group(function () {
         Route::post('/csv', [TerrafundCsvImportController::class, 'createAction']);
-        Route::delete('/{treeSpecies}', [TerrafundTreeSpeciesController::class, 'deleteAction']);
         Route::post('/search', [ProgrammeTreeSpeciesController::class, 'searchTreeSpeciesAction']);
     });
 
@@ -544,49 +535,13 @@ Route::prefix('terrafund')->group(function () {
         Route::delete('/{noneTreeSpecies}', [TerrafundNoneTreeSpeciesController::class, 'deleteAction']);
     });
 
-    Route::post('/nursery', [TerrafundNurseryController::class, 'createAction']);
-    Route::prefix('nursery')->group(function () {
-        Route::get('/tree_species', [TerrafundTreeSpeciesController::class, 'readAllNurseryTreesAction']);
-        Route::get('/{terrafundNursery}', [TerrafundNurseryController::class, 'readAction']);
-        Route::patch('/{terrafundNursery}', [TerrafundNurseryController::class, 'updateAction']);
-        Route::get('/{terrafundNursery}/submissions', [TerrafundNurserySubmissionController::class, 'readAllNurserySubmissions']);
-        Route::prefix('/submission')->group(function () {
-            Route::get('/due', [TerrafundDueSubmissionController::class, 'readAllDueNurserySubmissionsForUserAction']);
-            Route::post('/filter', [TerrafundNurserySubmissionController::class, 'filterByDateAction']);
-            Route::post('/', [TerrafundNurserySubmissionController::class, 'createAction']);
-            Route::patch('/{terrafundNurserySubmission}', [TerrafundNurserySubmissionController::class, 'updateAction']);
-            Route::get('/{terrafundNurserySubmission}', [TerrafundNurserySubmissionController::class, 'readAction']);
-        });
-        Route::get('/submissions/submitted', [TerrafundDueSubmissionController::class, 'readAllPastNurserySubmissionsForUserAction']);
-    });
 
-    Route::post('/site', [TerrafundSiteController::class, 'createAction']);
     Route::prefix('site')->group(function () {
-        Route::get('/tree_species', [TerrafundTreeSpeciesController::class, 'readAllSiteTreesAction']);
         Route::get('/land_tenures', [DataController::class, 'readAllTerrafundLandTenuresAction']);
         Route::get('/restoration_methods', [DataController::class, 'readAllTerrafundRestorationMethodsAction']);
-        Route::get('/{terrafundSite}', [TerrafundSiteController::class, 'readAction']);
-        Route::patch('/{terrafundSite}', [TerrafundSiteController::class, 'updateAction']);
-        Route::get('/{terrafundSite}/submissions', [TerrafundSiteSubmissionController::class, 'readAllSiteSubmissions']);
-        Route::prefix('/submission')->group(function () {
-            Route::post('/', [TerrafundSiteSubmissionController::class, 'createAction']);
-            Route::get('/due', [TerrafundDueSubmissionController::class, 'readAllDueSiteSubmissionsForUserAction']);
-            Route::post('/filter', [TerrafundSiteSubmissionController::class, 'filterByDateAction']);
-            Route::get('/{terrafundSiteSubmission}', [TerrafundSiteSubmissionController::class, 'readAction']);
-            Route::patch('/{terrafundSiteSubmission}', [TerrafundSiteSubmissionController::class, 'updateAction']);
-        });
-        Route::get('/submissions/submitted', [TerrafundDueSubmissionController::class, 'readAllPastSiteSubmissionsForUserAction']);
     });
 
-    Route::prefix('/submission')->group(function () {
-        Route::post('/{terrafundDueSubmission}/unable', [TerrafundDueSubmissionController::class, 'unableToReportOnDueSubmissionAction']);
-    });
     // Route::get('/submissions/due', [TerrafundDueSubmissionController::class, 'readAllDueSubmissionsForUserAction']);
-
-    Route::prefix('my')->group(function () {
-        Route::get('/nurseries', [TerrafundNurseryController::class, 'readMyNurseriesAction']);
-        Route::get('/sites', [TerrafundSiteController::class, 'readMySitesAction']);
-    });
 
     Route::prefix('export')->group(function () {
         Route::prefix('site')->group(function () {

@@ -33,7 +33,6 @@ class TerrafundCreateSiteDueSubmissionJob implements ShouldQueue
                     $submission = new TerrafundDueSubmission();
                     $submission->terrafund_due_submissionable_type = TerrafundSite::class;
                     $submission->terrafund_due_submissionable_id = $site->id;
-                    $submission->terrafund_programme_id = $site->terrafund_programme_id;
                     $submission->due_at = $this->due_date;
                     $submission->is_submitted = false;
                     $submission->saveOrFail();
