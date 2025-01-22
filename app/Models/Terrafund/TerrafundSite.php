@@ -17,7 +17,6 @@ class TerrafundSite extends Model
         'name',
         'start_date',
         'end_date',
-        'terrafund_programme_id',
         'restoration_methods',
         'boundary_geojson',
         'hectares_to_restore',
