@@ -83,6 +83,7 @@ class TreeSpeciesTransformer
         $ids = $this->getSiteReportIds();
 
         return TreeSpecies::whereIn('speciesable_id', $ids)
+            ->where('speciesable_type', SiteReport::class)
             ->where('collection', $this->collectionType)
             ->where('hidden', false)
             ->get()
