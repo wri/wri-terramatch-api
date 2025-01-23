@@ -64,8 +64,9 @@ class GetRelationsForEntityController extends Controller
         if ($filter = $request->query('filter')) {
             if (! empty($filter['collection'])) {
                 $query->where('collection', $filter['collection']);
-                $entityTreeSpecies = $query->get();
-
+                $entityTreeSpecies = $query->get()->groupBy('taxon_id')->map(function ($group) {
+                    return $group->first();
+                })->values();
                 $transformer = new TreeSpeciesTransformer($entity, $entityTreeSpecies, $filter['collection']);
                 $transformedData = $transformer->transform();
 
