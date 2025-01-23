@@ -8,6 +8,7 @@ use App\Http\Resources\V2\TreeSpecies\TreeSpeciesCollection;
 use App\Http\Resources\V2\TreeSpecies\TreeSpeciesTransformer;
 use App\Models\V2\Disturbance;
 use App\Models\V2\EntityModel;
+use App\Models\V2\EntityRelationModel;
 use App\Models\V2\Invasive;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
@@ -46,7 +47,7 @@ class GetRelationsForEntityController extends Controller
         if ($relationType === 'seedings') {
             return $this->handleSeedings($entity);
         }
-
+        /** @var EntityRelationModel $type */
         $type = self::RELATIONS[$relationType];
 
         return $type::createResourceCollection($entity);
