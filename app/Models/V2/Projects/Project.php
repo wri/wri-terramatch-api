@@ -631,7 +631,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
      * @return HasManyThrough The query of site report IDs for all reports associated with sites that have been
      * approved, and have a report status approved.
      */
-    private function approvedSiteReportIds(): HasManyThrough
+    public function approvedSiteReportIds(): HasManyThrough
     {
         return $this->approvedSiteReports()->select('v2_site_reports.id');
     }

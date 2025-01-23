@@ -17,6 +17,7 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Stratas\Strata;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -82,12 +83,12 @@ class GetRelationsForEntityController extends Controller
     private function handleSeedings(EntityModel $entity): JsonResource
     {
         if ($entity instanceof Project) {
-            $siteReportIds = $entity->submittedSiteReportIds()->pluck('id')->toArray();
+            $siteReportIds = $entity->approvedSiteReportIds()->pluck('id')->toArray();
         } elseif ($entity instanceof Site) {
-            $siteReportIds = $entity->submittedReportIds()->pluck('id')->toArray();
+            $siteReportIds = $entity->approvedReportIds()->pluck('id')->toArray();
         } elseif ($entity instanceof ProjectReport) {
             $siteReportIds = $entity->task->siteReports()
-                ->whereNotIn('status', SiteReport::UNSUBMITTED_STATUSES)
+                ->where('status', ReportStatusStateMachine::APPROVED)
                 ->pluck('id')->toArray();
         } elseif ($entity instanceof SiteReport) {
             $siteReportIds = [$entity->id];

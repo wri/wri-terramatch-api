@@ -8,6 +8,7 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
+use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 
@@ -54,27 +55,31 @@ class TreeSpeciesTransformer
 
         $newSpecies = $this->getNewSpecies();
 
+        $combinedSpecies = $this->entityTreeSpecies->concat($newSpecies);
+
         return new Collection(
-            $this->entityTreeSpecies->concat($newSpecies)
+            $combinedSpecies->sortByDesc('report_amount')
         );
     }
 
     private function transformProjectReport(): Collection
     {
+        $transformedSpecies = $this->siteReportTreeSpecies->map(function ($reportSpecies) {
+            $species = new TreeSpecies([
+                'name' => $reportSpecies['name'],
+                'amount' => $reportSpecies['amount'],
+                'collection' => $reportSpecies['collection'],
+                'taxon_id' => $reportSpecies['taxon_id'],
+            ]);
+
+            $species->report_amount = $reportSpecies['amount'];
+            $species->is_new_species = false;
+
+            return $species;
+        });
+
         return new Collection(
-            $this->siteReportTreeSpecies->map(function ($reportSpecies) {
-                $species = new TreeSpecies([
-                    'name' => $reportSpecies['name'],
-                    'amount' => $reportSpecies['amount'],
-                    'collection' => $reportSpecies['collection'],
-                    'taxon_id' => $reportSpecies['taxon_id'],
-                ]);
-
-                $species->report_amount = $reportSpecies['amount'];
-                $species->is_new_species = false;
-
-                return $species;
-            })
+            $transformedSpecies->sortByDesc('report_amount')
         );
     }
 
@@ -104,9 +109,9 @@ class TreeSpeciesTransformer
     private function getSiteReportIds(): array
     {
         return match (true) {
-            $this->entity instanceof Project => $this->entity->submittedSiteReportIds()->pluck('id')->toArray(),
-            $this->entity instanceof Site => $this->entity->submittedReportIds()->pluck('id')->toArray(),
-            $this->entity instanceof ProjectReport => $this->entity->task->siteReports()->whereNotIn('status', SiteReport::UNSUBMITTED_STATUSES)->pluck('id')->toArray(),
+            $this->entity instanceof Project => $this->entity->approvedSiteReportIds()->pluck('id')->toArray(),
+            $this->entity instanceof Site => $this->entity->approvedReportIds()->pluck('id')->toArray(),
+            $this->entity instanceof ProjectReport => $this->entity->task->siteReports()->where('status', ReportStatusStateMachine::APPROVED)->pluck('id')->toArray(),
             default => [],
         };
     }
