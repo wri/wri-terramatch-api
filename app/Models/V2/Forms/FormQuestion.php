@@ -43,7 +43,7 @@ class FormQuestion extends Model
         'options_list',
         'options_other',
         'show_on_parent_condition',
-        'conditional_default',
+        'is_parent_conditional_default',
     ];
 
     protected $with = [
@@ -56,7 +56,7 @@ class FormQuestion extends Model
         'additional_props' => 'json',
         'options_other' => 'boolean',
         'show_on_parent_condition' => 'boolean',
-        'conditional_default' => 'boolean',
+        'is_parent_conditional_default' => 'boolean',
     ];
 
     public function section(): BelongsTo
