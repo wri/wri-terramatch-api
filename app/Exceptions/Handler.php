@@ -352,8 +352,6 @@ class Handler extends ExceptionHandler
                 return JsonResponseHelper::error([[$exception->getMessage()]], 422);
             default:
                 if (config('app.env') == 'local') {
-                    Log::info($exception);
-
                     return new Response($this->renderExceptionContent($exception), 500, ['Content-Type' => 'text/html']);
                 } else {
                     return JsonResponseHelper::error([], 500);
