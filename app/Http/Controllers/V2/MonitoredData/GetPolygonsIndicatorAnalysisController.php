@@ -59,6 +59,7 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                     'calc_area',
                 ])
                 ->where('is_active', 1)
+                ->where('status', 'approved')
                 ->get()
                 ->map(function ($polygon) use ($slugMappings, $slug) {
                     $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
@@ -122,8 +123,14 @@ class GetPolygonsIndicatorAnalysisController extends Controller
         foreach ($values as $key => $value) {
             $array = explode(',', str_replace('-', '_', $key));
             $arrayTrim = array_map('trim', $array);
+            $counter = 0;
             foreach ($arrayTrim as $item) {
-                $separateKeys[$item] = round((float) $value, 1);
+                if ($counter == 0) {
+                    $separateKeys[$item] = round((float) $value, 1);
+                    $counter++;
+                } else {
+                    $separateKeys[$item] = null;
+                }
             }
         }
 

@@ -65,6 +65,7 @@ class RestorationByEcoregionHelper
                 'Cameroonian Highlands forests',
                 'Celtic broadleaf forests',
                 'Atlantic Coast restingas',
+                'Gulf of Oman desert and semi-desert'
             ],
             'neotropical' => [
                 'Sinú Valley dry forests',
