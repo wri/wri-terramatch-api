@@ -15,7 +15,6 @@ class Draft extends Model
     public $fillable = [
         'organisation_id',
         'due_submission_id',
-        'terrafund_due_submission_id',
         'name',
         'type',
         'data',

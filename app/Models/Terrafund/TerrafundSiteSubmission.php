@@ -16,7 +16,6 @@ class TerrafundSiteSubmission extends Model implements TerrafundSubmissionInterf
 
     public $fillable = [
         'terrafund_site_id',
-        'terrafund_due_submission_id',
         'shared_drive_link',
     ];
 

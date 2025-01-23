@@ -19,7 +19,6 @@ class TerrafundNurserySubmission extends Model implements TerrafundSubmissionInt
         'interesting_facts',
         'site_prep',
         'terrafund_nursery_id',
-        'terrafund_due_submission_id',
         'shared_drive_link',
     ];
 

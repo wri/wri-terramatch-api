@@ -32,21 +32,4 @@ final class TerrafundFileControllerTest extends TestCase
             ->assertStatus(403);
     }
 
-    public function testCreateActionRequiresAccessToProgrammeSubmission(): void
-    {
-        $user = User::factory()->create();
-        $programmeSubmission = TerrafundProgrammeSubmission::factory()->create();
-        $file = Upload::factory()->create([
-            'user_id' => $user->id,
-        ]);
-
-        $this->actingAs($user)
-            ->postJson('/api/terrafund/file', [
-                'fileable_type' => 'programme_submission',
-                'fileable_id' => $programmeSubmission->id,
-                'upload' => $file->id,
-                'is_public' => false,
-            ])
-            ->assertStatus(403);
-    }
 }

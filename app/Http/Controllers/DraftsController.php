@@ -66,12 +66,6 @@ class DraftsController extends Controller
             $draft->due_submission_id = $data['due_submission_id'];
             $draft->saveOrFail();
         }
-        if (isset($data['terrafund_due_submission_id'])) {
-            $dueSubmission = TerrafundDueSubmission::find($data['terrafund_due_submission_id']);
-            $this->authorize('assignToDraft', $dueSubmission);
-            $draft->terrafund_due_submission_id = $data['terrafund_due_submission_id'];
-            $draft->saveOrFail();
-        }
         $resource = new DraftResource($draft);
 
         return JsonResponseHelper::success($resource, 201);

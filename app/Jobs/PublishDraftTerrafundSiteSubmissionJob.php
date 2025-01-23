@@ -78,8 +78,6 @@ class PublishDraftTerrafundSiteSubmissionJob
                         'name' => $treeSpeciesData['name'],
                         'amount' => $treeSpeciesData['amount'],
                     ];
-                    $controller = new TerrafundTreeSpeciesController();
-                    $controller->callAction('createAction', [new StoreTerrafundTreeSpeciesRequest($payload)]);
                 }
             } else {
                 $file = Arr::first($uploads, function ($upload) use ($dataArray) {

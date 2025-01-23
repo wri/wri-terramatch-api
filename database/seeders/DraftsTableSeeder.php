@@ -456,7 +456,6 @@ class DraftsTableSeeder extends Seeder
 
         $draft = new DraftModel();
         $draft->id = 16;
-        $draft->terrafund_due_submission_id = 1;
         $draft->organisation_id = 1;
         $draft->name = 'Terrafund Site Submission Draft';
         $draft->type = 'terrafund_site_submission';
@@ -484,7 +483,6 @@ class DraftsTableSeeder extends Seeder
         $draft = new DraftModel();
         $draft->id = 17;
         $draft->organisation_id = 1;
-        $draft->terrafund_due_submission_id = 6;
         $draft->name = 'Terrafund Programme Submission Draft';
         $draft->type = 'terrafund_programme_submission';
         $data = DraftTerrafundProgrammeSubmission::BLUEPRINT;

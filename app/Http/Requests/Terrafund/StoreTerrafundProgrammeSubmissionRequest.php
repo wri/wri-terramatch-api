@@ -56,7 +56,6 @@ class StoreTerrafundProgrammeSubmissionRequest extends FormRequest
             'income_increase_description' => 'nullable|string|max:65000',
             'beneficiaries_skills_knowledge_increase' => 'nullable|string|max:65000',
             'skills_knowledge_description' => 'nullable|string|max:65000',
-            'terrafund_due_submission_id' => '',
         ];
     }
 }

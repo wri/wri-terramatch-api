@@ -8,7 +8,6 @@ class DraftValidator extends Validator
         'name' => 'present|string|between:1,255',
         'type' => 'present|string|in:pitch,offer,programme,site,site_submission,programme_submission,terrafund_programme,terrafund_nursery,terrafund_site,organisation,terrafund_nursery_submission,terrafund_site_submission,terrafund_programme_submission',
         'due_submission_id' => 'integer|exists:due_submissions,id',
-        'terrafund_due_submission_id' => 'integer|exists:terrafund_due_submissions,id',
         'is_from_mobile' => 'boolean',
     ];
 

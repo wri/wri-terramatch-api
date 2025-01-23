@@ -91,11 +91,9 @@ class AddIndexes extends Migration
         });
 
         Schema::table('terrafund_nursery_submissions', function (Blueprint $table) {
-            $table->index('terrafund_due_submission_id');
             $table->index('terrafund_nursery_id');
         });
         Schema::table('terrafund_site_submissions', function (Blueprint $table) {
-            $table->index('terrafund_due_submission_id');
             $table->index('terrafund_site_id');
         });
 
