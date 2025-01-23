@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V2\Entities;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V2\Seedings\SeedingsCollection;
 use App\Http\Resources\V2\TreeSpecies\TreeSpeciesCollection;
 use App\Http\Resources\V2\TreeSpecies\TreeSpeciesTransformer;
 use App\Models\V2\Disturbance;
@@ -13,6 +14,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Stratas\Strata;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Illuminate\Http\Request;
@@ -42,6 +44,9 @@ class GetRelationsForEntityController extends Controller
             return $this->handleTreeSpecies($request, $entity);
         }
 
+        if ($relationType === 'seedings') {
+            return $this->handleSeedings($entity);
+        }
         /** @var EntityRelationModel $type */
         $type = self::RELATIONS[$relationType];
 
@@ -72,5 +77,45 @@ class GetRelationsForEntityController extends Controller
         }
 
         return new TreeSpeciesCollection($query->get());
+    }
+
+    private function handleSeedings(EntityModel $entity): JsonResource
+    {
+        if ($entity instanceof Project) {
+            $siteReportIds = $entity->submittedSiteReportIds()->pluck('id')->toArray();
+        } elseif ($entity instanceof Site) {
+            $siteReportIds = $entity->submittedReportIds()->pluck('id')->toArray();
+        } elseif ($entity instanceof ProjectReport) {
+            $siteReportIds = $entity->task->siteReports()
+                ->whereNotIn('status', SiteReport::UNSUBMITTED_STATUSES)
+                ->pluck('id')->toArray();
+        } elseif ($entity instanceof SiteReport) {
+            $siteReportIds = [$entity->id];
+        } else {
+            return response()->json(['error' => 'Unsupported entity type for seedings.'], 400);
+        }
+
+        $query = Seeding::query()
+            ->where('seedable_type', SiteReport::class)
+            ->whereIn('seedable_id', $siteReportIds)
+            ->visible();
+
+        $groupedSeedings = $query->get()
+        ->groupBy('name')
+        ->map(function ($group) {
+            $first = $group->first();
+
+            return new Seeding([
+                'uuid' => $first->uuid,
+                'name' => $first->name,
+                'weight_of_sample' => $group->sum('weight_of_sample'),
+                'seeds_in_sample' => null,
+                'amount' => $group->sum('amount'),
+            ]);
+        })
+        ->sortByDesc('amount')
+        ->values();
+
+        return new SeedingsCollection($groupedSeedings);
     }
 }
