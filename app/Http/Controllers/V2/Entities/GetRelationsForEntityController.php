@@ -56,10 +56,18 @@ class GetRelationsForEntityController extends Controller
 
     private function handleTreeSpecies(Request $request, EntityModel $entity): JsonResource
     {
-        $query = TreeSpecies::query()
-            ->where('speciesable_type', get_class($entity))
-            ->where('speciesable_id', $entity->id)
-            ->visible();
+        $query = TreeSpecies::query()->visible();
+
+        if ($entity instanceof Site || $entity instanceof ProjectReport) {
+            $speciesableType = Project::class;
+            $speciesableId = $entity->project_id;
+        } else {
+            $speciesableType = get_class($entity);
+            $speciesableId = $entity->id;
+        }
+
+        $query->where('speciesable_type', $speciesableType)
+              ->where('speciesable_id', $speciesableId);
 
         if ($filter = $request->query('filter')) {
             if (! empty($filter['collection'])) {

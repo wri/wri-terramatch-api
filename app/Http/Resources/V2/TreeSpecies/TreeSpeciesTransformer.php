@@ -64,7 +64,8 @@ class TreeSpeciesTransformer
 
     private function transformProjectReport(): Collection
     {
-        $transformedSpecies = $this->siteReportTreeSpecies->map(function ($reportSpecies) {
+        $reportTreeSpecies = $this->collectionType === TreeSpecies::COLLECTION_NURSERY ? $this->getProjectReportTreeSpecies() : $this->siteReportTreeSpecies;
+        $transformedSpecies = $reportTreeSpecies->map(function ($reportSpecies) {
             $species = new TreeSpecies([
                 'name' => $reportSpecies['name'],
                 'amount' => $reportSpecies['amount'],
@@ -90,6 +91,29 @@ class TreeSpeciesTransformer
         return TreeSpecies::whereIn('speciesable_id', $ids)
             ->where('speciesable_type', SiteReport::class)
             ->where('collection', $this->collectionType)
+            ->where('hidden', false)
+            ->get()
+            ->groupBy(function ($species) {
+                return $species->taxon_id ?? $species->name;
+            })
+            ->map(function ($group) {
+                return [
+                    'taxon_id' => $group->first()->taxon_id,
+                    'name' => $group->first()->name,
+                    'amount' => $group->sum('amount'),
+                    'collection' => $group->first()->collection,
+                ];
+            })
+            ->values();
+    }
+
+    private function getProjectReportTreeSpecies(): SupportCollection
+    {
+        $id = $this->entity->id;
+
+        return TreeSpecies::where('speciesable_id', $id)
+            ->where('speciesable_type', ProjectReport::class)
+            ->where('collection', TreeSpecies::COLLECTION_NURSERY)
             ->where('hidden', false)
             ->get()
             ->groupBy(function ($species) {
