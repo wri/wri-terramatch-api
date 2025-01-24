@@ -99259,30 +99259,6 @@ paths:
                     type: boolean
                   version_name:
                     type: string
-  /v2/users/locale:
-    patch:
-      summary: Updates user locale
-      operationId: post-v2-users-locale
-      tags:
-        - V2 Locale
-      parameters:
-        - in: body
-          name: locale
-          required: true
-          description: 'locale used could be one of en-US,es-MX,fr-FR,pt-BR'
-          schema:
-            type: object
-            properties:
-              locale:
-                type: string
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
   '/v2/terrafund/clip-polygons/polygon/{uuid}':
     post:
       summary: Clip Overlapping Polygons by Polygon
