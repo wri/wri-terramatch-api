@@ -1068,50 +1068,13 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
         }
     }
-
     public function getAllPolygonsAsGeoJSONDownload(Request $request)
     {
         try {
             $siteUuid = $request->query('uuid');
-            $polygonsUuids = SitePolygon::where('site_id', $siteUuid)
-                ->active()
-                ->pluck('poly_id');
-            $features = [];
-            foreach ($polygonsUuids as $polygonUuid) {
-                $feature = [];
-                $polygonGeometry = PolygonGeometry::where('uuid', $polygonUuid)
-                  ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
-                  ->first();
-                if (! $polygonGeometry) {
-                    return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
-                }
+            $geoJson = GeometryHelper::generateGeoJSON(null, $siteUuid);
 
-                $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
-                if (! $sitePolygon) {
-                    return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
-                }
-
-                $properties = [];
-                $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid'];
-                foreach ($fieldsToValidate as $field) {
-                    $properties[$field] = $sitePolygon->$field;
-                }
-
-                $propertiesJson = json_encode($properties);
-
-                $feature = [
-                  'type' => 'Feature',
-                  'geometry' => json_decode($polygonGeometry->geojsonGeom),
-                  'properties' => json_decode($propertiesJson),
-                ];
-                $features[] = $feature;
-            }
-            $featureCollection = [
-              'type' => 'FeatureCollection',
-              'features' => $features,
-            ];
-
-            return response()->json($featureCollection);
+            return response()->json($geoJson);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
         }

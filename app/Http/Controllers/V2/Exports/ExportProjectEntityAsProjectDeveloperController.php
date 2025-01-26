@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V2\Exports;
 
 use App\Exports\V2\EntityExport;
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Nurseries\Nursery;
@@ -70,17 +71,13 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
 
     private function exportShapefiles(Project $project)
     {
-        $filename = storage_path('./'.Str::of($project->name)->replace(['/', '\\'], '-') . ' Sites Shapefiles - ' . now() . '.zip');
-        $zip = new \ZipArchive();
-        $zip->open($filename, \ZipArchive::CREATE);
+      $geoJson = GeometryHelper::generateGeoJSON($project);
+      $filename = Str::of($project->name)->replace(['/', '\\'], '-') . ' Sites GeoJSON - ' . now() . '.geojson';
+      $path = storage_path('./' . $filename);
 
-        rescue(function () use ($project, $zip) {
-            $this->addSiteShapefiles($project, $zip);
-        });
+      file_put_contents($path, json_encode($geoJson, JSON_PRETTY_PRINT));
 
-        $zip->close();
-
-        return response()->download($filename)->deleteFileAfterSend();
+      return response()->download($path)->deleteFileAfterSend();
     }
 
     private function addSiteShapefiles(Project $project, \ZipArchive $mainZip): void
