@@ -71,13 +71,13 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
 
     private function exportShapefiles(Project $project)
     {
-      $geoJson = GeometryHelper::generateGeoJSON($project);
-      $filename = Str::of($project->name)->replace(['/', '\\'], '-') . ' Sites GeoJSON - ' . now() . '.geojson';
-      $path = storage_path('./' . $filename);
+        $geoJson = GeometryHelper::generateGeoJSON($project);
+        $filename = Str::of($project->name)->replace(['/', '\\'], '-') . ' Sites GeoJSON - ' . now() . '.geojson';
+        $path = storage_path('./' . $filename);
 
-      file_put_contents($path, json_encode($geoJson, JSON_PRETTY_PRINT));
+        file_put_contents($path, json_encode($geoJson, JSON_PRETTY_PRINT));
 
-      return response()->download($path)->deleteFileAfterSend();
+        return response()->download($path)->deleteFileAfterSend();
     }
 
     private function addSiteShapefiles(Project $project, \ZipArchive $mainZip): void

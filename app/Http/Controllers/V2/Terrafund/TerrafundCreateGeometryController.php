@@ -1068,6 +1068,7 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['message' => 'Failed to generate GeoJSON.', 'error' => $e->getMessage()], 500);
         }
     }
+
     public function getAllPolygonsAsGeoJSONDownload(Request $request)
     {
         try {

@@ -406,6 +406,7 @@ class GeometryHelper
             'geometry' => $geometry,
         ];
     }
+
     public static function generateGeoJSON($project = null, $siteUuid = null)
     {
         $query = SitePolygon::query();
@@ -428,7 +429,7 @@ class GeometryHelper
                 ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
                 ->first();
 
-            if (!$polygonGeometry) {
+            if (! $polygonGeometry) {
                 throw new \Exception('No polygon geometry found for the given UUID.');
             }
 
