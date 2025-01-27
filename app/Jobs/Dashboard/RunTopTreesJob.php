@@ -70,7 +70,7 @@ class RunTopTreesJob implements ShouldQueue
                 ]
             );
             $response = $runTopTreesService->runTopTreesJob($request);
-            Redis::set('dashboard:top-trees-planted|' . $this->cacheParameter, json_encode($response), 'EX', config('cache.ttl.dashboard'));
+            Redis::set('dashboard:top-trees-planted|' . $this->cacheParameter, json_encode($response), 'EX', config('cache.ttl.dashboard') ?? 86400);
 
 
             $delayedJob->update([

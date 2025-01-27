@@ -1,11 +1,11 @@
-summary: Get Bbox of all polygons of project
+summary: Get Bbox of landscape geometries
 tags:
-  - Projects
+  - Landscapes
 parameters:
-  - name: landscape
+  - name: landscapes
     type: string
     in: query
-    description: 'The landscape identifier (e.g., "Ghana Cocoa Belt")'
+    description: 'Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)'
     required: true
 responses:
   '200':

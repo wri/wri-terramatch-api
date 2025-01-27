@@ -59,25 +59,33 @@ class GetPolygonsController extends Controller
             return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
         }
     }
+
     public function getLandscapeBbox(Request $request)
     {
-        $landscape = $request->input('landscape');
-    
-        $envelopes = LandscapeGeom::where('landscape', $landscape)
-            ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) as envelope')
+        $landscapes = $request->input('landscapes');
+        if($landscapes === null) {
+            return response()->json(['error' => 'Landscapes parameter is required'], 400);
+        }
+        if (is_string($landscapes)) {
+            $landscapes = explode(',', $landscapes);
+        }
+
+        $envelopes = LandscapeGeom::whereIn('landscape', $landscapes)
+            ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) as envelope, landscape')
             ->get();
-    
+
+
         if ($envelopes->isEmpty()) {
             return null;
         }
-    
+
         $maxX = $maxY = PHP_INT_MIN;
         $minX = $minY = PHP_INT_MAX;
-    
+
         foreach ($envelopes as $envelope) {
             $geojson = json_decode($envelope->envelope);
             $coordinates = $geojson->coordinates[0];
-    
+
             foreach ($coordinates as $point) {
                 $x = $point[0];
                 $y = $point[1];
@@ -87,10 +95,10 @@ class GetPolygonsController extends Controller
                 $minY = min($minY, $y);
             }
         }
-    
+
         return [
             'bbox' => [$minX, $minY, $maxX, $maxY],
-            'landscape' => $landscape
+            'landscapes' => $landscapes,
         ];
     }
 };
