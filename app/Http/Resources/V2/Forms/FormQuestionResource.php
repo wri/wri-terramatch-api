@@ -41,6 +41,7 @@ class FormQuestionResource extends JsonResource
             'show_on_parent_condition' => $this->show_on_parent_condition,
             'linked_field_key' => $this->linked_field_key,
             'reference' => $this->buildReference($this->params),
+            'is_parent_conditional_default' => $this->is_parent_conditional_default,
         ]);
 
         if (count($this->children) > 0) {

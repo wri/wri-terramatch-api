@@ -47,8 +47,9 @@ class GetPolygonsIndicatorAnalysisVerifyController extends Controller
                     $query->where('project_id', $entity->project->id);
                 }
             })
-                ->select(['id', 'poly_id', 'is_active'])
+                ->select(['id', 'poly_id', 'is_active', 'status'])
                 ->where('is_active', 1)
+                ->where('status', 'approved')
                 ->get()
                 ->map(function ($polygon) use ($slugMappings, $slug) {
                     $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()

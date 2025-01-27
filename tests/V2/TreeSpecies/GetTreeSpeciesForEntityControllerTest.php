@@ -35,8 +35,12 @@ class GetTreeSpeciesForEntityControllerTest extends TestCase
 
         foreach ($testCases as $entity => $model) {
             $treeSpecies = TreeSpecies::factory()->create([
-                'speciesable_type' => get_class($model),
-                'speciesable_id' => $model->id,
+                'speciesable_type' => $model instanceof Site || $model instanceof ProjectReport
+                    ? Project::class
+                    : get_class($model),
+                'speciesable_id' => $model instanceof Site || $model instanceof ProjectReport
+                    ? $model->project_id
+                    : $model->id,
             ]);
 
             $this->actingAs($user)
