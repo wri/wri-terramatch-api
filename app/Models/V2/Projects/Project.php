@@ -29,6 +29,7 @@ use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\Models\V2\Workdays\Workday;
+use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -145,6 +146,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'goal_trees_restored_direct_seeding',
         'landscape',
         'direct_seeding_survival_rate',
+        'cohort',
     ];
 
     public $fileConfiguration = [
@@ -240,6 +242,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $this->hasMany(Site::class);
     }
 
+    public function nonDraftSites(): HasMany
+    {
+        return $this->hasMany(Site::class)->where('status', '!=', EntityStatusStateMachine::STARTED);
+    }
+
     public function controlSites(): HasMany
     {
         return $this->hasMany(Site::class)->where('control_site', true);
@@ -248,6 +255,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function nurseries(): HasMany
     {
         return $this->hasMany(Nursery::class);
+    }
+
+    public function nonDraftNurseries(): HasMany
+    {
+        return $this->hasMany(Nursery::class)->where('status', '!=', EntityStatusStateMachine::STARTED);
     }
 
     public function reports(): HasMany
@@ -600,7 +612,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
      * @return HasManyThrough The query of site report IDs for all reports associated with sites that have been
      * approved, and have a report status not in due or started (reports that have been submitted).
      */
-    private function submittedSiteReportIds(): HasManyThrough
+    public function submittedSiteReportIds(): HasManyThrough
     {
         return $this->submittedSiteReports()->select('v2_site_reports.id');
     }
@@ -619,7 +631,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
      * @return HasManyThrough The query of site report IDs for all reports associated with sites that have been
      * approved, and have a report status approved.
      */
-    private function approvedSiteReportIds(): HasManyThrough
+    public function approvedSiteReportIds(): HasManyThrough
     {
         return $this->approvedSiteReports()->select('v2_site_reports.id');
     }

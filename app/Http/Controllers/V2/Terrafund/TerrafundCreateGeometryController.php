@@ -755,7 +755,7 @@ class TerrafundCreateGeometryController extends Controller
                               'nonSurpassSizeLimit' => PolygonSize::geoJsonValid($feature['geometry']),
                               'insideCountry' => WithinCountry::getIntersectionDataWithSiteId($geojsonInside, $feature['properties']['site_id'])['valid'] ?? false,
                               'noSpikes' => Spikes::geoJsonValid($feature['geometry']),
-                              'validPolygonType' => GeometryType::geoJsonValid($feature['geometry']),
+                              'validPolygonType' => GeometryType::getGeometryType($feature['geometry']),
                               'nonSurpassEstimatedArea' => $isValidArea,
                               'completeData' => SitePolygonValidator::isValid('SCHEMA', $validationGeojson) && SitePolygonValidator::isValid('DATA', $validationGeojson),
                             ];

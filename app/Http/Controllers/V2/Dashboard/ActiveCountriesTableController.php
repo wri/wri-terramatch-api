@@ -26,6 +26,7 @@ class ActiveCountriesTableController extends Controller
                 $landscapes = data_get($request, 'filter.landscapes', []);
                 $organisations = data_get($request, 'filter.organisationType', []);
                 $country = data_get($request, 'filter.country', '');
+                $cohort = data_get($request, 'filter.cohort', '');
                 $uuid = data_get($request, 'filter.projectUuid', '');
 
                 $delayedJob = DelayedJob::create();
@@ -35,6 +36,7 @@ class ActiveCountriesTableController extends Controller
                     $landscapes,
                     $organisations,
                     $country,
+                    $cohort,
                     $uuid,
                     $cacheParameter
                 );

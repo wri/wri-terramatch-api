@@ -70,7 +70,7 @@ class TreeSpecies extends Model implements EntityRelationModel
             $query->where('collection', $filter['collection']);
         }
 
-        return new TreeSpeciesCollection($query->paginate());
+        return new TreeSpeciesCollection($query->get());
     }
 
     public function scopeVisible($query): Builder

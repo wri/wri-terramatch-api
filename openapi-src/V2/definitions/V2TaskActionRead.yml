@@ -2,22 +2,29 @@ title: V2TaskActionRead
 type: object
 properties:
   uuid:
-    type: integer
-  type:
-    type: string
-  status:
     type: string
   due_at:
     type: string
     format: date-time
-  title:
-    type: string
-  report_title:
-    type: string
-  update_request_status:
-    type: string
   submitted_at:
     type: string
     format: date-time
+  report_title:
+    type: string
+  updated_at:
+    type: string
+    format: date-time
+  status:
+    type: string
+  update_request_status:
+    type: string
+  nothing_to_report:
+    type: boolean
+  title:
+    type: string
+  type:
+    type: string
   parent_name:
     type: string
+  completion:
+    type: integer

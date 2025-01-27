@@ -6,11 +6,11 @@ use App\Models\V2\Action;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Tasks\Task;
+use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\TaskStatusStateMachine;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-
 use Parental\HasParent;
 
 /**
@@ -57,6 +57,7 @@ class TaskDueJob extends ScheduledJob
     protected function performJob(): void
     {
         Project::where('framework_key', $this->framework_key)
+            ->where('status', '!=', EntityStatusStateMachine::STARTED)
             ->chunkById(100, function ($projects) {
                 foreach ($projects as $project) {
                     $this->createTask($project);
@@ -66,6 +67,12 @@ class TaskDueJob extends ScheduledJob
 
     protected function createTask(Project $project): void
     {
+        $existTask = Task::where('project_id', $project->id)
+            ->where('due_at', $this->due_at)
+            ->exists();
+        if ($existTask) {
+            return;
+        }
         $task = Task::create([
             'organisation_id' => $project->organisation_id,
             'project_id' => $project->id,
@@ -82,7 +89,7 @@ class TaskDueJob extends ScheduledJob
         ]);
 
         $hasSite = false;
-        foreach ($project->sites as $site) {
+        foreach ($project->nonDraftSites as $site) {
             $hasSite = true;
             $task->siteReports()->create([
                 'framework_key' => $this->framework_key,
@@ -93,7 +100,7 @@ class TaskDueJob extends ScheduledJob
         }
 
         $hasNursery = false;
-        foreach ($project->nurseries as $nursery) {
+        foreach ($project->nonDraftNurseries as $nursery) {
             $hasNursery = true;
             $task->nurseryReports()->create([
                 'framework_key' => $this->framework_key,

@@ -21,6 +21,7 @@ class ProjectResource extends JsonResource
             'update_request_status' => $this->update_request_status,
             'readable_update_request_status' => $this->readable_update_request_status,
             'framework_key' => $this->framework_key,
+            'cohort' => $this->cohort,
             'framework_uuid' => $this->framework_uuid,
             'organisation_id' => $this->organisation_id,
             'boundary_geojson' => $this->boundary_geojson,
