@@ -1,0 +1,16 @@
+summary: Get Bbox of all polygons of project
+tags:
+  - Projects
+parameters:
+  - name: landscape
+    type: string
+    in: query
+    description: 'The landscape identifier (e.g., "Ghana Cocoa Belt")'
+    required: true
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: ../../definitions/_index.yml#/DashboardBBOXLandscape
+  '404':
+    description: Project not found
