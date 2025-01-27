@@ -1,0 +1,16 @@
+summary: Get Bbox of landscape geometries
+tags:
+  - Landscapes
+parameters:
+  - name: landscapes
+    type: string
+    in: query
+    description: 'Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)'
+    required: true
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: ../../definitions/_index.yml#/DashboardBBOXLandscape
+  '404':
+    description: Project not found

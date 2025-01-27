@@ -77,7 +77,7 @@ class RunJobsCreatedJob implements ShouldQueue
             ]);
 
             $response = $jobsCreatedService->calculateJobsCreated($request);
-            Redis::set('dashboard:jobs-created|' . $this->cacheParameter, json_encode($response), 'EX', config('cache.ttl.dashboard'));
+            Redis::set('dashboard:jobs-created|' . $this->cacheParameter, json_encode($response), 'EX', config('cache.ttl.dashboard') ?? 86400);
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,

@@ -43330,6 +43330,13 @@ definitions:
         type: array
         items:
           type: number
+  DashboardBBOXLandscape:
+    type: object
+    properties:
+      bbox:
+        type: array
+        items:
+          type: number
   DashboardBBOXCountry:
     type: object
     properties:
@@ -97529,6 +97536,29 @@ paths:
           type: string
           in: query
           description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              bbox:
+                type: array
+                items:
+                  type: number
+        '404':
+          description: Project not found
+  /v2/dashboard/bbox/landscape:
+    get:
+      summary: Get Bbox of landscape geometries
+      tags:
+        - Landscapes
+      parameters:
+        - name: landscapes
+          type: string
+          in: query
+          description: 'Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)'
           required: true
       responses:
         '200':

@@ -6,6 +6,7 @@ use App\Helpers\GeometryHelper;
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\GetPolygonsResource;
+use App\Models\LandscapeGeom;
 use App\Models\V2\PolygonGeometry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -57,5 +58,47 @@ class GetPolygonsController extends Controller
 
             return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
         }
+    }
+
+    public function getLandscapeBbox(Request $request)
+    {
+        $landscapes = $request->input('landscapes');
+        if($landscapes === null) {
+            return response()->json(['error' => 'Landscapes parameter is required'], 400);
+        }
+        if (is_string($landscapes)) {
+            $landscapes = explode(',', $landscapes);
+        }
+
+        $envelopes = LandscapeGeom::whereIn('landscape', $landscapes)
+            ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) as envelope, landscape')
+            ->get();
+
+
+        if ($envelopes->isEmpty()) {
+            return null;
+        }
+
+        $maxX = $maxY = PHP_INT_MIN;
+        $minX = $minY = PHP_INT_MAX;
+
+        foreach ($envelopes as $envelope) {
+            $geojson = json_decode($envelope->envelope);
+            $coordinates = $geojson->coordinates[0];
+
+            foreach ($coordinates as $point) {
+                $x = $point[0];
+                $y = $point[1];
+                $maxX = max($maxX, $x);
+                $minX = min($minX, $x);
+                $maxY = max($maxY, $y);
+                $minY = min($minY, $y);
+            }
+        }
+
+        return [
+            'bbox' => [$minX, $minY, $maxX, $maxY],
+            'landscapes' => $landscapes,
+        ];
     }
 };

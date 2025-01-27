@@ -748,6 +748,7 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
+    Route::get('/bbox/landscape', [GetPolygonsController::class, 'getLandscapeBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);

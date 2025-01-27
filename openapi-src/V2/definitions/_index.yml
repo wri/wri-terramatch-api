@@ -320,6 +320,8 @@ DashboardGetPolygonStatusResponse:
   $ref: './DashboardGetPolygonStatusResponse.yml'
 DashboardBBOXProject:
   $ref: './DashboardBBOXProject.yml'
+DashboardBBOXLandscape:
+  $ref: './DashboardBBOXLandscape.yml'
 DashboardBBOXCountry:
   $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
