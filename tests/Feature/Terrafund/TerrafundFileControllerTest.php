@@ -3,7 +3,6 @@
 namespace Tests\Feature\Terrafund;
 
 use App\Models\Terrafund\TerrafundNurserySubmission;
-use App\Models\Terrafund\TerrafundProgrammeSubmission;
 use App\Models\Upload;
 use App\Models\V2\User;
 use Tests\TestCase;
@@ -31,5 +30,4 @@ final class TerrafundFileControllerTest extends TestCase
             ])
             ->assertStatus(403);
     }
-
 }

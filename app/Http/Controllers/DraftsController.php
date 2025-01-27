@@ -28,7 +28,6 @@ use App\Models\Draft as DraftModel;
 use App\Models\DueSubmission;
 use App\Models\Programme;
 use App\Models\Site;
-use App\Models\Terrafund\TerrafundDueSubmission;
 use App\Resources\DraftResource;
 use App\Validators\DraftValidator;
 use Exception;

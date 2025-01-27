@@ -37,7 +37,7 @@ class StoreTerrafundNurserySubmissionRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:terrafund_nurseries,id',
-            ]
+            ],
         ];
     }
 }
