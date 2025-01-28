@@ -89,14 +89,6 @@ trait HasWorkdays
                 $this->workdays()->visible()->collections($collections)->select('id')
             )
             ->gender()
-            ->with('demographical')
-            ->get()
-            ->groupBy(function ($demographic) {
-                return $demographic->demographical->collection . '_' . $demographic->name;
-            })
-            ->map(function ($group) {
-                return $group->first();
-            })
             ->sum('amount');
     }
 }
