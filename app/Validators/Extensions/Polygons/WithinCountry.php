@@ -71,8 +71,8 @@ class WithinCountry extends Extension
             'inside_percentage' => $insidePercentage,
             'country_name' => $intersectionData->country,
             'extra_info' => [
-              'country_name' => $intersectionData->country
-            ]
+              'country_name' => $intersectionData->country,
+            ],
         ];
     }
 
