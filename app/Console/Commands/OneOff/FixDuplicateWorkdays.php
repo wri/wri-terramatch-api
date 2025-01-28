@@ -6,7 +6,6 @@ use App\Console\Commands\Traits\Abortable;
 use App\Console\Commands\Traits\AbortException;
 use App\Models\V2\Workdays\Workday;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class FixDuplicateWorkdays extends Command
 {
@@ -50,7 +49,7 @@ class FixDuplicateWorkdays extends Command
             $this->info("Completed processing {$dupes->count()} duplicated workdays\n\n");
 
             if (count($errors) > 0) {
-                $this->warn("Entries that were not resolved: ");
+                $this->warn('Entries that were not resolved: ');
                 foreach ($errors as $error) {
                     $this->warn($error->getMessage());
                 }
@@ -66,15 +65,15 @@ class FixDuplicateWorkdays extends Command
         $workdays = Workday::where([
             'workdayable_type' => $dupe->workdayable_type,
             'workdayable_id' => $dupe->workdayable_id,
-            'collection' => $dupe->collection
+            'collection' => $dupe->collection,
         ])->get();
 
-        $type = explode("\\", $dupe->workdayable_type);
+        $type = explode('\\', $dupe->workdayable_type);
         $params = json_encode([
-            "type" => array_pop($type),
-            "id" => $dupe->workdayable_id,
-            "uuid" => $workdays->first()->workdayable->uuid,
-            "collection" => $dupe->collection,
+            'type' => array_pop($type),
+            'id' => $dupe->workdayable_id,
+            'uuid' => $workdays->first()->workdayable->uuid,
+            'collection' => $dupe->collection,
         ]);
         $this->assert(
             $workdays->map(fn ($w) => $w->visible)->unique()->count() == 1,
