@@ -11,7 +11,7 @@ class FeatureBounds extends Extension
 
     public static $message = [
         'key' => 'COORDINATE_SYSTEM',
-        'message' => 'The coordinates must have valid lat/lng values.',
+        'message' => 'Projection error. Please ensure geometry projection is WGS-84.',
     ];
 
     public static function passes($attribute, $value, $parameters, $validator): bool
