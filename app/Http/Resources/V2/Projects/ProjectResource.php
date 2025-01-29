@@ -99,6 +99,7 @@ class ProjectResource extends JsonResource
             'trees_restored_ppc' =>
                 $this->getTreesGrowingThroughAnr($this->sites()->IsApproved()->get()) + (($this->trees_planted_count + $this->seeds_planted_count) * ($this->survival_rate / 100)),
             'direct_seeding_survival_rate' => $this->direct_seeding_survival_rate,
+            'detailed_intervention_types' => $this->detailed_intervention_types,
         ];
 
         return $this->appendFilesToResource($data);
