@@ -39,6 +39,7 @@ use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
+use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
 use App\Http\Controllers\V2\Entities\GetRelationsForEntityController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
@@ -509,6 +510,9 @@ Route::prefix('{relationType}')
             Route::get('/{entity}', GetRelationsForEntityController::class);
         });
     });
+
+Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsController::class)
+->whereIn('entityType', ['project', 'site']);
 
 ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
     Route::get('/{entity}', GetWorkdaysForEntityController::class);
