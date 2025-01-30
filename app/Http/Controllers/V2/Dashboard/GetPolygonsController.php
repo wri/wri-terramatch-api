@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\GetPolygonsResource;
 use App\Models\LandscapeGeom;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -100,5 +101,80 @@ class GetPolygonsController extends Controller
             'bbox' => [$minX, $minY, $maxX, $maxY],
             'landscapes' => $landscapes,
         ];
+    }
+
+    public function getCountryLandscapeBbox(Request $request)
+    {
+        $landscapes = $request->input('landscapes');
+        $iso = $request->input('country');
+
+        $maxX = $maxY = PHP_INT_MIN;
+        $minX = $minY = PHP_INT_MAX;
+
+        if ($landscapes !== null) {
+            if (is_string($landscapes)) {
+                $landscapes = explode(',', $landscapes);
+            }
+
+            $envelopes = LandscapeGeom::whereIn('landscape', $landscapes)
+                ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) as envelope, landscape')
+                ->get();
+
+            foreach ($envelopes as $envelope) {
+                $geojson = json_decode($envelope->envelope);
+                $coordinates = $geojson->coordinates[0];
+
+                foreach ($coordinates as $point) {
+                    $x = $point[0];
+                    $y = $point[1];
+                    $maxX = max($maxX, $x);
+                    $minX = min($minX, $x);
+                    $maxY = max($maxY, $y);
+                    $minY = min($minY, $y);
+                }
+            }
+        }
+
+        if ($iso !== null) {
+            $countryData = WorldCountryGeneralized::where('iso', $iso)
+                ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) AS bbox, country')
+                ->first();
+
+            if (! $countryData) {
+                return response()->json(['error' => 'Country not found'], 404);
+            }
+
+            $geoJson = json_decode($countryData->bbox);
+            $coordinates = $geoJson->coordinates[0];
+
+            foreach ($coordinates as $point) {
+                $x = $point[0];
+                $y = $point[1];
+                $maxX = max($maxX, $x);
+                $minX = min($minX, $x);
+                $maxY = max($maxY, $y);
+                $minY = min($minY, $y);
+            }
+
+            $countryName = $countryData->country;
+        }
+
+        if ($maxX === PHP_INT_MIN || $minX === PHP_INT_MAX) {
+            return response()->json(['error' => 'No valid bounding box found'], 404);
+        }
+
+        $response = [
+            'bbox' => [$minX, $minY, $maxX, $maxY],
+        ];
+
+        if (isset($landscapes)) {
+            $response['landscapes'] = $landscapes;
+        }
+
+        if (isset($countryName)) {
+            $response['country'] = $countryName;
+        }
+
+        return response()->json($response);
     }
 };
