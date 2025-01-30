@@ -80,6 +80,30 @@ definitions:
             type: integer
           unfiltered_total:
             type: integer
+  TreeSpeciesAggregated:
+    type: object
+    properties:
+      tree-planted:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date-time
+              nullable: true
+            treeSpeciesAmount:
+              type: integer
+      seeding-records:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date-time
+            treeSpeciesAmount:
+              type: integer
   TreeSpeciesRead:
     type: object
     properties:
@@ -44512,7 +44536,7 @@ definitions:
       needs-more-information:
         type: integer
 paths:
-  '/v2/tree-species/{entity}/{UUID}':
+  '/v2/tree-species/{entity}/{UUID}/aggregate-reports':
     get:
       operationId: get-v2-tree-species-entity-uuid
       summary: View all tree species for a given entity
@@ -44578,6 +44602,49 @@ paths:
                     type: integer
                   unfiltered_total:
                     type: integer
+  '/v2/{entity}/{UUID}':
+    get:
+      operationId: get-v2-tree-species-entity-uuid
+      summary: View all tree species for a given entity
+      tags:
+        - V2 Tree Species
+      parameters:
+        - type: string
+          name: entity
+          in: path
+          required: true
+          description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              tree-planted:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dueDate:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    treeSpeciesAmount:
+                      type: integer
+              seeding-records:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dueDate:
+                      type: string
+                      format: date-time
+                    treeSpeciesAmount:
+                      type: integer
   /v2/admin/projects/multi:
     get:
       summary: Get multiple projects as an admin

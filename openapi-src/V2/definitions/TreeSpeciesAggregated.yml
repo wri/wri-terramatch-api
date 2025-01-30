@@ -1,0 +1,23 @@
+type: object
+properties:
+  tree-planted:
+    type: array
+    items:
+      type: object
+      properties:
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+        treeSpeciesAmount:
+          type: integer
+  seeding-records:
+    type: array
+    items:
+      type: object
+      properties:
+        dueDate:
+          type: string
+          format: date-time
+        treeSpeciesAmount:
+          type: integer
