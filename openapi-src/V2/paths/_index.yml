@@ -2712,6 +2712,9 @@
 /v2/dashboard/bbox/landscape:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-bbox-landscape.yml'
+/v2/dashboard/bbox/country-landscape:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-get-bbox-country-landscape.yml'
 /v2/dashboard/country/{country}:
   get:
     $ref: './Dashboard/get-v2-dashboard-country.yml'
