@@ -1,6 +1,9 @@
 /v2/tree-species/{entity}/{UUID}:
   get:
     $ref: './TreeSpecies/get-v2-tree-species-entity-uuid.yml'
+/v2/{entity}/{UUID}/aggregate-reports:
+  get:
+    $ref: './TreeSpecies/get-v2-entity-uuid-aggregate-reports.yml'
 /v2/admin/projects/multi:
   get:
     $ref: './Projects/get-v2-admin-projects-multi.yml'
