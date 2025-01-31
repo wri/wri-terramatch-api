@@ -44536,7 +44536,7 @@ definitions:
       needs-more-information:
         type: integer
 paths:
-  '/v2/tree-species/{entity}/{UUID}/aggregate-reports':
+  '/v2/tree-species/{entity}/{UUID}':
     get:
       operationId: get-v2-tree-species-entity-uuid
       summary: View all tree species for a given entity
@@ -44602,7 +44602,7 @@ paths:
                     type: integer
                   unfiltered_total:
                     type: integer
-  '/v2/{entity}/{UUID}':
+  '/v2/{entity}/{UUID}/aggregate-reports':
     get:
       operationId: get-v2-tree-species-entity-uuid
       summary: View all tree species for a given entity
