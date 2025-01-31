@@ -9,7 +9,6 @@ use App\Models\SiteSubmission as PPCSiteSubmission;
 use App\Models\Submission as PPCProgrammeSubmission;
 use App\Models\Terrafund\TerrafundNursery;
 use App\Models\Terrafund\TerrafundNurserySubmission;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundProgrammeSubmission;
 use App\Models\Terrafund\TerrafundSite;
 use App\Models\Terrafund\TerrafundSiteSubmission;
@@ -101,7 +100,6 @@ class UpdateRequestsMigrationCommand extends Command
     private function getV2Model(string $oldModel): ?string
     {
         switch($oldModel) {
-            case TerrafundProgramme::class:
             case PPCProgramme::class:
                 return Project::class;
             case TerrafundProgrammeSubmission::class:

@@ -8,7 +8,6 @@ class DraftTerrafundProgrammeSubmission extends Drafting
 {
     public const BLUEPRINT = [
         'terrafund_programme_submission' => [
-            'terrafund_programme_id' => null,
             'shared_drive_link' => null,
             'landscape_community_contribution' => null,
             'top_three_successes' => null,

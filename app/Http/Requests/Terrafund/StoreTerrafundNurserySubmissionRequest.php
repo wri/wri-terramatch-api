@@ -38,9 +38,6 @@ class StoreTerrafundNurserySubmissionRequest extends FormRequest
                 'integer',
                 'exists:terrafund_nurseries,id',
             ],
-            'terrafund_due_submission_id' => [
-                '',
-            ],
         ];
     }
 }

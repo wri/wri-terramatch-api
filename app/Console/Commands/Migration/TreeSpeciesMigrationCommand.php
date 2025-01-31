@@ -10,7 +10,6 @@ use App\Models\SiteTreeSpecies;
 use App\Models\Submission;
 use App\Models\Terrafund\TerrafundNoneTreeSpecies;
 use App\Models\Terrafund\TerrafundNursery;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSiteSubmission;
 use App\Models\Terrafund\TerrafundTreeSpecies;
 use App\Models\V2\Nurseries\Nursery;
@@ -38,7 +37,6 @@ class TreeSpeciesMigrationCommand extends Command
     protected $description = 'Migrate Tree Species Data only to  V2 tables';
 
     protected $modelMap = [
-        TerrafundProgramme::class => Project::class,
         TerrafundSiteSubmission::class => SiteReport::class,
         TerrafundNursery::class => Nursery::class,
     ];

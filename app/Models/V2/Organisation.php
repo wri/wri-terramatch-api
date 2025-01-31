@@ -2,7 +2,6 @@
 
 namespace App\Models\V2;
 
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
@@ -340,11 +339,6 @@ class Organisation extends Model implements MediaModel
     public function interests()
     {
         return $this->hasMany(Interest::class);
-    }
-
-    public function terrafundProgrammes()
-    {
-        return $this->hasMany(TerrafundProgramme::class);
     }
 
     public function scopeIsType($query, $status): Builder

@@ -15,7 +15,6 @@ class TerrafundNursery extends Model
         'name',
         'start_date',
         'end_date',
-        'terrafund_programme_id',
         'seedling_grown',
         'planting_contribution',
         'nursery_type',
@@ -42,10 +41,5 @@ class TerrafundNursery extends Model
     public function terrafundNurserySubmissions()
     {
         return $this->hasMany(TerrafundNurserySubmission::class);
-    }
-
-    public function terrafundProgramme()
-    {
-        return $this->belongsTo(TerrafundProgramme::class, 'terrafund_programme_id');
     }
 }

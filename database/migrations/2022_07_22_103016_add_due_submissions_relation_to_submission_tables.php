@@ -11,12 +11,6 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::table('terrafund_programme_submissions', function (Blueprint $table) {
-            $table->foreignIdFor(TerrafundDueSubmission::class)
-                ->nullable()
-                ->after('terrafund_programme_id');
-        });
-
         Schema::table('terrafund_site_submissions', function (Blueprint $table) {
             $table->foreignIdFor(TerrafundDueSubmission::class)
                 ->nullable()

@@ -33,11 +33,6 @@ class StoreTerrafundSiteRequest extends FormRequest
                 'json',
                 'between:1,4294967295',
             ],
-            'terrafund_programme_id' => [
-                'required',
-                'integer',
-                'exists:terrafund_programmes,id',
-            ],
             'restoration_methods' => [
                 'required',
                 'array',

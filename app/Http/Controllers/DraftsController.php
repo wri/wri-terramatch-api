@@ -28,7 +28,6 @@ use App\Models\Draft as DraftModel;
 use App\Models\DueSubmission;
 use App\Models\Programme;
 use App\Models\Site;
-use App\Models\Terrafund\TerrafundDueSubmission;
 use App\Resources\DraftResource;
 use App\Validators\DraftValidator;
 use Exception;
@@ -64,12 +63,6 @@ class DraftsController extends Controller
             $dueSubmission = DueSubmission::find($data['due_submission_id']);
             $this->authorize('assignToDraft', $dueSubmission);
             $draft->due_submission_id = $data['due_submission_id'];
-            $draft->saveOrFail();
-        }
-        if (isset($data['terrafund_due_submission_id'])) {
-            $dueSubmission = TerrafundDueSubmission::find($data['terrafund_due_submission_id']);
-            $this->authorize('assignToDraft', $dueSubmission);
-            $draft->terrafund_due_submission_id = $data['terrafund_due_submission_id'];
             $draft->saveOrFail();
         }
         $resource = new DraftResource($draft);

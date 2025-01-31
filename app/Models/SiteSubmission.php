@@ -49,11 +49,6 @@ class SiteSubmission extends Model
         return $this->hasMany(SiteTreeSpecies::class);
     }
 
-    public function directSeedings()
-    {
-        return $this->hasMany(DirectSeeding::class);
-    }
-
     public function disturbances()
     {
         return $this->hasMany(SiteSubmissionDisturbance::class);

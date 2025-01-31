@@ -2,7 +2,6 @@
 
 use App\Models\Programme;
 use App\Models\Site;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -21,7 +20,6 @@ class CreateV2TemporarySitesTable extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->foreignIdFor(Programme::class)->nullable();
-            $table->foreignIdFor(TerrafundProgramme::class)->nullable();
             $table->foreignIdFor(Site::class)->nullable();
             $table->foreignIdFor(TerrafundSite::class)->nullable();
             $table->tinyInteger('control_site')->nullable();

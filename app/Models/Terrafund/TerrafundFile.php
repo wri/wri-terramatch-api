@@ -31,19 +31,9 @@ class TerrafundFile extends Model
         return $this->morphTo();
     }
 
-    public function terrafundProgramme()
-    {
-        return $this->hasOne(TerrafundProgramme::class);
-    }
-
     public function setUploadAttribute($upload): void
     {
         $this->setAttributeByUpload('upload', $upload);
-    }
-
-    public function scopeTerrafundProgramme(Builder $query): Builder
-    {
-        return $query->where('fileable_type', TerrafundProgramme::class);
     }
 
     public function scopeTerrafundProgrammeSubmission(Builder $query): Builder

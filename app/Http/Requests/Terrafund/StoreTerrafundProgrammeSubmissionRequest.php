@@ -20,7 +20,6 @@ class StoreTerrafundProgrammeSubmissionRequest extends FormRequest
             'percentage_survival_to_date' => 'nullable|integer|between:0,100',
             'survival_calculation' => 'nullable|string|between:1,5000',
             'survival_comparison' => 'nullable|string|between:1,5000',
-            'terrafund_programme_id' => 'required|integer|exists:terrafund_programmes,id',
             'ft_women' => 'nullable|between:0,4000000000',
             'ft_men' => 'nullable|between:0,4000000000',
             'ft_youth' => 'nullable|between:0,4000000000',
@@ -57,7 +56,6 @@ class StoreTerrafundProgrammeSubmissionRequest extends FormRequest
             'income_increase_description' => 'nullable|string|max:65000',
             'beneficiaries_skills_knowledge_increase' => 'nullable|string|max:65000',
             'skills_knowledge_description' => 'nullable|string|max:65000',
-            'terrafund_due_submission_id' => '',
         ];
     }
 }

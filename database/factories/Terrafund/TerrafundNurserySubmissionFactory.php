@@ -2,7 +2,6 @@
 
 namespace Database\Factories\Terrafund;
 
-use App\Models\Terrafund\TerrafundDueSubmission;
 use App\Models\Terrafund\TerrafundNursery;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +17,6 @@ class TerrafundNurserySubmissionFactory extends Factory
             'interesting_facts' => $this->faker->paragraph(),
             'site_prep' => $this->faker->paragraph(),
             'terrafund_nursery_id' => TerrafundNursery::factory()->create()->id,
-            'terrafund_due_submission_id' => TerrafundDueSubmission::factory()->create(['is_submitted' => true]),
         ];
     }
 }

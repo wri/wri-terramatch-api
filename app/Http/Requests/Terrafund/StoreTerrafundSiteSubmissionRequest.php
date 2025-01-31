@@ -22,9 +22,6 @@ class StoreTerrafundSiteSubmissionRequest extends FormRequest
                 'url',
                 'max:255',
             ],
-            'terrafund_due_submission_id' => [
-                '',
-            ],
         ];
     }
 }

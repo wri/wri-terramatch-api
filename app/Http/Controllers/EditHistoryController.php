@@ -9,7 +9,6 @@ use App\Http\Requests\EditHistory\EditHistoryCreateRequest;
 use App\Http\Requests\EditHistory\EditHistoryRejectRequest;
 use App\Http\Requests\EditHistory\EditHistoryUpdateRequest;
 use App\Http\Requests\Terrafund\UpdateTerrafundNurseryRequest;
-use App\Http\Requests\Terrafund\UpdateTerrafundProgrammeRequest;
 use App\Http\Requests\Terrafund\UpdateTerrafundSiteRequest;
 use App\Http\Requests\UpdateProgrammeRequest;
 use App\Http\Requests\UpdateSiteRequest;
@@ -21,7 +20,6 @@ use App\Models\OrganisationVersion;
 use App\Models\Programme;
 use App\Models\Site;
 use App\Models\Terrafund\TerrafundNursery;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -254,11 +252,6 @@ class EditHistoryController extends Controller
             case Site::class:
                 $controller = new SiteController();
                 $controller->callAction('updateAction',  [$model, new UpdateSiteRequest($data)]);
-
-                break;
-            case TerrafundProgramme::class:
-                $controller = new Terrafund\TerrafundProgrammeController();
-                $controller->callAction('updateAction', [ new UpdateTerrafundProgrammeRequest($data), $model]);
 
                 break;
             case TerrafundSite::class:

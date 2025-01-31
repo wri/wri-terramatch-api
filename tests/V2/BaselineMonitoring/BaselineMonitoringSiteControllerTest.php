@@ -2,9 +2,6 @@
 
 namespace Tests\V2\BaselineMonitoring;
 
-use App\Models\Programme;
-use App\Models\Site;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
 use App\Models\V2\User;
 use App\Models\V2\BaselineMonitoring\SiteMetric;
@@ -97,41 +94,5 @@ final class BaselineMonitoringSiteControllerTest extends TestCase
             ->assertStatus(202);
 
         $this->assertEquals(0, SiteMetric::isUuid($uuid)->count());
-    }
-
-    public function testGetSiteMetricsByProjectAction(): void
-    {
-        $admin = User::factory()->admin()->create();
-
-        $tfProject = TerrafundProgramme::factory()->create();
-        $tfSites = TerrafundSite::factory()->count(3)->create(['terrafund_programme_id' => $tfProject->id]);
-
-        foreach($tfSites as $site){
-            SiteMetric::factory()->create([
-                'monitorable_type' => TerrafundSite::class,
-                'monitorable_id' => $site->id]
-            );
-        }
-
-        $this->actingAs($admin)
-            ->getJson('/api/terrafund/programme/' . $tfProject->id .'/site-metrics')
-            ->assertStatus(200)
-            ->assertJsonCount(3, 'data');
-
-        $ppcProject = Programme::factory()->create();
-        $ppcSites = Site::factory()->count(3)->create(['programme_id' => $ppcProject->id]);
-
-        foreach($ppcSites as $site){
-            SiteMetric::factory()->create([
-                    'monitorable_type' => Site::class,
-                    'monitorable_id' => $site->id]
-            );
-        }
-
-        $this->actingAs($admin)
-            ->getJson('/api/programme/' . $ppcProject->id .'/site-metrics')
-            ->assertStatus(200)
-            ->assertJsonCount(3, 'data');
-
     }
 }

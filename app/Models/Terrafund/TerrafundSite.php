@@ -17,7 +17,6 @@ class TerrafundSite extends Model
         'name',
         'start_date',
         'end_date',
-        'terrafund_programme_id',
         'restoration_methods',
         'boundary_geojson',
         'hectares_to_restore',
@@ -33,11 +32,6 @@ class TerrafundSite extends Model
         'restoration_methods' => 'array',
         'land_tenures' => 'array',
     ];
-
-    public function terrafundProgramme()
-    {
-        return $this->belongsTo(TerrafundProgramme::class, 'terrafund_programme_id');
-    }
 
     public function terrafundDueSubmissions()
     {

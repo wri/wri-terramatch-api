@@ -40,7 +40,7 @@ class Site extends Model
         'aim_natural_regeneration_hectares',
     ];
 
-    protected $with = ['programme', 'seedDetails', 'invasives'];
+    protected $with = ['programme', 'invasives'];
 
     public $casts = [
         'control_site' => 'boolean',
@@ -99,11 +99,6 @@ class Site extends Model
     public function satelliteMonitors()
     {
         return $this->morphMany(SatelliteMonitor::class, 'satellite_monitorable');
-    }
-
-    public function seedDetails()
-    {
-        return $this->hasMany(SeedDetail::class);
     }
 
     public function invasives()

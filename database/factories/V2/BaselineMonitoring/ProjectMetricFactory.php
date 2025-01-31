@@ -2,7 +2,6 @@
 
 namespace Database\Factories\V2\BaselineMonitoring;
 
-use App\Models\Terrafund\TerrafundProgramme;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -25,9 +24,6 @@ class ProjectMetricFactory extends Factory
 
         $data = [
             'uuid' => Str::uuid()->toString(),
-            'monitorable_type' => TerrafundProgramme::class,
-            'monitorable_id' => TerrafundProgramme::factory()->create()->id,
-
             'tree_count' => $this->faker->randomFloat(2, 0, 10000),
             'tree_cover' => $this->faker->randomFloat(2, 0, 100),
             'tree_cover_loss' => $this->faker->randomFloat(2, 0, 100),

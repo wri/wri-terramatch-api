@@ -180,7 +180,6 @@ class UsersTableSeeder extends Seeder
         $user->saveOrFail();
         $user->assignRole('project-developer');
         $user->frameworks()->attach(2);
-        $user->terrafundProgrammes()->attach(1);
         $user->refresh();
 
         $user = new UserModel();
@@ -252,8 +251,6 @@ class UsersTableSeeder extends Seeder
         $user->saveOrFail();
         $user->assignRole('project-developer');
         $user->frameworks()->attach(2);
-        $user->terrafundProgrammes()->attach(1);
-        $user->terrafundProgrammes()->attach(2);
         $user->refresh();
     }
 }

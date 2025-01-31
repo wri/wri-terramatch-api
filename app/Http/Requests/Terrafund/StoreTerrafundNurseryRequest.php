@@ -27,11 +27,6 @@ class StoreTerrafundNurseryRequest extends FormRequest
                 'date_format:Y-m-d',
                 'after:start_date',
             ],
-            'terrafund_programme_id' => [
-                'required',
-                'integer',
-                'exists:terrafund_programmes,id',
-            ],
             'seedling_grown' => [
                 'required',
                 'integer',

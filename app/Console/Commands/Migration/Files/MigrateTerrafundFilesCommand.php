@@ -5,13 +5,11 @@ namespace App\Console\Commands\Migration\Files;
 use App\Models\Terrafund\TerrafundFile;
 use App\Models\Terrafund\TerrafundNursery;
 use App\Models\Terrafund\TerrafundNurserySubmission;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundProgrammeSubmission;
 use App\Models\Terrafund\TerrafundSite;
 use App\Models\Terrafund\TerrafundSiteSubmission;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
@@ -44,11 +42,6 @@ class MigrateTerrafundFilesCommand extends Command
                 $this->info('Starting migration of terrafund file ' . $terrafundFile->id);
 
                 switch ($terrafundFile->fileable_type) {
-                    case TerrafundProgramme::class:
-                        $model = 'project';
-                        $query = Project::query();
-
-                        break;
                     case TerrafundSite::class:
                         $model = 'site';
                         $query = Site::query();

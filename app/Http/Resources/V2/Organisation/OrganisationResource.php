@@ -4,7 +4,6 @@ namespace App\Http\Resources\V2\Organisation;
 
 use App\Http\Resources\V2\CoreTeamLeaderResource;
 use App\Http\Resources\V2\FundingTypeResource;
-use App\Http\Resources\V2\General\ShapefileResource;
 use App\Http\Resources\V2\LeadershipTeamResource;
 use App\Http\Resources\V2\OwnershipStakeResource;
 use App\Http\Resources\V2\ProjectPitches\ProjectPitchResource;
@@ -93,7 +92,6 @@ class OrganisationResource extends JsonResource
             'restored_areas_description' => $this->restored_areas_description,
             'monitoring_evaluation_experience' => $this->monitoring_evaluation_experience,
             'funding_history' => $this->funding_history,
-            'shapefiles' => ShapefileResource::collection($this->shapefiles),
             'engagement_farmers' => $this->engagement_farmers,
             'engagement_women' => $this->engagement_women,
             'engagement_youth' => $this->engagement_youth,

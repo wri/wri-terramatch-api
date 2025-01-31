@@ -7,7 +7,6 @@ use App\Models\Organisation;
 use App\Models\Programme;
 use App\Models\Site;
 use App\Models\Terrafund\TerrafundNursery;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
@@ -20,10 +19,6 @@ class V2Helper
             case 'project':
             case Programme::class:
                 return Programme::find($id);
-
-            case 'terrafund_programme':
-            case TerrafundProgramme::class:
-                return TerrafundProgramme::find($id);
 
             case 'site':
             case Site::class:
@@ -46,7 +41,6 @@ class V2Helper
     {
         switch (get_class($model)) {
             case Programme::class:
-            case TerrafundProgramme::class:
                 return $model->organisation;
             case Site::class:
                 return $model->programme->organisation;
@@ -62,7 +56,6 @@ class V2Helper
     {
         switch (get_class($model)) {
             case Programme::class:
-            case TerrafundProgramme::class:
                 return $model;
             case Site::class:
                 return $model->programme;
@@ -80,7 +73,6 @@ class V2Helper
             case Programme::class:
             case Site::class:
                 return Framework::where('name', 'PPC')->first();
-            case TerrafundProgramme::class:
             case TerrafundSite::class:
             case TerrafundNursery::class:
                 return Framework::where('name', 'Terrafund')->first();

@@ -4,7 +4,6 @@ namespace App\Resources\Terrafund;
 
 use App\Models\Terrafund\TerrafundDueSubmission;
 use App\Models\Terrafund\TerrafundNursery;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
 use App\Resources\DraftResource;
 use App\Resources\Resource;
@@ -38,8 +37,6 @@ class TerrafundDueSubmissionResource extends Resource
     public function getTerrafundDueSubmissionable(TerrafundDueSubmission $terrafundDueSubmission)
     {
         switch ($terrafundDueSubmission->terrafund_due_submissionable_type) {
-            case TerrafundProgramme::class:
-                return new TerrafundProgrammeResource($terrafundDueSubmission->terrafund_due_submissionable);
             case TerrafundSite::class:
                 return new TerrafundSiteResource($terrafundDueSubmission->terrafund_due_submissionable);
             case TerrafundNursery::class:

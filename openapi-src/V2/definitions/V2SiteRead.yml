@@ -8,8 +8,6 @@ properties:
     type: integer
   programme_id:
     type: integer
-  terrafund_programme_id:
-    type: integer
   control_site:
     type: boolean
   name:

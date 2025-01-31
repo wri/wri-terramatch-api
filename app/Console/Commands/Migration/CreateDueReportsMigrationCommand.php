@@ -7,7 +7,6 @@ use App\Models\Programme;
 use App\Models\Site as PPCSite;
 use App\Models\Terrafund\TerrafundDueSubmission;
 use App\Models\Terrafund\TerrafundNursery;
-use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Terrafund\TerrafundSite;
 use App\Models\V2\Action;
 use App\Models\V2\Nurseries\Nursery;
@@ -55,24 +54,6 @@ class CreateDueReportsMigrationCommand extends Command
         TerrafundDueSubmission::where('is_submitted', 0)->chunk(500, function ($chunk) use (&$count, &$created) {
             foreach ($chunk as $stub) {
                 switch($stub->terrafund_due_submissionable_type) {
-                    case TerrafundProgramme::class:
-                        $project = Project::where('old_model',  TerrafundProgramme::class)
-                            ->where('old_id', $stub->terrafund_due_submissionable_id)
-                            ->first();
-
-                        if (! empty($project)) {
-                            $report = ProjectReport::updateOrCreate([
-                                'framework_key' => 'terrafund',
-                                'project_id' => $project->id,
-                                'status' => ReportStatusStateMachine::DUE,
-                                'due_at' => $stub->due_at,
-                            ], []);
-
-                            $this->handleTask($project, $stub);
-                            $this->handleActions($project, $report);
-                        }
-
-                        break;
                     case TerrafundSite::class:
                         $site = Site::where('old_model',  TerrafundSite::class)
                             ->where('old_id', $stub->terrafund_due_submissionable_id)
