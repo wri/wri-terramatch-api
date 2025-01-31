@@ -1,12 +1,13 @@
 <?php
 
-namespace Tests\Unit\Models\V2\Workdays;
+namespace Tests\Unit\Models\V2\Demographics;
 
+use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\Workdays\Workday;
 use Tests\TestCase;
 
-class WorkdayTest extends TestCase
+class DemographicTest extends TestCase
 {
     public function test_sync_relation()
     {
@@ -15,7 +16,8 @@ class WorkdayTest extends TestCase
         // First, test adding workdays to an empty set
         $data = [
             [
-                'collection' => Workday::COLLECTION_SITE_VOLUNTEER_PLANTING,
+                'type' => Demographic::WORKDAY_TYPE,
+                'collection' => DemographicCollections::VOLUNTEER_PLANTING,
                 'demographics' => [
                     ['type' => 'age', 'name' => 'youth', 'amount' => 20],
                     ['type' => 'gender', 'name' => 'non-binary', 'amount' => 20],
@@ -23,13 +25,14 @@ class WorkdayTest extends TestCase
                 ],
             ],
         ];
-        Workday::syncRelation($siteReport, 'workdaysVolunteerPlanting', $data, false);
+        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false);
 
+        /** @var Demographic $workday */
         $workday = $siteReport->workdaysVolunteerPlanting()->first();
-        $this->assertEquals(3, $workday->demographics()->count());
-        $this->assertEquals(20, $workday->demographics()->isAge('youth')->first()->amount);
-        $this->assertEquals(20, $workday->demographics()->isGender('non-binary')->first()->amount);
-        $this->assertEquals(20, $workday->demographics()->isEthnicity('other')->first()->amount);
+        $this->assertEquals(3, $workday->entries()->count());
+        $this->assertEquals(20, $workday->entries()->isAge('youth')->first()->amount);
+        $this->assertEquals(20, $workday->entries()->isGender('non-binary')->first()->amount);
+        $this->assertEquals(20, $workday->entries()->isEthnicity('other')->first()->amount);
 
         // Test modifying an existing demographic collection
         $data[0]['demographics'] = [
@@ -38,7 +41,7 @@ class WorkdayTest extends TestCase
             ['type' => 'gender', 'name' => 'female', 'amount' => 20],
             ['type' => 'ethnicity', 'subtype' => 'indigenous', 'name' => 'Ohlone', 'amount' => 40],
         ];
-        Workday::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', $data, false);
+        Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false);
         $workday->refresh();
         $this->assertEquals(4, $workday->demographics()->count());
         $this->assertEquals(40, $workday->demographics()->isAge('youth')->first()->amount);
@@ -48,14 +51,15 @@ class WorkdayTest extends TestCase
 
         // Test remove demographics
         $data[0]['demographics'] = [];
-        Workday::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', $data, false);
+        Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false);
         $workday->refresh();
         $this->assertEquals(0, $workday->demographics()->count());
 
         // Test duplicate rows in the incoming data set
         $data = [
             [
-                'collection' => Workday::COLLECTION_SITE_VOLUNTEER_PLANTING,
+                'type' => Demographic::WORKDAY_TYPE,
+                'collection' => DemographicCollections::VOLUNTEER_PLANTING,
                 'demographics' => [
                     ['type' => 'age', 'name' => 'youth', 'amount' => 20],
                     ['type' => 'age', 'name' => 'youth', 'amount' => 40],
@@ -67,14 +71,15 @@ class WorkdayTest extends TestCase
             ],
         ];
         $siteReport = SiteReport::factory()->create();
-        Workday::syncRelation($siteReport, 'workdaysVolunteerPlanting', $data, false);
-        Workday::syncRelation($siteReport, 'workdaysVolunteerPlanting', $data, false);
+        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false);
+        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false);
 
+        /** @var Demographic $workday */
         $workday = $siteReport->workdaysVolunteerPlanting()->first();
-        $this->assertEquals(3, $workday->demographics()->count());
-        $this->assertEquals(3, $workday->demographics()->withTrashed()->count());
-        $this->assertEquals(40, $workday->demographics()->isAge('youth')->first()->amount);
-        $this->assertEquals(40, $workday->demographics()->isGender('non-binary')->first()->amount);
-        $this->assertEquals(40, $workday->demographics()->isEthnicity('other')->first()->amount);
+        $this->assertEquals(3, $workday->entries()->count());
+        $this->assertEquals(3, $workday->entries()->withTrashed()->count());
+        $this->assertEquals(40, $workday->entries()->isAge('youth')->first()->amount);
+        $this->assertEquals(40, $workday->entries()->isGender('non-binary')->first()->amount);
+        $this->assertEquals(40, $workday->entries()->isEthnicity('other')->first()->amount);
     }
 }

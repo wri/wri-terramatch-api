@@ -15,6 +15,7 @@ use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\MediaModel;
@@ -28,7 +29,6 @@ use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
-use App\Models\V2\Workdays\Workday;
 use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
@@ -413,24 +413,25 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         $projectQuery = $this->reports()->Approved();
         $siteQuery = $this->approvedSiteReports();
         if ($useDemographicsCutoff) {
-            $projectQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
-            $siteQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+            $projectQuery->where('due_at', '>=', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
+            $siteQuery->where('due_at', '>=', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
         }
 
-        return Demographic::where('demographical_type', Workday::class)->
-            whereIn(
-                'demographical_id',
-                Workday::where('workdayable_type', SiteReport::class)
-                    ->whereIn('workdayable_id', $siteQuery->select('v2_site_reports.id'))
+        return DemographicEntry::whereIn(
+            'demographic_id',
+            Demographic::where('demographical_type', SiteReport::class)
+                    ->whereIn('demographical_id', $siteQuery->select('v2_site_reports.id'))
+                    ->type(Demographic::WORKDAY_TYPE)
                     ->visible()
                     ->select('id')
-            )->orWhereIn(
-                'demographical_id',
-                Workday::where('workdayable_type', ProjectReport::class)
-                    ->whereIn('workdayable_id', $projectQuery->select('id'))
-                    ->visible()
-                    ->select('id')
-            )->gender()->sum('amount') ?? 0;
+        )->orWhereIn(
+            'demographic_id',
+            Demographic::where('demographical_type', ProjectReport::class)
+                ->whereIn('demographical_id', $projectQuery->select('id'))
+                ->type(Demographic::WORKDAY_TYPE)
+                ->visible()
+                ->select('id')
+        )->gender()->sum('amount') ?? 0;
     }
 
     public function getSelfReportedWorkdayCountAttribute($useDemographicsCutoff = false): int
@@ -445,8 +446,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         $siteQuery = $this->approvedSiteReports()->groupBy('v2_sites.project_id');
 
         if ($useDemographicsCutoff) {
-            $projectQuery->where('due_at', '<', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
-            $siteQuery->where('due_at', '<', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+            $projectQuery->where('due_at', '<', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
+            $siteQuery->where('due_at', '<', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
         }
 
         $projectTotals = $projectQuery->get($sumQueries)->first();

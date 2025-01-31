@@ -21,7 +21,6 @@ use App\Models\V2\ReportModel;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
-use App\Models\V2\Workdays\Workday;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -171,11 +170,6 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function workdays()
-    {
-        return $this->morphMany(Workday::class, 'workdayable');
     }
 
     public function approvedBy(): BelongsTo

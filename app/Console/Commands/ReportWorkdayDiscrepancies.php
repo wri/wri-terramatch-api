@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\Workdays\Workday;
 use Illuminate\Console\Command;
 
 class ReportWorkdayDiscrepancies extends Command
@@ -26,30 +27,30 @@ class ReportWorkdayDiscrepancies extends Command
     private const PROPERTIES = [
         ProjectReport::class => [
             'paid' => [
-                Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
-                Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT,
-                Workday::COLLECTION_PROJECT_PAID_OTHER,
+                DemographicCollections::PAID_NURSERY_OPERATIONS,
+                DemographicCollections::PAID_PROJECT_MANAGEMENT,
+                DemographicCollections::PAID_OTHER,
             ],
             'volunteer' => [
-                Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
-                Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT,
-                Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
+                DemographicCollections::VOLUNTEER_NURSERY_OPERATIONS,
+                DemographicCollections::VOLUNTEER_PROJECT_MANAGEMENT,
+                DemographicCollections::VOLUNTEER_OTHER,
             ],
         ],
         SiteReport::class => [
             'paid' => [
-                Workday::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT,
-                Workday::COLLECTION_SITE_PAID_PLANTING,
-                Workday::COLLECTION_SITE_PAID_SITE_MAINTENANCE,
-                Workday::COLLECTION_SITE_PAID_SITE_MONITORING,
-                Workday::COLLECTION_SITE_PAID_OTHER,
+                DemographicCollections::PAID_SITE_ESTABLISHMENT,
+                DemographicCollections::PAID_PLANTING,
+                DemographicCollections::PAID_SITE_MAINTENANCE,
+                DemographicCollections::PAID_SITE_MONITORING,
+                DemographicCollections::PAID_OTHER,
             ],
             'volunteer' => [
-                Workday::COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT,
-                Workday::COLLECTION_SITE_VOLUNTEER_PLANTING,
-                Workday::COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE,
-                Workday::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING,
-                Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
+                DemographicCollections::VOLUNTEER_SITE_ESTABLISHMENT,
+                DemographicCollections::VOLUNTEER_PLANTING,
+                DemographicCollections::VOLUNTEER_SITE_MAINTENANCE,
+                DemographicCollections::VOLUNTEER_SITE_MONITORING,
+                DemographicCollections::VOLUNTEER_OTHER,
             ],
         ],
     ];
@@ -69,9 +70,10 @@ class ReportWorkdayDiscrepancies extends Command
                         $aggregate_volunteer = (int)$report->workdays_volunteer;
 
                         $modelType = get_class($report);
-                        $query = Workday::where([
-                            'workdayable_type' => $modelType,
-                            'workdayable_id' => $report->id,
+                        $query = Demographic::where([
+                            'demographical_type' => $modelType,
+                            'demographical_id' => $report->id,
+                            'type' => Demographic::WORKDAY_TYPE,
                         ]);
                         if ($query->count() == 0) {
                             // Skip reports that have no associated workday rows.

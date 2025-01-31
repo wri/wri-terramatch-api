@@ -16,17 +16,17 @@ use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
+use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
 use App\Models\V2\ReportModel;
-use App\Models\V2\RestorationPartners\RestorationPartner;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
-use App\Models\V2\Workdays\Workday;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -209,59 +209,60 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     // Required by the HasWorkdays trait
     public const WORKDAY_COLLECTIONS = [
         'paid' => [
-            Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
-            Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT,
-            Workday::COLLECTION_PROJECT_PAID_OTHER,
+            DemographicCollections::PAID_NURSERY_OPERATIONS,
+            DemographicCollections::PAID_PROJECT_MANAGEMENT,
+            DemographicCollections::PAID_OTHER,
         ],
         'volunteer' => [
-            Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
-            Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT,
-            Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
+            DemographicCollections::VOLUNTEER_NURSERY_OPERATIONS,
+            DemographicCollections::VOLUNTEER_PROJECT_MANAGEMENT,
+            DemographicCollections::VOLUNTEER_OTHER,
         ],
         'other' => [
-            Workday::COLLECTION_PROJECT_PAID_OTHER,
-            Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
+            DemographicCollections::PAID_OTHER,
+            DemographicCollections::VOLUNTEER_OTHER,
         ],
         'finance' => [
-            Workday::COLLECTION_PROJECT_DIRECT,
-            Workday::COLLECTION_PROJECT_CONVERGENCE,
+            DemographicCollections::DIRECT,
+            DemographicCollections::CONVERGENCE,
         ],
         'direct' => [
-            Workday::COLLECTION_PROJECT_DIRECT,
+            DemographicCollections::DIRECT,
         ],
         'convergence' => [
-            Workday::COLLECTION_PROJECT_CONVERGENCE,
+            DemographicCollections::CONVERGENCE,
         ],
     ];
 
+    // Required by the HasRestorationPartners trait
     public const RESTORATION_PARTNER_COLLECTIONS = [
         'direct' => [
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_INCOME,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_BENEFITS,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_CONSERVATION_PAYMENTS,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_MARKET_ACCESS,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_CAPACITY,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_TRAINING,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_LAND_TITLE,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_LIVELIHOODS,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_PRODUCTIVITY,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_OTHER,
+            DemographicCollections::DIRECT_INCOME,
+            DemographicCollections::DIRECT_BENEFITS,
+            DemographicCollections::DIRECT_CONSERVATION_PAYMENTS,
+            DemographicCollections::DIRECT_MARKET_ACCESS,
+            DemographicCollections::DIRECT_CAPACITY,
+            DemographicCollections::DIRECT_TRAINING,
+            DemographicCollections::DIRECT_LAND_TITLE,
+            DemographicCollections::DIRECT_LIVELIHOODS,
+            DemographicCollections::DIRECT_PRODUCTIVITY,
+            DemographicCollections::DIRECT_OTHER,
         ],
         'indirect' => [
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_INCOME,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_BENEFITS,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_CONSERVATION_PAYMENTS,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_MARKET_ACCESS,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_CAPACITY,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_TRAINING,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_LAND_TITLE,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_LIVELIHOODS,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_PRODUCTIVITY,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_OTHER,
+            DemographicCollections::INDIRECT_INCOME,
+            DemographicCollections::INDIRECT_BENEFITS,
+            DemographicCollections::INDIRECT_CONSERVATION_PAYMENTS,
+            DemographicCollections::INDIRECT_MARKET_ACCESS,
+            DemographicCollections::INDIRECT_CAPACITY,
+            DemographicCollections::INDIRECT_TRAINING,
+            DemographicCollections::INDIRECT_LAND_TITLE,
+            DemographicCollections::INDIRECT_LIVELIHOODS,
+            DemographicCollections::INDIRECT_PRODUCTIVITY,
+            DemographicCollections::INDIRECT_OTHER,
         ],
         'other' => [
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_OTHER,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_OTHER,
+            DemographicCollections::DIRECT_OTHER,
+            DemographicCollections::INDIRECT_OTHER,
         ],
     ];
 
@@ -441,15 +442,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         }
 
         // Assume that the types are balanced and just return the value from 'gender'
-        $sumTotals = fn ($collectionType) => Demographic::where('demographical_type', Workday::class)
-            ->whereIn(
-                'demographical_id',
-                Workday::where('workdayable_type', SiteReport::class)
-                    ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
+        $sumTotals = fn ($collectionType) => DemographicEntry::whereIn(
+            'demographic_id',
+            Demographic::where('demographical_type', SiteReport::class)
+                    ->whereIn('demographical_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
+                    ->type(Demographic::WORKDAY_TYPE)
                     ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
                     ->visible()
                     ->select('id')
-            )->gender()->sum('amount');
+        )->gender()->sum('amount');
 
         return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
     }

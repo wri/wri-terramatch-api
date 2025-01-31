@@ -3,12 +3,13 @@
 namespace Tests\V2\Workdays;
 
 use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
+use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\User;
-use App\Models\V2\Workdays\Workday;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -51,7 +52,7 @@ class GetWorkdaysForEntityControllerTest extends TestCase
         $response = $this->actingAs($owner)
             ->getJson($uri)
             ->assertSuccessful()
-            ->assertJsonCount(count(Workday::SITE_COLLECTIONS), 'data')
+            ->assertJsonCount(count(DemographicCollections::WORKDAYS_SITE_COLLECTIONS), 'data')
             ->decodeResponseJson();
         foreach ($response['data'] as $workday) {
             $this->assertCount(0, $workday['demographics']);
@@ -80,27 +81,27 @@ class GetWorkdaysForEntityControllerTest extends TestCase
             'status' => EntityStatusStateMachine::STARTED,
         ]);
 
-        $workday = Workday::factory()->create([
-            'workdayable_id' => $report->id,
+        $workday = Demographic::factory()->create([
+            'demographical_id' => $report->id,
         ]);
-        $femaleCount = Demographic::factory()->gender()->create([
-            'demographical_id' => $workday->id,
+        $femaleCount = DemographicEntry::factory()->gender()->create([
+            'demographic_id' => $workday->id,
             'name' => 'female',
         ])->amount;
-        $nonBinaryCount = Demographic::factory()->gender()->create([
-            'demographical_id' => $workday->id,
+        $nonBinaryCount = DemographicEntry::factory()->gender()->create([
+            'demographic_id' => $workday->id,
             'name' => 'non-binary',
         ])->amount;
-        $youthCount = Demographic::factory()->age()->create([
-            'demographical_id' => $workday->id,
+        $youthCount = DemographicEntry::factory()->age()->create([
+            'demographic_id' => $workday->id,
             'name' => 'youth',
         ])->amount;
-        $otherAgeCount = Demographic::factory()->age()->create([
-            'demographical_id' => $workday->id,
+        $otherAgeCount = DemographicEntry::factory()->age()->create([
+            'demographic_id' => $workday->id,
             'name' => 'other',
         ])->amount;
-        $indigenousCount = Demographic::factory()->ethnicity()->create([
-            'demographical_id' => $workday->id,
+        $indigenousCount = DemographicEntry::factory()->ethnicity()->create([
+            'demographic_id' => $workday->id,
             'subtype' => 'indigenous',
             'name' => 'Ohlone',
         ])->amount;
@@ -110,7 +111,7 @@ class GetWorkdaysForEntityControllerTest extends TestCase
         $response = $this->actingAs($owner)
             ->getJson($uri)
             ->assertSuccessful()
-            ->assertJsonCount(count(Workday::SITE_COLLECTIONS), 'data')
+            ->assertJsonCount(count(DemographicCollections::WORKDAYS_SITE_COLLECTIONS), 'data')
             ->decodeResponseJson();
         $foundCollection = false;
         foreach ($response['data'] as $workdayData) {

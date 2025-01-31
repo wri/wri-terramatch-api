@@ -3,7 +3,7 @@
 namespace App\Models\Traits;
 
 use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Demographics\DemographicEntry;
 use Illuminate\Support\Str;
 
 /**
@@ -29,7 +29,7 @@ trait HasWorkdays
 
     public function workdays()
     {
-        return $this->morphMany(Workday::class, 'workdayable');
+        return $this->morphMany(Demographic::class, 'demographical')->type(Demographic::WORKDAY_TYPE);
     }
 
     public function getWorkdaysPaidAttribute(): int
@@ -68,9 +68,10 @@ trait HasWorkdays
         if (! empty($value)) {
             foreach (self::WORKDAY_COLLECTIONS['other'] as $collection) {
                 if (! $this->workdays()->collection($collection)->exists()) {
-                    Workday::create([
-                        'workdayable_type' => get_class($this),
-                        'workdayable_id' => $this->id,
+                    Demographic::create([
+                        'demographical_type' => get_class($this),
+                        'demographical_id' => $this->id,
+                        'type' => Demographic::WORKDAY_TYPE,
                         'collection' => $collection,
                     ]);
                 }
@@ -83,11 +84,10 @@ trait HasWorkdays
     protected function sumTotalWorkdaysAmounts(array $collections): int
     {
         // Gender is considered the canonical total value for all current types of workdays, so just pull and sum gender.
-        return Demographic::where('demographical_type', Workday::class)
-            ->whereIn(
-                'demographical_id',
-                $this->workdays()->visible()->collections($collections)->select('id')
-            )
+        return DemographicEntry::whereIn(
+            'demographic_id',
+            $this->workdays()->visible()->collections($collections)->select('id')
+        )
             ->gender()
             ->sum('amount');
     }

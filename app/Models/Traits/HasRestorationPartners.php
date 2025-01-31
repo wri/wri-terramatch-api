@@ -3,7 +3,7 @@
 namespace App\Models\Traits;
 
 use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\RestorationPartners\RestorationPartner;
+use App\Models\V2\Demographics\DemographicEntry;
 use Illuminate\Support\Str;
 
 trait HasRestorationPartners
@@ -24,7 +24,7 @@ trait HasRestorationPartners
 
     public function restorationPartners()
     {
-        return $this->morphMany(RestorationPartner::class, 'partnerable');
+        return $this->morphMany(Demographic::class, 'demographical')->type(Demographic::RESTORATION_PARTNER_TYPE);
     }
 
     public function getDirectRestorationPartnersAttribute(): int
@@ -53,9 +53,10 @@ trait HasRestorationPartners
         if (! empty($value)) {
             foreach (self::RESTORATION_PARTNER_COLLECTIONS['other'] as $collection) {
                 if (! $this->restorationPartners()->collection($collection)->exists()) {
-                    RestorationPartner::create([
-                        'partnerable_type' => get_class($this),
-                        'partnerable_id' => $this->id,
+                    Demographic::create([
+                        'demographical_type' => get_class($this),
+                        'demographical_id' => $this->id,
+                        'type' => Demographic::RESTORATION_PARTNER_TYPE,
                         'collection' => $collection,
                     ]);
                 }
@@ -67,11 +68,10 @@ trait HasRestorationPartners
 
     protected function sumTotalRestorationPartnersAmounts(array $collections): int
     {
-        return Demographic::where('demographical_type', RestorationPartner::class)
-            ->whereIn(
-                'demographical_id',
-                $this->restorationPartners()->visible()->collections($collections)->select('id')
-            )
+        return DemographicEntry::whereIn(
+            'demographic_id',
+            $this->restorationPartners()->visible()->collections($collections)->select('id')
+        )
             ->gender()
             ->sum('amount');
     }
