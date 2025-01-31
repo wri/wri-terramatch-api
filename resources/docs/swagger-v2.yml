@@ -44604,7 +44604,7 @@ paths:
                     type: integer
   '/v2/{entity}/{UUID}/aggregate-reports':
     get:
-      operationId: get-v2-tree-species-entity-uuid
+      operationId: get-v2-aggregate-report-entity-uuid
       summary: View all tree species for a given entity
       tags:
         - V2 Tree Species
