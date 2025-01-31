@@ -25,7 +25,7 @@ class ReportReminder extends I18nMail
             $entityName = $entity->project->name;
         }
         if ($entityClass == 'site-report') {
-            $entityName = Site::find($entity->site_id)?->value('name');
+            $entityName = Site::where('id', $entity->site_id)->value('name');
         }
         if ($entityClass == 'nursery-report') {
             $entityName = $entity->nursery->name;
