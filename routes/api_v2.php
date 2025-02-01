@@ -35,6 +35,7 @@ use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
+use App\Http\Controllers\V2\Demographics\GetDemographicsForEntityController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
@@ -179,7 +180,6 @@ use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkCon
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Reports\NothingToReportReportController;
-use App\Http\Controllers\V2\RestorationPartners\GetRestorationPartnersForEntityController;
 use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
@@ -226,7 +226,6 @@ use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
 use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
-use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
@@ -511,12 +510,8 @@ Route::prefix('{relationType}')
     });
 
 ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
-    Route::get('/{entity}', GetWorkdaysForEntityController::class);
-}, prefix: 'workdays');
-
-ModelInterfaceBindingMiddleware::forSlugs(['project-report'], function () {
-    Route::get('/{entity}', GetRestorationPartnersForEntityController::class);
-}, prefix: 'restoration-partners');
+    Route::get('/{entity}', GetDemographicsForEntityController::class);
+}, prefix: '{demographicType}');
 
 Route::prefix('leadership-team')->group(function () {
     Route::post('/', StoreLeadershipTeamController::class);
