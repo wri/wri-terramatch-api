@@ -43,17 +43,17 @@ class DemographicTest extends TestCase
         ];
         Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false);
         $workday->refresh();
-        $this->assertEquals(4, $workday->demographics()->count());
-        $this->assertEquals(40, $workday->demographics()->isAge('youth')->first()->amount);
-        $this->assertEquals(20, $workday->demographics()->isGender('non-binary')->first()->amount);
-        $this->assertEquals(20, $workday->demographics()->isGender('female')->first()->amount);
-        $this->assertEquals(40, $workday->demographics()->isEthnicity('indigenous', 'Ohlone')->first()->amount);
+        $this->assertEquals(4, $workday->entries()->count());
+        $this->assertEquals(40, $workday->entries()->isAge('youth')->first()->amount);
+        $this->assertEquals(20, $workday->entries()->isGender('non-binary')->first()->amount);
+        $this->assertEquals(20, $workday->entries()->isGender('female')->first()->amount);
+        $this->assertEquals(40, $workday->entries()->isEthnicity('indigenous', 'Ohlone')->first()->amount);
 
         // Test remove demographics
         $data[0]['demographics'] = [];
         Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false);
         $workday->refresh();
-        $this->assertEquals(0, $workday->demographics()->count());
+        $this->assertEquals(0, $workday->entries()->count());
 
         // Test duplicate rows in the incoming data set
         $data = [

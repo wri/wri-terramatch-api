@@ -12,6 +12,7 @@ use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class GetWorkdaysForEntityControllerTest extends TestCase
@@ -114,6 +115,7 @@ class GetWorkdaysForEntityControllerTest extends TestCase
             ->assertJsonCount(count(DemographicCollections::WORKDAYS_SITE_COLLECTIONS), 'data')
             ->decodeResponseJson();
         $foundCollection = false;
+        Log::info('response: ' . json_encode($response['data'], JSON_PRETTY_PRINT));
         foreach ($response['data'] as $workdayData) {
             $demographics = $workdayData['demographics'];
             if ($workdayData['collection'] != $workday->collection) {

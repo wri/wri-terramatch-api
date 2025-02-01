@@ -120,7 +120,7 @@ class ProjectTest extends TestCase
         // Unapproved site (doesn't count toward workday count)
         $site = Site::factory()->ppc()->create(['project_id' => $project->id, 'status' => EntityStatusStateMachine::AWAITING_APPROVAL]);
         $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::APPROVED]);
-        $workday = Demographic::factory()->create(['demographical_' => $report->id]);
+        $workday = Demographic::factory()->create(['demographical_id' => $report->id]);
         DemographicEntry::factory()->create(['demographic_id' => $workday->id, 'amount' => 3]);
 
         // Approved site

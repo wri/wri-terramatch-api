@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V2\RestorationPartners;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\RestorationPartners\RestorationPartnerResource;
+use App\Http\Resources\V2\Demographics\DemographicResource;
 use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\EntityModel;
@@ -35,11 +35,12 @@ class GetRestorationPartnersForEntityController extends Controller
                 // Allows the resource to return an API response with no demographics, but still containing
                 // the collection and readable collection name.
                 $restorationPartner['type'] = Demographic::RESTORATION_PARTNER_TYPE;
+                $restorationPartner['demographical_type'] = get_class($entity);
                 $restorationPartner['collection'] = $collection;
                 $restorationPartners->push($restorationPartner);
             }
         }
 
-        return RestorationPartnerResource::collection($restorationPartners);
+        return DemographicResource::collection($restorationPartners);
     }
 }
