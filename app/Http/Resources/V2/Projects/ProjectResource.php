@@ -55,6 +55,7 @@ class ProjectResource extends JsonResource
             'approved_trees_planted_count' => $this->approved_trees_planted_count,
             'seeds_planted_count' => $this->seeds_planted_count,
             'regenerated_trees_count' => $this->regenerated_trees_count,
+            'approved_regenerated_trees_count' => $this->approved_regenerated_trees_count,
             'workday_count' => $this->workday_count,
             // These two are temporary until we have bulk import completed.
             'self_reported_workday_count' => $this->self_reported_workday_count,
@@ -100,6 +101,8 @@ class ProjectResource extends JsonResource
                 $this->getTreesGrowingThroughAnr($this->sites()->IsApproved()->get()) + (($this->trees_planted_count + $this->seeds_planted_count) * ($this->survival_rate / 100)),
             'direct_seeding_survival_rate' => $this->direct_seeding_survival_rate,
             'detailed_intervention_types' => $this->detailed_intervention_types,
+            'assisted_natural_regeneration_list' => $this->getAssistedNaturalRegenerationList($this->sites()->IsApproved()->get()),
+            'goal_trees_restored_anr' => $this->goal_trees_restored_anr,
         ];
 
         return $this->appendFilesToResource($data);
@@ -110,5 +113,18 @@ class ProjectResource extends JsonResource
         return $sites->sum(function ($site) {
             return $site->reports()->Approved()->sum('num_trees_regenerating');
         });
+    }
+
+    public function getAssistedNaturalRegenerationList($sites)
+    {
+        $sitesAssistedNaturalRegeneration = [];
+        foreach ($sites as $site) {
+            $sitesAssistedNaturalRegeneration[] = [
+                'name' => $site->name,
+                'treeCount' => floatval($site->reports()->Approved()->sum('num_trees_regenerating')),
+            ];
+        }
+
+        return $sitesAssistedNaturalRegeneration;
     }
 }

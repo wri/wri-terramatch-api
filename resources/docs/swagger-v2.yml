@@ -80,6 +80,47 @@ definitions:
             type: integer
           unfiltered_total:
             type: integer
+      count_new_species:
+        type: integer
+      count_reported_species:
+        type: integer
+      count_stablished_species:
+        type: integer
+  TreeSpeciesAggregated:
+    type: object
+    properties:
+      tree-planted:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date-time
+              nullable: true
+            aggregateAmount:
+              type: integer
+      seeding-records:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date-time
+            aggregateAmount:
+              type: integer
+      trees-regenerating:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date-time
+              nullable: true
+            aggregateAmount:
+              type: integer
   TreeSpeciesRead:
     type: object
     properties:
@@ -44578,6 +44619,66 @@ paths:
                     type: integer
                   unfiltered_total:
                     type: integer
+              count_new_species:
+                type: integer
+              count_reported_species:
+                type: integer
+              count_stablished_species:
+                type: integer
+  '/v2/{entity}/{UUID}/aggregate-reports':
+    get:
+      operationId: get-v2-aggregate-report-entity-uuid
+      summary: View all tree species for a given entity
+      tags:
+        - V2 Tree Species
+      parameters:
+        - type: string
+          name: entity
+          in: path
+          required: true
+          description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              tree-planted:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dueDate:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    aggregateAmount:
+                      type: integer
+              seeding-records:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dueDate:
+                      type: string
+                      format: date-time
+                    aggregateAmount:
+                      type: integer
+              trees-regenerating:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dueDate:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    aggregateAmount:
+                      type: integer
   /v2/admin/projects/multi:
     get:
       summary: Get multiple projects as an admin

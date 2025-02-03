@@ -72,13 +72,27 @@ class GetRelationsForEntityController extends Controller
         if ($filter = $request->query('filter')) {
             if (! empty($filter['collection'])) {
                 $query->where('collection', $filter['collection']);
-                $entityTreeSpecies = $query->get()->groupBy('taxon_id')->map(function ($group) {
+                $entityTreeSpecies = $query->get()->groupBy(function ($item) {
+                    return $item->taxon_id ?? $item->name;
+                })->map(function ($group) {
                     return $group->first();
                 })->values();
+                $countStablishedSpecies = $entityTreeSpecies->count();
                 $transformer = new TreeSpeciesTransformer($entity, $entityTreeSpecies, $filter['collection']);
                 $transformedData = $transformer->transform();
+                $countReportedSpecies = $transformedData->filter(function ($species) {
+                    return $species['report_amount'] > 0 && $species['is_new_species'] === false;
+                })->count();
 
-                return new TreeSpeciesCollection($transformedData);
+                $countNewSpecies = $transformedData->filter(function ($species) {
+                    return $species['report_amount'] > 0 && $species['is_new_species'] === true;
+                })->count();
+
+                return (new TreeSpeciesCollection($transformedData))->additional([
+                    'count_stablished_species' => $countStablishedSpecies,
+                    'count_reported_species' => $countReportedSpecies,
+                    'count_new_species' => $countNewSpecies,
+                ]);
             }
 
             if (! empty($filter['collection'])) {

@@ -1,5 +1,7 @@
 TreeSpeciesPaginated:
   $ref: './TreeSpeciesPaginated.yml'
+TreeSpeciesAggregated:
+  $ref: './TreeSpeciesAggregated.yml'
 TreeSpeciesRead:
   $ref: './TreeSpeciesRead.yml'
 TreeSpeciesReadAll:

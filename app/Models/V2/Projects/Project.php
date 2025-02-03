@@ -408,6 +408,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $this->submittedSiteReports()->sum('num_trees_regenerating');
     }
 
+    public function getApprovedRegeneratedTreesCountAttribute(): int
+    {
+        return $this->approvedSiteReports()->sum('num_trees_regenerating');
+    }
+
     public function getWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
         $projectQuery = $this->reports()->Approved();
