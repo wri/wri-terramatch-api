@@ -36,6 +36,10 @@ class Demographic extends Model implements HandlesLinkedFieldSync
 
     public const VALID_TYPES = [self::WORKDAY_TYPE, self::RESTORATION_PARTNER_TYPE];
 
+    // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that both in-flight
+    // work at the time of release, and updates from update requests afterward honor that change.
+    protected const SUBTYPE_SWAP_TYPES = [DemographicEntry::GENDER, DemographicEntry::AGE, DemographicEntry::CASTE];
+
     protected $casts = [
         'hidden' => 'boolean',
     ];
@@ -91,6 +95,13 @@ class Demographic extends Model implements HandlesLinkedFieldSync
             $subtype = data_get($row, 'subtype');
             $name = data_get($row, 'name');
             $amount = data_get($row, 'amount');
+
+            // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that both in-flight
+            // work at the time of release, and updates from update requests afterward honor that change.
+            if (in_array($type, self::SUBTYPE_SWAP_TYPES) && $name != null && $subtype == null) {
+                $subtype = $name;
+                $name = null;
+            }
 
             foreach ($syncData as &$syncRow) {
                 if (data_get($syncRow, 'type') === $type &&
