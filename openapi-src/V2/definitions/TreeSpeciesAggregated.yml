@@ -21,3 +21,14 @@ properties:
           format: date-time
         treeSpeciesAmount:
           type: integer
+  trees-regenerating:
+    type: array
+    items:
+      type: object
+      properties:
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+        treeRegeneratingAmount:
+          type: integer

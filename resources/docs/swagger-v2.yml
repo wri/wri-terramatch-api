@@ -104,6 +104,17 @@ definitions:
               format: date-time
             treeSpeciesAmount:
               type: integer
+      trees-regenerating:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date-time
+              nullable: true
+            treeRegeneratingAmount:
+              type: integer
   TreeSpeciesRead:
     type: object
     properties:
@@ -44644,6 +44655,17 @@ paths:
                       type: string
                       format: date-time
                     treeSpeciesAmount:
+                      type: integer
+              trees-regenerating:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dueDate:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    treeRegeneratingAmount:
                       type: integer
   /v2/admin/projects/multi:
     get:
