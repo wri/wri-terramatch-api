@@ -80,6 +80,12 @@ definitions:
             type: integer
           unfiltered_total:
             type: integer
+      count_new_species:
+        type: integer
+      count_reported_species:
+        type: integer
+      count_stablished_species:
+        type: integer
   TreeSpeciesAggregated:
     type: object
     properties:
@@ -92,7 +98,7 @@ definitions:
               type: string
               format: date-time
               nullable: true
-            treeSpeciesAmount:
+            aggregateAmount:
               type: integer
       seeding-records:
         type: array
@@ -102,7 +108,18 @@ definitions:
             dueDate:
               type: string
               format: date-time
-            treeSpeciesAmount:
+            aggregateAmount:
+              type: integer
+      trees-regenerating:
+        type: array
+        items:
+          type: object
+          properties:
+            dueDate:
+              type: string
+              format: date-time
+              nullable: true
+            aggregateAmount:
               type: integer
   TreeSpeciesRead:
     type: object
@@ -44602,6 +44619,12 @@ paths:
                     type: integer
                   unfiltered_total:
                     type: integer
+              count_new_species:
+                type: integer
+              count_reported_species:
+                type: integer
+              count_stablished_species:
+                type: integer
   '/v2/{entity}/{UUID}/aggregate-reports':
     get:
       operationId: get-v2-aggregate-report-entity-uuid
@@ -44633,7 +44656,7 @@ paths:
                       type: string
                       format: date-time
                       nullable: true
-                    treeSpeciesAmount:
+                    aggregateAmount:
                       type: integer
               seeding-records:
                 type: array
@@ -44643,7 +44666,18 @@ paths:
                     dueDate:
                       type: string
                       format: date-time
-                    treeSpeciesAmount:
+                    aggregateAmount:
+                      type: integer
+              trees-regenerating:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dueDate:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    aggregateAmount:
                       type: integer
   /v2/admin/projects/multi:
     get:

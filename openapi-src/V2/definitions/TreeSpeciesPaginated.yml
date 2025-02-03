@@ -28,3 +28,9 @@ properties:
         type: integer
       unfiltered_total:
         type: integer
+  count_new_species:
+    type: integer
+  count_reported_species:
+    type: integer
+  count_stablished_species:
+    type: integer

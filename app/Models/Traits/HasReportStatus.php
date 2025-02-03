@@ -68,6 +68,11 @@ trait HasReportStatus
         return $query->whereIn('status', self::COMPLETE_STATUSES);
     }
 
+    public function scopeHasBeenApproved(Builder $query): Builder
+    {
+        return $query->where('status', ReportStatusStateMachine::APPROVED);
+    }
+
     public function scopeHasBeenSubmitted(Builder $query): Builder
     {
         return $query->whereNotIn('status', self::UNSUBMITTED_STATUSES);

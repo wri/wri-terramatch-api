@@ -43,6 +43,7 @@ class ProjectWithAdminSchemaResource extends JsonResource
             'trees_planted_count' => $this->trees_planted_count,
             'seeds_planted_count' => $this->seeds_planted_count,
             'regenerated_trees_count' => $this->regenerated_trees_count,
+            'approved_regenerated_trees_count' => $this->approved_regenerated_trees_count,
             'workday_count' => $this->workday_count,
             'total_jobs_created' => $this->total_jobs_created,
             'total_sites' => $this->total_sites,

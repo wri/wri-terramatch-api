@@ -54,6 +54,7 @@ class SiteResource extends JsonResource
             'combined_workday_count' => $this->combined_workday_count,
             'trees_planted_count' => $this->trees_planted_count,
             'regenerated_trees_count' => $this->regenerated_trees_count,
+            'approved_regenerated_trees_count' => $this->approved_regenerated_trees_count,
             'migrated' => ! empty($this->old_model),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
