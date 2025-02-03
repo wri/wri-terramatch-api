@@ -100,6 +100,8 @@ class ProjectResource extends JsonResource
                 $this->getTreesGrowingThroughAnr($this->sites()->IsApproved()->get()) + (($this->trees_planted_count + $this->seeds_planted_count) * ($this->survival_rate / 100)),
             'direct_seeding_survival_rate' => $this->direct_seeding_survival_rate,
             'detailed_intervention_types' => $this->detailed_intervention_types,
+            'assisted_natural_regeneration_list' => $this->getAssistedNaturalRegenerationList($this->sites()->IsApproved()->get()),
+            'goal_trees_restored_anr' => $this->goal_trees_restored_anr,
         ];
 
         return $this->appendFilesToResource($data);
@@ -111,4 +113,17 @@ class ProjectResource extends JsonResource
             return $site->reports()->Approved()->sum('num_trees_regenerating');
         });
     }
+
+    public function getAssistedNaturalRegenerationList($sites)
+    {
+        $sitesAssistedNaturalRegeneration = [];
+        foreach ($sites as $site) {
+            $sitesAssistedNaturalRegeneration[] = [
+                'name' => $site->name,
+                'treeCount' => floatval($site->reports()->Approved()->sum('num_trees_regenerating'))
+            ];
+        }
+        return $sitesAssistedNaturalRegeneration;
+    }
+
 }
