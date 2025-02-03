@@ -11,6 +11,7 @@ use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class GetAggregateReportsController extends Controller
 {
@@ -20,9 +21,9 @@ class GetAggregateReportsController extends Controller
     ];
 
     private const FRAMEWORK_COLLECTIONS = [
-        'terrafund' => ['tree-planted'],
-        'ppc' => ['tree-planted', 'seeding-records'],
-        'hbf' => ['tree-planted', 'seeding-records'],
+        'terrafund' => ['tree-planted','tree-regenerating'],
+        'ppc' => ['tree-planted', 'seeding-records', 'tree-regenerating'],
+        'hbf' => ['tree-planted', 'seeding-records', 'tree-regenerating'],
     ];
 
     public function __invoke(Request $request, string $entityType, string $uuid): JsonResponse
@@ -47,6 +48,10 @@ class GetAggregateReportsController extends Controller
 
         if (in_array('tree-planted', self::FRAMEWORK_COLLECTIONS[$frameworkKey])) {
             $this->processTreeSpecies($reportIds, $response);
+        }
+
+        if (in_array('tree-regenerating', self::FRAMEWORK_COLLECTIONS[$frameworkKey])) {
+            $this->processTreesRegenerating($reportIds, $response);
         }
 
         if (in_array('seeding-records', self::FRAMEWORK_COLLECTIONS[$frameworkKey])) {
@@ -76,6 +81,25 @@ class GetAggregateReportsController extends Controller
         return $response;
     }
 
+    private function processTreesRegenerating(array $reportIds, array &$response): void
+    {
+      $siteReports = SiteReport::query()
+          ->whereIn('id', $reportIds)
+          ->get();
+      $grouped = $siteReports
+          ->groupBy('due_at')
+          ->map(function ($group) {
+            return [
+                'dueDate' => $group->first()->due_at,
+                'treeRegeneratingAmount' => $group->sum('num_trees_regenerating')
+            ];
+          })
+          ->values()
+          ->sortBy('dueDate')
+          ->toArray();
+      $response['trees-regenerating'] = array_values($grouped);
+
+    }
     private function processTreeSpecies(array $reportIds, array &$response): void
     {
         $treeSpecies = TreeSpecies::query()
@@ -92,7 +116,7 @@ class GetAggregateReportsController extends Controller
             ->map(function ($group) {
                 return [
                     'dueDate' => $group->first()->speciesable->due_at,
-                    'treeSpeciesAmount' => $group->sum('amount'),
+                    'treeSpeciesAmount' => $group->sum('amount')
                 ];
             })
             ->values()
