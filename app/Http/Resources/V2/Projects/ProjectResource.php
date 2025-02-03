@@ -120,10 +120,10 @@ class ProjectResource extends JsonResource
         foreach ($sites as $site) {
             $sitesAssistedNaturalRegeneration[] = [
                 'name' => $site->name,
-                'treeCount' => floatval($site->reports()->Approved()->sum('num_trees_regenerating'))
+                'treeCount' => floatval($site->reports()->Approved()->sum('num_trees_regenerating')),
             ];
         }
+
         return $sitesAssistedNaturalRegeneration;
     }
-
 }
