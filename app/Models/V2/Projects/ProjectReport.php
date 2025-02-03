@@ -3,15 +3,14 @@
 namespace App\Models\V2\Projects;
 
 use App\Models\Framework;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
-use App\Models\Traits\HasRestorationPartners;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
-use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -56,8 +55,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use HasUpdateRequests;
     use HasEntityResources;
     use BelongsToThroughTrait;
-    use HasWorkdays;
-    use HasRestorationPartners;
+    use HasDemographics;
 
     protected $auditInclude = [
         'status',
@@ -170,9 +168,9 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'beneficiaries_training_other',
         'beneficiaries_training_youth',
         'beneficiaries_training_non_youth',
-        // virtual (see HasWorkdays trait)
+
+        // virtual (see HasDemographics trait)
         'other_workdays_description',
-        // virtual (see HasRestorationPartners trait)
         'other_restoration_partners_description',
     ];
 
@@ -206,63 +204,63 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         ],
     ];
 
-    // Required by the HasWorkdays trait
-    public const WORKDAY_COLLECTIONS = [
-        'paid' => [
-            DemographicCollections::PAID_NURSERY_OPERATIONS,
-            DemographicCollections::PAID_PROJECT_MANAGEMENT,
-            DemographicCollections::PAID_OTHER,
+    // Required by the HasDemographics trait.
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Demographic::WORKDAY_TYPE => [
+            'paid' => [
+                DemographicCollections::PAID_NURSERY_OPERATIONS,
+                DemographicCollections::PAID_PROJECT_MANAGEMENT,
+                DemographicCollections::PAID_OTHER,
+            ],
+            'volunteer' => [
+                DemographicCollections::VOLUNTEER_NURSERY_OPERATIONS,
+                DemographicCollections::VOLUNTEER_PROJECT_MANAGEMENT,
+                DemographicCollections::VOLUNTEER_OTHER,
+            ],
+            'other' => [
+                DemographicCollections::PAID_OTHER,
+                DemographicCollections::VOLUNTEER_OTHER,
+            ],
+            'finance' => [
+                DemographicCollections::DIRECT,
+                DemographicCollections::CONVERGENCE,
+            ],
+            'direct' => [
+                DemographicCollections::DIRECT,
+            ],
+            'convergence' => [
+                DemographicCollections::CONVERGENCE,
+            ],
         ],
-        'volunteer' => [
-            DemographicCollections::VOLUNTEER_NURSERY_OPERATIONS,
-            DemographicCollections::VOLUNTEER_PROJECT_MANAGEMENT,
-            DemographicCollections::VOLUNTEER_OTHER,
-        ],
-        'other' => [
-            DemographicCollections::PAID_OTHER,
-            DemographicCollections::VOLUNTEER_OTHER,
-        ],
-        'finance' => [
-            DemographicCollections::DIRECT,
-            DemographicCollections::CONVERGENCE,
-        ],
-        'direct' => [
-            DemographicCollections::DIRECT,
-        ],
-        'convergence' => [
-            DemographicCollections::CONVERGENCE,
-        ],
-    ];
-
-    // Required by the HasRestorationPartners trait
-    public const RESTORATION_PARTNER_COLLECTIONS = [
-        'direct' => [
-            DemographicCollections::DIRECT_INCOME,
-            DemographicCollections::DIRECT_BENEFITS,
-            DemographicCollections::DIRECT_CONSERVATION_PAYMENTS,
-            DemographicCollections::DIRECT_MARKET_ACCESS,
-            DemographicCollections::DIRECT_CAPACITY,
-            DemographicCollections::DIRECT_TRAINING,
-            DemographicCollections::DIRECT_LAND_TITLE,
-            DemographicCollections::DIRECT_LIVELIHOODS,
-            DemographicCollections::DIRECT_PRODUCTIVITY,
-            DemographicCollections::DIRECT_OTHER,
-        ],
-        'indirect' => [
-            DemographicCollections::INDIRECT_INCOME,
-            DemographicCollections::INDIRECT_BENEFITS,
-            DemographicCollections::INDIRECT_CONSERVATION_PAYMENTS,
-            DemographicCollections::INDIRECT_MARKET_ACCESS,
-            DemographicCollections::INDIRECT_CAPACITY,
-            DemographicCollections::INDIRECT_TRAINING,
-            DemographicCollections::INDIRECT_LAND_TITLE,
-            DemographicCollections::INDIRECT_LIVELIHOODS,
-            DemographicCollections::INDIRECT_PRODUCTIVITY,
-            DemographicCollections::INDIRECT_OTHER,
-        ],
-        'other' => [
-            DemographicCollections::DIRECT_OTHER,
-            DemographicCollections::INDIRECT_OTHER,
+        Demographic::RESTORATION_PARTNER_TYPE => [
+            'direct' => [
+                DemographicCollections::DIRECT_INCOME,
+                DemographicCollections::DIRECT_BENEFITS,
+                DemographicCollections::DIRECT_CONSERVATION_PAYMENTS,
+                DemographicCollections::DIRECT_MARKET_ACCESS,
+                DemographicCollections::DIRECT_CAPACITY,
+                DemographicCollections::DIRECT_TRAINING,
+                DemographicCollections::DIRECT_LAND_TITLE,
+                DemographicCollections::DIRECT_LIVELIHOODS,
+                DemographicCollections::DIRECT_PRODUCTIVITY,
+                DemographicCollections::DIRECT_OTHER,
+            ],
+            'indirect' => [
+                DemographicCollections::INDIRECT_INCOME,
+                DemographicCollections::INDIRECT_BENEFITS,
+                DemographicCollections::INDIRECT_CONSERVATION_PAYMENTS,
+                DemographicCollections::INDIRECT_MARKET_ACCESS,
+                DemographicCollections::INDIRECT_CAPACITY,
+                DemographicCollections::INDIRECT_TRAINING,
+                DemographicCollections::INDIRECT_LAND_TITLE,
+                DemographicCollections::INDIRECT_LIVELIHOODS,
+                DemographicCollections::INDIRECT_PRODUCTIVITY,
+                DemographicCollections::INDIRECT_OTHER,
+            ],
+            'other' => [
+                DemographicCollections::DIRECT_OTHER,
+                DemographicCollections::INDIRECT_OTHER,
+            ],
         ],
     ];
 
@@ -447,7 +445,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             Demographic::where('demographical_type', SiteReport::class)
                     ->whereIn('demographical_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
                     ->type(Demographic::WORKDAY_TYPE)
-                    ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
+                    ->collections(SiteReport::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE][$collectionType])
                     ->visible()
                     ->select('id')
         )->gender()->sum('amount');

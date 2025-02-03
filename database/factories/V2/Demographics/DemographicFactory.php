@@ -37,4 +37,16 @@ class DemographicFactory extends Factory
             ];
         });
     }
+
+    public function projectReportRestorationPartners(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'demographical_type' => ProjectReport::class,
+                'demographical_id' => ProjectReport::factory()->create(),
+                'type' => Demographic::RESTORATION_PARTNER_TYPE,
+                'collection' => $this->faker->randomElement(array_keys(DemographicCollections::RESTORATION_PARTNERS_PROJECT_COLLECTIONS)),
+            ];
+        });
+    }
 }

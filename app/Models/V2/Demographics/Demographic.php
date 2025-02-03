@@ -34,6 +34,8 @@ class Demographic extends Model implements HandlesLinkedFieldSync
     public const WORKDAY_TYPE = 'workdays';
     public const RESTORATION_PARTNER_TYPE = 'restoration-partners';
 
+    public const VALID_TYPES = [self::WORKDAY_TYPE, self::RESTORATION_PARTNER_TYPE];
+
     protected $casts = [
         'hidden' => 'boolean',
     ];

@@ -279,8 +279,8 @@ class BulkWorkdayImport extends Command
 
         // Check that all the demographics are balanced
         $collections = array_merge(
-            $this->modelConfig['model']::WORKDAY_COLLECTIONS['paid'],
-            $this->modelConfig['model']::WORKDAY_COLLECTIONS['volunteer'],
+            $this->modelConfig['model']::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['paid'],
+            $this->modelConfig['model']::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['volunteer'],
         );
         foreach ($collections as $collection) {
             if (empty($row[$collection])) {
@@ -349,8 +349,8 @@ class BulkWorkdayImport extends Command
     protected function persistWorkdays($report, $data): void
     {
         $collections = array_merge(
-            get_class($report)::WORKDAY_COLLECTIONS['paid'],
-            get_class($report)::WORKDAY_COLLECTIONS['volunteer'],
+            get_class($report)::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['paid'],
+            get_class($report)::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['volunteer'],
         );
 
         $modelDescription = Str::replace('-', ' ', Str::title($report->shortName)) .
