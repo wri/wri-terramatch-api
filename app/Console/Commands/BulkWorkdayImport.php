@@ -78,18 +78,18 @@ class BulkWorkdayImport extends Command
     ];
 
     protected const DEMOGRAPHICS = [
-        'women' => ['type' => 'gender', 'subtype' => null, 'name' => 'female'],
-        'men' => ['type' => 'gender', 'subtype' => null, 'name' => 'male'],
-        'non-binary' => ['type' => 'gender', 'subtype' => null, 'name' => 'non-binary'],
-        'nonbinary' => ['type' => 'gender', 'subtype' => null, 'name' => 'non-binary'],
-        'gender-unknown' => ['type' => 'gender', 'subtype' => null, 'name' => 'unknown'],
-        'no-gender' => ['type' => 'gender', 'subtype' => null, 'name' => 'unknown'],
+        'women' => ['type' => 'gender', 'subtype' => 'female', 'name' => null],
+        'men' => ['type' => 'gender', 'subtype' => 'male', 'name' => null],
+        'non-binary' => ['type' => 'gender', 'subtype' => 'non-binary', 'name' => null],
+        'nonbinary' => ['type' => 'gender', 'subtype' => 'non-binary', 'name' => null],
+        'gender-unknown' => ['type' => 'gender', 'subtype' => 'unknown', 'name' => null],
+        'no-gender' => ['type' => 'gender', 'subtype' => 'unknown', 'name' => null],
 
-        'youth_15-24' => ['type' => 'age', 'subtype' => null, 'name' => 'youth'],
-        'adult_24-64' => ['type' => 'age', 'subtype' => null, 'name' => 'adult'],
-        'elder_65+' => ['type' => 'age', 'subtype' => null, 'name' => 'elder'],
-        'age-unknown' => ['type' => 'age', 'subtype' => null, 'name' => 'unknown'],
-        'age_unknown' => ['type' => 'age', 'subtype' => null, 'name' => 'unknown'],
+        'youth_15-24' => ['type' => 'age', 'subtype' => 'youth', 'name' => null],
+        'adult_24-64' => ['type' => 'age', 'subtype' => 'adult', 'name' => null],
+        'elder_65+' => ['type' => 'age', 'subtype' => 'elder', 'name' => null],
+        'age-unknown' => ['type' => 'age', 'subtype' => 'unknown', 'name' => null],
+        'age_unknown' => ['type' => 'age', 'subtype' => 'unknown', 'name' => null],
 
         'indigenous' => ['type' => 'ethnicity', 'subtype' => 'indigenous', 'name' => null],
         'ethnicity-other' => ['type' => 'ethnicity', 'subtype' => 'other', 'name' => null],

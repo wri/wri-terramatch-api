@@ -22,9 +22,13 @@ class DemographicEntry extends Model
 
     // demographic types
     public const GENDER = 'gender';
+    public const GENDERS = ['male', 'female', 'non-binary', 'unknown'];
     public const AGE = 'age';
+    public const AGES = ['youth', 'adult', 'elder', 'unknown'];
     public const ETHNICITY = 'ethnicity';
+    public const ETHNICITIES = ['indigenous', 'other', 'unknown'];
     public const CASTE = 'caste';
+    public const CASTES = ['marginalized'];
 
     public function demographic()
     {
@@ -38,7 +42,7 @@ class DemographicEntry extends Model
 
     public function scopeIsGender(Builder $query, string $gender): Builder
     {
-        return $query->where(['type' => self::GENDER, 'name' => $gender]);
+        return $query->where(['type' => self::GENDER, 'subtype' => $gender]);
     }
 
     public function scopeAge(Builder $query): Builder
@@ -48,7 +52,7 @@ class DemographicEntry extends Model
 
     public function scopeIsAge(Builder $query, string $age): Builder
     {
-        return $query->where(['type' => self::AGE, 'name' => $age]);
+        return $query->where(['type' => self::AGE, 'subtype' => $age]);
     }
 
     public function scopeEthnicity(Builder $query): Builder

@@ -21,8 +21,8 @@ class DemographicTest extends TestCase
                 'type' => Demographic::WORKDAY_TYPE,
                 'collection' => DemographicCollections::VOLUNTEER_PLANTING,
                 'demographics' => [
-                    ['type' => 'age', 'name' => 'youth', 'amount' => 20],
-                    ['type' => 'gender', 'name' => 'non-binary', 'amount' => 20],
+                    ['type' => 'age', 'subtype' => 'youth', 'amount' => 20],
+                    ['type' => 'gender', 'subtype' => 'non-binary', 'amount' => 20],
                     ['type' => 'ethnicity', 'subtype' => 'other', 'amount' => 20],
                 ],
             ],
@@ -38,9 +38,9 @@ class DemographicTest extends TestCase
 
         // Test modifying an existing demographic collection
         $data[0]['demographics'] = [
-            ['type' => 'age', 'name' => 'youth', 'amount' => 40],
-            ['type' => 'gender', 'name' => 'non-binary', 'amount' => 20],
-            ['type' => 'gender', 'name' => 'female', 'amount' => 20],
+            ['type' => 'age', 'subtype' => 'youth', 'amount' => 40],
+            ['type' => 'gender', 'subtype' => 'non-binary', 'amount' => 20],
+            ['type' => 'gender', 'subtype' => 'female', 'amount' => 20],
             ['type' => 'ethnicity', 'subtype' => 'indigenous', 'name' => 'Ohlone', 'amount' => 40],
         ];
         Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false);
@@ -63,10 +63,10 @@ class DemographicTest extends TestCase
                 'type' => Demographic::WORKDAY_TYPE,
                 'collection' => DemographicCollections::VOLUNTEER_PLANTING,
                 'demographics' => [
-                    ['type' => 'age', 'name' => 'youth', 'amount' => 20],
-                    ['type' => 'age', 'name' => 'youth', 'amount' => 40],
-                    ['type' => 'gender', 'name' => 'non-binary', 'amount' => 20],
-                    ['type' => 'gender', 'name' => 'non-binary', 'amount' => 40],
+                    ['type' => 'age', 'subtype' => 'youth', 'amount' => 20],
+                    ['type' => 'age', 'subtype' => 'youth', 'amount' => 40],
+                    ['type' => 'gender', 'subtype' => 'non-binary', 'amount' => 20],
+                    ['type' => 'gender', 'subtype' => 'non-binary', 'amount' => 40],
                     ['type' => 'ethnicity', 'subtype' => 'other', 'amount' => 20],
                     ['type' => 'ethnicity', 'subtype' => 'other', 'amount' => 40],
                 ],
@@ -95,12 +95,12 @@ class DemographicTest extends TestCase
         $paidTotal = DemographicEntry::factory()->create([
             'demographic_id' => $paidNurseryOpsWorkday->id,
             'type' => 'gender',
-            'name' => 'male',
+            'subtype' => 'male',
         ])->amount;
         DemographicEntry::factory()->create([
             'demographic_id' => $paidNurseryOpsWorkday->id,
             'type' => 'age',
-            'name' => 'adult',
+            'subtype' => 'adult',
         ]);
         $paidOtherWorkday = Demographic::factory()->projectReportWorkdays()->create([
             'demographical_id' => $report->id,
@@ -109,7 +109,7 @@ class DemographicTest extends TestCase
         $paidTotal += DemographicEntry::factory()->create([
             'demographic_id' => $paidOtherWorkday->id,
             'type' => 'gender',
-            'name' => 'unknown',
+            'subtype' => 'unknown',
         ])->amount;
         $directWorkday = Demographic::factory()->projectReportWorkdays()->create([
             'demographical_id' => $report->id,
@@ -118,7 +118,7 @@ class DemographicTest extends TestCase
         $paidDirectTotal = DemographicEntry::factory()->create([
             'demographic_id' => $directWorkday->id,
             'type' => 'gender',
-            'name' => 'female',
+            'subtype' => 'female',
         ])->amount;
 
         $directIncomeRP = Demographic::factory()->projectReportRestorationPartners()->create([
@@ -128,12 +128,12 @@ class DemographicTest extends TestCase
         $directRPTotal = DemographicEntry::factory()->create([
             'demographic_id' => $directIncomeRP->id,
             'type' => 'gender',
-            'name' => 'non-binary',
+            'subtype' => 'non-binary',
         ])->amount;
         DemographicEntry::factory()->create([
             'demographic_id' => $directIncomeRP->id,
             'type' => 'age',
-            'name' => 'youth',
+            'subtype' => 'youth',
         ]);
         $directProductivityRP = Demographic::factory()->projectReportRestorationPartners()->create([
             'demographical_id' => $report->id,
@@ -142,7 +142,7 @@ class DemographicTest extends TestCase
         $directRPTotal += DemographicEntry::factory()->create([
             'demographic_id' => $directProductivityRP->id,
             'type' => 'gender',
-            'name' => 'female',
+            'subtype' => 'female',
         ])->amount;
         $indirectTrainingRP = Demographic::factory()->projectReportRestorationPartners()->create([
             'demographical_id' => $report->id,
@@ -151,7 +151,7 @@ class DemographicTest extends TestCase
         $indirectRPTotal = DemographicEntry::factory()->create([
             'demographic_id' => $indirectTrainingRP->id,
             'type' => 'gender',
-            'name' => 'unknown',
+            'subtype' => 'unknown',
         ])->amount;
 
         $this->assertEquals($paidTotal, $report->workdays_paid);

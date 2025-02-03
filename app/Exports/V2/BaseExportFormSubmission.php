@@ -71,18 +71,18 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                 case 'workdays':
                 case 'restorationPartners':
                     $list = [];
-                    $demographical = $answer->first();
-                    if ($demographical == null) {
+                    $demographic = $answer->first();
+                    if ($demographic == null) {
                         return '';
                     }
 
                     $types = ['gender' => [], 'age' => [], 'ethnicity' => [], 'caste' => []];
-                    foreach ($demographical->demographics as $demographic) {
-                        $value = match ($demographic->type) {
-                            'ethnicity' => [$demographic->amount, $demographic->subtype, $demographic->name],
-                            default => [$demographic->amount, $demographic->name],
+                    foreach ($demographic->entries as $entry) {
+                        $value = match ($entry->type) {
+                            'ethnicity' => [$entry->amount, $entry->subtype, $entry->name],
+                            default => [$entry->amount, $entry->subtype],
                         };
-                        $types[$demographic['type']][] = implode(':', $value);
+                        $types[$entry['type']][] = implode(':', $value);
                     }
                     $list[] = 'gender:(' . implode(')(', $types['gender']) . ')';
                     $list[] = 'age:(' . implode(')(', $types['age']) . ')';

@@ -58,11 +58,11 @@ class UpdateProjectReportWithFormControllerTest extends TestCase
                     'collection' => 'paid-project-management',
                     'demographics' => [[
                         'type' => 'gender',
-                        'name' => 'male',
+                        'subtype' => 'male',
                         'amount' => 24,
                     ], [
                         'type' => 'age',
-                        'name' => 'youth',
+                        'subtype' => 'youth',
                         'amount' => 24,
                     ], [
                         'type' => 'ethnicity',

@@ -87,19 +87,19 @@ class GetWorkdaysForEntityControllerTest extends TestCase
         ]);
         $femaleCount = DemographicEntry::factory()->gender()->create([
             'demographic_id' => $workday->id,
-            'name' => 'female',
+            'subtype' => 'female',
         ])->amount;
         $nonBinaryCount = DemographicEntry::factory()->gender()->create([
             'demographic_id' => $workday->id,
-            'name' => 'non-binary',
+            'subtype' => 'non-binary',
         ])->amount;
         $youthCount = DemographicEntry::factory()->age()->create([
             'demographic_id' => $workday->id,
-            'name' => 'youth',
+            'subtype' => 'youth',
         ])->amount;
         $otherAgeCount = DemographicEntry::factory()->age()->create([
             'demographic_id' => $workday->id,
-            'name' => 'other',
+            'subtype' => 'other',
         ])->amount;
         $indigenousCount = DemographicEntry::factory()->ethnicity()->create([
             'demographic_id' => $workday->id,
@@ -129,10 +129,10 @@ class GetWorkdaysForEntityControllerTest extends TestCase
 
             // They should be in creation order
             $expected = [
-                ['type' => 'gender', 'subtype' => null, 'name' => 'female', 'amount' => $femaleCount],
-                ['type' => 'gender', 'subtype' => null, 'name' => 'non-binary', 'amount' => $nonBinaryCount],
-                ['type' => 'age', 'subtype' => null, 'name' => 'youth', 'amount' => $youthCount],
-                ['type' => 'age', 'subtype' => null, 'name' => 'other', 'amount' => $otherAgeCount],
+                ['type' => 'gender', 'subtype' => 'female', 'name' => null, 'amount' => $femaleCount],
+                ['type' => 'gender', 'subtype' => 'non-binary', 'name' => null, 'amount' => $nonBinaryCount],
+                ['type' => 'age', 'subtype' => 'youth', 'name' => null, 'amount' => $youthCount],
+                ['type' => 'age', 'subtype' => 'other', 'name' => null, 'amount' => $otherAgeCount],
                 ['type' => 'ethnicity', 'subtype' => 'indigenous', 'name' => 'Ohlone', 'amount' => $indigenousCount],
             ];
             $this->assertEquals($expected, $demographics);
