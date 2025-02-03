@@ -9,7 +9,7 @@ properties:
           type: string
           format: date-time
           nullable: true
-        treeSpeciesAmount:
+        aggregateAmount:
           type: integer
   seeding-records:
     type: array
@@ -19,7 +19,7 @@ properties:
         dueDate:
           type: string
           format: date-time
-        treeSpeciesAmount:
+        aggregateAmount:
           type: integer
   trees-regenerating:
     type: array
@@ -30,5 +30,5 @@ properties:
           type: string
           format: date-time
           nullable: true
-        treeRegeneratingAmount:
+        aggregateAmount:
           type: integer

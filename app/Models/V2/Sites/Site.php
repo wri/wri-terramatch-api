@@ -348,6 +348,11 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         return $this->reports()->hasBeenSubmitted()->sum('num_trees_regenerating');
     }
 
+    public function getApprovedRegeneratedTreesCountAttribute(): int
+    {
+        return $this->reports()->hasBeenApproved()->sum('num_trees_regenerating');
+    }
+
     public function getWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
         $reportQuery = $this->reports()->hasBeenSubmitted();

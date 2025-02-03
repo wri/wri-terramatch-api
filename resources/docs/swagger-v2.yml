@@ -92,7 +92,7 @@ definitions:
               type: string
               format: date-time
               nullable: true
-            treeSpeciesAmount:
+            aggregateAmount:
               type: integer
       seeding-records:
         type: array
@@ -102,7 +102,7 @@ definitions:
             dueDate:
               type: string
               format: date-time
-            treeSpeciesAmount:
+            aggregateAmount:
               type: integer
       trees-regenerating:
         type: array
@@ -113,7 +113,7 @@ definitions:
               type: string
               format: date-time
               nullable: true
-            treeRegeneratingAmount:
+            aggregateAmount:
               type: integer
   TreeSpeciesRead:
     type: object
@@ -44644,7 +44644,7 @@ paths:
                       type: string
                       format: date-time
                       nullable: true
-                    treeSpeciesAmount:
+                    aggregateAmount:
                       type: integer
               seeding-records:
                 type: array
@@ -44654,7 +44654,7 @@ paths:
                     dueDate:
                       type: string
                       format: date-time
-                    treeSpeciesAmount:
+                    aggregateAmount:
                       type: integer
               trees-regenerating:
                 type: array
@@ -44665,7 +44665,7 @@ paths:
                       type: string
                       format: date-time
                       nullable: true
-                    treeRegeneratingAmount:
+                    aggregateAmount:
                       type: integer
   /v2/admin/projects/multi:
     get:

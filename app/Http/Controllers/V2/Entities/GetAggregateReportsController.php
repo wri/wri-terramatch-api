@@ -11,7 +11,6 @@ use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class GetAggregateReportsController extends Controller
 {
@@ -83,23 +82,24 @@ class GetAggregateReportsController extends Controller
 
     private function processTreesRegenerating(array $reportIds, array &$response): void
     {
-      $siteReports = SiteReport::query()
-          ->whereIn('id', $reportIds)
-          ->get();
-      $grouped = $siteReports
-          ->groupBy('due_at')
-          ->map(function ($group) {
-            return [
-                'dueDate' => $group->first()->due_at,
-                'treeRegeneratingAmount' => $group->sum('num_trees_regenerating')
-            ];
-          })
-          ->values()
-          ->sortBy('dueDate')
-          ->toArray();
-      $response['trees-regenerating'] = array_values($grouped);
+        $siteReports = SiteReport::query()
+            ->whereIn('id', $reportIds)
+            ->get();
+        $grouped = $siteReports
+            ->groupBy('due_at')
+            ->map(function ($group) {
+                return [
+                    'dueDate' => $group->first()->due_at,
+                    'aggregateAmount' => $group->sum('num_trees_regenerating'),
+                ];
+            })
+            ->values()
+            ->sortBy('dueDate')
+            ->toArray();
+        $response['trees-regenerating'] = array_values($grouped);
 
     }
+
     private function processTreeSpecies(array $reportIds, array &$response): void
     {
         $treeSpecies = TreeSpecies::query()
@@ -116,7 +116,7 @@ class GetAggregateReportsController extends Controller
             ->map(function ($group) {
                 return [
                     'dueDate' => $group->first()->speciesable->due_at,
-                    'treeSpeciesAmount' => $group->sum('amount')
+                    'aggregateAmount' => $group->sum('amount'),
                 ];
             })
             ->values()
@@ -141,7 +141,7 @@ class GetAggregateReportsController extends Controller
             ->map(function ($group) {
                 return [
                     'dueDate' => $group->first()->seedable->due_at,
-                    'treeSpeciesAmount' => $group->sum('amount'),
+                    'aggregateAmount' => $group->sum('amount'),
                 ];
             })
             ->values()
