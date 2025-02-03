@@ -11473,8 +11473,8 @@ definitions:
               updated_at:
                 type: string
           organisation:
-            type: object
             title: AdminOrganisationRead
+            type: object
             properties:
               uuid:
                 type: string
@@ -16335,8 +16335,8 @@ definitions:
           updated_at:
             type: string
       organisation:
-        type: object
         title: AdminOrganisationRead
+        type: object
         properties:
           uuid:
             type: string
@@ -60894,7 +60894,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -60905,8 +60904,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -60934,6 +60933,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       tags:
         - V2 Admin
         - V2 Organisations
@@ -68611,7 +68611,6 @@ paths:
                     date_added:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -68622,8 +68621,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -68651,6 +68650,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -73536,8 +73536,8 @@ paths:
                             updated_at:
                               type: string
                         organisation:
-                          type: object
                           title: AdminOrganisationRead
+                          type: object
                           properties:
                             uuid:
                               type: string
@@ -80226,7 +80226,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -80237,8 +80236,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -80266,6 +80265,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       operationId: get-v2-funding-programme
   /v2/admin/funding-programme:
     get:
@@ -80561,7 +80561,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -80572,8 +80571,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -80601,6 +80600,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       operationId: get-v2-admin-funding-programme
     post:
       summary: Create a funding programme
@@ -86934,8 +86934,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                type: object
                 title: AdminOrganisationRead
+                type: object
                 properties:
                   uuid:
                     type: string
@@ -88357,7 +88357,6 @@ paths:
                       type: string
                       format: date-time
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -88368,8 +88367,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -88397,6 +88396,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/applications/{UUID}':
     get:
       summary: Get a specific application
@@ -89165,8 +89165,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                type: object
                 title: AdminOrganisationRead
+                type: object
                 properties:
                   uuid:
                     type: string
@@ -91964,8 +91964,8 @@ paths:
                         updated_at:
                           type: string
                     organisation:
-                      type: object
                       title: AdminOrganisationRead
+                      type: object
                       properties:
                         uuid:
                           type: string
@@ -95398,6 +95398,37 @@ paths:
           description: OK
           schema:
             type: file
+  '/v2/admin/{ENTITY}/export/{FRAMEWORK}/pm':
+    get:
+      operationId: get-v2-admin-entity-export-framework-pm.yml
+      summary: Export entities data for project manager
+      tags:
+        - V2 Projects
+        - V2 Sites
+        - V2 Nurseries
+        - V2 Project Reports
+        - V2 Site Reports
+        - V2 Nursery Reports
+        - Exports
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+        - type: string
+          name: FRAMEWORK
+          in: path
+          required: true
+          description: allowed values terrafund/ppc and more frameworks
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              url:
+                type: string
   '/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}':
     get:
       operationId: get-v2-admin-entity-presigned-url-framework.yml

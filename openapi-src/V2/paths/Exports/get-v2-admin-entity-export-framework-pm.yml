@@ -1,0 +1,29 @@
+operationId: get-v2-admin-entity-export-framework-pm.yml
+summary: Export entities data for project manager
+tags:
+  - V2 Projects
+  - V2 Sites
+  - V2 Nurseries
+  - V2 Project Reports
+  - V2 Site Reports
+  - V2 Nursery Reports
+  - Exports
+parameters:
+  - type: string
+    name: ENTITY
+    in: path
+    required: true
+    description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+  - type: string
+    name: FRAMEWORK
+    in: path
+    required: true
+    description: allowed values terrafund/ppc and more frameworks
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        url:
+          type: string
