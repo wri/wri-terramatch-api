@@ -18,6 +18,7 @@ class ProjectAdminExportController extends Controller
     {
         $user = Auth::user();
         $key = 'export:project-manager|'.$user->uuid.'|'.$entity.'|'.$framework;
+
         try {
             $cacheValue = Redis::get($key);
 
