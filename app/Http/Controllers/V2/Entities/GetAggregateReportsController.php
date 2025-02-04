@@ -22,7 +22,7 @@ class GetAggregateReportsController extends Controller
     private const FRAMEWORK_COLLECTIONS = [
         'terrafund' => ['tree-planted','tree-regenerating'],
         'terrafund-landscapes' => ['tree-planted','tree-regenerating'],
-        'enterprise' => ['tree-planted','tree-regenerating'],
+        'enterprises' => ['tree-planted','tree-regenerating'],
         'ppc' => ['tree-planted', 'seeding-records', 'tree-regenerating'],
         'hbf' => ['tree-planted', 'seeding-records', 'tree-regenerating'],
     ];
