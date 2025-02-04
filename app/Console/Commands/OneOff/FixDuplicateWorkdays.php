@@ -4,7 +4,7 @@ namespace App\Console\Commands\OneOff;
 
 use App\Console\Commands\Traits\Abortable;
 use App\Console\Commands\Traits\AbortException;
-use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Demographics\Demographic;
 use Illuminate\Console\Command;
 
 class FixDuplicateWorkdays extends Command
@@ -32,8 +32,9 @@ class FixDuplicateWorkdays extends Command
     {
         $this->executeAbortableScript(function () {
             # Find all instances of workdays that are duplicated across the same type, id and collection.
-            $dupes = Workday::select('workdayable_type', 'workdayable_id', 'collection')
-                ->groupBy('workdayable_type', 'workdayable_id', 'collection')
+            $dupes = Demographic::select('demographical_type', 'demographical_id', 'collection')
+                ->type(Demographic::WORKDAY_TYPE)
+                ->groupBy('demographical_type', 'demographical_id', 'collection')
                 ->havingRaw('count(*) > ?', [1])
                 ->get();
 
@@ -62,17 +63,18 @@ class FixDuplicateWorkdays extends Command
      */
     private function removeDuplicates($dupe)
     {
-        $workdays = Workday::where([
-            'workdayable_type' => $dupe->workdayable_type,
-            'workdayable_id' => $dupe->workdayable_id,
+        $workdays = Demographic::where([
+            'demographical_type' => $dupe->demographical_type,
+            'demographical_id' => $dupe->demographical_id,
+            'type' => Demographic::WORKDAY_TYPE,
             'collection' => $dupe->collection,
         ])->get();
 
-        $type = explode('\\', $dupe->workdayable_type);
+        $type = explode('\\', $dupe->demographical_type);
         $params = json_encode([
             'type' => array_pop($type),
-            'id' => $dupe->workdayable_id,
-            'uuid' => $workdays->first()->workdayable->uuid,
+            'id' => $dupe->demographical_id,
+            'uuid' => $workdays->first()->demographical->uuid,
             'collection' => $dupe->collection,
         ]);
         $this->assert(
@@ -92,9 +94,9 @@ class FixDuplicateWorkdays extends Command
         $this->assert($numberUpdatedDates == 1 || $mostRecentUpdated == $workdays->first(), "First is not the most recently updated: $params");
 
         // If we made it through the checks above, it's considered safe to delete all the workdays after the first one.
-        $this->info("Removing dupes: [$dupe->workdayable_type, $dupe->workdayable_id, $dupe->collection]");
+        $this->info("Removing dupes: [$dupe->demographical_type, $dupe->demographical_id, $dupe->collection]");
         foreach ($workdays->slice(1) as $workday) {
-            $workday->demographics()->delete();
+            $workday->entries()->delete();
             $workday->delete();
         }
     }

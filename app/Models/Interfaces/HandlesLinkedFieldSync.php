@@ -6,5 +6,5 @@ use App\Models\V2\EntityModel;
 
 interface HandlesLinkedFieldSync
 {
-    public static function syncRelation(EntityModel $entity, string $property, $data, bool $hidden): void;
+    public static function syncRelation(EntityModel $entity, string $property, string $inputType, $data, bool $hidden): void;
 }

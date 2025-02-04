@@ -3,7 +3,7 @@
 namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Demographics\DemographicEntry;
 use Illuminate\Console\Command;
 
 class FixDuplicateDemographics extends Command
@@ -20,43 +20,42 @@ class FixDuplicateDemographics extends Command
      *
      * @var string
      */
-    protected $description = 'Fixes workday demographics that have been duplicated';
+    protected $description = 'Fixes demographics that have been duplicated';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $workdays = [];
+        $demographics = [];
 
-        Demographic::selectRaw('demographical_id, type, subtype, name, count(*) as num, sum(amount) as sum')
+        DemographicEntry::selectRaw('demographic_id, type, subtype, name, count(*) as num, sum(amount) as sum')
             // group by is case insensitive, so in order to avoid turning up false positives, we cast to binary
             // to get the DB to recognize different casing.
-            ->groupByRaw('demographical_id, type, subtype, name, Cast(name as binary)')
-            ->where('demographical_type', Workday::class)
+            ->groupByRaw('demographic_id, type, subtype, name, Cast(name as binary)')
             ->orderByRaw('num desc')
-            ->chunk(10, function ($chunk) use (&$workdays) {
-                foreach ($chunk as $demographic) {
-                    if ($demographic->num == 1) {
+            ->chunk(10, function ($chunk) use (&$demographics) {
+                foreach ($chunk as $entry) {
+                    if ($entry->num == 1) {
                         return false;
                     }
 
-                    $demographic['rows'] = Demographic::where([
-                        'demographical_id' => $demographic->demographical_id,
-                        'demographical_type' => Workday::class,
-                        'type' => $demographic->type,
-                        'subtype' => $demographic->subtype,
-                        'name' => $demographic->name,
+                    $entry['rows'] = DemographicEntry::where([
+                        'demographic_id' => $entry->demographic_id,
+                        'type' => $entry->type,
+                        'subtype' => $entry->subtype,
+                        'name' => $entry->name,
                     ])->select('id', 'amount')->get()->toArray();
-                    $workdays[$demographic->demographical_id][] = $demographic->toArray();
+                    $demographics[$entry->demographic_id][] = $entry->toArray();
                 }
 
                 return true;
             });
 
-        foreach ($workdays as $workdayId => $stats) {
+        foreach ($demographics as $demographicId => $stats) {
             foreach ($stats as $stat) {
-                $workday = Workday::withTrashed()->find($workdayId);
+                /** @var Demographic $demographic */
+                $demographic = Demographic::withTrashed()->find($demographicId);
 
                 $rows = collect($stat['rows']);
                 $max = $rows->max('amount');
@@ -78,11 +77,12 @@ class FixDuplicateDemographics extends Command
                 }
 
                 $info = [
-                    'workday_id' => $workdayId,
-                    'workdayable_type' => $workday->workdayable_type,
-                    'workdayable_id' => $workday->workdayable_id,
-                    'workdayable_uuid' => $workday->workdayable()->withTrashed()->first()->uuid,
-                    'collection' => $workday->collection,
+                    'demographic_id' => $demographicId,
+                    'demographical_type' => $demographic->demographical_type,
+                    'demographical_id' => $demographic->demographical_id,
+                    'demographical_uuid' => $demographic->demographical()->withTrashed()->first()->uuid,
+                    'demographic_type' => $demographic->type,
+                    'collection' => $demographic->collection,
                     'type' => $stat['type'],
                     'subtype' => $stat['subtype'],
                     'name' => $stat['name'],
@@ -97,7 +97,7 @@ class FixDuplicateDemographics extends Command
                 unset($row);
                 foreach ($stat['rows'] as $row) {
                     if ($row['action'] == 'delete') {
-                        Demographic::find($row['id'])->delete();
+                        DemographicEntry::find($row['id'])->delete();
                     }
                 }
             }

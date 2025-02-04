@@ -3,113 +3,141 @@
 namespace App\Models\Traits;
 
 use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\EntityModel;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Models\V2\Demographics\DemographicEntry;
+use Illuminate\Support\Str;
+use Symfony\Component\CssSelector\Exception\InternalErrorException;
 
-/**
- * Models that use the Demographics associations are required to have 'collection' (string) and 'hidden' (boolean)
- * columns.
- */
 trait HasDemographics
 {
-    /**
-     * @throws \Exception
-     */
-    public static function syncRelation(EntityModel $entity, string $property, $data, bool $hidden): void
+    public const DEMOGRAPHIC_ATTRIBUTES = [
+        'workdaysPaid' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'paid'],
+        'workdaysVolunteer' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'volunteer'],
+        'workdaysDirectTotal' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'direct'],
+        'workdaysConvergenceTotal' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'convergence'],
+        'directRestorationPartners' => ['type' => Demographic::RESTORATION_PARTNER_TYPE, 'collections' => 'direct'],
+        'indirectRestorationPartners' => ['type' => Demographic::RESTORATION_PARTNER_TYPE, 'collections' => 'indirect'],
+    ];
+
+    public static function bootHasDemographics()
     {
-        $morph = $entity->$property();
-        if (count($data) == 0) {
-            $morph->delete();
-
-            return;
+        if (empty(static::DEMOGRAPHIC_COLLECTIONS)) {
+            throw new InternalErrorException('No demographic collections defined');
         }
 
-        // Demographic collections only have one instance per collection
-        $demographicData = $data[0];
-        $demographical = $morph->first();
-        if ($demographical != null && $demographical->collection != $demographicData['collection']) {
-            throw new \Exception(
-                'Collection does not match entity property [' .
-                'property collection: ' . $demographical->collection . ', ' .
-                'submitted collection: ' . $demographicData['collection'] . ']'
-            );
-        }
+        collect(static::DEMOGRAPHIC_COLLECTIONS)->each(function ($collectionSets, $demographicType) {
+            $attributePrefix = Str::camel($demographicType);
+            self::resolveRelationUsing($attributePrefix, function ($entity) use ($demographicType) {
+                return $entity->demographics()->type($demographicType);
+            });
 
-        if ($demographical == null) {
-            $demographical = self::create([
-                $morph->getMorphType() => get_class($entity),
-                $morph->getForeignKeyName() => $entity->id,
-                'collection' => $demographicData['collection'],
-                'hidden' => $hidden,
-            ]);
-        } else {
-            $demographical->update(['hidden' => $hidden]);
-        }
-
-        // Make sure the incoming data is clean, and meets our expectations of one row per type/subtype/name combo.
-        // The FE is not supposed to send us data with duplicates, but there has been a bug in the past that caused
-        // this problem, so this extra check is just covering our bases.
-        $syncData = isset($demographicData['demographics']) ? collect($demographicData['demographics'])->reduce(function ($syncData, $row) {
-            $type = data_get($row, 'type');
-            $subtype = data_get($row, 'subtype');
-            $name = data_get($row, 'name');
-            $amount = data_get($row, 'amount');
-
-            foreach ($syncData as &$syncRow) {
-                if (data_get($syncRow, 'type') === $type &&
-                    data_get($syncRow, 'subtype') === $subtype &&
-                    data_get($syncRow, 'name') === $name) {
-
-                    // Keep the last value for this type/subtype/name in the incoming data set.
-                    $syncRow['amount'] = $amount;
-
-                    return $syncData;
-                }
-            }
-
-            $syncData[] = $row;
-
-            return $syncData;
-        }, []) : [];
-
-        $represented = collect();
-        foreach ($syncData as $row) {
-            $demographic = $demographical->demographics()->where([
-                'type' => data_get($row, 'type'),
-                'subtype' => data_get($row, 'subtype'),
-                'name' => data_get($row, 'name'),
-            ])->first();
-
-            if ($demographic == null) {
-                $represented->push($demographical->demographics()->create($row)->id);
-            } else {
-                $represented->push($demographic->id);
-                $demographic->update(['amount' => data_get($row, 'amount')]);
-            }
-        }
-
-        // Remove any existing demographic that wasn't in the submitted set.
-        $demographical->demographics()->whereNotIn('id', $represented)->delete();
+            $collections = match ($demographicType) {
+                Demographic::WORKDAY_TYPE => collect([
+                    $collectionSets['paid'],
+                    $collectionSets['volunteer'],
+                    $collectionSets['finance'],
+                ])->flatten(),
+                Demographic::RESTORATION_PARTNER_TYPE => collect([
+                    $collectionSets['direct'],
+                    $collectionSets['indirect'],
+                ])->flatten(),
+                default => throw new InternalErrorException("Unrecognized demographic type: $demographicType"),
+            };
+            $collections->each(function ($collection) use ($attributePrefix) {
+                self::resolveRelationUsing(
+                    $attributePrefix . Str::studly($collection),
+                    function ($entity) use ($attributePrefix, $collection) {
+                        return $entity->$attributePrefix()->collection($collection);
+                    }
+                );
+            });
+        });
     }
 
-    public function demographics(): MorphMany
+    public function demographics()
     {
         return $this->morphMany(Demographic::class, 'demographical');
     }
 
-    public function scopeCollection(Builder $query, string $collection): Builder
+    public function getAttribute($key)
     {
-        return $query->where('collection', $collection);
+        $attribute = parent::getAttribute($key);
+        if ($attribute != null) {
+            return $attribute;
+        }
+
+        $keyNormalized = Str::camel($key);
+        if (array_key_exists($keyNormalized, self::DEMOGRAPHIC_ATTRIBUTES)) {
+            $definition = self::DEMOGRAPHIC_ATTRIBUTES[$keyNormalized];
+            $type = $definition['type'];
+            $collections = self::DEMOGRAPHIC_COLLECTIONS[$type][$definition['collections']];
+
+            return $this->sumTotalDemographicAmounts(Str::camel($type), $collections);
+        }
+
+        $otherDemographicType = $this->getDescriptionAttributeType($keyNormalized);
+        if ($otherDemographicType != null) {
+            $attributeName = Str::camel($otherDemographicType);
+
+            return $this
+                ->$attributeName()
+                ->collections(self::DEMOGRAPHIC_COLLECTIONS[$otherDemographicType]['other'])
+                ->orderBy('updated_at', 'desc')
+                ->select('description')
+                ->first()
+                ?->description;
+        }
+
+        return $attribute;
     }
 
-    public function scopeCollections(Builder $query, array $collections): Builder
+    public function setAttribute($key, $value)
     {
-        return $query->whereIn('collection', $collections);
+        $otherDemographicType = $this->getDescriptionAttributeType(Str::camel($key));
+
+        if ($otherDemographicType == null) {
+            return parent::setAttribute($key, $value);
+        }
+
+        $collections = self::DEMOGRAPHIC_COLLECTIONS[$otherDemographicType]['other'];
+        $attributeName = Str::camel($otherDemographicType);
+        if (! empty($value)) {
+            // If we're setting a non-null value, make sure that each of the appropriate "other" collections
+            // exist for this demographic type.
+            foreach ($collections as $collection) {
+                if (! $this->$attributeName()->collection($collection)->exists()) {
+                    Demographic::create([
+                        'demographical_type' => get_class($this),
+                        'demographical_id' => $this->id,
+                        'type' => $otherDemographicType,
+                        'collection' => $collection,
+                    ]);
+                }
+            }
+        }
+
+        // We set the description on every appropriate "other" collection demographic regardless of visibility.
+        $this->$attributeName()->collections($collections)->update(['description' => $value]);
+
+        return $this;
     }
 
-    public function scopeVisible($query): Builder
+    protected function getDescriptionAttributeType(string $keyNormalized): string | null
     {
-        return $query->where('hidden', false);
+        if (! Str::startsWith($keyNormalized, 'other') || ! Str::endsWith($keyNormalized, 'Description')) {
+            return null;
+        }
+
+        $demographicType = Str::kebab(Str::before(Str::after($keyNormalized, 'other'), 'Description'));
+
+        return in_array($demographicType, Demographic::VALID_TYPES) ? $demographicType : null;
+    }
+
+    protected function sumTotalDemographicAmounts(string $demographicType, array $collections): int
+    {
+        // Gender is considered the canonical total value for all current types of workdays, so just pull and sum gender.
+        return DemographicEntry::whereIn(
+            'demographic_id',
+            $this->$demographicType()->visible()->collections($collections)->select('id')
+        )->gender()->sum('amount');
     }
 }

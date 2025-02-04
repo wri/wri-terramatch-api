@@ -4,6 +4,7 @@ namespace App\Models\V2\Sites;
 
 use App\Http\Resources\V2\SiteReports\SiteReportResource;
 use App\Models\Framework;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasLinkedFields;
@@ -11,10 +12,11 @@ use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
-use App\Models\Traits\HasWorkdays;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
 use App\Models\V2\MediaModel;
@@ -26,7 +28,6 @@ use App\Models\V2\Seeding;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
-use App\Models\V2\Workdays\Workday;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,7 +59,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     use HasUpdateRequests;
     use HasEntityResources;
     use BelongsToThroughTrait;
-    use HasWorkdays;
+    use HasDemographics;
 
     protected $auditInclude = [
         'status',
@@ -104,7 +105,8 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'survival_calculation',
         'survival_description',
         'maintenance_activities',
-        // virtual (see HasWorkdays trait)
+
+        // virtual (see HasDemographics trait)
         'other_workdays_description',
     ];
 
@@ -154,29 +156,31 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'answers' => 'array',
     ];
 
-    // Required by the HasWorkdays trait
-    public const WORKDAY_COLLECTIONS = [
-        'paid' => [
-            Workday::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT,
-            WORKDAY::COLLECTION_SITE_PAID_PLANTING,
-            Workday::COLLECTION_SITE_PAID_SITE_MAINTENANCE,
-            Workday::COLLECTION_SITE_PAID_SITE_MONITORING,
-            Workday::COLLECTION_SITE_PAID_OTHER,
-        ],
-        'volunteer' => [
-            Workday::COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT,
-            WORKDAY::COLLECTION_SITE_VOLUNTEER_PLANTING,
-            Workday::COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE,
-            Workday::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING,
-            Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
-        ],
-        'other' => [
-            Workday::COLLECTION_SITE_PAID_OTHER,
-            Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
-        ],
-        'finance' => [
-            Workday::COLLECTION_PROJECT_DIRECT,
-            Workday::COLLECTION_PROJECT_CONVERGENCE,
+    // Required by the HasDemographics trait
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Demographic::WORKDAY_TYPE => [
+            'paid' => [
+                DemographicCollections::PAID_SITE_ESTABLISHMENT,
+                DemographicCollections::PAID_PLANTING,
+                DemographicCollections::PAID_SITE_MAINTENANCE,
+                DemographicCollections::PAID_SITE_MONITORING,
+                DemographicCollections::PAID_OTHER,
+            ],
+            'volunteer' => [
+                DemographicCollections::VOLUNTEER_SITE_ESTABLISHMENT,
+                DemographicCollections::VOLUNTEER_PLANTING,
+                DemographicCollections::VOLUNTEER_SITE_MAINTENANCE,
+                DemographicCollections::VOLUNTEER_SITE_MONITORING,
+                DemographicCollections::VOLUNTEER_OTHER,
+            ],
+            'other' => [
+                DemographicCollections::PAID_OTHER,
+                DemographicCollections::VOLUNTEER_OTHER,
+            ],
+            'finance' => [
+                DemographicCollections::DIRECT,
+                DemographicCollections::CONVERGENCE,
+            ],
         ],
     ];
 

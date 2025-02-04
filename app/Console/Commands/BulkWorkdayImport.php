@@ -7,9 +7,10 @@ use App\Console\Commands\Traits\AbortException;
 use App\Console\Commands\Traits\ExceptionLevel;
 use App\Models\SiteSubmission;
 use App\Models\Submission;
+use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\Workdays\Workday;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -34,27 +35,27 @@ class BulkWorkdayImport extends Command
 
     protected const COLLECTIONS = [
         'sites' => [
-            'Paid_site_establishment' => Workday::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT,
-            'Vol_site_establishment' => Workday::COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT,
-            'Paid_planting' => Workday::COLLECTION_SITE_PAID_PLANTING,
-            'Vol_planting' => Workday::COLLECTION_SITE_VOLUNTEER_PLANTING,
-            'Paid_monitoring' => Workday::COLLECTION_SITE_PAID_SITE_MONITORING,
-            'Vol_monitoring' => Workday::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING,
-            'Paid_maintenance' => Workday::COLLECTION_SITE_PAID_SITE_MAINTENANCE,
-            'Vol_maintenance' => Workday::COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE,
-            'Paid_other' => Workday::COLLECTION_SITE_PAID_OTHER,
-            'Vol_other' => Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
+            'Paid_site_establishment' => DemographicCollections::PAID_SITE_ESTABLISHMENT,
+            'Vol_site_establishment' => DemographicCollections::VOLUNTEER_SITE_ESTABLISHMENT,
+            'Paid_planting' => DemographicCollections::PAID_PLANTING,
+            'Vol_planting' => DemographicCollections::VOLUNTEER_PLANTING,
+            'Paid_monitoring' => DemographicCollections::PAID_SITE_MONITORING,
+            'Vol_monitoring' => DemographicCollections::VOLUNTEER_SITE_MONITORING,
+            'Paid_maintenance' => DemographicCollections::PAID_SITE_MAINTENANCE,
+            'Vol_maintenance' => DemographicCollections::VOLUNTEER_SITE_MAINTENANCE,
+            'Paid_other' => DemographicCollections::PAID_OTHER,
+            'Vol_other' => DemographicCollections::VOLUNTEER_OTHER,
         ],
 
         'projects' => [
-            'Paid_project_management' => Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT,
-            'Vol_project_management' => Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT,
-            'Paid_nursery_ops' => Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
-            'Vol_nursery_ops' => Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
-            'Paid_seed_collection' => Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
-            'Vol_seed_collection' => Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
-            'Paid_other' => Workday::COLLECTION_PROJECT_PAID_OTHER,
-            'Vol_other' => Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
+            'Paid_project_management' => DemographicCollections::PAID_PROJECT_MANAGEMENT,
+            'Vol_project_management' => DemographicCollections::VOLUNTEER_PROJECT_MANAGEMENT,
+            'Paid_nursery_ops' => DemographicCollections::PAID_NURSERY_OPERATIONS,
+            'Vol_nursery_ops' => DemographicCollections::VOLUNTEER_NURSERY_OPERATIONS,
+            'Paid_seed_collection' => DemographicCollections::PAID_NURSERY_OPERATIONS,
+            'Vol_seed_collection' => DemographicCollections::VOLUNTEER_NURSERY_OPERATIONS,
+            'Paid_other' => DemographicCollections::PAID_OTHER,
+            'Vol_other' => DemographicCollections::VOLUNTEER_OTHER,
         ],
     ];
 
@@ -77,18 +78,18 @@ class BulkWorkdayImport extends Command
     ];
 
     protected const DEMOGRAPHICS = [
-        'women' => ['type' => 'gender', 'subtype' => null, 'name' => 'female'],
-        'men' => ['type' => 'gender', 'subtype' => null, 'name' => 'male'],
-        'non-binary' => ['type' => 'gender', 'subtype' => null, 'name' => 'non-binary'],
-        'nonbinary' => ['type' => 'gender', 'subtype' => null, 'name' => 'non-binary'],
-        'gender-unknown' => ['type' => 'gender', 'subtype' => null, 'name' => 'unknown'],
-        'no-gender' => ['type' => 'gender', 'subtype' => null, 'name' => 'unknown'],
+        'women' => ['type' => 'gender', 'subtype' => 'female', 'name' => null],
+        'men' => ['type' => 'gender', 'subtype' => 'male', 'name' => null],
+        'non-binary' => ['type' => 'gender', 'subtype' => 'non-binary', 'name' => null],
+        'nonbinary' => ['type' => 'gender', 'subtype' => 'non-binary', 'name' => null],
+        'gender-unknown' => ['type' => 'gender', 'subtype' => 'unknown', 'name' => null],
+        'no-gender' => ['type' => 'gender', 'subtype' => 'unknown', 'name' => null],
 
-        'youth_15-24' => ['type' => 'age', 'subtype' => null, 'name' => 'youth'],
-        'adult_24-64' => ['type' => 'age', 'subtype' => null, 'name' => 'adult'],
-        'elder_65+' => ['type' => 'age', 'subtype' => null, 'name' => 'elder'],
-        'age-unknown' => ['type' => 'age', 'subtype' => null, 'name' => 'unknown'],
-        'age_unknown' => ['type' => 'age', 'subtype' => null, 'name' => 'unknown'],
+        'youth_15-24' => ['type' => 'age', 'subtype' => 'youth', 'name' => null],
+        'adult_24-64' => ['type' => 'age', 'subtype' => 'adult', 'name' => null],
+        'elder_65+' => ['type' => 'age', 'subtype' => 'elder', 'name' => null],
+        'age-unknown' => ['type' => 'age', 'subtype' => 'unknown', 'name' => null],
+        'age_unknown' => ['type' => 'age', 'subtype' => 'unknown', 'name' => null],
 
         'indigenous' => ['type' => 'ethnicity', 'subtype' => 'indigenous', 'name' => null],
         'ethnicity-other' => ['type' => 'ethnicity', 'subtype' => 'other', 'name' => null],
@@ -278,8 +279,8 @@ class BulkWorkdayImport extends Command
 
         // Check that all the demographics are balanced
         $collections = array_merge(
-            $this->modelConfig['model']::WORKDAY_COLLECTIONS['paid'],
-            $this->modelConfig['model']::WORKDAY_COLLECTIONS['volunteer'],
+            $this->modelConfig['model']::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['paid'],
+            $this->modelConfig['model']::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['volunteer'],
         );
         foreach ($collections as $collection) {
             if (empty($row[$collection])) {
@@ -348,8 +349,8 @@ class BulkWorkdayImport extends Command
     protected function persistWorkdays($report, $data): void
     {
         $collections = array_merge(
-            get_class($report)::WORKDAY_COLLECTIONS['paid'],
-            get_class($report)::WORKDAY_COLLECTIONS['volunteer'],
+            get_class($report)::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['paid'],
+            get_class($report)::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['volunteer'],
         );
 
         $modelDescription = Str::replace('-', ' ', Str::title($report->shortName)) .
@@ -371,14 +372,15 @@ class BulkWorkdayImport extends Command
             }
 
             $this->info("Populating collection $collection\n");
-            $workday = Workday::create([
-                'workdayable_type' => get_class($report),
-                'workdayable_id' => $report->id,
+            $workday = Demographic::create([
+                'demographical_type' => get_class($report),
+                'demographical_id' => $report->id,
+                'type' => Demographic::WORKDAY_TYPE,
                 'collection' => $collection,
             ]);
 
             foreach ($data[$collection] as $demographicData) {
-                $workday->demographics()->create($demographicData);
+                $workday->entries()->create($demographicData);
             }
         }
 
