@@ -215,11 +215,11 @@ trait UsesLinkedFields
         switch ($linkedFieldInfo['link-type']) {
             case 'fields':
                 return data_get($model, $property);
-            case 'file-collections' :
+            case 'file-collections':
                 $colCfg = data_get($model->fileConfiguration, $property);
 
                 return $model->getFileResource($property, $colCfg);
-            case 'relations' :
+            case 'relations':
                 $relation = data_get($linkedFieldInfo, 'property');
                 $resource = data_get($linkedFieldInfo, 'resource');
                 if (empty($resource)) {
@@ -242,7 +242,7 @@ trait UsesLinkedFields
         $property = $linkedFieldInfo['property'];
 
         if (empty($model) || empty($property)) {
-            return ;
+            return;
         }
 
         if ($linkedFieldInfo['link-type'] == 'fields') {
@@ -258,15 +258,17 @@ trait UsesLinkedFields
     {
         $entity ??= $this;
 
-        if (! in_array($inputType, [
-            'treeSpecies',
-            'disturbances',
-            'workdays',
-            'restorationPartners',
-            'stratas',
-            'invasive',
-            'seedings',
-        ])) {
+        if (
+            ! in_array($inputType, [
+                'treeSpecies',
+                'disturbances',
+                'workdays',
+                'restorationPartners',
+                'stratas',
+                'invasive',
+                'seedings',
+            ])
+        ) {
             return;
         }
 
@@ -299,6 +301,63 @@ trait UsesLinkedFields
                 }
                 $entity->$property()->create($entry);
             }
+        }
+    }
+
+    public function cleanConditionalAnswers(Form $form): void
+    {
+        $formConfig = $this->getFormConfig();
+        $fieldsConfig = data_get($formConfig, 'fields', []);
+        $modelAnswers = $this->answers;
+        $entityProps = [];
+
+        $childQuestions = [];
+        $conditionalsToBeCleaned = [];
+
+        foreach ($form->sections as $section) {
+            foreach ($section->questions as $question) {
+                if ($question->input_type !== 'conditional') {
+                    if (! is_null($question->parent_id)) {
+                        $childQuestions[] = $question;
+                    }
+                } else {
+                    $conditionalValue = data_get($modelAnswers, $question->uuid, null);
+                    if ($conditionalValue == false) {
+                        $conditionalsToBeCleaned[] = $question->uuid;
+                    }
+                }
+            }
+        }
+
+        foreach ($childQuestions as $child) {
+            if (in_array($child->parent_id, $conditionalsToBeCleaned)) {
+                $fieldConfig = data_get($fieldsConfig, $question->linked_field_key);
+                $property = data_get($fieldConfig, 'property', null);
+                if ($this->isPlainField($child->input_type)) {
+                    $entityProps[$property] = $this->getDefaultValue($child->input_type);
+                }
+            }
+        }
+        $this->update($entityProps);
+    }
+
+    private function isPlainField($input_type)
+    {
+        $plainFields = ['long-text', 'date', 'number', 'text', 'number-percentage', 'boolean'];
+
+        return in_array($input_type, $plainFields);
+    }
+
+    private function getDefaultValue($inputType)
+    {
+        if ($inputType == 'long-text' || $inputType == 'text') {
+            return '';
+        }
+        if ($inputType == 'number' || $inputType == 'number-percentage') {
+            return 0;
+        }
+        if ($inputType == 'boolean') {
+            return false;
         }
     }
 }
