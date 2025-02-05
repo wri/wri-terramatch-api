@@ -515,7 +515,7 @@ Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsControll
 
 ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
     Route::get('/{entity}', GetDemographicsForEntityController::class);
-}, prefix: '{demographicType}');
+}, prefix: '{demographicType}')->whereIn('demographicType', ['workdays', 'restoration-partners']);
 
 Route::prefix('leadership-team')->group(function () {
     Route::post('/', StoreLeadershipTeamController::class);
