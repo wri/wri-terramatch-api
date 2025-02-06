@@ -3,15 +3,13 @@
 namespace Database\Factories\V2\Demographics;
 
 use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Workdays\Workday;
+use App\Models\V2\Demographics\DemographicCollections;
+use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Sites\SiteReport;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DemographicFactory extends Factory
 {
-    public const GENDERS = ['male', 'female', 'non-binary', 'unknown'];
-    public const AGES = ['youth', 'adult', 'elder', 'unknown'];
-    public const ETHNICITIES = ['indigenous', 'other', 'unknown'];
-
     /**
      * Define the model's default state.
      *
@@ -20,41 +18,34 @@ class DemographicFactory extends Factory
     public function definition()
     {
         return [
-            'demographical_type' => Workday::class,
-            'demographical_id' => Workday::factory()->create()->id,
-            'type' => 'gender',
-            'subtype' => null,
-            'name' => $this->faker->randomElement(self::GENDERS),
-            'amount' => $this->faker->randomNumber([0, 5000]),
+            'uuid' => $this->faker->uuid(),
+            'demographical_type' => SiteReport::class,
+            'demographical_id' => SiteReport::factory()->create(),
+            'type' => Demographic::WORKDAY_TYPE,
+            'collection' => $this->faker->randomElement(array_keys(DemographicCollections::WORKDAYS_SITE_COLLECTIONS)),
         ];
     }
 
-    public function gender()
+    public function projectReportWorkdays(): Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => Demographic::GENDER,
-                'name' => $this->faker->randomElement(self::GENDERS),
+                'demographical_type' => ProjectReport::class,
+                'demographical_id' => ProjectReport::factory()->create(),
+                'type' => Demographic::WORKDAY_TYPE,
+                'collection' => $this->faker->randomElement(array_keys(DemographicCollections::WORKDAYS_PROJECT_COLLECTIONS)),
             ];
         });
     }
 
-    public function age()
+    public function projectReportRestorationPartners(): Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => Demographic::AGE,
-                'name' => $this->faker->randomElement(self::AGES),
-            ];
-        });
-    }
-
-    public function ethnicity()
-    {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => Demographic::ETHNICITY,
-                'subtype' => $this->faker->randomElement(self::ETHNICITIES),
+                'demographical_type' => ProjectReport::class,
+                'demographical_id' => ProjectReport::factory()->create(),
+                'type' => Demographic::RESTORATION_PARTNER_TYPE,
+                'collection' => $this->faker->randomElement(array_keys(DemographicCollections::RESTORATION_PARTNERS_PROJECT_COLLECTIONS)),
             ];
         });
     }

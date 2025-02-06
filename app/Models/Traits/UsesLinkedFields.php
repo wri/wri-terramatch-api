@@ -272,7 +272,7 @@ trait UsesLinkedFields
 
         $class = get_class($entity->$property()->make());
         if (is_a($class, HandlesLinkedFieldSync::class, true)) {
-            $class::syncRelation($entity, $property, $data, $hidden);
+            $class::syncRelation($entity, $property, $inputType, $data, $hidden);
 
             return;
         }

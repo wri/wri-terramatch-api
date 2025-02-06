@@ -1,5 +1,7 @@
 TreeSpeciesPaginated:
   $ref: './TreeSpeciesPaginated.yml'
+TreeSpeciesAggregated:
+  $ref: './TreeSpeciesAggregated.yml'
 TreeSpeciesRead:
   $ref: './TreeSpeciesRead.yml'
 TreeSpeciesReadAll:
@@ -320,6 +322,8 @@ DashboardGetPolygonStatusResponse:
   $ref: './DashboardGetPolygonStatusResponse.yml'
 DashboardBBOXProject:
   $ref: './DashboardBBOXProject.yml'
+DashboardBBOXLandscape:
+  $ref: './DashboardBBOXLandscape.yml'
 DashboardBBOXCountry:
   $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:

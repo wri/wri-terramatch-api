@@ -35,10 +35,12 @@ use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
+use App\Http\Controllers\V2\Demographics\GetDemographicsForEntityController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
+use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
 use App\Http\Controllers\V2\Entities\GetRelationsForEntityController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
@@ -52,6 +54,7 @@ use App\Http\Controllers\V2\Exports\ExportImageController;
 use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
+use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
 use App\Http\Controllers\V2\Files\FilePropertiesController;
 use App\Http\Controllers\V2\Files\Gallery\ViewNurseryGalleryController;
 use App\Http\Controllers\V2\Files\Gallery\ViewNurseryReportGalleryController;
@@ -179,7 +182,6 @@ use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkCon
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Reports\NothingToReportReportController;
-use App\Http\Controllers\V2\RestorationPartners\GetRestorationPartnersForEntityController;
 use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
@@ -226,8 +228,6 @@ use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
 use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
-use App\Http\Controllers\V2\UserLocaleController;
-use App\Http\Controllers\V2\Workdays\GetWorkdaysForEntityController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
@@ -343,6 +343,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
     Route::get('/{entity}/presigned-url/{framework}', GeneratePreSignedURLDownloadReportController::class);
+    Route::get('/{entity}/export/{framework}/pm', ProjectAdminExportController::class);
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::put('/{entity}/{status}', AdminStatusEntityController::class);
@@ -511,13 +512,12 @@ Route::prefix('{relationType}')
         });
     });
 
-ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
-    Route::get('/{entity}', GetWorkdaysForEntityController::class);
-}, prefix: 'workdays');
+Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsController::class)
+->whereIn('entityType', ['project', 'site']);
 
-ModelInterfaceBindingMiddleware::forSlugs(['project-report'], function () {
-    Route::get('/{entity}', GetRestorationPartnersForEntityController::class);
-}, prefix: 'restoration-partners');
+ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
+    Route::get('/{entity}', GetDemographicsForEntityController::class);
+}, prefix: '{demographicType}')->whereIn('demographicType', ['workdays', 'restoration-partners']);
 
 Route::prefix('leadership-team')->group(function () {
     Route::post('/', StoreLeadershipTeamController::class);
@@ -749,6 +749,8 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
     Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
+    Route::get('/bbox/landscape', [GetPolygonsController::class, 'getLandscapeBbox']);
+    Route::get('/bbox/country-landscape', [GetPolygonsController::class, 'getCountryLandscapeBbox']);
     Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
     Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);
@@ -792,5 +794,3 @@ Route::prefix('site-polygon')->group(function () {
 });
 
 Route::get('/type-entity', EntityTypeController::class);
-
-Route::patch('/users/locale', UserLocaleController::class);

@@ -406,4 +406,49 @@ class GeometryHelper
             'geometry' => $geometry,
         ];
     }
+
+    public static function generateGeoJSON($project = null, $siteUuid = null)
+    {
+        $query = SitePolygon::query();
+
+        if ($project) {
+            $query->whereHas('site', function ($query) use ($project) {
+                $query->where('project_id', $project->id);
+            });
+        }
+
+        if ($siteUuid) {
+            $query->where('site_id', $siteUuid);
+        }
+
+        $sitePolygons = $query->active()->get();
+
+        $features = [];
+        foreach ($sitePolygons as $sitePolygon) {
+            $polygonGeometry = PolygonGeometry::where('uuid', $sitePolygon->poly_id)
+                ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+                ->first();
+
+            if (! $polygonGeometry) {
+                throw new \Exception('No polygon geometry found for the given UUID.');
+            }
+
+            $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid'];
+            $properties = [];
+            foreach ($fieldsToValidate as $field) {
+                $properties[$field] = $sitePolygon->$field;
+            }
+
+            $features[] = [
+                'type' => 'Feature',
+                'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                'properties' => $properties,
+            ];
+        }
+
+        return [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
+    }
 }

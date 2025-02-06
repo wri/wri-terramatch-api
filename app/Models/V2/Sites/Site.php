@@ -16,6 +16,7 @@ use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\Disturbance;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Invasive;
@@ -25,7 +26,6 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Seeding;
 use App\Models\V2\Stratas\Strata;
 use App\Models\V2\TreeSpecies\TreeSpecies;
-use App\Models\V2\Workdays\Workday;
 use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use App\StateMachines\SiteStatusStateMachine;
@@ -348,28 +348,33 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         return $this->reports()->hasBeenSubmitted()->sum('num_trees_regenerating');
     }
 
+    public function getApprovedRegeneratedTreesCountAttribute(): int
+    {
+        return $this->reports()->hasBeenApproved()->sum('num_trees_regenerating');
+    }
+
     public function getWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
         $reportQuery = $this->reports()->hasBeenSubmitted();
         if ($useDemographicsCutoff) {
-            $reportQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+            $reportQuery->where('due_at', '>=', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
         }
 
-        return Demographic::where('demographical_type', Workday::class)
-            ->whereIn(
-                'demographical_id',
-                Workday::where('workdayable_type', SiteReport::class)
-                    ->whereIn('workdayable_id', $reportQuery->select('id'))
+        return DemographicEntry::whereIn(
+            'demographic_id',
+            Demographic::where('demographical_type', SiteReport::class)
+                    ->whereIn('demographical_id', $reportQuery->select('id'))
+                    ->type(Demographic::WORKDAY_TYPE)
                     ->visible()
                     ->select('id')
-            )->gender()->sum('amount') ?? 0;
+        )->gender()->sum('amount') ?? 0;
     }
 
     public function getSelfReportedWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
         $reportQuery = $this->reports()->hasBeenSubmitted();
         if ($useDemographicsCutoff) {
-            $reportQuery->where('due_at', '<', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+            $reportQuery->where('due_at', '<', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
         }
         $totals = $reportQuery->get([
             DB::raw('sum(`workdays_volunteer`) as volunteer'),

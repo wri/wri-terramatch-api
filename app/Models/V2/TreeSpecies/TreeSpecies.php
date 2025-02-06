@@ -63,7 +63,8 @@ class TreeSpecies extends Model implements EntityRelationModel
         $query = TreeSpecies::query()
             ->where('speciesable_type', get_class($entity))
             ->where('speciesable_id', $entity->id)
-            ->visible();
+            ->visible()
+            ->orderBy('amount', 'desc');
 
         $filter = request()->query('filter');
         if (! empty($filter['collection'])) {

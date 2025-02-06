@@ -3,10 +3,10 @@
 namespace Tests\Unit\Models\V2\Sites;
 
 use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteMonitoring;
 use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\Workdays\Workday;
 use App\StateMachines\EntityStatusStateMachine;
 use Tests\TestCase;
 
@@ -65,17 +65,17 @@ class SiteTest extends TestCase
         $site = Site::factory()->ppc()->create();
 
         $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::APPROVED]);
-        $workday = Workday::factory()->create(['workdayable_id' => $report->id]);
-        Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 3]);
+        $workday = Demographic::factory()->create(['demographical_id' => $report->id]);
+        DemographicEntry::factory()->create(['demographic_id' => $workday->id, 'amount' => 3]);
 
         $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::AWAITING_APPROVAL]);
-        $workday = Workday::factory()->create(['workdayable_id' => $report->id]);
-        Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 5]);
+        $workday = Demographic::factory()->create(['demographical_id' => $report->id]);
+        DemographicEntry::factory()->create(['demographic_id' => $workday->id, 'amount' => 5]);
 
         // Unsubmitted report (doesn't count toward workday count)
         $report = SiteReport::factory()->ppc()->create(['site_id' => $site->id, 'status' => EntityStatusStateMachine::STARTED]);
-        $workday = Workday::factory()->create(['workdayable_id' => $report->id]);
-        Demographic::factory()->create(['demographical_id' => $workday->id, 'amount' => 7]);
+        $workday = Demographic::factory()->create(['demographical_id' => $report->id]);
+        DemographicEntry::factory()->create(['demographic_id' => $workday->id, 'amount' => 7]);
 
         $this->assertEquals(8, $site->workday_count);
     }

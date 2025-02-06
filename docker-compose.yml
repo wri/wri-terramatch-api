@@ -55,14 +55,17 @@ services:
             - "1025:1025"
             - "1080:1080"
     minio:
-        image: "3sidedcube/minio"
-        networks:
-            - "default"
+        image: "minio/minio"
+        command: server /data
         ports:
             - "9000:9000"
         environment:
-            MINIO_ACCESS_KEY: "AKIABUVWH1HUD7YQZQAR"
-            MINIO_SECRET_KEY: "PVMlDMep3/jLSz9GxPV3mTvH4JZynkf2BFeTu+i8"
+            MINIO_ROOT_USER: "AKIABUVWH1HUD7YQZQAR"
+            MINIO_ROOT_PASSWORD: "PVMlDMep3/jLSz9GxPV3mTvH4JZynkf2BFeTu+i8"
+        volumes:
+            - ./data:/data
+        networks:
+            - "default"
     motocker:
         image: "picadoh/motocker"
         networks:
