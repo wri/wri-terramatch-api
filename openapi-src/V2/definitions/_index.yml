@@ -408,3 +408,9 @@ Indicators:
   $ref: './Indicators.yml'
 IndicatorPolygonsStatus:
   $ref: './IndicatorPolygonsStatus.yml'
+V2ImpactStoryRead:
+  $ref: './V2ImpactStoryRead.yml'
+V2ImpactStoryUpdate:
+  $ref: './V2ImpactStoryUpdate.yml'
+V2ImpactStoryCreate:
+  $ref: './V2ImpactStoryCreate.yml'
