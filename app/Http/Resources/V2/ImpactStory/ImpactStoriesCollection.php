@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Resources\V2\User;
+namespace App\Http\Resources\V2\ImpactStory;
 
-use App\Http\Resources\V2\ImpactStory\ImpactStoryResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ImpactStoriesCollection extends ResourceCollection
