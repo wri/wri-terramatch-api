@@ -2847,127 +2847,15 @@
 /v2/indicators/{entity}/{uuid}/{slug}/export:
   get:
     $ref: './MonitoredData/get-v2-indicators-entity-slug-export.yml'
-/v2/impact-stories:
+/v2/admin/impact-stories:
   get:
-    summary: Get a collection of impact stories
-    operationId: v2-get-impact-stories
-    description: 'Fetches a list of impact stories with filtering and sorting options.'
-    tags:
-      - V2 Impact Stories
-    parameters:
-      - name: search
-        type: string
-        in: query
-        description: 'Search term to use on the collection'
-      - name: filter
-        type: string
-        in: query
-        description: 'Multiple filters can be applied. Syntax: ?filter[status]=published'
-      - name: sort
-        type: string
-        in: query
-        description: 'Sorting can be applied, default is ascending or use - for descending. Example: ?sort=-created_at'
-      - name: per_page
-        type: integer
-        in: query
-        description: 'Number of results per page'
-      - name: page
-        type: integer
-        in: query
-        description: 'Page number for results'
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '../definitions/_index.yml#/V2ImpactStoryRead'
-            links:
-              type: object
-              $ref: '../definitions/_index.yml#/V2PaginationLinks'
-            meta:
-              type: object
-              $ref: '../definitions/_index.yml#/V2PaginationMeta'
-
+    $ref: './ImpactStories/get-v2-impact-stories.yml'
   post:
-    summary: Create a new Impact Story
-    operationId: v2-create-impact-story
-    description: 'Creates a new impact story.'
-    tags:
-      - V2 Impact Stories
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '../definitions/_index.yml#/V2ImpactStoryCreate'
-    responses:
-      '201':
-        description: Impact Story created successfully
-        schema:
-          $ref: '../definitions/_index.yml#/V2ImpactStoryRead'
-
-/v2/impact-stories/{id}:
+    $ref: './ImpactStories/post-v2-impact-stories.yml'
+/v2/admin/impact-stories/{id}:
   get:
-    summary: Get a specific impact story
-    operationId: v2-get-impact-story
-    description: 'Retrieves details of a single impact story.'
-    tags:
-      - V2 Impact Stories
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-        description: 'UUID of the impact story'
-    responses:
-      '200':
-        description: Impact Story retrieved successfully
-        schema:
-          $ref: '../definitions/_index.yml#/V2ImpactStoryRead'
-
+    $ref: './ImpactStories/get-v2-impact-stories-id.yml'
   put:
-    summary: Update an impact story
-    operationId: v2-update-impact-story
-    description: 'Updates the details of an existing impact story.'
-    tags:
-      - V2 Impact Stories
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-        description: 'UUID of the impact story to update'
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '../definitions/_index.yml#/V2ImpactStoryUpdate'
-    responses:
-      '200':
-        description: Impact Story updated successfully
-        schema:
-          $ref: '../definitions/_index.yml#/V2ImpactStoryRead'
-
+    $ref: './ImpactStories/put-v2-impact-stories-id.yml'
   delete:
-    summary: Delete an impact story
-    operationId: v2-delete-impact-story
-    description: 'Deletes an existing impact story.'
-    tags:
-      - V2 Impact Stories
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-        description: 'UUID of the impact story to delete'
-    responses:
-      '204':
-        description: Impact Story deleted successfully
+    $ref: './ImpactStories/delete-v2-impact-stories-id.yml'

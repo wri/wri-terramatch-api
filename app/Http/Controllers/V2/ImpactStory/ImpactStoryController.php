@@ -51,6 +51,7 @@ class ImpactStoryController extends Controller
     public function show(ImpactStory $impactStory, Request $request): ImpactStoryResource
     {
         $this->authorize('read', $impactStory);
+
         return new ImpactStoryResource($impactStory);
     }
 
@@ -59,6 +60,7 @@ class ImpactStoryController extends Controller
         $this->authorize('create', ImpactStory::class);
         $data = $request->validated();
         $impactStory = ImpactStory::create($data);
+
         return new ImpactStoryResource($impactStory);
     }
 
@@ -67,6 +69,7 @@ class ImpactStoryController extends Controller
         $this->authorize('update', $impactStory);
         $data = $request->validated();
         $impactStory->update($data);
+
         return new ImpactStoryResource($impactStory);
     }
 
@@ -74,6 +77,7 @@ class ImpactStoryController extends Controller
     {
         $this->authorize('delete', $impactStory);
         $impactStory->delete();
+
         return JsonResponseHelper::success(['Impact Story has been deleted.'], 200);
     }
 }

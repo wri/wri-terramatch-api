@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class ImpactStory extends Model
 {
     use HasFactory;
+
     protected $fillable = [
       'title',
       'status',
@@ -19,13 +20,13 @@ class ImpactStory extends Model
       'content',
   ];
 
-  protected $casts = [
-    'category' => 'array',
-    'content' => 'array',
-  ];
+    protected $casts = [
+      'category' => 'array',
+      'content' => 'array',
+    ];
 
-  public function organization()
-  {
-      return $this->belongsTo(Organisation::class);
-  }
+    public function organization()
+    {
+        return $this->belongsTo(Organisation::class);
+    }
 }

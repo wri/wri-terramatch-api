@@ -375,7 +375,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
     Route::resource('users', AdminUserController::class);
     Route::resource('impact-stories', ImpactStoryController::class);
-    
+
     Route::prefix('forms')->group(function () {
         Route::post('/', StoreFormController::class);
         Route::get('/', IndexFormController::class);

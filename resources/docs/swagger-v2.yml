@@ -99869,7 +99869,7 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/impact-stories:
+  /v2/admin/impact-stories:
     get:
       summary: Get a collection of impact stories
       operationId: v2-get-impact-stories
@@ -99979,29 +99979,28 @@ paths:
       description: Creates a new impact story.
       tags:
         - V2 Impact Stories
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - title
-                - content
-              properties:
-                title:
-                  type: string
-                  example: Empowering Local Communities
-                content:
-                  type: string
-                  example: This is an inspiring story of impact...
-                status:
-                  type: string
-                  enum:
-                    - draft
-                    - published
-                    - archived
-                  example: draft
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            required:
+              - title
+              - content
+            properties:
+              title:
+                type: string
+                example: Empowering Local Communities
+              content:
+                type: string
+                example: This is an inspiring story of impact...
+              status:
+                type: string
+                enum:
+                  - draft
+                  - published
+                  - archived
+                example: draft
       responses:
         '201':
           description: Impact Story created successfully
@@ -100032,7 +100031,7 @@ paths:
                 type: string
                 format: date-time
                 example: '2024-09-02T15:04:05Z'
-  '/v2/impact-stories/{id}':
+  '/v2/admin/impact-stories/{id}':
     get:
       summary: Get a specific impact story
       operationId: v2-get-impact-story
@@ -100043,8 +100042,7 @@ paths:
         - name: id
           in: path
           required: true
-          schema:
-            type: string
+          type: string
           description: UUID of the impact story
       responses:
         '200':
@@ -100086,29 +100084,26 @@ paths:
         - name: id
           in: path
           required: true
-          schema:
-            type: string
+          type: string
           description: UUID of the impact story to update
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Updated Title
-                content:
-                  type: string
-                  example: Updated content of the impact story.
-                status:
-                  type: string
-                  enum:
-                    - draft
-                    - published
-                    - archived
-                  example: published
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Updated Title
+              content:
+                type: string
+                example: Updated content of the impact story.
+              status:
+                type: string
+                enum:
+                  - draft
+                  - published
+                  - archived
+                example: published
       responses:
         '200':
           description: Impact Story updated successfully
@@ -100149,9 +100144,7 @@ paths:
         - name: id
           in: path
           required: true
-          schema:
-            type: string
-          description: UUID of the impact story to delete
+          type: string
       responses:
         '204':
           description: Impact Story deleted successfully
