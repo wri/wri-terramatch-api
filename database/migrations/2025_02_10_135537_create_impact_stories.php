@@ -19,11 +19,7 @@ return new class extends Migration
         $table->date('date');
         $table->json('category');
         $table->string('thumbnail');
-        $table->longText('content');
-        $table->string('sm_instagram')->nullable();
-        $table->string('sm_x')->nullable();
-        $table->string('sm_facebook')->nullable();
-        $table->string('sm_linkedin')->nullable();
+        $table->json('content');
         $table->timestamps();
         
         $table->foreign('organization_id')->references('id')->on('organisations')->onDelete('cascade');
