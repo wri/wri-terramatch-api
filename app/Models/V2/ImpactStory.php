@@ -5,10 +5,14 @@ namespace App\Models\V2;
 use App\Models\V2\Organisation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\HasUuid;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ImpactStory extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    use HasUuid;
 
     protected $fillable = [
       'title',
