@@ -24,7 +24,10 @@ class ImpactStory extends Model
       'category' => 'array',
       'content' => 'array',
     ];
-
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
     public function organization()
     {
         return $this->belongsTo(Organisation::class);
