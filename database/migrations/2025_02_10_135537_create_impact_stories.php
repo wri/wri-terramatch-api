@@ -21,6 +21,7 @@ return new class extends Migration {
         $table->string('thumbnail');
         $table->json('content');
         $table->timestamps();
+        $table->softDeletes();
       });
     
     }
