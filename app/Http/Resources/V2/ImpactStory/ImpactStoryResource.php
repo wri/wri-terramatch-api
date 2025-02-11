@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\V2\ImpactStory;
 
-use App\Http\Resources\V2\Organisation\OrganisationResource;
+use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ImpactStoryResource extends JsonResource
@@ -14,7 +14,12 @@ class ImpactStoryResource extends JsonResource
             'title' => $this->title,
             'status' => $this->status,
             'organization' => $this->whenLoaded('organization', function () {
-                return $this->organization->only(['name', 'countries']);
+              return [
+                'name' => $this->organization->name,
+                'countries' => WorldCountryGeneralized::whereIn('iso', $this->organization->countries)
+                    ->pluck('country')
+                    ->toArray(),
+              ];
             }),
             'date' => $this->date,
             'category' => $this->category,
