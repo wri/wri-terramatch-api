@@ -10,7 +10,7 @@ use App\StateMachines\ReportStatusStateMachine;
 
 class TaskDigestMail extends I18nMail
 {
-    public function __construct($user, Task $task)
+    public function __construct($user, Task $task, bool $isManager)
     {
         parent::__construct($user);
         $params = $this->getBodyParams($task);
@@ -28,7 +28,7 @@ class TaskDigestMail extends I18nMail
             ->setBodyParams($params);
         $this->transactional = true;
         $projectUUID = $task->project()->first()->uuid;
-        $this->link = '/project/'.$projectUUID.'/reporting-task/'.$task->uuid;
+        $this->link = $isManager ? '/admin#/task/'.$task->uuid.'/show' : '/project/'.$projectUUID.'/reporting-task/'.$task->uuid;
     }
 
     private function getBodyParams(Task $task): array
