@@ -10,19 +10,19 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('impact_stories', function (Blueprint $table) {
-            $table->id();
-            $table->string('title', 71);
-            $table->string('status');
-            $table->unsignedBigInteger('organization_id');
-            $table->date('date');
-            $table->json('category');
-            $table->string('thumbnail');
-            $table->json('content');
-            $table->timestamps();
-
-            $table->foreign('organization_id')->references('id')->on('organisations')->onDelete('cascade');
-        });
+      Schema::create('impact_stories', function (Blueprint $table) {
+        $table->id();
+        $table->uuid('uuid')->unique();
+        $table->string('title', 71);
+        $table->string('status');
+        $table->unsignedBigInteger('organization_id');
+        $table->date('date');
+        $table->json('category');
+        $table->string('thumbnail');
+        $table->json('content');
+        $table->timestamps();
+      });
+    
     }
 
     /**

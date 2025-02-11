@@ -5,6 +5,7 @@ namespace Database\Factories\V2;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\V2\ImpactStory;
 use App\Models\V2\Organisation;
+use Illuminate\Support\Str;
 
 class ImpactStoryFactory extends Factory
 {
@@ -13,6 +14,8 @@ class ImpactStoryFactory extends Factory
     public function definition()
     {
         return [
+          'uuid' => (string) Str::uuid(),
+
             'title' => $this->faker->sentence,
             'status' => $this->faker->randomElement(['draft', 'published']),
             'organization_id' => Organisation::factory(),
