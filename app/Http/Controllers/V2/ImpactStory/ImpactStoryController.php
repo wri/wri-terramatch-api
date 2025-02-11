@@ -8,7 +8,7 @@ use App\Http\Requests\V2\ImpactStory\StoreImpactStoryRequest;
 use App\Http\Requests\V2\ImpactStory\UpdateImpactStoryRequest;
 use App\Http\Resources\V2\ImpactStory\ImpactStoriesCollection;
 use App\Http\Resources\V2\ImpactStory\ImpactStoryResource;
-use App\Models\ImpactStory;
+use App\Models\V2\ImpactStory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
