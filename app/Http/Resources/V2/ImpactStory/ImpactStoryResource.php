@@ -13,7 +13,9 @@ class ImpactStoryResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'status' => $this->status,
-            'organization' => new OrganisationResource($this->whenLoaded('organization')),
+            'organization' => $this->whenLoaded('organization', function () {
+                return $this->organization->only(['name', 'countries']);
+            }),
             'date' => $this->date,
             'category' => $this->category,
             'thumbnail' => $this->thumbnail,
