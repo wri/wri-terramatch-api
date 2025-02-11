@@ -4,8 +4,8 @@ namespace App\Http\Controllers\V2\ImpactStory;
 
 use App\Helpers\JsonResponseHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V2\ImpactStory\StoreImpactStoryRequest;
-use App\Http\Requests\V2\ImpactStory\UpdateImpactStoryRequest;
+use App\Http\Requests\V2\ImpactStories\StoreImpactStoryRequest;
+use App\Http\Requests\V2\ImpactStories\UpdateImpactStoryRequest;
 use App\Http\Resources\V2\ImpactStory\ImpactStoriesCollection;
 use App\Http\Resources\V2\ImpactStory\ImpactStoryResource;
 use App\Models\V2\ImpactStory;

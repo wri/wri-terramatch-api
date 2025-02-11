@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\V2\ImpactStory;
+namespace App\Http\Requests\V2\ImpactStories;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -14,11 +14,11 @@ class StoreImpactStoryRequest extends FormRequest
         return [
             'title' => 'required|string|max:71',
             'status' => 'required|string',
-            'organization_id' => 'required|exists:organisations,id',
-            'date' => 'required|date',
-            'category' => 'required|json',
-            'thumbnail' => 'required|string',
-            'content' => 'required|json',
+            'organization_id' => 'exists:organisations,id',
+            'date' => 'date',
+            'category' => 'json',
+            'thumbnail' => 'string',
+            'content' => 'json',
         ];
     }
 }

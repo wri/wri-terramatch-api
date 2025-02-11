@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\V2\ImpactStory;
+namespace App\Http\Requests\V2\ImpactStories;
 
 use Illuminate\Foundation\Http\FormRequest;
 
