@@ -100154,13 +100154,19 @@ paths:
       operationId: v2-bulk-delete-impact-stories
       tags:
         - ImpactStories
-      parameters:
-        - type: array
-          name: 'uuids[]'
-          in: query
-          required: true
-          items:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uuids:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - uuids
       responses:
         '200':
           description: Impact Stories have been deleted
