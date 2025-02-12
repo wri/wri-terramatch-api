@@ -11,6 +11,7 @@ use App\Http\Resources\V2\ImpactStory\ImpactStoryResource;
 use App\Models\V2\ImpactStory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -79,5 +80,23 @@ class ImpactStoryController extends Controller
         $impactStory->delete();
 
         return JsonResponseHelper::success(['Impact Story has been deleted.'], 200);
+    }
+    public function bulkDestroy(Request $request): JsonResponse
+    {
+        $request->validate([
+            'uuids' => 'required|array'
+        ]);
+
+        $uuids = $request->input('uuids');
+        Log::info(['uuids' => $request]);
+        $stories = ImpactStory::whereIn('uuid', $uuids)->get();
+        foreach ($stories as $story) {
+            $this->authorize('delete', $story);
+        }
+
+
+        ImpactStory::whereIn('uuid', $uuids)->delete();
+
+        return JsonResponseHelper::success(['Impact Stories have been deleted.'], 200);
     }
 }

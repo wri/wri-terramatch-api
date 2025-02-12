@@ -100147,4 +100147,20 @@ paths:
           type: string
       responses:
         '204':
-          description: Impact Story deleted successfully
+          description: Impact Story has been deleted
+  /v2/admin/impact-stories/bulk-delete:
+    delete:
+      summary: Bulk delete a set of impact stories by UUID
+      operationId: v2-bulk-delete-impact-stories
+      tags:
+        - ImpactStories
+      parameters:
+        - type: array
+          name: 'uuids[]'
+          in: query
+          required: true
+          items:
+            type: string
+      responses:
+        '200':
+          description: Impact Stories have been deleted

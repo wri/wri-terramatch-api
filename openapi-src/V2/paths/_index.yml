@@ -2859,3 +2859,6 @@
     $ref: './ImpactStories/put-v2-impact-stories-id.yml'
   delete:
     $ref: './ImpactStories/delete-v2-impact-stories-id.yml'
+/v2/admin/impact-stories/bulk-delete:
+  delete:
+    $ref: './ImpactStories/delete-v2-impact-stories-bulk.yml'

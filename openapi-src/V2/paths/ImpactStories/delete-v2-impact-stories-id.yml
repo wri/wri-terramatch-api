@@ -10,4 +10,4 @@ parameters:
     type: string
 responses:
   '204':
-    description: Impact Story deleted successfully
+    description: Impact Story has been deleted
