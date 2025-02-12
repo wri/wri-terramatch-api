@@ -26,12 +26,12 @@ class ImpactStoryResource extends JsonResource
                   'countries' => !empty($this->organization->countries) 
                   ? WorldCountryGeneralized::whereIn('iso', (array) $this->organization->countries)
                       ->pluck('country')
-                      ->toArray()
-                  : [],
+                      ->implode(', ')
+                  : '',
 
                 ];
             }),
-            'date' => $this->date,
+            'date' => $this->date ? \Carbon\Carbon::parse($this->date)->format('d/m/y') : null,
             'category' => $this->category,
             'thumbnail' => $this->thumbnail,
             'content' => $this->content,
