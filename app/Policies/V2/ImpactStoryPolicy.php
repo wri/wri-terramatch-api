@@ -32,5 +32,4 @@ class ImpactStoryPolicy extends Policy
     {
         return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user) || $user->can('impact-stories-manage');
     }
-
 }

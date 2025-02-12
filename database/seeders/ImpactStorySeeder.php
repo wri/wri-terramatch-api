@@ -1,9 +1,10 @@
 <?php
+
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\V2\ImpactStory;
 use App\Models\V2\Organisation;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class ImpactStorySeeder extends Seeder
@@ -11,7 +12,7 @@ class ImpactStorySeeder extends Seeder
     public function run()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        ImpactStory::truncate(); 
+        ImpactStory::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $organizations = Organisation::factory(3)->create();

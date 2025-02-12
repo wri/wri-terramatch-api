@@ -15,12 +15,17 @@ class ImpactStoryResource extends JsonResource
             'title' => $this->title,
             'status' => $this->status,
             'organization' => $this->whenLoaded('organization', function () {
-              return [
-                'name' => $this->organization->name,
-                'countries' => WorldCountryGeneralized::whereIn('iso', $this->organization->countries)
-                    ->pluck('country')
-                    ->toArray(),
-              ];
+                return [
+                  'name' => $this->organization->name,
+                  'web_url' => $this->organization->web_url,
+                  'facebook_url' => $this->organization->facebook_url,
+                  'instagram_url' => $this->organization->instagram_url,
+                  'linkedin_url' => $this->organization->linkedin_url,
+                  'twitter_url' => $this->organization->twitter_url,
+                  'countries' => WorldCountryGeneralized::whereIn('iso', $this->organization->countries)
+                      ->pluck('country')
+                      ->toArray(),
+                ];
             }),
             'date' => $this->date,
             'category' => $this->category,

@@ -376,7 +376,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::resource('users', AdminUserController::class);
     Route::delete('impact-stories/bulk-delete', [ImpactStoryController::class, 'bulkDestroy']);
     Route::resource('impact-stories', ImpactStoryController::class);
-    
+
 
     Route::prefix('forms')->group(function () {
         Route::post('/', StoreFormController::class);

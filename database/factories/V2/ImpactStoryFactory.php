@@ -2,9 +2,9 @@
 
 namespace Database\Factories\V2;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\V2\ImpactStory;
 use App\Models\V2\Organisation;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 class ImpactStoryFactory extends Factory

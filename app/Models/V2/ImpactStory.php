@@ -2,10 +2,9 @@
 
 namespace App\Models\V2;
 
-use App\Models\V2\Organisation;
+use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ImpactStory extends Model
@@ -28,10 +27,12 @@ class ImpactStory extends Model
       'category' => 'array',
       'content' => 'array',
     ];
+
     public function getRouteKeyName()
     {
         return 'uuid';
     }
+
     public function organization()
     {
         return $this->belongsTo(Organisation::class);

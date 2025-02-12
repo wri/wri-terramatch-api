@@ -81,10 +81,11 @@ class ImpactStoryController extends Controller
 
         return JsonResponseHelper::success(['Impact Story has been deleted.'], 200);
     }
+
     public function bulkDestroy(Request $request): JsonResponse
     {
         $request->validate([
-            'uuids' => 'required|array'
+            'uuids' => 'required|array',
         ]);
 
         $uuids = $request->input('uuids');
