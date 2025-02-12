@@ -61,7 +61,7 @@ class ImpactStoryController extends Controller
         $this->authorize('create', ImpactStory::class);
         $data = $request->validated();
         $impactStory = ImpactStory::create($data);
-
+        $impactStory->load('organization');
         return new ImpactStoryResource($impactStory);
     }
 
@@ -70,7 +70,7 @@ class ImpactStoryController extends Controller
         $this->authorize('update', $impactStory);
         $data = $request->validated();
         $impactStory->update($data);
-
+        $impactStory->load('organization');
         return new ImpactStoryResource($impactStory);
     }
 
