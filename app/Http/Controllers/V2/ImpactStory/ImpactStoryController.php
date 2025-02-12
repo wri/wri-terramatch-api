@@ -70,8 +70,9 @@ class ImpactStoryController extends Controller
     public function update(ImpactStory $impactStory, UpdateImpactStoryRequest $request)
     {
         $this->authorize('update', $impactStory);
-        
+
         $data = $request->validated();
+
         if (!empty($data['organization_id'])) {
             $organization = Organisation::where('uuid', $data['organization_id'])->first();
             if (!$organization) {
@@ -79,7 +80,6 @@ class ImpactStoryController extends Controller
             }
             $data['organization_id'] = $organization->id;
         }
-    
         $impactStory->update($data);
         $impactStory->load('organization');
     
