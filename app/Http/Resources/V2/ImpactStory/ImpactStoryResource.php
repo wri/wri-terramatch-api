@@ -16,6 +16,7 @@ class ImpactStoryResource extends JsonResource
             'status' => $this->status,
             'organization' => $this->whenLoaded('organization', function () {
                 return [
+                  'uuid' => $this->organization->uuid,
                   'name' => $this->organization->name,
                   'web_url' => $this->organization->web_url,
                   'facebook_url' => $this->organization->facebook_url,
