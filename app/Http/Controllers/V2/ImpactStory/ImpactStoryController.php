@@ -53,7 +53,7 @@ class ImpactStoryController extends Controller
     public function show(ImpactStory $impactStory, Request $request): ImpactStoryResource
     {
         $this->authorize('read', $impactStory);
-
+        $impactStory->load('organization'); 
         return new ImpactStoryResource($impactStory);
     }
 
