@@ -6,6 +6,7 @@ use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestionOption;
 use App\Models\V2\FundingProgramme;
+use App\Models\V2\ImpactStory;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Organisation;
@@ -42,6 +43,7 @@ class ModelInterfaceBindingMiddleware
         'nursery' => Nursery::class,
         'nursery-reports' => NurseryReport::class,
         'nursery-report' => NurseryReport::class,
+        'impact-story' => ImpactStory::class,
 
         // MediaModel concrete classes
         'organisation' => Organisation::class,
@@ -53,6 +55,7 @@ class ModelInterfaceBindingMiddleware
         'site-monitoring' => SiteMonitoring::class,
         'site-polygon' => SitePolygon::class,
         'audit-status' => AuditStatus::class,
+
     ];
 
     private static array $typeSlugsCache = [];

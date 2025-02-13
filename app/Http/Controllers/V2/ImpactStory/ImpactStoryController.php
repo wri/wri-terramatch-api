@@ -53,7 +53,8 @@ class ImpactStoryController extends Controller
     public function show(ImpactStory $impactStory, Request $request): ImpactStoryResource
     {
         $this->authorize('read', $impactStory);
-        $impactStory->load('organization'); 
+        $impactStory->load('organization');
+
         return new ImpactStoryResource($impactStory);
     }
 
@@ -65,27 +66,29 @@ class ImpactStoryController extends Controller
         $data['organization_id'] = $organization->id;
         $impactStory = ImpactStory::create($data);
         $impactStory->load('organization');
+
         return new ImpactStoryResource($impactStory);
     }
+
     public function update(ImpactStory $impactStory, UpdateImpactStoryRequest $request)
     {
         $this->authorize('update', $impactStory);
 
         $data = $request->validated();
 
-        if (!empty($data['organization_id'])) {
+        if (! empty($data['organization_id'])) {
             $organization = Organisation::where('uuid', $data['organization_id'])->first();
-            if (!$organization) {
+            if (! $organization) {
                 return response()->json(['error' => 'Invalid organization_id'], 422);
             }
             $data['organization_id'] = $organization->id;
         }
         $impactStory->update($data);
         $impactStory->load('organization');
-    
+
         return new ImpactStoryResource($impactStory);
     }
-    
+
     public function destroy(ImpactStory $impactStory, Request $request): JsonResponse
     {
         $this->authorize('delete', $impactStory);

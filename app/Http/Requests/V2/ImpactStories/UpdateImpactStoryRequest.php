@@ -21,7 +21,7 @@ class UpdateImpactStoryRequest extends FormRequest
             'tags' => 'sometimes|nullable|array',
             'tags.*' => 'exists:tags,id',
             'published_at' => 'sometimes|nullable|date',
-            'organization_id' => 'sometimes|uuid|exists:organisations,uuid'
+            'organization_id' => 'sometimes|uuid|exists:organisations,uuid',
         ];
     }
 }
