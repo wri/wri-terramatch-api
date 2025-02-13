@@ -12,7 +12,6 @@ use App\Models\V2\ImpactStory;
 use App\Models\V2\Organisation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -104,7 +103,6 @@ class ImpactStoryController extends Controller
         ]);
 
         $uuids = $request->input('uuids');
-        Log::info(['uuids' => $request]);
         $stories = ImpactStory::whereIn('uuid', $uuids)->get();
         foreach ($stories as $story) {
             $this->authorize('delete', $story);

@@ -2,19 +2,19 @@ summary: Bulk delete a set of impact stories by UUID
 operationId: v2-bulk-post-impact-stories
 tags:
   - ImpactStories
-requestBody:
-  required: true
-  content:
-    application/json:
-      schema:
-        type: object
-        properties:
-          uuids:
-            type: array
-            items:
-              type: string
-        required:
-          - uuids
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        uuids:
+          type: array
+          items:
+            type: string
+      required:
+        - uuids
 responses:
   '200':
     description: Impact Stories have been deleted
