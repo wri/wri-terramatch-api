@@ -9,26 +9,25 @@ class ImpactStoryResource extends JsonResource
 {
     public function toArray($request)
     {
-        return [
+        $data = [
             'id' => $this->id,
             'uuid' => $this->uuid,
             'title' => $this->title,
             'status' => $this->status,
             'organization' => $this->whenLoaded('organization', function () {
                 return [
-                  'uuid' => $this->organization->uuid,
-                  'name' => $this->organization->name,
-                  'web_url' => $this->organization->web_url,
-                  'facebook_url' => $this->organization->facebook_url,
-                  'instagram_url' => $this->organization->instagram_url,
-                  'linkedin_url' => $this->organization->linkedin_url,
-                  'twitter_url' => $this->organization->twitter_url,
-                  'countries' => ! empty($this->organization->countries)
-                  ? WorldCountryGeneralized::whereIn('iso', (array) $this->organization->countries)
-                      ->pluck('country')
-                      ->implode(', ')
-                  : '',
-
+                    'uuid' => $this->organization->uuid,
+                    'name' => $this->organization->name,
+                    'web_url' => $this->organization->web_url,
+                    'facebook_url' => $this->organization->facebook_url,
+                    'instagram_url' => $this->organization->instagram_url,
+                    'linkedin_url' => $this->organization->linkedin_url,
+                    'twitter_url' => $this->organization->twitter_url,
+                    'countries' => !empty($this->organization->countries)
+                        ? WorldCountryGeneralized::whereIn('iso', (array) $this->organization->countries)
+                            ->pluck('country')
+                            ->implode(', ')
+                        : '',
                 ];
             }),
             'date' => $this->date,
@@ -38,5 +37,7 @@ class ImpactStoryResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
+
+        return $this->appendFilesToResource($data);
     }
 }
