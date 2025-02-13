@@ -103,6 +103,7 @@ use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
 use App\Http\Controllers\V2\Geometry\GeometryController;
+use App\Http\Controllers\V2\ImpactStory\ImpactStoryController;
 use App\Http\Controllers\V2\Indicators\GetHectaresRestoredController;
 use App\Http\Controllers\V2\LeadershipTeam\DeleteLeadershipTeamController;
 use App\Http\Controllers\V2\LeadershipTeam\StoreLeadershipTeamController;
@@ -373,6 +374,9 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::post('/create', [AdminUserCreationController::class, 'store']);
     });
     Route::resource('users', AdminUserController::class);
+    Route::post('impact-stories/bulk-delete', [ImpactStoryController::class, 'bulkDestroy']);
+    Route::resource('impact-stories', ImpactStoryController::class);
+
 
     Route::prefix('forms')->group(function () {
         Route::post('/', StoreFormController::class);

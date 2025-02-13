@@ -1,0 +1,15 @@
+summary: Create a new Impact Story
+operationId: v2-create-impact-story
+description: 'Creates a new impact story.'
+tags:
+  - V2 Impact Stories
+parameters:
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/V2ImpactStoryCreate'
+responses:
+  '201':
+    description: Impact Story created successfully
+    schema:
+      $ref: '../../definitions/_index.yml#/V2ImpactStoryRead'

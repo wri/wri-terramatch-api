@@ -11490,8 +11490,8 @@ definitions:
               updated_at:
                 type: string
           organisation:
-            title: AdminOrganisationRead
             type: object
+            title: AdminOrganisationRead
             properties:
               uuid:
                 type: string
@@ -16352,8 +16352,8 @@ definitions:
           updated_at:
             type: string
       organisation:
-        title: AdminOrganisationRead
         type: object
+        title: AdminOrganisationRead
         properties:
           uuid:
             type: string
@@ -44552,6 +44552,68 @@ definitions:
         type: integer
       needs-more-information:
         type: integer
+  V2ImpactStoryRead:
+    type: object
+    properties:
+      uuid:
+        type: string
+        example: 123e4567-e89b-12d3-a456-426614174000
+      title:
+        type: string
+        example: Empowering Local Communities
+      content:
+        type: string
+        example: This is an inspiring story of impact...
+      status:
+        type: string
+        enum:
+          - draft
+          - published
+          - archived
+        example: published
+      created_at:
+        type: string
+        format: date-time
+        example: '2024-09-02T15:04:05Z'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2024-09-02T15:04:05Z'
+  V2ImpactStoryUpdate:
+    type: object
+    properties:
+      title:
+        type: string
+        example: Updated Title
+      content:
+        type: string
+        example: Updated content of the impact story.
+      status:
+        type: string
+        enum:
+          - draft
+          - published
+          - archived
+        example: published
+  V2ImpactStoryCreate:
+    type: object
+    required:
+      - title
+      - content
+    properties:
+      title:
+        type: string
+        example: Empowering Local Communities
+      content:
+        type: string
+        example: This is an inspiring story of impact...
+      status:
+        type: string
+        enum:
+          - draft
+          - published
+          - archived
+        example: draft
 paths:
   '/v2/tree-species/{entity}/{UUID}':
     get:
@@ -60928,6 +60990,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -60938,8 +61001,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -60967,7 +61030,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       tags:
         - V2 Admin
         - V2 Organisations
@@ -68645,6 +68707,7 @@ paths:
                     date_added:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -68655,8 +68718,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -68684,7 +68747,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -73570,8 +73632,8 @@ paths:
                             updated_at:
                               type: string
                         organisation:
-                          title: AdminOrganisationRead
                           type: object
+                          title: AdminOrganisationRead
                           properties:
                             uuid:
                               type: string
@@ -80260,6 +80322,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -80270,8 +80333,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -80299,7 +80362,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       operationId: get-v2-funding-programme
   /v2/admin/funding-programme:
     get:
@@ -80595,6 +80657,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -80605,8 +80668,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -80634,7 +80697,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       operationId: get-v2-admin-funding-programme
     post:
       summary: Create a funding programme
@@ -86968,8 +87030,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                title: AdminOrganisationRead
                 type: object
+                title: AdminOrganisationRead
                 properties:
                   uuid:
                     type: string
@@ -88391,6 +88453,7 @@ paths:
                       type: string
                       format: date-time
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -88401,8 +88464,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -88430,7 +88493,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/applications/{UUID}':
     get:
       summary: Get a specific application
@@ -89199,8 +89261,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                title: AdminOrganisationRead
                 type: object
+                title: AdminOrganisationRead
                 properties:
                   uuid:
                     type: string
@@ -91998,8 +92060,8 @@ paths:
                         updated_at:
                           type: string
                     organisation:
-                      title: AdminOrganisationRead
                       type: object
+                      title: AdminOrganisationRead
                       properties:
                         uuid:
                           type: string
@@ -99807,3 +99869,304 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /v2/admin/impact-stories:
+    get:
+      summary: Get a collection of impact stories
+      operationId: v2-get-impact-stories
+      description: Fetches a list of impact stories with filtering and sorting options.
+      tags:
+        - V2 Impact Stories
+      parameters:
+        - name: search
+          type: string
+          in: query
+          description: Search term to use on the collection
+        - name: filter
+          type: string
+          in: query
+          description: 'Multiple filters can be applied. Syntax: ?filter[status]=published'
+        - name: sort
+          type: string
+          in: query
+          description: 'Sorting can be applied, default is ascending or use - for descending. Example: ?sort=-created_at'
+        - name: per_page
+          type: integer
+          in: query
+          description: Number of results per page
+        - name: page
+          type: integer
+          in: query
+          description: Page number for results
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      example: 123e4567-e89b-12d3-a456-426614174000
+                    title:
+                      type: string
+                      example: Empowering Local Communities
+                    content:
+                      type: string
+                      example: This is an inspiring story of impact...
+                    status:
+                      type: string
+                      enum:
+                        - draft
+                        - published
+                        - archived
+                      example: published
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: '2024-09-02T15:04:05Z'
+                    updated_at:
+                      type: string
+                      format: date-time
+                      example: '2024-09-02T15:04:05Z'
+              links:
+                type: object
+                title: V2PaginationLinks
+                properties:
+                  first:
+                    type: string
+                  last:
+                    type: string
+                  prev:
+                    type: string
+                  next:
+                    type: string
+              meta:
+                type: object
+                title: V2PaginationMeta
+                properties:
+                  from:
+                    type: integer
+                  to:
+                    type: integer
+                  current_page:
+                    type: integer
+                  last_page:
+                    type: integer
+                  per_page:
+                    type: integer
+                  total:
+                    type: integer
+                  path:
+                    type: string
+                  links:
+                    type: array
+                    items:
+                      title: V2PaginationCurrentLinks
+                      properties:
+                        url:
+                          type: string
+                        label:
+                          type: string
+                        active:
+                          type: boolean
+    post:
+      summary: Create a new Impact Story
+      operationId: v2-create-impact-story
+      description: Creates a new impact story.
+      tags:
+        - V2 Impact Stories
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            required:
+              - title
+              - content
+            properties:
+              title:
+                type: string
+                example: Empowering Local Communities
+              content:
+                type: string
+                example: This is an inspiring story of impact...
+              status:
+                type: string
+                enum:
+                  - draft
+                  - published
+                  - archived
+                example: draft
+      responses:
+        '201':
+          description: Impact Story created successfully
+          schema:
+            type: object
+            properties:
+              uuid:
+                type: string
+                example: 123e4567-e89b-12d3-a456-426614174000
+              title:
+                type: string
+                example: Empowering Local Communities
+              content:
+                type: string
+                example: This is an inspiring story of impact...
+              status:
+                type: string
+                enum:
+                  - draft
+                  - published
+                  - archived
+                example: published
+              created_at:
+                type: string
+                format: date-time
+                example: '2024-09-02T15:04:05Z'
+              updated_at:
+                type: string
+                format: date-time
+                example: '2024-09-02T15:04:05Z'
+  '/v2/admin/impact-stories/{id}':
+    get:
+      summary: Get a specific impact story
+      operationId: v2-get-impact-story
+      description: Retrieves details of a single impact story.
+      tags:
+        - V2 Impact Stories
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          description: UUID of the impact story
+      responses:
+        '200':
+          description: Impact Story retrieved successfully
+          schema:
+            type: object
+            properties:
+              uuid:
+                type: string
+                example: 123e4567-e89b-12d3-a456-426614174000
+              title:
+                type: string
+                example: Empowering Local Communities
+              content:
+                type: string
+                example: This is an inspiring story of impact...
+              status:
+                type: string
+                enum:
+                  - draft
+                  - published
+                  - archived
+                example: published
+              created_at:
+                type: string
+                format: date-time
+                example: '2024-09-02T15:04:05Z'
+              updated_at:
+                type: string
+                format: date-time
+                example: '2024-09-02T15:04:05Z'
+    put:
+      summary: Update an impact story
+      operationId: v2-update-impact-story
+      description: Updates the details of an existing impact story.
+      tags:
+        - V2 Impact Stories
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          description: UUID of the impact story to update
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Updated Title
+              content:
+                type: string
+                example: Updated content of the impact story.
+              status:
+                type: string
+                enum:
+                  - draft
+                  - published
+                  - archived
+                example: published
+      responses:
+        '200':
+          description: Impact Story updated successfully
+          schema:
+            type: object
+            properties:
+              uuid:
+                type: string
+                example: 123e4567-e89b-12d3-a456-426614174000
+              title:
+                type: string
+                example: Empowering Local Communities
+              content:
+                type: string
+                example: This is an inspiring story of impact...
+              status:
+                type: string
+                enum:
+                  - draft
+                  - published
+                  - archived
+                example: published
+              created_at:
+                type: string
+                format: date-time
+                example: '2024-09-02T15:04:05Z'
+              updated_at:
+                type: string
+                format: date-time
+                example: '2024-09-02T15:04:05Z'
+    delete:
+      summary: Delete an impact story
+      operationId: v2-delete-impact-story
+      description: Deletes an existing impact story.
+      tags:
+        - V2 Impact Stories
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Impact Story has been deleted
+  /v2/admin/impact-stories/bulk-delete:
+    post:
+      summary: Bulk delete a set of impact stories by UUID
+      operationId: v2-bulk-post-impact-stories
+      tags:
+        - ImpactStories
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              uuids:
+                type: array
+                items:
+                  type: string
+            required:
+              - uuids
+      responses:
+        '200':
+          description: Impact Stories have been deleted

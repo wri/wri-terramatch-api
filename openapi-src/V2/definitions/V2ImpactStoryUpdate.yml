@@ -1,0 +1,12 @@
+type: object
+properties:
+  title:
+    type: string
+    example: 'Updated Title'
+  content:
+    type: string
+    example: 'Updated content of the impact story.'
+  status:
+    type: string
+    enum: [draft, published, archived]
+    example: 'published'
