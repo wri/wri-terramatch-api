@@ -1,5 +1,5 @@
 summary: Bulk delete a set of impact stories by UUID
-operationId: v2-bulk-delete-impact-stories
+operationId: v2-bulk-post-impact-stories
 tags:
   - ImpactStories
 requestBody:
