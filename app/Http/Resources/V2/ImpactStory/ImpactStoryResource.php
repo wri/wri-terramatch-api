@@ -31,7 +31,7 @@ class ImpactStoryResource extends JsonResource
 
                 ];
             }),
-            'date' => $this->date ? \Carbon\Carbon::parse($this->date)->format('d/m/y') : null,
+            'date' => $this->date,
             'category' => $this->category,
             'thumbnail' => $this->thumbnail,
             'content' => $this->content,
