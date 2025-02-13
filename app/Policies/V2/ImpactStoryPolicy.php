@@ -32,4 +32,11 @@ class ImpactStoryPolicy extends Policy
     {
         return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user) || $user->can('impact-stories-manage');
     }
+
+    public function uploadFiles(?User $user, ImpactStory $impactStory): bool
+    {
+        return $this->isVerifiedAdmin($user)
+            || $this->isTerrafundAdmin($user)
+            || $user->can('impact-stories-manage');
+    }
 }

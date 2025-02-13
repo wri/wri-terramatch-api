@@ -4,6 +4,7 @@ return [
     'validation-rules' => [
         'logo-image' => 'file|mimes:jpg,png',
         'cover-image' => 'file|mimes:jpg,png',
+        'thumbnail' => 'file|mimes:jpg,png',
         'cover-image-with-svg' => 'file|mimes:jpg,png,svg',
         'photos' => 'file|mimes:jpg,png,mp4',
         'pdf' => 'file|mimes:pdf',
@@ -13,6 +14,7 @@ return [
     ],
     'validation-file-types' => [
         'logo-image' => 'media',
+        'thumbnail' => 'media',
         'cover-image' => 'media',
         'cover-image-with-svg' => 'media',
         'photos' => 'media',
