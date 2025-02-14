@@ -44,6 +44,8 @@ class FormQuestion extends Model
         'options_other',
         'show_on_parent_condition',
         'is_parent_conditional_default',
+        'min_character_limit',
+        'max_character_limit',
     ];
 
     protected $with = [
@@ -57,6 +59,8 @@ class FormQuestion extends Model
         'options_other' => 'boolean',
         'show_on_parent_condition' => 'boolean',
         'is_parent_conditional_default' => 'boolean',
+        'min_character_limit' => 'integer',
+        'max_character_limit' => 'integer',
     ];
 
     public function section(): BelongsTo
