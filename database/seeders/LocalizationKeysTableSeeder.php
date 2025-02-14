@@ -378,6 +378,96 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('v2-project-invite-received-create.body', '{organisationName} has invited you to join TerraMatch as a monitoring partner on {projectName}
             Click the link below to create your account and set your password so you can see the project’s progress and access its reports.');
         $this->createLocalizationKey('v2-project-invite-received-create.cta', 'CREATE ACCOUNT');
+
+        // terrafund-polygon-update
+        $this->createLocalizationKey('terrafund-polygon-update.subject', 'Terrafund Polygon Update');
+        $this->createLocalizationKey('terrafund-polygon-update.title', 'Monitoring Partners to DQA Updates');
+        $this->createLocalizationKey('terrafund-report-reminder.body', 'Dear {userName},<br>' .
+            'Please find below the weekly update on polygon versions, statuses, and comments.<br><br>' .
+            '<p style="text-align: start; margin: 0;"><strong>Polygon Version Update</strong></p><br>' .
+            '<table>' .
+            '<tr>' .
+            '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px;">' .
+            '<table style="width: 100%; border-collapse: collapse;">' .
+            '    <thead>' .
+            '        <tr>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden; border-left:hidden;">Project Name</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden;">Site Name</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden;">Polygon Name</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden;">Version ID</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden;">Change</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden;">Updated by</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden; border-right:hidden;">Comment</th>' .
+            '        </tr>' .
+            '    </thead>' .
+            '    <tbody>' .
+            '        <tr>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-right:hidden;">-</td>' .
+            '        </tr>' .
+            '        <tr>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden; border-right:hidden;">-</td>' .
+            '        </tr>' .
+            '    </tbody>' .
+            '</table>'  .
+            '</td>' .
+            '</tr>' .
+            '</table>' .
+            '<br><br>' .
+            '<p style="text-align: start; margin: 0;"><strong>Polygon Polygon Status Update</strong></p><br>' .
+            '<table>' .
+            '<tr>' .
+            '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px;">' .
+            '<table style="width: 100%; border-collapse: collapse;">' .
+            '    <thead>' .
+            '        <tr>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden; border-left:hidden;">Project Name</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden;">Site Name</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden;">Polygon Name</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden;">Version ID</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden;">Change</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden;">Updated by</th>' .
+            '            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2; border-top:hidden; border-right:hidden;">Comment</th>' .
+            '        </tr>' .
+            '    </thead>' .
+            '    <tbody>' .
+            '        <tr>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-right:hidden;">-</td>' .
+            '        </tr>' .
+            '        <tr>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
+            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden; border-right:hidden;">-</td>' .
+            '        </tr>' .
+            '    </tbody>' .
+            '</table>'  .
+            '</td>' .
+            '</tr>' .
+            '</table>' .
+            '<br><br>' .
+            '<p style="text-align: start; margin: 0;">Best regards,</p>' .
+            '<p style="text-align: start; margin: 0;"><strong>TerraMatch Support</strong></p><br>');
     }
 
     public function createLocalizationKey($key, $value): void
