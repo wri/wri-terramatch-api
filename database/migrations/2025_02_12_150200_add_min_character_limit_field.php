@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('form_questions', function (Blueprint $table) {
-            $table->unsignedInteger('min_character_limit')->nullable()->default(90000);
+            $table->unsignedInteger('min_character_limit')->nullable()->default(0);
             $table->unsignedInteger('max_character_limit')->nullable()->default(90000);
         });
     }
