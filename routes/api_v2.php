@@ -417,7 +417,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::get('/export', ExportProjectPitchController::class);
     });
 });
-
+Route::resource('impact-stories', ImpactStoryController::class);
 /** NON ADMIN ROUTES */
 Route::prefix('organisations')->group(function () {
     Route::get('/{organisation}/tasks', ViewOrganisationTasksController::class);
