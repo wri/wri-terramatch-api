@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\V2\ImpactStory;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
@@ -154,4 +155,53 @@ class TerrafundDashboardQueryHelper
 
         return self::retrievePolygonUuidsByStatusForProjects($projectUuids, $approvedStatus);
     }
+    public static function buildImpactStoryQuery(array $filters, ?string $search, ?string $sort)
+    {
+        $sortableColumns = ['date', '-date', 'title', '-title', 'created_at', '-created_at'];
+    
+        $query = ImpactStory::with('organization');
+    
+        if ($search) {
+            $query->where('title', 'like', '%' . trim($search) . '%');
+        }
+    
+        if (!empty($filters['organisationType'])) {
+            $query->whereHas('organization', function ($q) use ($filters) {
+                $q->whereIn('type', (array) $filters['organisationType']);
+            });
+        }
+    
+        if (!empty($filters['country'])) {
+            $query->whereHas('organization', function ($q) use ($filters) {
+                $q->where(function ($subQuery) use ($filters) {
+                    foreach ((array) $filters['country'] as $country) {
+                        $subQuery->orWhereJsonContains('countries', $country);
+                    }
+                });
+            });
+        }
+        if (!empty($filters['status'])) {
+          
+          $query->whereIn('status', (array) $filters['status']);
+        }
+      //   if (!empty($filters['category'])) {
+      //     $categories = (array) $filters['category'];
+      //     $query->where(function ($q) use ($categories) {
+      //         foreach ($categories as $category) {
+      //           Log::info(["cateogry" => $category]);
+      //             $q->orWhereJsonContains('category',  $category);
+      //         }
+      //     });
+      //     dd($query->toSql(), $query->getBindings());
+      // }
+    
+        if ($sort && in_array($sort, $sortableColumns)) {
+            $sortColumn = ltrim($sort, '-');
+            $direction = str_starts_with($sort, '-') ? 'desc' : 'asc';
+            $query->orderBy($sortColumn, $direction);
+        }
+    
+        return $query;
+    }
+    
 }
