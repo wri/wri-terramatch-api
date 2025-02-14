@@ -13,23 +13,24 @@ use App\Models\V2\ImpactStory;
 use App\Models\V2\Organisation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+
 class ImpactStoryController extends Controller
 {
-  public function index(Request $request): ImpactStoriesCollection
-  {
-      $this->authorize('readAll', ImpactStory::class);
-  
-      $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
-      $search = $request->query('search');
-      $sort = $request->query('sort');
-      $filters = $request->input('filter', []);
-  
-      $query = TerrafundDashboardQueryHelper::buildImpactStoryQuery($filters, $search, $sort);
-  
-      $collection = $query->paginate($perPage)->appends(request()->query());
-  
-      return new ImpactStoriesCollection($collection);
-  }
+    public function index(Request $request): ImpactStoriesCollection
+    {
+        $this->authorize('readAll', ImpactStory::class);
+
+        $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
+        $search = $request->query('search');
+        $sort = $request->query('sort');
+        $filters = $request->input('filter', []);
+
+        $query = TerrafundDashboardQueryHelper::buildImpactStoryQuery($filters, $search, $sort);
+
+        $collection = $query->paginate($perPage)->appends(request()->query());
+
+        return new ImpactStoriesCollection($collection);
+    }
 
     public function show(ImpactStory $impactStory, Request $request): ImpactStoryResource
     {
