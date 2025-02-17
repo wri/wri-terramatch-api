@@ -185,16 +185,15 @@ class TerrafundDashboardQueryHelper
 
             $query->whereIn('status', (array) $filters['status']);
         }
-        //   if (!empty($filters['category'])) {
-        //     $categories = (array) $filters['category'];
-        //     $query->where(function ($q) use ($categories) {
-        //         foreach ($categories as $category) {
-        //           Log::info(["cateogry" => $category]);
-        //             $q->orWhereJsonContains('category',  $category);
-        //         }
-        //     });
-        //     dd($query->toSql(), $query->getBindings());
-        // }
+        if (! empty($filters['category'])) {
+            $categories = (array) $filters['category'];
+
+            $query->where(function ($q) use ($categories) {
+                foreach ($categories as $category) {
+                    $q->orWhereJsonContains('category', $category);
+                }
+            });
+        }
 
         if ($sort && in_array($sort, $sortableColumns)) {
             $sortColumn = ltrim($sort, '-');
