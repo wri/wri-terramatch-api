@@ -14,9 +14,9 @@ return new class extends Migration {
             $table->id();
             $table->uuid('site_polygon_uuid');
             $table->string('version_name');
-            $table->string('change');
+            $table->text('change');
             $table->unsignedBigInteger('updated_by_id');
-            $table->string('comment');
+            $table->text('comment');
             $table->string('type');
             $table->foreign('site_polygon_uuid')->references('uuid')->on('site_polygon');
             $table->foreign('updated_by_id')->references('id')->on('users');

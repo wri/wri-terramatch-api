@@ -17,6 +17,7 @@ class PolygonUpdates extends Model
         'change',
         'updated_by_id',
         'comment',
+        'type',
     ];
 
     public function scopeLastWeek($query)
