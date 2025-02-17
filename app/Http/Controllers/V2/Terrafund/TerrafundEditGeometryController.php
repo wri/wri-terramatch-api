@@ -399,7 +399,7 @@ class TerrafundEditGeometryController extends Controller
         $keys = ['poly_name','plantstart','plantend','practice','target_sys','distr','num_trees','site_id'];
         foreach ($keys as $key) {
             if ($newSitePolygon[$key] !== $sitePolygon[$key]) {
-                $diff[] = "$key => from $$sitePolygon[$key] to {$newSitePolygon[$key]}";
+                $diff[] = "$key => from $sitePolygon[$key] to {$newSitePolygon[$key]}";
             }
         }
 

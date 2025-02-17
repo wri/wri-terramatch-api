@@ -49,17 +49,13 @@ class SendWeeklyPolygonUpdateNotificationsJob implements ShouldQueue
 
         $usersPdWithSkip = $this->skipRecipients($project->users()->get());
         $usersManagersWithSkip = $this->skipRecipients($project->managers()->get());
-        $usersPDGroupedByLocale = $usersPdWithSkip->groupBy('locale');
-        $usersManagersGroupedByLocale = $usersManagersWithSkip->groupBy('locale');
 
-        foreach ($usersPDGroupedByLocale as $locale => $users) {
-            $groupedLocale['locale'] = $locale;
-            Mail::to($users->pluck('email_address')->toArray())->queue(new PolygonUpdateNotification($groupedLocale, $this->sitePolygon));
+        foreach ($usersPdWithSkip as $user) {
+            Mail::to($user->email_address)->queue(new PolygonUpdateNotification($user, $this->sitePolygon));
         }
 
-        foreach ($usersManagersGroupedByLocale as $locale => $users) {
-            $groupedLocaleManager['locale'] = $locale;
-            Mail::to($users->pluck('email_address')->toArray())->queue(new PolygonUpdateNotification($groupedLocaleManager, $this->sitePolygon));
+        foreach ($usersManagersWithSkip as $user) {
+            Mail::to($user->email_address)->queue(new PolygonUpdateNotification($user, $this->sitePolygon));
         }
     }
 }
