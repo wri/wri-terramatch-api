@@ -10,12 +10,12 @@ class ImpactStoryPolicy extends Policy
 {
     public function readAll(?User $user): bool
     {
-        return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user) || $user->can('impact-stories-manage');
+        return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user) || $this->isUser($user);
     }
 
     public function read(?User $user, ImpactStory $impactStory): bool
     {
-        return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user) || $user->can('impact-stories-manage') || $this->isOwner($user, $impactStory);
+        return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user) || $this->isUser($user) || $this->isOwner($user, $impactStory);
     }
 
     public function create(?User $user): bool

@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\V2\ImpactStory;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
@@ -153,5 +154,68 @@ class TerrafundDashboardQueryHelper
         $approvedStatus = ['approved'];
 
         return self::retrievePolygonUuidsByStatusForProjects($projectUuids, $approvedStatus);
+    }
+
+    public static function buildImpactStoryQuery(array $filters, ?string $search, ?string $sort)
+    {
+        $sortableColumns = ['date', '-date', 'title', '-title', 'created_at', '-created_at'];
+
+        $query = ImpactStory::with('organization');
+
+        if ($search) {
+            $searchTerm = trim($search);
+
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', '%' . $searchTerm . '%')
+                  ->orWhereHas('organization', function ($orgQuery) use ($searchTerm) {
+                      $orgQuery->where('name', 'like', '%' . $searchTerm . '%');
+                  })
+                  ->orWhereHas('organization', function ($orgQuery) use ($searchTerm) {
+                      $orgQuery->whereExists(function ($subQuery) use ($searchTerm) {
+                          $subQuery->selectRaw(1)
+                              ->from('world_countries_generalized as wcg')
+                              ->whereRaw('JSON_CONTAINS(organisations.countries, JSON_QUOTE(wcg.iso))')
+                              ->where('wcg.country', 'like', '%' . $searchTerm . '%');
+                      });
+                  });
+            });
+        }
+
+        if (! empty($filters['organisationType'])) {
+            $query->whereHas('organization', function ($q) use ($filters) {
+                $q->whereIn('type', (array) $filters['organisationType']);
+            });
+        }
+
+        if (! empty($filters['country'])) {
+            $query->whereHas('organization', function ($q) use ($filters) {
+                $q->where(function ($subQuery) use ($filters) {
+                    foreach ((array) $filters['country'] as $country) {
+                        $subQuery->orWhereJsonContains('countries', $country);
+                    }
+                });
+            });
+        }
+
+        if (! empty($filters['status'])) {
+            $query->whereIn('status', (array) $filters['status']);
+        }
+
+        if (! empty($filters['category'])) {
+            $categories = (array) $filters['category'];
+            $query->where(function ($q) use ($categories) {
+                foreach ($categories as $category) {
+                    $q->orWhereJsonContains('category', $category);
+                }
+            });
+        }
+
+        if ($sort && in_array($sort, $sortableColumns)) {
+            $sortColumn = ltrim($sort, '-');
+            $direction = str_starts_with($sort, '-') ? 'desc' : 'asc';
+            $query->orderBy($sortColumn, $direction);
+        }
+
+        return $query;
     }
 }
