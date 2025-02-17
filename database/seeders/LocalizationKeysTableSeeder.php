@@ -387,7 +387,7 @@ class LocalizationKeysTableSeeder extends Seeder
             '<p style="text-align: start; margin: 0;"><strong>Polygon Version Update</strong></p><br>' .
             '<table>' .
             '<tr>' .
-            '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px;">' .
+            '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px; display: {}">' .
             '<table style="width: 100%; border-collapse: collapse;">' .
             '    <thead>' .
             '        <tr>' .
@@ -401,24 +401,7 @@ class LocalizationKeysTableSeeder extends Seeder
             '        </tr>' .
             '    </thead>' .
             '    <tbody>' .
-            '        <tr>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-right:hidden;">-</td>' .
-            '        </tr>' .
-            '        <tr>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden; border-right:hidden;">-</td>' .
-            '        </tr>' .
+            '        {polygonUpdateTable}' .
             '    </tbody>' .
             '</table>'  .
             '</td>' .
@@ -442,24 +425,7 @@ class LocalizationKeysTableSeeder extends Seeder
             '        </tr>' .
             '    </thead>' .
             '    <tbody>' .
-            '        <tr>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-right:hidden;">-</td>' .
-            '        </tr>' .
-            '        <tr>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden;">-</td>' .
-            '            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-bottom:hidden; border-right:hidden;">-</td>' .
-            '        </tr>' .
+            '        {polygonStatusTable}' .
             '    </tbody>' .
             '</table>'  .
             '</td>' .
