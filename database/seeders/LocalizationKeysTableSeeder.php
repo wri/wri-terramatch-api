@@ -389,7 +389,7 @@ class LocalizationKeysTableSeeder extends Seeder
             '<p style="text-align: start; margin: 0;"><strong>Polygon Version Update</strong></p><br>' .
             '<table>' .
             '<tr>' .
-            '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px; display: {}">' .
+            '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px; display: {hasUpdateChange};">' .
             '<table style="width: 100%; border-collapse: collapse;">' .
             '    <thead>' .
             '        <tr>' .
@@ -413,7 +413,7 @@ class LocalizationKeysTableSeeder extends Seeder
             '<p style="text-align: start; margin: 0;"><strong>Polygon Polygon Status Update</strong></p><br>' .
             '<table>' .
             '<tr>' .
-            '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px;">' .
+            '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px; display: {hasStatusChange};">' .
             '<table style="width: 100%; border-collapse: collapse;">' .
             '    <thead>' .
             '        <tr>' .

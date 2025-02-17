@@ -51,8 +51,8 @@ class PolygonUpdateNotification extends I18nMail
         $hasUpdateChange = $statusChanges->count() > 0;
         $hasStatusChange = $updateChanges->count() > 0;
 
-        $params['{polygonUpdateTable}'] = $hasUpdateChange ? 'block' : 'none';
-        $params['{polygonStatusTable}'] = $hasStatusChange ? 'block' : 'none';
+        $params['{hasUpdateChange}'] = $hasUpdateChange ? 'block' : 'none';
+        $params['{hasStatusChange}'] = $hasStatusChange ? 'block' : 'none';
 
         if ($hasUpdateChange) {
             $params['{polygonUpdateTable}'] = $this->getTable(

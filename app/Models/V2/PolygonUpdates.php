@@ -2,14 +2,10 @@
 
 namespace App\Models\V2;
 
-use App\Models\Traits\HasStatus;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PolygonUpdates extends Model
 {
-    use HasFactory;
-    use HasStatus;
 
     protected $fillable = [
         'site_polygon_uuid',
