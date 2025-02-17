@@ -21,10 +21,9 @@ class ImpactStoryController extends Controller
         $this->authorize('readAll', ImpactStory::class);
 
         $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
-        $search = $request->query('search');
         $sort = $request->query('sort');
         $filters = $request->input('filter', []);
-
+        $search = $filters['search'] ?? null;
         $query = TerrafundDashboardQueryHelper::buildImpactStoryQuery($filters, $search, $sort);
 
         $collection = $query->paginate($perPage)->appends(request()->query());
