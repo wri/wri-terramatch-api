@@ -13,10 +13,10 @@ return new class extends Migration {
         Schema::create('polygon_updates', function (Blueprint $table) {
             $table->id();
             $table->uuid('site_polygon_uuid');
-            $table->string('version_name');
-            $table->text('change');
+            $table->string('version_name')->nullable();
+            $table->text('change')->nullable();
             $table->unsignedBigInteger('updated_by_id');
-            $table->text('comment');
+            $table->text('comment')->nullable();
             $table->string('type');
             $table->foreign('site_polygon_uuid')->references('uuid')->on('site_polygon');
             $table->foreign('updated_by_id')->references('id')->on('users');
