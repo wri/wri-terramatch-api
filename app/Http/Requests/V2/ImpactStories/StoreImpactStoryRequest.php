@@ -16,7 +16,7 @@ class StoreImpactStoryRequest extends FormRequest
             'status' => 'required|string',
             'organization_id' => 'exists:organisations,id',
             'date' => 'date',
-            'category' => 'json',
+            'category' => 'array',
             'thumbnail' => 'string',
             'content' => 'json',
         ];
