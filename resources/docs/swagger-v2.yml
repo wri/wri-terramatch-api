@@ -99872,7 +99872,6 @@ paths:
   /v2/admin/impact-stories:
     get:
       summary: Get a collection of impact stories
-      operationId: v2-get-impact-stories
       description: Fetches a list of impact stories with filtering and sorting options.
       tags:
         - V2 Impact Stories
@@ -100034,7 +100033,6 @@ paths:
   '/v2/admin/impact-stories/{id}':
     get:
       summary: Get a specific impact story
-      operationId: v2-get-impact-story
       description: Retrieves details of a single impact story.
       tags:
         - V2 Impact Stories
@@ -100173,7 +100171,6 @@ paths:
   /v2/impact-stories:
     get:
       summary: Get a collection of impact stories
-      operationId: v2-get-impact-stories
       description: Fetches a list of impact stories with filtering and sorting options.
       tags:
         - V2 Impact Stories
@@ -100277,7 +100274,6 @@ paths:
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story
-      operationId: v2-get-impact-story
       description: Retrieves details of a single impact story.
       tags:
         - V2 Impact Stories
