@@ -9,12 +9,12 @@ class PolygonUpdateNotification extends I18nMail
 {
     private $user;
 
-    private $sitePolygonUuid;
+    private $sitePolygon;
 
-    public function __construct($user, $sitePolygonUuid)
+    public function __construct($user, SitePolygon $sitePolygon)
     {
         $this->user = $user;
-        $this->sitePolygonUuid = $sitePolygonUuid;
+        $this->sitePolygon = $sitePolygon;
         parent::__construct($user);
         $params = $this->getBodyParams();
         $this->setSubjectKey('terrafund-polygon-update.subject')
@@ -29,14 +29,13 @@ class PolygonUpdateNotification extends I18nMail
             '{userName}' => $this->user->full_name,
         ];
 
-        $sitePolygon = SitePolygon::where('uuid', $this->sitePolygonUuid)->first();
-        $project = $sitePolygon->project;
-        $site = $sitePolygon->site;
-        $polygonName = $sitePolygon->poly_name;
-        $versionId = $sitePolygon->version_name;
+        $project = $this->sitePolygon->project;
+        $site = $this->sitePolygon->site;
+        $polygonName = $this->sitePolygon->poly_name;
+        $versionId = $this->sitePolygon->version_name;
 
-        $statusChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygonUuid)->lastWeek()->isStatus()->get();
-        $updateChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygonUuid)->lastWeek()->isUpdate()->get();
+        $statusChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygon->uuid)->lastWeek()->isStatus()->get();
+        $updateChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygon->uuid)->lastWeek()->isUpdate()->get();
 
         $hasUpdateChange = $statusChanges->count() > 0;
         $hasStatusChange = $updateChanges->count() > 0;
@@ -90,13 +89,13 @@ class PolygonUpdateNotification extends I18nMail
     private function getRow($projectName, $siteName, $polygonName, $versionId, $change, $updatedBy, $comment): string
     {
         return '<tr>' .
-        '         <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden;">'. $projectName .'</td>' .
-        '         <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">'. $siteName .'</td>' .
-        '         <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">'. $polygonName .'</td>' .
-        '         <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">'. $versionId .'</td>' .
-        '         <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">'. $change .'</td>' .
-        '         <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">'. $updatedBy .'</td>' .
-        '         <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-right:hidden;">'. $comment .'</td>' .
-        '      </tr>';
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden;">'. $projectName .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">'. $siteName .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">'. $polygonName .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">'. $versionId .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">'. $change .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">'. $updatedBy .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-right:hidden;">'. $comment .'</td>' .
+        '</tr>';
     }
 }
