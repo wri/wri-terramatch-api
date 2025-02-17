@@ -381,7 +381,9 @@ class LocalizationKeysTableSeeder extends Seeder
 
         // terrafund-polygon-update
         $this->createLocalizationKey('terrafund-polygon-update.subject', 'Terrafund Polygon Update');
-        $this->createLocalizationKey('terrafund-polygon-update.title', 'Monitoring Partners to DQA Updates');
+        $this->createLocalizationKey('terrafund-polygon-update.dqatopd.title', 'Monitoring Partners to DQA Updates');
+        $this->createLocalizationKey('terrafund-polygon-update.pdtodqa.title', 'DQA to Monitoring Partners Updates');
+        $this->createLocalizationKey('terrafund-polygon-update.cta', 'View Updates');
         $this->createLocalizationKey('terrafund-polygon-update.body', 'Dear {userName},<br>' .
             'Please find below the weekly update on polygon versions, statuses, and comments.<br><br>' .
             '<p style="text-align: start; margin: 0;"><strong>Polygon Version Update</strong></p><br>' .

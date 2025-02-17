@@ -51,11 +51,11 @@ class SendWeeklyPolygonUpdateNotificationsJob implements ShouldQueue
         $usersManagersWithSkip = $this->skipRecipients($project->managers()->get());
 
         foreach ($usersPdWithSkip as $user) {
-            Mail::to($user->email_address)->queue(new PolygonUpdateNotification($user, $this->sitePolygon));
+            Mail::to($user->email_address)->queue(new PolygonUpdateNotification($user, $this->sitePolygon, false));
         }
 
         foreach ($usersManagersWithSkip as $user) {
-            Mail::to($user->email_address)->queue(new PolygonUpdateNotification($user, $this->sitePolygon));
+            Mail::to($user->email_address)->queue(new PolygonUpdateNotification($user, $this->sitePolygon, true));
         }
     }
 }

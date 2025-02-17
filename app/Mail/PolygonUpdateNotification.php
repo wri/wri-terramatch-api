@@ -11,16 +11,27 @@ class PolygonUpdateNotification extends I18nMail
 
     private $sitePolygon;
 
-    public function __construct($user, SitePolygon $sitePolygon)
+    private $isAdmin;
+
+    public function __construct($user, SitePolygon $sitePolygon, $isManager)
     {
         $this->user = $user;
         $this->sitePolygon = $sitePolygon;
+        $this->isManager = $isManager;
         parent::__construct($user);
         $params = $this->getBodyParams();
         $this->setSubjectKey('terrafund-polygon-update.subject')
-            ->setTitleKey('terrafund-polygon-update.title')
             ->setBodyKey('terrafund-polygon-update.body')
             ->setBodyParams($params);
+
+        if ($isManager) {
+            $this->setTitleKey('terrafund-polygon-update.dqatopd.title');
+        } else {
+            $this->setTitleKey('terrafund-polygon-update.pdtodqa.title');
+        }
+        $this->setCta('terrafund-polygon-update.cta');
+
+        $this->link = '/site/' . $sitePolygon->site_id;
     }
 
     private function getBodyParams(): array
