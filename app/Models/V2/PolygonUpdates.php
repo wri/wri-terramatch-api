@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PolygonUpdates extends Model
 {
-
     protected $fillable = [
         'site_polygon_uuid',
         'version_name',
