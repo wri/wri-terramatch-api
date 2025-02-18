@@ -180,10 +180,9 @@ class TerrafundDashboardQueryHelper
                   });
             });
         }
-
-        if (! empty($filters['organisationType'])) {
+        if (! empty($filters['organizationType'])) {
             $query->whereHas('organization', function ($q) use ($filters) {
-                $q->whereIn('type', (array) $filters['organisationType']);
+                $q->whereIn('type', (array) $filters['organizationType']);
             });
         }
 
