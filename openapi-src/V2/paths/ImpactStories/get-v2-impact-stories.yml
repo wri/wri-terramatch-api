@@ -1,5 +1,4 @@
 summary: Get a collection of impact stories
-operationId: v2-get-impact-stories
 description: 'Fetches a list of impact stories with filtering and sorting options.'
 tags:
   - V2 Impact Stories

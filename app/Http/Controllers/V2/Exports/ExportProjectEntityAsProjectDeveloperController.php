@@ -75,7 +75,7 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
         $filename = Str::of($project->name)->replace(['/', '\\'], '-') . ' Sites GeoJSON - ' . now() . '.geojson';
         $path = storage_path('./' . $filename);
 
-        file_put_contents($path, json_encode($geoJson, JSON_PRETTY_PRINT));
+        file_put_contents($path, json_encode($geoJson));
 
         return response()->download($path)->deleteFileAfterSend();
     }

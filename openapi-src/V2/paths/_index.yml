@@ -2862,3 +2862,9 @@
 /v2/admin/impact-stories/bulk-delete:
   post:
     $ref: './ImpactStories/delete-v2-impact-stories-bulk.yml'
+/v2/impact-stories:
+  get:
+    $ref: './ImpactStories/get-v2-impact-stories.yml'
+/v2/impact-stories/{id}:
+  get:
+    $ref: './ImpactStories/get-v2-impact-stories-id.yml'

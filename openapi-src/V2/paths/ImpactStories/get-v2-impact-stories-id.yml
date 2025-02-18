@@ -1,5 +1,4 @@
 summary: Get a specific impact story
-operationId: v2-get-impact-story
 description: 'Retrieves details of a single impact story.'
 tags:
   - V2 Impact Stories
