@@ -26,7 +26,7 @@ class ImpactStoryResource extends JsonResource
                     'countries' => ! empty($this->organization->countries)
                         ? WorldCountryGeneralized::whereIn('iso', (array) $this->organization->countries)
                             ->pluck('country')
-                            ->implode(', ')
+                            ->implode(',')
                         : '',
                 ];
             }),
