@@ -384,8 +384,9 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('terrafund-polygon-update.dqatopd.title', 'Monitoring Partners to DQA Updates');
         $this->createLocalizationKey('terrafund-polygon-update.pdtodqa.title', 'DQA to Monitoring Partners Updates');
         $this->createLocalizationKey('terrafund-polygon-update.cta', 'View Updates');
-        $this->createLocalizationKey('terrafund-polygon-update.body',
-        '<table style="margin: 0 32px;">'.
+        $this->createLocalizationKey(
+            'terrafund-polygon-update.body',
+            '<table style="margin: 0 32px;">'.
             '<tr>'.
                 '<td>'.
                     '<p style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Dear {userName},</p>'.
@@ -442,7 +443,8 @@ class LocalizationKeysTableSeeder extends Seeder
                     '<p style="text-align: start; margin: 0; font-family: \'Inter\', sans-serif; font-size: 14px; color: #353535;"><strong>TerraMatch Support</strong></p><br>'.
                 '</td>'.
             '</tr>'.
-        '</table>');
+        '</table>'
+        );
     }
 
     public function createLocalizationKey($key, $value): void
