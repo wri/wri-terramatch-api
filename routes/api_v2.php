@@ -169,7 +169,6 @@ use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
 use App\Http\Controllers\V2\Projects\SoftDeleteProjectController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
-use App\Http\Controllers\V2\Projects\ViewMyProjectsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\ViewProjectNurseriesController;
 use App\Http\Controllers\V2\Projects\ViewProjectSitesController;
@@ -435,8 +434,6 @@ Route::prefix('my')->group(function () {
         Route::get('/', IndexMyActionsController::class);
         Route::put('/{action}/complete', CompleteActionController::class);
     });
-
-    Route::get('/projects', ViewMyProjectsController::class);
 });
 
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');

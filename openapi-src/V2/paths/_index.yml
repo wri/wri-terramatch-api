@@ -22,9 +22,6 @@
 /v2/projects/{UUID}/{EMAIL}/remove-partner:
   delete:
     $ref: './Projects/delete-v2-projects-uuid-partners.yml'
-/v2/my/projects:
-  get:
-    $ref: './Projects/get-v2-my-projects.yml'
 /v2/my/actions:
   get:
     $ref: './Users/get-v2-my-actions.yml'
