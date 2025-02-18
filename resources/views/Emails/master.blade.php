@@ -75,7 +75,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <table cellpadding="0" cellspacing="0" border="0" width="500">
+                                <table cellpadding="0" cellspacing="0" border="0" width="100%">
                                     <tr>
                                         <td width="64"></td>
                                         <td width="372" style="font-family: sans-serif; font-size: 22px; color: #000000; text-align: center; text-transform: uppercase;">

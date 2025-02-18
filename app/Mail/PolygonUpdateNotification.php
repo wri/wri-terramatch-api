@@ -97,13 +97,13 @@ class PolygonUpdateNotification extends I18nMail
     private function getRow($projectName, $siteName, $polygonName, $versionId, $change, $updatedBy, $comment): string
     {
         return '<tr>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif;">'. $projectName .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif;">'. $siteName .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif;">'. $polygonName .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif;">'. $versionId .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif;">'. $change .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif;">'. $updatedBy .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; border-right:hidden;">'. $comment .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $projectName .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $siteName .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $polygonName .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $versionId .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $change .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $updatedBy .'</td>' .
+        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; border-right:hidden; word-break: break-word;">'. $comment .'</td>' .
         '</tr>';
     }
 }
