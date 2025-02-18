@@ -388,22 +388,22 @@ class LocalizationKeysTableSeeder extends Seeder
         '<table style="margin: 0 32px;">'.
             '<tr>'.
                 '<td>'.
-                    '<p style="font-size: 14px; color: #353535; font-family: 'Inter', sans-serif;">Dear {userName},</p>'.
-                    '<p style="font-size: 14px; color: #353535; font-family: 'Inter', sans-serif;">Please find below the weekly update on polygon versions, statuses, and comments.</p><br>'.
-                    '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: 'Inter', sans-serif;">Polygon Version Update</strong></p><br>'.
+                    '<p style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Dear {userName},</p>'.
+                    '<p style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Please find below the weekly update on polygon versions, statuses, and comments.</p><br>'.
+                    '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Polygon Version Update</strong></p><br>'.
                     '<table>'.
                         '<tr>'.
                             '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px; display: {hasUpdateChange};">'.
                                 '<table style="width: 100%; border-collapse: collapse;">'.
                                     '<thead>'.
                                         '<tr>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; border-left:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Project Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Site Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Polygon Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Version ID</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Change</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Updated by</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600; border-right:hidden;">Comment</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; border-left:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Project Name</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Site Name</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Polygon Name</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Version ID</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Change</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Updated by</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600; border-right:hidden;">Comment</th>'.
                                         '</tr>'.
                                     '</thead>'.
                                     '<tbody>'.
@@ -414,20 +414,20 @@ class LocalizationKeysTableSeeder extends Seeder
                         '</tr>'.
                     '</table>'.
                     '<br><br>'.
-                    '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: 'Inter', sans-serif;">Polygon Polygon Status Update</strong></p><br>'.
+                    '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Polygon Polygon Status Update</strong></p><br>'.
                     '<table>'.
                         '<tr>'.
                             '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px; display: {hasStatusChange};">'.
                                 '<table style="width: 100%; border-collapse: collapse;">'.
                                     '<thead>'.
                                         '<tr>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; border-left:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Project Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Site Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Polygon Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Version ID</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Change</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600;">Updated by</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: 'Inter', sans-serif; font-weight: 600; border-right:hidden;">Comment</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; border-left:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Project Name</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Site Name</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Polygon Name</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Version ID</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Change</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Updated by</th>'.
+                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600; border-right:hidden;">Comment</th>'.
                                         '</tr>'.
                                     '</thead>'.
                                     '<tbody>'.
@@ -438,8 +438,8 @@ class LocalizationKeysTableSeeder extends Seeder
                         '</tr>'.
                     '</table>'.
                     '<br><br>'.
-                    '<p style="text-align: start; font-family: 'Inter', sans-serif; font-size: 14px; color: #353535;">Best regards,</p>'.
-                    '<p style="text-align: start; margin: 0; font-family: 'Inter', sans-serif; font-size: 14px; color: #353535;"><strong>TerraMatch Support</strong></p><br>'.
+                    '<p style="text-align: start; font-family: \'Inter\', sans-serif; font-size: 14px; color: #353535;">Best regards,</p>'.
+                    '<p style="text-align: start; margin: 0; font-family: \'Inter\', sans-serif; font-size: 14px; color: #353535;"><strong>TerraMatch Support</strong></p><br>'.
                 '</td>'.
             '</tr>'.
         '</table>');
