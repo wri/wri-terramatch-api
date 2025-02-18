@@ -8,6 +8,7 @@ use App\Http\Requests\V2\AuditStatus\AuditStatusUpdateRequest;
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
 
@@ -31,9 +32,20 @@ class UpdateAuditableStatusController extends Controller
 
         if (isset($body['status'])) {
             $this->saveAuditStatus(get_class($auditable), $auditable->id, $status, $body['comment'], $body['type']);
+            if ($auditable instanceof SitePolygon) {
+                $user = auth()->user();
+                PolygonUpdates::create([
+                    'site_polygon_uuid' => $auditable->uuid,
+                    'version_name' => $auditable->version_name,
+                    'change' => 'New Status: ' . $status,
+                    'updated_by_id' => $user->id,
+                    'comment' => 'Polygon Status Updated',
+                    'type' => 'status',
+                ]);
+            }
         } elseif (isset($body['is_active'])) {
             AuditStatus::where('auditable_id', $auditable->id)
-                ->where('type', $body['type'])
+                ->where('type', operator: $body['type'])
                 ->where('is_active', true)
                 ->update(['is_active' => false]);
             $this->saveAuditStatus(get_class($auditable), $auditable->id, $status, $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);

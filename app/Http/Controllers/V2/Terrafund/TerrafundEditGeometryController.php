@@ -6,6 +6,7 @@ use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
@@ -256,6 +257,17 @@ class TerrafundEditGeometryController extends Controller
 
             $user = Auth::user();
             $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
+
+            $diff = $this->getDiff($sitePolygon, $newPolygonVersion);
+            PolygonUpdates::create([
+                'site_polygon_uuid' => $sitePolygon->uuid,
+                'version_name' => $newPolygonVersion->version_name,
+                'change' => implode(', ', $diff),
+                'updated_by_id' => $user->id,
+                'comment' => 'Polygon Updated',
+                'type' => 'update',
+            ]);
+
             if (! $newPolygonVersion) {
                 return response()->json(['error' => 'An error occurred while creating a new version of the site polygon'], 500);
             }
@@ -379,5 +391,18 @@ class TerrafundEditGeometryController extends Controller
 
             return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
         }
+    }
+
+    private function getDiff(SitePolygon $sitePolygon, SitePolygon $newSitePolygon): array
+    {
+        $diff = [];
+        $keys = ['poly_name','plantstart','plantend','practice','target_sys','distr','num_trees','site_id'];
+        foreach ($keys as $key) {
+            if ($newSitePolygon[$key] !== $sitePolygon[$key]) {
+                $diff[] = "$key => from $sitePolygon[$key] to {$newSitePolygon[$key]}";
+            }
+        }
+
+        return $diff;
     }
 }
