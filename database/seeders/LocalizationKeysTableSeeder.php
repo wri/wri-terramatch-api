@@ -390,7 +390,7 @@ class LocalizationKeysTableSeeder extends Seeder
             '<tr>'.
                 '<td>'.
                     '<p style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Dear {userName},</p>'.
-                    '<p style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Please find below the weekly update on polygon versions, statuses, and comments.</p><br>'.
+                    '<p style="text-align: start; font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Please find below the weekly update on polygon versions, statuses, and comments.</p><br>'.
                     '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Polygon Version Update</strong></p><br>'.
                     '<table style="table-layout: fixed;">'.
                         '<tr>'.
