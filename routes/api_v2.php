@@ -569,6 +569,7 @@ ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], f
 });
 
 ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+    // Note: projects read is no longer used in v2.
     Route::get('/{entity}', ViewEntityController::class);
 });
 

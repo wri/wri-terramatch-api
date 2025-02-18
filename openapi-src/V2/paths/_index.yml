@@ -1399,25 +1399,6 @@
     operationId: get-v2-admin-projects
     description: ''
 /v2/projects/{UUID}:
-  get:
-    summary: View a specific project
-    tags:
-      - V2 Projects
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '../definitions/_index.yml#/ProjectFullRead'
   delete:
     summary: Delete a specific project (draft / started only)
     tags:
