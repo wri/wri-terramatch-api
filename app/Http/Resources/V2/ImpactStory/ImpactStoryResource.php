@@ -23,11 +23,18 @@ class ImpactStoryResource extends JsonResource
                     'instagram_url' => $this->organization->instagram_url,
                     'linkedin_url' => $this->organization->linkedin_url,
                     'twitter_url' => $this->organization->twitter_url,
-                    'countries' => ! empty($this->organization->countries)
-                        ? WorldCountryGeneralized::whereIn('iso', (array) $this->organization->countries)
-                            ->pluck('country')
-                            ->implode(',')
-                        : '',
+'countries' => ! empty($this->organization->countries)
+    ? collect(WorldCountryGeneralized::whereIn('iso', (array) $this->organization->countries)->get())
+        ->map(function ($country) {
+            return [
+              'label' => $country->country ?? null,
+              'icon' => isset($country->iso) ? '/flags/' . strtolower($country->iso) . '.svg' : null,
+            ];
+        })
+        ->filter()
+        ->values()
+        ->toArray()
+    : [],
                 ];
             }),
             'date' => $this->date,
