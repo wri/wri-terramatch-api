@@ -24,6 +24,7 @@ class ImpactStoryController extends Controller
         $sort = $request->query('sort');
         $filters = $request->input('filter', []);
         $search = $filters['search'] ?? null;
+        $sort = $sort ?? '-created_at';
         $query = TerrafundDashboardQueryHelper::buildImpactStoryQuery($filters, $search, $sort);
 
         $collection = $query->paginate($perPage)->appends(request()->query());
