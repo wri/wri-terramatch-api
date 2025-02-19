@@ -391,7 +391,7 @@ class LocalizationKeysTableSeeder extends Seeder
                 '<td>'.
                     '<p style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Dear {userName},</p>'.
                     '<p style="text-align: start; font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Please find below the weekly update on polygon versions, statuses, and comments.</p><br>'.
-                    '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Polygon Version Update</strong></p><br>'.
+                    '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif; display: {hasUpdateChange};">Polygon Version Update</strong></p><br>'.
                     '<table style="table-layout: fixed;">'.
                         '<tr>'.
                             '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px; display: {hasUpdateChange};">'.
@@ -415,7 +415,7 @@ class LocalizationKeysTableSeeder extends Seeder
                         '</tr>'.
                     '</table>'.
                     '<br><br>'.
-                    '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Polygon Polygon Status Update</strong></p><br>'.
+                    '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif; display: {hasStatusChange};">Polygon Status Update</strong></p><br>'.
                     '<table style="table-layout: fixed;">'.
                         '<tr>'.
                             '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px; display: {hasStatusChange};">'.

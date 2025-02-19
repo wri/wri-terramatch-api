@@ -11,7 +11,7 @@ class PolygonUpdateNotification extends I18nMail
 
     private $sitePolygon;
 
-    private $isAdmin;
+    private $isManager;
 
     public function __construct($user, SitePolygon $sitePolygon, $isManager)
     {
@@ -45,8 +45,8 @@ class PolygonUpdateNotification extends I18nMail
         $statusChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygon->uuid)->lastWeek()->isStatus()->get();
         $updateChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygon->uuid)->lastWeek()->isUpdate()->get();
 
-        $hasUpdateChange = $statusChanges->count() > 0;
-        $hasStatusChange = $updateChanges->count() > 0;
+        $hasUpdateChange = $updateChanges->count() > 0;
+        $hasStatusChange = $statusChanges->count() > 0;
 
         $params['{hasUpdateChange}'] = $hasUpdateChange ? 'block' : 'none';
         $params['{hasStatusChange}'] = $hasStatusChange ? 'block' : 'none';
