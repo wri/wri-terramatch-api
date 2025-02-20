@@ -282,7 +282,14 @@ Route::prefix('media')->group(function () {
     Route::patch('/{uuid}', [MediaController::class, 'updateMedia']);
     Route::patch('project/{project}/{mediaUuid}', [MediaController::class, 'updateIsCover']);
 });
+Route::get('impact-stories', [ImpactStoryController::class, 'index'])
+    ->withoutMiddleware(['auth:service-api-key,api']);
 
+Route::get('impact-stories/{impact_story}', [ImpactStoryController::class, 'show'])
+    ->withoutMiddleware(['auth:service-api-key,api']);
+
+Route::resource('impact-stories', ImpactStoryController::class)
+    ->except(['index', 'show']);
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
@@ -417,7 +424,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::get('/export', ExportProjectPitchController::class);
     });
 });
-Route::resource('impact-stories', ImpactStoryController::class);
+
 /** NON ADMIN ROUTES */
 Route::prefix('organisations')->group(function () {
     Route::get('/{organisation}/tasks', ViewOrganisationTasksController::class);
