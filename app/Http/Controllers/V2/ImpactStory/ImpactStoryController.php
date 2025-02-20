@@ -18,12 +18,11 @@ class ImpactStoryController extends Controller
 {
     public function index(Request $request): ImpactStoriesCollection
     {
-        $this->authorize('readAll', ImpactStory::class);
-
         $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
         $sort = $request->query('sort');
         $filters = $request->input('filter', []);
         $search = $filters['search'] ?? null;
+        $sort = $sort ?? '-created_at';
         $query = TerrafundDashboardQueryHelper::buildImpactStoryQuery($filters, $search, $sort);
 
         $collection = $query->paginate($perPage)->appends(request()->query());
@@ -33,7 +32,6 @@ class ImpactStoryController extends Controller
 
     public function show(ImpactStory $impactStory, Request $request): ImpactStoryResource
     {
-        $this->authorize('read', $impactStory);
         $impactStory->load('organization');
 
         return new ImpactStoryResource($impactStory);

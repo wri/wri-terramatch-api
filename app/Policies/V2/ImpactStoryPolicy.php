@@ -10,7 +10,7 @@ class ImpactStoryPolicy extends Policy
 {
     public function readAll(?User $user): bool
     {
-        return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user) || $this->isUser($user);
+        return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user) || $this->isUser($user) || $this->isGuest($user);
     }
 
     public function read(?User $user, ImpactStory $impactStory): bool
