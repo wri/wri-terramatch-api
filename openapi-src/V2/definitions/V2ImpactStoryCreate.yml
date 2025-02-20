@@ -1,0 +1,15 @@
+type: object
+required:
+  - title
+  - content
+properties:
+  title:
+    type: string
+    example: 'Empowering Local Communities'
+  content:
+    type: string
+    example: 'This is an inspiring story of impact...'
+  status:
+    type: string
+    enum: [draft, published, archived]
+    example: 'draft'

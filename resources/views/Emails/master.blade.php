@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
         <!-- add styles -->
         <style>
             .full-width-fixed-table {
@@ -74,7 +75,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <table cellpadding="0" cellspacing="0" border="0" width="500">
+                                <table cellpadding="0" cellspacing="0" border="0" width="100%">
                                     <tr>
                                         <td width="64"></td>
                                         <td width="372" style="font-family: sans-serif; font-size: 22px; color: #000000; text-align: center; text-transform: uppercase;">

@@ -1,0 +1,41 @@
+summary: Get a collection of impact stories
+description: 'Fetches a list of impact stories with filtering and sorting options.'
+tags:
+  - V2 Impact Stories
+parameters:
+  - name: search
+    type: string
+    in: query
+    description: 'Search term to use on the collection'
+  - name: filter
+    type: string
+    in: query
+    description: 'Multiple filters can be applied. Syntax: ?filter[status]=published'
+  - name: sort
+    type: string
+    in: query
+    description: 'Sorting can be applied, default is ascending or use - for descending. Example: ?sort=-created_at'
+  - name: per_page
+    type: integer
+    in: query
+    description: 'Number of results per page'
+  - name: page
+    type: integer
+    in: query
+    description: 'Page number for results'
+responses:
+  '200':
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '../../definitions/_index.yml#/V2ImpactStoryRead'
+        links:
+          type: object
+          $ref: '../../definitions/_index.yml#/V2PaginationLinks'
+        meta:
+          type: object
+          $ref: '../../definitions/_index.yml#/V2PaginationMeta'

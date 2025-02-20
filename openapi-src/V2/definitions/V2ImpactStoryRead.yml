@@ -1,0 +1,23 @@
+type: object
+properties:
+  uuid:
+    type: string
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  title:
+    type: string
+    example: 'Empowering Local Communities'
+  content:
+    type: string
+    example: 'This is an inspiring story of impact...'
+  status:
+    type: string
+    enum: [draft, published, archived]
+    example: 'published'
+  created_at:
+    type: string
+    format: date-time
+    example: '2024-09-02T15:04:05Z'
+  updated_at:
+    type: string
+    format: date-time
+    example: '2024-09-02T15:04:05Z'
