@@ -1,0 +1,20 @@
+summary: Update an impact story
+operationId: v2-update-impact-story
+description: 'Updates the details of an existing impact story.'
+tags:
+  - V2 Impact Stories
+parameters:
+  - name: id
+    in: path
+    required: true
+    type: string
+    description: 'UUID of the impact story to update'
+  - in: body
+    name: body
+    schema:
+      $ref: '../../definitions/_index.yml#/V2ImpactStoryUpdate'
+responses:
+  '200':
+    description: Impact Story updated successfully
+    schema:
+      $ref: '../../definitions/_index.yml#/V2ImpactStoryRead'

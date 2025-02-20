@@ -1,0 +1,15 @@
+summary: Get a specific impact story
+description: 'Retrieves details of a single impact story.'
+tags:
+  - V2 Impact Stories
+parameters:
+  - name: id
+    in: path
+    required: true
+    type: string
+    description: 'UUID of the impact story'
+responses:
+  '200':
+    description: Impact Story retrieved successfully
+    schema:
+      $ref: '../../definitions/_index.yml#/V2ImpactStoryRead'

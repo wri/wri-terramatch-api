@@ -1,0 +1,13 @@
+summary: Delete an impact story
+operationId: v2-delete-impact-story
+description: 'Deletes an existing impact story.'
+tags:
+  - V2 Impact Stories
+parameters:
+  - name: id
+    in: path
+    required: true
+    type: string
+responses:
+  '204':
+    description: Impact Story has been deleted

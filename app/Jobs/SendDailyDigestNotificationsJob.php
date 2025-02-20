@@ -40,15 +40,20 @@ class SendDailyDigestNotificationsJob implements ShouldQueue
         if (! $this->task->project) {
             return;
         }
-        $users = $this->task->project->users()->get();
-        $users = $this->skipRecipients($users);
-        $usersGroupedByLocale = $users->groupBy('locale');
+        $usersPdWithSkip = $this->skipRecipients($this->task->project->users()->get());
+        $usersManagersWithSkip = $this->skipRecipients($this->task->project->managers()->get());
+        $usersPDGroupedByLocale = $usersPdWithSkip->groupBy('locale');
+        $usersManagersGroupedByLocale = $usersManagersWithSkip->groupBy('locale');
         $taskDueAt = Carbon::parse($this->task->due_at);
 
-        if (! $this->verifyIfReportsAreApproved($this->task) && Carbon::now()->diffInDays($taskDueAt) <= 7) {
-            foreach ($usersGroupedByLocale as $locale => $users) {
+        if (! $this->verifyIfReportsAreApproved($this->task) && (Carbon::now()->greaterThanOrEqualTo($taskDueAt->subWeek()) || Carbon::now()->greaterThan($taskDueAt))) {
+            foreach ($usersPDGroupedByLocale as $locale => $users) {
                 $groupedLocale['locale'] = $locale;
-                Mail::to($users->pluck('email_address')->toArray())->queue(new TaskDigestMail($groupedLocale, $this->task));
+                Mail::to($users->pluck('email_address')->toArray())->queue(new TaskDigestMail($groupedLocale, $this->task, false));
+            }
+            foreach ($usersManagersGroupedByLocale as $locale => $users) {
+                $groupedLocaleManager['locale'] = $locale;
+                Mail::to($users->pluck('email_address')->toArray())->queue(new TaskDigestMail($groupedLocaleManager, $this->task, true));
             }
         }
     }

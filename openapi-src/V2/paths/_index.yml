@@ -2847,3 +2847,24 @@
 /v2/indicators/{entity}/{uuid}/{slug}/export:
   get:
     $ref: './MonitoredData/get-v2-indicators-entity-slug-export.yml'
+/v2/admin/impact-stories:
+  get:
+    $ref: './ImpactStories/get-v2-impact-stories.yml'
+  post:
+    $ref: './ImpactStories/post-v2-impact-stories.yml'
+/v2/admin/impact-stories/{id}:
+  get:
+    $ref: './ImpactStories/get-v2-impact-stories-id.yml'
+  put:
+    $ref: './ImpactStories/put-v2-impact-stories-id.yml'
+  delete:
+    $ref: './ImpactStories/delete-v2-impact-stories-id.yml'
+/v2/admin/impact-stories/bulk-delete:
+  post:
+    $ref: './ImpactStories/delete-v2-impact-stories-bulk.yml'
+/v2/impact-stories:
+  get:
+    $ref: './ImpactStories/get-v2-impact-stories.yml'
+/v2/impact-stories/{id}:
+  get:
+    $ref: './ImpactStories/get-v2-impact-stories-id.yml'

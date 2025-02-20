@@ -140,6 +140,7 @@ trait HasReportStatus
     public function approve($feedback): void
     {
         $this->setCompletion();
+        $this->cleanUpConditionalData();
         $this->entityStatusApprove($feedback);
     }
 
@@ -174,5 +175,11 @@ trait HasReportStatus
     public function getViewLinkPath(): string
     {
         return '/reports/' . Str::kebab(explode_pop('\\', get_class($this))) . '/' . $this->uuid;
+    }
+
+    public function cleanUpConditionalData()
+    {
+        $form = $this->getForm();
+        $this->cleanConditionalAnswers($form);
     }
 }

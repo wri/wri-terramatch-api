@@ -42,6 +42,8 @@ class FormQuestionResource extends JsonResource
             'linked_field_key' => $this->linked_field_key,
             'reference' => $this->buildReference($this->params),
             'is_parent_conditional_default' => $this->is_parent_conditional_default,
+            'min_character_limit' => $this->min_character_limit,
+            'max_character_limit' => $this->max_character_limit,
         ]);
 
         if (count($this->children) > 0) {
