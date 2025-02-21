@@ -16,6 +16,9 @@ trait HasDemographics
         'workdaysConvergenceTotal' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'convergence'],
         'directRestorationPartners' => ['type' => Demographic::RESTORATION_PARTNER_TYPE, 'collections' => 'direct'],
         'indirectRestorationPartners' => ['type' => Demographic::RESTORATION_PARTNER_TYPE, 'collections' => 'indirect'],
+        'jobsFullTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'full-time'],
+        'jobsPartTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'part-time'],
+        'jobsVolunteerTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'volunteer'],
     ];
 
     public static function bootHasDemographics()
@@ -39,6 +42,11 @@ trait HasDemographics
                 Demographic::RESTORATION_PARTNER_TYPE => collect([
                     $collectionSets['direct'],
                     $collectionSets['indirect'],
+                ])->flatten(),
+                Demographic::JOBS_TYPE => collect([
+                    $collectionSets['full-time'],
+                    $collectionSets['part-time'],
+                    $collectionSets['volunteer'],
                 ])->flatten(),
                 default => throw new InternalErrorException("Unrecognized demographic type: $demographicType"),
             };
