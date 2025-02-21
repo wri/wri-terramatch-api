@@ -478,7 +478,7 @@ return [
                     'label' => 'Tree Species',
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
-                    'collection' => 'tree-planted',
+                    'collection' => 'nursery-seedling',
                 ],
                 'pro-rep-rel-paid-nursery-operations' => [
                     'property' => 'workdaysPaidNurseryOperations',
