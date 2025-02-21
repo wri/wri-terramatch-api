@@ -8,6 +8,6 @@ class ImpactStoriesCollection extends ResourceCollection
 {
     public function toArray($request)
     {
-        return ['data' => ImpactStoryResource::collection($this->collection)];
+        return ['data' => ImpactStoryLiteResource::collection($this->collection)];
     }
 }
