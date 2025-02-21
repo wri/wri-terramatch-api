@@ -91,14 +91,24 @@ class MigrateJobsToDemographics extends Command
                 if ($type == "total") {
                     $field = $subtypes;
                     if ($demographic != null) {
-                        $total = $demographic->entries()->gender()->sum('amount');
-                        if ($projectReport[$field] > $total) {
-                            // we've got a total that's greater than the sum of gender values, create a "unknown" gender
-                            // row to fill the gap
+                        // Make sure gender / age demographics are balanced and reach at least to the "_total" field
+                        // for this type of job from the original report. Pad gender and age demographics with an
+                        // "unknown" if needed.
+                        $genderTotal = $demographic->entries()->gender()->sum('amount');
+                        $ageTotal = $demographic->entries()->age()->sum('amount');
+                        $targetTotal = max($genderTotal, $ageTotal, $projectReport[$field]);
+                        if ($genderTotal < $targetTotal) {
                             $demographic->entries()->create([
                                 'type' => 'gender',
                                 'subtype' => 'unknown',
-                                'amount' => $projectReport[$field] - $total
+                                'amount' => $targetTotal - $genderTotal,
+                            ]);
+                        }
+                        if ($ageTotal < $targetTotal) {
+                            $demographic->entries()->create([
+                                'type' => 'age',
+                                'subtype' => 'unknown',
+                                'amount' => $targetTotal - $ageTotal,
                             ]);
                         }
                     }
