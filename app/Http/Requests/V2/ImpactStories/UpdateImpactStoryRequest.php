@@ -12,16 +12,12 @@ class UpdateImpactStoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'sometimes|nullable|string|between:1,255',
-            'content' => 'sometimes|nullable|string',
-            'status' => 'sometimes|nullable|string|in:draft,published,archived',
-            'author_id' => 'sometimes|nullable|exists:users,id',
-            'categories' => 'sometimes|nullable|array',
-            'categories.*' => 'exists:categories,id',
-            'tags' => 'sometimes|nullable|array',
-            'tags.*' => 'exists:tags,id',
-            'published_at' => 'sometimes|nullable|date',
-            'organization_id' => 'sometimes|uuid|exists:organisations,uuid',
+            'title' => 'sometimes|nullable|string|max:71',
+            'date' => 'sometimes|nullable|date',
+            'category' => 'sometimes|nullable|array',
+            'thumbnail' => 'sometimes|nullable|string',
+            'content' => 'sometimes|nullable|json',
+            'status' => 'required|string|in:draft,published',
         ];
     }
 }
