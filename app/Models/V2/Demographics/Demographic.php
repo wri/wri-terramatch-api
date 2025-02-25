@@ -196,6 +196,9 @@ class Demographic extends Model implements HandlesLinkedFieldSync
             self::JOBS_TYPE => match ($this->demographical_type) {
                 ProjectReport::class => DemographicCollections::JOBS_PROJECT_COLLECTIONS,
             },
+            self::VOLUNTEERS_TYPE => match ($this->demographical_type) {
+                ProjectReport::class => DemographicCollections::VOLUNTEERS_PROJECT_COLLECTIONS,
+            },
             default => null
         };
         if (empty($collections)) {
