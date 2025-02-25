@@ -37,45 +37,13 @@ properties:
     type: string
   survival_comparison:
     type: string
-  ft_women:
-    type: integer
-  ft_men:
-    type: integer
-  ft_youth:
-    type: integer
-  ft_smallholder_farmers:
-    type: integer
-  ft_total:
-    type: integer
-  pt_women:
-    type: integer
-  pt_men:
-    type: integer
-  pt_youth:
-    type: integer
-  pt_smallholder_farmers:
-    type: integer
-  pt_total:
-    type: integer
   seasonal_women:
     type: integer
   seasonal_men:
     type: integer
   seasonal_youth:
     type: integer
-  seasonal_smallholder_farmers:
-    type: integer
   seasonal_total:
-    type: integer
-  volunteer_women:
-    type: integer
-  volunteer_men:
-    type: integer
-  volunteer_youth:
-    type: integer
-  volunteer_smallholder_farmers:
-    type: integer
-  volunteer_total:
     type: integer
   shared_drive_link:
     type: string
@@ -89,12 +57,6 @@ properties:
     type: integer
   volunteers_work_description:
     type: string
-  ft_jobs_non_youth:
-    type: integer
-  ft_jobs_youth:
-    type: integer
-  volunteer_non_youth:
-    type: integer
   beneficiaries:
     type: integer
   beneficiaries_description:

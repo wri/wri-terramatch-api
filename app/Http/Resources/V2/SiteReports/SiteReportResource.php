@@ -30,8 +30,6 @@ class SiteReportResource extends JsonResource
             'nothing_to_report' => $this->nothing_to_report,
 
             'title' => $this->title,
-            'workdays_paid' => $this->workdays_paid,
-            'workdays_volunteer' => $this->workdays_volunteer,
             'seeds_planted' => $this->seeds_planted,
             'technical_narrative' => $this->technical_narrative,
             'public_narrative' => $this->public_narrative,
@@ -40,7 +38,6 @@ class SiteReportResource extends JsonResource
             'polygon_status' => $this->polygon_status,
             'paid_other_activity_description' => $this->paid_other_activity_description,
 
-            'total_workdays_count' => $this->total_workdays_count,
             'total_trees_planted_count' => $this->total_trees_planted_count,
             'total_seeds_planted_count' => $this->total_seeds_planted_count,
 
