@@ -411,6 +411,14 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             ->sum('amount');
     }
 
+    public function getRegeneratedTreesCountAttribute(): int
+    {
+        if (empty($this->task_id)) {
+            return 0;
+        }
+        return $this->task->siteReports()->hasBeenApproved()->sum('num_trees_regenerating');
+    }
+
     public function getSeedsPlantedCountAttribute(): int
     {
         if (empty($this->task_id)) {
