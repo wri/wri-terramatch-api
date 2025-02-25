@@ -97,6 +97,7 @@ class ProjectReportResource extends JsonResource
             'seedlings_grown' => $this->seedlings_grown,
             'trees_planted_count' => $this->trees_planted_count,
             'seeds_planted_count' => $this->seeds_planted_count,
+            'regenerated_trees_count' => $this->regenerated_trees_count,
             'community_progress' => $this->community_progress,
             'equitable_opportunities' => $this->equitable_opportunities,
             'local_engagement' => $this->local_engagement,
