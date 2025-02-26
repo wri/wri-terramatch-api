@@ -24,7 +24,7 @@ class DemographicEntry extends Model
     public const GENDER = 'gender';
     public const GENDERS = ['male', 'female', 'non-binary', 'unknown'];
     public const AGE = 'age';
-    public const AGES = ['youth', 'adult', 'elder', 'unknown'];
+    public const AGES = ['youth', 'non-youth', 'adult', 'elder', 'unknown'];
     public const ETHNICITY = 'ethnicity';
     public const ETHNICITIES = ['indigenous', 'other', 'unknown'];
     public const CASTE = 'caste';

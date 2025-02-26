@@ -70,6 +70,8 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
 
                 case 'workdays':
                 case 'restorationPartners':
+                case 'jobs':
+                case 'volunteers':
                     $list = [];
                     $demographic = $answer->first();
                     if ($demographic == null) {
@@ -88,7 +90,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     $list[] = 'age:(' . implode(')(', $types['age']) . ')';
                     if ($frameworkKey == 'hbf') {
                         $list[] = 'caste:(' . implode(')(', $types['caste']) . ')';
-                    } else {
+                    } elseif ($field['input_type'] == 'workdays' || $field['input_type'] == 'restorationPartners') {
                         $list[] = 'ethnicity:(' . implode(')(', $types['ethnicity']) . ')';
                     }
 

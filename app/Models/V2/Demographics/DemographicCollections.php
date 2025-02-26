@@ -88,4 +88,18 @@ class DemographicCollections
         self::DIRECT_OTHER => 'Direct Other',
         self::INDIRECT_OTHER => 'Indirect Other',
     ];
+
+    public const FULL_TIME = 'full-time';
+    public const PART_TIME = 'part-time';
+
+    public const JOBS_PROJECT_COLLECTIONS = [
+        self::FULL_TIME => 'Full-time',
+        self::PART_TIME => 'Part-time',
+    ];
+
+    public const VOLUNTEER = 'volunteer';
+
+    public const VOLUNTEERS_PROJECT_COLLECTIONS = [
+        self::VOLUNTEER => 'Volunteer',
+    ];
 }

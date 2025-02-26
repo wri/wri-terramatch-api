@@ -8700,64 +8700,6 @@ definitions:
             type: integer
           unfiltered_total:
             type: integer
-  V2WorkdayRead:
-    title: V2WorkdayRead
-    type: object
-    properties:
-      uuid:
-        type: string
-      collection:
-        type: string
-      readable_collection:
-        type: string
-      demographics:
-        type: array
-        items:
-          title: Demographic
-          type: object
-          properties:
-            type:
-              type: string
-              enum:
-                - gender
-                - age
-                - ethnicity
-                - caste
-            subtype:
-              type: string
-            name:
-              type: string
-            amount:
-              type: integer
-  V2RestorationPartnerRead:
-    title: V2RestorationPartnerRead
-    type: object
-    properties:
-      uuid:
-        type: string
-      collection:
-        type: string
-      readable_collection:
-        type: string
-      demographics:
-        type: array
-        items:
-          title: Demographic
-          type: object
-          properties:
-            type:
-              type: string
-              enum:
-                - gender
-                - age
-                - ethnicity
-                - caste
-            subtype:
-              type: string
-            name:
-              type: string
-            amount:
-              type: integer
   V2DisturbanceRead:
     title: V2DisturbanceRead
     type: object
@@ -39166,8 +39108,6 @@ definitions:
           created_at:
             type: string
             format: date-time
-      workdays_volunteer:
-        type: integer
       technical_narrative:
         type: string
       public_narrative:
@@ -40269,45 +40209,13 @@ definitions:
         type: string
       survival_comparison:
         type: string
-      ft_women:
-        type: integer
-      ft_men:
-        type: integer
-      ft_youth:
-        type: integer
-      ft_smallholder_farmers:
-        type: integer
-      ft_total:
-        type: integer
-      pt_women:
-        type: integer
-      pt_men:
-        type: integer
-      pt_youth:
-        type: integer
-      pt_smallholder_farmers:
-        type: integer
-      pt_total:
-        type: integer
       seasonal_women:
         type: integer
       seasonal_men:
         type: integer
       seasonal_youth:
         type: integer
-      seasonal_smallholder_farmers:
-        type: integer
       seasonal_total:
-        type: integer
-      volunteer_women:
-        type: integer
-      volunteer_men:
-        type: integer
-      volunteer_youth:
-        type: integer
-      volunteer_smallholder_farmers:
-        type: integer
-      volunteer_total:
         type: integer
       shared_drive_link:
         type: string
@@ -40321,12 +40229,6 @@ definitions:
         type: integer
       volunteers_work_description:
         type: string
-      ft_jobs_non_youth:
-        type: integer
-      ft_jobs_youth:
-        type: integer
-      volunteer_non_youth:
-        type: integer
       beneficiaries:
         type: integer
       beneficiaries_description:
@@ -57369,112 +57271,6 @@ paths:
                 type: object
               created_by:
                 type: object
-  '/v2/workdays/{ENTITY}/{UUID}':
-    get:
-      operationId: get-v2-workdays-entity-uuid
-      summary: View all workdays for a given entity
-      tags:
-        - V2 Workdays
-      parameters:
-        - type: string
-          name: ENTITY
-          in: path
-          required: true
-          description: allowed values project-report/site-report
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  title: V2WorkdayRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    collection:
-                      type: string
-                    readable_collection:
-                      type: string
-                    demographics:
-                      type: array
-                      items:
-                        title: Demographic
-                        type: object
-                        properties:
-                          type:
-                            type: string
-                            enum:
-                              - gender
-                              - age
-                              - ethnicity
-                              - caste
-                          subtype:
-                            type: string
-                          name:
-                            type: string
-                          amount:
-                            type: integer
-  '/v2/restoration-partners/{ENTITY}/{UUID}':
-    get:
-      operationId: get-v2-restoration-partners-entity-uuid
-      summary: View all restoration partners for a given entity
-      tags:
-        - V2 Restoration Partners
-      parameters:
-        - type: string
-          name: ENTITY
-          in: path
-          required: true
-          description: allowed values project-report
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  title: V2RestorationPartnerRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    collection:
-                      type: string
-                    readable_collection:
-                      type: string
-                    demographics:
-                      type: array
-                      items:
-                        title: Demographic
-                        type: object
-                        properties:
-                          type:
-                            type: string
-                            enum:
-                              - gender
-                              - age
-                              - ethnicity
-                              - caste
-                          subtype:
-                            type: string
-                          name:
-                            type: string
-                          amount:
-                            type: integer
   '/v2/stratas/{ENTITY}/{UUID}':
     get:
       operationId: get-v2-stratas-entity-uuid
