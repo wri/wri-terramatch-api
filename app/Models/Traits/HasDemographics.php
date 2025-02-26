@@ -19,6 +19,8 @@ trait HasDemographics
         'jobsFullTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'full-time'],
         'jobsPartTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'part-time'],
         'volunteersTotal' => ['type' => Demographic::VOLUNTEERS_TYPE, 'collections' => 'volunteer'],
+        'beneficiariesTotal' => ['type' => Demographic::BENEFICIARIES_TYPE, 'collections' => 'all'],
+        'beneficiariesTrainingTotal' => ['type' => Demographic::BENEFICIARIES_TYPE, 'collections' => 'training'],
     ];
 
     public static function bootHasDemographics()
@@ -49,6 +51,10 @@ trait HasDemographics
                 ])->flatten(),
                 Demographic::VOLUNTEERS_TYPE => collect([
                     $collectionSets['volunteer'],
+                ])->flatten(),
+                Demographic::BENEFICIARIES_TYPE => collect([
+                    $collectionSets['all'],
+                    $collectionSets['training'],
                 ])->flatten(),
                 default => throw new InternalErrorException("Unrecognized demographic type: $demographicType"),
             };

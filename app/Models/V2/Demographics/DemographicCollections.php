@@ -102,4 +102,12 @@ class DemographicCollections
     public const VOLUNTEERS_PROJECT_COLLECTIONS = [
         self::VOLUNTEER => 'Volunteer',
     ];
+
+    public const ALL = 'all';
+    public const TRAINING = 'training';
+
+    public const BENEFICIARIES_PROJECT_COLLECTIONS = [
+        self::ALL => 'All Beneficiaries',
+        self::TRAINING => 'Training Beneficiaries',
+    ];
 }

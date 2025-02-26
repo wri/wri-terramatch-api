@@ -275,6 +275,14 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
                 DemographicCollections::VOLUNTEER,
             ],
         ],
+        Demographic::BENEFICIARIES_TYPE => [
+            'all' => [
+                DemographicCollections::ALL,
+            ],
+            'training' => [
+                DemographicCollections::TRAINING
+            ]
+        ]
     ];
 
     public function registerMediaConversions(Media $media = null): void
