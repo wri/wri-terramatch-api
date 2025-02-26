@@ -36,10 +36,10 @@ class MigrateBeneficiariesToDemographics extends Command
             'farmer' => [
                 'smallholder' => 'beneficiaries_smallholder',
                 'large-scale' => 'beneficiaries_large_scale',
-                'marginalized' => 'beneficiaries_scstobc_farmers'
+                'marginalized' => 'beneficiaries_scstobc_farmers',
             ],
             'caste' => [
-                'marginalized' => 'beneficiaries_scstobc'
+                'marginalized' => 'beneficiaries_scstobc',
             ],
             'total' => 'beneficiaries',
         ],
@@ -53,7 +53,7 @@ class MigrateBeneficiariesToDemographics extends Command
                 'youth' => 'beneficiaries_training_youth',
                 'non-youth' => 'beneficiaries_training_non_youth',
             ],
-            'total' => "beneficiaries_skills_knowledge_increase",
+            'total' => 'beneficiaries_skills_knowledge_increase',
         ],
     ];
 
@@ -143,7 +143,7 @@ class MigrateBeneficiariesToDemographics extends Command
                 $all = $projectReport->demographics()->create([
                     'type' => Demographic::BENEFICIARIES_TYPE,
                     'collection' => 'all',
-                    'hidden' => false
+                    'hidden' => false,
                 ]);
             }
 

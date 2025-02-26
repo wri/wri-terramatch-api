@@ -702,6 +702,20 @@ return [
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'volunteers',
                     'collection' => 'volunteer'
+                ],
+                'pro-rep-beneficiaries-all' => [
+                    'property' => 'beneficiariesAll',
+                    'label' => 'All Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'beneficiaries',
+                    'collection' => 'all'
+                ],
+                'pro-rep-beneficiaries-training' => [
+                    'property' => 'beneficiariesTraining',
+                    'label' => 'Training Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'beneficiaries',
+                    'collection' => 'training'
                 ]
             ],
             'file-collections' => [
