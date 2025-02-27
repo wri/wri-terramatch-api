@@ -5,8 +5,6 @@ namespace App\Models\V2\Demographics;
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\EntityModel;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\SiteReport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -184,42 +182,5 @@ class Demographic extends Model implements HandlesLinkedFieldSync
     public function scopeVisible($query): Builder
     {
         return $query->where('hidden', false);
-    }
-
-    public function getReadableCollectionAttribute(): ?string
-    {
-        if (empty($this->collection)) {
-            return 'Unknown';
-        }
-
-        $collections = match ($this->type) {
-            self::RESTORATION_PARTNER_TYPE => match ($this->demographical_type) {
-                ProjectReport::class => DemographicCollections::RESTORATION_PARTNERS_PROJECT_COLLECTIONS,
-                default => null
-            },
-            self::WORKDAY_TYPE => match ($this->demographical_type) {
-                ProjectReport::class => DemographicCollections::WORKDAYS_PROJECT_COLLECTIONS,
-                SiteReport::class => DemographicCollections::WORKDAYS_SITE_COLLECTIONS,
-                default => null
-            },
-            self::JOBS_TYPE => match ($this->demographical_type) {
-                ProjectReport::class => DemographicCollections::JOBS_PROJECT_COLLECTIONS,
-            },
-            self::VOLUNTEERS_TYPE => match ($this->demographical_type) {
-                ProjectReport::class => DemographicCollections::VOLUNTEERS_PROJECT_COLLECTIONS,
-            },
-            self::ALL_BENEFICIARIES_TYPE => match ($this->demographical_type) {
-                ProjectReport::class => DemographicCollections::ALL_BENEFICIARIES_PROJECT_COLLECTIONS,
-            },
-            self::TRAINING_BENEFICIARIES_TYPE => match ($this->demographical_type) {
-                ProjectReport::class => DemographicCollections::TRAINING_BENEFICIARIES_PROJECT_COLLECTIONS,
-            },
-            default => null
-        };
-        if (empty($collections)) {
-            return 'Unknown';
-        }
-
-        return data_get($collections, $this->collection, 'Unknown');
     }
 }
