@@ -21,8 +21,6 @@ properties:
     $ref: './_index.yml#/UserRead'
   approved_by:
     $ref: './_index.yml#/UserRead'
-  workdays_volunteer:
-    type: integer
   technical_narrative:
     type: string
   public_narrative:

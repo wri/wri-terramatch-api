@@ -264,6 +264,8 @@ trait UsesLinkedFields
                 'disturbances',
                 'workdays',
                 'restorationPartners',
+                'jobs',
+                'volunteers',
                 'stratas',
                 'invasive',
                 'seedings',

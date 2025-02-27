@@ -35,7 +35,6 @@ use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
-use App\Http\Controllers\V2\Demographics\GetDemographicsForEntityController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
@@ -518,10 +517,6 @@ Route::prefix('{relationType}')
 
 Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsController::class)
 ->whereIn('entityType', ['project', 'site']);
-
-ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
-    Route::get('/{entity}', GetDemographicsForEntityController::class);
-}, prefix: '{demographicType}')->whereIn('demographicType', ['workdays', 'restoration-partners']);
 
 Route::prefix('leadership-team')->group(function () {
     Route::post('/', StoreLeadershipTeamController::class);
