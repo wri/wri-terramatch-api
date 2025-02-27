@@ -41,7 +41,7 @@ class MigrateBeneficiariesToDemographics extends Command
             'caste' => [
                 'marginalized' => 'beneficiaries_scstobc',
             ],
-            'total' => 'beneficiaries',
+            'total' => ['beneficiaries', 'total_community_partners']
         ],
     ];
 
@@ -91,13 +91,17 @@ class MigrateBeneficiariesToDemographics extends Command
                 $demographic = null;
                 foreach ($types as $type => $subtypes) {
                     if ($type == 'total') {
-                        $field = $subtypes;
+                        $fields = is_array($subtypes) ? $subtypes : [$subtypes];
                         // Make sure gender / age demographics are balanced and reach at least to the "_total" field
                         // for this type of job from the original report. Pad gender and age demographics with an
                         // "unknown" if needed.
                         $genderTotal = $demographic?->entries()->gender()->sum('amount') ?? 0;
                         $ageTotal = $demographic?->entries()->age()->sum('amount') ?? 0;
-                        $targetTotal = max($genderTotal, $ageTotal, $projectReport[$field] ?? 0);
+
+                        $totals = [$genderTotal, $ageTotal];
+                        foreach ($fields as $field) $totals[] = $projectReport[$field];
+                        $targetTotal = max($totals);
+
                         if ($demographic == null && $targetTotal > 0) {
                             $demographic = $projectReport->demographics()->create([
                                 'type' => $demographicType,
