@@ -104,10 +104,14 @@ class DemographicCollections
     ];
 
     public const ALL = 'all';
+
+    public const ALL_BENEFICIARIES_PROJECT_COLLECTIONS = [
+        self::ALL => 'All Beneficiaries',
+    ];
+
     public const TRAINING = 'training';
 
-    public const BENEFICIARIES_PROJECT_COLLECTIONS = [
-        self::ALL => 'All Beneficiaries',
+    public const TRAINING_BENEFICIARIES_PROJECT_COLLECTIONS = [
         self::TRAINING => 'Training Beneficiaries',
     ];
 }

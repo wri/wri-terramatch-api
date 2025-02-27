@@ -22,7 +22,7 @@ class MigrateBeneficiariesToDemographics extends Command
      */
     protected $description = 'Move beneficiaries data to demographics';
 
-    protected const BENEFICIARIES_MAPPING = [
+    protected const ALL_MAPPING = [
         'all' => [
             'gender' => [
                 'male' => 'beneficiaries_men',
@@ -43,6 +43,9 @@ class MigrateBeneficiariesToDemographics extends Command
             ],
             'total' => 'beneficiaries',
         ],
+    ];
+
+    protected const TRAINING_MAPPING = [
         'training' => [
             'gender' => [
                 'male' => 'beneficiaries_training_men',
@@ -55,6 +58,11 @@ class MigrateBeneficiariesToDemographics extends Command
             ],
             'total' => 'beneficiaries_skills_knowledge_increase',
         ],
+    ];
+
+    protected const MIGRATION_MAPPING = [
+        'all-beneficiaries' => self::ALL_MAPPING,
+        'training-beneficiaries' => self::TRAINING_MAPPING,
     ];
 
     /**
@@ -77,19 +85,27 @@ class MigrateBeneficiariesToDemographics extends Command
 
     private function convertJobs(ProjectReport $projectReport): void
     {
-        foreach (self::BENEFICIARIES_MAPPING as $collection => $types) {
-            /** @var Demographic $demographic */
-            $demographic = null;
-            foreach ($types as $type => $subtypes) {
-                if ($type == 'total') {
-                    $field = $subtypes;
-                    if ($demographic != null) {
+        foreach (self::MIGRATION_MAPPING as $demographicType => $mapping) {
+            foreach ($mapping as $collection => $types) {
+                /** @var Demographic $demographic */
+                $demographic = null;
+                foreach ($types as $type => $subtypes) {
+                    if ($type == 'total') {
+                        $field = $subtypes;
                         // Make sure gender / age demographics are balanced and reach at least to the "_total" field
                         // for this type of job from the original report. Pad gender and age demographics with an
                         // "unknown" if needed.
-                        $genderTotal = $demographic->entries()->gender()->sum('amount');
-                        $ageTotal = $demographic->entries()->age()->sum('amount');
-                        $targetTotal = max($genderTotal, $ageTotal, $projectReport[$field]);
+                        $genderTotal = $demographic?->entries()->gender()->sum('amount') ?? 0;
+                        $ageTotal = $demographic?->entries()->age()->sum('amount') ?? 0;
+                        $targetTotal = max($genderTotal, $ageTotal, $projectReport[$field] ?? 0);
+                        if ($demographic == null && $targetTotal > 0) {
+                            $demographic = $projectReport->demographics()->create([
+                                'type' => $demographicType,
+                                'collection' => $collection,
+                                'hidden' => false,
+                            ]);
+                        }
+
                         if ($genderTotal < $targetTotal) {
                             $demographic->entries()->create([
                                 'type' => 'gender',
@@ -104,44 +120,44 @@ class MigrateBeneficiariesToDemographics extends Command
                                 'amount' => $targetTotal - $ageTotal,
                             ]);
                         }
-                    }
-                } else {
-                    // If none of the fields for this type exist, skip
-                    $fields = collect(array_values($subtypes));
-                    if ($fields->first(fn ($field) => $projectReport[$field] > 0) == null) {
-                        continue;
-                    }
+                    } else {
+                        // If none of the fields for this type exist, skip
+                        $fields = collect(array_values($subtypes));
+                        if ($fields->first(fn ($field) => $projectReport[$field] > 0) == null) {
+                            continue;
+                        }
 
-                    if ($demographic == null) {
-                        $demographic = $projectReport->demographics()->create([
-                            'type' => Demographic::BENEFICIARIES_TYPE,
-                            'collection' => $collection,
-                            'hidden' => false,
-                        ]);
-                    }
-                    foreach ($subtypes as $subtype => $field) {
-                        $value = $projectReport[$field];
-                        if ($value > 0) {
-                            $demographic->entries()->create([
-                                'type' => $type,
-                                'subtype' => $subtype,
-                                'amount' => $value,
+                        if ($demographic == null) {
+                            $demographic = $projectReport->demographics()->create([
+                                'type' => $demographicType,
+                                'collection' => $collection,
+                                'hidden' => false,
                             ]);
+                        }
+                        foreach ($subtypes as $subtype => $field) {
+                            $value = $projectReport[$field];
+                            if ($value > 0) {
+                                $demographic->entries()->create([
+                                    'type' => $type,
+                                    'subtype' => $subtype,
+                                    'amount' => $value,
+                                ]);
+                            }
                         }
                     }
                 }
             }
         }
 
-        if ($projectReport->beneficiariesTrainingTotal > $projectReport->beneficiariesTotal) {
+        if ($projectReport->trainingBeneficiariesTotal > $projectReport->allBeneficiariesTotal) {
             // in this case, the training data had a greater gender total than the "all" gender total, so we want
             // to pad "all" so that they're equal.
-            $padValue = $projectReport->beneficiariesTrainingTotal - $projectReport->beneficiariesTotal;
+            $padValue = $projectReport->trainingBeneficiariesTotal - $projectReport->allBeneficiariesTotal;
 
-            $all = $projectReport->beneficiariesAll()->first();
+            $all = $projectReport->allBeneficiaries()->first();
             if ($all == null) {
                 $all = $projectReport->demographics()->create([
-                    'type' => Demographic::BENEFICIARIES_TYPE,
+                    'type' => Demographic::ALL_BENEFICIARIES_TYPE,
                     'collection' => 'all',
                     'hidden' => false,
                 ]);

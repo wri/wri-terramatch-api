@@ -35,9 +35,17 @@ class Demographic extends Model implements HandlesLinkedFieldSync
     public const RESTORATION_PARTNER_TYPE = 'restoration-partners';
     public const JOBS_TYPE = 'jobs';
     public const VOLUNTEERS_TYPE = 'volunteers';
-    public const BENEFICIARIES_TYPE = 'beneficiaries';
+    public const ALL_BENEFICIARIES_TYPE = 'all-beneficiaries';
+    public const TRAINING_BENEFICIARIES_TYPE = 'training-beneficiaries';
 
-    public const VALID_TYPES = [self::WORKDAY_TYPE, self::RESTORATION_PARTNER_TYPE, self::JOBS_TYPE, self::VOLUNTEERS_TYPE, self::BENEFICIARIES_TYPE];
+    public const VALID_TYPES = [
+        self::WORKDAY_TYPE,
+        self::RESTORATION_PARTNER_TYPE,
+        self::JOBS_TYPE,
+        self::VOLUNTEERS_TYPE,
+        self::ALL_BENEFICIARIES_TYPE,
+        self::TRAINING_BENEFICIARIES_TYPE,
+    ];
 
     // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that both in-flight
     // work at the time of release, and updates from update requests afterward honor that change.
@@ -200,8 +208,11 @@ class Demographic extends Model implements HandlesLinkedFieldSync
             self::VOLUNTEERS_TYPE => match ($this->demographical_type) {
                 ProjectReport::class => DemographicCollections::VOLUNTEERS_PROJECT_COLLECTIONS,
             },
-            self::BENEFICIARIES_TYPE => match ($this->demographical_type) {
-                ProjectReport::class => DemographicCollections::BENEFICIARIES_PROJECT_COLLECTIONS,
+            self::ALL_BENEFICIARIES_TYPE => match ($this->demographical_type) {
+                ProjectReport::class => DemographicCollections::ALL_BENEFICIARIES_PROJECT_COLLECTIONS,
+            },
+            self::TRAINING_BENEFICIARIES_TYPE => match ($this->demographical_type) {
+                ProjectReport::class => DemographicCollections::TRAINING_BENEFICIARIES_PROJECT_COLLECTIONS,
             },
             default => null
         };
