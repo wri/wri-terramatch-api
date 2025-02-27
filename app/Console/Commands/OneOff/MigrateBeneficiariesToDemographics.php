@@ -41,7 +41,7 @@ class MigrateBeneficiariesToDemographics extends Command
             'caste' => [
                 'marginalized' => 'beneficiaries_scstobc',
             ],
-            'total' => ['beneficiaries', 'total_community_partners']
+            'total' => ['beneficiaries', 'total_community_partners'],
         ],
     ];
 
@@ -99,7 +99,9 @@ class MigrateBeneficiariesToDemographics extends Command
                         $ageTotal = $demographic?->entries()->age()->sum('amount') ?? 0;
 
                         $totals = [$genderTotal, $ageTotal];
-                        foreach ($fields as $field) $totals[] = $projectReport[$field];
+                        foreach ($fields as $field) {
+                            $totals[] = $projectReport[$field];
+                        }
                         $targetTotal = max($totals);
 
                         if ($demographic == null && $targetTotal > 0) {
