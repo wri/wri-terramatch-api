@@ -707,14 +707,14 @@ return [
                     'property' => 'allBeneficiaries',
                     'label' => 'All Beneficiaries',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
-                    'input_type' => 'all-beneficiaries',
+                    'input_type' => 'allBeneficiaries',
                     'collection' => 'all'
                 ],
                 'pro-rep-beneficiaries-training' => [
                     'property' => 'trainingBeneficiaries',
                     'label' => 'Training Beneficiaries',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
-                    'input_type' => 'training-beneficiaries',
+                    'input_type' => 'trainingBeneficiaries',
                     'collection' => 'training'
                 ]
             ],
