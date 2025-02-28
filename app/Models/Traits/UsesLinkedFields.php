@@ -266,6 +266,7 @@ trait UsesLinkedFields
                 'restorationPartners',
                 'jobs',
                 'volunteers',
+                'beneficiaries',
                 'stratas',
                 'invasive',
                 'seedings',

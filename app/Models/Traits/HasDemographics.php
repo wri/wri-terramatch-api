@@ -18,7 +18,9 @@ trait HasDemographics
         'indirectRestorationPartners' => ['type' => Demographic::RESTORATION_PARTNER_TYPE, 'collections' => 'indirect'],
         'jobsFullTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'full-time'],
         'jobsPartTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'part-time'],
-        'volunteersTotal' => ['type' => Demographic::VOLUNTEERS_TYPE, 'collections' => 'volunteer'],
+        'volunteersTotal' => ['type' => Demographic::VOLUNTEERS_TYPE],
+        'allBeneficiariesTotal' => ['type' => Demographic::ALL_BENEFICIARIES_TYPE],
+        'trainingBeneficiariesTotal' => ['type' => Demographic::TRAINING_BENEFICIARIES_TYPE],
     ];
 
     public static function bootHasDemographics()
@@ -47,19 +49,22 @@ trait HasDemographics
                     $collectionSets['full-time'],
                     $collectionSets['part-time'],
                 ])->flatten(),
-                Demographic::VOLUNTEERS_TYPE => collect([
-                    $collectionSets['volunteer'],
-                ])->flatten(),
+                // These three define a single collection each, and simply rely on the type level relation above
+                Demographic::VOLUNTEERS_TYPE,
+                Demographic::ALL_BENEFICIARIES_TYPE,
+                Demographic::TRAINING_BENEFICIARIES_TYPE => null,
                 default => throw new InternalErrorException("Unrecognized demographic type: $demographicType"),
             };
-            $collections->each(function ($collection) use ($attributePrefix) {
-                self::resolveRelationUsing(
-                    $attributePrefix . Str::studly($collection),
-                    function ($entity) use ($attributePrefix, $collection) {
-                        return $entity->$attributePrefix()->collection($collection);
-                    }
-                );
-            });
+            if (! empty($collections)) {
+                $collections->each(function ($collection) use ($attributePrefix) {
+                    self::resolveRelationUsing(
+                        $attributePrefix . Str::studly($collection),
+                        function ($entity) use ($attributePrefix, $collection) {
+                            return $entity->$attributePrefix()->collection($collection);
+                        }
+                    );
+                });
+            }
         });
     }
 
@@ -79,7 +84,9 @@ trait HasDemographics
         if (array_key_exists($keyNormalized, self::DEMOGRAPHIC_ATTRIBUTES)) {
             $definition = self::DEMOGRAPHIC_ATTRIBUTES[$keyNormalized];
             $type = $definition['type'];
-            $collections = self::DEMOGRAPHIC_COLLECTIONS[$type][$definition['collections']];
+            $collections = is_string(self::DEMOGRAPHIC_COLLECTIONS[$type])
+                ? [self::DEMOGRAPHIC_COLLECTIONS[$type]]
+                : self::DEMOGRAPHIC_COLLECTIONS[$type][$definition['collections']];
 
             return $this->sumTotalDemographicAmounts(Str::camel($type), $collections);
         }

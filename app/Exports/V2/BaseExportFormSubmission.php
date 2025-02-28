@@ -72,13 +72,14 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                 case 'restorationPartners':
                 case 'jobs':
                 case 'volunteers':
+                case 'beneficiaries':
                     $list = [];
                     $demographic = $answer->first();
                     if ($demographic == null) {
                         return '';
                     }
 
-                    $types = ['gender' => [], 'age' => [], 'ethnicity' => [], 'caste' => []];
+                    $types = ['gender' => [], 'age' => [], 'ethnicity' => [], 'farmer' => [], 'caste' => []];
                     foreach ($demographic->entries as $entry) {
                         $value = match ($entry->type) {
                             'ethnicity' => [$entry->amount, $entry->subtype, $entry->name],
@@ -88,6 +89,9 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     }
                     $list[] = 'gender:(' . implode(')(', $types['gender']) . ')';
                     $list[] = 'age:(' . implode(')(', $types['age']) . ')';
+                    if ($demographic->type == 'beneficiaries' && $demographic->collection == 'all') {
+                        $list[] = 'farmer:(' . implode(')(', $types['farmer']) . ')';
+                    }
                     if ($frameworkKey == 'hbf') {
                         $list[] = 'caste:(' . implode(')(', $types['caste']) . ')';
                     } elseif ($field['input_type'] == 'workdays' || $field['input_type'] == 'restorationPartners') {

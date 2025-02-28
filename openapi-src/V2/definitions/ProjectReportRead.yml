@@ -57,28 +57,10 @@ properties:
     type: integer
   volunteers_work_description:
     type: string
-  beneficiaries:
-    type: integer
   beneficiaries_description:
     type: string
-  beneficiaries_women:
-    type: integer
-  beneficiaries_men:
-    type: integer
-  beneficiaries_non_youth:
-    type: integer
-  beneficiaries_youth:
-    type: integer
-  beneficiaries_smallholder:
-    type: integer
-  beneficiaries_large_scale:
-    type: integer
-  beneficiaries_income_increase:
-    type: integer
   beneficiaries_income_increase_description:
     type: string
-  beneficiaries_skills_knowledge_increase:
-    type: integer
   beneficiaries_skills_knowledge_increase_description:
     type: string
   ethnic_indigenous_1:
