@@ -94,10 +94,6 @@ class GetRelationsForEntityController extends Controller
                     'count_new_species' => $countNewSpecies,
                 ]);
             }
-
-            if (! empty($filter['collection'])) {
-                $query->where('collection', $filter['collection']);
-            }
         }
 
         return new TreeSpeciesCollection($query->get());

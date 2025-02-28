@@ -475,7 +475,7 @@ return [
             'relations' => [
                 'pro-rep-rel-tree-species' => [
                     'property' => 'treeSpecies',
-                    'label' => 'Tree Species',
+                    'label' => 'Tree Species (Nursery Seedling)',
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
                     'collection' => 'nursery-seedling',
