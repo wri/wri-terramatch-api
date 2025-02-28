@@ -31,6 +31,7 @@ return [
             'users-manage',
             'monitoring-manage',
             'reports-manage',
+            'polygons-manage'
         ],
         'admin-ppc' => [
             'framework-ppc',
@@ -38,6 +39,7 @@ return [
             'users-manage',
             'monitoring-manage',
             'reports-manage',
+            'polygons-manage'
         ],
         'admin-terrafund' => [
             'framework-terrafund',
@@ -47,6 +49,7 @@ return [
             'users-manage',
             'monitoring-manage',
             'reports-manage' ,
+            'polygons-manage'
         ],
         'admin-hbf' => [
             'framework-hbf',
@@ -54,30 +57,31 @@ return [
             'users-manage',
             'monitoring-manage',
             'reports-manage',
+            'polygons-manage'
         ],
         'admin-epa-ghana-pilot' => [
             'framework-epa-ghana-pilot',
             'custom-forms-manage',
             'users-manage',
             'monitoring-manage',
-            'reports-manage',
+            'reports-manage'
         ],
         'project-developer' => [
-            'manage-own',
+            'manage-own'
         ],
         'project-manager' => [
-            'projects-manage',
+            'projects-manage'
         ],
         'greenhouse-service-account' => [
             'projects-read',
             'polygons-manage',
-            'media-manage',
+            'media-manage'
         ],
         'research-service-account' => [
-            'polygons-manage',
+            'polygons-manage'
         ],
         'government' => [
-            'view-dashboard',
+            'view-dashboard'
         ],
         'funder' => [
             'view-dashboard'
