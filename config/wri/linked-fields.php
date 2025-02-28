@@ -697,11 +697,25 @@ return [
                     'collection' => 'part-time'
                 ],
                 'pro-rep-volunteers' => [
-                    'property' => 'volunteersVolunteer',
+                    'property' => 'volunteers',
                     'label' => 'Volunteers',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'volunteers',
                     'collection' => 'volunteer'
+                ],
+                'pro-rep-beneficiaries-all' => [
+                    'property' => 'allBeneficiaries',
+                    'label' => 'All Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'allBeneficiaries',
+                    'collection' => 'all'
+                ],
+                'pro-rep-beneficiaries-training' => [
+                    'property' => 'trainingBeneficiaries',
+                    'label' => 'Training Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'trainingBeneficiaries',
+                    'collection' => 'training'
                 ]
             ],
             'file-collections' => [
