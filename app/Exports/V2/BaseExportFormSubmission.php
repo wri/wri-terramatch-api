@@ -72,7 +72,8 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                 case 'restorationPartners':
                 case 'jobs':
                 case 'volunteers':
-                case 'beneficiaries':
+                case 'allBeneficiaries':
+                case 'trainingBeneficiaries':
                     $list = [];
                     $demographic = $answer->first();
                     if ($demographic == null) {
@@ -89,12 +90,13 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     }
                     $list[] = 'gender:(' . implode(')(', $types['gender']) . ')';
                     $list[] = 'age:(' . implode(')(', $types['age']) . ')';
-                    if ($demographic->type == 'beneficiaries' && $demographic->collection == 'all') {
+                    if ($field['input_type'] == 'allBeneficiaries') {
                         $list[] = 'farmer:(' . implode(')(', $types['farmer']) . ')';
                     }
-                    if ($frameworkKey == 'hbf') {
+                    if ($frameworkKey == 'hbf' && $field['input_type'] != 'trainingBeneficiaries') {
                         $list[] = 'caste:(' . implode(')(', $types['caste']) . ')';
-                    } elseif ($field['input_type'] == 'workdays' || $field['input_type'] == 'restorationPartners') {
+                    }
+                    if ($frameworkKey != 'hbf' && ($field['input_type'] == 'workdays' || $field['input_type'] == 'restorationPartners')) {
                         $list[] = 'ethnicity:(' . implode(')(', $types['ethnicity']) . ')';
                     }
 
