@@ -426,4 +426,9 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     {
         return $query->where('status', ReportStatusStateMachine::APPROVED);
     }
+
+    public function getProjectReportAttribute()
+    {
+        return $this->task->projectReport->only(['name', 'status', 'uuid']);
+    }
 }
