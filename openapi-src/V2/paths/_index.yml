@@ -1286,9 +1286,6 @@
     responses:
       '200':
         description: OK
-/v2/projects/{UUID}/sites:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-sites.yml'
 /v2/projects/{UUID}/nurseries:
   get:
     $ref: './Projects/get-v2-projects-uuid-nurseries.yml'

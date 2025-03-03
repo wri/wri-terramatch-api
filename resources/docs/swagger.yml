@@ -16044,50 +16044,6 @@ paths:
           schema:
             $ref: '#/definitions/ProjectMetricCreate'
           description: The property monitorable_type options are programme or terrafund_programme
-  /v2/projects/{UUID}/sites:
-    get:
-      summary: Get the sites of a specific project
-      operationId: get-v2-projects-uuid-sites
-      tags:
-        - V2 Projects
-      description: "Available Filters : status | Available Searches: name"
-      produces:
-        - application/json
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-        - name: search
-          type: string
-          in: query
-          description: 'search term to use on the collection'
-        - name: per_page
-          type: integer
-          in: query
-          description: 'number of results (per page) to return'
-        - name: page
-          type: integer
-          in: query
-          description: 'page number you want results from'
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/definitions/V2SiteLiteRead'
-              links:
-                $ref: '#/definitions/V2PaginationLinks'
-              meta:
-                $ref: '#/definitions/V2PaginationMeta'
   '/v2/projects/{UUID}/nurseries':
     get:
       summary: Get the nurseries of a specific project
