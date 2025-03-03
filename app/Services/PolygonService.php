@@ -415,10 +415,10 @@ class PolygonService
         $properties['num_trees'] = is_int($properties['num_trees'] ?? null) ? $properties['num_trees'] : null;
 
         $distributionsValidValues = ['full', 'partial', 'single-line'];
-        $properties['distr'] = $this->orderCommaSeparatedPropertiesAlphabetically($properties['distr'], $distributionsValidValues);
+        $properties['distr'] = $this->orderCommaSeparatedPropertiesAlphabetically($properties['distr'] ?? '', $distributionsValidValues);
 
         $practicesValidValues = ['assisted-natural-regeneration', 'direct-seeding','tree-planting'];
-        $properties['practice'] = $this->orderCommaSeparatedPropertiesAlphabetically($properties['practice'], $practicesValidValues);
+        $properties['practice'] = $this->orderCommaSeparatedPropertiesAlphabetically($properties['practice'] ?? '', $practicesValidValues);
 
         return [
             'poly_name' => $properties['poly_name'] ?? null,
