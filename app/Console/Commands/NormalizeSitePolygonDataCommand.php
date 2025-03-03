@@ -115,39 +115,40 @@ class NormalizeSitePolygonDataCommand extends Command
     public function handle()
     {
         $isDryRun = $this->option('dry-run');
-        
+
         if ($isDryRun) {
             $this->info('Running in DRY RUN mode - no changes will be made to the database');
         }
-        
+
         $this->info('Starting data normalization of site_polygon table...');
-        
-        if (!$isDryRun) {
+
+        if (! $isDryRun) {
             DB::beginTransaction();
         }
-        
+
         try {
             $distrChanges = $this->normalizeDistrColumn($isDryRun);
             $targetSysChanges = $this->normalizeTargetSysColumn($isDryRun);
             $practiceChanges = $this->normalizePracticeColumn($isDryRun);
-            
+
             $totalChanges = $distrChanges + $targetSysChanges + $practiceChanges;
-            
-            if (!$isDryRun) {
+
+            if (! $isDryRun) {
                 DB::commit();
                 $this->info("Data normalization completed successfully! Total records updated: {$totalChanges}");
             } else {
                 $this->info("Dry run completed. {$totalChanges} records would be updated if run without --dry-run option.");
             }
-            
+
             return 0;
         } catch (\Exception $e) {
-            if (!$isDryRun) {
+            if (! $isDryRun) {
                 DB::rollBack();
             }
-            
+
             $this->error('An error occurred during normalization: ' . $e->getMessage());
             Log::error('Normalization error: ' . $e->getMessage());
+
             return 1;
         }
     }
@@ -156,48 +157,49 @@ class NormalizeSitePolygonDataCommand extends Command
     {
         $this->info('Analyzing distr column...');
         $totalChanges = 0;
-        
+
         $valuesToUpdate = [];
         foreach ($this->distrMapping as $oldValue => $newValue) {
             if ($oldValue === $newValue) {
                 continue;
             }
-            
+
             $count = SitePolygon::where('distr', $oldValue)->count();
             if ($count > 0) {
                 $valuesToUpdate[$oldValue] = [
                     'new_value' => $newValue,
-                    'count' => $count
+                    'count' => $count,
                 ];
                 $totalChanges += $count;
             }
         }
-        
+
         if (empty($valuesToUpdate)) {
             $this->info('No incorrect distr values found that need updating.');
+
             return 0;
         }
-        
+
         $this->info('Found ' . count($valuesToUpdate) . ' different distr values that need correction:');
         foreach ($valuesToUpdate as $oldValue => $info) {
-            $this->info("- '{$oldValue}' to " . 
-                         ($info['new_value'] === null ? 'NULL' : "'{$info['new_value']}'") . 
+            $this->info("- '{$oldValue}' to " .
+                         ($info['new_value'] === null ? 'NULL' : "'{$info['new_value']}'") .
                          " ({$info['count']} records)");
         }
-        
+
         if ($isDryRun) {
             return $totalChanges;
         }
-        
+
         $this->info('Updating distr values...');
         foreach ($valuesToUpdate as $oldValue => $info) {
             SitePolygon::where('distr', $oldValue)
                 ->update(['distr' => $info['new_value']]);
-            
-            $this->info("Updated {$info['count']} records from '{$oldValue}' to " . 
+
+            $this->info("Updated {$info['count']} records from '{$oldValue}' to " .
                          ($info['new_value'] === null ? 'NULL' : "'{$info['new_value']}'"));
         }
-        
+
         return $totalChanges;
     }
 
@@ -205,45 +207,46 @@ class NormalizeSitePolygonDataCommand extends Command
     {
         $this->info('Analyzing target_sys column...');
         $totalChanges = 0;
-        
+
         $valuesToUpdate = [];
         foreach ($this->targetSysMapping as $oldValue => $newValue) {
             if ($oldValue === $newValue) {
                 continue;
             }
-            
+
             $count = SitePolygon::where('target_sys', $oldValue)->count();
             if ($count > 0) {
                 $valuesToUpdate[$oldValue] = [
                     'new_value' => $newValue,
-                    'count' => $count
+                    'count' => $count,
                 ];
                 $totalChanges += $count;
             }
         }
-        
+
         if (empty($valuesToUpdate)) {
             $this->info('No incorrect target_sys values found that need updating.');
+
             return 0;
         }
-        
+
         $this->info('Found ' . count($valuesToUpdate) . ' different target_sys values that need correction:');
         foreach ($valuesToUpdate as $oldValue => $info) {
             $this->info("- '{$oldValue}' to '{$info['new_value']}' ({$info['count']} records)");
         }
-        
+
         if ($isDryRun) {
             return $totalChanges;
         }
-        
+
         $this->info('Updating target_sys values...');
         foreach ($valuesToUpdate as $oldValue => $info) {
             SitePolygon::where('target_sys', $oldValue)
                 ->update(['target_sys' => $info['new_value']]);
-            
+
             $this->info("Updated {$info['count']} records from '{$oldValue}' to '{$info['new_value']}'");
         }
-        
+
         return $totalChanges;
     }
 
@@ -251,48 +254,49 @@ class NormalizeSitePolygonDataCommand extends Command
     {
         $this->info('Analyzing practice column...');
         $totalChanges = 0;
-        
+
         $valuesToUpdate = [];
         foreach ($this->practiceMapping as $oldValue => $newValue) {
             if ($oldValue === $newValue) {
                 continue;
             }
-            
+
             $count = SitePolygon::where('practice', $oldValue)->count();
             if ($count > 0) {
                 $valuesToUpdate[$oldValue] = [
                     'new_value' => $newValue,
-                    'count' => $count
+                    'count' => $count,
                 ];
                 $totalChanges += $count;
             }
         }
-        
+
         if (empty($valuesToUpdate)) {
             $this->info('No incorrect practice values found that need updating.');
+
             return 0;
         }
-        
+
         $this->info('Found ' . count($valuesToUpdate) . ' different practice values that need correction:');
         foreach ($valuesToUpdate as $oldValue => $info) {
-            $this->info("- '{$oldValue}' to " . 
-                         ($info['new_value'] === null ? 'NULL' : "'{$info['new_value']}'") . 
+            $this->info("- '{$oldValue}' to " .
+                         ($info['new_value'] === null ? 'NULL' : "'{$info['new_value']}'") .
                          " ({$info['count']} records)");
         }
-        
+
         if ($isDryRun) {
             return $totalChanges;
         }
-        
+
         $this->info('Updating practice values...');
         foreach ($valuesToUpdate as $oldValue => $info) {
             SitePolygon::where('practice', $oldValue)
                 ->update(['practice' => $info['new_value']]);
-            
-            $this->info("Updated {$info['count']} records from '{$oldValue}' to " . 
+
+            $this->info("Updated {$info['count']} records from '{$oldValue}' to " .
                          ($info['new_value'] === null ? 'NULL' : "'{$info['new_value']}'"));
         }
-        
+
         return $totalChanges;
     }
 }
