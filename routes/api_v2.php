@@ -170,7 +170,6 @@ use App\Http\Controllers\V2\Projects\SoftDeleteProjectController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\ViewProjectNurseriesController;
-use App\Http\Controllers\V2\Projects\ViewProjectSitesController;
 use App\Http\Controllers\V2\Projects\ViewProjectTasksController;
 use App\Http\Controllers\V2\Projects\ViewProjectTasksReportsController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminCreateReportingFrameworkController;
@@ -182,7 +181,6 @@ use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessC
 use App\Http\Controllers\V2\Reports\NothingToReportReportController;
 use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
-use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
 use App\Http\Controllers\V2\Sites\AdminSitesPolygonController;
 use App\Http\Controllers\V2\Sites\AdminSitesPolygonCountController;
@@ -330,7 +328,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::prefix('sites')->group(function () {
-        Route::get('/', AdminIndexSitesController::class);
         Route::get('/multi', AdminSitesMultiController::class);
     });
 
@@ -542,7 +539,6 @@ Route::prefix('projects')->group(function () {
     Route::delete('/{project}', SoftDeleteProjectController::class);
     Route::get('/{project}/tasks', ViewProjectTasksController::class);
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
-    Route::get('/{project}/sites', ViewProjectSitesController::class);
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
     Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
     Route::get('/{project}/nurseries', ViewProjectNurseriesController::class);
