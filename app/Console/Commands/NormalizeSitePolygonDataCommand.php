@@ -53,7 +53,7 @@ class NormalizeSitePolygonDataCommand extends Command
         'Partial plantation, Line plantation' => 'partial,single-line',
         'N/A' => null,
         'partial,planting-in-patches' => 'partial',
-        '' => null
+        '' => null,
     ];
 
     protected $targetSysMapping = [
@@ -67,7 +67,7 @@ class NormalizeSitePolygonDataCommand extends Command
         'N/A' => null,
         'Null' => null,
         '' => null,
-        'open-natural-ecosystem' => 'natural-forest'
+        'open-natural-ecosystem' => 'natural-forest',
     ];
 
     protected $practiceMapping = [
@@ -113,7 +113,7 @@ class NormalizeSitePolygonDataCommand extends Command
         'enrichment-planting,assisted-natural-regeneration' => 'assisted-natural-regeneration',
         'tree planting/RNA' => 'tree-planting',
         'tree-planting, direct-seeding, cutting' => 'direct-seeding,tree-planting',
-        'tree-planting, assisted-natural-regeneration, direct-seeding' => 'assisted-natural-regeneration,direct-seeding,tree-planting'
+        'tree-planting, assisted-natural-regeneration, direct-seeding' => 'assisted-natural-regeneration,direct-seeding,tree-planting',
     ];
 
     /**
