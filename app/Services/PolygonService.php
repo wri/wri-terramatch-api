@@ -381,7 +381,40 @@ class PolygonService
         }
     }
 
-    protected function validateSitePolygonProperties(string $polygonUuid, array $properties)
+    protected function orderCommaSeparatedPropertiesAlphabetically(string $commaSeparatedProperties, array $validValues)
+    {
+        $properties = explode(',', $commaSeparatedProperties);
+        $properties = array_map('trim', $properties);
+        sort($properties);
+        $properties = array_filter($properties, function ($value) use ($validValues) {
+            return in_array($value, $validValues);
+        });
+        if (empty($properties)) {
+            return null;
+        }
+
+        return implode(',', $properties);
+    }
+
+    protected function validateTargetSys(string $targetSys): ?string
+    {
+        $validValues = [
+            'agroforest',
+            'mangrove',
+            'natural-forest',
+            'peatland',
+            'riparian-area-or-wetland',
+            'silvopasture',
+            'urban-forest',
+            'woodlot-or-plantation',
+        ];
+
+        $targetSys = trim($targetSys);
+
+        return in_array($targetSys, $validValues, true) ? $targetSys : null;
+    }
+
+    public function validateSitePolygonProperties(string $polygonUuid, array $properties)
     {
         // Avoid trying to store an invalid date string or int in the DB, as that will throw an exception and prevent
         // the site polygon from storing. With an invalid date, this will end up reporting schema invalid and data
@@ -399,14 +432,21 @@ class PolygonService
         }
         $properties['num_trees'] = is_int($properties['num_trees'] ?? null) ? $properties['num_trees'] : null;
 
+        $distributionsValidValues = ['full', 'partial', 'single-line'];
+        $properties['distr'] = $this->orderCommaSeparatedPropertiesAlphabetically($properties['distr'] ?? '', $distributionsValidValues);
+
+        $practicesValidValues = ['assisted-natural-regeneration', 'direct-seeding','tree-planting'];
+        $properties['practice'] = $this->orderCommaSeparatedPropertiesAlphabetically($properties['practice'] ?? '', $practicesValidValues);
+        $properties['target_sys'] = $this->validateTargetSys($properties['target_sys'] ?? '');
+
         return [
             'poly_name' => $properties['poly_name'] ?? null,
             'site_id' => $properties['site_id'] ?? null,
             'plantstart' => $properties['plantstart'],
             'plantend' => $properties['plantend'],
-            'practice' => $properties['practice'] ?? null,
-            'target_sys' => $properties['target_sys'] ?? null,
-            'distr' => $properties['distr'] ?? null,
+            'practice' => $properties['practice'],
+            'target_sys' => $properties['target_sys'],
+            'distr' => $properties['distr'],
             'num_trees' => $properties['num_trees'],
             'calc_area' => $properties['area'] ?? null,
             'status' => 'draft',
