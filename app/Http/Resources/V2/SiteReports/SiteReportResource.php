@@ -69,6 +69,8 @@ class SiteReportResource extends JsonResource
             'survival_calculation' => $this->survival_calculation,
             'survival_description' => $this->survival_description,
             'maintenance_activities' => $this->maintenance_activities,
+
+            'project_report' => $this->project_report,
         ];
 
         return $this->appendFilesToResource($data);
