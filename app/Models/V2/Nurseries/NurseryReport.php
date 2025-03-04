@@ -289,6 +289,6 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
 
     public function getProjectReportAttribute()
     {
-        return $this->task->projectReport?->only(['name', 'status', 'uuid']) ??  "";
+        return $this->task->projectReport?->only(['name', 'status', 'uuid']) ?? '';
     }
 }

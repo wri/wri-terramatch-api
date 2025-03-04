@@ -429,6 +429,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
 
     public function getProjectReportAttribute()
     {
-        return $this->task->projectReport?->only(['name', 'status', 'uuid']) ?? "";
+        return $this->task->projectReport?->only(['name', 'status', 'uuid']) ?? '';
     }
 }
