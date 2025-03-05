@@ -11,7 +11,6 @@ class DemographicResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'collection' => $this->collection,
-            'readable_collection' => $this->readable_collection,
             'demographics' => empty($this->entries) ? [] : DemographicEntryResource::collection($this->entries),
         ];
     }

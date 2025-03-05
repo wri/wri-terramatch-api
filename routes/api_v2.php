@@ -35,7 +35,6 @@ use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
-use App\Http\Controllers\V2\Demographics\GetDemographicsForEntityController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
@@ -156,7 +155,6 @@ use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController;
 use App\Http\Controllers\V2\ProjectReports\AdminIndexProjectReportsController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
-use App\Http\Controllers\V2\Projects\AdminIndexProjectsController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\AdminUpdateProjectController;
 use App\Http\Controllers\V2\Projects\CreateBlankProjectWithFormController;
@@ -170,7 +168,6 @@ use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
 use App\Http\Controllers\V2\Projects\SoftDeleteProjectController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
-use App\Http\Controllers\V2\Projects\ViewMyProjectsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\ViewProjectNurseriesController;
 use App\Http\Controllers\V2\Projects\ViewProjectSitesController;
@@ -322,7 +319,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::prefix('projects')->group(function () {
-        Route::get('', AdminIndexProjectsController::class);
         Route::put('/{project}', AdminUpdateProjectController::class);
         Route::get('/multi', AdminProjectMultiController::class);
     });
@@ -446,8 +442,6 @@ Route::prefix('my')->group(function () {
         Route::get('/', IndexMyActionsController::class);
         Route::put('/{action}/complete', CompleteActionController::class);
     });
-
-    Route::get('/projects', ViewMyProjectsController::class);
 });
 
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
@@ -526,10 +520,6 @@ Route::prefix('{relationType}')
 Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsController::class)
 ->whereIn('entityType', ['project', 'site']);
 
-ModelInterfaceBindingMiddleware::forSlugs(['project-report', 'site-report'], function () {
-    Route::get('/{entity}', GetDemographicsForEntityController::class);
-}, prefix: '{demographicType}')->whereIn('demographicType', ['workdays', 'restoration-partners']);
-
 Route::prefix('leadership-team')->group(function () {
     Route::post('/', StoreLeadershipTeamController::class);
     Route::patch('/{leadershipTeam}', UpdateLeadershipTeamController::class);
@@ -583,6 +573,7 @@ ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], f
 });
 
 ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
+    // Note: projects read is no longer used in v2.
     Route::get('/{entity}', ViewEntityController::class);
 });
 

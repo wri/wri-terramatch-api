@@ -70,13 +70,17 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
 
                 case 'workdays':
                 case 'restorationPartners':
+                case 'jobs':
+                case 'volunteers':
+                case 'allBeneficiaries':
+                case 'trainingBeneficiaries':
                     $list = [];
                     $demographic = $answer->first();
                     if ($demographic == null) {
                         return '';
                     }
 
-                    $types = ['gender' => [], 'age' => [], 'ethnicity' => [], 'caste' => []];
+                    $types = ['gender' => [], 'age' => [], 'ethnicity' => [], 'farmer' => [], 'caste' => []];
                     foreach ($demographic->entries as $entry) {
                         $value = match ($entry->type) {
                             'ethnicity' => [$entry->amount, $entry->subtype, $entry->name],
@@ -86,9 +90,13 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     }
                     $list[] = 'gender:(' . implode(')(', $types['gender']) . ')';
                     $list[] = 'age:(' . implode(')(', $types['age']) . ')';
-                    if ($frameworkKey == 'hbf') {
+                    if ($field['input_type'] == 'allBeneficiaries') {
+                        $list[] = 'farmer:(' . implode(')(', $types['farmer']) . ')';
+                    }
+                    if ($frameworkKey == 'hbf' && $field['input_type'] != 'trainingBeneficiaries') {
                         $list[] = 'caste:(' . implode(')(', $types['caste']) . ')';
-                    } else {
+                    }
+                    if ($frameworkKey != 'hbf' && ($field['input_type'] == 'workdays' || $field['input_type'] == 'restorationPartners')) {
                         $list[] = 'ethnicity:(' . implode(')(', $types['ethnicity']) . ')';
                     }
 

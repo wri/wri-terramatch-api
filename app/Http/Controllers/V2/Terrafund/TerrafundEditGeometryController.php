@@ -255,6 +255,8 @@ class TerrafundEditGeometryController extends Controller
               'target_sys' => 'nullable|string',
             ]);
 
+            $validatedData = App::make(PolygonService::class)->validateSitePolygonProperties($uuid, $validatedData);
+
             $user = Auth::user();
             $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
 

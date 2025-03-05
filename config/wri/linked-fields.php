@@ -475,10 +475,10 @@ return [
             'relations' => [
                 'pro-rep-rel-tree-species' => [
                     'property' => 'treeSpecies',
-                    'label' => 'Tree Species',
+                    'label' => 'Tree Species (Nursery Seedling)',
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
-                    'collection' => 'tree-planted',
+                    'collection' => 'nursery-seedling',
                 ],
                 'pro-rep-rel-paid-nursery-operations' => [
                     'property' => 'workdaysPaidNurseryOperations',
@@ -681,6 +681,41 @@ return [
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
                     'collection' => 'indirect-other'
+                ],
+                'pro-rep-full-time-jobs' => [
+                    'property' => 'jobsFullTime',
+                    'label' => 'Full-time Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'full-time'
+                ],
+                'pro-rep-part-time-jobs' => [
+                    'property' => 'jobsPartTime',
+                    'label' => 'Part-time Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'part-time'
+                ],
+                'pro-rep-volunteers' => [
+                    'property' => 'volunteers',
+                    'label' => 'Volunteers',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'volunteers',
+                    'collection' => 'volunteer'
+                ],
+                'pro-rep-beneficiaries-all' => [
+                    'property' => 'allBeneficiaries',
+                    'label' => 'All Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'allBeneficiaries',
+                    'collection' => 'all'
+                ],
+                'pro-rep-beneficiaries-training' => [
+                    'property' => 'trainingBeneficiaries',
+                    'label' => 'Training Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'trainingBeneficiaries',
+                    'collection' => 'training'
                 ]
             ],
             'file-collections' => [

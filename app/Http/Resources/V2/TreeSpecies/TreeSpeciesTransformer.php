@@ -135,7 +135,7 @@ class TreeSpeciesTransformer
         return match (true) {
             $this->entity instanceof Project => $this->entity->approvedSiteReportIds()->pluck('id')->toArray(),
             $this->entity instanceof Site => $this->entity->approvedReportIds()->pluck('id')->toArray(),
-            $this->entity instanceof ProjectReport => $this->entity->task->siteReports()->where('status', ReportStatusStateMachine::APPROVED)->pluck('id')->toArray(),
+            $this->entity instanceof ProjectReport => $this->entity->task?->siteReports()->where('status', ReportStatusStateMachine::APPROVED)->pluck('id')->toArray() ?? [],
             default => [],
         };
     }

@@ -162,6 +162,25 @@ class TerrafundDashboardQueryHelper
 
         $query = ImpactStory::with('organization');
 
+        if (! empty($filters['uuid'])) {
+            $project = Project::where('uuid', $filters['uuid'])->first();
+            if ($project) {
+                $query->whereHas('organization', function ($q) use ($project) {
+                    $q->where('id', $project->organisation_id);
+                });
+            }
+        } else {
+            if (! empty($filters['country'])) {
+                $query->whereHas('organization', function ($q) use ($filters) {
+                    $q->where(function ($subQuery) use ($filters) {
+                        foreach ((array) $filters['country'] as $country) {
+                            $subQuery->orWhereJsonContains('countries', $country);
+                        }
+                    });
+                });
+            }
+        }
+
         if ($search) {
             $searchTerm = trim($search);
 
@@ -184,16 +203,6 @@ class TerrafundDashboardQueryHelper
         if (! empty($filters['organisationType'])) {
             $query->whereHas('organization', function ($q) use ($filters) {
                 $q->whereIn('type', (array) $filters['organisationType']);
-            });
-        }
-
-        if (! empty($filters['country'])) {
-            $query->whereHas('organization', function ($q) use ($filters) {
-                $q->where(function ($subQuery) use ($filters) {
-                    foreach ((array) $filters['country'] as $country) {
-                        $subQuery->orWhereJsonContains('countries', $country);
-                    }
-                });
             });
         }
 

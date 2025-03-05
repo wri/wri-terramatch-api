@@ -94,10 +94,6 @@ class GetRelationsForEntityController extends Controller
                     'count_new_species' => $countNewSpecies,
                 ]);
             }
-
-            if (! empty($filter['collection'])) {
-                $query->where('collection', $filter['collection']);
-            }
         }
 
         return new TreeSpeciesCollection($query->get());
@@ -110,9 +106,9 @@ class GetRelationsForEntityController extends Controller
         } elseif ($entity instanceof Site) {
             $siteReportIds = $entity->approvedReportIds()->pluck('id')->toArray();
         } elseif ($entity instanceof ProjectReport) {
-            $siteReportIds = $entity->task->siteReports()
+            $siteReportIds = $entity->task?->siteReports()
                 ->where('status', ReportStatusStateMachine::APPROVED)
-                ->pluck('id')->toArray();
+                ->pluck('id')->toArray() ?? [];
         } elseif ($entity instanceof SiteReport) {
             $siteReportIds = [$entity->id];
         } else {
