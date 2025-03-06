@@ -17,7 +17,7 @@ class JobsCreatedService
         $projectIds = $query->select('v2_projects.id');
         $projectReportIds = ProjectReport::whereIn('project_id', $projectIds)
         ->where('status', 'approved')
-        ->pluck('id');
+        ->select('id');
         /** @var Collection $demographics */
         $demographics = Demographic::where([
           'demographical_type' => ProjectReport::class,
