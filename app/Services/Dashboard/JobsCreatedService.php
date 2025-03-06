@@ -3,8 +3,10 @@
 namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
+use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Projects\ProjectReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class JobsCreatedService
 {
@@ -12,85 +14,60 @@ class JobsCreatedService
     {
         $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
 
-        $rawProjectIds = $query
-            ->select('v2_projects.id', 'organisations.type')
-            ->get();
+        $projectIds = $query->select('v2_projects.id');
+        $projectReportIds = ProjectReport::whereIn('project_id', $projectIds)
+        ->where('status', 'approved')
+        ->select('id');
+        /** @var Collection $demographics */
+        $demographics = Demographic::where([
+          'demographical_type' => ProjectReport::class,
+          'hidden' => false,
+          'type' => 'jobs',
+        ])
+        ->whereIn('demographical_id', $projectReportIds)
+        ->with('entries')
+        ->get();
 
-        $allProjectIds = $this->getAllProjectIds($rawProjectIds);
-
-        $totalJobsCreated = $this->getTotalJobsCreated($allProjectIds);
-        $jobsCreatedDetailed = $this->getJobsCreatedDetailed($allProjectIds);
+        $all = $this->entries($demographics);
+        $ft = $this->entries($this->forCollection($demographics, 'full-time'));
+        $pt = $this->entries($this->forCollection($demographics, 'part-time'));
 
         return (object) [
-            'totalJobsCreated' => $totalJobsCreated,
-            'total_ft' => (int) $jobsCreatedDetailed->total_ft,
-            'total_pt' => (int) $jobsCreatedDetailed->total_pt,
-            'total_men' => $this->calculateTotalMen($jobsCreatedDetailed),
-            'total_pt_men' => (int) $jobsCreatedDetailed->total_pt_men,
-            'total_ft_men' => (int) $jobsCreatedDetailed->total_ft_men,
-            'total_women' => $this->calculateTotalWomen($jobsCreatedDetailed),
-            'total_pt_women' => (int) $jobsCreatedDetailed->total_pt_women,
-            'total_ft_women' => (int) $jobsCreatedDetailed->total_ft_women,
-            'total_youth' => $this->calculateTotalYouth($jobsCreatedDetailed),
-            'total_pt_youth' => (int) $jobsCreatedDetailed->total_pt_youth,
-            'total_ft_youth' => (int) $jobsCreatedDetailed->total_ft_youth,
-            'total_non_youth' => $this->calculateTotalNonYouth($jobsCreatedDetailed),
-            'total_pt_non_youth' => (int) $jobsCreatedDetailed->total_pt_non_youth,
-            'total_ft_non_youth' => (int) $jobsCreatedDetailed->total_ft_non_youth,
+            'totalJobsCreated' => $this->sum($this->forType($all, 'gender')),
+            'total_ft' => $this->sum($this->forType($ft, 'gender')),
+            'total_pt' => $this->sum($this->forType($pt, 'gender')),
+            'total_men' => $this->sum($this->forType($all, 'gender', 'male')),
+            'total_pt_men' => $this->sum($this->forType($pt, 'gender', 'male')),
+            'total_ft_men' => $this->sum($this->forType($ft, 'gender', 'male')),
+            'total_women' => $this->sum($this->forType($all, 'gender', 'female')),
+            'total_pt_women' => $this->sum($this->forType($pt, 'gender', 'female')),
+            'total_ft_women' => $this->sum($this->forType($ft, 'gender', 'female')),
+            'total_youth' => $this->sum($this->forType($all, 'age', 'youth')),
+            'total_pt_youth' => $this->sum($this->forType($pt, 'age', 'youth')),
+            'total_ft_youth' => $this->sum($this->forType($ft, 'age', 'youth')),
+            'total_non_youth' => $this->sum($this->forType($all, 'age', 'non-youth')),
+            'total_pt_non_youth' => $this->sum($this->forType($pt, 'age', 'non-youth')),
+            'total_ft_non_youth' => $this->sum($this->forType($ft, 'age', 'non-youth')),
         ];
     }
 
-    private function getAllProjectIds($projectIds)
+    private function sum(Collection $entries): int
     {
-        return $projectIds->pluck('id')->toArray();
+        return (int) $entries->pluck('amount')->sum() ?? 0;
     }
 
-    private function calculateTotalMen($jobsCreatedDetailed)
+    private function entries(Collection $demographics): Collection
     {
-        return $jobsCreatedDetailed->total_pt_men + $jobsCreatedDetailed->total_ft_men;
+        return $demographics->map(fn ($d) => $d->entries)->flatten();
     }
 
-    private function calculateTotalWomen($jobsCreatedDetailed)
+    private function forCollection(Collection $demographics, string $collection): Collection
     {
-        return $jobsCreatedDetailed->total_pt_women + $jobsCreatedDetailed->total_ft_women;
+        return $demographics->filter(fn ($d) => $d->collection == $collection);
     }
 
-    private function calculateTotalYouth($jobsCreatedDetailed)
+    private function forType(Collection $entries, string $type, string $subtype = null): Collection
     {
-        return $jobsCreatedDetailed->total_pt_youth + $jobsCreatedDetailed->total_ft_youth;
-    }
-
-    private function calculateTotalNonYouth($jobsCreatedDetailed)
-    {
-        return $jobsCreatedDetailed->total_pt_non_youth + $jobsCreatedDetailed->total_ft_non_youth;
-    }
-
-    private function getTotalJobsCreated($projectIds)
-    {
-        $sumData = ProjectReport::whereIn('project_id', $projectIds)
-            ->where('status', 'approved')
-            ->selectRaw('SUM(ft_total) as total_ft, SUM(pt_total) as total_pt')
-            ->first();
-
-        return $sumData->total_ft + $sumData->total_pt;
-    }
-
-    private function getJobsCreatedDetailed($projectIds)
-    {
-        return ProjectReport::whereIn('project_id', $projectIds)
-            ->where('status', 'approved')
-            ->selectRaw(
-                'SUM(ft_total) as total_ft, 
-                 SUM(pt_total) as total_pt, 
-                 SUM(pt_men) as total_pt_men, 
-                 SUM(ft_men) as total_ft_men, 
-                 SUM(pt_women) as total_pt_women, 
-                 SUM(ft_women) as total_ft_women, 
-                 SUM(pt_youth) as total_pt_youth, 
-                 SUM(ft_youth) as total_ft_youth, 
-                 SUM(pt_non_youth) as total_pt_non_youth, 
-                 SUM(ft_jobs_non_youth) as total_ft_non_youth'
-            )
-            ->first();
+        return $entries->filter(fn ($e) => $e->type == $type && ($subtype == null || $e->subtype == $subtype));
     }
 }

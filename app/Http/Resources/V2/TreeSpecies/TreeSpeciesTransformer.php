@@ -3,6 +3,7 @@
 namespace App\Http\Resources\V2\TreeSpecies;
 
 use App\Models\V2\EntityModel;
+use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
@@ -24,7 +25,7 @@ class TreeSpeciesTransformer
 
     public function __construct(EntityModel $entity, Collection $entityTreeSpecies, string $collectionType)
     {
-        $validEntityTypes = [Project::class, Site::class, ProjectReport::class];
+        $validEntityTypes = [Project::class, Site::class, ProjectReport::class, NurseryReport::class];
 
         if (! in_array(get_class($entity), $validEntityTypes)) {
             throw new \InvalidArgumentException(
@@ -44,6 +45,10 @@ class TreeSpeciesTransformer
             return $this->transformProjectReport();
         }
 
+        if ($this->entity instanceof NurseryReport) {
+            return $this->transformNurseryReport();
+        }
+
         // For Project and Site entities
         $this->entityTreeSpecies->each(function ($species) {
             $identifier = $species->taxon_id ?? $species->name;
@@ -59,6 +64,33 @@ class TreeSpeciesTransformer
 
         return new Collection(
             $combinedSpecies->sortByDesc('report_amount')
+        );
+    }
+
+    private function transformNurseryReport(): Collection
+    {
+        if ($this->collectionType !== TreeSpecies::COLLECTION_NURSERY) {
+            throw new \InvalidArgumentException(
+                'collection should be ' . TreeSpecies::COLLECTION_NURSERY
+            );
+        }
+        $reportTreeSpecies = $this->getNurseryReportTreeSpecies();
+        $transformedSpecies = $reportTreeSpecies->map(function ($reportSpecies) {
+            $species = new TreeSpecies([
+                'name' => $reportSpecies['name'],
+                'amount' => $reportSpecies['amount'],
+                'collection' => $reportSpecies['collection'],
+                'taxon_id' => $reportSpecies['taxon_id'],
+            ]);
+
+            $species->report_amount = $reportSpecies['amount'];
+            $species->is_new_species = false;
+
+            return $species;
+        });
+
+        return new Collection(
+            $transformedSpecies->sortByDesc('report_amount')
         );
     }
 
@@ -107,6 +139,29 @@ class TreeSpeciesTransformer
             ->values();
     }
 
+    private function getNurseryReportTreeSpecies(): SupportCollection
+    {
+        $id = $this->entity->id;
+
+        return TreeSpecies::where('speciesable_id', $id)
+            ->where('speciesable_type', NurseryReport::class)
+            ->where('collection', TreeSpecies::COLLECTION_NURSERY)
+            ->where('hidden', false)
+            ->get()
+            ->groupBy(function ($species) {
+                return $species->taxon_id ?? $species->name;
+            })
+            ->map(function ($group) {
+                return [
+                    'taxon_id' => $group->first()->taxon_id,
+                    'name' => $group->first()->name,
+                    'amount' => $group->sum('amount'),
+                    'collection' => $group->first()->collection,
+                ];
+            })
+            ->values();
+    }
+
     private function getProjectReportTreeSpecies(): SupportCollection
     {
         $id = $this->entity->id;
@@ -135,7 +190,7 @@ class TreeSpeciesTransformer
         return match (true) {
             $this->entity instanceof Project => $this->entity->approvedSiteReportIds()->pluck('id')->toArray(),
             $this->entity instanceof Site => $this->entity->approvedReportIds()->pluck('id')->toArray(),
-            $this->entity instanceof ProjectReport => $this->entity->task->siteReports()->where('status', ReportStatusStateMachine::APPROVED)->pluck('id')->toArray(),
+            $this->entity instanceof ProjectReport => $this->entity->task?->siteReports()->where('status', ReportStatusStateMachine::APPROVED)->pluck('id')->toArray() ?? [],
             default => [],
         };
     }

@@ -262,6 +262,17 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
                 DemographicCollections::INDIRECT_OTHER,
             ],
         ],
+        Demographic::JOBS_TYPE => [
+            'full-time' => [
+                DemographicCollections::FULL_TIME,
+            ],
+            'part-time' => [
+                DemographicCollections::PART_TIME,
+            ],
+        ],
+        Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
+        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Demographic::TRAINING_BENEFICIARIES_TYPE => DemographicCollections::TRAINING,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -409,6 +420,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             ->where('collection', TreeSpecies::COLLECTION_PLANTED)
             ->visible()
             ->sum('amount');
+    }
+
+    public function getRegeneratedTreesCountAttribute(): int
+    {
+        if (empty($this->task_id)) {
+            return 0;
+        }
+
+        return $this->task->siteReports()->hasBeenApproved()->sum('num_trees_regenerating');
     }
 
     public function getSeedsPlantedCountAttribute(): int

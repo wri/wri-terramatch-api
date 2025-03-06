@@ -5,8 +5,6 @@ namespace App\Models\V2\Demographics;
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\EntityModel;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\SiteReport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,8 +31,19 @@ class Demographic extends Model implements HandlesLinkedFieldSync
 
     public const WORKDAY_TYPE = 'workdays';
     public const RESTORATION_PARTNER_TYPE = 'restoration-partners';
+    public const JOBS_TYPE = 'jobs';
+    public const VOLUNTEERS_TYPE = 'volunteers';
+    public const ALL_BENEFICIARIES_TYPE = 'all-beneficiaries';
+    public const TRAINING_BENEFICIARIES_TYPE = 'training-beneficiaries';
 
-    public const VALID_TYPES = [self::WORKDAY_TYPE, self::RESTORATION_PARTNER_TYPE];
+    public const VALID_TYPES = [
+        self::WORKDAY_TYPE,
+        self::RESTORATION_PARTNER_TYPE,
+        self::JOBS_TYPE,
+        self::VOLUNTEERS_TYPE,
+        self::ALL_BENEFICIARIES_TYPE,
+        self::TRAINING_BENEFICIARIES_TYPE,
+    ];
 
     // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that both in-flight
     // work at the time of release, and updates from update requests afterward honor that change.
@@ -173,30 +182,5 @@ class Demographic extends Model implements HandlesLinkedFieldSync
     public function scopeVisible($query): Builder
     {
         return $query->where('hidden', false);
-    }
-
-    public function getReadableCollectionAttribute(): ?string
-    {
-        if (empty($this->collection)) {
-            return 'Unknown';
-        }
-
-        $collections = match ($this->type) {
-            self::RESTORATION_PARTNER_TYPE => match ($this->demographical_type) {
-                ProjectReport::class => DemographicCollections::RESTORATION_PARTNERS_PROJECT_COLLECTIONS,
-                default => null
-            },
-            self::WORKDAY_TYPE => match ($this->demographical_type) {
-                ProjectReport::class => DemographicCollections::WORKDAYS_PROJECT_COLLECTIONS,
-                SiteReport::class => DemographicCollections::WORKDAYS_SITE_COLLECTIONS,
-                default => null
-            },
-            default => null
-        };
-        if (empty($collections)) {
-            return 'Unknown';
-        }
-
-        return data_get($collections, $this->collection, 'Unknown');
     }
 }
