@@ -41,7 +41,7 @@ class MigrateBeneficiariesToDemographics extends Command
             'caste' => [
                 'marginalized' => 'beneficiaries_scstobc',
             ],
-            'total' => ['beneficiaries', 'total_community_partners'],
+            'total' => 'beneficiaries',
         ],
     ];
 
@@ -56,7 +56,7 @@ class MigrateBeneficiariesToDemographics extends Command
                 'youth' => 'beneficiaries_training_youth',
                 'non-youth' => 'beneficiaries_training_non_youth',
             ],
-            'total' => 'beneficiaries_skills_knowledge_increase',
+            'total' => ['beneficiaries_skills_knowledge_increase', 'people_knowledge_skills_increased'],
         ],
     ];
 
