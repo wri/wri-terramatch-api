@@ -14,15 +14,19 @@ class JobsCreatedService
     {
         $query = TerrafundDashboardQueryHelper::buildQueryFromRequest($request);
 
-        $projectIds = $query->select('v2_projects.id', 'organisations.type');
+        $projectIds = $query->select('v2_projects.id');
+        $projectReportIds = ProjectReport::whereIn('project_id', $projectIds)
+        ->where('status', 'approved')
+        ->pluck('id');
         /** @var Collection $demographics */
         $demographics = Demographic::where([
-            'demographical_type' => ProjectReport::class,
-            'demographical_id' => ProjectReport::whereIn('project_id', $projectIds)
-                ->where('status', 'approved')->select('id'),
-            'visible' => true,
-            'type' => 'jobs',
-        ])->with('entries')->get();
+          'demographical_type' => ProjectReport::class,
+          'hidden' => false,
+          'type' => 'jobs',
+        ])
+        ->whereIn('demographical_id', $projectReportIds)
+        ->with('entries')
+        ->get();
 
         $all = $this->entries($demographics);
         $ft = $this->entries($this->forCollection($demographics, 'full-time'));
