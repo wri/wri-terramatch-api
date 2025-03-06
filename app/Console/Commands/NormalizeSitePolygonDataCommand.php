@@ -79,6 +79,7 @@ class NormalizeSitePolygonDataCommand extends Command
         'agroforestry-systems,reforestation' => 'direct-seeding',
         'anr' => 'assisted-natural-regeneration',
         'asisted-natural-regeneration, tree-planting' => 'assisted-natural-regeneration,tree-planting',
+        'assisted-natural-regeneration, direct-seeding, tree-planting' => 'assisted-natural-regeneration,direct-seeding,tree-planting',
         'assisted-natural regeneration' => 'assisted-natural-regeneration',
         'assisted-natural-regeneration, tree-planting' => 'assisted-natural-regeneration,tree-planting',
         'assisted-natural-regeneration,tree-planting,direct-seeding' => 'assisted-natural-regeneration,direct-seeding,tree-planting',
