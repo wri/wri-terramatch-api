@@ -18,6 +18,7 @@ class UpdateImpactStoryRequest extends FormRequest
             'thumbnail' => 'sometimes|nullable|string',
             'content' => 'sometimes|nullable|json',
             'status' => 'required|string|in:draft,published',
+            'organization_id' => 'sometimes|string|nullable'
         ];
     }
 }
