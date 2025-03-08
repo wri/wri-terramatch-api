@@ -349,10 +349,8 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
         FormQuestion::whereIn('linked_field_key', $fieldKeys)
             ->get()
             ->each(function ($q) {
-                // In this case, the parent still exists so we want to keep the question intact.
-                if ($q->parent_id == null && $q->parent != null) {
-                    return;
-                }
+                // If the parent still exists, we want to keep the question intact.
+                if ($q->parent != null) return;
 
                 $this->info("Removing form question: [$q->uuid, $q->linked_field_key]");
                 $q->delete();
