@@ -350,7 +350,9 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
             ->get()
             ->each(function ($q) {
                 // If the parent still exists, we want to keep the question intact.
-                if ($q->parent != null) return;
+                if ($q->parent != null) {
+                    return;
+                }
 
                 $this->info("Removing form question: [$q->uuid, $q->linked_field_key]");
                 $q->delete();
