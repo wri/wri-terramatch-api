@@ -237,7 +237,7 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
             } else {
                 foreach ($subtypes as $subtype => $linkedFieldKey) {
                     $questionUuids = data_get($questionUuidMapping, $linkedFieldKey);
-                    if (empty($questionUuid)) {
+                    if (empty($questionUuids)) {
                         continue;
                     }
 
