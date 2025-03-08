@@ -21,7 +21,7 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
      *
      * @var string
      */
-    protected $signature = 'one-off:fix-update-requests-jobs-beneficiaries';
+    protected $signature = 'one-off:fix-update-requests-jobs-beneficiaries {--dry-run}';
 
     /**
      * The console command description.
@@ -189,11 +189,14 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
                     $this->assert($questionUuid != null, "demographics question not found [$updateRequest->uuid, $demographicKey]");
 
                     data_set($content, $questionUuid, [$demographic]);
+                    if ($this->option('dry-run')) {
+                        $this->info("Generated demographic [$updateRequest->uuid]: " . json_encode($demographic));
+                    }
                     $requiresSave = true;
                 }
             }
         }
-        if ($requiresSave) {
+        if ($requiresSave && ! $this->option('dry-run')) {
             $updateRequest->update(['content' => $content]);
         }
     }
