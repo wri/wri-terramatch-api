@@ -33,6 +33,8 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
     protected const DEMOGRAPHICS_LINKED_FIELDS = [
         'jobs' => [ 'full-time' => 'pro-rep-full-time-jobs', 'part-time' => 'pro-rep-part-time-jobs'],
         'volunteers' => ['volunteer' => 'pro-rep-volunteers'],
+        'all-beneficiaries' => ['all' => 'pro-rep-beneficiaries-all'],
+        'training-beneficiaries' => ['training' => 'pro-rep-beneficiaries-training'],
     ];
 
     protected const DEMOGRAPHICS_MAPPING = [
@@ -79,6 +81,42 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
                 'total' => 'pro-rep-volunteer-total',
             ],
         ],
+        'all-beneficiaries' => [
+            'all' => [
+                'gender' => [
+                    'male' => 'pro-rep-beneficiaries-men',
+                    'female' => 'pro-rep-beneficiaries-women',
+                    'non-binary' => 'pro-rep-beneficiaries-other',
+                ],
+                'age' => [
+                    'youth' => 'pro-rep-beneficiaries-youth',
+                    'non-youth' => 'pro-rep-beneficiaries-non-youth',
+                ],
+                'farmer' => [
+                    'smallholder' => 'pro-rep-beneficiaries-smallholder',
+                    'large-scale' => 'pro-rep-beneficiaries-large-scl',
+                    'marginalized' => 'pro-rep-beneficiaries_scstobc_farmers',
+                ],
+                'caste' => [
+                    'marginalized' => 'pro-rep-beneficiaries_scstobc',
+                ],
+                'total' => 'pro-rep-beneficiaries',
+            ],
+        ],
+        'training-beneficiaries' => [
+            'training' => [
+                'gender' => [
+                    'male' => 'pro-rep-beneficiaries-training-men',
+                    'female' => 'pro-rep-beneficiaries-training-women',
+                    'non-binary' => 'pro-rep-beneficiaries-training-other',
+                ],
+                'age' => [
+                    'youth' => 'pro-rep-beneficiaries-training-youth',
+                    'non-youth' => 'pro-rep-beneficiaries-training-non-youth',
+                ],
+                'total' => ['pro-rep-beneficiaries-skill-inc', 'pro-rep-people_knowledge-skills-increased'],
+            ],
+        ],
     ];
 
     /**
@@ -96,7 +134,7 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
     {
         // This is the list of all questions related to our linked field keys of concern that were removed since the release
         // and therefore could have data set in an affected update request.
-        $questionIds = FormQuestion::withTrashed()->where('deleted_at', '>', '2025-03-05')->whereIn('linked_field_key', $this->allOldLinkedFieldKeys())->pluck("uuid");
+        $questionIds = FormQuestion::withTrashed()->where('deleted_at', '>', '2025-03-05')->whereIn('linked_field_key', $this->allOldLinkedFieldKeys())->pluck('uuid');
 
         $updateRequests = UpdateRequest::whereNot('status', 'approved')
             ->where('updaterequestable_type', ProjectReport::class)
@@ -108,7 +146,7 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
         $count = (clone $updateRequests)->count();
         $this->info("\n Processing individual update requests...");
         $this->withProgressBar($count, function ($bar) use ($updateRequests) {
-            $updateRequests->each(function ($updateRequest, $index) use ($bar){
+            $updateRequests->each(function ($updateRequest, $index) use ($bar) {
                 $this->processUpdateRequest($updateRequest);
                 $bar->advance();
             });
@@ -121,7 +159,9 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
     private function processUpdateRequest($updateRequest): void
     {
         $projectReport = $updateRequest->updaterequestable;
-        if ($projectReport == null) return;
+        if ($projectReport == null) {
+            return;
+        }
 
         $sections = $projectReport->getForm()->sections()->withTrashed()->get();
         $relevantQuestions = collect();
@@ -135,16 +175,8 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
             ->flatten()
             ->filter()
             ->mapToGroups(fn ($q) => [ $q->linked_field_key => $q->uuid])
-            ->map(
-              function ($uuids, $linkedFieldKey) use ($updateRequest) {
-                $unique = $uuids->unique();
-                if ($unique->count() > 1) {
-                    $encodedIds = json_encode($uuids);
-                    $this->abort("Found multiple question UUIDs for a single linked field: [$updateRequest->uuid, $linkedFieldKey, $encodedIds}]");
-                }
-
-                return $unique->first();
-            });
+            // it's rare, but in some cases we have multiple recently deleted questions for the same linked field key
+            ->map(fn ($uuids) => $uuids->unique());
 
         $requiresSave = false;
         $content = $updateRequest->content;
@@ -188,40 +220,53 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
         $entries = collect();
         $total = 0;
         foreach ($fieldMapping as $type => $subtypes) {
-            if ($type == "total") {
-                $questionUuid = data_get($questionUuidMapping, $subtypes);
-                if (! empty($questionUuid)) {
-                    $total = data_Get($updateRequest->content, $questionUuid, $total);
+            if ($type == 'total') {
+                $subtypes = is_array($subtypes) ? $subtypes : [$subtypes];
+                foreach ($subtypes as $totalLinkedField) {
+                    $questionUuids = data_get($questionUuidMapping, $totalLinkedField);
+                    if (! empty($questionUuids)) {
+                        $total = collect($questionUuids)
+                            ->map(fn ($uuid) => data_get($updateRequest->content, $uuid, 0))
+                            ->push($total)
+                            ->max();
+                    }
                 }
             } else {
                 foreach ($subtypes as $subtype => $linkedFieldKey) {
-                    $questionUuid = data_get($questionUuidMapping, $linkedFieldKey);
-                    if (empty($questionUuid)) continue;
+                    $questionUuids = data_get($questionUuidMapping, $linkedFieldKey);
+                    if (empty($questionUuid)) {
+                        continue;
+                    }
 
-                    $value = data_get($updateRequest->content, $questionUuid);
+                    // Collection's max() correctly returns 0 if an array has nothing but nulls and 0s in it. PHP's
+                    // build-in max() function will return null in that case, but we want to respect the difference
+                    // between null and 0 here.
+                    $value = collect($questionUuids)->map(fn ($uuid) => data_get($updateRequest->content, $uuid))->max();
                     if ($value != null) {
                         $entries->push([
                             'type' => $type,
                             'subtype' => $subtype,
                             'name' => null,
-                            'amount' => $value
+                            'amount' => $value,
                         ]);
                     }
                 }
             }
         }
 
-        if ($entries->count() == 0 && $total == 0) return null;
+        if ($entries->count() == 0 && $total == 0) {
+            return null;
+        }
 
         // Balance gender (and age in non-HBF frameworks) against the reported total. When doing both gender and
         // age, take the max value from the reported total, the gender total and the age total and make sure
         // both gender and age reach that value.
-        $genderTotal = $entries->filter(fn ($entry) => $entry['type'] == "gender")->sum("amount");
-        $ageTotal = $entries->filter(fn ($entry) => $entry['type'] == "age")->sum("amount");
+        $genderTotal = $entries->filter(fn ($entry) => $entry['type'] == 'gender')->sum('amount');
+        $ageTotal = $entries->filter(fn ($entry) => $entry['type'] == 'age')->sum('amount');
         $framework = $updateRequest->updaterequestable->framework_key;
         $missingGender = 0;
         $missingAge = 0;
-        if ($framework == "hbf") {
+        if ($framework == 'hbf') {
             $missingGender = max(0, $total - $genderTotal);
         } else {
             $targetTotal = max($genderTotal, $ageTotal, $total);
@@ -234,7 +279,7 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
                 'type' => 'gender',
                 'subtype' => 'unknown',
                 'name' => null,
-                'amount' => $missingGender
+                'amount' => $missingGender,
             ]);
         }
         if ($missingAge > 0) {
@@ -242,7 +287,7 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
                 'type' => 'age',
                 'subtype' => 'unknown',
                 'name' => null,
-                'amount' => $missingAge
+                'amount' => $missingAge,
             ]);
         }
 
@@ -252,33 +297,45 @@ class FixUpdateRequestsJobsBeneficiaries extends Command
         ];
     }
 
-    private function getQuestionUuid($formElement, $linkedFieldKey): ?string {
+    private function getQuestionUuid($formElement, $linkedFieldKey): ?string
+    {
         if (get_class($formElement) == Form::class) {
             foreach ($formElement->sections as $section) {
                 $uuid = $this->getQuestionUuid($section, $linkedFieldKey);
-                if ($uuid != null) return $uuid;
+                if ($uuid != null) {
+                    return $uuid;
+                }
             }
-        } else if (get_class($formElement) == FormSection::class) {
+        } elseif (get_class($formElement) == FormSection::class) {
             foreach ($formElement->questions as $question) {
                 $uuid = $this->getQuestionUuid($question, $linkedFieldKey);
-                if ($uuid != null) return $uuid;
+                if ($uuid != null) {
+                    return $uuid;
+                }
             }
-        } else if (get_class($formElement) == FormQuestion::class) {
-            if ($formElement->linked_field_key == $linkedFieldKey) return $formElement->uuid;
+        } elseif (get_class($formElement) == FormQuestion::class) {
+            if ($formElement->linked_field_key == $linkedFieldKey) {
+                return $formElement->uuid;
+            }
             foreach ($formElement->children as $question) {
                 $uuid = $this->getQuestionUuid($question, $linkedFieldKey);
-                if ($uuid != null) return $uuid;
+                if ($uuid != null) {
+                    return $uuid;
+                }
             }
         }
 
         return null;
     }
 
-
     private $relevantFieldKeys;
+
     private function allOldLinkedFieldKeys()
     {
-        if ($this->relevantFieldKeys != null) return $this->relevantFieldKeys;
+        if ($this->relevantFieldKeys != null) {
+            return $this->relevantFieldKeys;
+        }
+
         return $this->relevantFieldKeys = collect(self::DEMOGRAPHICS_MAPPING)->values()->flatten()->values()->flatten()->values()->flatten();
     }
 
