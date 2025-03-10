@@ -45,6 +45,16 @@ class GetProjectsController extends Controller
             ->select('v2_projects.uuid', 'long', 'lat', 'v2_projects.name', 'organisations.type')
             ->get();
 
-        return response()->json(['data' => $projects]);
+        $minLong = $projects->min('long');
+        $maxLong = $projects->max('long');
+        $minLat = $projects->min('lat');
+        $maxLat = $projects->max('lat');
+        
+        $bbox = [$minLong, $minLat, $maxLong, $maxLat];
+        
+        return response()->json([
+            'data' => $projects,
+            'bbox' => $bbox
+        ]);
     }
 };
