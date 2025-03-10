@@ -120,8 +120,6 @@ ProjectPitchUpdate:
   $ref: './ProjectPitchUpdate.yml'
 V2SiteRead:
   $ref: './V2SiteRead.yml'
-V2SiteLiteRead:
-  $ref: './V2SiteLiteRead.yml'
 V2SiteMonitoringCreate:
   $ref: './V2SiteMonitoringCreate.yml'
 V2SiteMonitoringUpdate:
@@ -158,8 +156,6 @@ ProjectFullRead:
   $ref: './ProjectFullRead.yml'
 ProjectWithSchemaRead:
   $ref: './ProjectWithSchemaRead.yml'
-SiteFullRead:
-  $ref: './SiteFullRead.yml'
 SiteWithSchemaRead:
   $ref: './SiteWithSchemaRead.yml'
 ProjectPitchRead:
