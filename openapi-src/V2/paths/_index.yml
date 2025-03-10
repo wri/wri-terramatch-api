@@ -46,9 +46,6 @@
 /v2/admin/tasks:
   get:
     $ref: './Tasks/get-v2-admin-tasks.yml'
-/v2/admin/nurseries:
-  get:
-    $ref: './Nurseries/get-v2-admin-nurseries.yml'
 /v2/admin/forms:
   post:
     $ref: './Forms/post-v2-admin-forms.yml'
