@@ -113,7 +113,6 @@ use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisController
 use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisVerifyController;
 use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
 use App\Http\Controllers\V2\MonitoredData\RunIndicatorAnalysisController;
-use App\Http\Controllers\V2\Nurseries\AdminIndexNurseriesController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
 use App\Http\Controllers\V2\Nurseries\CreateNurseryWithFormController;
 use App\Http\Controllers\V2\Nurseries\SoftDeleteNurseryController;
@@ -341,7 +340,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::prefix('nurseries')->group(function () {
-        Route::get('/', AdminIndexNurseriesController::class);
         Route::get('/multi', AdminNurseriesMultiController::class);
     });
 
