@@ -48,6 +48,12 @@ class NormalizeSitePolygonDataCommand extends Command
         'single-line,partial' => 'partial,single-line',
         'single-line,full' => 'full,single-line',
         'full, single-line' => 'full,single-line',
+        'Null' => null,
+        'partial coverage_perimetral' => 'partial',
+        'Partial plantation, Line plantation' => 'partial,single-line',
+        'N/A' => null,
+        'partial,planting-in-patches' => 'partial',
+        '' => null,
     ];
 
     protected $targetSysMapping = [
@@ -58,6 +64,10 @@ class NormalizeSitePolygonDataCommand extends Command
         'Open natural ecosystem or Grasslands' => 'natural-forest',
         'Agroforestry' => 'agroforest',
         'Tree Planting' => 'natural-forest',
+        'N/A' => null,
+        'Null' => null,
+        '' => null,
+        'open-natural-ecosystem' => 'natural-forest',
     ];
 
     protected $practiceMapping = [
@@ -69,6 +79,7 @@ class NormalizeSitePolygonDataCommand extends Command
         'agroforestry-systems,reforestation' => 'direct-seeding',
         'anr' => 'assisted-natural-regeneration',
         'asisted-natural-regeneration, tree-planting' => 'assisted-natural-regeneration,tree-planting',
+        'assisted-natural-regeneration, direct-seeding, tree-planting' => 'assisted-natural-regeneration,direct-seeding,tree-planting',
         'assisted-natural regeneration' => 'assisted-natural-regeneration',
         'assisted-natural-regeneration, tree-planting' => 'assisted-natural-regeneration,tree-planting',
         'assisted-natural-regeneration,tree-planting,direct-seeding' => 'assisted-natural-regeneration,direct-seeding,tree-planting',
@@ -95,6 +106,15 @@ class NormalizeSitePolygonDataCommand extends Command
         'tree-planting,direct-seeding' => 'direct-seeding,tree-planting',
         'tree-planting,direct-seeding,applied-nucleation' => 'direct-seeding,tree-planting',
         'tree-planting,direct-seeding,applied-nucleation,cutting' => 'direct-seeding,tree-planting',
+        'N/A' => null,
+        'Null' => null,
+        '' => null,
+        'agroforestry-/tree-planting' => 'tree-planting',
+        'enrichment-planting' => null,
+        'enrichment-planting,assisted-natural-regeneration' => 'assisted-natural-regeneration',
+        'tree planting/RNA' => 'tree-planting',
+        'tree-planting, direct-seeding, cutting' => 'direct-seeding,tree-planting',
+        'tree-planting, assisted-natural-regeneration, direct-seeding' => 'assisted-natural-regeneration,direct-seeding,tree-planting',
     ];
 
     /**
@@ -164,7 +184,7 @@ class NormalizeSitePolygonDataCommand extends Command
                 continue;
             }
 
-            $count = SitePolygon::where('distr', $oldValue)->count();
+            $count = SitePolygon::withTrashed()->where('distr', $oldValue)->count();
             if ($count > 0) {
                 $valuesToUpdate[$oldValue] = [
                     'new_value' => $newValue,
@@ -193,7 +213,7 @@ class NormalizeSitePolygonDataCommand extends Command
 
         $this->info('Updating distr values...');
         foreach ($valuesToUpdate as $oldValue => $info) {
-            SitePolygon::where('distr', $oldValue)
+            SitePolygon::withTrashed()->where('distr', $oldValue)
                 ->update(['distr' => $info['new_value']]);
 
             $this->info("Updated {$info['count']} records from '{$oldValue}' to " .
@@ -214,7 +234,7 @@ class NormalizeSitePolygonDataCommand extends Command
                 continue;
             }
 
-            $count = SitePolygon::where('target_sys', $oldValue)->count();
+            $count = SitePolygon::withTrashed()->where('target_sys', $oldValue)->count();
             if ($count > 0) {
                 $valuesToUpdate[$oldValue] = [
                     'new_value' => $newValue,
@@ -241,7 +261,7 @@ class NormalizeSitePolygonDataCommand extends Command
 
         $this->info('Updating target_sys values...');
         foreach ($valuesToUpdate as $oldValue => $info) {
-            SitePolygon::where('target_sys', $oldValue)
+            SitePolygon::withTrashed()->where('target_sys', $oldValue)
                 ->update(['target_sys' => $info['new_value']]);
 
             $this->info("Updated {$info['count']} records from '{$oldValue}' to '{$info['new_value']}'");
@@ -261,7 +281,7 @@ class NormalizeSitePolygonDataCommand extends Command
                 continue;
             }
 
-            $count = SitePolygon::where('practice', $oldValue)->count();
+            $count = SitePolygon::withTrashed()->where('practice', $oldValue)->count();
             if ($count > 0) {
                 $valuesToUpdate[$oldValue] = [
                     'new_value' => $newValue,
@@ -290,7 +310,7 @@ class NormalizeSitePolygonDataCommand extends Command
 
         $this->info('Updating practice values...');
         foreach ($valuesToUpdate as $oldValue => $info) {
-            SitePolygon::where('practice', $oldValue)
+            SitePolygon::withTrashed()->where('practice', $oldValue)
                 ->update(['practice' => $info['new_value']]);
 
             $this->info("Updated {$info['count']} records from '{$oldValue}' to " .

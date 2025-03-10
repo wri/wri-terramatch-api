@@ -82,7 +82,7 @@ trait UsesLinkedFields
                         if (! empty($property)) {
                             $inputType = data_get($relationsConfig, "$question->linked_field_key.input_type");
                             $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
-                                $formData[$question->parent_id] === false;
+                                data_get($formData, $question->parent_id) === false;
                             $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)), $hidden);
                         }
                     }

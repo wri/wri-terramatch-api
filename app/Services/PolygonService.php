@@ -396,6 +396,24 @@ class PolygonService
         return implode(',', $properties);
     }
 
+    protected function validateTargetSys(string $targetSys): ?string
+    {
+        $validValues = [
+            'agroforest',
+            'mangrove',
+            'natural-forest',
+            'peatland',
+            'riparian-area-or-wetland',
+            'silvopasture',
+            'urban-forest',
+            'woodlot-or-plantation',
+        ];
+
+        $targetSys = trim($targetSys);
+
+        return in_array($targetSys, $validValues, true) ? $targetSys : null;
+    }
+
     public function validateSitePolygonProperties(string $polygonUuid, array $properties)
     {
         // Avoid trying to store an invalid date string or int in the DB, as that will throw an exception and prevent
@@ -419,6 +437,7 @@ class PolygonService
 
         $practicesValidValues = ['assisted-natural-regeneration', 'direct-seeding','tree-planting'];
         $properties['practice'] = $this->orderCommaSeparatedPropertiesAlphabetically($properties['practice'] ?? '', $practicesValidValues);
+        $properties['target_sys'] = $this->validateTargetSys($properties['target_sys'] ?? '');
 
         return [
             'poly_name' => $properties['poly_name'] ?? null,
@@ -426,7 +445,7 @@ class PolygonService
             'plantstart' => $properties['plantstart'],
             'plantend' => $properties['plantend'],
             'practice' => $properties['practice'],
-            'target_sys' => $properties['target_sys'] ?? null,
+            'target_sys' => $properties['target_sys'],
             'distr' => $properties['distr'],
             'num_trees' => $properties['num_trees'],
             'calc_area' => $properties['area'] ?? null,
