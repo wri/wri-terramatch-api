@@ -16,6 +16,7 @@ use App\Models\V2\Sites\CriteriaSiteHistoric;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
+use App\Models\V2\WorldCountryGeneralized;
 use App\Validators\SitePolygonValidator;
 use DateTime;
 use Exception;
@@ -665,5 +666,30 @@ class PolygonService
         }
 
         return $sitePolygonsQuery;
+    }
+    /**
+     * Get the bounding box of a country by its ISO code.
+     *
+     * @param string $iso
+     * @return array|null
+     */
+    public function getCountryBbox(string $iso): ?array
+    {
+        $countryData = WorldCountryGeneralized::where('iso', $iso)
+            ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) AS bbox, country')
+            ->first();
+
+        if (!$countryData) {
+            return null; // Country not found
+        }
+
+        $geoJson = json_decode($countryData->bbox);
+        $coordinates = $geoJson->coordinates[0];
+        $countryName = $countryData->country;
+
+        return [
+            $countryName,
+            [$coordinates[0][0], $coordinates[0][1], $coordinates[2][0], $coordinates[2][1]],
+        ];
     }
 }
