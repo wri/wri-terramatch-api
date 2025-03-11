@@ -667,6 +667,7 @@ class PolygonService
 
         return $sitePolygonsQuery;
     }
+
     /**
      * Get the bounding box of a country by its ISO code.
      *
@@ -679,7 +680,7 @@ class PolygonService
             ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) AS bbox, country')
             ->first();
 
-        if (!$countryData) {
+        if (! $countryData) {
             return null; // Country not found
         }
 

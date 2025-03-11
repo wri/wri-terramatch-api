@@ -15,6 +15,7 @@ class CountryDataController extends Controller
     public function getCountryBbox(string $iso)
     {
         $countryBbox = App::make(PolygonService::class)->getCountryBbox($iso);
+
         return response()->json(['bbox' => $countryBbox]);
     }
 
