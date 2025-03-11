@@ -75,19 +75,20 @@ class EntityTypeController extends Controller
             $site = Site::where('uuid', $uuid)->firstOrFail();
             $sitePolygons = $this->getSitePolygonsWithFiltersAndSorts($site->sitePolygons()->active(), $request);
             $polygonsUuids = $sitePolygons->pluck('poly_id');
-            
-            if ($sitePolygons->isEmpty() && $site) {
-              $project = $site->project;
 
-              if ($project && $project->country) {
-                  $countryBbox = App::make(PolygonService::class)->getCountryBbox($project->country);
-                  if ($countryBbox) {
-                      $bboxCoordinates = $countryBbox[1];
-                  }
-              }
+            if ($sitePolygons->isEmpty() && $site) {
+                $project = $site->project;
+
+                if ($project && $project->country) {
+                    $countryBbox = App::make(PolygonService::class)->getCountryBbox($project->country);
+                    if ($countryBbox) {
+                        $bboxCoordinates = $countryBbox[1];
+                    }
+                }
             } else {
-              $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsUuids);
+                $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsUuids);
             }
+
             return response()->json([
                 'type' => 'site',
                 'uuid' => $uuid,
