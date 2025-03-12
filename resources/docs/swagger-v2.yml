@@ -86724,19 +86724,6 @@ paths:
                   type: string
                 has_monitoring_data:
                   type: boolean
-    delete:
-      summary: Delete a project
-      operationId: delete-v2-admin-projects-UUID
-      tags:
-        - V2 Projects
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   '/v2/admin/project-reports/{UUID}':
     delete:
       summary: Delete a project report
