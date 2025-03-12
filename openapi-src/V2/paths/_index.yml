@@ -1,6 +1,3 @@
-/v2/tree-species/{entity}/{UUID}:
-  get:
-    $ref: './TreeSpecies/get-v2-tree-species-entity-uuid.yml'
 /v2/{entity}/{UUID}/aggregate-reports:
   get:
     $ref: './TreeSpecies/get-v2-entity-uuid-aggregate-reports.yml'
@@ -113,9 +110,6 @@
 /v2/stratas/{ENTITY}/{UUID}:
   get:
     $ref: './Stratas/get-v2-stratas-entity-uuid.yml'
-/v2/seedings/{ENTITY}/{UUID}:
-  get:
-    $ref: './Seedings/get-v2-seedings-entity-uuid.yml'
 /v2/disturbances/{ENTITY}/{UUID}:
   get:
     $ref: './Disturbances/get-v2-disturbances-entity-uuid.yml'

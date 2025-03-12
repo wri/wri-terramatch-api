@@ -2,22 +2,18 @@
 
 namespace App\Models\V2\TreeSpecies;
 
-use App\Http\Resources\V2\TreeSpecies\TreeSpeciesCollection;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
-use App\Models\V2\EntityModel;
-use App\Models\V2\EntityRelationModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property string $name
  * @property mixed $amount
  */
-class TreeSpecies extends Model implements EntityRelationModel
+class TreeSpecies extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -57,22 +53,6 @@ class TreeSpecies extends Model implements EntityRelationModel
         self::COLLECTION_NURSERY => 'Nursery Seedling',
         self::COLLECTION_HISTORICAL => 'Historical Tree Species',
     ];
-
-    public static function createResourceCollection(EntityModel $entity): JsonResource
-    {
-        $query = TreeSpecies::query()
-            ->where('speciesable_type', get_class($entity))
-            ->where('speciesable_id', $entity->id)
-            ->visible()
-            ->orderBy('amount', 'desc');
-
-        $filter = request()->query('filter');
-        if (! empty($filter['collection'])) {
-            $query->where('collection', $filter['collection']);
-        }
-
-        return new TreeSpeciesCollection($query->get());
-    }
 
     public function scopeVisible($query): Builder
     {
