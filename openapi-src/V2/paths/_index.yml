@@ -40,9 +40,6 @@
 /v2/admin/site-reports:
   get:
     $ref: './SiteReports/get-v2-admin-site-reports.yml'
-/v2/admin/project-reports:
-  get:
-    $ref: './ProjectReports/get-v2-admin-project-reports.yml'
 /v2/admin/tasks:
   get:
     $ref: './Tasks/get-v2-admin-tasks.yml'
