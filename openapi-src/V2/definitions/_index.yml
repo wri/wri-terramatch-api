@@ -130,8 +130,6 @@ V2ProjectMonitoringUpdate:
   $ref: './V2ProjectMonitoringUpdate.yml'
 V2ProjectMonitoringRead:
   $ref: './V2ProjectMonitoringRead.yml'
-V2NurseryLiteRead:
-  $ref: './V2NurseryLiteRead.yml'
 V2StrataRead:
   $ref: './V2StrataRead.yml'
 V2StrataPaginated:

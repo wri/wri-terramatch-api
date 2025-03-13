@@ -1277,9 +1277,6 @@
     responses:
       '200':
         description: OK
-/v2/projects/{UUID}/nurseries:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-nurseries.yml'
 /v2/projects/{UUID}/tasks:
   get:
     $ref: './Projects/get-v2-projects-uuid-tasks.yml'
