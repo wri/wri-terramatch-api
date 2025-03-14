@@ -63,7 +63,7 @@ class GenerateProjectAdminEntityExportJob implements ShouldQueue
 
             $user = User::isUuid($this->uuid)->first();
 
-            $ids = $user->projects()->pluck('v2_projects.id');
+            $ids = $user->frameworkProjects($this->framework)->pluck('id');
 
             Log::info('ids for: '. $ids);
 
