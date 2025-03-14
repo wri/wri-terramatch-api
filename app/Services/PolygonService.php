@@ -319,12 +319,14 @@ class PolygonService
             if (! $site) {
                 throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
             }
+            $plantstart = $properties['plantstart'] ?? $site->start_date;
             $sitePolygon = SitePolygon::create(array_merge(
                 $this->validateSitePolygonProperties($polygonUuid, $properties),
                 [
                     'poly_id' => $polygonUuid ?? null,
                     'created_by' => Auth::user()?->id,
                     'is_active' => true,
+                    'plantstart' => $plantstart,
                 ],
             ));
             $site = $sitePolygon->site()->first();

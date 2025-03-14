@@ -346,7 +346,7 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
             $siteStablishentDate = Site::where('uuid', $siteUuid)->value('start_date');
-            $plantstart = $siteStablishentDate ?? $validatedData['plantstart'];
+            $plantstart = $validatedData['plantstart'] ?? $siteStablishentDate;
             $polygonGeom = PolygonGeometry::where('uuid', $uuid)
             ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
             ->first();
