@@ -5,7 +5,7 @@ namespace App\Console\Commands\OneOff;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-class AssociateExactMatchTrees extends Command
+class UpdateSitePolygonsPlantStartField extends Command
 {
     /**
      * The name and signature of the console command.
