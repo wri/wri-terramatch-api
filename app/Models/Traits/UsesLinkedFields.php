@@ -43,6 +43,10 @@ trait UsesLinkedFields
                     if (! empty($linkedFieldInfo)) {
                         $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
                             data_get($input, $question->parent_id) === false;
+                        if ($linkedFieldInfo['model-label'] === 'Organisation' && $question->input_type === 'treeSpecies') {
+                            //TODO: [TM-1853] Review this error with Organisation tree species model.
+                            continue;
+                        }
                         $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid), $hidden);
                     }
                 }
