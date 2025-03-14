@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Projects\ProjectPolygon;
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
 use App\Services\AreaCalculationService;
@@ -344,6 +345,8 @@ class TerrafundEditGeometryController extends Controller
             if (! $polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
+            $siteStablishentDate = Site::where('uuid', $siteUuid)->value('start_date');
+            $plantstart = $siteStablishentDate ?? $validatedData['plantstart'];
             $polygonGeom = PolygonGeometry::where('uuid', $uuid)
             ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
             ->first();
@@ -352,7 +355,7 @@ class TerrafundEditGeometryController extends Controller
             $areaHectares = $areaCalculationService->getArea($geometry);
             $sitePolygon = new SitePolygon([
                 'poly_name' => $validatedData['poly_name'],
-                'plantstart' => $validatedData['plantstart'],
+                'plantstart' => $plantstart,
                 'plantend' => $validatedData['plantend'],
                 'practice' => $validatedData['practice'],
                 'distr' => $validatedData['distr'],
