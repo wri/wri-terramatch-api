@@ -3,8 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Jobs\SendWeeklyPolygonUpdateNotificationsJob;
+use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class SendWeeklyPolygonUpdateNotifications extends Command
 {
@@ -27,8 +30,10 @@ class SendWeeklyPolygonUpdateNotifications extends Command
      */
     public function handle()
     {
-        SitePolygon::chunkById(100, function ($sitePolygons) {
+        $sitePolygonIds = PolygonUpdates::lastWeek()->distinct()->pluck('site_polygon_uuid');
+        SitePolygon::whereIn('uuid', $sitePolygonIds)->chunkById(100, function (Collection $sitePolygons) {
             $sitePolygons->each(function (SitePolygon $sitePolygon) {
+                Log::info('Running weekly polygon update notifications for SitePolygon: ' . $sitePolygon->uuid);
                 SendWeeklyPolygonUpdateNotificationsJob::dispatchSync($sitePolygon);
             });
         });

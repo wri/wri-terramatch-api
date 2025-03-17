@@ -20,27 +20,26 @@ class PolygonUpdateNotification extends I18nMail
         $this->isManager = $isManager;
         parent::__construct($user);
         $params = $this->getBodyParams();
+
         $this->setSubjectKey('terrafund-polygon-update.subject')
-            ->setBodyKey('terrafund-polygon-update.body')
+            ->setBodyKey('terrafund-polygon-update.' . ($this->isManager ? 'manager' : 'pd') . '.body')
             ->setBodyParams($params);
 
-        if ($isManager) {
-            $this->setTitleKey('terrafund-polygon-update.dqatopd.title');
-        } else {
-            $this->setTitleKey('terrafund-polygon-update.pdtodqa.title');
-        }
+        $this->setTitleKey('terrafund-polygon-update.title');
+        $this->setTitleParams(['{date}' => now()->format('d/m/Y')]);
     }
 
     private function getBodyParams(): array
     {
-        $params = [
-            '{userName}' => $this->user->full_name,
-        ];
-
         $project = $this->sitePolygon->project;
         $site = $this->sitePolygon->site;
         $polygonName = $this->sitePolygon->poly_name;
-        $versionId = $this->sitePolygon->version_name;
+        $versionId = $this->sitePolygon->version_name ?? 'No id';
+
+        $params = [
+            '{userName}' => $this->user->full_name,
+            '{projectName}' => $project->name,
+        ];
 
         $statusChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygon->uuid)->lastWeek()->isStatus()->get();
         $updateChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygon->uuid)->lastWeek()->isUpdate()->get();
@@ -53,6 +52,7 @@ class PolygonUpdateNotification extends I18nMail
 
         if ($hasUpdateChange) {
             $params['{polygonUpdateTable}'] = $this->getTable(
+                'update',
                 $project->name,
                 $site->name,
                 $polygonName,
@@ -63,6 +63,7 @@ class PolygonUpdateNotification extends I18nMail
 
         if ($hasStatusChange) {
             $params['{polygonStatusTable}'] = $this->getTable(
+                'status',
                 $project->name,
                 $site->name,
                 $polygonName,
@@ -74,36 +75,71 @@ class PolygonUpdateNotification extends I18nMail
         return $params;
     }
 
-    public function getTable($projectName, $siteName, $polygonName, $versionId, $list): string
+    public function getTable($type, $projectName, $siteName, $polygonName, $versionId, $polygonUpdates): string
     {
         $rows = [];
 
-        foreach ($list as $item) {
-
-            $rows[] = $this->getRow(
-                $projectName,
-                $siteName,
-                $polygonName,
-                $versionId,
-                $item->change,
-                $item->user->full_name,
-                $item->comment
-            );
+        foreach ($polygonUpdates as $polygonUpdateRecord) {
+            if ($type === 'status') {
+                $rows[] = $this->getStatusRow(
+                    $projectName,
+                    $siteName,
+                    $polygonName,
+                    $polygonUpdateRecord
+                );
+            } else {
+                $rows[] = $this->getUpdateRow(
+                    $projectName,
+                    $siteName,
+                    $polygonName,
+                    $versionId,
+                    $polygonUpdateRecord
+                );
+            }
         }
 
         return implode('', $rows);
     }
 
-    private function getRow($projectName, $siteName, $polygonName, $versionId, $change, $updatedBy, $comment): string
+    private function getStatusRow(string $projectName, string $siteName, string $polygonName, PolygonUpdates $polygonUpdateRecord): string
     {
+        $link = $this->getLink();
+
         return '<tr>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $projectName .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $siteName .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $polygonName .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $versionId .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $change .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $updatedBy .'</td>' .
-        '   <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; border-right:hidden; word-break: break-word;">'. $comment .'</td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $projectName .'</td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $siteName .'</td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;"><a href="'.$link.'">'. $polygonName .'</a></td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $polygonUpdateRecord->old_status .'</td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $polygonUpdateRecord->new_status .'</td>' .
+            ($this->isManager ? ('<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $polygonUpdateRecord->user->full_name .'</td>') : '').
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; border-right:hidden; word-break: break-word;">'. $polygonUpdateRecord->comment .'</td>' .
         '</tr>';
+    }
+
+    private function getUpdateRow(string $projectName, string $siteName, string $polygonName, string $versionId, PolygonUpdates $polygonUpdateRecord): string
+    {
+        $link = $this->getLink();
+
+        return '<tr>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $projectName .'</td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $siteName .'</td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;"><a href="'.$link.'">'. $polygonName .'</a></td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $versionId .'</td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $polygonUpdateRecord->change .'</td>' .
+            ($this->isManager ? ('<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $polygonUpdateRecord->user->full_name .'</td>') : '').
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; border-right:hidden; word-break: break-word;">'. $polygonUpdateRecord->comment .'</td>' .
+        '</tr>';
+    }
+
+    private function getLink(): string
+    {
+        $link = config('app.front_end');
+        if ($this->isManager) {
+            $link .= '/admin#/' . 'site' . '/' . $this->sitePolygon->site_id . '/show/1';
+        } else {
+            $link .= '/site/' . $this->sitePolygon->site_id;
+        }
+
+        return $link;
     }
 }
