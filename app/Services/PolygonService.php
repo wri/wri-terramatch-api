@@ -197,7 +197,7 @@ class PolygonService
             if (isset($sitePolygonProperties['site_id']) && $sitePolygonProperties['site_id'] !== null) {
                 $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
             }
-            if (isset($sitePolygonProperties['site_id']) && (!isset($sitePolygonProperties['plantstart']) || $sitePolygonProperties['plantstart'] === null)) {
+            if (isset($sitePolygonProperties['site_id']) && (! isset($sitePolygonProperties['plantstart']) || $sitePolygonProperties['plantstart'] === null)) {
                 $siteStablishentDate = Site::where('uuid', $sitePolygonProperties['site_id'])->value('start_date');
                 $featureProperties['plantstart'] = $siteStablishentDate;
             }
