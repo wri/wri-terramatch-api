@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Helpers\I18nHelper;
+use App\Helpers\PolygonNotificationMailHelper;
 use App\Models\V2\LocalizationKey;
 use Illuminate\Database\Seeder;
 
@@ -380,85 +381,36 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('v2-project-invite-received-create.cta', 'CREATE ACCOUNT');
 
         // terrafund-polygon-update
-        $this->createLocalizationKey('terrafund-polygon-update.subject', 'Terrafund Polygon Update');
-        $this->createLocalizationKey('terrafund-polygon-update.dqatopd.title', 'Monitoring Partners to DQA Updates');
-        $this->createLocalizationKey('terrafund-polygon-update.pdtodqa.title', 'DQA to Monitoring Partners Updates');
+        $this->createLocalizationKey('terrafund-polygon-update.subject', 'Weekly Update on Polygon Changes');
+        $this->createLocalizationKey('terrafund-polygon-update.title', 'Polygon Updates Week of {date}');
         $this->createLocalizationKey('terrafund-polygon-update.cta', 'View Updates');
         $this->createLocalizationKey(
-            'terrafund-polygon-update.body',
-            '<table style="margin: 0 32px;">'.
-            '<tr>'.
-                '<td>'.
-                    '<p style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Dear {userName},</p>'.
-                    '<p style="text-align: start; font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">Please find below the weekly update on polygon versions, statuses, and comments.</p><br>'.
-                    '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif; display: {hasUpdateChange};">Polygon Version Update</strong></p><br>'.
-                    '<table style="table-layout: fixed;">'.
-                        '<tr>'.
-                            '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px; display: {hasUpdateChange};">'.
-                                '<table style="width: 100%; border-collapse: collapse;">'.
-                                    '<thead>'.
-                                        '<tr>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; border-left:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Project Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Site Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Polygon Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Version ID</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Change</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Updated by</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600; border-right:hidden;">Comment</th>'.
-                                        '</tr>'.
-                                    '</thead>'.
-                                    '<tbody>'.
-                                        '{polygonUpdateTable}'.
-                                    '</tbody>'.
-                                '</table>'.
-                            '</td>'.
-                        '</tr>'.
-                    '</table>'.
-                    '<br><br>'.
-                    '<p style="text-align: start; margin: 0;"><strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif; display: {hasStatusChange};">Polygon Status Update</strong></p><br>'.
-                    '<table style="table-layout: fixed;">'.
-                        '<tr>'.
-                            '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px; display: {hasStatusChange};">'.
-                                '<table style="width: 100%; border-collapse: collapse;">'.
-                                    '<thead>'.
-                                        '<tr>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; border-left:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Project Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Site Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Polygon Name</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Version ID</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Change</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600;">Updated by</th>'.
-                                            '<th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #F7F7F7; border-top:hidden; font-size: 14px; color: #00263399; font-family: \'Inter\', sans-serif; font-weight: 600; border-right:hidden;">Comment</th>'.
-                                        '</tr>'.
-                                    '</thead>'.
-                                    '<tbody>'.
-                                        '{polygonStatusTable}'.
-                                    '</tbody>'.
-                                '</table>'.
-                            '</td>'.
-                        '</tr>'.
-                    '</table>'.
-                    '<br><br>'.
-                    '<p style="text-align: start; font-family: \'Inter\', sans-serif; font-size: 14px; color: #353535;">Best regards,</p>'.
-                    '<p style="text-align: start; margin: 0; font-family: \'Inter\', sans-serif; font-size: 14px; color: #353535;"><strong>TerraMatch Support</strong></p><br>'.
-                '</td>'.
-            '</tr>'.
-        '</table>'
+            'terrafund-polygon-update.manager.body',
+            PolygonNotificationMailHelper::getPolygonNotificationMail(true)
+        );
+        $this->createLocalizationKey(
+            'terrafund-polygon-update.pd.body',
+            PolygonNotificationMailHelper::getPolygonNotificationMail(false)
         );
     }
 
     public function createLocalizationKey($key, $value): void
     {
-        if (LocalizationKey::where('key', operator: $key)->exists()) {
+        $localizationKey = LocalizationKey::where('key', $key)->first();
+        if (! is_null($localizationKey) && $localizationKey->value == $value) {
             return;
         }
 
-        $localizationKey = LocalizationKey::create([
-            'key' => $key,
-            'value' => $value,
-        ]);
-
+        if (is_null($localizationKey)) {
+            $localizationKey = LocalizationKey::create([
+                'key' => $key,
+                'value' => $value,
+                'created_at' => now(),
+            ]);
+        }
+        $localizationKey->value = $value;
         $localizationKey->value_id = I18nHelper::generateI18nItem($localizationKey, 'value');
+        $localizationKey->updated_at = now();
         $localizationKey->save();
     }
 }
