@@ -197,6 +197,10 @@ class PolygonService
             if (isset($sitePolygonProperties['site_id']) && $sitePolygonProperties['site_id'] !== null) {
                 $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
             }
+            if (isset($sitePolygonProperties['site_id']) && (! isset($sitePolygonProperties['plantstart']) || $sitePolygonProperties['plantstart'] === null)) {
+                $siteStablishentDate = Site::where('uuid', $sitePolygonProperties['site_id'])->value('start_date');
+                $featureProperties['plantstart'] = $siteStablishentDate;
+            }
             if($primary_uuid) {
                 $result = $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
                 if ($result === false) {
@@ -319,12 +323,14 @@ class PolygonService
             if (! $site) {
                 throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
             }
+            $plantstart = $properties['plantstart'] ?? $site->start_date;
             $sitePolygon = SitePolygon::create(array_merge(
                 $this->validateSitePolygonProperties($polygonUuid, $properties),
                 [
                     'poly_id' => $polygonUuid ?? null,
                     'created_by' => Auth::user()?->id,
                     'is_active' => true,
+                    'plantstart' => $plantstart,
                 ],
             ));
             $site = $sitePolygon->site()->first();
