@@ -124,11 +124,18 @@ class PolygonUpdateNotification extends I18nMail
             '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; border-left:hidden; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $projectName .'</td>' .
             '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $siteName .'</td>' .
             '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;"><a href="'.$link.'">'. $polygonName .'</a></td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $this->transformSnakeCaseToTitleCase($polygonUpdateRecord->old_status) .'</td>' .
+            '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $this->transformSnakeCaseToTitleCase($polygonUpdateRecord->new_status) .'</td>' .
             '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $versionId .'</td>' .
             '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $polygonUpdateRecord->change .'</td>' .
             ($this->isManager ? ('<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; word-break: break-word;">'. $polygonUpdateRecord->user->full_name .'</td>') : '').
             '<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; color: #002633; font-family: \'Inter\', sans-serif; border-right:hidden; word-break: break-word;">'. $polygonUpdateRecord->comment .'</td>' .
         '</tr>';
+    }
+
+    private function transformSnakeCaseToTitleCase(string $string): string
+    {
+        return ucwords(str_replace('_', ' ', $string));
     }
 
     private function getLink(): string
