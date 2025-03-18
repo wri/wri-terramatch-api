@@ -1267,19 +1267,6 @@
                   type: integer
     operationId: get-v2-admin-project-pitches
     description: ''
-/v2/projects/{UUID}:
-  delete:
-    summary: Delete a specific project (draft / started only)
-    tags:
-      - V2 Projects
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
 /v2/projects/{UUID}/nurseries:
   get:
     $ref: './Projects/get-v2-projects-uuid-nurseries.yml'
@@ -2288,19 +2275,6 @@
 '/v2/admin/projects/{UUID}':
   put:
     $ref: './Projects/put-v2-admin-project.yml'
-  delete:
-    summary: Delete a project
-    operationId: delete-v2-admin-projects-UUID
-    tags:
-      - V2 Projects
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
 '/v2/admin/project-reports/{UUID}':
   delete:
     summary: Delete a project report
