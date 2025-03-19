@@ -11,6 +11,8 @@ class PolygonUpdates extends Model
         'version_name',
         'change',
         'updated_by_id',
+        'old_status',
+        'new_status',
         'comment',
         'type',
     ];

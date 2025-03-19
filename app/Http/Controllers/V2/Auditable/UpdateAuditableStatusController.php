@@ -31,6 +31,8 @@ class UpdateAuditableStatusController extends Controller
         $auditable->save();
 
         if (isset($body['status'])) {
+            $oldStatus = $auditable->status;
+            $newStatus = $status;
             $this->saveAuditStatus(get_class($auditable), $auditable->id, $status, $body['comment'], $body['type']);
             if ($auditable instanceof SitePolygon) {
                 $user = auth()->user();
@@ -38,6 +40,8 @@ class UpdateAuditableStatusController extends Controller
                     'site_polygon_uuid' => $auditable->uuid,
                     'version_name' => $auditable->version_name,
                     'change' => 'New Status: ' . $status,
+                    'old_status' => $oldStatus,
+                    'new_status' => $newStatus,
                     'updated_by_id' => $user->id,
                     'comment' => 'Polygon Status Updated',
                     'type' => 'status',

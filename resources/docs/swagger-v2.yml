@@ -66445,19 +66445,6 @@ paths:
                     type: integer
       operationId: get-v2-admin-project-pitches
       description: ''
-  '/v2/projects/{UUID}':
-    delete:
-      summary: Delete a specific project (draft / started only)
-      tags:
-        - V2 Projects
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   '/v2/projects/{UUID}/tasks':
     get:
       summary: Get the tasks of a specific project
@@ -83723,19 +83710,6 @@ paths:
                   type: string
                 has_monitoring_data:
                   type: boolean
-    delete:
-      summary: Delete a project
-      operationId: delete-v2-admin-projects-UUID
-      tags:
-        - V2 Projects
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   '/v2/admin/project-reports/{UUID}':
     delete:
       summary: Delete a project report
