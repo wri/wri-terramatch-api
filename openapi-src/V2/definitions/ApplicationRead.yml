@@ -13,7 +13,7 @@ properties:
     format: uuid
   funding_programme:
     type: object
-    $ref: './_index.yml#/FundingProgramme'
+    $ref: './_index.yml#/FundingProgrammeWithLiteStages'
   organisation:
     type: object
     $ref: './_index.yml#/V2AdminOrganisationRead'
