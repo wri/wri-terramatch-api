@@ -19,7 +19,7 @@ properties:
     type: string
   order:
     type: integer
-  forms:
+  form:
     $ref: './_index.yml#/FormRead'
   deleted_at:
     type: string

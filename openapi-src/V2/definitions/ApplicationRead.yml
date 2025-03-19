@@ -8,9 +8,9 @@ properties:
     items:
       type: object
       $ref: './_index.yml#/FormSubmissionRead'
-  current_submission:
-    type: object
-    $ref: './_index.yml#/FormSubmissionRead'
+  current_submission_uuid:
+    type: string
+    format: uuid
   funding_programme:
     type: object
     $ref: './_index.yml#/FundingProgramme'
