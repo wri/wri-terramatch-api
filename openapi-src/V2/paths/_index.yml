@@ -43,9 +43,6 @@
 /v2/admin/tasks:
   get:
     $ref: './Tasks/get-v2-admin-tasks.yml'
-/v2/admin/nurseries:
-  get:
-    $ref: './Nurseries/get-v2-admin-nurseries.yml'
 /v2/admin/forms:
   post:
     $ref: './Forms/post-v2-admin-forms.yml'
@@ -1267,9 +1264,6 @@
                   type: integer
     operationId: get-v2-admin-project-pitches
     description: ''
-/v2/projects/{UUID}/nurseries:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-nurseries.yml'
 /v2/projects/{UUID}/tasks:
   get:
     $ref: './Projects/get-v2-projects-uuid-tasks.yml'
