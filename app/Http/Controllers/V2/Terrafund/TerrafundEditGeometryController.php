@@ -262,14 +262,16 @@ class TerrafundEditGeometryController extends Controller
             $newPolygonVersion = $sitePolygon->createCopy($user, null, false, $validatedData);
 
             $diff = $this->getDiff($sitePolygon, $newPolygonVersion);
-            PolygonUpdates::create([
-                'site_polygon_uuid' => $sitePolygon->uuid,
-                'version_name' => $newPolygonVersion->version_name,
-                'change' => implode(', ', $diff),
-                'updated_by_id' => $user->id,
-                'comment' => 'Polygon Updated',
-                'type' => 'update',
-            ]);
+            if (! empty($diff)) {
+                PolygonUpdates::create([
+                    'site_polygon_uuid' => $sitePolygon->primary_uuid,
+                    'version_name' => $newPolygonVersion->version_name,
+                    'change' => implode(', ', $diff),
+                    'updated_by_id' => $user->id,
+                    'comment' => 'Polygon Updated',
+                    'type' => 'update',
+                ]);
+            }
 
             if (! $newPolygonVersion) {
                 return response()->json(['error' => 'An error occurred while creating a new version of the site polygon'], 500);
