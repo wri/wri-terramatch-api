@@ -24,8 +24,9 @@ class TotalTerrafundHeaderDashboardController extends Controller
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
             $cacheValue = Redis::get('dashboard:total-section-header|'.$cacheParameter);
-            $timestampKey = 'dashboard:total-section-header|' . $cacheParameter . ':timestamp';
-            $lastUpdatedAt = Redis::get($timestampKey);
+            // here should be set the last updated at for the dashboard
+            // $timestampKey = 'dashboard:total-section-header|' . $cacheParameter . ':timestamp';
+            // $lastUpdatedAt = Redis::get($timestampKey);
 
             if (! $cacheValue) {
                 $frameworks = data_get($request, 'filter.programmes', []);
@@ -51,7 +52,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
                 return (new DelayedJobResource($delayedJob))->additional(['message' => 'Data for total-section-header is being processed']);
             } else {
                 $data = json_decode($cacheValue);
-                $data->last_updated_at = $lastUpdatedAt;
+                // $data->last_updated_at = $lastUpdatedAt;
 
                 return response()->json($data);
             }
