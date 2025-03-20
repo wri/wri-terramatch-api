@@ -1,0 +1,5 @@
+title: V2TaskReadUuid
+type: object
+properties:
+  uuid:
+    type: string

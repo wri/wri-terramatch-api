@@ -1295,6 +1295,9 @@
 /v2/tasks/{UUID}:
   get:
     $ref: './Tasks/get-v2-tasks-uuid.yml'
+/v2/tasks/{ID}/id:
+  get:
+    $ref: './Tasks/get-v2-tasks-id.yml'
 /v2/tasks/{UUID}/reports:
   get:
     $ref: './Tasks/get-v2-tasks-uuid-reports.yml'
