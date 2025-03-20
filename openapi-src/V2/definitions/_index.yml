@@ -18,6 +18,8 @@ UserReadAll:
   $ref: './UserReadAll.yml'
 FundingProgramme:
   $ref: './FundingProgramme.yml'
+FundingProgrammeWithLiteStages:
+  $ref: './FundingProgrammeWithLiteStages.yml'
 LimitedFundingProgrammeRead:
   $ref: './LimitedFundingProgrammeRead.yml'
 FundingProgrammeStatus:
