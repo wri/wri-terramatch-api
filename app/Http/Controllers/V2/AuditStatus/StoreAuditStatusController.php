@@ -33,7 +33,7 @@ class StoreAuditStatusController extends Controller
             if ($auditable instanceof SitePolygon) {
                 $user = auth()->user();
                 PolygonUpdates::create([
-                    'site_polygon_uuid' => $auditable->uuid,
+                    'site_polygon_uuid' => $auditable->primary_uuid,
                     'version_name' => $auditable->version_name,
                     'change' => 'New Comment',
                     'updated_by_id' => $user->id,
