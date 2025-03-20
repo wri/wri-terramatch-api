@@ -30,10 +30,12 @@ class StoreAuditStatusController extends Controller
             $auditStatus = $this->saveAuditStatus(get_class($auditable), $auditable->id, $body['status'], $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
         } else {
             $auditStatus = $this->saveAuditStatus(get_class($auditable), $auditable->id, $body['status'], $body['comment'], $body['type']);
+            $oldStatus = $auditable->status;
+            $newStatus = $body['status'];
+            $auditable->status = $newStatus;
+            $auditable->save();
             if ($auditable instanceof SitePolygon) {
                 $user = auth()->user();
-                $oldStatus = $auditable->status;
-                $newStatus = $body['status'];
                 if ($oldStatus !== $newStatus) {
                     PolygonUpdates::create([
                         'site_polygon_uuid' => $auditable->primary_uuid,

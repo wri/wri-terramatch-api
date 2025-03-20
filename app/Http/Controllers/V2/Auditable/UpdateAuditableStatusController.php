@@ -25,14 +25,12 @@ class UpdateAuditableStatusController extends Controller
         }
 
         $body = $request->all();
-        $status = $body['status'];
-
-        $auditable->status = $status;
-        $auditable->save();
-
         if (isset($body['status'])) {
+            $status = $body['status'];
             $oldStatus = $auditable->status;
             $newStatus = $status;
+            $auditable->status = $status;
+            $auditable->save();
             $this->saveAuditStatus(get_class($auditable), $auditable->id, $status, $body['comment'], $body['type']);
             if ($auditable instanceof SitePolygon) {
                 $user = auth()->user();
