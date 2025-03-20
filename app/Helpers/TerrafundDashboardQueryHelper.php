@@ -151,9 +151,19 @@ class TerrafundDashboardQueryHelper
         $projectUuids = TerrafundDashboardQueryHelper::buildQueryFromRequest($request)
             ->pluck('v2_projects.uuid');
 
-        $approvedStatus = ['approved'];
+        $filters = $request->query('filter');
+        if (!isset($filters['status'])) {
+            $status = ['approved'];
+        } else {
+            $status = $filters['status'];
+            if ($status === 'all') {
+              $status = ['needs-more-information', 'submitted', 'approved', 'draft'];
+            } else {
+              $status = explode(',', $status);
+            }
+        }
 
-        return self::retrievePolygonUuidsByStatusForProjects($projectUuids, $approvedStatus);
+        return self::retrievePolygonUuidsByStatusForProjects($projectUuids, $status);
     }
 
     public static function buildImpactStoryQuery(array $filters, ?string $search, ?string $sort)
