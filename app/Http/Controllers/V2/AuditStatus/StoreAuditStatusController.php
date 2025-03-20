@@ -32,14 +32,20 @@ class StoreAuditStatusController extends Controller
             $auditStatus = $this->saveAuditStatus(get_class($auditable), $auditable->id, $body['status'], $body['comment'], $body['type']);
             if ($auditable instanceof SitePolygon) {
                 $user = auth()->user();
-                PolygonUpdates::create([
-                    'site_polygon_uuid' => $auditable->primary_uuid,
-                    'version_name' => $auditable->version_name,
-                    'change' => 'New Comment',
-                    'updated_by_id' => $user->id,
-                    'comment' => $body['comment'],
-                    'type' => 'update',
-                ]);
+                $oldStatus = $auditable->status;
+                $newStatus = $body['status'];
+                if ($oldStatus !== $newStatus) {
+                    PolygonUpdates::create([
+                        'site_polygon_uuid' => $auditable->primary_uuid,
+                        'version_name' => $auditable->version_name,
+                        'change' => 'Polygon Status Updated',
+                        'old_status' => $oldStatus,
+                        'new_status' => $newStatus,
+                        'updated_by_id' => $user->id,
+                        'comment' => $body['comment'],
+                        'type' => 'status',
+                    ]);
+                }
             }
             if ($body['type'] == 'comment' && get_class($auditable) != SitePolygon::class) {
                 SendProjectManagerJobs::dispatch($auditable);
