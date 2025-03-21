@@ -44,12 +44,19 @@ trait HasCacheParameter
     private function getCacheParameterForOrganisations($organisations)
     {
         if (empty($organisations)) {
-            return '';
+            return 'all-orgs';
         }
 
         $sortedOrganisations = is_array($organisations) ? $organisations : [$organisations];
 
         sort($sortedOrganisations);
+
+        $allOrgTypes = ['non-profit-organization', 'for-profit-organization'];
+        sort($allOrgTypes);
+
+        if ($sortedOrganisations == $allOrgTypes) {
+            return 'all-orgs';
+        }
 
         return implode(',', $sortedOrganisations);
     }
