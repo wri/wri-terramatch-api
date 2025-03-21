@@ -9,7 +9,6 @@ use App\Services\PolygonService;
 use App\Services\SiteService;
 use Exception;
 use Illuminate\Bus\Queueable;
-
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Response;
@@ -63,7 +62,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
         try {
             $geojsonContent = Redis::get($this->redis_key);
 
-            if (!$geojsonContent) { 
+            if (! $geojsonContent) {
                 Log::error('GeoJSON content not found in Redis for key: ' . $this->redis_key);
                 $delayedJob->update([
                     'status' => DelayedJob::STATUS_FAILED,
