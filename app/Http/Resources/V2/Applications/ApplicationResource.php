@@ -15,7 +15,7 @@ class ApplicationResource extends JsonResource
             'uuid' => $this->uuid,
             'form_submissions' => FormSubmissionResource::collection($this->formSubmissions),
             'current_submission_uuid' => $this->currentSubmission?->uuid,
-            'funding_programme' => new FundingProgrammeResource($this->fundingProgramme),
+            'funding_programme' => new FundingProgrammeResource($this->fundingProgramme, true),
             'organisation' => new OrganisationLiteResource($this->organisation),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

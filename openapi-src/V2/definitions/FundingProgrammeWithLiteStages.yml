@@ -1,0 +1,46 @@
+title: FundingProgrammeRead
+x-stoplight:
+  id: uh5oce75en4za
+type: object
+properties:
+  id:
+    type: integer
+  uuid:
+    type: string
+  name:
+    type: string
+  description:
+    type: string
+  location:
+    type: string
+  read_more_url:
+    type: string
+  framework_key:
+    type: string
+  status:
+    type: string
+  organisation_types:
+    type: array
+    items:
+      type: string
+  stages:
+    type: array
+    items:
+      $ref: './_index.yml#/StageLiteRead'
+  organisations:
+    type: array
+    items:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+  cover:
+    $ref: './_index.yml#/V2FileRead'
+  deleted_at:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string
