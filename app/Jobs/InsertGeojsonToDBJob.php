@@ -63,7 +63,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
         try {
             $geojsonContent = Redis::get($this->redis_key);
 
-            if (! $geojsonContent) {
+            if (!$geojsonContent) { 
                 Log::error('GeoJSON content not found in Redis for key: ' . $this->redis_key);
                 $delayedJob->update([
                     'status' => DelayedJob::STATUS_FAILED,
