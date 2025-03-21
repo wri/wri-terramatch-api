@@ -201,7 +201,7 @@ class PolygonService
                 $siteStablishentDate = Site::where('uuid', $sitePolygonProperties['site_id'])->value('start_date');
                 $featureProperties['plantstart'] = $siteStablishentDate;
             }
-            if($primary_uuid) {
+            if ($primary_uuid) {
                 $result = $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
                 if ($result === false) {
                     $this->insertSitePolygon(
