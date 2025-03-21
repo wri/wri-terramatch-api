@@ -39,7 +39,7 @@ class V2SeparateInterventionMethodsCommand extends Command
 
                 if ($pitch->restoration_intervention_types) {
                     foreach ($pitch->restoration_intervention_types as $item) {
-                        switch($item) {
+                        switch ($item) {
                             case 'agroforestry':
                                 $landUse[] = 'agroforest';
 
