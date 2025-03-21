@@ -234,8 +234,6 @@ ActionRead:
   $ref: './ActionRead.yml'
 V2TaskRead:
   $ref: './V2TaskRead.yml'
-V2TaskReadUuid:
-  $ref: './V2TaskReadUuid.yml'
 V2TaskActionRead:
   $ref: './V2TaskActionRead.yml'
 StatusUpdate:
