@@ -3,12 +3,21 @@
 namespace App\Http\Resources\V2\FundingProgrammes;
 
 use App\Http\Resources\V2\Organisation\OrganisationLiteResource;
+use App\Http\Resources\V2\Stages\StageLiteResource;
 use App\Http\Resources\V2\Stages\StagesCollection;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class FundingProgrammeResource extends JsonResource
 {
+    protected bool $useLightStages;
+
+    public function __construct($resource, $useLightStages = false)
+    {
+        parent::__construct($resource);
+        $this->useLightStages = $useLightStages;
+    }
+
     /**
      * @param  Request  $request
      * @return array
@@ -29,7 +38,7 @@ class FundingProgrammeResource extends JsonResource
             'deadline_at' => $deadline ? Carbon::parse($deadline, 'EST')->toISOString() : null,
             'status' => $this->status,
             'organisation_types' => $this->organisation_types,
-            'stages' => new StagesCollection($this->stages),
+            'stages' => $this->useLightStages ? StageLiteResource::collection($this->stages) : new StagesCollection($this->stages),
             'organisations' => OrganisationLiteResource::collection($this->organisations),
             'deleted_at' => $this->deleted_at,
             'created_at' => $this->created_at,

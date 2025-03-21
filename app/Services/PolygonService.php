@@ -16,6 +16,7 @@ use App\Models\V2\Sites\CriteriaSiteHistoric;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
+use App\Models\V2\WorldCountryGeneralized;
 use App\Validators\SitePolygonValidator;
 use DateTime;
 use Exception;
@@ -196,6 +197,10 @@ class PolygonService
             if (isset($sitePolygonProperties['site_id']) && $sitePolygonProperties['site_id'] !== null) {
                 $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
             }
+            if (isset($sitePolygonProperties['site_id']) && (! isset($sitePolygonProperties['plantstart']) || $sitePolygonProperties['plantstart'] === null)) {
+                $siteStablishentDate = Site::where('uuid', $sitePolygonProperties['site_id'])->value('start_date');
+                $featureProperties['plantstart'] = $siteStablishentDate;
+            }
             if($primary_uuid) {
                 $result = $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
                 if ($result === false) {
@@ -318,12 +323,14 @@ class PolygonService
             if (! $site) {
                 throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
             }
+            $plantstart = $properties['plantstart'] ?? $site->start_date;
             $sitePolygon = SitePolygon::create(array_merge(
                 $this->validateSitePolygonProperties($polygonUuid, $properties),
                 [
                     'poly_id' => $polygonUuid ?? null,
                     'created_by' => Auth::user()?->id,
                     'is_active' => true,
+                    'plantstart' => $plantstart,
                 ],
             ));
             $site = $sitePolygon->site()->first();
@@ -665,5 +672,31 @@ class PolygonService
         }
 
         return $sitePolygonsQuery;
+    }
+
+    /**
+     * Get the bounding box of a country by its ISO code.
+     *
+     * @param string $iso
+     * @return array|null
+     */
+    public function getCountryBbox(string $iso): ?array
+    {
+        $countryData = WorldCountryGeneralized::where('iso', $iso)
+            ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) AS bbox, country')
+            ->first();
+
+        if (! $countryData) {
+            return null; // Country not found
+        }
+
+        $geoJson = json_decode($countryData->bbox);
+        $coordinates = $geoJson->coordinates[0];
+        $countryName = $countryData->country;
+
+        return [
+            $countryName,
+            [$coordinates[0][0], $coordinates[0][1], $coordinates[2][0], $coordinates[2][1]],
+        ];
     }
 }

@@ -40,14 +40,12 @@ class SendWeeklyPolygonUpdateNotificationsJob implements ShouldQueue
         if (! $project) {
             return;
         }
-
         $hasPolygonUpdates = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygon->uuid)->lastWeek()->count();
-
         if ($hasPolygonUpdates === 0) {
             return;
         }
 
-        $usersPdWithSkip = $this->skipRecipients($project->users()->get());
+        $usersPdWithSkip = $this->skipRecipients($project->users()->wherePivot('is_monitoring', true)->get());
         $usersManagersWithSkip = $this->skipRecipients($project->managers()->get());
 
         foreach ($usersPdWithSkip as $user) {

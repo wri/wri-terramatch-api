@@ -1,6 +1,3 @@
-/v2/tree-species/{entity}/{UUID}:
-  get:
-    $ref: './TreeSpecies/get-v2-tree-species-entity-uuid.yml'
 /v2/{entity}/{UUID}/aggregate-reports:
   get:
     $ref: './TreeSpecies/get-v2-entity-uuid-aggregate-reports.yml'
@@ -43,9 +40,6 @@
 /v2/admin/tasks:
   get:
     $ref: './Tasks/get-v2-admin-tasks.yml'
-/v2/admin/nurseries:
-  get:
-    $ref: './Nurseries/get-v2-admin-nurseries.yml'
 /v2/admin/forms:
   post:
     $ref: './Forms/post-v2-admin-forms.yml'
@@ -110,9 +104,6 @@
 /v2/stratas/{ENTITY}/{UUID}:
   get:
     $ref: './Stratas/get-v2-stratas-entity-uuid.yml'
-/v2/seedings/{ENTITY}/{UUID}:
-  get:
-    $ref: './Seedings/get-v2-seedings-entity-uuid.yml'
 /v2/disturbances/{ENTITY}/{UUID}:
   get:
     $ref: './Disturbances/get-v2-disturbances-entity-uuid.yml'
@@ -1270,22 +1261,6 @@
                   type: integer
     operationId: get-v2-admin-project-pitches
     description: ''
-/v2/projects/{UUID}:
-  delete:
-    summary: Delete a specific project (draft / started only)
-    tags:
-      - V2 Projects
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-/v2/projects/{UUID}/nurseries:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-nurseries.yml'
 /v2/projects/{UUID}/tasks:
   get:
     $ref: './Projects/get-v2-projects-uuid-tasks.yml'
@@ -2294,19 +2269,6 @@
 '/v2/admin/projects/{UUID}':
   put:
     $ref: './Projects/put-v2-admin-project.yml'
-  delete:
-    summary: Delete a project
-    operationId: delete-v2-admin-projects-UUID
-    tags:
-      - V2 Projects
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
 '/v2/admin/project-reports/{UUID}':
   delete:
     summary: Delete a project report
