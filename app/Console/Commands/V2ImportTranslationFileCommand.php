@@ -55,36 +55,39 @@ class V2ImportTranslationFileCommand extends Command
             $contents = json_decode($disk->get($filename));
 
             foreach ($contents as $hash => $translation) {
-                $i18Items = I18nItem::where('hash', $hash)->get();
+                $i18nItems = I18nItem::where('hash', $hash)->get();
                 $value = data_get($translation, 'string', '');
                 $short = strlen($value) < 256;
 
                 if (! empty($value)) {
-                    foreach ($i18Items as $i18Item) {
-                        $i18Translation = $i18Item->getTranslated($lang);
+                    foreach ($i18nItems as $i18nItem) {
+                        $i18nTranslation = $i18nItem->getTranslated($lang);
 
-                        if (empty($i18Translation)) {
+                        if (empty($i18nTranslation)) {
                             I18nTranslation::create([
-                                'i18n_item_id' => $i18Item->id,
+                                'i18n_item_id' => $i18nItem->id,
                                 'language' => $lang,
                                 'short_value' => $short ? $value : null,
                                 'long_value' => $short ? null : $value,
                             ]);
                         } else {
-                            $i18Translation->update([
+                            $i18nTranslation->update([
                                 'short_value' => $short ? $value : null,
                                 'long_value' => $short ? null : $value,
                             ]);
                         }
 
-                        if (! in_array($i18Item->id, $processedIds)) {
-                            $processedIds[] = $i18Item->id;
+                        if (! in_array($i18nItem->id, $processedIds)) {
+                            $processedIds[] = $i18nItem->id;
                         }
                     }
                 }
             }
         }
 
-        I18nItem::whereIn('id', $processedIds)->update(['status' => I18nItem::STATUS_TRANSLATED]);
+        // Process update in chunks to prevent hitting database limits with large arrays
+        collect($processedIds)->chunk(100)->each(function ($chunk) {
+            I18nItem::whereIn('id', $chunk->all())->update(['status' => I18nItem::STATUS_TRANSLATED]);
+        });
     }
 }
