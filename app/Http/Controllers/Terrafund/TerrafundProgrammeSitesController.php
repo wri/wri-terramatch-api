@@ -49,7 +49,7 @@ class TerrafundProgrammeSitesController extends Controller
     {
         $this->authorize('read', $terrafundProgramme);
         $resources = [];
-        foreach ($terrafundProgramme->terrafundSites  as $site) {
+        foreach ($terrafundProgramme->terrafundSites as $site) {
             $metric = $site->baselineMonitoring()->first();
             if (! empty($metric)) {
                 $resources[] = new SiteMetricResource($metric);

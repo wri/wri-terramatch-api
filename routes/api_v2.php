@@ -152,7 +152,6 @@ use App\Http\Controllers\V2\ProjectPitches\SubmitProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\UpdateProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController;
-use App\Http\Controllers\V2\ProjectReports\AdminIndexProjectReportsController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\AdminUpdateProjectController;
@@ -351,7 +350,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::get('nursery-reports', AdminIndexNurseryReportsController::class);
     Route::get('site-reports', AdminIndexSiteReportsController::class);
-    Route::get('project-reports', AdminIndexProjectReportsController::class);
 
     Route::prefix('funding-programme/stage')->group(function () {
         Route::post('/', StoreStageController::class);

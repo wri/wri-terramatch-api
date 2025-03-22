@@ -19,7 +19,7 @@ class WorldCountriesGeneralizedTableSeeder extends Seeder
             $s3FilePath = 'world_countries/world_country_geometry.json';
 
             $fileContents = Storage::disk('s3')->get($s3FilePath);
-            if(! $fileContents) {
+            if (! $fileContents) {
                 throw new Exception('Failed to get file contents from S3');
             }
             $geometry = json_decode($fileContents, true);
@@ -2035,7 +2035,7 @@ class WorldCountriesGeneralizedTableSeeder extends Seeder
             ];
 
             foreach ($countries as $country) {
-                if(isset($geometry[$country['iso']])) {
+                if (isset($geometry[$country['iso']])) {
                     $country['geometry'] = DB::raw('ST_GeomFromGeoJSON(' . json_encode($geometry[$country['iso']]) . ')');
                     DB::table('world_countries_generalized')->insert($country);
                 }

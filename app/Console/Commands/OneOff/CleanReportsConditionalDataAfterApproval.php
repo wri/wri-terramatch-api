@@ -30,17 +30,17 @@ class CleanReportsConditionalDataAfterApproval extends Command
     public function handle()
     {
         ProjectReport::where('status', EntityStatusStateMachine::APPROVED)->chunk(100, function ($chunk) {
-            foreach($chunk as $projectReport) {
+            foreach ($chunk as $projectReport) {
                 $projectReport->cleanUpConditionalData();
             }
         });
         SiteReport::where('status', EntityStatusStateMachine::APPROVED)->chunk(100, function ($chunk) {
-            foreach($chunk as $siteReport) {
+            foreach ($chunk as $siteReport) {
                 $siteReport->cleanUpConditionalData();
             }
         });
         NurseryReport::where('status', EntityStatusStateMachine::APPROVED)->chunk(100, function ($chunk) {
-            foreach($chunk as $nurseryReport) {
+            foreach ($chunk as $nurseryReport) {
                 $nurseryReport->cleanUpConditionalData();
             }
         });
