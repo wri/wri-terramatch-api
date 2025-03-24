@@ -18,7 +18,7 @@ class SiteService
                 return;
             }
             $site->restorationInProgress();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new \Exception($e->getMessage(), Response::HTTP_NOT_MODIFIED);
         }
     }

@@ -184,10 +184,6 @@ ApplicationLiteRead:
   $ref: './ApplicationLiteRead.yml'
 ApplicationRead:
   $ref: './ApplicationRead.yml'
-ProjectReportLiteRead:
-  $ref: './ProjectReportLiteRead.yml'
-ProjectReportPaginated:
-  $ref: './ProjectReportPaginated.yml'
 TaskPaginated:
   $ref: './TaskPaginated.yml'
 SiteReportLiteRead:

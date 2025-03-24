@@ -87,7 +87,7 @@ class EditHistoryController extends Controller
         $collection = $qry->paginate($perPage);
 
         $resources = [];
-        foreach ($collection  as $edit) {
+        foreach ($collection as $edit) {
             $resources[] = new EditHistoryResource($edit);
         }
 

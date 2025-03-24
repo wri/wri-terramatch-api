@@ -9,7 +9,6 @@ use App\Services\PolygonService;
 use App\Services\SiteService;
 use Exception;
 use Illuminate\Bus\Queueable;
-
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Response;
