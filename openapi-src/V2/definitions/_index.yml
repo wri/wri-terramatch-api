@@ -190,10 +190,6 @@ SiteReportLiteRead:
   $ref: './SiteReportLiteRead.yml'
 SiteReportPaginated:
   $ref: './SiteReportPaginated.yml'
-NurseryReportLiteRead:
-  $ref: './NurseryReportLiteRead.yml'
-NurseryReportPaginated:
-  $ref: './NurseryReportPaginated.yml'
 NurseryPaginated:
   $ref: './NurseryPaginated.yml'
 NurseryRead:
