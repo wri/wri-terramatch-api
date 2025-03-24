@@ -43,7 +43,7 @@ return $config->setRules([
             'on_multiline' => 'ensure_fully_multiline',
             'keep_multiple_spaces_after_comma' => true,
         ],
-        'new_with_parentheses' => false,
+        'new_with_braces' => false,
         'single_quote' => true,
     ])
     ->setFinder($finder);
