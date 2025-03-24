@@ -20,6 +20,7 @@ class GetPolygonsController extends Controller
 
         return response()->json(['centroid' => $centroid]);
     }
+
     public function getPolygonsOfProject($projectId)
     {
         if (! $projectId) {
