@@ -451,4 +451,17 @@ class GeometryHelper
             'features' => $features,
         ];
     }
+
+    public static function centroidOfPolygon($polyUUID)
+    {
+        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS lon, ST_Y(ST_Centroid(geom)) AS lat')
+        ->where('uuid', $polyUUID)
+        ->first();
+
+        if (! $centroid) {
+            return [];
+        }
+
+        return [$centroid->lon, $centroid->lat];
+    }
 }

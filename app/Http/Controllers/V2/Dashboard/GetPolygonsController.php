@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Log;
 
 class GetPolygonsController extends Controller
 {
+    public function getCentroidOfPolygon($polyUUID)
+    {
+        $centroid = GeometryHelper::centroidOfPolygon($polyUUID);
+
+        return response()->json(['centroid' => $centroid]);
+    }
+
     public function getPolygonsOfProject($projectId)
     {
         if (! $projectId) {

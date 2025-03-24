@@ -41681,6 +41681,13 @@ definitions:
                     type: string
                   poly_id:
                     type: string
+  DashboardGetPolygonCentroidResponse:
+    type: object
+    properties:
+      centroid:
+        type: array
+        items:
+          type: number
 paths:
   '/v2/{entity}/{UUID}/aggregate-reports':
     get:
@@ -85384,6 +85391,27 @@ paths:
                             type: string
                           poly_id:
                             type: string
+  '/v2/dashboard/polygons/{poly_uuid}/centroid':
+    get:
+      summary: Retrieve the centroid of a polygon
+      description: |
+        This endpoint returns the centroid of a polygon.
+      parameters:
+        - name: poly_uuid
+          type: string
+          in: path
+          description: The uuid of the polygon
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              centroid:
+                type: array
+                items:
+                  type: number
   /v2/dashboard/get-polygons/statuses:
     get:
       summary: Retrieve all polygons.

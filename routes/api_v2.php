@@ -738,6 +738,7 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/projects/{project}/polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
+    Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
