@@ -6,6 +6,7 @@ parameters:
     type: string
     in: path
     description: The project uuid
+    required: true
 responses:
   '200':
     description: Successful response
