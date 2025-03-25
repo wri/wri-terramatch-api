@@ -40406,6 +40406,18 @@ definitions:
           Approved:
             type: array
             description: Ids of approved polygons
+      centroids:
+        type: array
+        description: Centroids of polygons
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+              description: Uuid of polygon
+            centroid:
+              type: array
+              description: Centroid of polygon
   DashboardBBOXProject:
     type: object
     properties:
@@ -85439,6 +85451,18 @@ paths:
                   Approved:
                     type: array
                     description: Ids of approved polygons
+              centroids:
+                type: array
+                description: Centroids of polygons
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      description: Uuid of polygon
+                    centroid:
+                      type: array
+                      description: Centroid of polygon
         '400':
           description: Bad request
         '500':
