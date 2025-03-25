@@ -20,6 +20,9 @@ properties:
         uuid:
           type: string
           description: Uuid of polygon
-        centroid:
-          type: array
-          description: Centroid of polygon
+        long:
+          type: number
+          description: Longitude of polygon
+        lat:
+          type: number
+          description: Latitude of polygon

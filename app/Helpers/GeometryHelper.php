@@ -477,10 +477,8 @@ class GeometryHelper
             ->map(function ($polygon) {
                 return [
                     'uuid' => $polygon->uuid,
-                    'centroid' => [
-                        (float) $polygon->centroid_x,
-                        (float) $polygon->centroid_y,
-                    ],
+                    'long' => $polygon->centroid_x,
+                    'lat' => $polygon->centroid_y
                 ];
             });
     }
