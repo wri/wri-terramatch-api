@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('organisation_id');
             $table->string('collection', 255);
             $table->decimal('amount', 15, 2);
-            $table->tinyInteger('year')->unsigned();
+            $table->unsignedSmallInteger('year');
             $table->string('documentation')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
