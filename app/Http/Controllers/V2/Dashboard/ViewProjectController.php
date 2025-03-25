@@ -27,12 +27,18 @@ class ViewProjectController extends Controller
               'allowed' => false,
             ];
         } elseif ($user->hasRole('funder')) {
-            $isAllowed = Project::where('uuid', $uuid)
-            ->where('framework_key', $user->program)
-            ->exists();
-            $response = (object)[
-                'allowed' => $isAllowed,
-            ];
+            $verifyInUserProgram = Project::where('uuid', $uuid)
+                ->where('framework_key', $user->program)
+                ->exists();
+            if ($verifyInUserProgram) {
+                $isAllowed = $verifyInUserProgram;
+            } else {
+                $frameworksSlugs = $user->my_frameworks_slug;
+                $verifyInUserFrameworks = Project::where('uuid', $uuid)
+                    ->whereIn('framework_key', $frameworksSlugs)
+                    ->exists();
+                $isAllowed = $verifyInUserFrameworks;
+            }
         } elseif ($user->hasRole('project-developer')) {
             $projectId = Project::where('uuid', $uuid)
                 ->value('id');
