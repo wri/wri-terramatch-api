@@ -30,7 +30,8 @@ class GetPolygonsController extends Controller
         $siteswithPolygons = $project->sites()
             ->with(['sitePolygons' => function ($query) {
                 $query->select('uuid', 'site_id', 'poly_name', 'poly_id')
-                     ->where('status', 'approved');
+                     ->where('status', 'approved')
+                     ->where('is_active', true);
             }])
             ->select('uuid', 'name')
             ->get();
@@ -40,10 +41,13 @@ class GetPolygonsController extends Controller
 
     public function getPolygonsDataByStatusOfProject(Request $request): GetPolygonsResource
     {
-        $polygonsIds = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProjects($request);
+        $polygonsIdsByStatus = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProjects($request);
+        $polygonsIds = array_values($polygonsIdsByStatus)[0];
+        $centroids = GeometryHelper::getCentroidsOfPolygons($polygonsIds);
 
         return new GetPolygonsResource([
-          'data' => $polygonsIds,
+          'data' => $polygonsIdsByStatus,
+          'centroids' => $centroids,
         ]);
     }
 

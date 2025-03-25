@@ -464,4 +464,25 @@ class GeometryHelper
 
         return [$centroid->lon, $centroid->lat];
     }
+
+    public static function getCentroidsOfPolygons(array $polygonUuids)
+    {
+        return PolygonGeometry::whereIn('uuid', $polygonUuids)
+            ->select([
+                'uuid',
+                DB::raw('ST_X(ST_Centroid(geom)) AS centroid_x'),
+                DB::raw('ST_Y(ST_Centroid(geom)) AS centroid_y'),
+            ])
+            ->get()
+            ->map(function ($polygon) {
+                return [
+                    'uuid' => $polygon->uuid,
+                    'centroid' => [
+                        (float) $polygon->centroid_x,
+                        (float) $polygon->centroid_y,
+                    ],
+                ];
+            });
+    }
+    
 }
