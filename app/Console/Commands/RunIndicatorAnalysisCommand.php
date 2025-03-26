@@ -45,6 +45,7 @@ class RunIndicatorAnalysisCommand extends Command
 
         if (empty($slugs)) {
             $this->error('No slugs provided. Please use --slugs=slug1 --slugs=slug2 ...');
+
             return 1;
         }
 
