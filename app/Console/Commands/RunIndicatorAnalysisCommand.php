@@ -13,14 +13,14 @@ class RunIndicatorAnalysisCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'run-indicator-analysis';
+    protected $signature = 'run-indicator-analysis {--slugs=*}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Run indicator analysis';
+    protected $description = 'Run indicator analysis for some slugs example: php artisan run-indicator-analysis --slugs=restorationByLandUse --slugs=restorationByStrategy, etc.';
 
     protected RunIndicatorAnalysisService $service;
 
@@ -34,10 +34,19 @@ class RunIndicatorAnalysisCommand extends Command
     {
         $this->info('Running indicator analysis');
 
-        $slugs = [
-            'restorationByLandUse',
-            'restorationByStrategy',
-        ];
+        // The slug options to use are as follows:
+        // --slugs=treeCoverLoss
+        // --slugs=treeCoverLossFires
+        // --slugs=restorationByEcoRegion
+        // --slugs=restorationByStrategy
+        // --slugs=restorationByLandUse
+
+        $slugs = $this->option('slugs');
+
+        if (empty($slugs)) {
+            $this->error('No slugs provided. Please use --slugs=slug1 --slugs=slug2 ...');
+            return 1;
+        }
 
         $polygonsUuids = SitePolygon::where('is_active', true)->where('status', 'approved')->pluck('poly_id')->toArray();
         $request = [
