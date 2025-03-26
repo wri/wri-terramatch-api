@@ -6,6 +6,7 @@ use App\Jobs\Dashboard\RunActiveCountriesTableJob;
 use App\Jobs\Dashboard\RunActiveProjectsJob;
 use App\Jobs\Dashboard\RunHectaresRestoredJob;
 use App\Jobs\Dashboard\RunJobsCreatedJob;
+use App\Jobs\Dashboard\RunProjectsJob;
 use App\Jobs\Dashboard\RunTopTreesJob;
 use App\Jobs\Dashboard\RunTotalHeaderJob;
 use App\Jobs\Dashboard\RunTreeRestorationGoalJob;
@@ -248,6 +249,19 @@ class CacheDashboardDataCommand extends Command
         $hectaresRestoredDelayedJob = DelayedJob::create();
         dispatch(new RunHectaresRestoredJob(
             $hectaresRestoredDelayedJob->id,
+            $frameworks,
+            $landscapes,
+            $organisations,
+            $country,
+            $cohort,
+            $uuid,
+            $cacheParameter
+        ));
+
+        // Projects Job
+        $projectsDelayedJob = DelayedJob::create();
+        dispatch(new RunProjectsJob(
+            $projectsDelayedJob->id,
             $frameworks,
             $landscapes,
             $organisations,
