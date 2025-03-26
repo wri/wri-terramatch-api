@@ -1,4 +1,3 @@
-version: "3"
 services:
     mariadb:
         build:
@@ -37,14 +36,6 @@ services:
             - ".:/app"
             - "~/.composer:/tmp"
         command: "composer about"
-        networks:
-            - "default"
-    npm:
-        image: "node:8"
-        volumes:
-            - ".:/usr/src/app"
-        command: "npm --version"
-        working_dir: "/usr/src/app"
         networks:
             - "default"
     mailcatcher:
