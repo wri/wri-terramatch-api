@@ -5,9 +5,13 @@ jobs:
   lintTest:
     runs-on: ubuntu-latest
     steps:
-      - uses: KengoTODA/actions-setup-docker-compose@v1
+      - name: Build and push
+        uses: docker/build-push-action@v6
         with:
-          version: '2.29.1'
+          context: .
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Install deps
