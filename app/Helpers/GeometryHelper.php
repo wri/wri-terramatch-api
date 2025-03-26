@@ -478,7 +478,7 @@ class GeometryHelper
                 return [
                     'uuid' => $polygon->uuid,
                     'long' => $polygon->centroid_x,
-                    'lat' => $polygon->centroid_y
+                    'lat' => $polygon->centroid_y,
                 ];
             });
     }
