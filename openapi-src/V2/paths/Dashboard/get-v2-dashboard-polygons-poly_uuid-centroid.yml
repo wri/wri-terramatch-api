@@ -1,0 +1,14 @@
+summary: Retrieve the centroid of a polygon
+description: |
+  This endpoint returns the centroid of a polygon.
+parameters:
+  - name: poly_uuid
+    type: string
+    in: path
+    description: The uuid of the polygon
+    required: true
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardGetPolygonCentroidResponse'

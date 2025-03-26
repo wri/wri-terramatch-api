@@ -41426,6 +41426,21 @@ definitions:
           Approved:
             type: array
             description: Ids of approved polygons
+      centroids:
+        type: array
+        description: Centroids of polygons
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+              description: Uuid of polygon
+            long:
+              type: number
+              description: Longitude of polygon
+            lat:
+              type: number
+            description: Latitude of polygon
   DashboardBBOXProject:
     type: object
     properties:
@@ -42676,6 +42691,38 @@ definitions:
           - published
           - archived
         example: draft
+  DashboardGetSitePolygonsDataProjectsResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            uuid:
+              type: string
+            name:
+              type: string
+            site_polygons:
+              type: array
+              items:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  site_id:
+                    type: string
+                  poly_name:
+                    type: string
+                  poly_id:
+                    type: string
+  DashboardGetPolygonCentroidResponse:
+    type: object
+    properties:
+      centroid:
+        type: array
+        items:
+          type: number
 paths:
   '/v2/{entity}/{UUID}/aggregate-reports':
     get:
@@ -88461,6 +88508,66 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  '/v2/dashboard/projects/{project}/polygons':
+    get:
+      summary: Retrieve all sitepolygons data and site for a project
+      description: |
+        This endpoint returns all site polygons data and site for a project .
+      parameters:
+        - name: project
+          type: string
+          in: path
+          description: The project uuid
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    name:
+                      type: string
+                    site_polygons:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          site_id:
+                            type: string
+                          poly_name:
+                            type: string
+                          poly_id:
+                            type: string
+  '/v2/dashboard/polygons/{poly_uuid}/centroid':
+    get:
+      summary: Retrieve the centroid of a polygon
+      description: |
+        This endpoint returns the centroid of a polygon.
+      parameters:
+        - name: poly_uuid
+          type: string
+          in: path
+          description: The uuid of the polygon
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              centroid:
+                type: array
+                items:
+                  type: number
   /v2/dashboard/get-polygons/statuses:
     get:
       summary: Retrieve all polygons.
@@ -88488,6 +88595,21 @@ paths:
                   Approved:
                     type: array
                     description: Ids of approved polygons
+              centroids:
+                type: array
+                description: Centroids of polygons
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      description: Uuid of polygon
+                    long:
+                      type: number
+                      description: Longitude of polygon
+                    lat:
+                      type: number
+                    description: Latitude of polygon
         '400':
           description: Bad request
         '500':
