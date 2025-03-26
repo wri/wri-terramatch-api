@@ -39,7 +39,7 @@ services:
         networks:
             - "default"
     mailcatcher:
-        image: "jeanberu/mailcatcher"
+        image: "chatwork/mailcatcher"
         networks:
             - "default"
         ports:
