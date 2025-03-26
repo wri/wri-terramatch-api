@@ -11,3 +11,18 @@ properties:
       Approved:
         type: array
         description: Ids of approved polygons
+  centroids:
+    type: array
+    description: Centroids of polygons
+    items:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: Uuid of polygon
+        long:
+          type: number
+          description: Longitude of polygon
+        lat:
+          type: number
+        description: Latitude of polygon

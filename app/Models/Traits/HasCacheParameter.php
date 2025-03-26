@@ -30,12 +30,35 @@ trait HasCacheParameter
 
     private function getCacheParameterForLandscapes($landscapes)
     {
-        return implode(',', $landscapes);
+        if (empty($landscapes)) {
+            return '';
+        }
+
+        $sortedLandscapes = is_array($landscapes) ? $landscapes : [$landscapes];
+
+        sort($sortedLandscapes);
+
+        return implode(',', $sortedLandscapes);
     }
 
     private function getCacheParameterForOrganisations($organisations)
     {
-        return implode(',', $organisations);
+        if (empty($organisations)) {
+            return 'all-orgs';
+        }
+
+        $sortedOrganisations = is_array($organisations) ? $organisations : [$organisations];
+
+        sort($sortedOrganisations);
+
+        $allOrgTypes = ['non-profit-organization', 'for-profit-organization'];
+        sort($allOrgTypes);
+
+        if ($sortedOrganisations == $allOrgTypes) {
+            return 'all-orgs';
+        }
+
+        return implode(',', $sortedOrganisations);
     }
 
     private function getCacheParameterForCountry($country)
@@ -45,7 +68,15 @@ trait HasCacheParameter
 
     private function getCacheParameterForFramework($frameworks)
     {
-        return implode(',', $frameworks);
+        if (empty($frameworks)) {
+            return '';
+        }
+
+        $sortedFrameworks = is_array($frameworks) ? $frameworks : [$frameworks];
+
+        sort($sortedFrameworks);
+
+        return implode(',', $sortedFrameworks);
     }
 
     private function getCacheParameterForProjectUudid($projectUuid)
