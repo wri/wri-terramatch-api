@@ -3,8 +3,8 @@ default:
 composer:
 	docker compose run composer composer install --ignore-platform-reqs
 
-rebuild-with-composer:
-	docker compose build --no-cache
+build-with-composer:
+	docker buildx bake
 	docker compose run composer composer install --ignore-platform-reqs
 
 up:
@@ -46,15 +46,6 @@ lint-test:
 lint-test-all:
 	docker compose exec php ./vendor/bin/php-cs-fixer fix -v
 	docker compose exec php ./vendor/bin/phpunit
-
-# REQUIRES FFMPEG
-frames:
-	ffmpeg -loop 1 -i resources/frames/introduction.png -f lavfi -i anullsrc=channel_layout=5.1:sample_rate=48000 \
-		-c:v libx264 -t 3 -pix_fmt yuv420p -vf scale=1920:1080 resources/frames/introduction.mp4
-	ffmpeg -loop 1 -i resources/frames/aims.png -f lavfi -i anullsrc=channel_layout=5.1:sample_rate=48000 \
-		-c:v libx264 -t 3 -pix_fmt yuv420p -vf scale=1920:1080 resources/frames/aims.mp4
-	ffmpeg -loop 1 -i resources/frames/importance.png -f lavfi -i anullsrc=channel_layout=5.1:sample_rate=48000 \
-		-c:v libx264 -t 3 -pix_fmt yuv420p -vf scale=1920:1080 resources/frames/importance.mp4
 
 doc:
 	npm run doc-v2

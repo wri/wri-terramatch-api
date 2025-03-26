@@ -12,12 +12,6 @@ services:
             MYSQL_DATABASE: "wri_restoration_marketplace_api"
             MYSQL_USER: "wri"
             MYSQL_PASSWORD: "wri"
-        x-bake:
-            cache-to:
-                - type=gha
-                - mode=max
-            cache-from:
-                - type=gha
     php:
         depends_on:
             - "mariadb"
@@ -36,12 +30,6 @@ services:
             - ".:/var/www/html"
         extra_hosts: # <--- this is required
             - "host.docker.internal:host-gateway" # <--- this is required
-        x-bake:
-            cache-to:
-                - type=gha
-                - mode=max
-            cache-from:
-                - type=gha
     composer:
         image: "composer:2.5.1"
         volumes:
