@@ -5,15 +5,10 @@ jobs:
   lintTest:
     runs-on: ubuntu-latest
     steps:
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Build docker
+        run: docker buildx bake
       - name: Install deps
         run: make composer
       - name: Bring up Docker
