@@ -451,4 +451,35 @@ class GeometryHelper
             'features' => $features,
         ];
     }
+
+    public static function centroidOfPolygon($polyUUID)
+    {
+        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS lon, ST_Y(ST_Centroid(geom)) AS lat')
+        ->where('uuid', $polyUUID)
+        ->first();
+
+        if (! $centroid) {
+            return [];
+        }
+
+        return [$centroid->lon, $centroid->lat];
+    }
+
+    public static function getCentroidsOfPolygons(array $polygonUuids)
+    {
+        return PolygonGeometry::whereIn('uuid', $polygonUuids)
+            ->select([
+                'uuid',
+                DB::raw('ST_X(ST_Centroid(geom)) AS centroid_x'),
+                DB::raw('ST_Y(ST_Centroid(geom)) AS centroid_y'),
+            ])
+            ->get()
+            ->map(function ($polygon) {
+                return [
+                    'uuid' => $polygon->uuid,
+                    'long' => $polygon->centroid_x,
+                    'lat' => $polygon->centroid_y,
+                ];
+            });
+    }
 }

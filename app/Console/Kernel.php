@@ -33,6 +33,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('generate-admin-all-entity-records-export')->twiceDaily(13, 20)->onOneServer();
         $schedule->command('send-daily-digest-notifications')->weeklyOn(1, '17:00')->timezone('Europe/Sofia')->onOneServer();
         $schedule->command('send-weekly-polygon-update-notifications')->weeklyOn(1, '00:00')->timezone('Europe/Sofia')->onOneServer();
+        $schedule->command('dashboard:cache-data')->weeklyOn(6, '23:59')->onOneServer();
     }
 
     protected function commands()
