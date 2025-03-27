@@ -68,7 +68,7 @@ class TaskDigestMail extends I18nMail
         ];
 
         $params['{reportData}'] = '';
-        foreach($types as $type) {
+        foreach ($types as $type) {
             $list = ${$type.'List'};
             $rows = '';
             $rowCount = count($list);

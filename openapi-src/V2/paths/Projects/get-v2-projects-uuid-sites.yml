@@ -1,8 +1,8 @@
-summary: Get the reports of a specific project
-operationId: get-v2-projects-uuid-reports
+summary: Get the sites of a specific project
+operationId: get-v2-projects-uuid-sites
 tags:
   - V2 Projects
-description: "Available Filters : status  |  Available Searches: name  |  Available Sort Options: name, status, created_at, updated_at"
+description: "Available Filters : status  |  Available Searches: name  |  Available Sort Options: name, status, number_of_trees_planted, created_at, updated_at"
 produces:
   - application/json
 parameters:
@@ -39,7 +39,7 @@ responses:
         data:
           type: array
           items:
-            $ref: '../../definitions/_index.yml#/ProjectReportLiteRead'
+            $ref: '../../definitions/_index.yml#/V2SiteLiteRead'
         links:
           $ref: '../../definitions/_index.yml#/V2PaginationLinks'
         meta:

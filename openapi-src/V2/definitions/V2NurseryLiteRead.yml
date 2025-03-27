@@ -21,4 +21,3 @@ properties:
     type: string
   created_date:
     type: string
-
