@@ -16,7 +16,7 @@ jobs:
           push: false
           set: |
             *.cache-to=type=gha,mode=max
-            *.cache-from=type=gah
+            *.cache-from=type=gha
           files: |
             docker-compose.yml
       - name: Install deps
