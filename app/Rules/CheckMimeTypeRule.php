@@ -25,7 +25,7 @@ class CheckMimeTypeRule implements Rule
     public function passes($attribute, $value)
     {
         $file = request()->file('upload_file');
-        if (!$file) {
+        if (! $file) {
             return false;
         }
 
@@ -38,13 +38,14 @@ class CheckMimeTypeRule implements Rule
             'image/svg+xml',
             'image/heif',
             'image/heic',
-            'application/octet-stream'
+            'application/octet-stream',
         ];
 
         $isAllowedMimeType = in_array($file->getClientMimeType(), $allowedMimeTypes);
 
         if ($file->getClientMimeType() === 'application/octet-stream') {
             $extension = strtolower($file->getClientOriginalExtension());
+
             return in_array($extension, ['heic', 'heif']);
         }
 
