@@ -31,9 +31,6 @@
 /v2/{ENTITY}/{UUID}/reports:
   get:
     $ref: './Entity/get-v2-entity-uuid-reports.yml'
-/v2/admin/nursery-reports:
-  get:
-    $ref: './NurseryReports/get-v2-admin-nursery-reports.yml'
 /v2/admin/tasks:
   get:
     $ref: './Tasks/get-v2-admin-tasks.yml'
@@ -1198,6 +1195,65 @@
           $ref: '../definitions/_index.yml#/V2OwnershipStakeRead'
     tags:
       - V2 Ownership Stake
+/v2/admin/sites:
+  get:
+    summary: View all sites as an admin
+    tags:
+      - V2 Sites
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/V2SiteRead'
+            links:
+              type: object
+              properties:
+                first:
+                  type: string
+                last:
+                  type: string
+                prev:
+                  type: string
+                next:
+                  type: string
+            meta:
+              type: object
+              properties:
+                current_page:
+                  type: integer
+                from:
+                  type: integer
+                last_page:
+                  type: integer
+                next:
+                  type: integer
+    operationId: get-v2-admin-sites
 /v2/admin/project-pitches:
   get:
     summary: View project pitches as an admin
@@ -1258,6 +1314,12 @@
                   type: integer
     operationId: get-v2-admin-project-pitches
     description: ''
+/v2/projects/{UUID}/sites:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-sites.yml'
+/v2/projects/{UUID}/nurseries:
+  get:
+    $ref: './Projects/get-v2-projects-uuid-nurseries.yml'
 /v2/projects/{UUID}/tasks:
   get:
     $ref: './Projects/get-v2-projects-uuid-tasks.yml'
@@ -2330,6 +2392,8 @@
 /v2/sites/{UUID}:
   delete:
     $ref: './Sites/delete-v2-sites-uuid.yml'
+  get:
+    $ref: './Sites/get-v2-sites-uuid.yml'
 /v2/sites/{UUID}/polygons:
   get:
     $ref: './Sites/get-v2-admin-sites-uuid-polygons.yml'
@@ -2513,6 +2577,9 @@
 /v2/dashboard/projects/{project}/polygons:
   get:
     $ref: './Dashboard/get-v2-dashboard-projects-project-polygons.yml'
+/v2/dashboard/polygons/{poly_uuid}/centroid:
+  get:
+    $ref: './Dashboard/get-v2-dashboard-polygons-poly_uuid-centroid.yml'
 /v2/dashboard/get-polygons/statuses:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-polygons-statuses.yml'

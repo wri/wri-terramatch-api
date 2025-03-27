@@ -1,0 +1,23 @@
+title: V2SiteLiteRead
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  framework_key:
+    type: string
+  description:
+    type: string
+  control_site:
+    type: integer
+  status:
+    type: string
+  readable_status:
+    type: string
+  number_of_trees_planted:
+    type: integer
+  start_date:
+    type: string
+  created_at:
+    type: string
