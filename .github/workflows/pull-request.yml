@@ -9,11 +9,12 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
       - name: Build docker
         uses: docker/bake-action@v6
         with:
           source: .
-          push: false
           set: |
             mariadb.cache-to=type=gha,mode=max,scope=mariadb
             mariadb.cache-from=type=gha,scope=mariadb
