@@ -15,8 +15,10 @@ jobs:
           source: .
           push: false
           set: |
-            *.cache-to=type=gha,mode=max
-            *.cache-from=type=gha
+            mariadb.cache-to=type=gha,mode=max,scope=mariadb
+            mariadb.cache-from=type=gha,scope=mariadb
+            php.cache-to=type=gha,mode=max,scope=php
+            php.cache-from=type=gha,scope=php
           files: |
             docker-compose.yml
       - name: Install deps
