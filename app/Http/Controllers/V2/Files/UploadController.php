@@ -52,7 +52,9 @@ class UploadController extends Controller
                     $data['download_url'],
                     'image/png',
                     'image/jpg',
-                    'image/jpeg'
+                    'image/jpeg',
+                    'image/heif',
+                    'image/heic'
                 );
 
                 $this->prepHandler($handler, $data, $mediaModel, $config, $collection);
@@ -141,7 +143,7 @@ class UploadController extends Controller
     private function getType($media, $config)
     {
         $documents = ['application/pdf', 'application/vnd.ms-excel', 'text/plain', 'application/msword'];
-        $images = ['image/png', 'image/jpeg', 'image/svg+xml'];
+        $images = ['image/png', 'image/jpeg', 'image/heif', 'image/heic', 'image/svg+xml'];
         $videos = ['video/mp4'];
 
         if (in_array($media->mime_type, $documents)) {

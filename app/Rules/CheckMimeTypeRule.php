@@ -25,9 +25,30 @@ class CheckMimeTypeRule implements Rule
     public function passes($attribute, $value)
     {
         $file = request()->file('upload_file');
-        $allowedMimeTypes = ['image/jpeg', 'image/gif', 'image/png', 'application/pdf', 'image/tiff', 'image/svg+xml'];
+        if (!$file) {
+            return false;
+        }
 
-        return $file && in_array($file->getClientMimeType(), $allowedMimeTypes);
+        $allowedMimeTypes = [
+            'image/jpeg',
+            'image/gif',
+            'image/png',
+            'application/pdf',
+            'image/tiff',
+            'image/svg+xml',
+            'image/heif',
+            'image/heic',
+            'application/octet-stream'
+        ];
+
+        $isAllowedMimeType = in_array($file->getClientMimeType(), $allowedMimeTypes);
+
+        if ($file->getClientMimeType() === 'application/octet-stream') {
+            $extension = strtolower($file->getClientOriginalExtension());
+            return in_array($extension, ['heic', 'heif']);
+        }
+
+        return $isAllowedMimeType;
     }
 
     /**
