@@ -69,8 +69,8 @@ class AppServiceProvider extends ServiceProvider
             }
 
 
-              // Find the DelayedJob record and update it
-              $delayedJob = DelayedJob::where('id', $delayedJobId)->first();
+            // Find the DelayedJob record and update it
+            $delayedJob = DelayedJob::where('id', $delayedJobId)->first();
             if ($delayedJob) {
                 $delayedJob->update([
                     'status' => DelayedJob::STATUS_FAILED,
