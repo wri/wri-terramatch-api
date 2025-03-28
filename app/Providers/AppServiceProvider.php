@@ -68,8 +68,6 @@ class AppServiceProvider extends ServiceProvider
                 return;
             }
 
-
-            // Find the DelayedJob record and update it
             $delayedJob = DelayedJob::where('id', $delayedJobId)->first();
             if ($delayedJob) {
                 $delayedJob->update([
