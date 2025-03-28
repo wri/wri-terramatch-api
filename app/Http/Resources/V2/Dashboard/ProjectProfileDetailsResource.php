@@ -25,6 +25,7 @@ class ProjectProfileDetailsResource extends JsonResource
             'targetLandUse' => $this->land_use_types,
             'landTenure' => $this->land_tenure_project_area,
             'framework' => $this->framework_key,
+            'cohort' => $this->cohort,
             'cover_image' => $coverImage ? [
                 'id' => $coverImage->id,
                 'url' => $coverImage->getUrl(),
