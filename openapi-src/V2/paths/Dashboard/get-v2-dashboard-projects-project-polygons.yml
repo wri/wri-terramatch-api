@@ -1,0 +1,14 @@
+summary: Retrieve all sitepolygons data and site for a project
+description: |
+  This endpoint returns all site polygons data and site for a project .
+parameters:
+  - name: project
+    type: string
+    in: path
+    description: The project uuid
+    required: true
+responses:
+  '200':
+    description: Successful response
+    schema:
+      $ref: '../../definitions/_index.yml#/DashboardGetSitePolygonsDataProjectsResponse'

@@ -39,6 +39,9 @@ class ViewProjectController extends Controller
                     ->exists();
                 $isAllowed = $verifyInUserFrameworks;
             }
+            $response = (object)[
+                'allowed' => $isAllowed,
+            ];
         } elseif ($user->hasRole('project-developer')) {
             $projectId = Project::where('uuid', $uuid)
                 ->value('id');

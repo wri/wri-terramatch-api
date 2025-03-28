@@ -24,6 +24,7 @@ class TotalTerrafundHeaderDashboardController extends Controller
         try {
             $cacheParameter = $this->getParametersFromRequest($request);
             $cacheValue = Redis::get('dashboard:total-section-header|'.$cacheParameter);
+            // here should be set the last updated at for the dashboard
             $timestampKey = 'dashboard:total-section-header|' . $cacheParameter . ':timestamp';
             $lastUpdatedAt = Redis::get($timestampKey);
 

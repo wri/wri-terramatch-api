@@ -120,6 +120,8 @@ ProjectPitchUpdate:
   $ref: './ProjectPitchUpdate.yml'
 V2SiteRead:
   $ref: './V2SiteRead.yml'
+V2SiteLiteRead:
+  $ref: './V2SiteLiteRead.yml'
 V2SiteMonitoringCreate:
   $ref: './V2SiteMonitoringCreate.yml'
 V2SiteMonitoringUpdate:
@@ -152,6 +154,8 @@ ProjectFullRead:
   $ref: './ProjectFullRead.yml'
 ProjectWithSchemaRead:
   $ref: './ProjectWithSchemaRead.yml'
+SiteFullRead:
+  $ref: './SiteFullRead.yml'
 SiteWithSchemaRead:
   $ref: './SiteWithSchemaRead.yml'
 ProjectPitchRead:
@@ -186,20 +190,8 @@ ApplicationLiteRead:
   $ref: './ApplicationLiteRead.yml'
 ApplicationRead:
   $ref: './ApplicationRead.yml'
-ProjectReportLiteRead:
-  $ref: './ProjectReportLiteRead.yml'
-ProjectReportPaginated:
-  $ref: './ProjectReportPaginated.yml'
 TaskPaginated:
   $ref: './TaskPaginated.yml'
-SiteReportLiteRead:
-  $ref: './SiteReportLiteRead.yml'
-SiteReportPaginated:
-  $ref: './SiteReportPaginated.yml'
-NurseryReportLiteRead:
-  $ref: './NurseryReportLiteRead.yml'
-NurseryReportPaginated:
-  $ref: './NurseryReportPaginated.yml'
 NurseryPaginated:
   $ref: './NurseryPaginated.yml'
 NurseryRead:
@@ -402,3 +394,7 @@ V2ImpactStoryUpdate:
   $ref: './V2ImpactStoryUpdate.yml'
 V2ImpactStoryCreate:
   $ref: './V2ImpactStoryCreate.yml'
+DashboardGetSitePolygonsDataProjectsResponse:
+  $ref: './DashboardGetSitePolygonsDataProjectsResponse.yml'
+DashboardGetPolygonCentroidResponse:
+  $ref: './DashboardGetPolygonCentroidResponse.yml'

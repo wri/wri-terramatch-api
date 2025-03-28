@@ -138,7 +138,7 @@ class SitePPCMigrationCommand extends Command
 
         $list = [];
         foreach ($rawList as $item) {
-            switch($item) {
+            switch ($item) {
                 case 'agroforestry':
                     $val = 'agroforest';
 
@@ -178,7 +178,7 @@ class SitePPCMigrationCommand extends Command
 
         $list = [];
         foreach ($rawList as $item) {
-            switch($item) {
+            switch ($item) {
                 case 'seed_dispersal_direct_seeding':
                     $val = 'direct-seeding';
 

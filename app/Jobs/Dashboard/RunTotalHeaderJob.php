@@ -72,13 +72,14 @@ class RunTotalHeaderJob implements ShouldQueue
             $response = $runTotalHeaderService->runTotalHeaderJob($request);
 
             $cacheKey = 'dashboard:total-section-header|' . $this->cacheParameter;
-            Redis::set($cacheKey, json_encode($response), 'EX', config('cache.ttl.dashboard') ?? 86400);
+            Redis::set($cacheKey, json_encode($response));
 
             $timestampKey = $cacheKey . ':timestamp';
-            Redis::set($timestampKey, now()->toDateTimeString(), 'EX', config('cache.ttl.dashboard') ?? 86400);
+            Redis::set($timestampKey, now()->toDateTimeString());
             $timestampKey = 'dashboard:total-section-header|' . $this->cacheParameter . ':timestamp';
             $lastUpdatedAt = Redis::get($timestampKey);
             $response->last_updated_at = $lastUpdatedAt;
+
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
                 'payload' => json_encode($response),

@@ -1,4 +1,3 @@
-version: "3"
 services:
     mariadb:
         build:
@@ -39,16 +38,8 @@ services:
         command: "composer about"
         networks:
             - "default"
-    npm:
-        image: "node:8"
-        volumes:
-            - ".:/usr/src/app"
-        command: "npm --version"
-        working_dir: "/usr/src/app"
-        networks:
-            - "default"
     mailcatcher:
-        image: "jeanberu/mailcatcher"
+        image: "chatwork/mailcatcher"
         networks:
             - "default"
         ports:

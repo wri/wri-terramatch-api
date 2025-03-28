@@ -57,7 +57,7 @@ class FixPolygonOverlapJob implements ShouldQueue
      */
     public function middleware()
     {
-        return [new SetAuthenticatedUserForJob];
+        return [new SetAuthenticatedUserForJob()];
     }
 
     /**
