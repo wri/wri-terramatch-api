@@ -42,39 +42,42 @@ class AppServiceProvider extends ServiceProvider
         SitePolygon::observe(SitePolygonObserver::class);
         Media::observe(MediaObserver::class);
         Queue::failing(function (JobFailed $event) {
-          $jobName = $event->job->resolveName();
-          $jobId = $event->job->uuid(); // Get UUID if available
-          $exceptionMessage = $event->exception->getMessage();
-          
-          $rawBody = $event->job->getRawBody();;
-      
-          $payload = json_decode($rawBody, true);
-          try {
-            $command = unserialize($payload['data']['command']);
-            $reflection = new ReflectionClass($command);
-            if ($reflection->hasProperty('delayed_job_id')) {
-                $property = $reflection->getProperty('delayed_job_id');
-                $property->setAccessible(true);
-                $delayedJobId = $property->getValue($command);
-            } else {
-                $delayedJobId = null;
+            $jobName = $event->job->resolveName();
+            $jobId = $event->job->uuid(); // Get UUID if available
+            $exceptionMessage = $event->exception->getMessage();
+
+            $rawBody = $event->job->getRawBody();
+            ;
+
+            $payload = json_decode($rawBody, true);
+
+            try {
+                $command = unserialize($payload['data']['command']);
+                $reflection = new ReflectionClass($command);
+                if ($reflection->hasProperty('delayed_job_id')) {
+                    $property = $reflection->getProperty('delayed_job_id');
+                    $property->setAccessible(true);
+                    $delayedJobId = $property->getValue($command);
+                } else {
+                    $delayedJobId = null;
+                }
+
+            } catch (\Exception $e) {
+                Log::error('Error deserializing command: ' . $e->getMessage());
+
+                return;
             }
-        
-        } catch (\Exception $e) {
-            Log::error("Error deserializing command: " . $e->getMessage());
-            return;
-        }
-        
-        
-          // Find the DelayedJob record and update it
-          $delayedJob = DelayedJob::where('id', $delayedJobId)->first();
-          if ($delayedJob) {
-              $delayedJob->update([
-                  'status' => DelayedJob::STATUS_FAILED,
-                  'payload' => json_encode(['error' => $exceptionMessage]),
-                  'status_code' => 500,
-              ]);
-          }
-      });
+
+
+              // Find the DelayedJob record and update it
+              $delayedJob = DelayedJob::where('id', $delayedJobId)->first();
+            if ($delayedJob) {
+                $delayedJob->update([
+                    'status' => DelayedJob::STATUS_FAILED,
+                    'payload' => json_encode(['error' => $exceptionMessage]),
+                    'status_code' => 500,
+                ]);
+            }
+        });
     }
 }
