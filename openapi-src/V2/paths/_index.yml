@@ -31,12 +31,6 @@
 /v2/{ENTITY}/{UUID}/reports:
   get:
     $ref: './Entity/get-v2-entity-uuid-reports.yml'
-/v2/admin/nursery-reports:
-  get:
-    $ref: './NurseryReports/get-v2-admin-nursery-reports.yml'
-/v2/admin/site-reports:
-  get:
-    $ref: './SiteReports/get-v2-admin-site-reports.yml'
 /v2/admin/tasks:
   get:
     $ref: './Tasks/get-v2-admin-tasks.yml'

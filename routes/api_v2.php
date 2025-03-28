@@ -116,7 +116,6 @@ use App\Http\Controllers\V2\MonitoredData\RunIndicatorAnalysisController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
 use App\Http\Controllers\V2\Nurseries\CreateNurseryWithFormController;
 use App\Http\Controllers\V2\Nurseries\SoftDeleteNurseryController;
-use App\Http\Controllers\V2\NurseryReports\AdminIndexNurseryReportsController;
 use App\Http\Controllers\V2\NurseryReports\NurseryReportsViaNurseryController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
@@ -177,7 +176,6 @@ use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkCon
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Reports\NothingToReportReportController;
-use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
@@ -351,8 +349,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
     });
 
-    Route::get('nursery-reports', AdminIndexNurseryReportsController::class);
-    Route::get('site-reports', AdminIndexSiteReportsController::class);
 
     Route::prefix('funding-programme/stage')->group(function () {
         Route::post('/', StoreStageController::class);
