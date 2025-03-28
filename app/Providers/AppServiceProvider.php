@@ -43,12 +43,9 @@ class AppServiceProvider extends ServiceProvider
         Media::observe(MediaObserver::class);
         Queue::failing(function (JobFailed $event) {
             $jobName = $event->job->resolveName();
-            $jobId = $event->job->uuid(); // Get UUID if available
+            $jobId = $event->job->uuid();
             $exceptionMessage = $event->exception->getMessage();
-
             $rawBody = $event->job->getRawBody();
-            ;
-
             $payload = json_decode($rawBody, true);
 
             try {
@@ -61,14 +58,12 @@ class AppServiceProvider extends ServiceProvider
                 } else {
                     $delayedJobId = null;
                 }
-
             } catch (\Exception $e) {
                 Log::error('Error deserializing command: ' . $e->getMessage());
 
                 return;
             }
-
-            $delayedJob = DelayedJob::where('id', $delayedJobId)->first();
+            $delayedJob = $delayedJobId == null ? null : DelayedJob::where('id', $delayedJobId)->first();
             if ($delayedJob) {
                 $delayedJob->update([
                     'status' => DelayedJob::STATUS_FAILED,
