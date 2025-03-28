@@ -5,11 +5,22 @@ jobs:
   lintTest:
     runs-on: ubuntu-latest
     steps:
-      - uses: KengoTODA/actions-setup-docker-compose@v1
-        with:
-          version: '2.29.1'
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build docker
+        uses: docker/bake-action@v6
+        with:
+          load: true
+          source: .
+          set: |
+            mariadb.cache-to=type=gha,mode=max,scope=mariadb
+            mariadb.cache-from=type=gha,scope=mariadb
+            php.cache-to=type=gha,mode=max,scope=php
+            php.cache-from=type=gha,scope=php
+          files: |
+            docker-compose.yml
       - name: Install deps
         run: make composer
       - name: Bring up Docker

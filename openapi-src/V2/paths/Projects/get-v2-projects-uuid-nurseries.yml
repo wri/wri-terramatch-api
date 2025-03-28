@@ -1,5 +1,5 @@
-summary: Get the reports of a specific site
-operationId: get-v2-sites-uuid-reports
+summary: Get the nurseries of a specific project
+operationId: get-v2-projects-uuid-nurseries
 tags:
   - V2 Projects
 description: "Available Filters : status  |  Available Searches: name  |  Available Sort Options: name, status, created_at, updated_at"
@@ -39,7 +39,7 @@ responses:
         data:
           type: array
           items:
-            $ref: '../../definitions/_index.yml#/SiteReportLiteRead'
+            $ref: '../../definitions/_index.yml#/V2NurseryLiteRead'
         links:
           $ref: '../../definitions/_index.yml#/V2PaginationLinks'
         meta:

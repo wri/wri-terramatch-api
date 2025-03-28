@@ -7,9 +7,11 @@ use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Nurseries\Nursery;
+use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SiteReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -21,7 +23,7 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
     {
         ini_set('memory_limit', '-1');
         Validator::make(['entity' => $entity], [
-            'entity' => 'required|in:sites,nurseries,project-reports,shapefiles',
+            'entity' => 'required|in:sites,nurseries,project-reports,shapefiles,site-reports,nursery-reports',
         ])->validate();
 
         if ($entity === 'shapefiles') {
@@ -35,7 +37,15 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
 
         $filename = Str::of($project->name)->replace(['/', '\\'], '-') . ' - '.$entity.' establishment data - ' . now() . '.csv';
 
-        $query = $modelClass::where('project_id', $project->id);
+        if ($entity === 'nursery-reports') {
+            $nursery = Nursery::where('project_id', $project->id)->pluck('id');
+            $query = $modelClass::whereIn('nursery_id', $nursery);
+        } elseif ($entity === 'site-reports') {
+            $site = Site::where('project_id', $project->id)->pluck('id');
+            $query = $modelClass::whereIn('site_id', $site);
+        } else {
+            $query = $modelClass::where('project_id', $project->id);
+        }
 
         return (new EntityExport($query, $form))->download($filename, Excel::CSV);//->deleteFileAfterSend(true);
     }
@@ -62,6 +72,15 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
                 break;
             case 'project-reports':
                 $model = ProjectReport::class;
+
+                break;
+
+            case 'site-reports':
+                $model = SiteReport::class;
+
+                break;
+            case 'nursery-reports':
+                $model = NurseryReport::class;
 
                 break;
         }
