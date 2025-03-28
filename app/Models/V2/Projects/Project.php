@@ -7,7 +7,6 @@ use App\Models\Organisation;
 use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
-use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
@@ -52,7 +51,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     use HasUuid;
     use SoftDeletes;
     use HasFrameworkKey;
-    use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
