@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
 use App\Http\Controllers\Controller;
+use App\Models\Traits\IndicatorUpdateTrait;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Projects\ProjectPolygon;
@@ -22,6 +23,8 @@ use Illuminate\Support\Facades\Log;
 
 class TerrafundEditGeometryController extends Controller
 {
+    use IndicatorUpdateTrait;
+
     public function getSitePolygonData(string $uuid)
     {
         try {
@@ -277,6 +280,8 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['error' => 'An error occurred while creating a new version of the site polygon'], 500);
             }
             $newPolygonVersion->changeStatusOnEdit();
+
+            $this->updateIndicatorsForPolygon($newPolygonVersion->poly_id);
 
             return response()->json(['message' => 'Site polygon version created successfully'], 201);
         } catch (\Exception $e) {
