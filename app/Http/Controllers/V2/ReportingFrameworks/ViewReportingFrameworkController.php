@@ -11,7 +11,7 @@ class ViewReportingFrameworkController extends Controller
 {
     public function __invoke(Request $request, string $uuid): ReportingFrameworkResource
     {
-        $framework = Framework::where('framework_key', $uuid)->firstOrFail();
+        $framework = Framework::where('uuid', $uuid)->firstOrFail();
         return new ReportingFrameworkResource($framework);
     }
 }
