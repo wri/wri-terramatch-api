@@ -3,12 +3,15 @@
 namespace App\Models\V2;
 
 use App\Models\Terrafund\TerrafundProgramme;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\HasVersions;
 use App\Models\Traits\NamedEntityTrait;
+use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Database\Factories\V2\OrganisationFactory;
@@ -35,6 +38,7 @@ class Organisation extends Model implements MediaModel
     use HasV2MediaCollections;
     use SoftDeletes;
     use HasTags;
+    use HasDemographics;
 
     /*  Statuses    */
     public const STATUS_DRAFT = 'draft';
@@ -192,6 +196,12 @@ class Organisation extends Model implements MediaModel
         'socioeconomic_impact' => 'string',
         'growith_stage' => 'string',
         'additional_comments' => 'string',
+    ];
+
+    // Required by the HasDemographics trait
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Demographic::JOBS_TYPE => DemographicCollections::EMPLOYEE,
+        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void

@@ -4,6 +4,7 @@ namespace App\Models\Traits;
 
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\V2\Forms\Form;
+use App\Models\V2\Forms\FormQuestion;
 
 trait UsesLinkedFields
 {
@@ -34,6 +35,7 @@ trait UsesLinkedFields
     {
         $localAnswers = [];
         foreach ($this->getform()->sections as $section) {
+            /** @var FormQuestion $question */
             foreach ($section->questions as $question) {
                 if ($question->input_type !== 'conditional' && ! empty($question->linked_field_key)) {
                     $linkedFieldInfo = $question->getLinkedFieldInfo([
@@ -43,10 +45,6 @@ trait UsesLinkedFields
                     if (! empty($linkedFieldInfo)) {
                         $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
                             data_get($input, $question->parent_id) === false;
-                        if ($linkedFieldInfo['model-label'] === 'Organisation' && $question->input_type === 'treeSpecies') {
-                            //TODO: [TM-1853] Review this error with Organisation tree species model.
-                            continue;
-                        }
                         $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid), $hidden);
                     }
                 }
