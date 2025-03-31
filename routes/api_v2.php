@@ -159,6 +159,7 @@ use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\CreateProjectWithFormController;
 use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminCreateProjectMonitoringController;
+use App\Http\Controllers\V2\Projects\Monitoring\AdminSoftDeleteProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminUpdateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
@@ -319,6 +320,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('project-monitorings')->group(function () {
         Route::post('/', AdminCreateProjectMonitoringController::class);
         Route::put('/{projectMonitoring}', AdminUpdateProjectMonitoringController::class);
+        Route::delete('/{projectMonitoring}', AdminSoftDeleteProjectMonitoringController::class);
     });
 
     Route::prefix('sites')->group(function () {
