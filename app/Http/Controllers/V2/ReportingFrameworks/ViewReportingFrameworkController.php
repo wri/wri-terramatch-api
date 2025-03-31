@@ -9,8 +9,9 @@ use Illuminate\Http\Request;
 
 class ViewReportingFrameworkController extends Controller
 {
-    public function __invoke(Request $request, Framework $framework): ReportingFrameworkResource
+    public function __invoke(Request $request, string $uuid): ReportingFrameworkResource
     {
+        $framework = Framework::where('framework_key', $uuid)->firstOrFail();
         return new ReportingFrameworkResource($framework);
     }
 }
