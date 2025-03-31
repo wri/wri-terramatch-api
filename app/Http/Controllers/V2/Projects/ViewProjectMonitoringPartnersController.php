@@ -22,8 +22,9 @@ class ViewProjectMonitoringPartnersController extends Controller
             ->orderByDesc('accepted_at')
             ->get();
         
-        $projectUsersEmails = $project->users->pluck('email_address');
+        $projectUsersEmails = $project->users()->wherePivot('is_monitoring', true)->pluck('email_address');
 
+        $invitesToProcess = [];
         foreach ($projectUsersEmails as $email_address) {
             $invite = $invites->where('email_address', '==', $email_address)->first();
             if (!$invite) {
@@ -32,19 +33,18 @@ class ViewProjectMonitoringPartnersController extends Controller
                 $data['token'] = $token;
                 $data['email_address'] = $email_address;
                 $newInvite = $project->invites()->create($data);
-                $invites->push($newInvite);
+                $invitesToProcess[] = $newInvite;
+            } else {
+                $invitesToProcess[] = $invite;
             }
         }
 
-        $uniques = $invites->unique('email_address');
-
-        $results = $uniques->map(function ($invite) use ($invites){
+        $results = collect($invitesToProcess)->map(function ($invite) use ($invites){
             if(!is_null($invite->accepted_at)){
                 return $invite;
             }
 
             $accepted = $invites->where('email_address', $invite->email_address)->whereNotNull('accepted_at')->first();
-
             return is_null($accepted) ? $invite : $accepted;
         });
 
