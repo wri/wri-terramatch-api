@@ -159,7 +159,6 @@ use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\CreateProjectWithFormController;
 use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminCreateProjectMonitoringController;
-use App\Http\Controllers\V2\Projects\Monitoring\AdminSoftDeleteProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminUpdateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
@@ -190,7 +189,6 @@ use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\ShowSitePolygonController;
 use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
-use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
 use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
@@ -321,7 +319,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('project-monitorings')->group(function () {
         Route::post('/', AdminCreateProjectMonitoringController::class);
         Route::put('/{projectMonitoring}', AdminUpdateProjectMonitoringController::class);
-        Route::delete('/{projectMonitoring}', AdminSoftDeleteProjectMonitoringController::class);
     });
 
     Route::prefix('sites')->group(function () {
@@ -577,7 +574,6 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/reports', SiteReportsViaSiteController::class);
     Route::get('/monitorings', ViewASitesMonitoringsController::class);
     Route::get('/image/locations', SiteImageLocationsController::class);
-    Route::delete('/', SoftDeleteSiteController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
