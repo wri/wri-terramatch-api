@@ -52,6 +52,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     public function handle(PolygonValidationService $validationService)
     {
         try {
+            $startTime = microtime(true); // Start time
             $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
             $user = $delayedJob->creator;
             $metadata = $delayedJob->metadata;
@@ -69,22 +70,14 @@ class RunSitePolygonsValidationJob implements ShouldQueue
             }
 
             foreach ($this->sitePolygonsUuids as $polygonUuid) {
-                $request = new Request(['uuid' => $polygonUuid]);
-                $validationService->validateOverlapping($request);
-                $validationService->checkSelfIntersection($request);
-                $validationService->validateCoordinateSystem($request);
-                $validationService->validatePolygonSize($request);
-                $validationService->checkWithinCountry($request);
-                $validationService->checkBoundarySegments($request);
-                $validationService->getGeometryType($request);
-                $validationService->validateEstimatedArea($request);
-                $validationService->validateDataInDB($request);
-
-                $delayedJob->increment('processed_content');
-                $delayedJob->processMessage();
-                $delayedJob->save();
-            }
-
+              $validationResults = $validationService->runConsolidatedValidation($polygonUuid);
+              if (isset($validationResults['error'])) {
+                  Log::warning("Validation warning for polygon $polygonUuid: " . $validationResults['error']);
+              }
+              $delayedJob->increment('processed_content');
+              $delayedJob->processMessage();
+              $delayedJob->save();
+          }
             $delayedJob->update([
                 'status' => DelayedJobProgress::STATUS_SUCCEEDED,
                 'payload' => ['message' => 'Validation completed for all site polygons'],
@@ -92,7 +85,10 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 'progress' => 100,
             ]);
 
-            Log::info('site available? ' . $site);
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+        
+            Log::info("runValidationPolygon executed in {$executionTime} seconds.");
 
             Mail::to($user->email_address)
                 ->send(new PolygonOperationsComplete(
