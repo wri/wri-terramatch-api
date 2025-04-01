@@ -130,14 +130,35 @@ class TerrafundEditGeometryController extends Controller
 
             $deletedUuids = [];
             $failedUuids = [];
+            $affectedProjects = [];
 
-            foreach ($uuids as $uuid) {
-                try {
-                    $this->deletePolygonAndSitePolygon($uuid);
-                    $deletedUuids[] = ['uuid' => $uuid];
-                } catch (\Exception $e) {
-                    Log::error('An error occurred while deleting polygon and site polygon for UUID: ' . $uuid . '. Error: ' . $e->getMessage());
-                    $failedUuids[] = ['uuid' => $uuid, 'error' => $e->getMessage()];
+            $batchSize = 10;
+            $batches = array_chunk($uuids, $batchSize);
+
+            foreach ($batches as $batch) {
+                foreach ($batch as $uuid) {
+                    try {
+                        $result = $this->deletePolygonAndSitePolygon($uuid);
+
+                        if ($result instanceof \Illuminate\Http\JsonResponse) {
+                            $data = $result->getData(true);
+
+                            if (isset($data['uuid'])) {
+                                $deletedUuids[] = ['uuid' => $uuid];
+
+                                if (isset($data['project_uuid']) && $data['project_uuid']) {
+                                    $affectedProjects[] = $data['project_uuid'];
+                                }
+                            } elseif (isset($data['error'])) {
+                                $failedUuids[] = ['uuid' => $uuid, 'error' => $data['error']];
+                            }
+                        } else {
+                            $deletedUuids[] = ['uuid' => $uuid];
+                        }
+                    } catch (\Exception $e) {
+                        Log::error('An error occurred while deleting polygon and site polygon for UUID: ' . $uuid . '. Error: ' . $e->getMessage());
+                        $failedUuids[] = ['uuid' => $uuid, 'error' => $e->getMessage()];
+                    }
                 }
             }
 
