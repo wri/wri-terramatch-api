@@ -483,7 +483,7 @@ class GeometryHelper
             });
     }
 
-    private function processDeletionBatch(array $uuidBatch, array &$deletedUuids, array &$failedUuids, array &$affectedProjects)
+    public static function processDeletionBatch(array $uuidBatch, array &$deletedUuids, array &$failedUuids, array &$affectedProjects)
     {
         $polygonGeometries = PolygonGeometry::whereIn('uuid', $uuidBatch)
             ->with('sitePolygon.project')
