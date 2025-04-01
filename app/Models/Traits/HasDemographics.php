@@ -18,6 +18,9 @@ trait HasDemographics
         'indirectRestorationPartners' => ['type' => Demographic::RESTORATION_PARTNER_TYPE, 'collections' => 'indirect'],
         'jobsFullTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'full-time'],
         'jobsPartTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'part-time'],
+        'employeesAllTotal' => ['type' => Demographic::EMPLOYEES_TYPE, 'collections' => 'all'],
+        'employeesFullTimeTotal' => ['type', Demographic::EMPLOYEES_TYPE, 'collections' => 'full-time'],
+        'employeesPartTimeTotal' => ['type', Demographic::EMPLOYEES_TYPE, 'collections' => 'part-time'],
         'volunteersTotal' => ['type' => Demographic::VOLUNTEERS_TYPE],
         'allBeneficiariesTotal' => ['type' => Demographic::ALL_BENEFICIARIES_TYPE],
         'trainingBeneficiariesTotal' => ['type' => Demographic::TRAINING_BENEFICIARIES_TYPE],
@@ -46,6 +49,11 @@ trait HasDemographics
                     $collectionSets['indirect'],
                 ])->flatten(),
                 Demographic::JOBS_TYPE => collect([
+                    $collectionSets['full-time'],
+                    $collectionSets['part-time'],
+                ])->flatten(),
+                Demographic::EMPLOYEES_TYPE => collect([
+                    $collectionSets['all'],
                     $collectionSets['full-time'],
                     $collectionSets['part-time'],
                 ])->flatten(),

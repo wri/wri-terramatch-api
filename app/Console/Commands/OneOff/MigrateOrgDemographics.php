@@ -58,7 +58,7 @@ class MigrateOrgDemographics extends Command
     ];
 
     protected const EMPLOYEE_MAPPING = [
-        'employee' => [
+        'all' => [
             'integer' => [
                 'gender' => [
                     'male' => 'male_employees',
@@ -72,13 +72,13 @@ class MigrateOrgDemographics extends Command
                     'marginalized' => 'num_of_marginalised_employees',
                 ],
             ],
-            'total' => ['total_employees'],
+            'total' => ['total_employees', ['ft_permanent_employees', 'pt_permanent_employees']],
         ],
     ];
 
     protected const MIGRATION_MAPPING = [
         'all-beneficiaries' => self::ALL_MAPPING,
-        'jobs' => self::EMPLOYEE_MAPPING,
+        'employees' => self::EMPLOYEE_MAPPING,
     ];
 
     /**
@@ -138,17 +138,27 @@ class MigrateOrgDemographics extends Command
                     }
                 };
 
-                $calculateTotals = function () use ($demographic, $organisation, $fields) {
-                    $genderTotal = $demographic?->entries()->gender()->sum('amount') ?? 0;
-                    $ageTotal = $demographic?->entries()->age()->sum('amount') ?? 0;
+                $calculateTotals = function () use (&$demographic, $organisation, $fields) {
                     $reportedTotal = 0;
                     foreach ($fields['total'] as $totalField) {
                         // Only use the current total field if we haven't already found a valid value.
-                        if (empty($reportedTotal)) {
+                        if (! empty($reportedTotal)) {
+                            break;
+                        }
+
+                        if (is_array($totalField)) {
+                            // An array here indicates that the fields should be pulled and summed.
+                            $reportedTotal = 0;
+                            foreach ($totalField as $sumField) {
+                                $reportedTotal += $organisation[$sumField] ?? 0;
+                            }
+                        } else {
                             $reportedTotal = $organisation[$totalField] ?? 0;
                         }
                     }
 
+                    $genderTotal = $demographic?->entries()->gender()->sum('amount') ?? 0;
+                    $ageTotal = $demographic?->entries()->age()->sum('amount') ?? 0;
                     return ['total' => max([$genderTotal, $ageTotal, $reportedTotal]), 'gender' => $genderTotal, 'age' => $ageTotal];
                 };
 

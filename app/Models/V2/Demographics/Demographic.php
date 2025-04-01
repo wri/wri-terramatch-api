@@ -33,6 +33,7 @@ class Demographic extends Model implements HandlesLinkedFieldSync
     public const RESTORATION_PARTNER_TYPE = 'restoration-partners';
     public const JOBS_TYPE = 'jobs';
     public const VOLUNTEERS_TYPE = 'volunteers';
+    public const EMPLOYEES_TYPE = 'employees';
     public const ALL_BENEFICIARIES_TYPE = 'all-beneficiaries';
     public const TRAINING_BENEFICIARIES_TYPE = 'training-beneficiaries';
 
@@ -41,6 +42,7 @@ class Demographic extends Model implements HandlesLinkedFieldSync
         self::RESTORATION_PARTNER_TYPE,
         self::JOBS_TYPE,
         self::VOLUNTEERS_TYPE,
+        self::EMPLOYEES_TYPE,
         self::ALL_BENEFICIARIES_TYPE,
         self::TRAINING_BENEFICIARIES_TYPE,
     ];
