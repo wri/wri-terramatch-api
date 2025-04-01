@@ -47,7 +47,7 @@ class DemographicCollections
     // jobs
     public const FULL_TIME = 'full-time';
     public const PART_TIME = 'part-time';
-    public const EMPLOYEE = 'employee';
+    public const TEMP = 'temp';
 
     // volunteers
     public const VOLUNTEER = 'volunteer';

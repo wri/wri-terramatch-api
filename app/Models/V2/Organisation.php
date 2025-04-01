@@ -218,6 +218,9 @@ class Organisation extends Model implements MediaModel
             'part-time' => [
                 DemographicCollections::PART_TIME,
             ],
+            'temp' => [
+                DemographicCollections::TEMP,
+            ]
         ],
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
     ];

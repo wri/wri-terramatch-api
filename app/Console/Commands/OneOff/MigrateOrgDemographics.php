@@ -72,8 +72,17 @@ class MigrateOrgDemographics extends Command
                     'marginalized' => 'num_of_marginalised_employees',
                 ],
             ],
-            'total' => ['total_employees', ['ft_permanent_employees', 'pt_permanent_employees']],
+            'total' => ['total_employees', ['ft_permanent_employees', 'pt_permanent_employees', 'temp_employees']],
         ],
+        'full-time' => [
+            'total' => ['ft_permanent_employees'],
+        ],
+        'part-time' => [
+            'total' => ['pt_permanent_employees'],
+        ],
+        'temp' => [
+            'total' => ['temp_employees'],
+        ]
     ];
 
     protected const MIGRATION_MAPPING = [
@@ -163,7 +172,9 @@ class MigrateOrgDemographics extends Command
                 };
 
                 // First, add the disaggregates from integer reporting fields.
-                $addDisaggregates($fields['integer']);
+                if (! empty($fields['integer'])) {
+                    $addDisaggregates($fields['integer']);
+                }
 
                 if (! empty($fields['percentage'])) {
                     // Find the current reported total based on integer disaggregate values and reported total values
