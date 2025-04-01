@@ -2320,8 +2320,6 @@
   post:
     $ref: './Auth/post-v2-users-resend.yml'
 /v2/sites/{UUID}:
-  delete:
-    $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
 /v2/sites/{UUID}/polygons:
@@ -2353,9 +2351,6 @@
 /v2/projects/{UUID}/managers/{USER_UUID}:
   delete:
     $ref: './Projects/delete-v2-projects-uuid-managers.yml'
-/v2/nurseries/{UUID}:
-  delete:
-    $ref: './Nurseries/delete-v2-nurseries-uuid.yml'
 /v2/admin/audits/{ENTITY}/{UUID}:
   get:
     $ref: './Audits/get-v2-admin-audits-entity-uuid.yml'

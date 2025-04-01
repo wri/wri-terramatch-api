@@ -68234,20 +68234,6 @@ paths:
           schema:
             type: object
   '/v2/sites/{UUID}':
-    delete:
-      summary: Delete a site
-      operationId: delete-v2-sites-uuid
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-      tags:
-        - V2 Sites
-      description: ''
     get:
       summary: View a specific site
       operationId: get-v2-sites-uuid
@@ -69772,21 +69758,6 @@ paths:
       responses:
         '200':
           description: OK
-  '/v2/nurseries/{UUID}':
-    delete:
-      summary: Delete a nursery
-      operationId: delete-v2-nurseries-uuid
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-      tags:
-        - V2 Nurseries
-      description: ''
   '/v2/admin/audits/{ENTITY}/{UUID}':
     get:
       operationId: get-v2-admin-audits-entity-uuid
