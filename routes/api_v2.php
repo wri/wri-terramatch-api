@@ -115,7 +115,6 @@ use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
 use App\Http\Controllers\V2\MonitoredData\RunIndicatorAnalysisController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
 use App\Http\Controllers\V2\Nurseries\CreateNurseryWithFormController;
-use App\Http\Controllers\V2\Nurseries\SoftDeleteNurseryController;
 use App\Http\Controllers\V2\NurseryReports\NurseryReportsViaNurseryController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
@@ -615,7 +614,6 @@ Route::prefix('nurseries')->group(function () {
     Route::get('/{nursery}/files', ViewNurseryGalleryController::class);
     Route::get('/{nursery}/reports', NurseryReportsViaNurseryController::class);
     Route::get('/{nursery}/image/locations', NurseryImageLocationsController::class);
-    Route::delete('/{nursery}', SoftDeleteNurseryController::class);
     Route::get('/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
 });
 
