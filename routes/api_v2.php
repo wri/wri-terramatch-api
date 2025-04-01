@@ -344,7 +344,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::put('/{entity}/{status}', AdminStatusEntityController::class);
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
-        Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
     });
 
 
