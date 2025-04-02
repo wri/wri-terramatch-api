@@ -2499,9 +2499,6 @@
 /v2/dashboard/get-polygons:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-polygons.yml'
-/v2/dashboard/projects/{project}/polygons:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-projects-project-polygons.yml'
 /v2/dashboard/polygons/{poly_uuid}/centroid:
   get:
     $ref: './Dashboard/get-v2-dashboard-polygons-poly_uuid-centroid.yml'
