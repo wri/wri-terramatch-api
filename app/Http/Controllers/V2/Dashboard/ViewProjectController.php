@@ -43,26 +43,27 @@ class ViewProjectController extends Controller
                 'allowed' => $isAllowed,
             ];
         } elseif ($user->hasRole('project-developer')) {
-            $projectId = Project::where('uuid', $uuid)
-                ->value('id');
+            $project = Project::where('uuid', $uuid)->first();
+            $projectId = $project ? $project->id : null;
+
             $isInvite = ProjectInvite::where('email_address', $user->email_address)
                 ->where('project_id', $projectId)
                 ->exists();
+
+            $isAllowedByOrganization = $project && $user->organisation 
+                && ($user->organisation->id == $project->organisation_id 
+                    || $user->projects->contains($project->id));  
+
             $response = (object)[
-                'allowed' => $isInvite,
+                'allowed' => $isInvite || $isAllowedByOrganization,
             ];
         } elseif ($user->hasDashboardAdminAccess()) {
             $response = (object)[
                 'allowed' => true,
             ];
         } else {
-            $project = Project::where('uuid', $uuid)->first();
-            $isAllowedByOrganization = $project && $user->organisation
-                && ($user->organisation->id == $project->organisation_id
-                    || $user->projects->contains($project->id));
-
-            $response = (object) [
-                'allowed' => $isAllowedByOrganization ?? false,
+            $response = (object)[
+                'allowed' => false,
             ];
         }
 
