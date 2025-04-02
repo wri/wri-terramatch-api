@@ -57,4 +57,7 @@ class DemographicCollections
 
     // training-beneficiaries
     public const TRAINING = 'training';
+
+    // indirect-beneficiaries
+    public const INDIRECT = 'indirect';
 }

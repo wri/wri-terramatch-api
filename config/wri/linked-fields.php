@@ -308,6 +308,20 @@ return [
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
                 ],
+                'pro-pit-all-jobs' => [
+                    'property' => 'employeesAll',
+                    'label' => 'All Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'all'
+                ],
+                'pro-pit-all-beneficiaries' => [
+                    'property' => 'allBeneficiaries',
+                    'label' => 'All Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'allBeneficiaries',
+                    'collection' => 'all'
+                ],
             ],
         ],
         'project' => [

@@ -220,7 +220,7 @@ class Organisation extends Model implements MediaModel
             ],
             'temp' => [
                 DemographicCollections::TEMP,
-            ]
+            ],
         ],
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
     ];
