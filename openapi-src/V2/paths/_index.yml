@@ -2320,6 +2320,8 @@
   post:
     $ref: './Auth/post-v2-users-resend.yml'
 /v2/sites/{UUID}:
+  delete:
+    $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
 /v2/sites/{UUID}/polygons:
