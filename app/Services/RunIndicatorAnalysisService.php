@@ -14,6 +14,18 @@ use Symfony\Component\Process\Process;
 
 class RunIndicatorAnalysisService
 {
+    /**
+     * Maximum number of retry attempts for API calls
+     */
+    protected const MAX_RETRIES = 3;
+
+    /**
+     * Run the indicator analysis for the given polygons and slug
+     *
+     * @param array $request
+     * @param string $slug
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function run(array $request, string $slug)
     {
         try {
@@ -52,64 +64,81 @@ class RunIndicatorAnalysisService
             if (! isset($slugMappings[$slug])) {
                 return response()->json(['message' => 'Slug Not Found'], 400);
             }
-            foreach ($request['uuids'] as $uuid) {
-                $polygonGeometry = $this->getGeometry($uuid);
-                $registerExist = DB::table($slugMappings[$slug]['table_name'].' as i')
-                    ->where('i.site_polygon_id', $polygonGeometry['site_polygon_id'])
-                    ->where('i.indicator_slug', $slug)
-                    ->where('i.year_of_analysis', Carbon::now()->year)
-                    ->exists();
 
-                if ($registerExist) {
-                    continue;
-                }
+            // Count total and processed polygons for logging
+            $totalPolygons = count($request['uuids']);
+            $processedCount = 0;
+            $skippedCount = 0;
+            $errorCount = 0;
 
-                if (str_contains($slug, 'restorationBy')) {
-                    $geojson = GeometryHelper::getPolygonGeojson($uuid);
-                    $indicatorRestorationResponse = App::make(PythonService::class)->IndicatorPolygon($geojson, $slugMappings[$slug]['indicator'], getenv('GFW_SECRET_KEY'));
+            Log::info("Starting analysis for slug: $slug with $totalPolygons polygons");
 
-                    if ($slug == 'restorationByEcoRegion') {
-                        $value = json_encode($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
-                    } else {
-                        $value = $this->formatKeysValues($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
-                    }
-                    $data = [
-                        'indicator_slug' => $slug,
-                        'site_polygon_id' => $polygonGeometry['site_polygon_id'],
-                        'year_of_analysis' => Carbon::now()->year,
-                        'value' => $value,
-                    ];
-                    $slugMappings[$slug]['model']::create($data);
-
-                    continue;
-                }
-
-                $response = $this->sendApiRequestIndicator(getenv('GFW_SECRET_KEY'), $slugMappings[$slug]['query_url'], $slugMappings[$slug]['sql'], $polygonGeometry['geo']);
-                if (str_contains($slug, 'treeCoverLoss')) {
-                    $processedTreeCoverLossValue = $this->processTreeCoverLossValue($response->json()['data'], $slugMappings[$slug]['indicator']);
-                }
-
-                if ($response->successful()) {
-                    if (str_contains($slug, 'treeCoverLoss')) {
-                        $data = $this->generateTreeCoverLossData($processedTreeCoverLossValue, $slug, $polygonGeometry);
-                    } else {
-                        $data = [
-                            'indicator_slug' => $slug,
-                            'site_polygon_id' => $polygonGeometry['site_polygon_id'],
-                            'year_of_analysis' => Carbon::now()->year,
-                            'value' => json_encode($response->json()['data']),
-                        ];
+            foreach ($request['uuids'] as $index => $uuid) {
+                try {
+                    if ($index % 100 === 0) {
+                        Log::info("Processing polygon $index of $totalPolygons for slug: $slug");
                     }
 
-                    $slugMappings[$slug]['model']::create($data);
-                } else {
-                    Log::error('A problem occurred during the analysis of the geometry for the polygon: ' . $uuid);
+                    $polygonGeometry = $this->getGeometry($uuid);
+
+                    if (! $polygonGeometry) {
+                        Log::warning("Could not retrieve geometry for polygon UUID: $uuid");
+                        $errorCount++;
+
+                        continue;
+                    }
+
+                    // Check if we already have a record for this polygon in the current year
+                    $registerExist = DB::table($slugMappings[$slug]['table_name'].' as i')
+                        ->where('i.site_polygon_id', $polygonGeometry['site_polygon_id'])
+                        ->where('i.indicator_slug', $slug)
+                        ->where('i.year_of_analysis', Carbon::now()->year)
+                        ->exists();
+
+                    if ($registerExist) {
+                        $skippedCount++;
+
+                        continue;
+                    }
+
+                    if (str_contains($slug, 'restorationBy')) {
+                        $this->processRestorationAnalysis($uuid, $slug, $polygonGeometry, $slugMappings);
+                    } else {
+                        $this->processTreeCoverAnalysis($uuid, $slug, $polygonGeometry, $slugMappings);
+                    }
+
+                    $processedCount++;
+
+                } catch (\Exception $e) {
+                    $errorCount++;
+                    Log::error("Error processing polygon UUID: $uuid", [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
                 }
             }
 
-            return response()->json(['message' => 'Analysis completed']);
+            Log::info("Analysis completed for slug: $slug", [
+                'total_polygons' => $totalPolygons,
+                'processed' => $processedCount,
+                'skipped' => $skippedCount,
+                'errors' => $errorCount,
+            ]);
+
+            return response()->json([
+                'message' => 'Analysis completed',
+                'stats' => [
+                    'total_polygons' => $totalPolygons,
+                    'processed' => $processedCount,
+                    'skipped' => $skippedCount,
+                    'errors' => $errorCount,
+                ],
+            ]);
         } catch (\Exception $e) {
-            Log::info($e);
+            Log::error('Global error in indicator analysis', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
             return response()->json([
                 'message' => 'An error occurred during the analysis',
@@ -118,26 +147,194 @@ class RunIndicatorAnalysisService
         }
     }
 
-    public function getGeometry($polygonUuid)
+    /**
+     * Process restoration analysis for a polygon
+     *
+     * @param string $uuid
+     * @param string $slug
+     * @param array $polygonGeometry
+     * @param array $slugMappings
+     * @return void
+     */
+    protected function processRestorationAnalysis($uuid, $slug, $polygonGeometry, $slugMappings)
     {
-        $geojson = GeometryHelper::getMonitoredPolygonsGeojson($polygonUuid);
-        $geoJsonObject = json_decode($geojson['geometry']->geojsonGeometry, true);
+        $geojson = GeometryHelper::getPolygonGeojson($uuid);
 
-        return [
-            'geo' => [
-                'type' => 'Polygon',
-                'coordinates' => $geoJsonObject['coordinates'],
-            ],
-            'site_polygon_id' => $geojson['site_polygon_id'],
-        ];
+        if (! $geojson) {
+            Log::warning("Could not retrieve GeoJSON for polygon UUID: $uuid");
+
+            return;
+        }
+
+        $retries = 0;
+        $success = false;
+
+        while (! $success && $retries < self::MAX_RETRIES) {
+            try {
+                $indicatorRestorationResponse = App::make(PythonService::class)->IndicatorPolygon(
+                    $geojson,
+                    $slugMappings[$slug]['indicator'],
+                    getenv('GFW_SECRET_KEY')
+                );
+
+                if (! isset($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']])) {
+                    throw new \Exception('Invalid response structure from Python service');
+                }
+
+                if ($slug == 'restorationByEcoRegion') {
+                    $value = json_encode($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
+                } else {
+                    $value = $this->formatKeysValues($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
+                }
+
+                $data = [
+                    'indicator_slug' => $slug,
+                    'site_polygon_id' => $polygonGeometry['site_polygon_id'],
+                    'year_of_analysis' => Carbon::now()->year,
+                    'value' => $value,
+                ];
+
+                // Insert the record, ignoring duplicates
+                $slugMappings[$slug]['model']::updateOrCreate(
+                    [
+                        'indicator_slug' => $slug,
+                        'site_polygon_id' => $polygonGeometry['site_polygon_id'],
+                        'year_of_analysis' => Carbon::now()->year,
+                    ],
+                    $data
+                );
+
+                $success = true;
+            } catch (\Exception $e) {
+                $retries++;
+                Log::warning("Retry $retries for polygon UUID: $uuid", [
+                    'error' => $e->getMessage(),
+                ]);
+
+                if ($retries >= self::MAX_RETRIES) {
+                    throw $e;
+                }
+
+                sleep(1);
+            }
+        }
     }
 
+    /**
+     * Process tree cover analysis for a polygon
+     *
+     * @param string $uuid
+     * @param string $slug
+     * @param array $polygonGeometry
+     * @param array $slugMappings
+     * @return void
+     */
+    protected function processTreeCoverAnalysis($uuid, $slug, $polygonGeometry, $slugMappings)
+    {
+        $retries = 0;
+        $success = false;
+
+        while (! $success && $retries < self::MAX_RETRIES) {
+            try {
+                $response = $this->sendApiRequestIndicator(
+                    getenv('GFW_SECRET_KEY'),
+                    $slugMappings[$slug]['query_url'],
+                    $slugMappings[$slug]['sql'],
+                    $polygonGeometry['geo']
+                );
+
+                if (! $response->successful()) {
+                    throw new \Exception('API request failed with status: ' . $response->status());
+                }
+
+                $processedTreeCoverLossValue = $this->processTreeCoverLossValue(
+                    $response->json()['data'],
+                    $slugMappings[$slug]['indicator']
+                );
+
+                $data = $this->generateTreeCoverLossData($processedTreeCoverLossValue, $slug, $polygonGeometry);
+
+                $slugMappings[$slug]['model']::updateOrCreate(
+                    [
+                        'indicator_slug' => $slug,
+                        'site_polygon_id' => $polygonGeometry['site_polygon_id'],
+                        'year_of_analysis' => Carbon::now()->year,
+                    ],
+                    $data
+                );
+
+                $success = true;
+            } catch (\Exception $e) {
+                $retries++;
+                Log::warning("Retry $retries for polygon UUID: $uuid", [
+                    'error' => $e->getMessage(),
+                ]);
+
+                if ($retries >= self::MAX_RETRIES) {
+                    throw $e;
+                }
+
+                sleep(1);
+            }
+        }
+    }
+
+    /**
+     * Get geometry for a polygon
+     *
+     * @param string $polygonUuid
+     * @return array|null
+     */
+    public function getGeometry($polygonUuid)
+    {
+        try {
+            $geojson = GeometryHelper::getMonitoredPolygonsGeojson($polygonUuid);
+
+            if (! $geojson || ! isset($geojson['geometry']) || ! isset($geojson['site_polygon_id'])) {
+                Log::warning("Invalid geometry for polygon UUID: $polygonUuid");
+
+                return null;
+            }
+
+            $geoJsonObject = json_decode($geojson['geometry']->geojsonGeometry, true);
+
+            if (! $geoJsonObject || ! isset($geoJsonObject['coordinates'])) {
+                Log::warning("Invalid GeoJSON for polygon UUID: $polygonUuid");
+
+                return null;
+            }
+
+            return [
+                'geo' => [
+                    'type' => 'Polygon',
+                    'coordinates' => $geoJsonObject['coordinates'],
+                ],
+                'site_polygon_id' => $geojson['site_polygon_id'],
+            ];
+        } catch (\Exception $e) {
+            Log::error("Error retrieving geometry for polygon UUID: $polygonUuid", [
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Send API request to indicator service
+     *
+     * @param string $secret_key
+     * @param string $query_url
+     * @param string $query_sql
+     * @param array $geometry
+     * @return \Illuminate\Http\Client\Response
+     */
     public function sendApiRequestIndicator($secret_key, $query_url, $query_sql, $geometry)
     {
         $response = Http::withHeaders([
             'content-type' => 'application/json',
             'x-api-key' => $secret_key,
-        ])->post('https://data-api.globalforestwatch.org' . $query_url, [
+        ])->timeout(30)->post('https://data-api.globalforestwatch.org' . $query_url, [
             'sql' => $query_sql,
             'geometry' => $geometry,
         ]);
@@ -159,6 +356,7 @@ class RunIndicatorAnalysisService
                     $outputFile,
                 ]);
 
+                $process->setTimeout(60);
                 $process->run();
 
                 if (! $process->isSuccessful()) {
@@ -167,7 +365,25 @@ class RunIndicatorAnalysisService
                     return $response;
                 }
 
-                $adjustedData = json_decode(file_get_contents($outputFile), true);
+                if (! file_exists($outputFile)) {
+                    Log::error('Output file not created by Python script');
+
+                    return $response;
+                }
+
+                $outputContent = file_get_contents($outputFile);
+                if (empty($outputContent)) {
+                    Log::error('Output file is empty');
+
+                    return $response;
+                }
+
+                $adjustedData = json_decode($outputContent, true);
+                if (! $adjustedData) {
+                    Log::error('Failed to decode adjusted data: ' . json_last_error_msg());
+
+                    return $response;
+                }
 
                 return new \Illuminate\Http\Client\Response(
                     new \GuzzleHttp\Psr7\Response(
@@ -191,16 +407,39 @@ class RunIndicatorAnalysisService
         return $response;
     }
 
+    /**
+     * Process tree cover loss value
+     *
+     * @param array $data
+     * @param string $indicator
+     * @return array
+     */
     public function processTreeCoverLossValue($data, $indicator)
     {
         $processedTreeCoverLossValue = [];
+        if (! is_array($data)) {
+            Log::warning('Invalid data format for tree cover loss processing', ['data' => $data]);
+
+            return $processedTreeCoverLossValue;
+        }
+
         foreach ($data as $i) {
-            $processedTreeCoverLossValue[$i[$indicator . '__year']] = $i['area__ha'];
+            if (isset($i[$indicator . '__year']) && isset($i['area__ha'])) {
+                $processedTreeCoverLossValue[$i[$indicator . '__year']] = $i['area__ha'];
+            }
         }
 
         return $processedTreeCoverLossValue;
     }
 
+    /**
+     * Generate tree cover loss data
+     *
+     * @param array $processedTreeCoverLossValue
+     * @param string $slug
+     * @param array $polygonGeometry
+     * @return array
+     */
     public function generateTreeCoverLossData($processedTreeCoverLossValue, $slug, $polygonGeometry)
     {
         $yearsOfAnalysis = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
@@ -221,6 +460,12 @@ class RunIndicatorAnalysisService
         ];
     }
 
+    /**
+     * Format keys and values
+     *
+     * @param array $data
+     * @return string
+     */
     public function formatKeysValues($data)
     {
         $formattedData = [];

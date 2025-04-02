@@ -60,7 +60,6 @@ class GeometryHelper
     {
         try {
             $centroid = $this->centroidOfProject($projectUuid);
-
             if ($centroid === null) {
                 Log::warning("Invalid centroid for projectUuid: $projectUuid");
             }
@@ -81,8 +80,9 @@ class GeometryHelper
               'message' => 'Centroid updated',
               'centroid' => $centroid,
             ], 200);
-        } catch (\Exception $e) {
-            Log::error("Error updating centroid for projectUuid: $projectUuid");
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            Log::error("Error updating centroid for projectUuid: $projectUuid with error  $message");
 
             return response()->json([
               'message' => 'Error updating centroid',
@@ -481,5 +481,82 @@ class GeometryHelper
                     'lat' => $polygon->centroid_y,
                 ];
             });
+    }
+
+    private function processDeletionBatch(array $uuidBatch, array &$deletedUuids, array &$failedUuids, array &$affectedProjects)
+    {
+        $polygonGeometries = PolygonGeometry::whereIn('uuid', $uuidBatch)
+            ->with('sitePolygon.project')
+            ->get();
+
+        $polygonMap = $polygonGeometries->keyBy('uuid');
+
+        $primaryUuids = [];
+        foreach ($polygonGeometries as $polygon) {
+            if ($polygon->sitePolygon) {
+                $primaryUuids[] = $polygon->sitePolygon->primary_uuid;
+
+                // Track affected projects
+                if ($polygon->sitePolygon->project) {
+                    $affectedProjects[] = $polygon->sitePolygon->project->uuid;
+                }
+            }
+        }
+
+        $allRelatedSitePolygons = SitePolygon::whereIn('primary_uuid', array_unique($primaryUuids))
+            ->with('polygonGeometry')
+            ->get();
+
+        $groupedSitePolygons = $allRelatedSitePolygons->groupBy('primary_uuid');
+
+        foreach ($uuidBatch as $uuid) {
+            try {
+                if (! isset($polygonMap[$uuid])) {
+                    $failedUuids[] = ['uuid' => $uuid, 'error' => 'Polygon geometry not found'];
+
+                    continue;
+                }
+
+                $polygonGeometry = $polygonMap[$uuid];
+                $sitePolygon = $polygonGeometry->sitePolygon;
+
+                if (! $sitePolygon) {
+                    $failedUuids[] = ['uuid' => $uuid, 'error' => 'Site polygon not found'];
+
+                    continue;
+                }
+
+                $primaryUuid = $sitePolygon->primary_uuid;
+
+                DB::beginTransaction();
+
+                try {
+                    if ($sitePolygon->is_active) {
+                        $sitePolygon->is_active = false;
+                        $sitePolygon->save();
+                    }
+
+                    if (isset($groupedSitePolygons[$primaryUuid])) {
+                        foreach ($groupedSitePolygons[$primaryUuid] as $relatedSitePolygon) {
+                            if ($relatedSitePolygon->polygonGeometry) {
+                                $relatedSitePolygon->polygonGeometry->deleteWithRelated();
+                            }
+                        }
+                    }
+
+                    DB::commit();
+                    $deletedUuids[] = ['uuid' => $uuid];
+
+                    Log::info("All related polygons and site polygons deleted successfully for primary UUID: $primaryUuid");
+                } catch (\Exception $e) {
+                    DB::rollBack();
+
+                    throw $e;
+                }
+            } catch (\Exception $e) {
+                Log::error('An error occurred while deleting polygon and site polygon for UUID: ' . $uuid . '. Error: ' . $e->getMessage());
+                $failedUuids[] = ['uuid' => $uuid, 'error' => $e->getMessage()];
+            }
+        }
     }
 }
