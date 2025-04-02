@@ -26,6 +26,7 @@ trait HasDemographics
         'volunteersTotal' => ['type' => Demographic::VOLUNTEERS_TYPE],
         'allBeneficiariesTotal' => ['type' => Demographic::ALL_BENEFICIARIES_TYPE],
         'trainingBeneficiariesTotal' => ['type' => Demographic::TRAINING_BENEFICIARIES_TYPE],
+        'indirectBeneficiariesTotal' => ['type' => Demographic::INDIRECT_BENEFICIARIES_TYPE],
     ];
 
     public static function bootHasDemographics()
@@ -64,7 +65,8 @@ trait HasDemographics
                 // These three define a single collection each, and simply rely on the type level relation above
                 Demographic::VOLUNTEERS_TYPE,
                 Demographic::ALL_BENEFICIARIES_TYPE,
-                Demographic::TRAINING_BENEFICIARIES_TYPE => null,
+                Demographic::TRAINING_BENEFICIARIES_TYPE,
+                Demographic::INDIRECT_BENEFICIARIES_TYPE => null,
                 default => throw new InternalErrorException("Unrecognized demographic type: $demographicType"),
             };
             if (! empty($collections)) {

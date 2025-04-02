@@ -36,6 +36,7 @@ class Demographic extends Model implements HandlesLinkedFieldSync
     public const EMPLOYEES_TYPE = 'employees';
     public const ALL_BENEFICIARIES_TYPE = 'all-beneficiaries';
     public const TRAINING_BENEFICIARIES_TYPE = 'training-beneficiaries';
+    public const INDIRECT_BENEFICIARIES_TYPE = 'indirect-beneficiaries';
 
     public const VALID_TYPES = [
         self::WORKDAY_TYPE,
@@ -45,6 +46,7 @@ class Demographic extends Model implements HandlesLinkedFieldSync
         self::EMPLOYEES_TYPE,
         self::ALL_BENEFICIARIES_TYPE,
         self::TRAINING_BENEFICIARIES_TYPE,
+        self::INDIRECT_BENEFICIARIES_TYPE,
     ];
 
     // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that both in-flight

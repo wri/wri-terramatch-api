@@ -89,6 +89,7 @@ class ProjectPitch extends Model implements MediaModel
             ],
         ],
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Demographic::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
     ];
 
     public function registerMediaConversions(Media $media = null): void

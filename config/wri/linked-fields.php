@@ -322,6 +322,13 @@ return [
                     'input_type' => 'allBeneficiaries',
                     'collection' => 'all'
                 ],
+                'pro-pit-indirect-beneficiaries' => [
+                    'property' => 'indirectBeneficiaries',
+                    'label' => 'Indirect Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'indirectBeneficiaries',
+                    'collection' => 'indirect'
+                ],
             ],
         ],
         'project' => [
