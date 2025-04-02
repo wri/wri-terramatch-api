@@ -118,40 +118,42 @@ class TerrafundEditGeometryController extends Controller
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
+
     public function deleteMultiplePolygonsAndSitePolygons(Request $request)
     {
         try {
             $uuids = $request->input('uuids');
-    
+
             if (empty($uuids)) {
                 return response()->json(['message' => 'No UUIDs provided.'], 400);
             }
-    
+
             $batchSize = 10;
             $batches = array_chunk($uuids, $batchSize);
-            
+
             $deletedUuids = [];
             $failedUuids = [];
             $affectedProjects = [];
-    
+
             foreach ($batches as $batch) {
-              GeometryHelper::processDeletionBatch($batch, $deletedUuids, $failedUuids, $affectedProjects);
+                GeometryHelper::processDeletionBatch($batch, $deletedUuids, $failedUuids, $affectedProjects);
             }
-    
+
             $geometryHelper = new GeometryHelper();
             foreach (array_unique($affectedProjects) as $projectUuid) {
                 $geometryHelper->updateProjectCentroid($projectUuid);
             }
-    
+
             $response = [
                 'message' => 'Polygon geometries and associated site polygons deleted successfully.',
                 'deleted' => $deletedUuids,
                 'failed' => $failedUuids,
             ];
-    
+
             return response()->json($response);
         } catch (\Exception $e) {
             Log::error('An error occurred at delete multiple polygons and sites: ' . $e->getMessage());
+
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
