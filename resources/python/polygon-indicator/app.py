@@ -1,5 +1,6 @@
 import json
 import sys
+import os
 
 import requests
 import yaml
@@ -57,6 +58,10 @@ def main():
         geojson_data = json.load(f)
 
     config_path = "resources/python/polygon-indicator/config.yaml"
+
+    absolute_config_path = os.path.abspath(config_path)
+    print(f"Looking for config at: {absolute_config_path}")
+
     with open(config_path) as conf_file:
         config = yaml.safe_load(conf_file)
 
