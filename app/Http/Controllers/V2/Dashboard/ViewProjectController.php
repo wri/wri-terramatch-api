@@ -50,9 +50,9 @@ class ViewProjectController extends Controller
                 ->where('project_id', $projectId)
                 ->exists();
 
-            $isAllowedByOrganization = $project && $user->organisation 
-                && ($user->organisation->id == $project->organisation_id 
-                    || $user->projects->contains($project->id));  
+            $isAllowedByOrganization = $project && $user->organisation
+                && ($user->organisation->id == $project->organisation_id
+                    || $user->projects->contains($project->id));
 
             $response = (object)[
                 'allowed' => $isInvite || $isAllowedByOrganization,
