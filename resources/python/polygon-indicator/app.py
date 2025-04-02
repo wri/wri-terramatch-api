@@ -57,7 +57,7 @@ def main():
     with open(input_geojson, "r") as f:
         geojson_data = json.load(f)
 
-    config_path = "resources/python/polygon-indicator/config.yaml"
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yaml")
 
     absolute_config_path = os.path.abspath(config_path)
     print(f"Looking for config at: {absolute_config_path}")
