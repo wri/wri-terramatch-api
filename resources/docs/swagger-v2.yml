@@ -68233,23 +68233,6 @@ paths:
           description: OK
           schema:
             type: object
-  '/v2/sites/{UUID}':
-    get:
-      summary: View a specific site
-      operationId: get-v2-sites-uuid
-      tags:
-        - V2 Sites
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-      tags:
-        - V2 Sites
-      description: ''
   '/v2/sites/{UUID}/polygons':
     get:
       summary: Get polygons for a specific site
