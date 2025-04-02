@@ -59,9 +59,6 @@ def main():
 
     config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yaml")
 
-    absolute_config_path = os.path.abspath(config_path)
-    print(f"Looking for config at: {absolute_config_path}")
-
     with open(config_path) as conf_file:
         config = yaml.safe_load(conf_file)
 
