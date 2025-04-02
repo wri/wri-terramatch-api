@@ -55,13 +55,14 @@ class ViewProjectController extends Controller
             $response = (object)[
                 'allowed' => true,
             ];
-        } elseif ($project = Project::where('uuid', $uuid)->first()) {
-            $response = (object)[
-                'allowed' => $user->organisation->id == $project->organisation_id || $user->projects->contains($project->id),
-            ];
         } else {
-            $response = (object)[
-                'allowed' => false,
+            $project = Project::where('uuid', $uuid)->first();
+            $isAllowedByOrganization = $project && $user->organisation
+                && ($user->organisation->id == $project->organisation_id
+                    || $user->projects->contains($project->id));
+
+            $response = (object) [
+                'allowed' => $isAllowedByOrganization ?? false,
             ];
         }
 
