@@ -17,7 +17,7 @@ class ViewReportingFrameworkControllerTest extends TestCase
 
         $framework = Framework::factory()->create(['name' => 'Testing framework']);
 
-        $uri = '/api/v2/reporting-frameworks/' . $framework->uuid;
+        $uri = '/api/v2/reporting-frameworks/' . $framework->slug;
 
         $this->actingAs($user)
             ->getJson($uri)
