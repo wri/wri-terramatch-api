@@ -52,9 +52,9 @@
 /v2/reporting-frameworks/access-code/{ACCESS_CODE}:
   get:
     $ref: './ReportingFrameworks/get-v2-reporting-frameworks-access-code.yml'
-/v2/reporting-frameworks/{UUID}:
+/v2/reporting-frameworks/{frameworkKey}:
   get:
-    $ref: './ReportingFrameworks/get-v2-reporting-frameworks-uuid.yml'
+    $ref: './ReportingFrameworks/get-v2-reporting-frameworks-framweork-key.yml'
 /v2/forms/{ENTITY}/{UUID}:
   get:
     $ref: './Forms/get-v2-forms-entity-form-uuid.yml'
