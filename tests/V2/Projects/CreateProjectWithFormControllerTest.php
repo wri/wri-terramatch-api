@@ -89,7 +89,7 @@ class CreateProjectWithFormControllerTest extends TestCase
                 $project->treeSpecies()->where([
                     'collection' => $treeSpecies->collection,
                     'name' => $treeSpecies->name,
-                    'amount' => $treeSpecies->amount
+                    'amount' => $treeSpecies->amount,
                 ])->exists(),
                 "Tree Species $treeSpecies->name does not exist on the project table"
             );
@@ -100,7 +100,7 @@ class CreateProjectWithFormControllerTest extends TestCase
             $this->assertTrue(
                 $project->demographics()->where([
                     'type' => $demographic->type,
-                    'collection' => $demographic->collection
+                    'collection' => $demographic->collection,
                 ])->exists(),
                 "Demographic $demographic->type does not exist on the project table"
             );

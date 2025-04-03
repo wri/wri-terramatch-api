@@ -58,7 +58,7 @@ class DemographicFactory extends Factory
                 'demographical_type' => ProjectPitch::class,
                 'demographical_id' => ProjectPitch::factory()->create(),
                 'type' => Demographic::EMPLOYEES_TYPE,
-                'collection' => DemographicCollections::ALL
+                'collection' => DemographicCollections::ALL,
             ];
         });
     }

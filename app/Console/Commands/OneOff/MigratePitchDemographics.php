@@ -4,6 +4,7 @@ namespace App\Console\Commands\OneOff;
 
 use App\Console\Commands\Traits\DemographicsMigration;
 use App\Models\V2\ProjectPitch;
+use App\Models\V2\Projects\Project;
 use Illuminate\Console\Command;
 
 class MigratePitchDemographics extends Command
@@ -22,7 +23,7 @@ class MigratePitchDemographics extends Command
      *
      * @var string
      */
-    protected $description = 'Move beneficiaries / jobs data in Project Pitch to Demographics';
+    protected $description = 'Move beneficiaries / jobs data in Project Pitch and Project to Demographics';
 
     protected const ALL_MAPPING = [
         'all' => [
@@ -61,7 +62,7 @@ class MigratePitchDemographics extends Command
                     'marginalized' => 'pct_employees_marginalised',
                 ],
             ],
-            'total' => ['num_jobs_created'],
+            'total' => ['num_jobs_created', 'jobs_created_goal'],
         ],
     ];
 
@@ -84,7 +85,17 @@ class MigratePitchDemographics extends Command
                 }
             });
         });
-
         $this->info("\n\nCompleted moving project pitch beneficiaries / jobs data to Demographics.");
+
+        $this->info("\n\nMoving project beneficiaries / jobs data to Demographics...");
+        $this->withProgressBar(Project::count(), function ($progressBar) {
+            Project::chunkById(100, function ($projects) use ($progressBar) {
+                foreach ($projects as $project) {
+                    $this->convertDemographics($project, self::MIGRATION_MAPPING);
+                    $progressBar->advance();
+                }
+            });
+        });
+        $this->info("\n\nCompleted moving project beneficiaries / jobs data to Demographics.");
     }
 }
