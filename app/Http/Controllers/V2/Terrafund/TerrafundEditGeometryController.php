@@ -128,38 +128,20 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['message' => 'No UUIDs provided.'], 400);
             }
 
+            $batchSize = 10;
+            $batches = array_chunk($uuids, $batchSize);
+
             $deletedUuids = [];
             $failedUuids = [];
             $affectedProjects = [];
 
-            $batchSize = 10;
-            $batches = array_chunk($uuids, $batchSize);
-
             foreach ($batches as $batch) {
-                foreach ($batch as $uuid) {
-                    try {
-                        $result = $this->deletePolygonAndSitePolygon($uuid);
+                GeometryHelper::processDeletionBatch($batch, $deletedUuids, $failedUuids, $affectedProjects);
+            }
 
-                        if ($result instanceof \Illuminate\Http\JsonResponse) {
-                            $data = $result->getData(true);
-
-                            if (isset($data['uuid'])) {
-                                $deletedUuids[] = ['uuid' => $uuid];
-
-                                if (isset($data['project_uuid']) && $data['project_uuid']) {
-                                    $affectedProjects[] = $data['project_uuid'];
-                                }
-                            } elseif (isset($data['error'])) {
-                                $failedUuids[] = ['uuid' => $uuid, 'error' => $data['error']];
-                            }
-                        } else {
-                            $deletedUuids[] = ['uuid' => $uuid];
-                        }
-                    } catch (\Exception $e) {
-                        Log::error('An error occurred while deleting polygon and site polygon for UUID: ' . $uuid . '. Error: ' . $e->getMessage());
-                        $failedUuids[] = ['uuid' => $uuid, 'error' => $e->getMessage()];
-                    }
-                }
+            $geometryHelper = new GeometryHelper();
+            foreach (array_unique($affectedProjects) as $projectUuid) {
+                $geometryHelper->updateProjectCentroid($projectUuid);
             }
 
             $response = [
