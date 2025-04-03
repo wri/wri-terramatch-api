@@ -14,7 +14,6 @@ class RunProjectsService
             ->whereNotNull('lat')
             ->select('v2_projects.uuid', 'long', 'lat', 'v2_projects.name', 'organisations.type')
             ->get();
-
         $minLong = $projects->min('long');
         $maxLong = $projects->max('long');
         $minLat = $projects->min('lat');
