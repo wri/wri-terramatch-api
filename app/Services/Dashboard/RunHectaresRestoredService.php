@@ -52,6 +52,7 @@ class RunHectaresRestoredService
             ->join('v2_projects as p', 's.project_id', '=', 'p.id')
             ->whereIn('s.status', Site::$approvedStatuses)
             ->where('sp.status', 'approved')
+            ->where('sp.is_active', true)
             ->whereIn('p.uuid', $projects)
             ->select('sp.id')
             ->get();

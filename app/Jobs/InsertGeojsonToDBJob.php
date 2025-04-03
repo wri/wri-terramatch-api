@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\PolygonOperationsComplete;
 use App\Models\DelayedJob;
+use App\Models\Traits\IndicatorUpdateTrait;
 use App\Models\V2\Sites\Site;
 use App\Services\PolygonService;
 use App\Services\SiteService;
@@ -25,6 +26,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use IndicatorUpdateTrait;
 
     public $timeout = 0;
 
@@ -86,6 +88,19 @@ class InsertGeojsonToDBJob implements ShouldQueue
             }
 
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
+
+            $indicatorUpdateResults = [];
+            foreach ($uuids as $uuid) {
+                $updateSuccessful = $this->updateIndicatorsForPolygon($uuid);
+                $indicatorUpdateResults[$uuid] = [
+                    'status' => $updateSuccessful ? 'success' : 'error',
+                    'message' => $updateSuccessful ? 'Indicators updated successfully' : 'Failed to update indicators',
+                ];
+
+                if (! $updateSuccessful) {
+                    Log::warning("Failed to update indicators for polygon {$uuid}");
+                }
+            }
 
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,

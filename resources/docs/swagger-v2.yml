@@ -32167,31 +32167,6 @@ definitions:
           - published
           - archived
         example: draft
-  DashboardGetSitePolygonsDataProjectsResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          type: object
-          properties:
-            uuid:
-              type: string
-            name:
-              type: string
-            site_polygons:
-              type: array
-              items:
-                type: object
-                properties:
-                  uuid:
-                    type: string
-                  site_id:
-                    type: string
-                  poly_name:
-                    type: string
-                  poly_id:
-                    type: string
   DashboardGetPolygonCentroidResponse:
     type: object
     properties:
@@ -65225,62 +65200,6 @@ paths:
           description: OK
           schema:
             type: file
-  '/v2/admin/nurseries/{UUID}':
-    delete:
-      summary: Delete a nursery
-      operationId: delete-v2-admin-nurseries-UUID
-      tags:
-        - V2 Nurseries
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-  '/v2/admin/nursery-reports/{UUID}':
-    delete:
-      summary: Delete a nursery report
-      operationId: delete-v2-admin-nursery-reports-UUID
-      tags:
-        - V2 Nursery Reports
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-  '/v2/admin/sites/{UUID}':
-    delete:
-      summary: Delete a site
-      operationId: delete-v2-admin-site-UUID
-      tags:
-        - V2 Sites
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-  '/v2/admin/site-reports/{UUID}':
-    delete:
-      summary: Delete a site
-      operationId: delete-v2-admin-site-reports-UUID
-      tags:
-        - V2 Site Reports
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   /v2/admin/site-monitorings:
     post:
       summary: Create a site monitoring as an admin
@@ -67593,20 +67512,6 @@ paths:
                   type: string
                 has_monitoring_data:
                   type: boolean
-  '/v2/admin/project-reports/{UUID}':
-    delete:
-      summary: Delete a project report
-      operationId: delete-v2-admin-project-reports-UUID
-      tags:
-        - V2 Project Reports
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   /v2/admin/project-monitorings:
     post:
       summary: Create a project monitoring as an admin
@@ -68304,20 +68209,6 @@ paths:
           schema:
             type: object
   '/v2/sites/{UUID}':
-    delete:
-      summary: Delete a site
-      operationId: delete-v2-sites-uuid
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-      tags:
-        - V2 Sites
-      description: ''
     get:
       summary: View a specific site
       operationId: get-v2-sites-uuid
@@ -69842,21 +69733,6 @@ paths:
       responses:
         '200':
           description: OK
-  '/v2/nurseries/{UUID}':
-    delete:
-      summary: Delete a nursery
-      operationId: delete-v2-nurseries-uuid
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-      tags:
-        - V2 Nurseries
-      description: ''
   '/v2/admin/audits/{ENTITY}/{UUID}':
     get:
       operationId: get-v2-admin-audits-entity-uuid
@@ -72300,45 +72176,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  '/v2/dashboard/projects/{project}/polygons':
-    get:
-      summary: Retrieve all sitepolygons data and site for a project
-      description: |
-        This endpoint returns all site polygons data and site for a project .
-      parameters:
-        - name: project
-          type: string
-          in: path
-          description: The project uuid
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    name:
-                      type: string
-                    site_polygons:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          uuid:
-                            type: string
-                          site_id:
-                            type: string
-                          poly_name:
-                            type: string
-                          poly_id:
-                            type: string
   '/v2/dashboard/polygons/{poly_uuid}/centroid':
     get:
       summary: Retrieve the centroid of a polygon

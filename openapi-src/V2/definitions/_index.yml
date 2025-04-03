@@ -394,7 +394,5 @@ V2ImpactStoryUpdate:
   $ref: './V2ImpactStoryUpdate.yml'
 V2ImpactStoryCreate:
   $ref: './V2ImpactStoryCreate.yml'
-DashboardGetSitePolygonsDataProjectsResponse:
-  $ref: './DashboardGetSitePolygonsDataProjectsResponse.yml'
 DashboardGetPolygonCentroidResponse:
   $ref: './DashboardGetPolygonCentroidResponse.yml'
