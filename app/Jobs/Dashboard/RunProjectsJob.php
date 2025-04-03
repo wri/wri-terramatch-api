@@ -66,6 +66,7 @@ class RunProjectsJob implements ShouldQueue
                         'organisationType' => $this->organisations,
                         'projectUuid' => $this->uuid,
                         'cohort' => $this->cohort,
+                        'has_polygons' => true
                     ],
                 ]
             );
