@@ -36,7 +36,6 @@ use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
-use App\Http\Controllers\V2\Entities\AdminSoftDeleteEntityController;
 use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
@@ -113,11 +112,8 @@ use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisController
 use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisVerifyController;
 use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
 use App\Http\Controllers\V2\MonitoredData\RunIndicatorAnalysisController;
-use App\Http\Controllers\V2\Nurseries\AdminIndexNurseriesController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
 use App\Http\Controllers\V2\Nurseries\CreateNurseryWithFormController;
-use App\Http\Controllers\V2\Nurseries\SoftDeleteNurseryController;
-use App\Http\Controllers\V2\NurseryReports\AdminIndexNurseryReportsController;
 use App\Http\Controllers\V2\NurseryReports\NurseryReportsViaNurseryController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
@@ -153,7 +149,6 @@ use App\Http\Controllers\V2\ProjectPitches\SubmitProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\UpdateProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController;
-use App\Http\Controllers\V2\ProjectReports\AdminIndexProjectReportsController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\AdminUpdateProjectController;
@@ -179,7 +174,6 @@ use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkCon
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Reports\NothingToReportReportController;
-use App\Http\Controllers\V2\SiteReports\AdminIndexSiteReportsController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
@@ -194,7 +188,6 @@ use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\ShowSitePolygonController;
 use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
-use App\Http\Controllers\V2\Sites\SoftDeleteSiteController;
 use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
 use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
@@ -340,7 +333,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::prefix('nurseries')->group(function () {
-        Route::get('/', AdminIndexNurseriesController::class);
         Route::get('/multi', AdminNurseriesMultiController::class);
     });
 
@@ -351,12 +343,8 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::put('/{entity}/{status}', AdminStatusEntityController::class);
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
-        Route::delete('/{entity}', AdminSoftDeleteEntityController::class);
     });
 
-    Route::get('nursery-reports', AdminIndexNurseryReportsController::class);
-    Route::get('site-reports', AdminIndexSiteReportsController::class);
-    Route::get('project-reports', AdminIndexProjectReportsController::class);
 
     Route::prefix('funding-programme/stage')->group(function () {
         Route::post('/', StoreStageController::class);
@@ -585,7 +573,6 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/reports', SiteReportsViaSiteController::class);
     Route::get('/monitorings', ViewASitesMonitoringsController::class);
     Route::get('/image/locations', SiteImageLocationsController::class);
-    Route::delete('/', SoftDeleteSiteController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
@@ -625,7 +612,6 @@ Route::prefix('nurseries')->group(function () {
     Route::get('/{nursery}/files', ViewNurseryGalleryController::class);
     Route::get('/{nursery}/reports', NurseryReportsViaNurseryController::class);
     Route::get('/{nursery}/image/locations', NurseryImageLocationsController::class);
-    Route::delete('/{nursery}', SoftDeleteNurseryController::class);
     Route::get('/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
 });
 
@@ -745,7 +731,6 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/volunteers-survival-rate', VolunteersAndAverageSurvivalRateController::class);
     Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
-    Route::get('/projects/{project}/polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
     Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
     Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);

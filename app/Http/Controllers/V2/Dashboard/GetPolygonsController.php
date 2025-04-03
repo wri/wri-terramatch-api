@@ -82,7 +82,7 @@ class GetPolygonsController extends Controller
     public function getLandscapeBbox(Request $request)
     {
         $landscapes = $request->input('landscapes');
-        if($landscapes === null) {
+        if ($landscapes === null) {
             return response()->json(['error' => 'Landscapes parameter is required'], 400);
         }
         if (is_string($landscapes)) {

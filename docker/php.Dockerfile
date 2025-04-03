@@ -2,7 +2,7 @@
 FROM php:8.2-apache AS php
 
 # Set GDAL version
-ENV GDAL_VERSION=3.4.3
+ENV GDAL_VERSION=3.5.3
 
 # Install basic dependencies
 RUN apt-get update && apt-get install -y \

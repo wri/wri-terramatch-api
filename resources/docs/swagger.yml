@@ -8413,30 +8413,6 @@ definitions:
         type: string
       created_at:
         type: string
-  V2NurseryLiteRead:
-    title: V2NurseryLiteRead
-    type: object
-    properties:
-      uuid:
-        type: string
-      name:
-        type: string
-      project:
-        $ref: '#/definitions/ProjectLiteRead'
-      establishment_date:
-        type: string
-      framework_key:
-        type: string
-      framework_uuid:
-        type: string
-      status:
-        type: string
-      readable_status:
-        type: string
-      start_date:
-        type: string
-      created_date:
-        type: string
   V2SiteRead:
     type: object
     properties:

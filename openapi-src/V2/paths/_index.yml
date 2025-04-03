@@ -31,21 +31,9 @@
 /v2/{ENTITY}/{UUID}/reports:
   get:
     $ref: './Entity/get-v2-entity-uuid-reports.yml'
-/v2/admin/nursery-reports:
-  get:
-    $ref: './NurseryReports/get-v2-admin-nursery-reports.yml'
-/v2/admin/site-reports:
-  get:
-    $ref: './SiteReports/get-v2-admin-site-reports.yml'
-/v2/admin/project-reports:
-  get:
-    $ref: './ProjectReports/get-v2-admin-project-reports.yml'
 /v2/admin/tasks:
   get:
     $ref: './Tasks/get-v2-admin-tasks.yml'
-/v2/admin/nurseries:
-  get:
-    $ref: './Nurseries/get-v2-admin-nurseries.yml'
 /v2/admin/forms:
   post:
     $ref: './Forms/post-v2-admin-forms.yml'
@@ -2270,62 +2258,6 @@
         description: OK
         schema:
           type: file
-'/v2/admin/nurseries/{UUID}':
-  delete:
-    summary: Delete a nursery
-    operationId: delete-v2-admin-nurseries-UUID
-    tags:
-      - V2 Nurseries
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-'/v2/admin/nursery-reports/{UUID}':
-  delete:
-    summary: Delete a nursery report
-    operationId: delete-v2-admin-nursery-reports-UUID
-    tags:
-      - V2 Nursery Reports
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-'/v2/admin/sites/{UUID}':
-  delete:
-    summary: Delete a site
-    operationId: delete-v2-admin-site-UUID
-    tags:
-      - V2 Sites
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-'/v2/admin/site-reports/{UUID}':
-  delete:
-    summary: Delete a site
-    operationId: delete-v2-admin-site-reports-UUID
-    tags:
-      - V2 Site Reports
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
 '/v2/admin/site-monitorings':
   post:
     $ref: './Sites/Monitoring/post-v2-admin-site-monitorings.yml'
@@ -2337,20 +2269,6 @@
 '/v2/admin/projects/{UUID}':
   put:
     $ref: './Projects/put-v2-admin-project.yml'
-'/v2/admin/project-reports/{UUID}':
-  delete:
-    summary: Delete a project report
-    operationId: delete-v2-admin-project-reports-UUID
-    tags:
-      - V2 Project Reports
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
 '/v2/admin/project-monitorings':
   post:
     $ref: './Projects/Monitoring/post-v2-admin-project-monitorings.yml'
@@ -2402,8 +2320,6 @@
   post:
     $ref: './Auth/post-v2-users-resend.yml'
 /v2/sites/{UUID}:
-  delete:
-    $ref: './Sites/delete-v2-sites-uuid.yml'
   get:
     $ref: './Sites/get-v2-sites-uuid.yml'
 /v2/sites/{UUID}/polygons:
@@ -2435,9 +2351,6 @@
 /v2/projects/{UUID}/managers/{USER_UUID}:
   delete:
     $ref: './Projects/delete-v2-projects-uuid-managers.yml'
-/v2/nurseries/{UUID}:
-  delete:
-    $ref: './Nurseries/delete-v2-nurseries-uuid.yml'
 /v2/admin/audits/{ENTITY}/{UUID}:
   get:
     $ref: './Audits/get-v2-admin-audits-entity-uuid.yml'
@@ -2586,9 +2499,6 @@
 /v2/dashboard/get-polygons:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-polygons.yml'
-/v2/dashboard/projects/{project}/polygons:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-projects-project-polygons.yml'
 /v2/dashboard/polygons/{poly_uuid}/centroid:
   get:
     $ref: './Dashboard/get-v2-dashboard-polygons-poly_uuid-centroid.yml'

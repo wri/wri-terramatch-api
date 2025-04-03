@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\Terrafund;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
 use App\Http\Controllers\Controller;
+use App\Models\Traits\IndicatorUpdateTrait;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Projects\ProjectPolygon;
@@ -22,6 +23,8 @@ use Illuminate\Support\Facades\Log;
 
 class TerrafundEditGeometryController extends Controller
 {
+    use IndicatorUpdateTrait;
+
     public function getSitePolygonData(string $uuid)
     {
         try {
@@ -125,17 +128,20 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['message' => 'No UUIDs provided.'], 400);
             }
 
+            $batchSize = 10;
+            $batches = array_chunk($uuids, $batchSize);
+
             $deletedUuids = [];
             $failedUuids = [];
+            $affectedProjects = [];
 
-            foreach ($uuids as $uuid) {
-                try {
-                    $this->deletePolygonAndSitePolygon($uuid);
-                    $deletedUuids[] = ['uuid' => $uuid];
-                } catch (\Exception $e) {
-                    Log::error('An error occurred while deleting polygon and site polygon for UUID: ' . $uuid . '. Error: ' . $e->getMessage());
-                    $failedUuids[] = ['uuid' => $uuid, 'error' => $e->getMessage()];
-                }
+            foreach ($batches as $batch) {
+                GeometryHelper::processDeletionBatch($batch, $deletedUuids, $failedUuids, $affectedProjects);
+            }
+
+            $geometryHelper = new GeometryHelper();
+            foreach (array_unique($affectedProjects) as $projectUuid) {
+                $geometryHelper->updateProjectCentroid($projectUuid);
             }
 
             $response = [
@@ -277,6 +283,8 @@ class TerrafundEditGeometryController extends Controller
                 return response()->json(['error' => 'An error occurred while creating a new version of the site polygon'], 500);
             }
             $newPolygonVersion->changeStatusOnEdit();
+
+            $this->updateIndicatorsForPolygon($newPolygonVersion->poly_id);
 
             return response()->json(['message' => 'Site polygon version created successfully'], 201);
         } catch (\Exception $e) {

@@ -6,6 +6,7 @@ use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
 use App\Models\DelayedJobProgress;
+use App\Models\Traits\IndicatorUpdateTrait;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\ProjectPitch;
@@ -31,6 +32,7 @@ use InvalidArgumentException;
 
 class PolygonService
 {
+    use IndicatorUpdateTrait;
     public const OVERLAPPING_CRITERIA_ID = 3;
     public const SELF_CRITERIA_ID = 4;
     public const COORDINATE_SYSTEM_CRITERIA_ID = 5;
@@ -201,7 +203,7 @@ class PolygonService
                 $siteStablishentDate = Site::where('uuid', $sitePolygonProperties['site_id'])->value('start_date');
                 $featureProperties['plantstart'] = $siteStablishentDate;
             }
-            if($primary_uuid) {
+            if ($primary_uuid) {
                 $result = $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
                 if ($result === false) {
                     $this->insertSitePolygon(
@@ -215,6 +217,9 @@ class PolygonService
                     array_merge($sitePolygonProperties, $featureProperties),
                 );
             }
+
+            $this->updateIndicatorsForPolygon($uuid);
+
         } catch (\Exception $e) {
             Log::error('Error inserting polygon', [
               'uuid' => $uuid,
