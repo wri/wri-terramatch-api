@@ -3,6 +3,8 @@
 namespace Database\Factories\V2\Demographics;
 
 use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
+use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -45,6 +47,18 @@ class DemographicFactory extends Factory
                 'demographical_id' => ProjectReport::factory()->create(),
                 'type' => Demographic::RESTORATION_PARTNER_TYPE,
                 'collection' => $this->faker->randomElement(collect(array_values(ProjectReport::DEMOGRAPHIC_COLLECTIONS[Demographic::RESTORATION_PARTNER_TYPE]))->flatten()),
+            ];
+        });
+    }
+
+    public function projectPitchEmployees(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'demographical_type' => ProjectPitch::class,
+                'demographical_id' => ProjectPitch::factory()->create(),
+                'type' => Demographic::EMPLOYEES_TYPE,
+                'collection' => DemographicCollections::ALL
             ];
         });
     }

@@ -3,12 +3,15 @@
 namespace Tests\V2\Projects;
 
 use App\Helpers\CustomFormHelper;
+use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -80,6 +83,39 @@ class CreateProjectWithFormControllerTest extends TestCase
         foreach ($projectAssertions as $property => $expectedValue) {
             $this->assertEquals($expectedValue, $project->{$property}, $property);
         }
+
+        foreach ($projectPitch->treeSpecies as $treeSpecies) {
+            $this->assertTrue(
+                $project->treeSpecies()->where([
+                    'collection' => $treeSpecies->collection,
+                    'name' => $treeSpecies->name,
+                    'amount' => $treeSpecies->amount
+                ])->exists(),
+                "Tree Species $treeSpecies->name does not exist on the project table"
+            );
+            $this->assertEquals($projectPitch->treeSpecies()->count(), $project->treeSpecies()->count());
+        }
+
+        foreach ($projectPitch->demographics as $demographic) {
+            $this->assertTrue(
+                $project->demographics()->where([
+                    'type' => $demographic->type,
+                    'collection' => $demographic->collection
+                ])->exists(),
+                "Demographic $demographic->type does not exist on the project table"
+            );
+        }
+
+        $this->assertEquals($projectPitch->employeesAllTotal, $project->employeesAllTotal);
+        $this->assertEquals(
+            $projectPitch->employeesAll()->first()->entries()->gender()->sum('amount'),
+            $project->employeesAll()->first()->entries()->gender()->sum('amount')
+        );
+        $this->assertEquals(
+            $projectPitch->employeesAll()->first()->entries()->age()->sum('amount'),
+            $project->employeesAll()->first()->entries()->age()->sum('amount')
+        );
+        $this->assertEquals($projectPitch->demographics()->count(), $project->demographics()->count());
     }
 
     /**
@@ -121,6 +157,13 @@ class CreateProjectWithFormControllerTest extends TestCase
             'funding_programme_id' => $fundingProgramme->uuid,
             'organisation_id' => $organisation->uuid,
         ]);
+        TreeSpecies::factory()->create([
+            'speciesable_type' => ProjectPitch::class,
+            'speciesable_id' => $projectPitch->id,
+        ]);
+        $demographic = Demographic::factory()->projectPitchEmployees()->create(['demographical_id' => $projectPitch->id]);
+        DemographicEntry::factory()->gender()->create(['demographic_id' => $demographic->id]);
+        DemographicEntry::factory()->age()->create(['demographic_id' => $demographic->id]);
         $formSubmissions = FormSubmission::factory()->create([
             'project_pitch_uuid' => $projectPitch->uuid,
             'application_id' => $application->id,

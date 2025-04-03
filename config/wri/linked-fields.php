@@ -416,6 +416,27 @@ return [
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
                 ],
+                'pro-all-jobs' => [
+                    'property' => 'employeesAll',
+                    'label' => 'All Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'all'
+                ],
+                'pro-all-beneficiaries' => [
+                    'property' => 'allBeneficiaries',
+                    'label' => 'All Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'allBeneficiaries',
+                    'collection' => 'all'
+                ],
+                'pro-indirect-beneficiaries' => [
+                    'property' => 'indirectBeneficiaries',
+                    'label' => 'Indirect Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'indirectBeneficiaries',
+                    'collection' => 'indirect'
+                ],
             ],
         ],
         'project-report' => [

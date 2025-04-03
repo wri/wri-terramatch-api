@@ -4,6 +4,7 @@ namespace App\Models\V2\Projects;
 
 use App\Models\Framework;
 use App\Models\Organisation;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
@@ -14,6 +15,7 @@ use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Forms\Application;
@@ -59,6 +61,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     use HasUpdateRequests;
     use HasEntityStatus;
     use HasEntityResources;
+    use HasDemographics;
 
     protected $auditInclude = [
         'status',
@@ -204,6 +207,18 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public static $projectStatuses = [
         self::PROJECT_STATUS_NEW => 'New project',
         self::PROJECT_STATUS_EXISTING => 'Existing expansion',
+    ];
+
+    // Required by the HasDemographics trait. What's specified here should be a super set of what's on ProjectPitch,
+    // as those demographics are all copied to the project on establishment.
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Demographic::EMPLOYEES_TYPE => [
+            'all' => [
+                DemographicCollections::ALL,
+            ],
+        ],
+        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Demographic::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
     ];
 
     public function registerMediaConversions(Media $media = null): void
