@@ -66,17 +66,18 @@ class TerrafundDashboardQueryHelper
         $query->when($searchTerm, function ($query, $searchTerm) {
             $query->where('v2_projects.name', 'like', "%$searchTerm%");
         });
-        
+
         $query->when(data_get($filters, 'filter.has_polygons'), function ($query, $hasPolygons) {
-          if ($hasPolygons) {
-            $query->whereHas('sitePolygons', function ($querySP) {
-              $querySP->where('site_polygon.is_active', 1)
-                     ->whereNull('site_polygon.deleted_at')
-                     ->where('site_polygon.status', 'approved');
-            });
-  
-          }
+            if ($hasPolygons) {
+                $query->whereHas('sitePolygons', function ($querySP) {
+                    $querySP->where('site_polygon.is_active', 1)
+                           ->whereNull('site_polygon.deleted_at')
+                           ->where('site_polygon.status', 'approved');
+                });
+
+            }
         });
+
         return $query;
     }
 

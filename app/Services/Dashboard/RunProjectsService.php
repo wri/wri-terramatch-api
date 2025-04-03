@@ -4,7 +4,6 @@ namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class RunProjectsService
 {
