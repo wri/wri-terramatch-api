@@ -1,4 +1,4 @@
-title: V2LeadershipTeamCreate
+title: V2LeadershipsCreate
 type: object
 properties:
   organisation_id:
@@ -9,3 +9,5 @@ properties:
     type: string
   age:
     type: integer
+  nationality:
+    type: string
