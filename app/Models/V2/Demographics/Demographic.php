@@ -4,7 +4,6 @@ namespace App\Models\V2\Demographics;
 
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasUuid;
-use App\Models\V2\EntityModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -70,7 +69,7 @@ class Demographic extends Model implements HandlesLinkedFieldSync
     /**
      * @throws \Exception
      */
-    public static function syncRelation(EntityModel $entity, string $property, string $inputType, $data, bool $hidden): void
+    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden): void
     {
         $morph = $entity->$property();
         if (count($data) == 0) {
