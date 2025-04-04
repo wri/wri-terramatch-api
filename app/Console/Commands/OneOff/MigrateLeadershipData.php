@@ -43,9 +43,8 @@ class MigrateLeadershipData extends Command
                 ->where('uuid', $record->organisation_id)
                 ->first();
 
-            if (!$organisation) {
+            if (! $organisation) {
                 $this->warn("Skipping record {$record->id}, organisation not found.");
-
                 continue;
             }
 
