@@ -16,7 +16,7 @@ class StoreLeadershipsControllerTest extends TestCase
         $user = User::factory()->create();
 
         $payload = [
-            'organisation_id' => $user->organisation->id,
+            'organisation_id' => $user->organisation->uuid,
             'position' => 'a position',
             'gender' => 'a gender',
             'age' => 25,
@@ -40,7 +40,7 @@ class StoreLeadershipsControllerTest extends TestCase
         $organisation = Organisation::factory()->create();
 
         $payload = [
-            'organisation_id' => $organisation->id,
+            'organisation_id' => $organisation->uuid,
             'position' => 'a position',
             'gender' => 'a gender',
             'age' => 25,
