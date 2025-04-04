@@ -7,7 +7,6 @@ use App\Models\Framework;
 use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
-use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
@@ -50,7 +49,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     use HasUuid;
     use SoftDeletes;
     use HasReportStatus;
-    use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;

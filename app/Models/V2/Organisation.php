@@ -2,13 +2,23 @@
 
 namespace App\Models\V2;
 
+use App\Models\Draft;
+use App\Models\FilterRecord;
+use App\Models\Interest;
+use App\Models\OrganisationFile;
+use App\Models\OrganisationPhoto;
+use App\Models\Programme;
 use App\Models\Terrafund\TerrafundProgramme;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\HasVersions;
 use App\Models\Traits\NamedEntityTrait;
+use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
+use App\Models\V2\Forms\Application;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Database\Factories\V2\OrganisationFactory;
@@ -35,6 +45,7 @@ class Organisation extends Model implements MediaModel
     use HasV2MediaCollections;
     use SoftDeletes;
     use HasTags;
+    use HasDemographics;
 
     /*  Statuses    */
     public const STATUS_DRAFT = 'draft';
@@ -194,6 +205,26 @@ class Organisation extends Model implements MediaModel
         'additional_comments' => 'string',
     ];
 
+    // Required by the HasDemographics trait
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Demographic::EMPLOYEES_TYPE => [
+            'all' => [
+                // All is used for migrated old organization data, which didn't disaggregate FT / PT.
+                DemographicCollections::ALL,
+            ],
+            'full-time' => [
+                DemographicCollections::FULL_TIME,
+            ],
+            'part-time' => [
+                DemographicCollections::PART_TIME,
+            ],
+            'temp' => [
+                DemographicCollections::TEMP,
+            ],
+        ],
+        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+    ];
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumbnail')
@@ -349,8 +380,8 @@ class Organisation extends Model implements MediaModel
         return $this->hasMany(TerrafundProgramme::class);
     }
 
-    public function scopeIsType($query, $status): Builder
+    public function scopeIsType($query, $type): Builder
     {
-        return $query->where('type', $status);
+        return $query->where('type', $type);
     }
 }

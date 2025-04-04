@@ -180,6 +180,34 @@ return [
                     'resource' => 'App\Http\Resources\V2\OwnershipStakeResource',
                     'input_type' => 'ownershipStake',
                 ],
+                'org-beneficiaries-all' => [
+                    'property' => 'allBeneficiaries',
+                    'label' => 'Community Members',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'allBeneficiaries',
+                    'collection' => 'all'
+                ],
+                'org-employees-full-time' => [
+                    'property' => 'employeesFullTime',
+                    'label' => 'Full Time Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'full-time'
+                ],
+                'org-employees-part-time' => [
+                    'property' => 'employeesPartTime',
+                    'label' => 'Part Time Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'part-time'
+                ],
+                'org-employees-temp' => [
+                    'property' => 'employeesTemp',
+                    'label' => 'Temp Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'temp'
+                ],
             ],
         ],
         'project-pitch' => [
@@ -282,6 +310,27 @@ return [
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
                 ],
+                'pro-pit-all-jobs' => [
+                    'property' => 'employeesAll',
+                    'label' => 'All Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'all'
+                ],
+                'pro-pit-all-beneficiaries' => [
+                    'property' => 'allBeneficiaries',
+                    'label' => 'All Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'allBeneficiaries',
+                    'collection' => 'all'
+                ],
+                'pro-pit-indirect-beneficiaries' => [
+                    'property' => 'indirectBeneficiaries',
+                    'label' => 'Indirect Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'indirectBeneficiaries',
+                    'collection' => 'indirect'
+                ],
             ],
         ],
         'project' => [
@@ -368,6 +417,27 @@ return [
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
+                ],
+                'pro-all-jobs' => [
+                    'property' => 'employeesAll',
+                    'label' => 'All Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'all'
+                ],
+                'pro-all-beneficiaries' => [
+                    'property' => 'allBeneficiaries',
+                    'label' => 'All Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'allBeneficiaries',
+                    'collection' => 'all'
+                ],
+                'pro-indirect-beneficiaries' => [
+                    'property' => 'indirectBeneficiaries',
+                    'label' => 'Indirect Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'indirectBeneficiaries',
+                    'collection' => 'indirect'
                 ],
             ],
         ],

@@ -4,7 +4,6 @@ namespace App\Models\V2\Demographics;
 
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasUuid;
-use App\Models\V2\EntityModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,16 +32,20 @@ class Demographic extends Model implements HandlesLinkedFieldSync
     public const RESTORATION_PARTNER_TYPE = 'restoration-partners';
     public const JOBS_TYPE = 'jobs';
     public const VOLUNTEERS_TYPE = 'volunteers';
+    public const EMPLOYEES_TYPE = 'employees';
     public const ALL_BENEFICIARIES_TYPE = 'all-beneficiaries';
     public const TRAINING_BENEFICIARIES_TYPE = 'training-beneficiaries';
+    public const INDIRECT_BENEFICIARIES_TYPE = 'indirect-beneficiaries';
 
     public const VALID_TYPES = [
         self::WORKDAY_TYPE,
         self::RESTORATION_PARTNER_TYPE,
         self::JOBS_TYPE,
         self::VOLUNTEERS_TYPE,
+        self::EMPLOYEES_TYPE,
         self::ALL_BENEFICIARIES_TYPE,
         self::TRAINING_BENEFICIARIES_TYPE,
+        self::INDIRECT_BENEFICIARIES_TYPE,
     ];
 
     // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that both in-flight
@@ -66,7 +69,7 @@ class Demographic extends Model implements HandlesLinkedFieldSync
     /**
      * @throws \Exception
      */
-    public static function syncRelation(EntityModel $entity, string $property, string $inputType, $data, bool $hidden): void
+    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden): void
     {
         $morph = $entity->$property();
         if (count($data) == 0) {
