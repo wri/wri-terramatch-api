@@ -61,6 +61,7 @@ class MigrateLeadershipData extends Command
                 //'nationality' => $record->nationality,
                 'created_at' => $record->created_at,
                 'updated_at' => $record->updated_at,
+                'deleted_at' => $record->deleted_at,
             ]);
 
             $this->info("Migrated record {$record->id} from {$oldTable}.");
