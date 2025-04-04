@@ -7,9 +7,23 @@ use Illuminate\Support\Facades\DB;
 
 class MigrateLeadershipData extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'migrate:leadership-data';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Copy data from old tables to the new leaderships table';
 
+    /**
+     * Execute the console command.
+     */
     public function handle()
     {
         $this->info('Starting data migration...');
@@ -31,6 +45,7 @@ class MigrateLeadershipData extends Command
 
             if (!$organisation) {
                 $this->warn("Skipping record {$record->id}, organisation not found.");
+
                 continue;
             }
 
