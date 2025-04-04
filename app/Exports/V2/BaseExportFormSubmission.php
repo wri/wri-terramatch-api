@@ -71,9 +71,11 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                 case 'workdays':
                 case 'restorationPartners':
                 case 'jobs':
+                case 'employees':
                 case 'volunteers':
                 case 'allBeneficiaries':
                 case 'trainingBeneficiaries':
+                case 'indirectBeneficiaries':
                     $list = [];
                     $demographic = $answer->first();
                     if ($demographic == null) {
