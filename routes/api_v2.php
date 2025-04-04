@@ -17,9 +17,6 @@ use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
-use App\Http\Controllers\V2\CoreTeamLeader\DeleteCoreTeamLeaderController;
-use App\Http\Controllers\V2\CoreTeamLeader\StoreCoreTeamLeaderController;
-use App\Http\Controllers\V2\CoreTeamLeader\UpdateCoreTeamLeaderController;
 use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
 use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\CountriesController;
@@ -103,9 +100,8 @@ use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
 use App\Http\Controllers\V2\Geometry\GeometryController;
 use App\Http\Controllers\V2\ImpactStory\ImpactStoryController;
 use App\Http\Controllers\V2\Indicators\GetHectaresRestoredController;
-use App\Http\Controllers\V2\LeadershipTeam\DeleteLeadershipTeamController;
-use App\Http\Controllers\V2\LeadershipTeam\StoreLeadershipTeamController;
-use App\Http\Controllers\V2\LeadershipTeam\UpdateLeadershipTeamController;
+use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
+use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\MediaController;
 use App\Http\Controllers\V2\MonitoredData\GetIndicatorPolygonStatusController;
 use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisController;
@@ -507,22 +503,15 @@ Route::prefix('{relationType}')
 Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsController::class)
 ->whereIn('entityType', ['project', 'site']);
 
-Route::prefix('leadership-team')->group(function () {
-    Route::post('/', StoreLeadershipTeamController::class);
-    Route::patch('/{leadershipTeam}', UpdateLeadershipTeamController::class);
-    Route::delete('/{leadershipTeam}', DeleteLeadershipTeamController::class);
-});
-
 Route::prefix('ownership-stake')->group(function () {
     Route::post('/', StoreOwnershipStakeController::class);
     Route::patch('/{ownershipStake}', UpdateOwnershipStakeController::class);
     Route::delete('/{ownershipStake}', DeleteOwnershipStakeController::class);
 });
 
-Route::prefix('core-team-leader')->group(function () {
-    Route::post('/', StoreCoreTeamLeaderController::class);
-    Route::patch('/{coreTeamLeader}', UpdateCoreTeamLeaderController::class);
-    Route::delete('/{coreTeamLeader}', DeleteCoreTeamLeaderController::class);
+Route::prefix('leaderships')->group(function () {
+    Route::post('/', StoreLeadershipsController::class);
+    Route::delete('/{leaderships}', DeleteLeadershipsController::class);
 });
 
 Route::prefix('projects')->group(function () {

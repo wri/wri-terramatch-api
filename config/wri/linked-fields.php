@@ -156,14 +156,16 @@ return [
                 'org-leadership-team' => [
                     'property' => 'leadershipTeam',
                     'label' => 'Leadership Team',
-                    'resource' => 'App\Http\Resources\V2\LeadershipTeamResource',
-                    'input_type' => 'leadershipTeam',
+                    'resource' => 'App\Http\Resources\V2\LeadershipsResource',
+                    'input_type' => 'leaderships',
+                    'collection' => 'leadership-team'
                 ],
                 'org-core-team-leaders' => [
                     'property' => 'coreTeamLeaders',
                     'label' => 'Core Team Leaders',
-                    'resource' => 'App\Http\Resources\V2\CoreTeamLeaderResource',
-                    'input_type' => 'coreTeamLeaders',
+                    'resource' => 'App\Http\Resources\V2\LeadershipsResource',
+                    'input_type' => 'leaderships',
+                    'collection' => 'core-team-leaders'
                 ],
                 'org-tree-species-restored' => [
                     'property' => 'treeSpeciesHistorical',
