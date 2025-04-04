@@ -7,9 +7,23 @@ use Illuminate\Support\Facades\DB;
 
 class UpdateLeadershipsDataInFormQuestions extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'update:leaderships-data-form-questions';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Update data from form_questions table';
 
+    /**
+     * Execute the console command.
+     */
     public function handle()
     {
         $this->info('Starting data migration...');
