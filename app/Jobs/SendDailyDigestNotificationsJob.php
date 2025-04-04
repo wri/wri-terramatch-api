@@ -40,7 +40,7 @@ class SendDailyDigestNotificationsJob implements ShouldQueue
         if (! $this->task->project) {
             return;
         }
-        $usersPdWithSkip = $this->skipRecipients($this->task->project->users()->get());
+        $usersPdWithSkip = $this->skipRecipients($this->task->project->users()->wherePivot('is_monitoring', true)->get());
         $usersManagersWithSkip = $this->skipRecipients($this->task->project->managers()->get());
         $usersPDGroupedByLocale = $usersPdWithSkip->groupBy('locale');
         $usersManagersGroupedByLocale = $usersManagersWithSkip->groupBy('locale');
