@@ -28,19 +28,19 @@ class UpdateLeadershipsDataInFormQuestions extends Command
         foreach ($leaderFormQuestions as $record) {
             $newCollection = '';
             $record->input_type = 'leaderships';
-            
+
             if ($record->linked_field_key == 'org-leadership-team') {
                 $newCollection = 'leadership-team';
-            } else if ($record->linked_field_key == 'org-core-team-leaders') {
+            } elseif ($record->linked_field_key == 'org-core-team-leaders') {
                 $newCollection = 'core-team-leaders';
             }
 
             DB::table('form_questions')
-            ->where('id', $record->id)
-            ->update([
-                'input_type' => 'leaderships',
-                'collection' => $newCollection,
-            ]);
+                ->where('id', $record->id)
+                ->update([
+                    'input_type' => 'leaderships',
+                    'collection' => $newCollection,
+                ]);
 
             $this->info("updated record {$record->id} from form_questions.");
         }
