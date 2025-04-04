@@ -2,10 +2,8 @@
 
 namespace App\Http\Resources\V2\Organisation;
 
-use App\Http\Resources\V2\CoreTeamLeaderResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\General\ShapefileResource;
-use App\Http\Resources\V2\LeadershipTeamResource;
 use App\Http\Resources\V2\LeadershipsResource;
 use App\Http\Resources\V2\OwnershipStakeResource;
 use App\Http\Resources\V2\ProjectPitches\ProjectPitchResource;
