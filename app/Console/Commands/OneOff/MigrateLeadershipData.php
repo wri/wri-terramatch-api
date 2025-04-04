@@ -45,6 +45,7 @@ class MigrateLeadershipData extends Command
 
             if (! $organisation) {
                 $this->warn("Skipping record {$record->id}, organisation not found.");
+
                 continue;
             }
 
