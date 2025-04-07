@@ -9,7 +9,7 @@ class AddIsValidToSitePolygonTable extends Migration
     public function up(): void
     {
         Schema::table('site_polygon', function (Blueprint $table) {
-            $table->boolean('is_valid')->nullable()->after('status');
+          $table->string('is_valid')->nullable()->after('status');
         });
     }
 

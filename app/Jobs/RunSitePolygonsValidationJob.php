@@ -68,7 +68,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 throw new Exception('Site not found for the given site UUID.');
             }
 
-            foreach ($this->sitePolygonsUuids as $polygonUuid) {
+            foreach ($this->sitePolygonsUuids as $polygonUuid) {  
                 $request = new Request(['uuid' => $polygonUuid]);
                 $validationService->validateOverlapping($request);
                 $validationService->checkSelfIntersection($request);
