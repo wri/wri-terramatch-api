@@ -6,6 +6,7 @@ use App\Mail\PolygonOperationsComplete;
 use App\Models\DelayedJob;
 use App\Models\DelayedJobProgress;
 use App\Models\V2\Sites\Site;
+use App\Services\PolygonService;
 use App\Services\PolygonValidationService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -49,7 +50,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(PolygonValidationService $validationService)
+    public function handle(PolygonValidationService $validationService, PolygonService $polygonService)
     {
         try {
             $delayedJob = DelayedJobProgress::findOrFail($this->delayed_job_id);
@@ -68,7 +69,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 throw new Exception('Site not found for the given site UUID.');
             }
 
-            foreach ($this->sitePolygonsUuids as $polygonUuid) {  
+            foreach ($this->sitePolygonsUuids as $polygonUuid) {
                 $request = new Request(['uuid' => $polygonUuid]);
                 $validationService->validateOverlapping($request);
                 $validationService->checkSelfIntersection($request);
@@ -79,6 +80,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 $validationService->getGeometryType($request);
                 $validationService->validateEstimatedArea($request);
                 $validationService->validateDataInDB($request);
+                $polygonService->updateSitePolygonValidity($polygonUuid);
 
                 $delayedJob->increment('processed_content');
                 $delayedJob->processMessage();

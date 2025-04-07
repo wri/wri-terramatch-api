@@ -48,6 +48,12 @@ class PolygonService
     public const TERRAMACH_SOURCE = 'terramatch';
     public const GREENHOUSE_SOURCE = 'greenhouse';
 
+    public const EXCLUDED_VALIDATION_CRITERIA = [
+      self::DATA_CRITERIA_ID,
+      self::ESTIMATED_AREA_CRITERIA_ID,
+      self::WITHIN_COUNTRY_CRITERIA_ID,
+    ];
+
     // TODO: Remove this const and its usages when the point transformation ticket is complete.
     public const TEMP_FAKE_POLYGON_UUID = 'temp_fake_polygon_uuid';
 
@@ -703,5 +709,39 @@ class PolygonService
             $countryName,
             [$coordinates[0][0], $coordinates[0][1], $coordinates[2][0], $coordinates[2][1]],
         ];
+    }
+
+    public function updateSitePolygonValidity(string $polygonUuid): void
+    {
+        $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
+        if (! $sitePolygon) {
+            return;
+        }
+
+        $allCriteria = CriteriaSite::where('polygon_id', $polygonUuid)->get();
+
+        if ($allCriteria->isEmpty()) {
+            $sitePolygon->is_valid = null; // not checked
+            $sitePolygon->save();
+
+            return;
+        }
+
+        $nonExcluded = $allCriteria->filter(function ($c) {
+            return ! in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
+        });
+
+        $hasFailedNonExcluded = $nonExcluded->contains('valid', false);
+        $hasPassedNonExcluded = $nonExcluded->contains('valid', true);
+
+        if ($hasFailedNonExcluded) {
+            $sitePolygon->is_valid = 'failed';
+        } elseif ($hasPassedNonExcluded && $nonExcluded->every(fn ($c) => $c->valid)) {
+            $sitePolygon->is_valid = 'passed';
+        } else {
+            $sitePolygon->is_valid = 'partial';
+        }
+
+        $sitePolygon->save();
     }
 }
