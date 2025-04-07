@@ -467,7 +467,7 @@ Route::prefix('forms')->group(function () {
 
 
 Route::prefix('reporting-frameworks')->group(function () {
-    Route::get('/{framework}', ViewReportingFrameworkController::class);
+    Route::get('/{frameworkKey}', ViewReportingFrameworkController::class);
     Route::get('/access-code/{accessCode}', ViewReportingFrameworkViaAccessCodeController::class);
 });
 
