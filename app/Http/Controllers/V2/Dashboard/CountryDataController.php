@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 class CountryDataController extends Controller
 {
     use HasProjectCoverImage;
+
     public function getCountryBbox(string $iso)
     {
         $countryBbox = App::make(PolygonService::class)->getCountryBbox($iso);
