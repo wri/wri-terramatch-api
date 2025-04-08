@@ -670,6 +670,9 @@ class PolygonService
             $statusValues = explode(',', $request->input('status'));
             $sitePolygonsQuery->whereIn('site_polygon.status', $statusValues);
         }
+        if ($request->has('valid') && $request->input('valid')) {
+            $sitePolygonsQuery->where('site_polygon.is_valid', $request->input('valid'));
+        }
 
         $sortFields = $request->input('sort', []);
         foreach ($sortFields as $field => $direction) {
@@ -678,7 +681,7 @@ class PolygonService
             } elseif ($field === 'poly_name') {
                 $sitePolygonsQuery->orderByRaw('site_polygon.poly_name IS NULL, site_polygon.poly_name ' . $direction);
             } else {
-                $sitePolygonsQuery->orderBy($field, $direction);
+                $sitePolygonsQuery->orderBy('site_polygon.' . $field, $direction);
             }
         }
 
