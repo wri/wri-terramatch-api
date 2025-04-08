@@ -10,7 +10,7 @@ use App\Services\PolygonService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
-class CountryDataController extends Controller
+class CountryAndPolygonDataController extends Controller
 {
     use HasProjectCoverImage;
 
@@ -75,7 +75,7 @@ class CountryDataController extends Controller
               ['key' => 'project_name', 'title' => 'title', 'value' => $project->name],
               ['key' => 'organizations', 'title' => 'Organization', 'value' => $organization?->name],
               ['key' => 'total_hectares_restored', 'title' => 'Total Hectares Restored', 'value' => round($project->total_hectares_restored_sum, 2)],
-              ['key' => 'cover_image', 'title' => 'Cover Image', 'value' => $coverImage?->getUrl()],
+              ['key' => 'cover_image', 'title' => 'Cover Image', 'value' => $coverImage?->getUrl('thumbnail')],
             ];
 
             return response()->json(['data' => $data]);
