@@ -25,7 +25,7 @@ class UpdateSitePolygonValidityCommand extends Command
 
     /**
      * Criteria IDs that are excluded from validation failure
-     * 
+     *
      * @var array
      */
     protected const EXCLUDED_VALIDATION_CRITERIA = [3, 12, 14];
@@ -58,6 +58,7 @@ class UpdateSitePolygonValidityCommand extends Command
 
         if ($totalPolygons === 0) {
             $this->info('No records to process.');
+
             return 0;
         }
 
@@ -106,15 +107,16 @@ class UpdateSitePolygonValidityCommand extends Command
 
     /**
      * Update the validity status of a single site polygon
-     * 
+     *
      * @param string $polygonId
      * @return string Status: 'updated' or 'skipped'
      */
     protected function updateSitePolygonValidity(string $polygonId): string
     {
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonId)->first();
-        if (!$sitePolygon) {
+        if (! $sitePolygon) {
             Log::warning("SitePolygon not found for polygon ID: {$polygonId}");
+
             return 'skipped';
         }
 
@@ -132,34 +134,28 @@ class UpdateSitePolygonValidityCommand extends Command
             return 'updated';
         }
 
-        // Check if there are any failing criteria
         $hasAnyFailing = $allCriteria->contains(function ($c) {
             return $c->valid === 0 || $c->valid === false;
         });
 
-        // If all criteria pass, it's a clear pass
-        if (!$hasAnyFailing) {
+        if (! $hasAnyFailing) {
             $newIsValid = 'passed';
         } else {
-            // Split criteria into excluded and non-excluded
             $excludedCriteria = $allCriteria->filter(function ($c) {
                 return in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
             });
 
             $nonExcludedCriteria = $allCriteria->filter(function ($c) {
-                return !in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
+                return ! in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
             });
 
-            // Check if any non-excluded criteria are failing
             $hasFailingNonExcluded = $nonExcludedCriteria->contains(function ($c) {
                 return $c->valid === 0 || $c->valid === false;
             });
 
             if ($hasFailingNonExcluded) {
-                // If any non-excluded criteria fail, it's a failure
                 $newIsValid = 'failed';
             } else {
-                // If only excluded criteria are failing, it's partial
                 $newIsValid = 'partial';
             }
         }

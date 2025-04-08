@@ -727,21 +727,38 @@ class PolygonService
             return;
         }
 
-        $nonExcluded = $allCriteria->filter(function ($c) {
-            return ! in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
+        $hasAnyFailing = $allCriteria->contains(function ($c) {
+            return $c->valid === 0 || $c->valid === false;
         });
 
-        $hasFailedNonExcluded = $nonExcluded->contains('valid', false);
-        $hasPassedNonExcluded = $nonExcluded->contains('valid', true);
-
-        if ($hasFailedNonExcluded) {
-            $sitePolygon->is_valid = 'failed';
-        } elseif ($hasPassedNonExcluded && $nonExcluded->every(fn ($c) => $c->valid)) {
-            $sitePolygon->is_valid = 'passed';
+        // If all criteria pass, it's a clear pass
+        if (! $hasAnyFailing) {
+            $newIsValid = 'passed';
         } else {
-            $sitePolygon->is_valid = 'partial';
+            // Split criteria into excluded and non-excluded
+            $excludedCriteria = $allCriteria->filter(function ($c) {
+                return in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
+            });
+
+            $nonExcludedCriteria = $allCriteria->filter(function ($c) {
+                return ! in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
+            });
+
+            // Check if any non-excluded criteria are failing
+            $hasFailingNonExcluded = $nonExcludedCriteria->contains(function ($c) {
+                return $c->valid === 0 || $c->valid === false;
+            });
+
+            if ($hasFailingNonExcluded) {
+                // If any non-excluded criteria fail, it's a failure
+                $newIsValid = 'failed';
+            } else {
+                // If only excluded criteria are failing, it's partial
+                $newIsValid = 'partial';
+            }
         }
 
+        $sitePolygon->is_valid = $newIsValid;
         $sitePolygon->save();
     }
 }

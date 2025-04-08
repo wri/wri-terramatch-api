@@ -53,7 +53,7 @@ class SitePolygon extends Model implements AuditableModel
       'source',
       'is_active',
       'version_name',
-      'is_valid'
+      'is_valid',
     ];
 
     public function polygonGeometry(): BelongsTo
