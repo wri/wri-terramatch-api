@@ -1299,6 +1299,7 @@ class TerrafundCreateGeometryController extends Controller
             $this->getGeometryType($request);
             $this->validateEstimatedArea($request);
             $this->validateDataInDB($request);
+            $this->updateSitePolygonValidity($request);
         } catch (\Exception $e) {
             Log::error('Error during validation polygon: ' . $e->getMessage());
 
