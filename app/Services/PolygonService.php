@@ -671,7 +671,11 @@ class PolygonService
             $sitePolygonsQuery->whereIn('site_polygon.status', $statusValues);
         }
         if ($request->has('valid') && $request->input('valid')) {
-            $sitePolygonsQuery->where('site_polygon.is_valid', $request->input('valid'));
+            if ($request->input('valid') === 'not_checked') {
+                $sitePolygonsQuery->whereNull('site_polygon.is_valid');
+            } else {
+                $sitePolygonsQuery->where('site_polygon.is_valid', $request->input('valid'));
+            }
         }
 
         $sortFields = $request->input('sort', []);

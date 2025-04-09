@@ -40,6 +40,7 @@ class AdminSitesPolygonController extends Controller
             if ($lightResource) {
                 return response()->json(SitePolygonLightResource::collection($sitePolygons));
             }
+
             return response()->json($sitePolygons);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
