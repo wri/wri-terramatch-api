@@ -172,6 +172,7 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon->is_active = true;
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->created_by = $user->id;
+        $newSitePolygon->is_valid = null;
         $newSitePolygon->save();
 
         return $newSitePolygon;
