@@ -28,7 +28,7 @@ class UpdateSitePolygonValidityCommand extends Command
      *
      * @var array
      */
-    protected const EXCLUDED_VALIDATION_CRITERIA = [3, 12, 14];
+    protected const EXCLUDED_VALIDATION_CRITERIA = [7, 12, 14];
 
     /**
      * Execute the console command.
