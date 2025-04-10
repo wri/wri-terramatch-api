@@ -14,7 +14,7 @@ return new class () extends Migration {
     public function up(): void
     {
         //
-        $collections = [            
+        $collections = [
             'barriers-project-activity-collection' => ['financial or economic barriers', 'harmful cultural norms', 'inequities in land and tenure rights'],
             'landowner-agreement-collection' => ['yes i have a written letter of support', 'yes i have secured a verbal agreement', 'no i have not secured prior agreement', 'other'],
         ];
