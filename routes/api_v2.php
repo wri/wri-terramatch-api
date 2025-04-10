@@ -20,7 +20,7 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
 use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\CountriesController;
-use App\Http\Controllers\V2\Dashboard\CountryDataController;
+use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
 use App\Http\Controllers\V2\Dashboard\GetProjectsController;
@@ -467,7 +467,7 @@ Route::prefix('forms')->group(function () {
 
 
 Route::prefix('reporting-frameworks')->group(function () {
-    Route::get('/{framework}', ViewReportingFrameworkController::class);
+    Route::get('/{frameworkKey}', ViewReportingFrameworkController::class);
     Route::get('/access-code/{accessCode}', ViewReportingFrameworkViaAccessCodeController::class);
 });
 
@@ -725,11 +725,11 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
-    Route::get('/country/{country}', [CountryDataController::class, 'getCountryBbox']);
+    Route::get('/country/{country}', [CountryAndPolygonDataController::class, 'getCountryBbox']);
     Route::get('/bbox/landscape', [GetPolygonsController::class, 'getLandscapeBbox']);
     Route::get('/bbox/country-landscape', [GetPolygonsController::class, 'getCountryLandscapeBbox']);
-    Route::get('/polygon-data/{uuid}', [CountryDataController::class, 'getPolygonData']);
-    Route::get('/project-data/{uuid}', [CountryDataController::class, 'getProjectData']);
+    Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
+    Route::get('/project-data/{uuid}', [CountryAndPolygonDataController::class, 'getProjectData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);

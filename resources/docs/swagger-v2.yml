@@ -37087,15 +37087,15 @@ paths:
                 type: string
               nursery_report_form_uuid:
                 type: string
-  '/v2/reporting-frameworks/{UUID}':
+  '/v2/reporting-frameworks/{frameworkKey}':
     get:
       summary: View a specific reporting framework using an access code
-      operationId: get-v2-reporting-frameworks-uuid
+      operationId: get-v2-reporting-frameworks-framework-key
       tags:
         - Funding Programmes
       parameters:
         - type: string
-          name: UUID
+          name: frameworkKey
           in: path
           required: true
       responses:
