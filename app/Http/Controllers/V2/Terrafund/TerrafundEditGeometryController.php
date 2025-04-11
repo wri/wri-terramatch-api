@@ -200,7 +200,7 @@ class TerrafundEditGeometryController extends Controller
                 $sitePolygon->changeStatusOnEdit();
                 $sitePolygon->validation_status = null;
                 $sitePolygon->save();
-                
+
                 $existingCriteriaSites = CriteriaSite::where('polygon_id', $sitePolygon->poly_id)
                     ->get();
                 foreach ($existingCriteriaSites as $criteriaSite) {
