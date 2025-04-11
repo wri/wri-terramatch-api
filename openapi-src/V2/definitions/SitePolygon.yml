@@ -61,5 +61,5 @@ properties:
     type: boolean
   version_name:
     type: string
-  is_valid:
+  validation_status:
     type: boolean

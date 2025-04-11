@@ -21,7 +21,7 @@ class SitePolygonLightResource extends JsonResource
             'plantstart' => $this->plantstart,
             'source' => $this->source,
             'status' => $this->status,
-            'is_valid' => $this->is_valid,
+            'validation_status' => $this->validation_status,
             'uuid' => $this->uuid,
             'poly_id' => $this->poly_id,
             'primary_uuid' => $this->primary_uuid,

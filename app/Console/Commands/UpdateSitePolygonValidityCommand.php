@@ -14,14 +14,14 @@ class UpdateSitePolygonValidityCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'site-polygon:update-validity {--only-null : Update only records with null is_valid} {--batch-size=100 : Number of records to process in each batch}';
+    protected $signature = 'site-polygon:update-validity {--only-null : Update only records with null validation_status} {--batch-size=100 : Number of records to process in each batch}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Update is_valid column in site_polygon table based on criteria_site data';
+    protected $description = 'Update validation_status column in site_polygon table based on criteria_site data';
 
     /**
      * Criteria IDs that are excluded from validation failure
@@ -46,9 +46,9 @@ class UpdateSitePolygonValidityCommand extends Command
 
         // Apply null filter if requested
         if ($onlyNull) {
-            $query->whereNull('is_valid');
-            $this->info('Processing only records with NULL is_valid value');
-            Log::info('Processing only records with NULL is_valid value');
+            $query->whereNull('validation_status');
+            $this->info('Processing only records with NULL validation_status value');
+            Log::info('Processing only records with NULL validation_status value');
         }
 
         // Get total count for progress bar
@@ -121,10 +121,10 @@ class UpdateSitePolygonValidityCommand extends Command
         }
 
         $allCriteria = DB::table('criteria_site')->where('polygon_id', $polygonId)->get();
-        $originalIsValid = $sitePolygon->is_valid;
+        $originalIsValid = $sitePolygon->validation_status;
 
         if ($allCriteria->isEmpty()) {
-            $sitePolygon->is_valid = null; // not checked
+            $sitePolygon->validation_status = null; // not checked
             $sitePolygon->save();
 
             if ($originalIsValid !== null) {
@@ -161,8 +161,8 @@ class UpdateSitePolygonValidityCommand extends Command
         }
 
         // Check if value would change before saving
-        if ($sitePolygon->is_valid !== $newIsValid) {
-            $sitePolygon->is_valid = $newIsValid;
+        if ($sitePolygon->validation_status !== $newIsValid) {
+            $sitePolygon->validation_status = $newIsValid;
             $sitePolygon->save();
 
             Log::info("Updated polygon {$polygonId}: from '" .

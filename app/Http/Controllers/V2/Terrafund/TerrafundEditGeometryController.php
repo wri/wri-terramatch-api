@@ -198,7 +198,7 @@ class TerrafundEditGeometryController extends Controller
                 PolygonGeometryHelper::updateEstAreainSitePolygon($polygonGeometry, $geometry);
                 PolygonGeometryHelper::updateProjectCentroidFromPolygon($polygonGeometry);
                 $sitePolygon->changeStatusOnEdit();
-                $sitePolygon->is_valid = null;
+                $sitePolygon->validation_status = null;
                 $sitePolygon->save();
                 
                 $existingCriteriaSites = CriteriaSite::where('polygon_id', $sitePolygon->poly_id)

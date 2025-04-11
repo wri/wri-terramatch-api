@@ -672,9 +672,9 @@ class PolygonService
         }
         if ($request->has('valid') && $request->input('valid')) {
             if ($request->input('valid') === 'not_checked') {
-                $sitePolygonsQuery->whereNull('site_polygon.is_valid');
+                $sitePolygonsQuery->whereNull('site_polygon.validation_status');
             } else {
-                $sitePolygonsQuery->where('site_polygon.is_valid', $request->input('valid'));
+                $sitePolygonsQuery->where('site_polygon.validation_status', $request->input('valid'));
             }
         }
 
@@ -728,7 +728,7 @@ class PolygonService
         $allCriteria = CriteriaSite::where('polygon_id', $polygonUuid)->get();
 
         if ($allCriteria->isEmpty()) {
-            $sitePolygon->is_valid = null; // not checked
+            $sitePolygon->validation_status = null; // not checked
             $sitePolygon->save();
 
             return;
@@ -765,7 +765,7 @@ class PolygonService
             }
         }
 
-        $sitePolygon->is_valid = $newIsValid;
+        $sitePolygon->validation_status = $newIsValid;
         $sitePolygon->save();
     }
 }

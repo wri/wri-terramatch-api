@@ -38,10 +38,10 @@ class NotifyGreenhouseJob implements ShouldQueue
      */
     public function handle(): void
     {
-        try {
-            App::make(GreenhouseClient::class)->{$this->method}($this->modelUuid);
-        } catch (ExternalAPIException $exception) {
-            Log::error($exception->getMessage());
-        }
+        // try {
+        //     App::make(GreenhouseClient::class)->{$this->method}($this->modelUuid);
+        // } catch (ExternalAPIException $exception) {
+        //     Log::error($exception->getMessage());
+        // }
     }
 }
