@@ -372,8 +372,6 @@ DashboardIndicatorHectaresRestorationData:
   $ref: './DashboardIndicatorHectaresRestorationData.yml'
 UserCreateComplete:
   $ref: './UserCreateComplete.yml'
-V2AdminProjectUpdate:
-  $ref: './V2AdminProjectUpdate.yml'
 IndicatorPost:
   $ref: './IndicatorPost.yml'
 Indicators:
