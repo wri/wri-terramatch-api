@@ -738,11 +738,9 @@ class PolygonService
             return $c->valid === 0 || $c->valid === false;
         });
 
-        // If all criteria pass, it's a clear pass
         if (! $hasAnyFailing) {
             $newIsValid = 'passed';
         } else {
-            // Split criteria into excluded and non-excluded
             $excludedCriteria = $allCriteria->filter(function ($c) {
                 return in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
             });
@@ -751,16 +749,13 @@ class PolygonService
                 return ! in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
             });
 
-            // Check if any non-excluded criteria are failing
             $hasFailingNonExcluded = $nonExcludedCriteria->contains(function ($c) {
                 return $c->valid === 0 || $c->valid === false;
             });
 
             if ($hasFailingNonExcluded) {
-                // If any non-excluded criteria fail, it's a failure
                 $newIsValid = 'failed';
             } else {
-                // If only excluded criteria are failing, it's partial
                 $newIsValid = 'partial';
             }
         }

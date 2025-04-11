@@ -41,17 +41,14 @@ class UpdateSitePolygonValidityCommand extends Command
         $this->info('Starting site_polygon validity update process');
         Log::info('Starting site_polygon validity update process');
 
-        // Query builder for site_polygon
         $query = SitePolygon::query();
 
-        // Apply null filter if requested
         if ($onlyNull) {
             $query->whereNull('validation_status');
             $this->info('Processing only records with NULL validation_status value');
             Log::info('Processing only records with NULL validation_status value');
         }
 
-        // Get total count for progress bar
         $totalPolygons = $query->count();
         $this->info("Found {$totalPolygons} records to process");
         Log::info("Found {$totalPolygons} records to process");
@@ -62,11 +59,9 @@ class UpdateSitePolygonValidityCommand extends Command
             return 0;
         }
 
-        // Create progress bar
         $progressBar = $this->output->createProgressBar($totalPolygons);
         $progressBar->start();
 
-        // Process in batches
         $processed = 0;
         $updated = 0;
         $skipped = 0;
@@ -92,7 +87,6 @@ class UpdateSitePolygonValidityCommand extends Command
                 }
             }
 
-            // Log progress after each batch
             Log::info("Progress: Processed {$processed} records, Updated: {$updated}, Skipped: {$skipped}, Errors: {$errors}");
         });
 
@@ -160,7 +154,6 @@ class UpdateSitePolygonValidityCommand extends Command
             }
         }
 
-        // Check if value would change before saving
         if ($sitePolygon->validation_status !== $newIsValid) {
             $sitePolygon->validation_status = $newIsValid;
             $sitePolygon->save();
