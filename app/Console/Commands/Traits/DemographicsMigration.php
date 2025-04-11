@@ -28,11 +28,30 @@ trait DemographicsMigration
                                 'hidden' => false,
                             ]);
                         }
+
+                        $percentageSum = 100;
+                        if ($percentageTotal != null) {
+                            $percentageSum = collect($subtypes)->values()->reduce(function ($percentageSum, $field) use ($model) {
+                                return $percentageSum + $model[$field];
+                            }, 0);
+                        }
+
                         foreach ($subtypes as $subtype => $field) {
                             $value = $model[$field];
                             if ($value > 0) {
                                 $existing = $demographic->entries()->where(['type' => $type, 'subtype' => $subtype])->first();
-                                $reportedValue = $percentageTotal == null ? $value : round($percentageTotal * ($value / 100));
+                                $reportedValue = $value;
+                                if ($percentageTotal != null) {
+                                    // Find how much this "percentage" takes up of the sum of percentages from this type. In
+                                    // some cases, the data has a problem where for instance both male and female will be
+                                    // specified as 100, which skews the final total. The final total is the most important
+                                    // value, so to keep it stable, we sum the percentage totals within each entry type above
+                                    // and then find what percentage this value is with respect to that total. This will get
+                                    // the final total value to be close to the reported total value (there could be a rounding
+                                    // error, but it should be no more than off by one).
+                                    $value = $value / $percentageSum;
+                                    $reportedValue = round($percentageTotal * $value);
+                                }
                                 $finalValue = max($existing?->value ?? 0, $reportedValue);
 
                                 if ($existing != null) {
