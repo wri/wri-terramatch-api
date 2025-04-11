@@ -16,7 +16,7 @@ trait DemographicsMigration
                 $addDisaggregates = function ($disaggregateFields, $percentageTotal = null) use (&$demographic, $model, $demographicType, $collection) {
                     foreach ($disaggregateFields as $type => $subtypes) {
                         // If none of the fields for this type exist, skip
-                        $fields = collect(array_values($subtypes));
+                        $fields = collect(array_values($subtypes))->flatten();
                         if ($fields->first(fn ($field) => $model[$field] > 0) == null) {
                             continue;
                         }
@@ -31,13 +31,15 @@ trait DemographicsMigration
 
                         $percentageSum = 100;
                         if ($percentageTotal != null) {
-                            $percentageSum = collect($subtypes)->values()->reduce(function ($percentageSum, $field) use ($model) {
+                            $percentageSum = collect($subtypes)->values()->flatten()->reduce(function ($percentageSum, $field) use ($model) {
                                 return $percentageSum + $model[$field];
                             }, 0);
                         }
 
                         foreach ($subtypes as $subtype => $field) {
-                            $value = $model[$field];
+                            $value = collect($field)->reduce(function ($value, $field) use ($model) {
+                                return max($value, $model[$field]);
+                            }, 0);
                             if ($value > 0) {
                                 $existing = $demographic->entries()->where(['type' => $type, 'subtype' => $subtype])->first();
                                 $reportedValue = $value;
