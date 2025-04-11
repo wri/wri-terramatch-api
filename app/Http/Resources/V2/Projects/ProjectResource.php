@@ -94,7 +94,6 @@ class ProjectResource extends JsonResource
             'states' => $this->states,
             'organisation' => new OrganisationLiteResource($this->organisation),
             'application' => new ApplicationLiteResource($this->application),
-            'migrated' => ! empty($this->old_model),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'trees_restored_ppc' =>

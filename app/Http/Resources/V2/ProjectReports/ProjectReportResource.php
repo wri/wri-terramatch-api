@@ -63,7 +63,6 @@ class ProjectReportResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'submitted_at' => $this->submitted_at,
-            'migrated' => ! empty($this->old_model),
             'created_by' => $this->handleCreatedBy(),
             'seedlings_grown' => $this->seedlings_grown,
             'trees_planted_count' => $this->trees_planted_count,

@@ -40,7 +40,6 @@ class NurseryReportResource extends JsonResource
             'project' => new ProjectLiteResource($this->nursery->project),
             'task_uuid' => $this->task_uuid,
             'submitted_at' => $this->submitted_at,
-            'migrated' => ! empty($this->old_model),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'project_report' => $this->project_report,
