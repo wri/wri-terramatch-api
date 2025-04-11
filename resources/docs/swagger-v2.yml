@@ -30450,6 +30450,8 @@ definitions:
         type: boolean
       version_name:
         type: string
+      validation_status:
+        type: boolean
   GeometryString:
     type: object
     properties:
@@ -30522,6 +30524,8 @@ definitions:
           type: boolean
         version_name:
           type: string
+        validation_status:
+          type: boolean
   SitePolygonsBboxResponse:
     title: SitePolygonsBboxResponse
     type: object
@@ -31290,6 +31294,8 @@ definitions:
               type: boolean
             version_name:
               type: string
+            validation_status:
+              type: boolean
       bbox:
         type: array
         items:
@@ -31371,6 +31377,8 @@ definitions:
               type: boolean
             version_name:
               type: string
+            validation_status:
+              type: boolean
   AuditStatusUpdateRequest:
     title: AuditStatusUpdateRequest
     type: object
@@ -31482,6 +31490,8 @@ definitions:
           type: boolean
         version_name:
           type: string
+        validation_status:
+          type: boolean
   PolygonChangeStatusUpdate:
     type: object
     properties:
@@ -69020,6 +69030,8 @@ paths:
                   type: boolean
                 version_name:
                   type: string
+                validation_status:
+                  type: boolean
         '500':
           description: Internal server error
   '/v2/sites/{UUID}/polygons/count':
@@ -70771,6 +70783,8 @@ paths:
                   type: boolean
                 version_name:
                   type: string
+                validation_status:
+                  type: boolean
         '400':
           description: Bad request
         '500':
@@ -73121,6 +73135,8 @@ paths:
                       type: boolean
                     version_name:
                       type: string
+                    validation_status:
+                      type: boolean
               bbox:
                 type: array
                 items:
@@ -73162,6 +73178,11 @@ paths:
           required: false
           description: 'Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`'
           type: string
+        - in: query
+          name: valid
+          required: false
+          description: Valid value to filter by
+          type: string
       responses:
         '200':
           description: Successful response
@@ -73197,6 +73218,11 @@ paths:
           name: sort
           required: false
           description: 'Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`'
+          type: string
+        - in: query
+          name: valid
+          required: false
+          description: Valid value to filter by
           type: string
       responses:
         '200':
@@ -73277,6 +73303,8 @@ paths:
                       type: boolean
                     version_name:
                       type: string
+                    validation_status:
+                      type: boolean
         '400':
           description: 'Bad request, UUID parameter is missing'
         '500':
@@ -73490,6 +73518,8 @@ paths:
                       type: boolean
                     version_name:
                       type: string
+                    validation_status:
+                      type: boolean
   '/v2/site-polygon/{uuid}':
     get:
       summary: get a site polygon by uuid
@@ -73573,6 +73603,8 @@ paths:
                     type: boolean
                   version_name:
                     type: string
+                  validation_status:
+                    type: boolean
   '/v2/site-polygon/{uuid}/versions':
     get:
       summary: list of site polygon versions
@@ -73658,6 +73690,8 @@ paths:
                       type: boolean
                     version_name:
                       type: string
+                    validation_status:
+                      type: boolean
   '/v2/site-polygon/{uuid}/new-version':
     post:
       summary: create a new site polygon version
@@ -73741,6 +73775,8 @@ paths:
                     type: boolean
                   version_name:
                     type: string
+                  validation_status:
+                    type: boolean
   '/v2/site-polygon/{uuid}/make-active':
     put:
       summary: update a site polygon to make active the site polygon uuid version and inactive the rest with same primary_uuid
@@ -73824,6 +73860,8 @@ paths:
                     type: boolean
                   version_name:
                     type: string
+                  validation_status:
+                    type: boolean
   '/v2/terrafund/clip-polygons/polygon/{uuid}':
     post:
       summary: Clip Overlapping Polygons by Polygon

@@ -48,6 +48,12 @@ class PolygonService
     public const TERRAMACH_SOURCE = 'terramatch';
     public const GREENHOUSE_SOURCE = 'greenhouse';
 
+    public const EXCLUDED_VALIDATION_CRITERIA = [
+      self::DATA_CRITERIA_ID,
+      self::ESTIMATED_AREA_CRITERIA_ID,
+      self::WITHIN_COUNTRY_CRITERIA_ID,
+    ];
+
     // TODO: Remove this const and its usages when the point transformation ticket is complete.
     public const TEMP_FAKE_POLYGON_UUID = 'temp_fake_polygon_uuid';
 
@@ -664,6 +670,13 @@ class PolygonService
             $statusValues = explode(',', $request->input('status'));
             $sitePolygonsQuery->whereIn('site_polygon.status', $statusValues);
         }
+        if ($request->has('valid') && $request->input('valid')) {
+            if ($request->input('valid') === 'not_checked') {
+                $sitePolygonsQuery->whereNull('site_polygon.validation_status');
+            } else {
+                $sitePolygonsQuery->where('site_polygon.validation_status', $request->input('valid'));
+            }
+        }
 
         $sortFields = $request->input('sort', []);
         foreach ($sortFields as $field => $direction) {
@@ -672,7 +685,7 @@ class PolygonService
             } elseif ($field === 'poly_name') {
                 $sitePolygonsQuery->orderByRaw('site_polygon.poly_name IS NULL, site_polygon.poly_name ' . $direction);
             } else {
-                $sitePolygonsQuery->orderBy($field, $direction);
+                $sitePolygonsQuery->orderBy('site_polygon.' . $field, $direction);
             }
         }
 
@@ -703,5 +716,51 @@ class PolygonService
             $countryName,
             [$coordinates[0][0], $coordinates[0][1], $coordinates[2][0], $coordinates[2][1]],
         ];
+    }
+
+    public function updateSitePolygonValidity(string $polygonUuid): void
+    {
+        $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
+        if (! $sitePolygon) {
+            return;
+        }
+
+        $allCriteria = CriteriaSite::where('polygon_id', $polygonUuid)->get();
+
+        if ($allCriteria->isEmpty()) {
+            $sitePolygon->validation_status = null; // not checked
+            $sitePolygon->save();
+
+            return;
+        }
+
+        $hasAnyFailing = $allCriteria->contains(function ($c) {
+            return $c->valid === 0 || $c->valid === false;
+        });
+
+        if (! $hasAnyFailing) {
+            $newIsValid = 'passed';
+        } else {
+            $excludedCriteria = $allCriteria->filter(function ($c) {
+                return in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
+            });
+
+            $nonExcludedCriteria = $allCriteria->filter(function ($c) {
+                return ! in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
+            });
+
+            $hasFailingNonExcluded = $nonExcludedCriteria->contains(function ($c) {
+                return $c->valid === 0 || $c->valid === false;
+            });
+
+            if ($hasFailingNonExcluded) {
+                $newIsValid = 'failed';
+            } else {
+                $newIsValid = 'partial';
+            }
+        }
+
+        $sitePolygon->validation_status = $newIsValid;
+        $sitePolygon->save();
     }
 }

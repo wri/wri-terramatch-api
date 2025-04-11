@@ -53,6 +53,7 @@ class SitePolygon extends Model implements AuditableModel
       'source',
       'is_active',
       'version_name',
+      'validation_status',
     ];
 
     public function polygonGeometry(): BelongsTo
@@ -171,6 +172,7 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon->is_active = true;
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->created_by = $user->id;
+        $newSitePolygon->validation_status = null;
         $newSitePolygon->save();
 
         return $newSitePolygon;
