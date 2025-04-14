@@ -52,6 +52,8 @@ class FundingProgramme extends Model implements MediaModel
         'description',
         'description_id',
         'organisation_types',
+        # Note: after investigation in April 2025, it looks like this is being used to fetch actual frameworks by
+        # access code instead of by framework key. See TODO in ApplicationStatus.tsx.
         'framework_key',
     ];
 
