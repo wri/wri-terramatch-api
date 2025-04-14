@@ -89,6 +89,7 @@ class ProjectPitch extends Model implements MediaModel
                 DemographicCollections::ALL,
             ],
         ],
+        Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
         Demographic::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
     ];
