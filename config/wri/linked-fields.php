@@ -356,6 +356,13 @@ return [
                     'input_type' => 'employees',
                     'collection' => 'all'
                 ],
+                'pro-pit-volunteers' => [
+                    'property' => 'volunteers',
+                    'label' => 'Volunteers',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'volunteers',
+                    'collection' => 'volunteer'
+                ],
                 'pro-pit-all-beneficiaries' => [
                     'property' => 'allBeneficiaries',
                     'label' => 'All Beneficiaries',
@@ -463,6 +470,13 @@ return [
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'employees',
                     'collection' => 'all'
+                ],
+                'pro-volunteers' => [
+                    'property' => 'volunteers',
+                    'label' => 'Volunteers',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'volunteers',
+                    'collection' => 'volunteer'
                 ],
                 'pro-all-beneficiaries' => [
                     'property' => 'allBeneficiaries',
