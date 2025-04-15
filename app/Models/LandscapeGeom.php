@@ -13,7 +13,7 @@ class LandscapeGeom extends Model
 
     protected $table = 'landscape_geom';
 
-    protected $fillable = ['landscape', 'geometry'];
+    protected $fillable = ['slug', 'landscape', 'geometry'];
 
     public function scopeForLandscape($query, string $landscape)
     {
