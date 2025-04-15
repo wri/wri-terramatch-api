@@ -1074,7 +1074,7 @@
           $ref: '../definitions/_index.yml#/V2LeadershipsRead'
     tags:
       - V2 Leaderships
-/v2/financialIndicators:
+/v2/financial-indicators:
   post:
     summary: Create a financialIndicators
     operationId: post-v2-financialIndicators
