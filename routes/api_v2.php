@@ -66,6 +66,8 @@ use App\Http\Controllers\V2\Files\Location\ProjectReportImageLocationsController
 use App\Http\Controllers\V2\Files\Location\SiteImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
 use App\Http\Controllers\V2\Files\UploadController;
+use App\Http\Controllers\V2\FinancialIndicators\DeleteFinancialIndicatorsController;
+use App\Http\Controllers\V2\FinancialIndicators\StoreFinancialIndicatorsController;
 use App\Http\Controllers\V2\Forms\AdminDeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\AdminIndexFormSubmissionController;
 use App\Http\Controllers\V2\Forms\CommonOptionsIndexController;
@@ -102,8 +104,6 @@ use App\Http\Controllers\V2\ImpactStory\ImpactStoryController;
 use App\Http\Controllers\V2\Indicators\GetHectaresRestoredController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
-use App\Http\Controllers\V2\FinancialIndicators\DeleteFinancialIndicatorsController;
-use App\Http\Controllers\V2\FinancialIndicators\StoreFinancialIndicatorsController;
 use App\Http\Controllers\V2\MediaController;
 use App\Http\Controllers\V2\MonitoredData\GetIndicatorPolygonStatusController;
 use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisController;
