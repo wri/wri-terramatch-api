@@ -1,0 +1,15 @@
+title: V2FinancialIndicatorsCreate
+type: object
+properties:
+  organisation_id:
+    type: string
+  amount:
+    type: integer
+  year:
+    type: integer
+  documentation:
+    type: string
+  description:
+    type: string
+  collection:
+    type: string

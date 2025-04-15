@@ -87,6 +87,8 @@ class FormQuestionResource extends JsonResource
             case 'dataTable':
             case 'fundingTypes':
             case 'tableInput':
+            case 'revenue':
+            case 'profitBudget':
             case 'selectImage':
             case 'coreTeamLeader':
             case 'leadershipTeam':

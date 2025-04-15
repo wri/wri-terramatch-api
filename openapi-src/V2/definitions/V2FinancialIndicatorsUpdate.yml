@@ -1,0 +1,11 @@
+title: V2FinancialIndicatorsUpdate
+type: object
+properties:
+  amount:
+    type: integer
+  year:
+    type: integer
+  documentation:
+    type: string
+  description:
+    type: string
