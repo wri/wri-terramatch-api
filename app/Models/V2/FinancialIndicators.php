@@ -30,6 +30,11 @@ class FinancialIndicators extends Model implements MediaModel
         'description',
     ];
 
+    public $casts = [
+        'amount' => 'float',
+        'year' => 'float',
+    ];
+
     public $fileConfiguration = [
         'documentation' => [
             'validation' => 'general-documents',
