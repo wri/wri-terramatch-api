@@ -3,16 +3,21 @@
 namespace App\Models\V2;
 
 use App\Models\Traits\HasUuid;
+use App\Models\Traits\HasV2MediaCollections;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class FinancialIndicators extends Model
+class FinancialIndicators extends Model implements MediaModel
 {
     use HasFactory;
     use SoftDeletes;
     use HasUuid;
+    use InteractsWithMedia;
+    use HasV2MediaCollections;
 
     public $table = 'financial_indicators';
 
@@ -23,6 +28,13 @@ class FinancialIndicators extends Model
         'year',
         'documentation',
         'description',
+    ];
+
+    public $fileConfiguration = [
+        'documentation' => [
+            'validation' => 'general-documents',
+            'multiple' => false,
+        ],
     ];
 
     public const COLLECTION_REVENUE = 'revenue';
@@ -41,5 +53,13 @@ class FinancialIndicators extends Model
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumbnail')
+            ->width(350)
+            ->height(211)
+            ->nonQueued();
     }
 }
