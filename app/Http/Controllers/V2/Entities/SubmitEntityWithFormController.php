@@ -12,6 +12,7 @@ use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Models\V2\Sites\SiteReport;
 
 class SubmitEntityWithFormController extends Controller
 {
@@ -41,7 +42,10 @@ class SubmitEntityWithFormController extends Controller
             $this->saveAuditStatusProjectDeveloperSubmitNotUpdateRequest($entity);
         }
 
-        SendProjectManagerJobs::dispatch($entity);
+        if (get_class($entity) !== SiteReport::class) {
+            SendProjectManagerJobs::dispatch($entity);
+        }
+
         Action::forTarget($entity)->delete();
 
         return $entity->createSchemaResource();
