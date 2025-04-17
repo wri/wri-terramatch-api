@@ -8,11 +8,12 @@ use App\Jobs\V2\SendTaskDigestProjectManagerJob as SendTaskDigestProjectManagerJ
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\Action;
 use App\Models\V2\EntityModel;
+use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\V2\Sites\SiteReport;
 
 class SubmitEntityWithFormController extends Controller
 {
@@ -42,7 +43,8 @@ class SubmitEntityWithFormController extends Controller
             $this->saveAuditStatusProjectDeveloperSubmitNotUpdateRequest($entity);
         }
 
-        if (get_class($entity) !== SiteReport::class) {
+        if (! $entity instanceof SiteReport && ! $entity instanceof NurseryReport) {
+            // Dispatch the job only if the entity is neither a SiteReport nor a NurseryReport
             SendProjectManagerJobs::dispatch($entity);
         }
 
