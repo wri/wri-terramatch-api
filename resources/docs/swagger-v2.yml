@@ -49705,6 +49705,39 @@ paths:
                 type: string
               description:
                 type: string
+    get:
+      summary: get financial indicators
+      operationId: get-v2-financial-indicators-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: V2FinancialIndicatorsRead
+            x-stoplight:
+              id: 04vvsvyndvy8n
+            type: object
+            properties:
+              uuid:
+                type: string
+              organisation_id:
+                type: string
+              amount:
+                type: integer
+              year:
+                type: integer
+              documentation:
+                type: string
+              description:
+                type: string
+              collection:
+                type: string
+      tags:
+        - V2 financial Indicators
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
   /v2/ownership-stake:
     post:
       summary: Create a ownership stake

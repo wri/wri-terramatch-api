@@ -1125,6 +1125,21 @@
         name: body
         schema:
           $ref: '../definitions/_index.yml#/V2FinancialIndicatorsUpdate'
+  get:
+    summary: get financial indicators
+    operationId: get-v2-financial-indicators-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsRead'
+    tags:
+      - V2 financial Indicators
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
 /v2/ownership-stake:
   post:
     summary: Create a ownership stake

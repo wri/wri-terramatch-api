@@ -67,6 +67,7 @@ use App\Http\Controllers\V2\Files\Location\SiteImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
 use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\DeleteFinancialIndicatorsController;
+use App\Http\Controllers\V2\FinancialIndicators\GetFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialIndicators\StoreFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialIndicators\UpdateFinancialIndicatorsController;
 use App\Http\Controllers\V2\Forms\AdminDeleteFormSubmissionController;
@@ -518,6 +519,7 @@ Route::prefix('leaderships')->group(function () {
 });
 
 Route::prefix('financial-indicators')->group(function () {
+    Route::get('/{financialIndicators}', GetFinancialIndicatorsController::class);
     Route::post('/', StoreFinancialIndicatorsController::class);
     Route::delete('/{financialIndicators}', DeleteFinancialIndicatorsController::class);
     Route::patch('/{financialIndicators}', UpdateFinancialIndicatorsController::class);

@@ -57,6 +57,7 @@ class ModelInterfaceBindingMiddleware
         'site-polygon' => SitePolygon::class,
         'audit-status' => AuditStatus::class,
         'financial-indicators' => FinancialIndicators::class,
+        'financial-indicator' => FinancialIndicators::class,
 
     ];
 
