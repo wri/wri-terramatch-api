@@ -47,6 +47,8 @@ class FormQuestion extends Model
         'is_parent_conditional_default',
         'min_character_limit',
         'max_character_limit',
+        'min_number_limit',
+        'max_number_limit',
     ];
 
     protected $with = [
@@ -62,6 +64,8 @@ class FormQuestion extends Model
         'is_parent_conditional_default' => 'boolean',
         'min_character_limit' => 'integer',
         'max_character_limit' => 'integer',
+        'min_number_limit' => 'integer',
+        'max_number_limit' => 'integer',
     ];
 
     public function section(): BelongsTo
