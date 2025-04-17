@@ -166,6 +166,26 @@ class Organisation extends Model implements MediaModel
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'consortium_proof' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'consortium_partnership_agreements' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'organogram' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'ownership_documents' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'carbon_credits_proof' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
     ];
 
     public $casts = [
@@ -203,6 +223,16 @@ class Organisation extends Model implements MediaModel
         'socioeconomic_impact' => 'string',
         'growith_stage' => 'string',
         'additional_comments' => 'string',
+        'consortium' => 'string',
+        'female_youth_leadership_example' => 'string',
+        'level_0_past_restoration' => 'array',
+        'level_1_past_restoration' => 'array',
+        'trees_naturally_regenerated_total' => 'integer',
+        'trees_naturally_regenerated_3year' => 'integer',
+        'carbon_credits' => 'integer',
+        'external_technical_assistance' => 'string',
+        'barriers_to_funding' => 'string',
+        'capacity_building_support_needed' => 'string',
     ];
 
     // Required by the HasDemographics trait

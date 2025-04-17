@@ -10,7 +10,7 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        if (Schema::hasTable('lanscape_geom')) {
+        if (Schema::hasTable('landscape_geom')) {
             // assume that if the table already exists in this env we don't want to recreate it.
             return;
         }

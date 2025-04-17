@@ -56,6 +56,8 @@ class ProjectPitch extends Model implements MediaModel
         'detailed_intervention_types' => 'array',
         'land_use_types' => 'array',
         'restoration_strategy' => 'array',
+        'level_0_past_restoration' => 'array',
+        'level_1_past_restoration' => 'array',
     ];
 
     public $fileConfiguration = [
@@ -88,6 +90,7 @@ class ProjectPitch extends Model implements MediaModel
                 DemographicCollections::ALL,
             ],
         ],
+        Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
         Demographic::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
     ];

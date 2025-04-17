@@ -40,7 +40,7 @@ class MigratePitchDemographics extends Command
                     'large-scale' => 'pct_beneficiaries_large',
                 ],
                 'caste' => [
-                    'marginalized' => 'pct_beneficiaries_backward_class',
+                    'marginalized' => ['pct_beneficiaries_backward_class', 'pct_beneficiaries_marginalized'],
                 ],
             ],
             'total' => ['proj_beneficiaries'],

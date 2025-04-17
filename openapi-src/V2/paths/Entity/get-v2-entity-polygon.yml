@@ -22,6 +22,11 @@ parameters:
     required: false
     description: Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`
     type: string
+  - in: query
+    name: valid
+    required: false
+    description: Valid value to filter by
+    type: string
 responses:
   '200':
     description: Successful response
