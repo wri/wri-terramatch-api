@@ -20,10 +20,10 @@ class FinancialIndicatorsResource extends JsonResource
             'collection' => $this->collection,
             'amount' => $this->amount,
             'year' => $this->year,
-            'documentation' => [
-                'file_name' => empty($documentation) ? '' : $documentation->file_name,
-                'url' => empty($documentation) ? '' : $documentation->getFullUrl(),
-            ],
+            'documentation' => empty($documentation) ? null : array_merge(
+                $documentation->toArray(),
+                ['full_url' => $documentation->getFullUrl()]
+            ),
             'description' => $this->description,
         ];
     }
