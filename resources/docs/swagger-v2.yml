@@ -6922,6 +6922,54 @@ definitions:
         type: string
       collection:
         type: string
+  V2FinancialIndicatorsCreate:
+    title: V2FinancialIndicatorsCreate
+    type: object
+    properties:
+      organisation_id:
+        type: string
+      amount:
+        type: integer
+      year:
+        type: integer
+      documentation:
+        type: string
+      description:
+        type: string
+      collection:
+        type: string
+  V2FinancialIndicatorsRead:
+    title: V2FinancialIndicatorsRead
+    x-stoplight:
+      id: 04vvsvyndvy8n
+    type: object
+    properties:
+      uuid:
+        type: string
+      organisation_id:
+        type: string
+      amount:
+        type: integer
+      year:
+        type: integer
+      documentation:
+        type: string
+      description:
+        type: string
+      collection:
+        type: string
+  V2FinancialIndicatorsUpdate:
+    title: V2FinancialIndicatorsUpdate
+    type: object
+    properties:
+      amount:
+        type: integer
+      year:
+        type: integer
+      documentation:
+        type: string
+      description:
+        type: string
   V2OwnershipStakeCreate:
     title: V2OwnershipStakeCreate
     type: object
@@ -49522,6 +49570,168 @@ paths:
                 type: string
       tags:
         - V2 Leaderships
+  /v2/financial-indicators:
+    post:
+      summary: Create a financialIndicators
+      operationId: post-v2-financialIndicators
+      responses:
+        '201':
+          description: Created
+          schema:
+            title: V2FinancialIndicatorsRead
+            x-stoplight:
+              id: 04vvsvyndvy8n
+            type: object
+            properties:
+              uuid:
+                type: string
+              organisation_id:
+                type: string
+              amount:
+                type: integer
+              year:
+                type: integer
+              documentation:
+                type: string
+              description:
+                type: string
+              collection:
+                type: string
+      parameters:
+        - in: body
+          name: body
+          schema:
+            title: V2FinancialIndicatorsCreate
+            type: object
+            properties:
+              organisation_id:
+                type: string
+              amount:
+                type: integer
+              year:
+                type: integer
+              documentation:
+                type: string
+              description:
+                type: string
+              collection:
+                type: string
+      tags:
+        - V2 financialIndicators
+  '/v2/financial-indicators/{UUID}':
+    delete:
+      summary: Delete a financial indicators
+      operationId: delete-v2-financial-indicators-UUID
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: V2FinancialIndicatorsRead
+            x-stoplight:
+              id: 04vvsvyndvy8n
+            type: object
+            properties:
+              uuid:
+                type: string
+              organisation_id:
+                type: string
+              amount:
+                type: integer
+              year:
+                type: integer
+              documentation:
+                type: string
+              description:
+                type: string
+              collection:
+                type: string
+      tags:
+        - V2 financial Indicators
+    patch:
+      summary: Update a financial indicators
+      operationId: patch-v2-financial-indicators-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: V2FinancialIndicatorsRead
+            x-stoplight:
+              id: 04vvsvyndvy8n
+            type: object
+            properties:
+              uuid:
+                type: string
+              organisation_id:
+                type: string
+              amount:
+                type: integer
+              year:
+                type: integer
+              documentation:
+                type: string
+              description:
+                type: string
+              collection:
+                type: string
+      tags:
+        - V2 financial Indicators
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            title: V2FinancialIndicatorsUpdate
+            type: object
+            properties:
+              amount:
+                type: integer
+              year:
+                type: integer
+              documentation:
+                type: string
+              description:
+                type: string
+    get:
+      summary: get financial indicators
+      operationId: get-v2-financial-indicators-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: V2FinancialIndicatorsRead
+            x-stoplight:
+              id: 04vvsvyndvy8n
+            type: object
+            properties:
+              uuid:
+                type: string
+              organisation_id:
+                type: string
+              amount:
+                type: integer
+              year:
+                type: integer
+              documentation:
+                type: string
+              description:
+                type: string
+              collection:
+                type: string
+      tags:
+        - V2 financial Indicators
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
   /v2/ownership-stake:
     post:
       summary: Create a ownership stake

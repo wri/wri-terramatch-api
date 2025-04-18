@@ -319,6 +319,18 @@ class Organisation extends Model implements MediaModel
             ->where('collection', Leaderships::COLLECTION_CORE_TEAM_LEADERS);
     }
 
+    public function revenue(): HasMany
+    {
+        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
+            ->where('collection', FinancialIndicators::COLLECTION_REVENUE);
+    }
+
+    public function profitBudget(): HasMany
+    {
+        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
+            ->where('collection', FinancialIndicators::COLLECTION_PROFIT_BUDGET);
+    }
+
     public function partners(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withPivot('status');

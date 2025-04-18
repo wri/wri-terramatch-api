@@ -44,6 +44,7 @@ class FormQuestionResource extends JsonResource
             'is_parent_conditional_default' => $this->is_parent_conditional_default,
             'min_character_limit' => $this->min_character_limit,
             'max_character_limit' => $this->max_character_limit,
+            'years' => $this->years,
         ]);
 
         if (count($this->children) > 0) {
@@ -87,6 +88,8 @@ class FormQuestionResource extends JsonResource
             case 'dataTable':
             case 'fundingTypes':
             case 'tableInput':
+            case 'revenue':
+            case 'profitBudget':
             case 'selectImage':
             case 'coreTeamLeader':
             case 'leadershipTeam':

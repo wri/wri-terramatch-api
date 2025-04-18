@@ -57,7 +57,6 @@ class SiteReportResource extends JsonResource
             'organisation' => new OrganisationLiteResource($this->organisation),
             'project' => new ProjectLiteResource($this->project),
             'site' => new SiteLiteResource($this->site),
-            'migrated' => ! empty($this->old_model),
             'approved_by' => new UserLiteResource($this->approvedBy),
             'created_by' => $this->handleCreatedBy(),
             'num_trees_regenerating' => $this->num_trees_regenerating,
