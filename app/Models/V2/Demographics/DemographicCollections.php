@@ -47,6 +47,7 @@ class DemographicCollections
     // jobs
     public const FULL_TIME = 'full-time';
     public const PART_TIME = 'part-time';
+    public const TEMP = 'temp';
 
     // volunteers
     public const VOLUNTEER = 'volunteer';
@@ -56,4 +57,7 @@ class DemographicCollections
 
     // training-beneficiaries
     public const TRAINING = 'training';
+
+    // indirect-beneficiaries
+    public const INDIRECT = 'indirect';
 }

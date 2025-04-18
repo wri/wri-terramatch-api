@@ -2,10 +2,9 @@
 
 namespace App\Http\Resources\V2\Organisation;
 
-use App\Http\Resources\V2\CoreTeamLeaderResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\General\ShapefileResource;
-use App\Http\Resources\V2\LeadershipTeamResource;
+use App\Http\Resources\V2\LeadershipsResource;
 use App\Http\Resources\V2\OwnershipStakeResource;
 use App\Http\Resources\V2\ProjectPitches\ProjectPitchResource;
 use App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource;
@@ -41,8 +40,8 @@ class OrganisationResource extends JsonResource
 
             'tree_species_historical' => TreeSpeciesResource::collection($this->treeSpeciesHistorical),
             'project_pitches' => ProjectPitchResource::collection($this->projectPitches),
-            'leadership_team' => LeadershipTeamResource::collection($this->leadershipTeam),
-            'core_team_leaders' => CoreTeamLeaderResource::collection($this->coreTeamLeaders),
+            'leadership_team' => LeadershipsResource::collection($this->leadershipTeam),
+            'core_team_leaders' => LeadershipsResource::collection($this->coreTeamLeaders),
             'funding_types' => FundingTypeResource::collection($this->fundingTypes),
             'ownership_stake' => OwnershipStakeResource::collection($this->ownershipStake),
 
@@ -142,6 +141,17 @@ class OrganisationResource extends JsonResource
             'environmental_impact' => $this->environmental_impact,
             'socioeconomic_impact' => $this->socioeconomic_impact,
             'growith_stage' => $this->growith_stage,
+            'consortium' => $this->consortium,
+            'female_youth_leadership_example' => $this->female_youth_leadership_example,
+            'level_0_past_restoration' => $this->level_0_past_restoration,
+            'level_1_past_restoration' => $this->level_1_past_restoration,
+            'level_2_past_restoration' => $this->level_2_past_restoration,
+            'trees_naturally_regenerated_total' => $this->trees_naturally_regenerated_total,
+            'trees_naturally_regenerated_3year' => $this->trees_naturally_regenerated_3year,
+            'carbon_credits' => $this->carbon_credits,
+            'external_technical_assistance' => $this->external_technical_assistance,
+            'barriers_to_funding' => $this->barriers_to_funding,
+            'capacity_building_support_needed' => $this->capacity_building_support_needed,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at,
             'tags' => $this->buildTagList(),

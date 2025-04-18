@@ -2,13 +2,23 @@
 
 namespace App\Models\V2;
 
+use App\Models\Draft;
+use App\Models\FilterRecord;
+use App\Models\Interest;
+use App\Models\OrganisationFile;
+use App\Models\OrganisationPhoto;
+use App\Models\Programme;
 use App\Models\Terrafund\TerrafundProgramme;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\HasVersions;
 use App\Models\Traits\NamedEntityTrait;
+use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
+use App\Models\V2\Forms\Application;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Database\Factories\V2\OrganisationFactory;
@@ -35,6 +45,7 @@ class Organisation extends Model implements MediaModel
     use HasV2MediaCollections;
     use SoftDeletes;
     use HasTags;
+    use HasDemographics;
 
     /*  Statuses    */
     public const STATUS_DRAFT = 'draft';
@@ -155,6 +166,26 @@ class Organisation extends Model implements MediaModel
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'consortium_proof' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'consortium_partnership_agreements' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'organogram' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'ownership_documents' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'carbon_credits_proof' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
     ];
 
     public $casts = [
@@ -192,6 +223,36 @@ class Organisation extends Model implements MediaModel
         'socioeconomic_impact' => 'string',
         'growith_stage' => 'string',
         'additional_comments' => 'string',
+        'consortium' => 'string',
+        'female_youth_leadership_example' => 'string',
+        'level_0_past_restoration' => 'array',
+        'level_1_past_restoration' => 'array',
+        'trees_naturally_regenerated_total' => 'integer',
+        'trees_naturally_regenerated_3year' => 'integer',
+        'carbon_credits' => 'integer',
+        'external_technical_assistance' => 'string',
+        'barriers_to_funding' => 'string',
+        'capacity_building_support_needed' => 'string',
+    ];
+
+    // Required by the HasDemographics trait
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Demographic::EMPLOYEES_TYPE => [
+            'all' => [
+                // All is used for migrated old organization data, which didn't disaggregate FT / PT.
+                DemographicCollections::ALL,
+            ],
+            'full-time' => [
+                DemographicCollections::FULL_TIME,
+            ],
+            'part-time' => [
+                DemographicCollections::PART_TIME,
+            ],
+            'temp' => [
+                DemographicCollections::TEMP,
+            ],
+        ],
+        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -241,19 +302,21 @@ class Organisation extends Model implements MediaModel
         return $this->hasMany(Application::class, 'organisation_id', 'uuid');
     }
 
-    public function leadershipTeam(): HasMany
-    {
-        return $this->hasMany(LeadershipTeam::class, 'organisation_id', 'uuid');
-    }
-
     public function ownershipStake(): HasMany
     {
         return $this->hasMany(OwnershipStake::class, 'organisation_id', 'uuid');
     }
 
+    public function leadershipTeam(): HasMany
+    {
+        return $this->hasMany(Leaderships::class, 'organisation_id', 'id')
+            ->where('collection', Leaderships::COLLECTION_LEADERSHIP_TEAM);
+    }
+
     public function coreTeamLeaders(): HasMany
     {
-        return $this->hasMany(CoreTeamLeader::class, 'organisation_id', 'uuid');
+        return $this->hasMany(Leaderships::class, 'organisation_id', 'id')
+            ->where('collection', Leaderships::COLLECTION_CORE_TEAM_LEADERS);
     }
 
     public function partners(): BelongsToMany
@@ -347,8 +410,8 @@ class Organisation extends Model implements MediaModel
         return $this->hasMany(TerrafundProgramme::class);
     }
 
-    public function scopeIsType($query, $status): Builder
+    public function scopeIsType($query, $type): Builder
     {
-        return $query->where('type', $status);
+        return $query->where('type', $type);
     }
 }

@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\V2\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Traits\HasProjectCoverImage;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
-use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
-class CountryDataController extends Controller
+class CountryAndPolygonDataController extends Controller
 {
+    use HasProjectCoverImage;
+
     public function getCountryBbox(string $iso)
     {
         $countryBbox = App::make(PolygonService::class)->getCountryBbox($iso);
@@ -63,19 +65,17 @@ class CountryDataController extends Controller
 
                 return response()->json(['error' => 'Project not found'], 404);
             }
-            $countSitePolygons = $project->total_site_polygons;
 
             $organization = $project->organisation()->first();
             if (! $organization) {
                 Log::error("Organization not found for project with ID: $project->id");
             }
-
-            $country = WorldCountryGeneralized::where('iso', $project->country)->first();
+            $coverImage = $this->getProjectCoverImage($project);
             $data = [
               ['key' => 'project_name', 'title' => 'title', 'value' => $project->name],
-              ['key' => 'country', 'title' => 'Country', 'value' => $country?->country],
-              ['key' => 'polygon_counts', 'title' => 'No. of Site - Polygons', 'value' => $countSitePolygons],
               ['key' => 'organizations', 'title' => 'Organization', 'value' => $organization?->name],
+              ['key' => 'total_hectares_restored', 'title' => 'Total Hectares Restored', 'value' => round($project->total_hectares_restored_sum, 2)],
+              ['key' => 'cover_image', 'title' => 'Cover Image', 'value' => $coverImage?->getUrl('thumbnail')],
             ];
 
             return response()->json(['data' => $data]);

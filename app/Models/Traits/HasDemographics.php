@@ -16,11 +16,17 @@ trait HasDemographics
         'workdaysConvergenceTotal' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'convergence'],
         'directRestorationPartners' => ['type' => Demographic::RESTORATION_PARTNER_TYPE, 'collections' => 'direct'],
         'indirectRestorationPartners' => ['type' => Demographic::RESTORATION_PARTNER_TYPE, 'collections' => 'indirect'],
+        'jobsAllTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'all'],
         'jobsFullTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'full-time'],
         'jobsPartTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'part-time'],
+        'employeesAllTotal' => ['type' => Demographic::EMPLOYEES_TYPE, 'collections' => 'all'],
+        'employeesFullTimeTotal' => ['type' => Demographic::EMPLOYEES_TYPE, 'collections' => 'full-time'],
+        'employeesPartTimeTotal' => ['type' => Demographic::EMPLOYEES_TYPE, 'collections' => 'part-time'],
+        'employeesTempTotal' => ['type' => Demographic::EMPLOYEES_TYPE, 'collections' => 'temp'],
         'volunteersTotal' => ['type' => Demographic::VOLUNTEERS_TYPE],
         'allBeneficiariesTotal' => ['type' => Demographic::ALL_BENEFICIARIES_TYPE],
         'trainingBeneficiariesTotal' => ['type' => Demographic::TRAINING_BENEFICIARIES_TYPE],
+        'indirectBeneficiariesTotal' => ['type' => Demographic::INDIRECT_BENEFICIARIES_TYPE],
     ];
 
     public static function bootHasDemographics()
@@ -37,22 +43,30 @@ trait HasDemographics
 
             $collections = match ($demographicType) {
                 Demographic::WORKDAY_TYPE => collect([
-                    $collectionSets['paid'],
-                    $collectionSets['volunteer'],
-                    $collectionSets['finance'],
+                    data_get($collectionSets, 'paid', []),
+                    data_get($collectionSets, 'volunteer', []),
+                    data_get($collectionSets, 'finance', []),
                 ])->flatten(),
                 Demographic::RESTORATION_PARTNER_TYPE => collect([
-                    $collectionSets['direct'],
-                    $collectionSets['indirect'],
+                    data_get($collectionSets, 'direct', []),
+                    data_get($collectionSets, 'indirect', []),
                 ])->flatten(),
                 Demographic::JOBS_TYPE => collect([
-                    $collectionSets['full-time'],
-                    $collectionSets['part-time'],
+                    data_get($collectionSets, 'all', []),
+                    data_get($collectionSets, 'full-time', []),
+                    data_get($collectionSets, 'part-time', []),
+                ])->flatten(),
+                Demographic::EMPLOYEES_TYPE => collect([
+                    data_get($collectionSets, 'all', []),
+                    data_get($collectionSets, 'full-time', []),
+                    data_get($collectionSets, 'part-time', []),
+                    data_get($collectionSets, 'temp', []),
                 ])->flatten(),
                 // These three define a single collection each, and simply rely on the type level relation above
                 Demographic::VOLUNTEERS_TYPE,
                 Demographic::ALL_BENEFICIARIES_TYPE,
-                Demographic::TRAINING_BENEFICIARIES_TYPE => null,
+                Demographic::TRAINING_BENEFICIARIES_TYPE,
+                Demographic::INDIRECT_BENEFICIARIES_TYPE => null,
                 default => throw new InternalErrorException("Unrecognized demographic type: $demographicType"),
             };
             if (! empty($collections)) {

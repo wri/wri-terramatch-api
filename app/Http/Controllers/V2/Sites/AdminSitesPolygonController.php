@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V2\Sites;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SitePolygonLightResource;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
@@ -20,6 +21,7 @@ class AdminSitesPolygonController extends Controller
             $type = $request->input('type');
             $offset = $request->input('offset', 0);
             $limit = $request->input('limit', 10);
+            $lightResource = $request->input('lightResource', false);
             $request = request();
 
 
@@ -34,6 +36,10 @@ class AdminSitesPolygonController extends Controller
                 ->offset($offset)
                 ->limit($limit)
                 ->get();
+
+            if ($lightResource) {
+                return response()->json(SitePolygonLightResource::collection($sitePolygons));
+            }
 
             return response()->json($sitePolygons);
         } catch (\Exception $e) {

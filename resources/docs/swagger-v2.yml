@@ -6888,64 +6888,8 @@ definitions:
         type: string
       collection:
         type: string
-  V2CoreTeamLeaderCreate:
-    title: V2CoreTeamLeaderCreate
-    type: object
-    properties:
-      organisation_id:
-        type: string
-      position:
-        type: string
-      gender:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      role:
-        type: string
-      age:
-        type: integer
-  V2CoreTeamLeaderRead:
-    title: V2CoreTeamLeaderRead
-    x-stoplight:
-      id: 04vvsvyndvy8n
-    type: object
-    properties:
-      uuid:
-        type: string
-      organisation_id:
-        type: string
-      position:
-        type: string
-      gender:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      role:
-        type: string
-      age:
-        type: integer
-  V2CoreTeamLeaderUpdate:
-    title: V2CoreTeamLeaderUpdate
-    type: object
-    properties:
-      position:
-        type: string
-      gender:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      role:
-        type: string
-      age:
-        type: integer
-  V2LeadershipTeamCreate:
-    title: V2LeadershipTeamCreate
+  V2LeadershipsCreate:
+    title: V2LeadershipsCreate
     type: object
     properties:
       organisation_id:
@@ -6956,8 +6900,10 @@ definitions:
         type: string
       age:
         type: integer
-  V2LeadershipTeamRead:
-    title: V2LeadershipTeamRead
+      nationality:
+        type: string
+  V2LeadershipsRead:
+    title: V2LeadershipsRead
     x-stoplight:
       id: 04vvsvyndvy8n
     type: object
@@ -6972,16 +6918,10 @@ definitions:
         type: string
       age:
         type: integer
-  V2LeadershipTeamUpdate:
-    title: V2LeadershipTeamUpdate
-    type: object
-    properties:
-      position:
+      nationality:
         type: string
-      gender:
+      collection:
         type: string
-      age:
-        type: integer
   V2OwnershipStakeCreate:
     title: V2OwnershipStakeCreate
     type: object
@@ -10991,8 +10931,8 @@ definitions:
               updated_at:
                 type: string
           organisation:
-            title: AdminOrganisationRead
             type: object
+            title: AdminOrganisationRead
             properties:
               uuid:
                 type: string
@@ -15433,8 +15373,8 @@ definitions:
           updated_at:
             type: string
       organisation:
-        title: AdminOrganisationRead
         type: object
+        title: AdminOrganisationRead
         properties:
           uuid:
             type: string
@@ -30510,6 +30450,8 @@ definitions:
         type: boolean
       version_name:
         type: string
+      validation_status:
+        type: boolean
   GeometryString:
     type: object
     properties:
@@ -30582,6 +30524,8 @@ definitions:
           type: boolean
         version_name:
           type: string
+        validation_status:
+          type: boolean
   SitePolygonsBboxResponse:
     title: SitePolygonsBboxResponse
     type: object
@@ -31350,6 +31294,8 @@ definitions:
               type: boolean
             version_name:
               type: string
+            validation_status:
+              type: boolean
       bbox:
         type: array
         items:
@@ -31431,6 +31377,8 @@ definitions:
               type: boolean
             version_name:
               type: string
+            validation_status:
+              type: boolean
   AuditStatusUpdateRequest:
     title: AuditStatusUpdateRequest
     type: object
@@ -31542,6 +31490,8 @@ definitions:
           type: boolean
         version_name:
           type: string
+        validation_status:
+          type: boolean
   PolygonChangeStatusUpdate:
     type: object
     properties:
@@ -37147,15 +37097,15 @@ paths:
                 type: string
               nursery_report_form_uuid:
                 type: string
-  '/v2/reporting-frameworks/{UUID}':
+  '/v2/reporting-frameworks/{frameworkKey}':
     get:
       summary: View a specific reporting framework using an access code
-      operationId: get-v2-reporting-frameworks-uuid
+      operationId: get-v2-reporting-frameworks-framework-key
       tags:
         - Funding Programmes
       parameters:
         - type: string
-          name: UUID
+          name: frameworkKey
           in: path
           required: true
       responses:
@@ -40476,6 +40426,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -40486,8 +40437,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -40515,7 +40466,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       tags:
         - V2 Admin
         - V2 Organisations
@@ -48193,6 +48143,7 @@ paths:
                     date_added:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -48203,8 +48154,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -48232,7 +48183,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -49498,15 +49448,15 @@ paths:
                 type: string
       tags:
         - V2 Funding Type
-  /v2/core-team-leader:
+  /v2/leaderships:
     post:
-      summary: Create a core team leader
-      operationId: post-v2-core-team-leader
+      summary: Create a leaderships
+      operationId: post-v2-leaderships
       responses:
         '201':
           description: Created
           schema:
-            title: V2CoreTeamLeaderRead
+            title: V2LeadershipsRead
             x-stoplight:
               id: 04vvsvyndvy8n
             type: object
@@ -49519,19 +49469,17 @@ paths:
                 type: string
               gender:
                 type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              role:
-                type: string
               age:
                 type: integer
+              nationality:
+                type: string
+              collection:
+                type: string
       parameters:
         - in: body
           name: body
           schema:
-            title: V2CoreTeamLeaderCreate
+            title: V2LeadershipsCreate
             type: object
             properties:
               organisation_id:
@@ -49540,73 +49488,16 @@ paths:
                 type: string
               gender:
                 type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              role:
-                type: string
               age:
                 type: integer
+              nationality:
+                type: string
       tags:
-        - V2 Core Team Leader
-  '/v2/core-team-leader/{UUID}':
-    patch:
-      summary: Update a core team leader
-      operationId: patch-v2-core-team-leader-UUID
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2CoreTeamLeaderRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
-            type: object
-            properties:
-              uuid:
-                type: string
-              organisation_id:
-                type: string
-              position:
-                type: string
-              gender:
-                type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              role:
-                type: string
-              age:
-                type: integer
-      tags:
-        - V2 Core Team Leader
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - in: body
-          name: body
-          schema:
-            title: V2CoreTeamLeaderUpdate
-            type: object
-            properties:
-              position:
-                type: string
-              gender:
-                type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              role:
-                type: string
-              age:
-                type: integer
+        - V2 Leaderships
+  '/v2/leaderships/{UUID}':
     delete:
-      summary: Delete a core team leader
-      operationId: delete-v2-core-team-leader-UUID
+      summary: Delete a leaderships
+      operationId: delete-v2-leaderships-UUID
       parameters:
         - type: string
           name: UUID
@@ -49616,38 +49507,7 @@ paths:
         '200':
           description: OK
           schema:
-            title: V2CoreTeamLeaderRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
-            type: object
-            properties:
-              uuid:
-                type: string
-              organisation_id:
-                type: string
-              position:
-                type: string
-              gender:
-                type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              role:
-                type: string
-              age:
-                type: integer
-      tags:
-        - V2 Core Team Leader
-  /v2/leadership-team:
-    post:
-      summary: Create a leadership team
-      operationId: post-v2-leadership-team
-      responses:
-        '201':
-          description: Created
-          schema:
-            title: V2LeadershipTeamRead
+            title: V2LeadershipsRead
             x-stoplight:
               id: 04vvsvyndvy8n
             type: object
@@ -49662,94 +49522,12 @@ paths:
                 type: string
               age:
                 type: integer
-      parameters:
-        - in: body
-          name: body
-          schema:
-            title: V2LeadershipTeamCreate
-            type: object
-            properties:
-              organisation_id:
+              nationality:
                 type: string
-              position:
+              collection:
                 type: string
-              gender:
-                type: string
-              age:
-                type: integer
       tags:
-        - V2 Leadership Team
-  '/v2/leadership-team/{UUID}':
-    patch:
-      summary: Update a leadership team
-      operationId: patch-v2-leadership-team-UUID
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2LeadershipTeamRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
-            type: object
-            properties:
-              uuid:
-                type: string
-              organisation_id:
-                type: string
-              position:
-                type: string
-              gender:
-                type: string
-              age:
-                type: integer
-      tags:
-        - V2 Leadership Team
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - in: body
-          name: body
-          schema:
-            title: V2LeadershipTeamUpdate
-            type: object
-            properties:
-              position:
-                type: string
-              gender:
-                type: string
-              age:
-                type: integer
-    delete:
-      summary: Delete a leadership team
-      operationId: delete-v2-leadership-team-UUID
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2LeadershipTeamRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
-            type: object
-            properties:
-              uuid:
-                type: string
-              organisation_id:
-                type: string
-              position:
-                type: string
-              gender:
-                type: string
-              age:
-                type: integer
-      tags:
-        - V2 Leadership Team
+        - V2 Leaderships
   /v2/ownership-stake:
     post:
       summary: Create a ownership stake
@@ -56204,6 +55982,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -56214,8 +55993,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -56243,7 +56022,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       operationId: get-v2-funding-programme
   /v2/admin/funding-programme:
     get:
@@ -56539,6 +56317,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -56549,8 +56328,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -56578,7 +56357,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       operationId: get-v2-admin-funding-programme
     post:
       summary: Create a funding programme
@@ -62492,8 +62270,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                title: AdminOrganisationRead
                 type: object
+                title: AdminOrganisationRead
                 properties:
                   uuid:
                     type: string
@@ -63915,6 +63693,7 @@ paths:
                       type: string
                       format: date-time
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -63925,8 +63704,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -63954,7 +63733,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/applications/{UUID}':
     get:
       summary: Get a specific application
@@ -64303,8 +64081,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                title: AdminOrganisationRead
                 type: object
+                title: AdminOrganisationRead
                 properties:
                   uuid:
                     type: string
@@ -66626,8 +66404,8 @@ paths:
                         updated_at:
                           type: string
                     organisation:
-                      title: AdminOrganisationRead
                       type: object
+                      title: AdminOrganisationRead
                       properties:
                         uuid:
                           type: string
@@ -69252,6 +69030,8 @@ paths:
                   type: boolean
                 version_name:
                   type: string
+                validation_status:
+                  type: boolean
         '500':
           description: Internal server error
   '/v2/sites/{UUID}/polygons/count':
@@ -71003,6 +70783,8 @@ paths:
                   type: boolean
                 version_name:
                   type: string
+                validation_status:
+                  type: boolean
         '400':
           description: Bad request
         '500':
@@ -73353,6 +73135,8 @@ paths:
                       type: boolean
                     version_name:
                       type: string
+                    validation_status:
+                      type: boolean
               bbox:
                 type: array
                 items:
@@ -73394,6 +73178,11 @@ paths:
           required: false
           description: 'Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`'
           type: string
+        - in: query
+          name: valid
+          required: false
+          description: Valid value to filter by
+          type: string
       responses:
         '200':
           description: Successful response
@@ -73429,6 +73218,11 @@ paths:
           name: sort
           required: false
           description: 'Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`'
+          type: string
+        - in: query
+          name: valid
+          required: false
+          description: Valid value to filter by
           type: string
       responses:
         '200':
@@ -73509,6 +73303,8 @@ paths:
                       type: boolean
                     version_name:
                       type: string
+                    validation_status:
+                      type: boolean
         '400':
           description: 'Bad request, UUID parameter is missing'
         '500':
@@ -73722,6 +73518,8 @@ paths:
                       type: boolean
                     version_name:
                       type: string
+                    validation_status:
+                      type: boolean
   '/v2/site-polygon/{uuid}':
     get:
       summary: get a site polygon by uuid
@@ -73805,6 +73603,8 @@ paths:
                     type: boolean
                   version_name:
                     type: string
+                  validation_status:
+                    type: boolean
   '/v2/site-polygon/{uuid}/versions':
     get:
       summary: list of site polygon versions
@@ -73890,6 +73690,8 @@ paths:
                       type: boolean
                     version_name:
                       type: string
+                    validation_status:
+                      type: boolean
   '/v2/site-polygon/{uuid}/new-version':
     post:
       summary: create a new site polygon version
@@ -73973,6 +73775,8 @@ paths:
                     type: boolean
                   version_name:
                     type: string
+                  validation_status:
+                    type: boolean
   '/v2/site-polygon/{uuid}/make-active':
     put:
       summary: update a site polygon to make active the site polygon uuid version and inactive the rest with same primary_uuid
@@ -74056,6 +73860,8 @@ paths:
                     type: boolean
                   version_name:
                     type: string
+                  validation_status:
+                    type: boolean
   '/v2/terrafund/clip-polygons/polygon/{uuid}':
     post:
       summary: Clip Overlapping Polygons by Polygon
@@ -74478,6 +74284,7 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -74488,8 +74295,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -74517,7 +74324,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
     post:
       summary: Create a new Impact Story
       operationId: v2-create-impact-story
@@ -74777,6 +74583,7 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -74787,8 +74594,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -74816,7 +74623,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story

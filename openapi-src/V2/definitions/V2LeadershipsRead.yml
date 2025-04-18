@@ -1,4 +1,4 @@
-title: V2LeadershipTeamRead
+title: V2LeadershipsRead
 x-stoplight:
   id: 04vvsvyndvy8n
 type: object
@@ -13,3 +13,7 @@ properties:
     type: string
   age:
     type: integer
+  nationality:
+    type: string
+  collection:
+    type: string

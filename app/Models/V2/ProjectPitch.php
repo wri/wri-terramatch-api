@@ -2,9 +2,12 @@
 
 namespace App\Models\V2;
 
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,6 +29,7 @@ class ProjectPitch extends Model implements MediaModel
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use HasTags;
+    use HasDemographics;
 
     /*  Statuses    */
     public const STATUS_DRAFT = 'draft';
@@ -52,6 +56,8 @@ class ProjectPitch extends Model implements MediaModel
         'detailed_intervention_types' => 'array',
         'land_use_types' => 'array',
         'restoration_strategy' => 'array',
+        'level_0_proposed' => 'array',
+        'level_1_proposed' => 'array',
     ];
 
     public $fileConfiguration = [
@@ -75,6 +81,18 @@ class ProjectPitch extends Model implements MediaModel
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+    ];
+
+    // Required by the HasDemographics trait
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Demographic::EMPLOYEES_TYPE => [
+            'all' => [
+                DemographicCollections::ALL,
+            ],
+        ],
+        Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
+        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Demographic::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
     ];
 
     public function registerMediaConversions(Media $media = null): void

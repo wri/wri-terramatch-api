@@ -9,6 +9,7 @@ use App\Models\Traits\IndicatorUpdateTrait;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Projects\ProjectPolygon;
+use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
@@ -197,6 +198,14 @@ class TerrafundEditGeometryController extends Controller
                 PolygonGeometryHelper::updateEstAreainSitePolygon($polygonGeometry, $geometry);
                 PolygonGeometryHelper::updateProjectCentroidFromPolygon($polygonGeometry);
                 $sitePolygon->changeStatusOnEdit();
+                $sitePolygon->validation_status = null;
+                $sitePolygon->save();
+
+                $existingCriteriaSites = CriteriaSite::where('polygon_id', $sitePolygon->poly_id)
+                    ->get();
+                foreach ($existingCriteriaSites as $criteriaSite) {
+                    $criteriaSite->delete();
+                }
             }
 
             return response()->json(['message' => 'Geometry updated successfully.', 'geometry' => $geometry, 'uuid' => $uuid]);

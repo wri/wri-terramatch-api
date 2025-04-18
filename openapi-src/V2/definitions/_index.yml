@@ -90,18 +90,10 @@ V2FileGalleryLite:
   $ref: './V2FileGalleryLite.yml'
 V2TreeSpeciesRead:
   $ref: './V2TreeSpeciesRead.yml'
-V2CoreTeamLeaderCreate:
-  $ref: './V2CoreTeamLeaderCreate.yml'
-V2CoreTeamLeaderRead:
-  $ref: './V2CoreTeamLeaderRead.yml'
-V2CoreTeamLeaderUpdate:
-  $ref: './V2CoreTeamLeaderUpdate.yml'
-V2LeadershipTeamCreate:
-  $ref: './V2LeadershipTeamCreate.yml'
-V2LeadershipTeamRead:
-  $ref: './V2LeadershipTeamRead.yml'
-V2LeadershipTeamUpdate:
-  $ref: './V2LeadershipTeamUpdate.yml'
+V2LeadershipsCreate:
+  $ref: './V2LeadershipsCreate.yml'
+V2LeadershipsRead:
+  $ref: './V2LeadershipsRead.yml'
 V2OwnershipStakeCreate:
   $ref: './V2OwnershipStakeCreate.yml'
 V2OwnershipStakeRead:

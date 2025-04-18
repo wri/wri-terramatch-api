@@ -52,9 +52,9 @@
 /v2/reporting-frameworks/access-code/{ACCESS_CODE}:
   get:
     $ref: './ReportingFrameworks/get-v2-reporting-frameworks-access-code.yml'
-/v2/reporting-frameworks/{UUID}:
+/v2/reporting-frameworks/{frameworkKey}:
   get:
-    $ref: './ReportingFrameworks/get-v2-reporting-frameworks-uuid.yml'
+    $ref: './ReportingFrameworks/get-v2-reporting-frameworks-framework-key.yml'
 /v2/forms/{ENTITY}/{UUID}:
   get:
     $ref: './Forms/get-v2-forms-entity-form-uuid.yml'
@@ -1042,45 +1042,26 @@
           $ref: '../definitions/_index.yml#/V2FundingTypeRead'
     tags:
       - V2 Funding Type
-/v2/core-team-leader:
+/v2/leaderships:
   post:
-    summary: Create a core team leader
-    operationId: post-v2-core-team-leader
+    summary: Create a leaderships
+    operationId: post-v2-leaderships
     responses:
       '201':
         description: Created
         schema:
-          $ref: '../definitions/_index.yml#/V2CoreTeamLeaderRead'
+          $ref: '../definitions/_index.yml#/V2LeadershipsRead'
     parameters:
       - in: body
         name: body
         schema:
-          $ref: '../definitions/_index.yml#/V2CoreTeamLeaderCreate'
+          $ref: '../definitions/_index.yml#/V2LeadershipsCreate'
     tags:
-      - V2 Core Team Leader
-'/v2/core-team-leader/{UUID}':
-  patch:
-    summary: Update a core team leader
-    operationId: patch-v2-core-team-leader-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2CoreTeamLeaderRead'
-    tags:
-      - V2 Core Team Leader
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2CoreTeamLeaderUpdate'
+      - V2 Leaderships
+'/v2/leaderships/{UUID}':
   delete:
-    summary: Delete a core team leader
-    operationId: delete-v2-core-team-leader-UUID
+    summary: Delete a leaderships
+    operationId: delete-v2-leaderships-UUID
     parameters:
       - type: string
         name: UUID
@@ -1090,60 +1071,9 @@
       '200':
         description: OK
         schema:
-          $ref: '../definitions/_index.yml#/V2CoreTeamLeaderRead'
+          $ref: '../definitions/_index.yml#/V2LeadershipsRead'
     tags:
-      - V2 Core Team Leader
-/v2/leadership-team:
-  post:
-    summary: Create a leadership team
-    operationId: post-v2-leadership-team
-    responses:
-      '201':
-        description: Created
-        schema:
-          $ref: '../definitions/_index.yml#/V2LeadershipTeamRead'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2LeadershipTeamCreate'
-    tags:
-      - V2 Leadership Team
-'/v2/leadership-team/{UUID}':
-  patch:
-    summary: Update a leadership team
-    operationId: patch-v2-leadership-team-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2LeadershipTeamRead'
-    tags:
-      - V2 Leadership Team
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2LeadershipTeamUpdate'
-  delete:
-    summary: Delete a leadership team
-    operationId: delete-v2-leadership-team-UUID
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2LeadershipTeamRead'
-    tags:
-      - V2 Leadership Team
+      - V2 Leaderships
 /v2/ownership-stake:
   post:
     summary: Create a ownership stake

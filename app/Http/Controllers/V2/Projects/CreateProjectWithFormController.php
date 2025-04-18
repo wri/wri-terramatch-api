@@ -99,12 +99,29 @@ class CreateProjectWithFormController extends Controller
             'direct_seeding_survival_rate' => $projectPitch->direct_seeding_survival_rate,
         ]);
 
-        foreach ($projectPitch->treeSpecies()->get() as $treeSpecies) {
+        foreach ($projectPitch->treeSpecies as $treeSpecies) {
             $project->treeSpecies()->create([
                 'collection' => $treeSpecies->collection ?? TreeSpecies::COLLECTION_PLANTED,
                 'name' => $treeSpecies->name,
                 'amount' => $treeSpecies->amount,
             ]);
+        }
+
+        foreach ($projectPitch->demographics as $pitchDemographic) {
+            $demographic = $project->demographics()->create([
+                'type' => $pitchDemographic->type,
+                'collection' => $pitchDemographic->collection,
+                'description' => $pitchDemographic->description,
+            ]);
+
+            foreach ($pitchDemographic->entries as $pitchEntry) {
+                $demographic->entries()->create([
+                    'type' => $pitchEntry->type,
+                    'subtype' => $pitchEntry->subtype,
+                    'name' => $pitchEntry->name,
+                    'amount' => $pitchEntry->amount,
+                ]);
+            }
         }
 
         $request->user()->projects()->sync([$project->id => ['is_monitoring' => false]], false);
