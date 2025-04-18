@@ -2262,9 +2262,6 @@
     $ref: './Sites/Monitoring/put-v2-admin-site-monitorings-uuid.yml'
   delete:
     $ref: './Sites/Monitoring/delete-v2-admin-site-monitorings-uuid.yml'
-'/v2/admin/projects/{UUID}':
-  put:
-    $ref: './Projects/put-v2-admin-project.yml'
 '/v2/admin/project-monitorings':
   post:
     $ref: './Projects/Monitoring/post-v2-admin-project-monitorings.yml'

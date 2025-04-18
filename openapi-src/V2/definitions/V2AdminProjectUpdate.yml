@@ -1,5 +1,0 @@
-title: V2AdminProjectUpdate
-type: object
-properties:
-  is_test:
-    type: boolean
