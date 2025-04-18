@@ -839,9 +839,6 @@
     responses:
       '200':
         description: OK
-/v2/{MODEL}/{UUID}/files:
-  get:
-    $ref: './Files/get-v2-model-uuid-files.yml'
 /v2/{MODEL}/{UUID}/image/locations:
   get:
     $ref: './Files/get-v2-model-uuid-image-locations.yml'
