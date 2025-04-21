@@ -1071,6 +1071,72 @@
           $ref: '../definitions/_index.yml#/V2LeadershipsRead'
     tags:
       - V2 Leaderships
+/v2/financial-indicators:
+  post:
+    summary: Create a financialIndicators
+    operationId: post-v2-financialIndicators
+    responses:
+      '201':
+        description: Created
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsRead'
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsCreate'
+    tags:
+      - V2 financialIndicators
+'/v2/financial-indicators/{UUID}':
+  delete:
+    summary: Delete a financial indicators
+    operationId: delete-v2-financial-indicators-UUID
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsRead'
+    tags:
+      - V2 financial Indicators
+  patch:
+    summary: Update a financial indicators
+    operationId: patch-v2-financial-indicators-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsRead'
+    tags:
+      - V2 financial Indicators
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsUpdate'
+  get:
+    summary: get financial indicators
+    operationId: get-v2-financial-indicators-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsRead'
+    tags:
+      - V2 financial Indicators
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
 /v2/ownership-stake:
   post:
     summary: Create a ownership stake

@@ -56,7 +56,8 @@ class ProjectPitch extends Model implements MediaModel
         'detailed_intervention_types' => 'array',
         'land_use_types' => 'array',
         'restoration_strategy' => 'array',
-        'level_0_past_restoration' => 'array',
+        'level_0_proposed' => 'array',
+        'level_1_proposed' => 'array',
     ];
 
     public $fileConfiguration = [

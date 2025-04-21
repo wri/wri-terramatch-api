@@ -226,8 +226,7 @@ class Organisation extends Model implements MediaModel
         'consortium' => 'string',
         'female_youth_leadership_example' => 'string',
         'level_0_past_restoration' => 'array',
-        'level_1_past_restoration' => 'string',
-        'level_2_past_restoration' => 'string',
+        'level_1_past_restoration' => 'array',
         'trees_naturally_regenerated_total' => 'integer',
         'trees_naturally_regenerated_3year' => 'integer',
         'carbon_credits' => 'integer',
@@ -318,6 +317,18 @@ class Organisation extends Model implements MediaModel
     {
         return $this->hasMany(Leaderships::class, 'organisation_id', 'id')
             ->where('collection', Leaderships::COLLECTION_CORE_TEAM_LEADERS);
+    }
+
+    public function revenue(): HasMany
+    {
+        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
+            ->where('collection', FinancialIndicators::COLLECTION_REVENUE);
+    }
+
+    public function profitBudget(): HasMany
+    {
+        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
+            ->where('collection', FinancialIndicators::COLLECTION_PROFIT_BUDGET);
     }
 
     public function partners(): BelongsToMany
