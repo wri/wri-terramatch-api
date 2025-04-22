@@ -37801,48 +37801,6 @@ paths:
                 type: object
               created_by:
                 type: object
-  '/v2/admin/{ENTITY}/{UUID}/{STATUS}':
-    put:
-      summary: Update status of an project/site/nurser or their reports
-      operationId: put-v2-admin-entity-uuid-status
-      tags:
-        - V2 Projects
-        - V2 Sites
-        - V2 Nurseries
-        - V2 Project Reports
-        - V2 Site Reports
-        - V2 Nursery Reports
-        - V2 Update requests
-      parameters:
-        - type: string
-          name: ENTITY
-          in: path
-          required: true
-          description: 'allowed values are projects, project-reports, site, site-reports, nurseries, nursery-reports'
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - type: string
-          name: STATUS
-          in: path
-          required: true
-          description: 'allowed values are approve, moreinfo'
-        - in: body
-          name: body
-          schema:
-            title: StatusUpdate
-            type: object
-            properties:
-              feedback:
-                type: string
-              feedback_fields:
-                type: array
-                items:
-                  type: string
-      responses:
-        '200':
-          description: OK
   '/v2/admin/{ENTITY}/{UUID}/reminder':
     post:
       summary: Send reminder to an entity report
