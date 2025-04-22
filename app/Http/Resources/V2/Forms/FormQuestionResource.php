@@ -45,6 +45,8 @@ class FormQuestionResource extends JsonResource
             'min_character_limit' => $this->min_character_limit,
             'max_character_limit' => $this->max_character_limit,
             'years' => $this->years,
+            'min_number_limit' => $this->min_number_limit,
+            'max_number_limit' => $this->max_number_limit,
         ]);
 
         if (count($this->children) > 0) {
