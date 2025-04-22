@@ -14,7 +14,8 @@ class EntityStatusStateMachine extends StateMachine
 
     public function recordHistory(): bool
     {
-        return true;
+        // We had this turned on for a long time and never made use of it; time to stop recording transition history.
+        return false;
     }
 
     public function transitions(): array
