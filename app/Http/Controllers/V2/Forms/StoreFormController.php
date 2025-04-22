@@ -138,6 +138,8 @@ class StoreFormController extends Controller
             'min_character_limit' => data_get($formQuestion, 'min_character_limit'),
             'max_character_limit' => data_get($formQuestion, 'max_character_limit'),
             'years' => data_get($formQuestion, 'years'),
+            'min_number_limit' => data_get($formQuestion, 'min_number_limit'),
+            'max_number_limit' => data_get($formQuestion, 'max_number_limit'),
         ]);
 
         $formQuestion->label_id = I18nHelper::generateI18nItem($formQuestion, 'label');
