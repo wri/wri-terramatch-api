@@ -10,7 +10,6 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
-use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
 use App\Services\AreaCalculationService;
