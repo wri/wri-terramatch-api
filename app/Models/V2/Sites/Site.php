@@ -2,7 +2,6 @@
 
 namespace App\Models\V2\Sites;
 
-use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Models\Framework;
 use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasEntityStatusScopesAndTransitions;
@@ -441,11 +440,6 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     public function getAuditableNameAttribute(): string
     {
         return $this->name;
-    }
-
-    public function dispatchStatusChangeEvent($user): void
-    {
-        EntityStatusChangeEvent::dispatch($user, $this, $this->name ?? '', '', $this->readable_status);
     }
 
     public function getViewLinkPath(): string

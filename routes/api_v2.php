@@ -33,7 +33,6 @@ use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
-use App\Http\Controllers\V2\Entities\AdminStatusEntityController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
 use App\Http\Controllers\V2\Entities\GetRelationsForEntityController;
@@ -339,7 +338,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('/{entity}/export/{framework}/pm', ProjectAdminExportController::class);
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-        Route::put('/{entity}/{status}', AdminStatusEntityController::class);
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
     });
 
