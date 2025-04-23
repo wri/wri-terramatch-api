@@ -98,6 +98,13 @@ trait UsesLinkedFields
         }
 
         $this->update($entityProps);
+
+        if ($this->status == EntityStatusStateMachine::APPROVED) {
+            // This state only occurs when an admin is editing an already approved entity. Under these circumstances,
+            // we'd rather see the entity saved with the clean data view than preserve any temporarily set data the
+            // admin might have put in place.
+            $this->cleanConditionalAnswers($form);
+        }
     }
 
     public function calculateCompletion(Form $form): int
