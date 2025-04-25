@@ -2286,7 +2286,7 @@ return [
         "KE-27" => [ "title" => "Migori", "country-code" => "KE" ],
         "KE-28" => [ "title" => "Mombasa", "country-code" => "KE" ],
         "KE-29" => [ "title" => "Murang'a", "country-code" => "KE" ],
-        "KE-30" => [ "title" => "Nairobi City", "country-code" => "KE" ],
+        "KE-30" => [ "title" => "Nairobi", "country-code" => "KE" ],
         "KE-31" => [ "title" => "Nakuru", "country-code" => "KE" ],
         "KE-32" => [ "title" => "Nandi", "country-code" => "KE" ],
         "KE-33" => [ "title" => "Narok", "country-code" => "KE" ],

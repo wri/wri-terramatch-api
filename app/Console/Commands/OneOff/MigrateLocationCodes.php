@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands\OneOff;
 
+use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Organisation;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\UpdateRequests\UpdateRequest;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Http;
@@ -61,6 +63,34 @@ class MigrateLocationCodes extends Command
             }
             $this->handleMigrationSet($query, $definitions);
         }
+
+        $this->info("\n\nUpdating UpdateRequests ...");
+        // Find all active form questions that could contain country or state data in update request content.
+        $formQuestions = FormQuestion::whereIn('linked_field_key', ['pro-country', 'pro-states'])->get();
+        foreach ($formQuestions as $formQuestion) {
+            $updateRequests = UpdateRequest::where('content', 'like', "%$formQuestion->uuid%")->whereNot('status', 'approved')->get();
+            if ($updateRequests->count() > 0) {
+                $this->info("\n\nFixing unapproved update request content for [$formQuestion->linked_field_key, $formQuestion->uuid]");
+                $this->withProgressBar($updateRequests->count(), function ($progressBar) use ($formQuestion, $updateRequests) {
+                    foreach ($updateRequests as $updateRequest) {
+                        $content = $updateRequest->content;
+                        $current = data_get($content, $formQuestion->uuid);
+                        if ($formQuestion->linked_field_key === 'pro-country') {
+                            $country = $this->findCountry($current);
+                            data_set($content, $formQuestion->uuid, $country);
+                        } else {
+                            $states = collect($current)->filter()->map(
+                                fn ($state) => $this->findState($state)
+                            )->filter()->toArray();
+                            data_set($content, $formQuestion->uuid, $states);
+                        }
+
+                        $updateRequest->update(['content' => $content]);
+                        $progressBar->advance();
+                    }
+                });
+            }
+        }
     }
 
     protected function handleMigrationSet($query, $definitions)
@@ -79,9 +109,13 @@ class MigrateLocationCodes extends Command
 
                             if (! empty($values)) {
                                 if (Str::startsWith($type, 'gadm_0')) {
-                                    $values = $this->remapCountries($values);
+                                    $values = collect($values)->filter()->map(
+                                        fn ($country) => $this->findCountry($country)
+                                    )->filter()->toArray();
                                 } else {
-                                    $values = $this->remapStates($values);
+                                    $values = collect($values)->filter()->map(
+                                        fn ($state) => $this->findState($state)
+                                    )->filter()->toArray();
                                 }
                             }
 
@@ -98,36 +132,6 @@ class MigrateLocationCodes extends Command
                 }
             });
         });
-    }
-
-    protected function remapCountries($countries)
-    {
-        $update = [];
-        foreach ($countries as $country) {
-            if (! empty($country)) {
-                $gadm = $this->findCountry($country);
-                if ($gadm != null) {
-                    $update[] = $gadm;
-                }
-            }
-        }
-
-        return $update;
-    }
-
-    protected function remapStates($states)
-    {
-        $update = [];
-        foreach ($states as $state) {
-            if (! empty($state)) {
-                $gadm = $this->findState($state);
-                if ($gadm != null) {
-                    $update[] = $gadm;
-                }
-            }
-        }
-
-        return $update;
     }
 
     protected $_countries;
