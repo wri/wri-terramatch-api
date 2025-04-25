@@ -1050,7 +1050,7 @@ class TerrafundCreateGeometryController extends Controller
             ];
             foreach ($fieldsToValidate as $field) {
                 $properties[$field] = $sitePolygon->$field;
-            }  
+            }
 
             $returnedProperties = [];
             $sitePolygonData = SitePolygonData::where('site_polygon_uuid', $sitePolygon->uuid)->first();
