@@ -76,16 +76,24 @@ class MigrateLocationCodes extends Command
                             } else {
                                 $values = $entity[$column];
                             }
+
                             if (! empty($values)) {
                                 if (Str::startsWith($type, 'gadm_0')) {
-                                    $this->remapCountries($values);
+                                    $values = $this->remapCountries($values);
                                 } else {
-                                    $this->remapStates($values);
+                                    $values = $this->remapStates($values);
                                 }
+                            }
+
+                            if (Str::endsWith($type, '_single')) {
+                                $entity[$column] = data_get($values, 0);
+                            } else {
+                                $entity[$column] = $values;
                             }
                         }
                     }
 
+                    $entity->save();
                     $progressBar->advance();
                 }
             });
