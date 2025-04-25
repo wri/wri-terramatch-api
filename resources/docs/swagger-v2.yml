@@ -37928,64 +37928,6 @@ paths:
                 type: object
               created_by:
                 type: object
-  
-    get:
-      operationId: get-v2-invasives-entity-uuid
-      summary: View all invasives for a given entity
-      tags:
-        - V2 Invasive
-      parameters:
-        - type: string
-          name: ENTITY
-          in: path
-          required: true
-          description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  title: V2InvasiveRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    name:
-                      type: string
-                    type:
-                      type: integer
-              links:
-                type: object
-                properties:
-                  first:
-                    type: string
-                  last:
-                    type: string
-                  prev:
-                    type: string
-                  next:
-                    type: string
-              meta:
-                type: object
-                properties:
-                  current_page:
-                    type: integer
-                  from:
-                    type: integer
-                  last_page:
-                    type: integer
-                  next:
-                    type: integer
-                  unfiltered_total:
-                    type: integer
   /v2/forms:
     get:
       summary: View all forms as a user
