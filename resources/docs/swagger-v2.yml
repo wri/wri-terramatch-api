@@ -37928,7 +37928,125 @@ paths:
                 type: object
               created_by:
                 type: object
-  
+  '/v2/stratas/{ENTITY}/{UUID}':
+    get:
+      operationId: get-v2-stratas-entity-uuid
+      summary: View all stratas for a given entity
+      tags:
+        - V2 Strata
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  title: V2StrataRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    description:
+                      type: string
+                    extent:
+                      type: integer
+              links:
+                type: object
+                properties:
+                  first:
+                    type: string
+                  last:
+                    type: string
+                  prev:
+                    type: string
+                  next:
+                    type: string
+              meta:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  from:
+                    type: integer
+                  last_page:
+                    type: integer
+                  next:
+                    type: integer
+                  unfiltered_total:
+                    type: integer
+  '/v2/disturbances/{ENTITY}/{UUID}':
+    get:
+      operationId: get-v2-disturbances-entity-uuid
+      summary: View all disturbances for a given entity
+      tags:
+        - V2 Disturbance
+      parameters:
+        - type: string
+          name: ENTITY
+          in: path
+          required: true
+          description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  title: V2DisturbanceRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    description:
+                      type: string
+                    intensity:
+                      type: string
+                    extent:
+                      type: string
+              links:
+                type: object
+                properties:
+                  first:
+                    type: string
+                  last:
+                    type: string
+                  prev:
+                    type: string
+                  next:
+                    type: string
+              meta:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  from:
+                    type: integer
+                  last_page:
+                    type: integer
+                  next:
+                    type: integer
+                  unfiltered_total:
+                    type: integer
+  '/v2/invasives/{ENTITY}/{UUID}':
     get:
       operationId: get-v2-invasives-entity-uuid
       summary: View all invasives for a given entity
