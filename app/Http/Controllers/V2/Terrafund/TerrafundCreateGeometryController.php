@@ -13,6 +13,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Models\V2\Sites\SitePolygonData;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
 use App\Services\SiteService;
@@ -1049,14 +1050,21 @@ class TerrafundCreateGeometryController extends Controller
             ];
             foreach ($fieldsToValidate as $field) {
                 $properties[$field] = $sitePolygon->$field;
-            }
+            }  
 
-            $propertiesJson = json_encode($properties);
+            $returnedProperties = [];
+            $sitePolygonData = SitePolygonData::where('site_polygon_uuid', $sitePolygon->uuid)->first();
+            if ($sitePolygonData) {
+                Log::info('Site polygon data', ['site polygon data' => $sitePolygonData]);
+                $returnedProperties = json_encode(array_merge($properties, $sitePolygonData->data));
+            } else {
+                $returnedProperties = json_encode($properties);
+            }
 
             $feature = [
               'type' => 'Feature',
               'geometry' => json_decode($polygonGeometry->geojsonGeom),
-              'properties' => json_decode($propertiesJson),
+              'properties' => json_decode($returnedProperties),
             ];
 
             $featureCollection = [
