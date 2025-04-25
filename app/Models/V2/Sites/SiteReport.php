@@ -141,6 +141,22 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'tree_planting_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'anr_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
+        'soil_water_conservation_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'soil_water_conservation_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
     ];
 
     public $table = 'v2_site_reports';
