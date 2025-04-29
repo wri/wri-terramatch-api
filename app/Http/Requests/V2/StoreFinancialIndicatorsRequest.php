@@ -16,7 +16,6 @@ class StoreFinancialIndicatorsRequest extends FormRequest
         return [
             'amount' => ['sometimes', 'integer', 'nullable'],
             'year' => ['sometimes', 'integer', 'nullable'],
-            'documentation' => ['sometimes', 'string', 'nullable'],
             'description' => ['sometimes', 'string', 'nullable'],
             'organisation_id' => ['sometimes', 'string', 'exists:organisations,uuid'],
         ];
