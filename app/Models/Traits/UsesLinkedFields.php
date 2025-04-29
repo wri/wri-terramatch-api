@@ -348,8 +348,8 @@ trait UsesLinkedFields
         foreach ($childQuestions as $child) {
             if (in_array($child->parent_id, $conditionalsToBeCleaned)) {
                 $fieldConfig = data_get($fieldsConfig, $child->linked_field_key);
-                $property = data_get($fieldConfig, 'property', null);
-                if ($this->isPlainField($child->input_type)) {
+                $property = data_get($fieldConfig, 'property');
+                if ($this->isPlainField($child->input_type) && ! empty($property)) {
                     $entityProps[$property] = null;
                 }
             }
