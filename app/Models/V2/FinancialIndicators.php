@@ -26,7 +26,6 @@ class FinancialIndicators extends Model implements MediaModel
         'collection',
         'amount',
         'year',
-        'documentation',
         'description',
     ];
 

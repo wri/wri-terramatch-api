@@ -16,6 +16,7 @@ use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\CriteriaSiteHistoric;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Models\V2\Sites\SitePolygonData;
 use App\Models\V2\User;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Validators\SitePolygonValidator;
@@ -330,14 +331,28 @@ class PolygonService
             if (! $site) {
                 throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
             }
+            $validatedProperties = $this->validateSitePolygonProperties($polygonUuid, $properties);
+            $extraProperties = array_diff_key($properties, $validatedProperties);
+            $columnsToRemove = ['area', 'uuid'];
+            $extraDataToStore = array_diff_key($extraProperties, array_flip($columnsToRemove));
+
             $sitePolygon = SitePolygon::create(array_merge(
-                $this->validateSitePolygonProperties($polygonUuid, $properties),
+                $validatedProperties,
                 [
                     'poly_id' => $polygonUuid ?? null,
                     'created_by' => Auth::user()?->id,
                     'is_active' => true,
                 ],
             ));
+
+            if (! empty($extraDataToStore)) {
+                $sitePolygonData = SitePolygonData::create([
+                    'site_polygon_uuid' => $sitePolygon->uuid,
+                    'data' => $extraDataToStore,
+                ]);
+                $sitePolygonData->save();
+            }
+
             $site = $sitePolygon->site()->first();
             if (! $site) {
                 Log::error('Site not found', ['site polygon uuid' => $sitePolygon->uuid, 'site id' => $sitePolygon->site_id]);
@@ -369,10 +384,30 @@ class PolygonService
             } else {
                 $user = User::find(1);
             }
-            $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid, $submit_polygon_loaded, $this->validateSitePolygonProperties($polygonUuid, $properties));
+
+            $validatedProperties = $this->validateSitePolygonProperties($polygonUuid, $properties);
+            $extraProperties = array_diff_key($properties, $validatedProperties);
+            $columnsToRemove = ['area', 'uuid'];
+            $extraDataToStore = array_diff_key($extraProperties, array_flip($columnsToRemove));
+
+            $newSitePolygon = $sitePolygon->createCopy(
+                $user,
+                $polygonUuid,
+                $submit_polygon_loaded,
+                $validatedProperties
+            );
             if (! $newSitePolygon) {
                 return false;
             }
+
+            if (! empty($extraDataToStore)) {
+                $sitePolygonData = SitePolygonData::create([
+                    'site_polygon_uuid' => $newSitePolygon->uuid,
+                    'data' => $extraDataToStore,
+                ]);
+                $sitePolygonData->save();
+            }
+
             $site = $newSitePolygon->site()->first();
             if (! $site) {
                 Log::error('Site not found', ['site polygon uuid' => $newSitePolygon->uuid, 'site id' => $newSitePolygon->site_id]);
