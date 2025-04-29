@@ -35,7 +35,6 @@ use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
-use App\Http\Controllers\V2\Entities\GetRelationsForEntityController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
@@ -491,14 +490,6 @@ Route::prefix('project-pitches')->group(function () {
     Route::get('/{projectPitch}/submissions', ViewProjectPitchSubmissionsController::class);
     Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
-
-Route::prefix('{relationType}')
-    ->whereIn('relationType', array_keys(GetRelationsForEntityController::RELATIONS))
-    ->group(function () {
-        ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-            Route::get('/{entity}', GetRelationsForEntityController::class);
-        });
-    });
 
 Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsController::class)
 ->whereIn('entityType', ['project', 'site']);

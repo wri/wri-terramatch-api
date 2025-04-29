@@ -92,15 +92,6 @@
 /v2/update-requests/{ENTITY}/{UUID}:
   get:
     $ref: './UpdateRequests/get-v2-update-requests-entity-uuid.yml'
-/v2/stratas/{ENTITY}/{UUID}:
-  get:
-    $ref: './Stratas/get-v2-stratas-entity-uuid.yml'
-/v2/disturbances/{ENTITY}/{UUID}:
-  get:
-    $ref: './Disturbances/get-v2-disturbances-entity-uuid.yml'
-/v2/invasives/{ENTITY}/{UUID}:
-  get:
-    $ref: './Invasives/get-v2-invasives-entity-uuid.yml'
 /v2/forms:
   get:
     summary: View all forms as a user
