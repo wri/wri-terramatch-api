@@ -27,7 +27,5 @@ interface EntityModel extends UpdateRequestableModel, ApprovalFlow
 
     public function isEditable(): bool;
 
-    public function dispatchStatusChangeEvent($user): void;
-
     public function getViewLinkPath(): string;
 }

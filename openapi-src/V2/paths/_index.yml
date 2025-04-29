@@ -81,9 +81,6 @@
 /v2/admin/update-requests/{UUID}/{STATUS}:
   put:
     $ref: './UpdateRequests/put-v2-admin-update-requests-uuid-status.yml'
-/v2/admin/{ENTITY}/{UUID}/{STATUS}:
-  put:
-    $ref: './Entity/put-v2-admin-entity-uuid-status.yml'
 /v2/admin/{ENTITY}/{UUID}/reminder:
   post:
     $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'
