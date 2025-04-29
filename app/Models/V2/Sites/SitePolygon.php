@@ -111,6 +111,11 @@ class SitePolygon extends Model implements AuditableModel
         return $this->hasMany(IndicatorTreeCoverLoss::class, 'site_polygon_id');
     }
 
+    public function sitePolygonData()
+    {
+        return $this->hasOne(SitePolygonData::class, 'site_polygon_uuid', 'uuid');
+    }
+
     public function getAuditableNameAttribute(): string
     {
         return $this->poly_name ?? '';
