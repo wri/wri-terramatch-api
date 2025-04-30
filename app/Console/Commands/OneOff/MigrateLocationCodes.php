@@ -118,8 +118,8 @@ class MigrateLocationCodes extends Command
     protected function handleMigrationSet($query, $definitions)
     {
         $count = (clone $query)->count();
-        $this->withProgressBar($count, function ($progressBar) use ($query, $definitions, &$chunks) {
-            $query->chunk(100, function ($chunk) use ($progressBar, $definitions, &$chunks) {
+        $this->withProgressBar($count, function ($progressBar) use ($query, $definitions) {
+            $query->chunk(100, function ($chunk) use ($progressBar, $definitions) {
                 foreach ($chunk as $entity) {
                     foreach ($definitions as $type => $columns) {
                     $isSingle = Str::endsWith($type, '_single');
