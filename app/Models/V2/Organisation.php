@@ -227,6 +227,7 @@ class Organisation extends Model implements MediaModel
         'female_youth_leadership_example' => 'string',
         'level_0_past_restoration' => 'array',
         'level_1_past_restoration' => 'array',
+        'level_2_past_restoration' => 'array',
         'trees_naturally_regenerated_total' => 'integer',
         'trees_naturally_regenerated_3year' => 'integer',
         'carbon_credits' => 'integer',
