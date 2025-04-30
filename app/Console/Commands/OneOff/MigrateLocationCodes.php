@@ -3,10 +3,12 @@
 namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\Forms\FormQuestion;
+use App\Models\V2\Leaderships;
 use App\Models\V2\Organisation;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\Models\V2\User;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Http;
@@ -90,6 +92,26 @@ class MigrateLocationCodes extends Command
                     }
                 });
             }
+        }
+
+        $this->info("\n\nRemoving `level_2_past_restoration` and `level_2_proposed` data...");
+        Organisation::whereNot('level_2_past_restoration', null)->update(['level_2_past_restoration' => null]);
+        ProjectPitch::whereNot('level_2_proposed', null)->update(['level_2_proposed' => null]);
+
+        $this->info("\n\nUpdating form question option lists...");
+        FormQuestion::where(['options_list' => 'countries', 'input_type' => 'select'])->update(['options_list' => 'gadm-level-0']);
+        FormQuestion::where(['options_list' => 'states', 'input_type' => 'select'])->update(['options_list' => 'gadm-level-1']);
+        FormQuestion::whereIn('linked_field_key', ['org-level-2-past-restoration', 'pro-pit-level-2-proposed'])
+            ->update(['input_type' => 'select', 'multichoice' => true, 'options_list' => 'gadm-level-2']);
+
+        $this->info("\n\nUpdating user countries...");
+        foreach (User::whereNotNull('country')->get() as $user) {
+            $user->update(['country' => $this->findCountry($user->country)]);
+        }
+
+        $this->info("\n\nUpdating leadership nationalities...");
+        foreach (Leaderships::whereNotNull('nationality')->get() as $leadership) {
+            $leadership->update(['nationality' => $this->findCountry($leadership->nationality)]);
         }
     }
 
