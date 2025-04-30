@@ -122,22 +122,23 @@ class MigrateLocationCodes extends Command
             $query->chunk(100, function ($chunk) use ($progressBar, $definitions) {
                 foreach ($chunk as $entity) {
                     foreach ($definitions as $type => $columns) {
-                    $isSingle = Str::endsWith($type, '_single');
-                    $isCountry = Str::startsWith($type, 'gadm_0');
+                        $isSingle = Str::endsWith($type, '_single');
+                        $isCountry = Str::startsWith($type, 'gadm_0');
 
-                    foreach ($columns as $column) {
-                        $values = $isSingle ? [$entity[$column]] : $entity[$column];
-                        
-                        $values = collect($values)
-                            ->map(fn ($v) => $isCountry ? $this->findCountry($v) : $this->findState($v))
-                            ->filter()
-                            ->toArray();
+                        foreach ($columns as $column) {
+                            $values = $isSingle ? [$entity[$column]] : $entity[$column];
 
-                        $entity[$column] = $isSingle ? data_get($values, 0) : $values;
+                            $values = collect($values)
+                                ->map(fn ($v) => $isCountry ? $this->findCountry($v) : $this->findState($v))
+                                ->filter()
+                                ->toArray();
+
+                            $entity[$column] = $isSingle ? data_get($values, 0) : $values;
+                        }
+
+                        $entity->save();
+                        $progressBar->advance();
                     }
-
-                    $entity->save();
-                    $progressBar->advance();
                 }
             });
         });
