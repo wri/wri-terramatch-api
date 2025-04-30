@@ -122,31 +122,18 @@ class MigrateLocationCodes extends Command
             $query->chunk(100, function ($chunk) use ($progressBar, $definitions, &$chunks) {
                 foreach ($chunk as $entity) {
                     foreach ($definitions as $type => $columns) {
-                        foreach ($columns as $column) {
-                            if (Str::endsWith($type, '_single')) {
-                                $values = [$entity[$column]];
-                            } else {
-                                $values = $entity[$column];
-                            }
+                    $isSingle = Str::endsWith($type, '_single');
+                    $isCountry = Str::startsWith($type, 'gadm_0');
 
-                            if (! empty($values)) {
-                                if (Str::startsWith($type, 'gadm_0')) {
-                                    $values = collect($values)->filter()->map(
-                                        fn ($country) => $this->findCountry($country)
-                                    )->filter()->toArray();
-                                } else {
-                                    $values = collect($values)->filter()->map(
-                                        fn ($state) => $this->findState($state)
-                                    )->filter()->toArray();
-                                }
-                            }
+                    foreach ($columns as $column) {
+                        $values = $isSingle ? [$entity[$column]] : $entity[$column];
+                        
+                        $values = collect($values)
+                            ->map(fn ($v) => $isCountry ? $this->findCountry($v) : $this->findState($v))
+                            ->filter()
+                            ->toArray();
 
-                            if (Str::endsWith($type, '_single')) {
-                                $entity[$column] = data_get($values, 0);
-                            } else {
-                                $entity[$column] = $values;
-                            }
-                        }
+                        $entity[$column] = $isSingle ? data_get($values, 0) : $values;
                     }
 
                     $entity->save();
