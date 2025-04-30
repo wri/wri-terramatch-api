@@ -129,16 +129,17 @@ class MigrateLocationCodes extends Command
                             $values = $isSingle ? [$entity[$column]] : $entity[$column];
 
                             $values = collect($values)
+                                ->filter()
                                 ->map(fn ($v) => $isCountry ? $this->findCountry($v) : $this->findState($v))
                                 ->filter()
                                 ->toArray();
 
                             $entity[$column] = $isSingle ? data_get($values, 0) : $values;
                         }
-
-                        $entity->save();
-                        $progressBar->advance();
                     }
+
+                    $entity->save();
+                    $progressBar->advance();
                 }
             });
         });
