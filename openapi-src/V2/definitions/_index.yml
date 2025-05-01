@@ -94,12 +94,6 @@ V2LeadershipsCreate:
   $ref: './V2LeadershipsCreate.yml'
 V2LeadershipsRead:
   $ref: './V2LeadershipsRead.yml'
-V2FinancialIndicatorsCreate:
-  $ref: './V2FinancialIndicatorsCreate.yml'
-V2FinancialIndicatorsRead:
-  $ref: './V2FinancialIndicatorsRead.yml'
-V2FinancialIndicatorsUpdate:
-  $ref: './V2FinancialIndicatorsUpdate.yml'
 V2OwnershipStakeCreate:
   $ref: './V2OwnershipStakeCreate.yml'
 V2OwnershipStakeRead:
