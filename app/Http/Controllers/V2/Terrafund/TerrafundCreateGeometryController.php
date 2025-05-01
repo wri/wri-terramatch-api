@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Constants\PolygonFields;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DelayedJobResource;
@@ -75,7 +76,7 @@ class TerrafundCreateGeometryController extends Controller
     public function validateDataInDB(Request $request)
     {
         $polygonUuid = $request->input('uuid');
-        $fieldsToValidate = ['poly_name', 'plantstart', 'practice', 'target_sys', 'distr', 'num_trees'];
+        $fieldsToValidate = PolygonFields::BASIC_FIELDS;
         // Check if the polygon with the specified poly_id exists
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
         if (! $sitePolygon) {
@@ -1036,7 +1037,7 @@ class TerrafundCreateGeometryController extends Controller
                 return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
             }
 
-            $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
+            $properties = $sitePolygon ? $sitePolygon->only(PolygonFields::EXTENDED_FIELDS) : [];
 
             $returnedProperties = [];
             $sitePolygonData = SitePolygonData::where('site_polygon_uuid', $sitePolygon->uuid)->first();
@@ -1106,7 +1107,7 @@ class TerrafundCreateGeometryController extends Controller
                     continue;
                 }
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
-                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
+                $properties = $sitePolygon ? $sitePolygon->only(PolygonFields::EXTENDED_FIELDS) : [];
                 $feature = [
                     'type' => 'Feature',
                     'geometry' => json_decode($polygonGeometry->geojsonGeom),
@@ -1168,10 +1169,7 @@ class TerrafundCreateGeometryController extends Controller
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
                 $projectUuid = $sitePolygon?->site?->project?->uuid ?? null;
                 $cohort = $sitePolygon?->site?->project?->cohort ?? null;
-                $properties = $sitePolygon ? $sitePolygon->only([
-                    'poly_name', 'plantstart', 'practice', 'target_sys',
-                    'distr', 'num_trees', 'site_id', 'uuid',
-                ]) : [];
+                $properties = $sitePolygon ? $sitePolygon->only(PolygonFields::EXTENDED_FIELDS) : [];
 
                 $properties['project_uuid'] = $projectUuid;
                 $properties['cohort'] = $cohort;
@@ -1214,7 +1212,7 @@ class TerrafundCreateGeometryController extends Controller
                     continue;
                 }
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
-                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid', 'id']) : [];
+                $properties = $sitePolygon ? $sitePolygon->only(PolygonFields::COMPLETE_FIELDS) : [];
                 $feature = [
                     'type' => 'Feature',
                     'geometry' => json_decode($polygonGeometry->geojsonGeom),

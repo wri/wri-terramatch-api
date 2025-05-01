@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Constants\PolygonFields;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
 use App\Http\Controllers\Controller;
@@ -412,7 +413,7 @@ class TerrafundEditGeometryController extends Controller
     private function getDiff(SitePolygon $sitePolygon, SitePolygon $newSitePolygon): array
     {
         $diff = [];
-        $keys = ['poly_name','plantstart','practice','target_sys','distr','num_trees','site_id'];
+        $keys = array_merge(['site_id'], PolygonFields::BASIC_FIELDS);
         foreach ($keys as $key) {
             if ($newSitePolygon[$key] !== $sitePolygon[$key]) {
                 $diff[] = "$key => from $sitePolygon[$key] to {$newSitePolygon[$key]}";

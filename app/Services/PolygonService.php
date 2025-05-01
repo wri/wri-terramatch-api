@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Constants\PolygonFields;
 use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
@@ -58,15 +59,7 @@ class PolygonService
     // TODO: Remove this const and its usages when the point transformation ticket is complete.
     public const TEMP_FAKE_POLYGON_UUID = 'temp_fake_polygon_uuid';
 
-    protected const POINT_PROPERTIES = [
-        'site_id',
-        'poly_name',
-        'plantstart',
-        'practice',
-        'target_sys',
-        'distr',
-        'num_trees',
-    ];
+    protected const POINT_PROPERTIES = PolygonFields::POINT_PROPERTIES;
 
     private const VALID_PRACTICES = [
         'tree-planting',

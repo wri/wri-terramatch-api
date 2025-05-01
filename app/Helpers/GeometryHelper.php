@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Constants\PolygonFields;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
@@ -432,7 +433,7 @@ class GeometryHelper
                 throw new \Exception('No polygon geometry found for the given UUID.');
             }
 
-            $fieldsToValidate = ['poly_name', 'plantstart', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid'];
+            $fieldsToValidate = PolygonFields::EXTENDED_FIELDS;
             $sitePolygonExtraAttributes = $sitePolygon->sitePolygonData;
             $properties = [];
             foreach ($fieldsToValidate as $field) {
