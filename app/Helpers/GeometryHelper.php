@@ -396,7 +396,6 @@ class GeometryHelper
                 'poly_id' => $polygonData->poly_id,
                 'poly_name' => $polygonData->poly_name ?? '',
                 'plantstart' => $polygonData->plantstart ?? '',
-                'plantend' => $polygonData->plantend ?? '',
                 'practice' => $polygonData->practice ?? '',
                 'target_sys' => $polygonData->target_sys ?? '',
                 'distr' => $polygonData->distr ?? '',
@@ -433,7 +432,7 @@ class GeometryHelper
                 throw new \Exception('No polygon geometry found for the given UUID.');
             }
 
-            $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid'];
+            $fieldsToValidate = ['poly_name', 'plantstart', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid'];
             $sitePolygonExtraAttributes = $sitePolygon->sitePolygonData;
             $properties = [];
             foreach ($fieldsToValidate as $field) {

@@ -75,7 +75,7 @@ class TerrafundCreateGeometryController extends Controller
     public function validateDataInDB(Request $request)
     {
         $polygonUuid = $request->input('uuid');
-        $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
+        $fieldsToValidate = ['poly_name', 'plantstart', 'practice', 'target_sys', 'distr', 'num_trees'];
         // Check if the polygon with the specified poly_id exists
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
         if (! $sitePolygon) {
@@ -1036,21 +1036,7 @@ class TerrafundCreateGeometryController extends Controller
                 return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
             }
 
-            $properties = [];
-            $fieldsToValidate = [
-              'poly_name',
-              'plantstart',
-              'plantend',
-              'practice',
-              'target_sys',
-              'distr',
-              'num_trees',
-              'uuid',
-              'site_id',
-            ];
-            foreach ($fieldsToValidate as $field) {
-                $properties[$field] = $sitePolygon->$field;
-            }
+            $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
 
             $returnedProperties = [];
             $sitePolygonData = SitePolygonData::where('site_polygon_uuid', $sitePolygon->uuid)->first();
@@ -1120,7 +1106,7 @@ class TerrafundCreateGeometryController extends Controller
                     continue;
                 }
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
-                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
+                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
                 $feature = [
                     'type' => 'Feature',
                     'geometry' => json_decode($polygonGeometry->geojsonGeom),
@@ -1183,7 +1169,7 @@ class TerrafundCreateGeometryController extends Controller
                 $projectUuid = $sitePolygon?->site?->project?->uuid ?? null;
                 $cohort = $sitePolygon?->site?->project?->cohort ?? null;
                 $properties = $sitePolygon ? $sitePolygon->only([
-                    'poly_name', 'plantstart', 'plantend', 'practice', 'target_sys',
+                    'poly_name', 'plantstart', 'practice', 'target_sys',
                     'distr', 'num_trees', 'site_id', 'uuid',
                 ]) : [];
 
@@ -1228,7 +1214,7 @@ class TerrafundCreateGeometryController extends Controller
                     continue;
                 }
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
-                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid', 'id']) : [];
+                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid', 'id']) : [];
                 $feature = [
                     'type' => 'Feature',
                     'geometry' => json_decode($polygonGeometry->geojsonGeom),

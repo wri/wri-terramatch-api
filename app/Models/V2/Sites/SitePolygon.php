@@ -42,7 +42,6 @@ class SitePolygon extends Model implements AuditableModel
       'site_id',
       'point_id',
       'plantstart',
-      'plantend',
       'practice',
       'target_sys',
       'distr',
@@ -166,7 +165,6 @@ class SitePolygon extends Model implements AuditableModel
         }
         $newSitePolygon->primary_uuid = $this->primary_uuid;
         $newSitePolygon->plantstart = $properties['plantstart'] ?? $this->plantstart;
-        $newSitePolygon->plantend = $properties['plantend'] ?? $this->plantend;
         $newSitePolygon->practice = $properties['practice'] ?? $this->practice;
         $newSitePolygon->target_sys = $properties['target_sys'] ?? $this->target_sys;
         $newSitePolygon->distr = $properties['distr'] ?? $this->distr;

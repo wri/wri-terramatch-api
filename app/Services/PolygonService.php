@@ -62,7 +62,6 @@ class PolygonService
         'site_id',
         'poly_name',
         'plantstart',
-        'plantend',
         'practice',
         'target_sys',
         'distr',
@@ -472,11 +471,6 @@ class PolygonService
             $properties['plantstart'] = null;
         }
 
-        try {
-            $properties['plantend'] = empty($properties['plantend']) ? null : Carbon::parse($properties['plantend']);
-        } catch (\Exception $e) {
-            $properties['plantend'] = null;
-        }
         $properties['num_trees'] = is_int($properties['num_trees'] ?? null) ? $properties['num_trees'] : null;
 
         $distributionsValidValues = ['full', 'partial', 'single-line'];
@@ -490,7 +484,6 @@ class PolygonService
             'poly_name' => $properties['poly_name'] ?? null,
             'site_id' => $properties['site_id'] ?? null,
             'plantstart' => $properties['plantstart'],
-            'plantend' => $properties['plantend'],
             'practice' => $properties['practice'],
             'target_sys' => $properties['target_sys'],
             'distr' => $properties['distr'],
@@ -532,8 +525,6 @@ class PolygonService
 
         switch ($field) {
             case 'plantstart':
-                return ! $this->isValidDate($value);
-            case 'plantend':
                 return ! $this->isValidDate($value);
             case 'practice':
                 return ! $this->areValidItems($value, self::VALID_PRACTICES);

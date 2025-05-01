@@ -235,7 +235,6 @@ class TerrafundEditGeometryController extends Controller
             $validatedData = $request->validate([
               'poly_name' => 'nullable|string',
               'plantstart' => 'nullable|date',
-              'plantend' => 'nullable|date',
               'practice' => 'nullable|string',
               'distr' => 'nullable|string',
               'num_trees' => 'nullable|integer',
@@ -262,7 +261,6 @@ class TerrafundEditGeometryController extends Controller
             $validatedData = $request->validate([
               'poly_name' => 'nullable|string',
               'plantstart' => 'nullable|date',
-              'plantend' => 'nullable|date',
               'practice' => 'nullable|string',
               'distr' => 'nullable|string',
               'num_trees' => 'nullable|integer',
@@ -341,7 +339,6 @@ class TerrafundEditGeometryController extends Controller
                 $validatedData = [
                   'poly_name' => null,
                   'plantstart' => null,
-                  'plantend' => null,
                   'practice' => null,
                   'distr' => null,
                   'num_trees' => null,
@@ -351,7 +348,6 @@ class TerrafundEditGeometryController extends Controller
                 $validatedData = $request->validate([
                   'poly_name' => 'nullable|string',
                   'plantstart' => 'nullable|date',
-                  'plantend' => 'nullable|date',
                   'practice' => 'nullable|string',
                   'distr' => 'nullable|string',
                   'num_trees' => 'nullable|integer',
@@ -372,7 +368,6 @@ class TerrafundEditGeometryController extends Controller
             $sitePolygon = new SitePolygon([
                 'poly_name' => $validatedData['poly_name'],
                 'plantstart' => $validatedData['plantstart'],
-                'plantend' => $validatedData['plantend'],
                 'practice' => $validatedData['practice'],
                 'distr' => $validatedData['distr'],
                 'num_trees' => $validatedData['num_trees'],
@@ -417,7 +412,7 @@ class TerrafundEditGeometryController extends Controller
     private function getDiff(SitePolygon $sitePolygon, SitePolygon $newSitePolygon): array
     {
         $diff = [];
-        $keys = ['poly_name','plantstart','plantend','practice','target_sys','distr','num_trees','site_id'];
+        $keys = ['poly_name','plantstart','practice','target_sys','distr','num_trees','site_id'];
         foreach ($keys as $key) {
             if ($newSitePolygon[$key] !== $sitePolygon[$key]) {
                 $diff[] = "$key => from $sitePolygon[$key] to {$newSitePolygon[$key]}";
