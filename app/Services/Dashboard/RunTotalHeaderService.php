@@ -11,7 +11,6 @@ class RunTotalHeaderService
     public function runTotalHeaderJob(Request $request)
     {
         $projects = $this->getProjectsData($request);
-        $countryName = $this->getCountryName($request);
 
         return (object)[
             'total_non_profit_count' => $this->getTotalNonProfitCount($projects),
@@ -21,7 +20,6 @@ class RunTotalHeaderService
             'total_hectares_restored_goal' => $projects->sum('total_hectares_restored_goal'),
             'total_trees_restored' => $this->getTotalTreesRestoredSum($projects),
             'total_trees_restored_goal' => $projects->sum('trees_grown_goal'),
-            'country_name' => $countryName,
         ];
 
         return $response;
@@ -40,18 +38,6 @@ class RunTotalHeaderService
             ->get();
     }
 
-    private function getCountryName(Request $request)
-    {
-        $country = data_get($request, 'filter.country');
-        if ($country) {
-            return WorldCountryGeneralized::where('iso', $country)
-                ->select('country')
-                ->first()
-                ->country;
-        }
-
-        return '';
-    }
 
     public function getTotalNonProfitCount($projects)
     {
