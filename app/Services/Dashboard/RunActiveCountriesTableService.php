@@ -3,8 +3,8 @@
 namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
-use Illuminate\Http\Request;
 use App\Models\V2\WorldCountryGeneralized;
+use Illuminate\Http\Request;
 
 class RunActiveCountriesTableService
 {
