@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class WorldCountriesGeneralizedTableSeeder extends Seeder
 {
+
     public function run()
     {
         ini_set('memory_limit', '4048M');
@@ -106,7 +107,8 @@ class WorldCountriesGeneralizedTableSeeder extends Seeder
                 ],
                 [
                     'OGR_FID' => 262,
-                    'geometry' => '',                                                                                                                                                            'country' => 'Armenia',
+                    'geometry' => '',
+                    'country' => 'Armenia',
                     'iso' => 'ARM',
                     'countryaff' => 'Armenia',
                     'aff_iso' => 'AM',
@@ -979,7 +981,6 @@ class WorldCountriesGeneralizedTableSeeder extends Seeder
                     'OGR_FID' => 371,
                     'geometry' => '',
                     'country' => 'Kiribati',
-
                     'iso' => 'KIR',
                     'countryaff' => 'Kiribati',
                     'aff_iso' => 'KI',
@@ -2034,14 +2035,36 @@ class WorldCountriesGeneralizedTableSeeder extends Seeder
                 ],
             ];
 
+            $successCount = 0;
+            $failCount = 0;
+
             foreach ($countries as $country) {
-                if (isset($geometry[$country['iso']])) {
-                    $country['geometry'] = DB::raw('ST_GeomFromGeoJSON(' . json_encode($geometry[$country['iso']]) . ')');
-                    DB::table('world_countries_generalized')->insert($country);
+                try {
+                    if (isset($geometry[$country['aff_iso']])) {
+                        $country['geometry'] = DB::raw('ST_GeomFromGeoJSON(' . json_encode($geometry[$country['aff_iso']]) . ')');
+                        $inserted = DB::table('world_countries_generalized')->insert($country);
+                        
+                        if ($inserted) {
+                            $successCount++;
+                            $this->command->info("Country {$country['country']} (ISO: {$country['iso']}) inserted successfully.");
+                        } else {
+                            $failCount++;
+                            $this->command->warn("Failed to insert country {$country['country']} (ISO: {$country['iso']})");
+                        }
+                    } else {
+                        $failCount++;
+                        $this->command->warn("No geometry found for country {$country['country']} (ISO: {$country['iso']})");
+                    }
+                } catch (Exception $e) {
+                    $failCount++;
+                    $this->command->error("Error inserting country {$country['country']} (ISO: {$country['iso']}): " . $e->getMessage());
                 }
             }
+            
+            $this->command->info("World countries seeding completed. Successes: $successCount, Failures: $failCount");
+            
         } catch (Exception $e) {
-            Log::error('Failed to retrieve file from S3: ' . $e->getMessage());
+            $this->command->error('Failed to seed world countries data: ' . $e->getMessage());
         }
     }
 }
