@@ -3,9 +3,8 @@
 namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
-use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use App\Models\V2\WorldCountryGeneralized;
 
 class RunActiveCountriesTableService
 {
@@ -21,9 +20,6 @@ class RunActiveCountriesTableService
             ->get(['country', 'iso']);
 
         $activeCountries = [];
-
-        Log::info('countries');
-        Log::info($countries);
 
         foreach ($countries as $country) {
             $countryProjects = $projects->where('country', $country->iso);
