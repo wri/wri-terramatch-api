@@ -3,9 +3,9 @@
 namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
-use App\Models\V2\Forms\FormOptionList;
-use App\Models\V2\Forms\FormOptionListOption;
+use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RunActiveCountriesTableService
 {
@@ -17,22 +17,23 @@ class RunActiveCountriesTableService
     public function getAllCountries(Request $request)
     {
         $projects = $this->getProjects($request);
-        $countryId = FormOptionList::where('key', 'countries')->value('id');
-        $countries = FormOptionListOption::where('form_option_list_id', $countryId)
-            ->orderBy('label')
-            ->get(['slug', 'label']);
+        $countries = WorldCountryGeneralized::orderBy('country')
+            ->get(['country', 'iso']);
 
         $activeCountries = [];
 
+        Log::info('countries');
+        Log::info($countries);
+
         foreach ($countries as $country) {
-            $countryProjects = $projects->where('country', $country->slug);
+            $countryProjects = $projects->where('country', $country->iso);
             if ($countryProjects->isEmpty()) {
                 continue;
             }
 
             $activeCountries[] = [
-                'country_slug' => $country->slug,
-                'country' => $country->label,
+                'country_slug' => $country->iso,
+                'country' => $country->country,
                 'number_of_projects' => $countryProjects->count(),
                 'total_trees_planted' => $this->sumField($countryProjects, 'approved_trees_planted_count'),
                 'total_jobs_created' => $this->sumField($countryProjects, 'total_approved_jobs_created'),
