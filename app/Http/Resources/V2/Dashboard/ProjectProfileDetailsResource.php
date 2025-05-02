@@ -3,8 +3,6 @@
 namespace App\Http\Resources\V2\Dashboard;
 
 use App\Models\Traits\HasProjectCoverImage;
-use App\Models\V2\Forms\FormOptionList;
-use App\Models\V2\Forms\FormOptionListOption;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProjectProfileDetailsResource extends JsonResource

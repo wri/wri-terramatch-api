@@ -3,7 +3,6 @@
 namespace App\Services\Dashboard;
 
 use App\Helpers\TerrafundDashboardQueryHelper;
-use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
 
 class RunTotalHeaderService
@@ -37,7 +36,6 @@ class RunTotalHeaderService
             ])
             ->get();
     }
-
 
     public function getTotalNonProfitCount($projects)
     {
