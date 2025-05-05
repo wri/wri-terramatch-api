@@ -224,20 +224,6 @@ return [
                     'input_type' => 'employees',
                     'collection' => 'temp'
                 ],
-                'org-financial-indicators-revenue' => [
-                    'property' => 'revenue',
-                    'label' => 'Revenue',
-                    'resource' => 'App\Http\Resources\V2\FinancialIndicatorsResource',
-                    'input_type' => 'financialIndicators',
-                    'collection' => 'revenue',
-                ],
-                'org-financial-indicators-profit-budget' => [
-                    'property' => 'profitBudget',
-                    'label' => 'Profit Budget',
-                    'resource' => 'App\Http\Resources\V2\FinancialIndicatorsResource',
-                    'input_type' => 'financialIndicators',
-                    'collection' => 'profit-budget',
-                ],
             ],
         ],
         'project-pitch' => [
@@ -855,20 +841,6 @@ return [
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'trainingBeneficiaries',
                     'collection' => 'training'
-                ],
-                'pro-rep-financial-indicators-revenue' => [
-                    'property' => 'revenue',
-                    'label' => 'Revenue',
-                    'resource' => 'App\Http\Resources\V2\FinancialIndicatorsResource',
-                    'input_type' => 'financialIndicators',
-                    'collection' => 'revenue',
-                ],
-                'pro-rep-financial-indicators-profit-budget' => [
-                    'property' => 'profitBudget',
-                    'label' => 'Profit Budget',
-                    'resource' => 'App\Http\Resources\V2\FinancialIndicatorsResource',
-                    'input_type' => 'financialIndicators',
-                    'collection' => 'profit-budget',
                 ],
             ],
             'file-collections' => [
