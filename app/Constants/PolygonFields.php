@@ -10,10 +10,10 @@ class PolygonFields
     public const BASIC_FIELDS = [
         'poly_name',
         'plantstart',
-        'practice', 
+        'practice',
         'target_sys',
         'distr',
-        'num_trees'
+        'num_trees',
     ];
 
     /**
@@ -27,9 +27,9 @@ class PolygonFields
         'distr',
         'num_trees',
         'site_id',
-        'uuid'
+        'uuid',
     ];
-    
+
     /**
      * Complete polygon fields including ID
      */
@@ -42,9 +42,9 @@ class PolygonFields
         'num_trees',
         'site_id',
         'uuid',
-        'id'
+        'id',
     ];
-    
+
     /**
      * Point properties list
      */
@@ -57,4 +57,4 @@ class PolygonFields
         'distr',
         'num_trees',
     ];
-} 
+}

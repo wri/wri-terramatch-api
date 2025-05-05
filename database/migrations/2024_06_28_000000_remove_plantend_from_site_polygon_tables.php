@@ -37,4 +37,4 @@ class RemovePlantendFromSitePolygonTables extends Migration
             $table->date('plantend')->nullable()->after('plantstart');
         });
     }
-} 
+}
