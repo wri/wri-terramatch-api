@@ -617,14 +617,4 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     {
         return $this->project?->name ?? '';
     }
-
-    public function getRevenueAttribute()
-    {
-        return $this->project?->organisation?->revenue;
-    }
-
-    public function getProfitBudgetAttribute()
-    {
-        return $this->project?->organisation?->profitBudget;
-    }
 }
