@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Constants\PolygonFields;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Polygons\EstimatedArea;
@@ -155,7 +156,7 @@ class PolygonValidationService
     public function validateDataInDB(Request $request)
     {
         $polygonUuid = $request->input('uuid');
-        $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
+        $fieldsToValidate = PolygonFields::BASIC_FIELDS;
 
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
         if (! $sitePolygon) {

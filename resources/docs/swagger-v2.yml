@@ -10931,8 +10931,8 @@ definitions:
               updated_at:
                 type: string
           organisation:
-            type: object
             title: AdminOrganisationRead
+            type: object
             properties:
               uuid:
                 type: string
@@ -15373,8 +15373,8 @@ definitions:
           updated_at:
             type: string
       organisation:
-        type: object
         title: AdminOrganisationRead
+        type: object
         properties:
           uuid:
             type: string
@@ -30116,9 +30116,6 @@ definitions:
                 plantstart:
                   type: string
                   format: date
-                plantend:
-                  type: string
-                  format: date
                 practice:
                   type: string
                 target_sys:
@@ -30413,9 +30410,6 @@ definitions:
       plantstart:
         type: string
         format: date
-      plantend:
-        type: string
-        format: date
       practice:
         type: string
       target_sys:
@@ -30487,9 +30481,6 @@ definitions:
         plantstart:
           type: string
           format: date
-        plantend:
-          type: string
-          format: date
         practice:
           type: string
         target_sys:
@@ -30546,9 +30537,6 @@ definitions:
       plantstart:
         type: string
         format: date
-      plantend:
-        type: string
-        format: date
       practice:
         type: string
       target_sys:
@@ -30600,8 +30588,6 @@ definitions:
                 poly_name:
                   type: string
                 plantstart:
-                  type: string
-                plantend:
                   type: string
                 practice:
                   type: string
@@ -31257,9 +31243,6 @@ definitions:
             plantstart:
               type: string
               format: date
-            plantend:
-              type: string
-              format: date
             practice:
               type: string
             target_sys:
@@ -31338,9 +31321,6 @@ definitions:
             site_name:
               type: string
             plantstart:
-              type: string
-              format: date
-            plantend:
               type: string
               format: date
             practice:
@@ -31453,9 +31433,6 @@ definitions:
         plantstart:
           type: string
           format: date
-        plantend:
-          type: string
-          format: date
         practice:
           type: string
         target_sys:
@@ -31545,9 +31522,6 @@ definitions:
         plantstart:
           type: string
           format: date
-        plantend:
-          type: string
-          format: date
         practice:
           type: string
         target_sys:
@@ -31609,9 +31583,6 @@ definitions:
       site_name:
         type: string
       plantstart:
-        type: string
-        format: date
-      plantend:
         type: string
         format: date
       practice:
@@ -40202,7 +40173,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -40213,8 +40183,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -40242,6 +40212,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       tags:
         - V2 Admin
         - V2 Organisations
@@ -47919,7 +47890,6 @@ paths:
                     date_added:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -47930,8 +47900,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -47959,6 +47929,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -55758,7 +55729,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -55769,8 +55739,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -55798,6 +55768,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       operationId: get-v2-funding-programme
   /v2/admin/funding-programme:
     get:
@@ -56093,7 +56064,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -56104,8 +56074,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -56133,6 +56103,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       operationId: get-v2-admin-funding-programme
     post:
       summary: Create a funding programme
@@ -62046,8 +62017,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                type: object
                 title: AdminOrganisationRead
+                type: object
                 properties:
                   uuid:
                     type: string
@@ -63469,7 +63440,6 @@ paths:
                       type: string
                       format: date-time
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -63480,8 +63450,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -63509,6 +63479,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/applications/{UUID}':
     get:
       summary: Get a specific application
@@ -63857,8 +63828,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                type: object
                 title: AdminOrganisationRead
+                type: object
                 properties:
                   uuid:
                     type: string
@@ -66592,9 +66563,6 @@ paths:
                 plantstart:
                   type: string
                   format: date
-                plantend:
-                  type: string
-                  format: date
                 practice:
                   type: string
                 target_sys:
@@ -67729,9 +67697,6 @@ paths:
                               plantstart:
                                 type: string
                                 format: date
-                              plantend:
-                                type: string
-                                format: date
                               practice:
                                 type: string
                               target_sys:
@@ -67837,9 +67802,6 @@ paths:
                               poly_name:
                                 type: string
                               plantstart:
-                                type: string
-                                format: date
-                              plantend:
                                 type: string
                                 format: date
                               practice:
@@ -67966,9 +67928,6 @@ paths:
                             plantstart:
                               type: string
                               format: date
-                            plantend:
-                              type: string
-                              format: date
                             practice:
                               type: string
                             target_sys:
@@ -68062,9 +68021,6 @@ paths:
                             poly_name:
                               type: string
                             plantstart:
-                              type: string
-                              format: date
-                            plantend:
                               type: string
                               format: date
                             practice:
@@ -68345,9 +68301,6 @@ paths:
                 plantstart:
                   type: string
                   format: date
-                plantend:
-                  type: string
-                  format: date
                 practice:
                   type: string
                 target_sys:
@@ -68439,9 +68392,6 @@ paths:
               poly_name:
                 type: string
               plantstart:
-                type: string
-                format: date
-              plantend:
                 type: string
                 format: date
               practice:
@@ -68540,8 +68490,6 @@ paths:
                           type: string
                         plantstart:
                           type: string
-                        plantend:
-                          type: string
                         practice:
                           type: string
                         target_sys:
@@ -68595,10 +68543,6 @@ paths:
                     nullable: true
                   num_trees:
                     type: integer
-                    nullable: true
-                  plantend:
-                    type: string
-                    format: date
                     nullable: true
                   plantstart:
                     type: string
@@ -69036,9 +68980,6 @@ paths:
               plantstart:
                 type: string
                 format: date
-              plantend:
-                type: string
-                format: date
               practice:
                 type: string
               target_sys:
@@ -69065,9 +69006,6 @@ paths:
               poly_name:
                 type: string
               plantstart:
-                type: string
-                format: date
-              plantend:
                 type: string
                 format: date
               practice:
@@ -69111,9 +69049,6 @@ paths:
               plantstart:
                 type: string
                 format: date
-              plantend:
-                type: string
-                format: date
               practice:
                 type: string
               target_sys:
@@ -69140,9 +69075,6 @@ paths:
               poly_name:
                 type: string
               plantstart:
-                type: string
-                format: date
-              plantend:
                 type: string
                 format: date
               practice:
@@ -70697,9 +70629,6 @@ paths:
                     plantstart:
                       type: string
                       format: date
-                    plantend:
-                      type: string
-                      format: date
                     practice:
                       type: string
                     target_sys:
@@ -70863,9 +70792,6 @@ paths:
                     site_name:
                       type: string
                     plantstart:
-                      type: string
-                      format: date
-                    plantend:
                       type: string
                       format: date
                     practice:
@@ -71080,9 +71006,6 @@ paths:
                     plantstart:
                       type: string
                       format: date
-                    plantend:
-                      type: string
-                      format: date
                     practice:
                       type: string
                     target_sys:
@@ -71163,9 +71086,6 @@ paths:
                   site_name:
                     type: string
                   plantstart:
-                    type: string
-                    format: date
-                  plantend:
                     type: string
                     format: date
                   practice:
@@ -71252,9 +71172,6 @@ paths:
                     plantstart:
                       type: string
                       format: date
-                    plantend:
-                      type: string
-                      format: date
                     practice:
                       type: string
                     target_sys:
@@ -71337,9 +71254,6 @@ paths:
                   plantstart:
                     type: string
                     format: date
-                  plantend:
-                    type: string
-                    format: date
                   practice:
                     type: string
                   target_sys:
@@ -71420,9 +71334,6 @@ paths:
                   site_name:
                     type: string
                   plantstart:
-                    type: string
-                    format: date
-                  plantend:
                     type: string
                     format: date
                   practice:
@@ -71883,7 +71794,6 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -71894,8 +71804,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -71923,6 +71833,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
     post:
       summary: Create a new Impact Story
       operationId: v2-create-impact-story
@@ -72182,7 +72093,6 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -72193,8 +72103,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -72222,6 +72132,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story
