@@ -2,7 +2,6 @@
 
 namespace App\Models\Traits;
 
-use App\Events\V2\General\EntityStatusChangeEvent;
 use App\StateMachines\ReportStatusStateMachine;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
@@ -165,11 +164,6 @@ trait HasReportStatus
             100 => 'Complete',
             default => 'Started'
         };
-    }
-
-    public function dispatchStatusChangeEvent($user): void
-    {
-        EntityStatusChangeEvent::dispatch($user, $this);
     }
 
     public function getViewLinkPath(): string

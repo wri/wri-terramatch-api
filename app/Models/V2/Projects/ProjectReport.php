@@ -200,6 +200,70 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             'validation' => 'photos',
             'multiple' => true,
         ],
+        'baseline_report_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'local_governance_order_letter_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'events_meetings_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
+        'local_governance_proof_of_partnership_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'top_three_successes_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'direct_jobs_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'convergence_jobs_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'convergence_schemes_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'livelihood_activities_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'direct_livelihood_impacts_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'certified_database_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'physical_assets_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
+        'indirect_community_partners_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'training_capacity_building_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'training_capacity_building_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
+        'financial_report_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
     ];
 
     // Required by the HasDemographics trait.

@@ -434,9 +434,25 @@ class GeometryHelper
             }
 
             $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid'];
+            $sitePolygonExtraAttributes = $sitePolygon->sitePolygonData;
             $properties = [];
             foreach ($fieldsToValidate as $field) {
                 $properties[$field] = $sitePolygon->$field;
+            }
+
+            if ($sitePolygonExtraAttributes !== null) {
+                $extraData = $sitePolygonExtraAttributes->data;
+
+                if (is_string($extraData)) {
+                    $decoded = json_decode($extraData, true);
+                    if (is_array($decoded)) {
+                        $properties = array_merge($properties, $decoded);
+                    }
+                } elseif (is_array($extraData)) {
+                    $properties = array_merge($properties, $extraData);
+                }
+            } else {
+                Log::info("No related sitePolygonData found for sitePolygon with UUID: {$sitePolygon->uuid}");
             }
 
             $features[] = [

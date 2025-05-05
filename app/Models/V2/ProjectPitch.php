@@ -58,6 +58,7 @@ class ProjectPitch extends Model implements MediaModel
         'restoration_strategy' => 'array',
         'level_0_proposed' => 'array',
         'level_1_proposed' => 'array',
+        'level_2_proposed' => 'array',
         'lat_proposed' => 'float',
         'long_proposed' => 'float',
     ];

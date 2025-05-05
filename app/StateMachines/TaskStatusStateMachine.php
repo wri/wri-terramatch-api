@@ -13,7 +13,7 @@ class TaskStatusStateMachine extends StateMachine
 
     public function recordHistory(): bool
     {
-        return true;
+        return false;
     }
 
     public function transitions(): array

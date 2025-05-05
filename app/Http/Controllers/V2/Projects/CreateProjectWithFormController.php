@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Projects;
 
+use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Entities\EntityWithSchemaResource;
 use App\Models\V2\Forms\Application;
@@ -125,7 +126,7 @@ class CreateProjectWithFormController extends Controller
         }
 
         $request->user()->projects()->sync([$project->id => ['is_monitoring' => false]], false);
-        $project->dispatchStatusChangeEvent($request->user());
+        EntityStatusChangeEvent::dispatch($request->user(), $project, $project->name ?? '', '', $project->readable_status);
 
         return $project->createSchemaResource();
     }

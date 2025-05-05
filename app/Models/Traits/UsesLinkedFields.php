@@ -5,6 +5,7 @@ namespace App\Models\Traits;
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestion;
+use App\StateMachines\EntityStatusStateMachine;
 
 trait UsesLinkedFields
 {
@@ -97,6 +98,13 @@ trait UsesLinkedFields
         }
 
         $this->update($entityProps);
+
+        if ($this->status == EntityStatusStateMachine::APPROVED) {
+            // This state only occurs when an admin is editing an already approved entity. Under these circumstances,
+            // we'd rather see the entity saved with the clean data view than preserve any temporarily set data the
+            // admin might have put in place.
+            $this->cleanConditionalAnswers($form);
+        }
     }
 
     public function calculateCompletion(Form $form): int
@@ -339,13 +347,14 @@ trait UsesLinkedFields
 
         foreach ($childQuestions as $child) {
             if (in_array($child->parent_id, $conditionalsToBeCleaned)) {
-                $fieldConfig = data_get($fieldsConfig, $question->linked_field_key);
-                $property = data_get($fieldConfig, 'property', null);
-                if ($this->isPlainField($child->input_type)) {
-                    $entityProps[$property] = $this->getDefaultValue($child->input_type);
+                $fieldConfig = data_get($fieldsConfig, $child->linked_field_key);
+                $property = data_get($fieldConfig, 'property');
+                if ($this->isPlainField($child->input_type) && ! empty($property)) {
+                    $entityProps[$property] = null;
                 }
             }
         }
+
         $this->update($entityProps);
     }
 
@@ -354,18 +363,5 @@ trait UsesLinkedFields
         $plainFields = ['long-text', 'date', 'number', 'text', 'number-percentage', 'boolean'];
 
         return in_array($input_type, $plainFields);
-    }
-
-    private function getDefaultValue($inputType)
-    {
-        if ($inputType == 'long-text' || $inputType == 'text') {
-            return '';
-        }
-        if ($inputType == 'number' || $inputType == 'number-percentage') {
-            return 0;
-        }
-        if ($inputType == 'boolean') {
-            return false;
-        }
     }
 }
