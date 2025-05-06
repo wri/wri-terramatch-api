@@ -156,7 +156,7 @@ class PolygonValidationService
     public function validateDataInDB(Request $request)
     {
         $polygonUuid = $request->input('uuid');
-        $fieldsToValidate = PolygonFields::BASIC_FIELDS;
+        $fieldsToValidate = PolygonFields::VALIDATION_FIELDS;
 
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
         if (! $sitePolygon) {

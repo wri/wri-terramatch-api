@@ -77,7 +77,7 @@ class TerrafundCreateGeometryController extends Controller
     public function validateDataInDB(Request $request)
     {
         $polygonUuid = $request->input('uuid');
-        $fieldsToValidate = PolygonFields::BASIC_FIELDS;
+        $fieldsToValidate = PolygonFields::VALIDATION_FIELDS;
         // Check if the polygon with the specified poly_id exists
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
         if (! $sitePolygon) {
