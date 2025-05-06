@@ -22,6 +22,7 @@ use App\Validators\Extensions\Polygons\EstimatedArea;
 use App\Validators\Extensions\Polygons\FeatureBounds;
 use App\Validators\Extensions\Polygons\GeometryType;
 use App\Validators\Extensions\Polygons\NotOverlapping;
+use App\Validators\Extensions\Polygons\PlantStartDate;
 use App\Validators\Extensions\Polygons\PolygonSize;
 use App\Validators\Extensions\Polygons\SelfIntersection;
 use App\Validators\Extensions\Polygons\Spikes;
@@ -1291,6 +1292,7 @@ class TerrafundCreateGeometryController extends Controller
             $this->getGeometryType($request);
             $this->validateEstimatedArea($request);
             $this->validateDataInDB($request);
+            $this->validatePlantStartDate($request);
             App::make(PolygonService::class)->updateSitePolygonValidity($request->input('uuid'));
         } catch (\Exception $e) {
             Log::error('Error during validation polygon: ' . $e->getMessage());
@@ -1430,5 +1432,16 @@ class TerrafundCreateGeometryController extends Controller
         $criteriaDataResponse = $this->getCriteriaData($polygonRequest);
 
         return json_decode($criteriaDataResponse->getContent(), true);
+    }
+
+    public function validatePlantStartDate(Request $request)
+    {
+        $polygonUuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $polygonUuid,
+            PlantStartDate::getValidationData($polygonUuid),
+            PolygonService::PLANT_START_DATE_CRITERIA_ID
+        );
     }
 }
