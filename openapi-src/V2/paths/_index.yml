@@ -81,9 +81,6 @@
 /v2/admin/update-requests/{UUID}/{STATUS}:
   put:
     $ref: './UpdateRequests/put-v2-admin-update-requests-uuid-status.yml'
-/v2/admin/{ENTITY}/{UUID}/{STATUS}:
-  put:
-    $ref: './Entity/put-v2-admin-entity-uuid-status.yml'
 /v2/admin/{ENTITY}/{UUID}/reminder:
   post:
     $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'
@@ -95,15 +92,6 @@
 /v2/update-requests/{ENTITY}/{UUID}:
   get:
     $ref: './UpdateRequests/get-v2-update-requests-entity-uuid.yml'
-/v2/stratas/{ENTITY}/{UUID}:
-  get:
-    $ref: './Stratas/get-v2-stratas-entity-uuid.yml'
-/v2/disturbances/{ENTITY}/{UUID}:
-  get:
-    $ref: './Disturbances/get-v2-disturbances-entity-uuid.yml'
-/v2/invasives/{ENTITY}/{UUID}:
-  get:
-    $ref: './Invasives/get-v2-invasives-entity-uuid.yml'
 /v2/forms:
   get:
     summary: View all forms as a user
@@ -2262,9 +2250,6 @@
     $ref: './Sites/Monitoring/put-v2-admin-site-monitorings-uuid.yml'
   delete:
     $ref: './Sites/Monitoring/delete-v2-admin-site-monitorings-uuid.yml'
-'/v2/admin/projects/{UUID}':
-  put:
-    $ref: './Projects/put-v2-admin-project.yml'
 '/v2/admin/project-monitorings':
   post:
     $ref: './Projects/Monitoring/post-v2-admin-project-monitorings.yml'

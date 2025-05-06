@@ -29,20 +29,25 @@ class CleanReportsConditionalDataAfterApproval extends Command
      */
     public function handle()
     {
-        ProjectReport::where('status', EntityStatusStateMachine::APPROVED)->chunk(100, function ($chunk) {
-            foreach ($chunk as $projectReport) {
-                $projectReport->cleanUpConditionalData();
-            }
-        });
-        SiteReport::where('status', EntityStatusStateMachine::APPROVED)->chunk(100, function ($chunk) {
-            foreach ($chunk as $siteReport) {
-                $siteReport->cleanUpConditionalData();
-            }
-        });
-        NurseryReport::where('status', EntityStatusStateMachine::APPROVED)->chunk(100, function ($chunk) {
-            foreach ($chunk as $nurseryReport) {
-                $nurseryReport->cleanUpConditionalData();
-            }
+        $this->info('Cleaning data on Project Reports...');
+        $this->cleanReports(ProjectReport::where('status', EntityStatusStateMachine::APPROVED));
+        $this->info("\n\nCleaning data on Site Reports...");
+        $this->cleanReports(SiteReport::where('status', EntityStatusStateMachine::APPROVED));
+        $this->info("\n\nCleaning data on Nursery Reports...");
+        $this->cleanReports(NurseryReport::where('status', EntityStatusStateMachine::APPROVED));
+        $this->info("\n\nDone!");
+    }
+
+    private function cleanReports($query)
+    {
+        $count = (clone $query)->count();
+        $this->withProgressBar($count, function ($progressBar) use ($query) {
+            $query->chunk(100, function ($chunk) use (&$progressBar) {
+                foreach ($chunk as $report) {
+                    $report->cleanUpConditionalData();
+                    $progressBar->advance();
+                }
+            });
         });
     }
 }

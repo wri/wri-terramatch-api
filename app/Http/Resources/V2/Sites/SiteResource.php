@@ -55,7 +55,6 @@ class SiteResource extends JsonResource
             'trees_planted_count' => $this->trees_planted_count,
             'regenerated_trees_count' => $this->regenerated_trees_count,
             'approved_regenerated_trees_count' => $this->approved_regenerated_trees_count,
-            'migrated' => ! empty($this->old_model),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'has_monitoring_data' => empty($this->has_monitoring_data) ? false : true,

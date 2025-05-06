@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Constants\PolygonFields;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DelayedJobResource;
@@ -13,6 +14,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Models\V2\Sites\SitePolygonData;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
 use App\Services\SiteService;
@@ -20,6 +22,7 @@ use App\Validators\Extensions\Polygons\EstimatedArea;
 use App\Validators\Extensions\Polygons\FeatureBounds;
 use App\Validators\Extensions\Polygons\GeometryType;
 use App\Validators\Extensions\Polygons\NotOverlapping;
+use App\Validators\Extensions\Polygons\PlantStartDate;
 use App\Validators\Extensions\Polygons\PolygonSize;
 use App\Validators\Extensions\Polygons\SelfIntersection;
 use App\Validators\Extensions\Polygons\Spikes;
@@ -74,7 +77,7 @@ class TerrafundCreateGeometryController extends Controller
     public function validateDataInDB(Request $request)
     {
         $polygonUuid = $request->input('uuid');
-        $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
+        $fieldsToValidate = PolygonFields::BASIC_FIELDS;
         // Check if the polygon with the specified poly_id exists
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
         if (! $sitePolygon) {
@@ -1035,28 +1038,21 @@ class TerrafundCreateGeometryController extends Controller
                 return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
             }
 
-            $properties = [];
-            $fieldsToValidate = [
-              'poly_name',
-              'plantstart',
-              'plantend',
-              'practice',
-              'target_sys',
-              'distr',
-              'num_trees',
-              'uuid',
-              'site_id',
-            ];
-            foreach ($fieldsToValidate as $field) {
-                $properties[$field] = $sitePolygon->$field;
-            }
+            $properties = $sitePolygon ? $sitePolygon->only(PolygonFields::EXTENDED_FIELDS) : [];
 
-            $propertiesJson = json_encode($properties);
+            $returnedProperties = [];
+            $sitePolygonData = SitePolygonData::where('site_polygon_uuid', $sitePolygon->uuid)->first();
+            if ($sitePolygonData) {
+                Log::info('Site polygon data', ['site polygon data' => $sitePolygonData]);
+                $returnedProperties = json_encode(array_merge($properties, $sitePolygonData->data));
+            } else {
+                $returnedProperties = json_encode($properties);
+            }
 
             $feature = [
               'type' => 'Feature',
               'geometry' => json_decode($polygonGeometry->geojsonGeom),
-              'properties' => json_decode($propertiesJson),
+              'properties' => json_decode($returnedProperties),
             ];
 
             $featureCollection = [
@@ -1112,7 +1108,7 @@ class TerrafundCreateGeometryController extends Controller
                     continue;
                 }
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
-                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid']) : [];
+                $properties = $sitePolygon ? $sitePolygon->only(PolygonFields::EXTENDED_FIELDS) : [];
                 $feature = [
                     'type' => 'Feature',
                     'geometry' => json_decode($polygonGeometry->geojsonGeom),
@@ -1174,10 +1170,7 @@ class TerrafundCreateGeometryController extends Controller
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
                 $projectUuid = $sitePolygon?->site?->project?->uuid ?? null;
                 $cohort = $sitePolygon?->site?->project?->cohort ?? null;
-                $properties = $sitePolygon ? $sitePolygon->only([
-                    'poly_name', 'plantstart', 'plantend', 'practice', 'target_sys',
-                    'distr', 'num_trees', 'site_id', 'uuid',
-                ]) : [];
+                $properties = $sitePolygon ? $sitePolygon->only(PolygonFields::EXTENDED_FIELDS) : [];
 
                 $properties['project_uuid'] = $projectUuid;
                 $properties['cohort'] = $cohort;
@@ -1220,7 +1213,7 @@ class TerrafundCreateGeometryController extends Controller
                     continue;
                 }
                 $sitePolygon = SitePolygon::where('poly_id', $polygonUuid)->first();
-                $properties = $sitePolygon ? $sitePolygon->only(['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid', 'id']) : [];
+                $properties = $sitePolygon ? $sitePolygon->only(PolygonFields::COMPLETE_FIELDS) : [];
                 $feature = [
                     'type' => 'Feature',
                     'geometry' => json_decode($polygonGeometry->geojsonGeom),
@@ -1299,6 +1292,7 @@ class TerrafundCreateGeometryController extends Controller
             $this->getGeometryType($request);
             $this->validateEstimatedArea($request);
             $this->validateDataInDB($request);
+            $this->validatePlantStartDate($request);
             App::make(PolygonService::class)->updateSitePolygonValidity($request->input('uuid'));
         } catch (\Exception $e) {
             Log::error('Error during validation polygon: ' . $e->getMessage());
@@ -1438,5 +1432,16 @@ class TerrafundCreateGeometryController extends Controller
         $criteriaDataResponse = $this->getCriteriaData($polygonRequest);
 
         return json_decode($criteriaDataResponse->getContent(), true);
+    }
+
+    public function validatePlantStartDate(Request $request)
+    {
+        $polygonUuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $polygonUuid,
+            PlantStartDate::getValidationData($polygonUuid),
+            PolygonService::PLANT_START_DATE_CRITERIA_ID
+        );
     }
 }

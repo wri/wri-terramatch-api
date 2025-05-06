@@ -48,6 +48,8 @@ class FormQuestion extends Model
         'min_character_limit',
         'max_character_limit',
         'years',
+        'min_number_limit',
+        'max_number_limit',
     ];
 
     protected $with = [
@@ -64,6 +66,8 @@ class FormQuestion extends Model
         'min_character_limit' => 'integer',
         'max_character_limit' => 'integer',
         'years' => 'array',
+        'min_number_limit' => 'integer',
+        'max_number_limit' => 'integer',
     ];
 
     public function section(): BelongsTo

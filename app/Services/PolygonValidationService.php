@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Constants\PolygonFields;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Polygons\EstimatedArea;
@@ -155,7 +156,7 @@ class PolygonValidationService
     public function validateDataInDB(Request $request)
     {
         $polygonUuid = $request->input('uuid');
-        $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees'];
+        $fieldsToValidate = PolygonFields::BASIC_FIELDS;
 
         $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
         if (! $sitePolygon) {
@@ -184,6 +185,17 @@ class PolygonValidationService
         $polygonService->createCriteriaSite($polygonUuid, PolygonService::DATA_CRITERIA_ID, $isValid, $validationErrors);
 
         return array_merge($responseData, ['status' => 200]);
+    }
+
+    public function validatePlantStartDate(Request $request)
+    {
+        $polygonUuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $polygonUuid,
+            \App\Validators\Extensions\Polygons\PlantStartDate::getValidationData($polygonUuid),
+            PolygonService::PLANT_START_DATE_CRITERIA_ID
+        );
     }
 
     protected function handlePolygonValidation($polygonUuid, $response, $criteriaId)
@@ -215,5 +227,6 @@ class PolygonValidationService
         $this->getGeometryType($request);
         $this->validateEstimatedArea($request);
         $this->validateDataInDB($request);
+        $this->validatePlantStartDate($request);
     }
 }

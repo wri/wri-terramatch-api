@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Constants\PolygonFields;
 use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
@@ -16,6 +17,7 @@ use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\CriteriaSiteHistoric;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Models\V2\Sites\SitePolygonData;
 use App\Models\V2\User;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Validators\SitePolygonValidator;
@@ -43,13 +45,13 @@ class PolygonService
     public const ESTIMATED_AREA_CRITERIA_ID = 12;
     public const SCHEMA_CRITERIA_ID = 13;
     public const DATA_CRITERIA_ID = 14;
+    public const PLANT_START_DATE_CRITERIA_ID = 15;
 
     public const UPLOADED_SOURCE = 'uploaded';
     public const TERRAMACH_SOURCE = 'terramatch';
     public const GREENHOUSE_SOURCE = 'greenhouse';
 
     public const EXCLUDED_VALIDATION_CRITERIA = [
-      self::DATA_CRITERIA_ID,
       self::ESTIMATED_AREA_CRITERIA_ID,
       self::WITHIN_COUNTRY_CRITERIA_ID,
     ];
@@ -57,16 +59,7 @@ class PolygonService
     // TODO: Remove this const and its usages when the point transformation ticket is complete.
     public const TEMP_FAKE_POLYGON_UUID = 'temp_fake_polygon_uuid';
 
-    protected const POINT_PROPERTIES = [
-        'site_id',
-        'poly_name',
-        'plantstart',
-        'plantend',
-        'practice',
-        'target_sys',
-        'distr',
-        'num_trees',
-    ];
+    protected const POINT_PROPERTIES = PolygonFields::POINT_PROPERTIES;
 
     private const VALID_PRACTICES = [
         'tree-planting',
@@ -205,10 +198,6 @@ class PolygonService
             if (isset($sitePolygonProperties['site_id']) && $sitePolygonProperties['site_id'] !== null) {
                 $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
             }
-            if (isset($sitePolygonProperties['site_id']) && (! isset($sitePolygonProperties['plantstart']) || $sitePolygonProperties['plantstart'] === null)) {
-                $siteStablishentDate = Site::where('uuid', $sitePolygonProperties['site_id'])->value('start_date');
-                $featureProperties['plantstart'] = $siteStablishentDate;
-            }
             if ($primary_uuid) {
                 $result = $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
                 if ($result === false) {
@@ -334,16 +323,28 @@ class PolygonService
             if (! $site) {
                 throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
             }
-            $plantstart = $properties['plantstart'] ?? $site->start_date;
+            $validatedProperties = $this->validateSitePolygonProperties($polygonUuid, $properties);
+            $extraProperties = array_diff_key($properties, $validatedProperties);
+            $columnsToRemove = ['area', 'uuid'];
+            $extraDataToStore = array_diff_key($extraProperties, array_flip($columnsToRemove));
+
             $sitePolygon = SitePolygon::create(array_merge(
-                $this->validateSitePolygonProperties($polygonUuid, $properties),
+                $validatedProperties,
                 [
                     'poly_id' => $polygonUuid ?? null,
                     'created_by' => Auth::user()?->id,
                     'is_active' => true,
-                    'plantstart' => $plantstart,
                 ],
             ));
+
+            if (! empty($extraDataToStore)) {
+                $sitePolygonData = SitePolygonData::create([
+                    'site_polygon_uuid' => $sitePolygon->uuid,
+                    'data' => $extraDataToStore,
+                ]);
+                $sitePolygonData->save();
+            }
+
             $site = $sitePolygon->site()->first();
             if (! $site) {
                 Log::error('Site not found', ['site polygon uuid' => $sitePolygon->uuid, 'site id' => $sitePolygon->site_id]);
@@ -375,10 +376,30 @@ class PolygonService
             } else {
                 $user = User::find(1);
             }
-            $newSitePolygon = $sitePolygon->createCopy($user, $polygonUuid, $submit_polygon_loaded, $this->validateSitePolygonProperties($polygonUuid, $properties));
+
+            $validatedProperties = $this->validateSitePolygonProperties($polygonUuid, $properties);
+            $extraProperties = array_diff_key($properties, $validatedProperties);
+            $columnsToRemove = ['area', 'uuid'];
+            $extraDataToStore = array_diff_key($extraProperties, array_flip($columnsToRemove));
+
+            $newSitePolygon = $sitePolygon->createCopy(
+                $user,
+                $polygonUuid,
+                $submit_polygon_loaded,
+                $validatedProperties
+            );
             if (! $newSitePolygon) {
                 return false;
             }
+
+            if (! empty($extraDataToStore)) {
+                $sitePolygonData = SitePolygonData::create([
+                    'site_polygon_uuid' => $newSitePolygon->uuid,
+                    'data' => $extraDataToStore,
+                ]);
+                $sitePolygonData->save();
+            }
+
             $site = $newSitePolygon->site()->first();
             if (! $site) {
                 Log::error('Site not found', ['site polygon uuid' => $newSitePolygon->uuid, 'site id' => $newSitePolygon->site_id]);
@@ -443,11 +464,6 @@ class PolygonService
             $properties['plantstart'] = null;
         }
 
-        try {
-            $properties['plantend'] = empty($properties['plantend']) ? null : Carbon::parse($properties['plantend']);
-        } catch (\Exception $e) {
-            $properties['plantend'] = null;
-        }
         $properties['num_trees'] = is_int($properties['num_trees'] ?? null) ? $properties['num_trees'] : null;
 
         $distributionsValidValues = ['full', 'partial', 'single-line'];
@@ -461,7 +477,6 @@ class PolygonService
             'poly_name' => $properties['poly_name'] ?? null,
             'site_id' => $properties['site_id'] ?? null,
             'plantstart' => $properties['plantstart'],
-            'plantend' => $properties['plantend'],
             'practice' => $properties['practice'],
             'target_sys' => $properties['target_sys'],
             'distr' => $properties['distr'],
@@ -503,8 +518,6 @@ class PolygonService
 
         switch ($field) {
             case 'plantstart':
-                return ! $this->isValidDate($value);
-            case 'plantend':
                 return ! $this->isValidDate($value);
             case 'practice':
                 return ! $this->areValidItems($value, self::VALID_PRACTICES);

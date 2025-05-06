@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\Terrafund;
 
+use App\Constants\PolygonFields;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
 use App\Http\Controllers\Controller;
@@ -10,7 +11,6 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
-use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
 use App\Services\AreaCalculationService;
@@ -236,7 +236,6 @@ class TerrafundEditGeometryController extends Controller
             $validatedData = $request->validate([
               'poly_name' => 'nullable|string',
               'plantstart' => 'nullable|date',
-              'plantend' => 'nullable|date',
               'practice' => 'nullable|string',
               'distr' => 'nullable|string',
               'num_trees' => 'nullable|integer',
@@ -263,7 +262,6 @@ class TerrafundEditGeometryController extends Controller
             $validatedData = $request->validate([
               'poly_name' => 'nullable|string',
               'plantstart' => 'nullable|date',
-              'plantend' => 'nullable|date',
               'practice' => 'nullable|string',
               'distr' => 'nullable|string',
               'num_trees' => 'nullable|integer',
@@ -342,7 +340,6 @@ class TerrafundEditGeometryController extends Controller
                 $validatedData = [
                   'poly_name' => null,
                   'plantstart' => null,
-                  'plantend' => null,
                   'practice' => null,
                   'distr' => null,
                   'num_trees' => null,
@@ -352,7 +349,6 @@ class TerrafundEditGeometryController extends Controller
                 $validatedData = $request->validate([
                   'poly_name' => 'nullable|string',
                   'plantstart' => 'nullable|date',
-                  'plantend' => 'nullable|date',
                   'practice' => 'nullable|string',
                   'distr' => 'nullable|string',
                   'num_trees' => 'nullable|integer',
@@ -364,8 +360,6 @@ class TerrafundEditGeometryController extends Controller
             if (! $polygonGeometry) {
                 return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
             }
-            $siteStablishentDate = Site::where('uuid', $siteUuid)->value('start_date');
-            $plantstart = $validatedData['plantstart'] ?? $siteStablishentDate;
             $polygonGeom = PolygonGeometry::where('uuid', $uuid)
             ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
             ->first();
@@ -374,8 +368,7 @@ class TerrafundEditGeometryController extends Controller
             $areaHectares = $areaCalculationService->getArea($geometry);
             $sitePolygon = new SitePolygon([
                 'poly_name' => $validatedData['poly_name'],
-                'plantstart' => $plantstart,
-                'plantend' => $validatedData['plantend'],
+                'plantstart' => $validatedData['plantstart'],
                 'practice' => $validatedData['practice'],
                 'distr' => $validatedData['distr'],
                 'num_trees' => $validatedData['num_trees'],
@@ -420,7 +413,7 @@ class TerrafundEditGeometryController extends Controller
     private function getDiff(SitePolygon $sitePolygon, SitePolygon $newSitePolygon): array
     {
         $diff = [];
-        $keys = ['poly_name','plantstart','plantend','practice','target_sys','distr','num_trees','site_id'];
+        $keys = array_merge(['site_id'], PolygonFields::BASIC_FIELDS);
         foreach ($keys as $key) {
             if ($newSitePolygon[$key] !== $sitePolygon[$key]) {
                 $diff[] = "$key => from $sitePolygon[$key] to {$newSitePolygon[$key]}";
