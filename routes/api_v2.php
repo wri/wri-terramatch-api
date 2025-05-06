@@ -134,14 +134,11 @@ use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
-use App\Http\Controllers\V2\ProjectPitches\AdminIndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
-use App\Http\Controllers\V2\ProjectPitches\IndexProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\StoreProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\SubmitProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\UpdateProjectPitchController;
-use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
@@ -394,7 +391,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::prefix('project-pitches')->group(function () {
-        Route::get('/', AdminIndexProjectPitchController::class);
         Route::get('/export', ExportProjectPitchController::class);
     });
 });
@@ -479,8 +475,6 @@ Route::prefix('funding-programme/stage')->group(function () {
 
 Route::prefix('project-pitches')->group(function () {
     Route::post('/', StoreProjectPitchController::class);
-    Route::get('/', IndexProjectPitchController::class);
-    Route::get('/{projectPitch}', ViewProjectPitchController::class);
     Route::patch('/{projectPitch}', UpdateProjectPitchController::class);
     Route::delete('/{projectPitch}', DeleteProjectPitchController::class);
     Route::get('/{projectPitch}/submissions', ViewProjectPitchSubmissionsController::class);
