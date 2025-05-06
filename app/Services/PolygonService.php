@@ -45,6 +45,7 @@ class PolygonService
     public const ESTIMATED_AREA_CRITERIA_ID = 12;
     public const SCHEMA_CRITERIA_ID = 13;
     public const DATA_CRITERIA_ID = 14;
+    public const PLANT_START_DATE_CRITERIA_ID = 15;
 
     public const UPLOADED_SOURCE = 'uploaded';
     public const TERRAMACH_SOURCE = 'terramatch';

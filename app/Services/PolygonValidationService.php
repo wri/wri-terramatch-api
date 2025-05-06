@@ -187,6 +187,17 @@ class PolygonValidationService
         return array_merge($responseData, ['status' => 200]);
     }
 
+    public function validatePlantStartDate(Request $request)
+    {
+        $polygonUuid = $request->input('uuid');
+
+        return $this->handlePolygonValidation(
+            $polygonUuid,
+            \App\Validators\Extensions\Polygons\PlantStartDate::getValidationData($polygonUuid),
+            PolygonService::PLANT_START_DATE_CRITERIA_ID
+        );
+    }
+
     protected function handlePolygonValidation($polygonUuid, $response, $criteriaId)
     {
         if (isset($response['error']) && $response['error'] != null) {
@@ -216,5 +227,6 @@ class PolygonValidationService
         $this->getGeometryType($request);
         $this->validateEstimatedArea($request);
         $this->validateDataInDB($request);
+        $this->validatePlantStartDate($request);
     }
 }

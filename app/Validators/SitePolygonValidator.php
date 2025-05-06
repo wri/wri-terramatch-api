@@ -52,6 +52,10 @@ class SitePolygonValidator extends Validator
         '*' => 'string|uuid|has_polygon_site|estimated_area',
     ];
 
+    public const PLANT_START_DATE = [
+        '*' => 'string|uuid|has_polygon_site|plant_start_date',
+    ];
+
     public const GEOMETRY_TYPE = [
       'type' => 'required|in:FeatureCollection',
       'features' => 'required|array|geometry_type',
