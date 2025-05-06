@@ -8,14 +8,14 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('financial_indicators', function (Blueprint $table) {
-            $table->smallInteger('year')->unsigned()->change();
+            $table->dropColumn('documentation');
         });
     }
 
     public function down()
     {
         Schema::table('financial_indicators', function (Blueprint $table) {
-            $table->tinyInteger('year')->unsigned()->change();
+            $table->string('documentation')->nullable();
         });
     }
 };

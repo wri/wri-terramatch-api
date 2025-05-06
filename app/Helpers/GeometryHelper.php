@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Constants\PolygonFields;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
@@ -396,7 +397,6 @@ class GeometryHelper
                 'poly_id' => $polygonData->poly_id,
                 'poly_name' => $polygonData->poly_name ?? '',
                 'plantstart' => $polygonData->plantstart ?? '',
-                'plantend' => $polygonData->plantend ?? '',
                 'practice' => $polygonData->practice ?? '',
                 'target_sys' => $polygonData->target_sys ?? '',
                 'distr' => $polygonData->distr ?? '',
@@ -433,10 +433,26 @@ class GeometryHelper
                 throw new \Exception('No polygon geometry found for the given UUID.');
             }
 
-            $fieldsToValidate = ['poly_name', 'plantstart', 'plantend', 'practice', 'target_sys', 'distr', 'num_trees', 'site_id', 'uuid'];
+            $fieldsToValidate = PolygonFields::EXTENDED_FIELDS;
+            $sitePolygonExtraAttributes = $sitePolygon->sitePolygonData;
             $properties = [];
             foreach ($fieldsToValidate as $field) {
                 $properties[$field] = $sitePolygon->$field;
+            }
+
+            if ($sitePolygonExtraAttributes !== null) {
+                $extraData = $sitePolygonExtraAttributes->data;
+
+                if (is_string($extraData)) {
+                    $decoded = json_decode($extraData, true);
+                    if (is_array($decoded)) {
+                        $properties = array_merge($properties, $decoded);
+                    }
+                } elseif (is_array($extraData)) {
+                    $properties = array_merge($properties, $extraData);
+                }
+            } else {
+                Log::info("No related sitePolygonData found for sitePolygon with UUID: {$sitePolygon->uuid}");
             }
 
             $features[] = [

@@ -49,7 +49,6 @@ class UpdateFormRequest extends FormRequest
             'form_sections.*.form_questions.*.options_other' => ['sometimes', 'nullable', 'boolean'],
             'form_sections.*.form_questions.*.min_character_limit' => ['sometimes', 'nullable', 'integer'],
             'form_sections.*.form_questions.*.max_character_limit' => ['sometimes', 'nullable', 'integer'],
-            'form_sections.*.form_questions.*.years' => ['sometimes', 'nullable', 'array'],
             'form_sections.*.form_questions.*.min_number_limit' => ['sometimes', 'nullable', 'integer'],
             'form_sections.*.form_questions.*.max_number_limit' => ['sometimes', 'nullable', 'integer'],
 
