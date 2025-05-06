@@ -57,4 +57,14 @@ class PolygonFields
         'distr',
         'num_trees',
     ];
+    /**
+     * Basic polygon property fields for validation and export
+     */
+    public const VALIDATION_FIELDS = [
+      'poly_name',
+      'practice',
+      'target_sys',
+      'distr',
+      'num_trees',
+  ];
 }
