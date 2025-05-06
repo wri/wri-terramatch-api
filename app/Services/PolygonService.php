@@ -51,7 +51,6 @@ class PolygonService
     public const GREENHOUSE_SOURCE = 'greenhouse';
 
     public const EXCLUDED_VALIDATION_CRITERIA = [
-      self::DATA_CRITERIA_ID,
       self::ESTIMATED_AREA_CRITERIA_ID,
       self::WITHIN_COUNTRY_CRITERIA_ID,
     ];
