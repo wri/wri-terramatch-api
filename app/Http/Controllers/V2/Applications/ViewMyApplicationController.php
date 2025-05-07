@@ -7,6 +7,7 @@ use App\Http\Resources\V2\Applications\ApplicationsCollection;
 use App\Models\V2\Forms\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ViewMyApplicationController extends Controller
@@ -42,6 +43,9 @@ class ViewMyApplicationController extends Controller
                 'funding_programme_name', '-funding_programme_name',
                 'stage_name', '-stage_name',
                 'form_submission_status', '-form_submission_status',
+            ])
+            ->allowedFilters([
+                AllowedFilter::exact('funding_programme_uuid')
             ]);
 
         $collection = $query->paginate($perPage)
