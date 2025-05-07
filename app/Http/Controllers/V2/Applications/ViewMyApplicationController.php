@@ -16,7 +16,7 @@ class ViewMyApplicationController extends Controller
         $this->authorize('viewOnlyMine', Application::class);
         $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
 
-        $orgUuids = collect(Auth::user()->all_my_organisations)->pluck('uuid')->toArray();
+        $orgUuids = collect(Auth::user()->all_my_organisations)->pluck('uuid')->unique()->toArray();
 
         $submissionUuids = Application::whereIn('applications.organisation_uuid', $orgUuids)
             ->selectRaw('(SELECT uuid FROM form_submissions WHERE form_submissions.application_id = applications.id LIMIT 1) as form_submission_uuid')
