@@ -45,7 +45,7 @@ class ViewMyApplicationController extends Controller
                 'form_submission_status', '-form_submission_status',
             ])
             ->allowedFilters([
-                AllowedFilter::exact('funding_programme_uuid')
+                AllowedFilter::exact('funding_programme_uuid'),
             ]);
 
         $collection = $query->paginate($perPage)

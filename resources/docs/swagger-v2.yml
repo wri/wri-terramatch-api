@@ -13855,6 +13855,8 @@ definitions:
         type: string
       updated_by_uuid:
         type: string
+      updated_by_name:
+        type: string
       project_pitch_uuid:
         type: string
       form_uuid:
@@ -14614,6 +14616,8 @@ definitions:
           updated_at:
             type: string
           updated_by_uuid:
+            type: string
+          updated_by_name:
             type: string
           project_pitch_uuid:
             type: string
@@ -60816,6 +60820,8 @@ paths:
                           type: string
                         updated_by_uuid:
                           type: string
+                        updated_by_name:
+                          type: string
                         project_pitch_uuid:
                           type: string
                         form_uuid:
@@ -62174,6 +62180,8 @@ paths:
                         updated_at:
                           type: string
                         updated_by_uuid:
+                          type: string
+                        updated_by_name:
                           type: string
                         project_pitch_uuid:
                           type: string

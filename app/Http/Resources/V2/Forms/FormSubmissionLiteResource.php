@@ -20,6 +20,7 @@ class FormSubmissionLiteResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'updated_by_uuid' => $this->user_id,
+            'updated_by_name' => $this->user?->full_name,
             'project_pitch_uuid' => $this->project_pitch_uuid,
             'form_uuid' => $this->form_id,
             'stage' => [
