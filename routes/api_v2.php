@@ -697,14 +697,12 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/bbox/landscape', [GetPolygonsController::class, 'getLandscapeBbox']);
     Route::get('/bbox/country-landscape', [GetPolygonsController::class, 'getCountryLandscapeBbox']);
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
-    Route::get('/project-data/{uuid}', [CountryAndPolygonDataController::class, 'getProjectData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
     Route::get('/countries', CountriesController::class);
     Route::get('/get-projects', GetProjectsController::class);
-    Route::get('/project-details/{project}', ProjectProfileDetailsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);

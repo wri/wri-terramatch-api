@@ -54,36 +54,4 @@ class CountryAndPolygonDataController extends Controller
 
         return response()->json(['data' => $data]);
     }
-
-    public function getProjectData(string $uuid)
-    {
-        try {
-            $project = Project::isUuid($uuid)->first();
-
-            if (! $project) {
-                Log::error("Project not found for project with UUID: $uuid");
-
-                return response()->json(['error' => 'Project not found'], 404);
-            }
-
-            $organization = $project->organisation()->first();
-            if (! $organization) {
-                Log::error("Organization not found for project with ID: $project->id");
-            }
-            $coverImage = $this->getProjectCoverImage($project);
-            $data = [
-              ['key' => 'project_name', 'title' => 'title', 'value' => $project->name],
-              ['key' => 'organizations', 'title' => 'Organization', 'value' => $organization?->name],
-              ['key' => 'total_hectares_restored', 'title' => 'Total Hectares Restored', 'value' => round($project->total_hectares_restored_sum, 2)],
-              ['key' => 'cover_image', 'title' => 'Cover Image', 'value' => $coverImage?->getUrl('thumbnail')],
-            ];
-
-            return response()->json(['data' => $data]);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-
-            return response()->json(['error' => 'An error occurred while fetching project data', 'message' => $e->getMessage()], 500);
-        }
-
-    }
 }
