@@ -68358,39 +68358,6 @@ paths:
                       description: Key of the data field
         '404':
           description: Polygon not found
-  '/v2/dashboard/project-data/{uuid}':
-    get:
-      summary: Get project point data by UUID
-      tags:
-        - Project point data by UUID
-      parameters:
-        - in: path
-          name: uuid
-          type: string
-          description: UUID of the project point
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    title:
-                      type: string
-                      description: Title of the data field
-                    value:
-                      type: string
-                      description: Value of the data field
-                    key:
-                      type: string
-                      description: Key of the data field
-        '500':
-          description: Error in queries
   /v2/dashboard/active-projects:
     get:
       summary: Retrieve all active projects list view.
@@ -68739,63 +68706,6 @@ paths:
                   type: string
                 name:
                   type: string
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/dashboard/project-details/{project}':
-    get:
-      summary: Retrieve project details view.
-      description: |
-        This endpoint return details to name of project, description objectives, restoration strategy, target land use type, and land tenure.
-      parameters:
-        - type: string
-          name: project
-          in: path
-          required: true
-          description: Optional. Filter counts and metrics by UUID.
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  descriptionObjetive:
-                    type: string
-                  country:
-                    type: string
-                  organisation:
-                    type: string
-                  survivalRate:
-                    type: integer
-                  countrySlug:
-                    type: string
-                  restorationStrategy:
-                    type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          type: string
-                  targetLandUse:
-                    type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          type: string
-                  landTenure:
-                    type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          type: string
         '400':
           description: Bad request
         '500':
