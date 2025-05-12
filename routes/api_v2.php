@@ -19,7 +19,6 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectControll
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
 use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
-use App\Http\Controllers\V2\Dashboard\CountriesController;
 use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
@@ -700,7 +699,6 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
-    Route::get('/countries', CountriesController::class);
     Route::get('/get-projects', GetProjectsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
