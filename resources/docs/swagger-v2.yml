@@ -30589,46 +30589,6 @@ definitions:
               type: integer
             total_jobs_created:
               type: integer
-  DashboardCountriesResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          type: object
-          properties:
-            id:
-              type: integer
-            country_slug:
-              type: string
-            data:
-              type: object
-              properties:
-                label:
-                  type: string
-                icon:
-                  type: string
-  DashboardCountryData:
-    type: object
-    properties:
-      id:
-        type: integer
-      country_slug:
-        type: string
-      data:
-        type: object
-        properties:
-          label:
-            type: string
-          icon:
-            type: string
-  DashboardCountryInfo:
-    type: object
-    properties:
-      label:
-        type: string
-      icon:
-        type: string
   DashboardProjectProfileResponse:
     type: object
     properties:
@@ -68596,46 +68556,6 @@ paths:
                       type: integer
                     total_jobs_created:
                       type: integer
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  /v2/dashboard/countries:
-    get:
-      summary: Retrieve all countries list view.
-      description: |
-        This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    country_slug:
-                      type: string
-                    data:
-                      type: object
-                      properties:
-                        label:
-                          type: string
-                        icon:
-                          type: string
         '400':
           description: Bad request
         '500':
