@@ -505,7 +505,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             ->sum('amount');
     }
 
-
     public function getWorkdaysTotalAttribute(): int
     {
         $projectReportTotal = $this->workdays_paid + $this->workdays_volunteer;
