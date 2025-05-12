@@ -505,13 +505,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             ->sum('amount');
     }
 
-    public function getTotalJobsCreatedAttribute(): int
-    {
-        $ptTotal = $this->pt_total ?? 0;
-        $ftTotal = $this->ft_total ?? 0;
-
-        return $ftTotal + $ptTotal;
-    }
 
     public function getWorkdaysTotalAttribute(): int
     {
