@@ -827,9 +827,6 @@
     responses:
       '200':
         description: OK
-/v2/{MODEL}/{UUID}/files:
-  get:
-    $ref: './Files/get-v2-model-uuid-files.yml'
 /v2/{MODEL}/{UUID}/image/locations:
   get:
     $ref: './Files/get-v2-model-uuid-image-locations.yml'
@@ -2504,9 +2501,6 @@
 /v2/dashboard/polygon-data/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-polygon-data-uuid.yml'
-/v2/dashboard/project-data/{uuid}:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-project-data-uuid.yml'
 /v2/dashboard/active-projects:
   get:
     $ref: './Dashboard/get-v2-dashboard-active-projects.yml'
@@ -2531,9 +2525,6 @@
 /v2/dashboard/frameworks:
   get:
     $ref: './Dashboard/get-v2-dashboard-frameworks.yml'
-/v2/dashboard/project-details/{project}:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-project-details.yml'
 /v2/dashboard/top-trees-planted:
   get:
     $ref: './Dashboard/get-v2-dashboard-top-trees-planted.yml'

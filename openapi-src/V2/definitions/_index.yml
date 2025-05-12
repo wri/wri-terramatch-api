@@ -166,6 +166,8 @@ AuditsPaginated:
   $ref: './AuditsPaginated.yml'
 FormSubmissionRead:
   $ref: './FormSubmissionRead.yml'
+FormSubmissionLiteRead:
+  $ref: './FormSubmissionLiteRead.yml'
 FormPaginated:
   $ref: './FormPaginated.yml'
 StagePaginated:
