@@ -19,13 +19,11 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectControll
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
 use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
-use App\Http\Controllers\V2\Dashboard\CountriesController;
 use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
 use App\Http\Controllers\V2\Dashboard\GetProjectsController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
-use App\Http\Controllers\V2\Dashboard\ProjectProfileDetailsController;
 use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
@@ -49,14 +47,6 @@ use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperControll
 use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
 use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
 use App\Http\Controllers\V2\Files\FilePropertiesController;
-use App\Http\Controllers\V2\Files\Gallery\ViewNurseryGalleryController;
-use App\Http\Controllers\V2\Files\Gallery\ViewNurseryReportGalleryController;
-use App\Http\Controllers\V2\Files\Gallery\ViewProjectGalleryController;
-use App\Http\Controllers\V2\Files\Gallery\ViewProjectMonitoringGalleryController;
-use App\Http\Controllers\V2\Files\Gallery\ViewProjectReportGalleryController;
-use App\Http\Controllers\V2\Files\Gallery\ViewSiteGalleryController;
-use App\Http\Controllers\V2\Files\Gallery\ViewSiteMonitoringGalleryController;
-use App\Http\Controllers\V2\Files\Gallery\ViewSiteReportGalleryController;
 use App\Http\Controllers\V2\Files\Location\NurseryImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\NurseryReportImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\ProjectImageLocationsController;
@@ -502,7 +492,6 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
     Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
     Route::get('/{project}/nurseries', ViewProjectNurseriesController::class);
-    Route::get('/{project}/files', ViewProjectGalleryController::class);
     Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
     Route::get('/{project}/reports', ProjectReportsViaProjectController::class);
     Route::get('/{project}/image/locations', ProjectImageLocationsController::class);
@@ -534,12 +523,10 @@ ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
 });
 
 Route::prefix('project-reports')->group(function () {
-    Route::get('/{projectReport}/files', ViewProjectReportGalleryController::class);
     Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
 });
 
 Route::prefix('sites/{site}')->group(function () {
-    Route::get('/files', ViewSiteGalleryController::class);
     Route::get('/reports', SiteReportsViaSiteController::class);
     Route::get('/monitorings', ViewASitesMonitoringsController::class);
     Route::get('/image/locations', SiteImageLocationsController::class);
@@ -564,29 +551,21 @@ Route::prefix('geometry')->group(function () {
 
 });
 
-Route::prefix('project-monitorings')->group(function () {
-    Route::get('/{projectMonitoring}/files', ViewProjectMonitoringGalleryController::class);
-});
-
 Route::prefix('site-monitorings')->group(function () {
     Route::get('/{siteMonitoring}', ViewSiteMonitoringController::class);
-    Route::get('/{siteMonitoring}/files', ViewSiteMonitoringGalleryController::class);
 });
 
 Route::prefix('site-reports')->group(function () {
-    Route::get('/{siteReport}/files', ViewSiteReportGalleryController::class);
     Route::get('/{siteReport}/image/locations', SiteReportImageLocationsController::class);
 });
 
 Route::prefix('nurseries')->group(function () {
-    Route::get('/{nursery}/files', ViewNurseryGalleryController::class);
     Route::get('/{nursery}/reports', NurseryReportsViaNurseryController::class);
     Route::get('/{nursery}/image/locations', NurseryImageLocationsController::class);
     Route::get('/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
 });
 
 Route::prefix('nursery-reports')->group(function () {
-    Route::get('/{nurseryReport}/files', ViewNurseryReportGalleryController::class);
     Route::get('/{nurseryReport}/image/locations', NurseryReportImageLocationsController::class);
 });
 
@@ -710,14 +689,11 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/bbox/landscape', [GetPolygonsController::class, 'getLandscapeBbox']);
     Route::get('/bbox/country-landscape', [GetPolygonsController::class, 'getCountryLandscapeBbox']);
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
-    Route::get('/project-data/{uuid}', [CountryAndPolygonDataController::class, 'getProjectData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
-    Route::get('/countries', CountriesController::class);
     Route::get('/get-projects', GetProjectsController::class);
-    Route::get('/project-details/{project}', ProjectProfileDetailsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);

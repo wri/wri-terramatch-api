@@ -154,6 +154,8 @@ AuditsPaginated:
   $ref: './AuditsPaginated.yml'
 FormSubmissionRead:
   $ref: './FormSubmissionRead.yml'
+FormSubmissionLiteRead:
+  $ref: './FormSubmissionLiteRead.yml'
 FormPaginated:
   $ref: './FormPaginated.yml'
 StagePaginated:
@@ -302,12 +304,6 @@ DashboardTotalSectionHeaderCountryResponse:
   $ref: './DashboardTotalSectionHeaderCountryResponse.yml'
 DashboardActiveCountriesResponse:
   $ref: './DashboardActiveCountriesResponse.yml'
-DashboardCountriesResponse:
-  $ref: './DashboardCountriesResponse.yml'
-DashboardCountryData:
-  $ref: './DashboardCountryData.yml'
-DashboardCountryInfo:
-  $ref: './DashboardCountryInfo.yml'
 DashboardProjectProfileResponse:
   $ref: './DashboardProjectProfileResponse.yml'
 DashboardProjectProfileData:
