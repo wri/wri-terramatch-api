@@ -1240,6 +1240,17 @@
               type: array
               items:
                 $ref: '../definitions/_index.yml#/SiteWithSchemaRead'
+/v2/admin/project-pitches/export:
+  get:
+    summary: Export project pitches as an admin
+    tags:
+      - Project Pitches
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+    operationId: get-v2-project-pitches-export
 '/v2/admin/forms/submissions/{UUID}':
   get:
     summary: Get a form submission
