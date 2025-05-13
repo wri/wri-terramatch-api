@@ -14,15 +14,6 @@ class IndicatorEntitySlugExportController extends Controller
 {
     public function __invoke(EntityModel $entity, string $slug)
     {
-        if (! isset($slugMappings[$slug])) {
-            return response()->json(['message' => 'Indicator not found'], 404);
-        }
-
-        return $this->exportCsv($entity, $slug);
-    }
-
-    public function exportCsv($entity, $slug)
-    {
         $defaulHeaders = [
             'poly_name' => 'Polygon Name',
             'size' => 'Size (ha)',
@@ -91,7 +82,15 @@ class IndicatorEntitySlugExportController extends Controller
                 'indicator_title' => 'Hectares Under Restoration By WWF EcoRegion',
             ],
         ];
+        if (! isset($slugMappings[$slug])) {
+            return response()->json(['message' => 'Indicator not found'], 404);
+        }
 
+        return $this->exportCsv($entity, $slug, $slugMappings);
+    }
+
+    public function exportCsv($entity, $slug, $slugMappings)
+    {
         $sitePolygonsIndicator = SitePolygon::whereHas($slugMappings[$slug]['relation_name'], function ($query) use ($slug) {
             $query->where('indicator_slug', $slug)
                 ->where('year_of_analysis', date('Y'));
