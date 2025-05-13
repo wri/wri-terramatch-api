@@ -114,7 +114,6 @@ use App\Http\Controllers\V2\Organisations\OrganisationListRequestedUsersControll
 use App\Http\Controllers\V2\Organisations\OrganisationRejectUserController;
 use App\Http\Controllers\V2\Organisations\OrganisationRetractMyDraftController;
 use App\Http\Controllers\V2\Organisations\OrganisationSubmitController;
-use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
@@ -149,7 +148,6 @@ use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\ViewProjectNurseriesController;
 use App\Http\Controllers\V2\Projects\ViewProjectSitesController;
-use App\Http\Controllers\V2\Projects\ViewProjectTasksController;
 use App\Http\Controllers\V2\Projects\ViewProjectTasksReportsController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminCreateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminDeleteReportingFrameworkController;
@@ -181,7 +179,6 @@ use App\Http\Controllers\V2\Stages\StoreStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
 use App\Http\Controllers\V2\Stages\ViewStageController;
-use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Tasks\ViewTaskController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
@@ -290,10 +287,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::put('/{updateRequest}/{status}', AdminStatusUpdateRequestController::class);
     });
 
-    Route::prefix('tasks')->group(function () {
-        Route::get('', AdminIndexTasksController::class);
-    });
-
     Route::prefix('projects')->group(function () {
         Route::get('/multi', AdminProjectMultiController::class);
     });
@@ -392,7 +385,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
 /** NON ADMIN ROUTES */
 Route::prefix('organisations')->group(function () {
-    Route::get('/{organisation}/tasks', ViewOrganisationTasksController::class);
     Route::get('listing', OrganisationListingController::class);
     Route::post('join-existing', JoinExistingOrganisationController::class);
     Route::put('approve-user', OrganisationApproveUserController::class);
@@ -493,7 +485,6 @@ Route::prefix('leaderships')->group(function () {
 });
 
 Route::prefix('projects')->group(function () {
-    Route::get('/{project}/tasks', ViewProjectTasksController::class);
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
     Route::get('/{project}/sites', ViewProjectSitesController::class);
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
