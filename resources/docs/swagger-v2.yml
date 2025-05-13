@@ -29551,20 +29551,6 @@ definitions:
         type: string
       updated_at:
         type: string
-  V2TaskRead:
-    title: V2TaskRead
-    type: object
-    properties:
-      uuid:
-        type: string
-      project:
-        type: object
-      period_key:
-        type: string
-      status:
-        type: string
-      readable_status:
-        type: string
   V2TaskActionRead:
     title: V2TaskActionRead
     type: object
@@ -37022,19 +37008,18 @@ paths:
               data:
                 type: array
                 items:
-                  title: V2TaskRead
+                  title: GeojsonRead
                   type: object
                   properties:
                     uuid:
-                      type: string
-                    project:
+                      type: integer
+                    name:
                       type: object
-                    period_key:
+                    geojson:
                       type: string
-                    status:
+                    created_at:
                       type: string
-                    readable_status:
-                      type: string
+                      format: date-time
               links:
                 title: V2PaginationLinks
                 properties:
@@ -50469,41 +50454,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-  '/v2/tasks/{UUID}':
-    get:
-      summary: Get a specific task
-      operationId: get-v2-tasks-uuid
-      tags:
-        - V2 Tasks
-      produces:
-        - application/json
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  title: V2TaskRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    project:
-                      type: object
-                    period_key:
-                      type: string
-                    status:
-                      type: string
-                    readable_status:
-                      type: string
   '/v2/tasks/{UUID}/reports':
     get:
       summary: Get the reports/actions via a task

@@ -180,7 +180,6 @@ use App\Http\Controllers\V2\Stages\UpdateStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
 use App\Http\Controllers\V2\Stages\ViewStageController;
 use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
-use App\Http\Controllers\V2\Tasks\ViewTaskController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
@@ -506,7 +505,6 @@ Route::prefix('projects')->group(function () {
 });
 
 Route::prefix('tasks')->group(function () {
-    Route::get('/{task}', ViewTaskController::class);
     Route::get('/{task}/reports', ViewProjectTasksReportsController::class);
     Route::put('/{task}/submit', SubmitProjectTasksController::class);
 });
