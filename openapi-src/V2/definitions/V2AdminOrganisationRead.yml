@@ -33,6 +33,10 @@ properties:
     type: array
     items:
       $ref: './_index.yml#/V2TreeSpeciesRead'
+  project_pitches:
+    type: array
+    items:
+      $ref: './_index.yml#/ProjectPitchRead'
   web_url:
     type: string
   facebook_url:

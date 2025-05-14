@@ -106,6 +106,10 @@ V2FundingTypeRead:
   $ref: './V2FundingTypeRead.yml'
 V2FundingTypeUpdate:
   $ref: './V2FundingTypeUpdate.yml'
+ProjectPitchCreate:
+  $ref: './ProjectPitchCreate.yml'
+ProjectPitchUpdate:
+  $ref: './ProjectPitchUpdate.yml'
 V2SiteRead:
   $ref: './V2SiteRead.yml'
 V2SiteLiteRead:
@@ -146,6 +150,8 @@ SiteFullRead:
   $ref: './SiteFullRead.yml'
 SiteWithSchemaRead:
   $ref: './SiteWithSchemaRead.yml'
+ProjectPitchRead:
+  $ref: './ProjectPitchRead.yml'
 AuditRead:
   $ref: './AuditRead.yml'
 AuditReadAll:
