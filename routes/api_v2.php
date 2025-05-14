@@ -148,7 +148,6 @@ use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\ViewProjectNurseriesController;
 use App\Http\Controllers\V2\Projects\ViewProjectSitesController;
-use App\Http\Controllers\V2\Projects\ViewProjectTasksReportsController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminCreateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminDeleteReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminIndexReportingFrameworkController;
@@ -505,7 +504,6 @@ Route::prefix('projects')->group(function () {
 });
 
 Route::prefix('tasks')->group(function () {
-    Route::get('/{task}/reports', ViewProjectTasksReportsController::class);
     Route::put('/{task}/submit', SubmitProjectTasksController::class);
 });
 

@@ -222,8 +222,6 @@ UpdateRequestLiteRead:
   $ref: './UpdateRequestLiteRead.yml'
 ActionRead:
   $ref: './ActionRead.yml'
-V2TaskActionRead:
-  $ref: './V2TaskActionRead.yml'
 StatusUpdate:
   $ref: './StatusUpdate.yml'
 EntityReportReminder:

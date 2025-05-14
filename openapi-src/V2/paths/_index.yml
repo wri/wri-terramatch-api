@@ -1232,9 +1232,6 @@
 /v2/projects/{UUID}/nurseries:
   get:
     $ref: './Projects/get-v2-projects-uuid-nurseries.yml'
-/v2/tasks/{UUID}/reports:
-  get:
-    $ref: './Tasks/get-v2-tasks-uuid-reports.yml'
 /v2/tasks/{UUID}/submit:
   put:
     $ref: './Tasks/put-v2-tasks-uuid-submit.yml'
