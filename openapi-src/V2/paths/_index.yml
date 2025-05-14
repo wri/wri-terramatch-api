@@ -845,7 +845,7 @@
         name: MODEL
         in: path
         required: true
-        description: 'Currently only organisation, funding-programme, project, site, nursery, project-report, site-report, nursery-report, project-monitoring and site-monitoring are set up'
+        description: 'Currently only organisation, funding-programme, project-pitch, project, site, nursery, project-report, site-report, nursery-report, project-monitoring and site-monitoring are set up'
       - type: string
         name: COLLECTION
         in: path
@@ -1251,6 +1251,39 @@
         schema:
           type: object
     operationId: get-v2-project-pitches-export
+'/v2/project-pitches/{UUID}':
+  patch:
+    summary: Update a project pitch
+    operationId: patch-v2-project-pitches-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/ProjectPitchRead'
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/ProjectPitchUpdate'
+    tags:
+      - Project Pitches
+  delete:
+    summary: Delete a project pitch
+    operationId: delete-v2-project-pitches-UUID
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+    tags:
+      - Project Pitches
 '/v2/admin/forms/submissions/{UUID}':
   get:
     summary: Get a form submission

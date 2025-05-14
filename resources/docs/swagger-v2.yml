@@ -48323,7 +48323,7 @@ paths:
           name: MODEL
           in: path
           required: true
-          description: 'Currently only organisation, funding-programme, project, site, nursery, project-report, site-report, nursery-report, project-monitoring and site-monitoring are set up'
+          description: 'Currently only organisation, funding-programme, project-pitch, project, site, nursery, project-report, site-report, nursery-report, project-monitoring and site-monitoring are set up'
         - type: string
           name: COLLECTION
           in: path
@@ -50665,6 +50665,531 @@ paths:
           schema:
             type: object
       operationId: get-v2-project-pitches-export
+  '/v2/project-pitches/{UUID}':
+    patch:
+      summary: Update a project pitch
+      operationId: patch-v2-project-pitches-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: ProjectPitchRead
+            x-stoplight:
+              id: rsuskf5on1pya
+            type: object
+            properties:
+              id:
+                type: string
+              uuid:
+                type: string
+              status:
+                type: string
+              readable_status:
+                type: string
+              organisation_id:
+                type: string
+              funding_programmes:
+                title: LimitedFundingProgrammeRead
+                x-stoplight:
+                  id: uh5oce75en4za
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  uuid:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  read_more_url:
+                    type: string
+                  organisation_types:
+                    type: array
+                    items:
+                      type: string
+                  location:
+                    type: string
+                  status:
+                    type: string
+              tree_species:
+                type: array
+                items:
+                  title: V2TreeSpeciesRead
+                  x-stoplight:
+                    id: 04vvsvyndvy8n
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    name:
+                      type: string
+                    amount:
+                      type: integer
+                    type:
+                      type: string
+                    collection:
+                      type: string
+              project_name:
+                type: string
+              how_discovered:
+                type: string
+              project_objectives:
+                type: string
+              project_country:
+                type: array
+                items:
+                  type: string
+              project_county_district:
+                type: string
+              restoration_intervention_types:
+                type: array
+                items:
+                  type: string
+              land_systems:
+                type: array
+                items:
+                  type: string
+              tree_restoration_practices:
+                type: array
+                items:
+                  type: string
+              total_hectares:
+                type: integer
+              project_budget:
+                type: integer
+              total_trees:
+                type: integer
+              capacity_building_needs:
+                type: array
+                items:
+                  type: string
+              additional:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              restoration_photos:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              cover:
+                title: V2FileRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  url:
+                    type: string
+                  thumb_url:
+                    type: string
+                  collection_name:
+                    type: string
+                  title:
+                    type: string
+                  file_name:
+                    type: string
+                  mime_type:
+                    type: string
+                  size:
+                    type: integer
+                  lat:
+                    type: integer
+                  lng:
+                    type: integer
+                  is_public:
+                    type: boolean
+                  is_cover:
+                    type: boolean
+                  created_at:
+                    type: string
+              proof_of_land_tenure_mou:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              detailed_project_budget:
+                title: V2FileRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  url:
+                    type: string
+                  thumb_url:
+                    type: string
+                  collection_name:
+                    type: string
+                  title:
+                    type: string
+                  file_name:
+                    type: string
+                  mime_type:
+                    type: string
+                  size:
+                    type: integer
+                  lat:
+                    type: integer
+                  lng:
+                    type: integer
+                  is_public:
+                    type: boolean
+                  is_cover:
+                    type: boolean
+                  created_at:
+                    type: string
+              expected_active_restoration_start_date:
+                type: string
+              expected_active_restoration_end_date:
+                type: string
+              description_of_project_timeline:
+                type: string
+              proj_partner_info:
+                type: string
+              land_tenure_proj_area:
+                type: array
+                items:
+                  type: string
+              landholder_comm_engage:
+                type: string
+              proj_success_risks:
+                type: string
+              monitor_eval_plan:
+                type: string
+              proj_boundary:
+                type: string
+              sustainable_dev_goals:
+                type: array
+                items:
+                  type: string
+              proj_area_description:
+                type: string
+              proposed_num_sites:
+                type: integer
+                minimum: 0
+                maximum: 4294967295
+              environmental_goals:
+                type: string
+              main_degradation_causes:
+                type: string
+              seedlings_source:
+                type: string
+              proposed_num_nurseries:
+                type: integer
+                minimum: 0
+                maximum: 4294967295
+              curr_land_degradation:
+                type: string
+              proj_impact_socieconom:
+                type: string
+              proj_impact_foodsec:
+                type: string
+              proj_impact_watersec:
+                type: string
+              proj_impact_jobtypes:
+                type: string
+              num_jobs_created:
+                type: integer
+                minimum: 0
+                maximum: 4294967295
+              pct_employees_men:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_employees_women:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_employees_18to35:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_employees_older35:
+                type: integer
+                minimum: 0
+                maximum: 100
+              proj_beneficiaries:
+                type: integer
+              pct_beneficiaries_women:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_beneficiaries_small:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_beneficiaries_large:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_beneficiaries_youth:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_beneficiaries_scheduled_classes:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_beneficiaries_scheduled_tribes:
+                type: integer
+                minimum: 0
+                maximum: 100
+              monitoring_evaluation_plan:
+                type: string
+              main_causes_of_degradation:
+                type: string
+              deleted_at:
+                type: string
+              created_at:
+                type: string
+              updated_at:
+                type: string
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            title: ProjectPitchUpdate
+            x-stoplight:
+              id: w5u1xed0to2g6
+            type: object
+            properties:
+              funding_programme_id:
+                type: integer
+              project_name:
+                type: string
+              project_objectives:
+                type: string
+              project_county_district:
+                type: string
+              how_discovered:
+                type: string
+              land_systems:
+                type: array
+                items:
+                  type: string
+              tree_restoration_practices:
+                type: array
+                items:
+                  type: string
+              project_budget:
+                type: integer
+              project_country:
+                type: array
+                items:
+                  type: string
+              restoration_intervention_types:
+                type: array
+                items:
+                  type: string
+              capacity_building_needs:
+                type: array
+                items:
+                  type: string
+              total_hectares:
+                type: integer
+              total_trees:
+                type: integer
+              expected_active_restoration_start_date:
+                type: string
+              expected_active_restoration_end_date:
+                type: string
+              description_of_project_timeline:
+                type: string
+              proj_partner_info:
+                type: string
+              land_tenure_proj_area:
+                type: array
+                items:
+                  type: string
+              landholder_comm_engage:
+                type: string
+              proj_success_risks:
+                type: string
+              monitor_eval_plan:
+                type: string
+              proj_boundary:
+                type: string
+              sustainable_dev_goals:
+                type: array
+                items:
+                  type: string
+              proj_area_description:
+                type: string
+              proposed_num_sites:
+                type: integer
+                minimum: 0
+                maximum: 4294967295
+              environmental_goals:
+                type: string
+              main_degradation_causes:
+                type: string
+              seedlings_source:
+                type: string
+              proposed_num_nurseries:
+                type: integer
+                minimum: 0
+                maximum: 4294967295
+              curr_land_degradation:
+                type: string
+              proj_impact_socieconom:
+                type: string
+              proj_impact_foodsec:
+                type: string
+              proj_impact_watersec:
+                type: string
+              proj_impact_jobtypes:
+                type: string
+              num_jobs_created:
+                type: integer
+                minimum: 0
+                maximum: 4294967295
+              pct_employees_men:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_employees_women:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_employees_18to35:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_employees_older35:
+                type: integer
+                minimum: 0
+                maximum: 100
+              proj_beneficiaries:
+                type: integer
+              pct_beneficiaries_women:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_beneficiaries_small:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_beneficiaries_large:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_beneficiaries_youth:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_beneficiaries_scheduled_classes:
+                type: integer
+                minimum: 0
+                maximum: 100
+              pct_beneficiaries_scheduled_tribes:
+                type: integer
+                minimum: 0
+                maximum: 100
+              monitoring_evaluation_plan:
+                type: string
+              main_causes_of_degradation:
+                type: string
+      tags:
+        - Project Pitches
+    delete:
+      summary: Delete a project pitch
+      operationId: delete-v2-project-pitches-UUID
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Project Pitches
   '/v2/admin/forms/submissions/{UUID}':
     get:
       summary: Get a form submission
