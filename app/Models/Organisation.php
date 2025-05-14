@@ -59,4 +59,9 @@ class Organisation extends Model
     {
         return $this->hasMany(TerrafundProgramme::class);
     }
+
+    public function financialCollection(): HasMany
+    {
+        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id');
+    }
 }
