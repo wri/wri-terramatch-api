@@ -182,7 +182,6 @@ class RunIndicatorAnalysisService
                 }
 
                 if ($slug == 'restorationByEcoRegion') {
-                    // Just encode the data as-is - the format now already matches what we want
                     $value = json_encode($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);
                 } else {
                     $value = $this->formatKeysValues($indicatorRestorationResponse['area'][$slugMappings[$slug]['indicator']]);

@@ -2,15 +2,10 @@
 
 namespace App\Helpers;
 
-use Illuminate\Support\Facades\Log;
-
 class RestorationByEcoregionHelper
 {
     public static function getCategoryEcoRegion($value, ?bool $isExport = false)
     {
-        Log::info($value);
-
-        // Mapping of realm codes to full realm names
         $realmMapping = [
             'NT' => 'Neotropical',
             'PAL' => 'Palearctic',
@@ -26,12 +21,10 @@ class RestorationByEcoregionHelper
 
         $formatedValue = [];
 
-        // Check if realm key exists in the input value
         if (isset($value['realm']) && isset($realmMapping[$value['realm']])) {
             $realmName = $realmMapping[$value['realm']];
             $realmValue = 0;
 
-            // Extract the value for the realm, assuming it might be in different formats
             foreach ($value as $key => $val) {
                 if ($key !== 'realm') {
                     $realmValue = round((float) $val, 3);
