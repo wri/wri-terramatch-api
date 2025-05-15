@@ -99,7 +99,7 @@ class RunIndicatorAnalysisService
                         ->exists();
 
                     // Debug logging to check if records are found
-                    Log::debug("Checking existing records", [
+                    Log::debug('Checking existing records', [
                         'uuid' => $uuid,
                         'site_polygon_id' => $polygonGeometry['site_polygon_id'],
                         'table' => $slugMappings[$slug]['table_name'],
@@ -110,6 +110,7 @@ class RunIndicatorAnalysisService
                     if ($registerExist && ! $updateExisting && ! $request['force']) {
                         $skippedCount++;
                         Log::debug("Skipping existing record for polygon: $uuid");
+
                         continue;
                     }
 
@@ -218,16 +219,16 @@ class RunIndicatorAnalysisService
                 if ($updateExisting) {
                     // Update existing record using direct update method
                     Log::debug("Updating record for polygon UUID: $uuid with new data");
-                    
+
                     // Try to find and update the existing record
                     $model = $slugMappings[$slug]['model'];
                     $record = $model::where($searchCriteria)->first();
-                    
+
                     if ($record) {
                         Log::debug("Found existing record ID: {$record->id}, updating");
                         $record->value = $value;
                         $record->save();
-                        
+
                         // Log the value for debugging
                         Log::debug("Updated record with value: {$value}");
                     } else {
@@ -236,7 +237,7 @@ class RunIndicatorAnalysisService
                 } else {
                     // Only create if it doesn't exist
                     $exists = $slugMappings[$slug]['model']::where($searchCriteria)->exists();
-                    if (!$exists) {
+                    if (! $exists) {
                         Log::debug("Creating new record for polygon UUID: $uuid");
                         $slugMappings[$slug]['model']::create($data);
                     } else {
@@ -305,16 +306,16 @@ class RunIndicatorAnalysisService
                 if ($updateExisting) {
                     // Update existing record using direct update method
                     Log::debug("Updating tree cover loss record for polygon UUID: $uuid with new data");
-                    
+
                     // Try to find and update the existing record
                     $model = $slugMappings[$slug]['model'];
                     $record = $model::where($searchCriteria)->first();
-                    
+
                     if ($record) {
                         Log::debug("Found existing tree cover loss record ID: {$record->id}, updating");
                         $record->value = $data['value'];
                         $record->save();
-                        
+
                         // Log the value for debugging
                         Log::debug("Updated tree cover loss record with value: {$data['value']}");
                     } else {
@@ -323,7 +324,7 @@ class RunIndicatorAnalysisService
                 } else {
                     // Only create if it doesn't exist
                     $exists = $slugMappings[$slug]['model']::where($searchCriteria)->exists();
-                    if (!$exists) {
+                    if (! $exists) {
                         Log::debug("Creating new record for polygon UUID: $uuid");
                         $slugMappings[$slug]['model']::create($data);
                     } else {
