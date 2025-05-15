@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V2\Organisation;
 
+use App\Http\Resources\V2\FinancialIndicatorsResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\General\ShapefileResource;
 use App\Http\Resources\V2\LeadershipsResource;
