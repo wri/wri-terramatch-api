@@ -31652,6 +31652,33 @@ definitions:
         type: array
         items:
           type: number
+  V2FinancialIndicatorsRead:
+    title: V2FinancialIndicatorsRead
+    type: array
+    items:
+      type: object
+  V2FinancialIndicatorsUpdate:
+    title: V2FinancialIndicatorsUpdate
+    type: object
+    properties:
+      organisation_id:
+        type: string
+      profit_analysis_data:
+        type: array
+        items:
+          type: object
+      current_radio_data:
+        type: array
+        items:
+          type: object
+      documentation_data:
+        type: array
+        items:
+          type: object
+      local_currency:
+        type: string
+      financial_year_start_month:
+        type: integer
 paths:
   '/v2/{entity}/{UUID}/aggregate-reports':
     get:
@@ -70655,3 +70682,42 @@ paths:
                 type: string
                 format: date-time
                 example: '2024-09-02T15:04:05Z'
+  /v2/financial-indicators:
+    patch:
+      summary: Update a financial indicators
+      operationId: patch-v2-financial-indicators-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: V2FinancialIndicatorsRead
+            type: array
+            items:
+              type: object
+      tags:
+        - V2 financial Indicators
+      parameters:
+        - in: body
+          name: body
+          schema:
+            title: V2FinancialIndicatorsUpdate
+            type: object
+            properties:
+              organisation_id:
+                type: string
+              profit_analysis_data:
+                type: array
+                items:
+                  type: object
+              current_radio_data:
+                type: array
+                items:
+                  type: object
+              documentation_data:
+                type: array
+                items:
+                  type: object
+              local_currency:
+                type: string
+              financial_year_start_month:
+                type: integer

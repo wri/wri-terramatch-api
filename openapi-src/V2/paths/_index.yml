@@ -2567,3 +2567,19 @@
 /v2/impact-stories/{id}:
   get:
     $ref: './ImpactStories/get-v2-impact-stories-id.yml'
+/v2/financial-indicators:
+  patch:
+    summary: Update a financial indicators
+    operationId: patch-v2-financial-indicators-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsRead'
+    tags:
+      - V2 financial Indicators
+    parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsUpdate'

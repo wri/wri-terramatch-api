@@ -46,6 +46,7 @@ class FormQuestionResource extends JsonResource
             'max_character_limit' => $this->max_character_limit,
             'min_number_limit' => $this->min_number_limit,
             'max_number_limit' => $this->max_number_limit,
+            'years' => $this->years,
         ]);
 
         if (count($this->children) > 0) {
@@ -92,6 +93,7 @@ class FormQuestionResource extends JsonResource
             case 'selectImage':
             case 'coreTeamLeader':
             case 'leadershipTeam':
+            case 'financialCollection':
             case 'ownershipStake':
             case 'workdays':
                 return [
