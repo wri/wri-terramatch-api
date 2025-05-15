@@ -52,7 +52,7 @@ class UpdateFormRequest extends FormRequest
             'form_sections.*.form_questions.*.min_number_limit' => ['sometimes', 'nullable', 'integer'],
             'form_sections.*.form_questions.*.max_number_limit' => ['sometimes', 'nullable', 'integer'],
             'form_sections.*.form_questions.*.years' => ['sometimes', 'nullable', 'array'],
-            
+
             'form_sections.*.form_questions.*.form_question_options' => ['sometimes', 'nullable', 'array'],
             'form_sections.*.form_questions.*.form_question_options.*.uuid' => ['sometimes', 'nullable', 'string'],
             'form_sections.*.form_questions.*.form_question_options.*.slug' => ['sometimes', 'nullable', 'string'],

@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\V2\FinancialIndicators;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V2\StoreFinancialIndicatorsRequest;
 use App\Http\Resources\V2\FinancialIndicatorsResource;
 use App\Models\V2\FinancialIndicators;
 use App\Models\V2\Organisation;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class UpsertFinancialIndicatorsController extends Controller
@@ -16,11 +14,11 @@ class UpsertFinancialIndicatorsController extends Controller
     {
         $model = Organisation::isUuid($request->organisation_id)->firstOrFail();
 
-        if (!is_null($request->financial_year_start_month) && $request->financial_year_start_month !== '') {
+        if (! is_null($request->financial_year_start_month) && $request->financial_year_start_month !== '') {
             $model->fin_start_month = $request->financial_year_start_month;
         }
 
-        if (!is_null($request->local_currency) && $request->local_currency !== '') {
+        if (! is_null($request->local_currency) && $request->local_currency !== '') {
             $model->currency = $request->local_currency;
         }
 
@@ -49,8 +47,8 @@ class UpsertFinancialIndicatorsController extends Controller
             $year = $entry['year'];
             $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_CURRENT_ASSETS, 'currentAssetsUuid', $entry['currentAssets'] ?? 0);
             $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_CURRENT_LIABILITIES, 'currentLiabilitiesUuid', $entry['currentLiabilities'] ?? 0);
-            $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_CURRENT_RATIO, 'currentRatioUuid', $entry['currentLiabilities'] > 0 
-            ? $entry['currentAssets'] / $entry['currentLiabilities'] 
+            $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_CURRENT_RATIO, 'currentRatioUuid', $entry['currentLiabilities'] > 0
+            ? $entry['currentAssets'] / $entry['currentLiabilities']
             : 0);
         }
 
@@ -60,10 +58,10 @@ class UpsertFinancialIndicatorsController extends Controller
             $where = [
                 'organisation_id' => $orgId,
                 'year' => $year,
-                'collection' => FinancialIndicators::COLLECTION_NOT_COLLECTION_DOCUMENTS
+                'collection' => FinancialIndicators::COLLECTION_NOT_COLLECTION_DOCUMENTS,
             ];
 
-            if (!empty($entry['uuid'])) {
+            if (! empty($entry['uuid'])) {
                 $where['uuid'] = $entry['uuid'];
             }
 
@@ -73,19 +71,20 @@ class UpsertFinancialIndicatorsController extends Controller
         return response()->json(FinancialIndicatorsResource::collection($updatedRecords));
     }
 
-    function safeUpdateOrCreate($orgId, $year, $collection, $uuidKey, $amount) {
+    public function safeUpdateOrCreate($orgId, $year, $collection, $uuidKey, $amount)
+    {
         global $entry;
-    
+
         $where = [
             'organisation_id' => $orgId,
             'year' => $year,
-            'collection' => $collection
+            'collection' => $collection,
         ];
-    
-        if (!empty($entry[$uuidKey])) {
+
+        if (! empty($entry[$uuidKey])) {
             $where['uuid'] = $entry[$uuidKey];
         }
-    
+
         return FinancialIndicators::updateOrCreate($where, ['amount' => $amount ?? 0]);
     }
 }

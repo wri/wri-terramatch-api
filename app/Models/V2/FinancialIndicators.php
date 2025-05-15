@@ -49,7 +49,6 @@ class FinancialIndicators extends Model implements MediaModel
     public const COLLECTION_PROFIT = 'profit';
     public const COLLECTION_CURRENT_RATIO = 'current-ratio';
     public const COLLECTION_NOT_COLLECTION_DOCUMENTS = 'description-documents';
-    
 
     public static $collections = [
         self::COLLECTION_REVENUE => 'Revenue',
