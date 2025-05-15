@@ -11,7 +11,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('form_questions', function (Blueprint $table) {
-            $table->smallInteger('years')->unsigned()->nullable();
+            $table->text('years')->nullable();
         });
     }
 
