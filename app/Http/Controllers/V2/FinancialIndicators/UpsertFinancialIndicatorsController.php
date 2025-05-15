@@ -15,7 +15,6 @@ class UpsertFinancialIndicatorsController extends Controller
     public function __invoke(Request $request)
     {
         $model = Organisation::isUuid($request->organisation_id)->firstOrFail();
-        $this->authorize('update', $model);
 
         if (!is_null($request->financial_year_start_month) && $request->financial_year_start_month !== '') {
             $model->fin_start_month = $request->financial_year_start_month;
@@ -57,16 +56,18 @@ class UpsertFinancialIndicatorsController extends Controller
 
         foreach ($request->documentation_data as $entry) {
             $year = $entry['year'];
-            $uuid = $entry['uuid'];
 
-            if (!$uuid && $entry['description']) {
-                continue;
+            $where = [
+                'organisation_id' => $orgId,
+                'year' => $year,
+                'collection' => FinancialIndicators::COLLECTION_NOT_COLLECTION_DOCUMENTS
+            ];
+
+            if (!empty($entry['uuid'])) {
+                $where['uuid'] = $entry['uuid'];
             }
 
-            $updatedRecords[] = FinancialIndicators::updateOrCreate(
-                ['organisation_id' => $orgId, 'year' => $year, 'collection' => FinancialIndicators::COLLECTION_NOT_COLLECTION_DOCUMENTS, 'uuid' => $uuid],
-                ['description' => $entry['description'] ?? null]
-            );
+            $updatedRecords[] = FinancialIndicators::updateOrCreate($where, ['description' => $entry['description'] ?? null]);
         }
 
         return response()->json(FinancialIndicatorsResource::collection($updatedRecords));
