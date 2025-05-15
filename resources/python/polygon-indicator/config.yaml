@@ -1,8 +1,8 @@
 base:
-  config_path: "secrets.yaml"
-  temp_path: "temp/"
+  config_path: 'secrets.yaml'
+  temp_path: 'temp/'
   log_level: DEBUG
-  data_path: "data/"
+  data_path: 'data/'
 
 polygons:
   intervention_key: IntervType
@@ -18,8 +18,8 @@ s3:
   lookup_bucket: tof-output
   lookup_prefix: tile-databases
   lookup_filelist:
-    - "tile-databases/america-africa-europe-corrected.csv"
-    - "tile-databases/asia.csv"
+    - 'tile-databases/america-africa-europe-corrected.csv'
+    - 'tile-databases/asia.csv'
 
 gdal:
   outfile: temp/tiles/mosaic
@@ -31,7 +31,7 @@ indicators:
     start_year: 2018
     end_year: 2024
     query_url: /dataset/umd_tree_cover_loss/latest/query
-    sql: "SELECT umd_tree_cover_loss__year, SUM(area__ha) FROM results GROUP BY umd_tree_cover_loss__year"
+    sql: 'SELECT umd_tree_cover_loss__year, SUM(area__ha) FROM results GROUP BY umd_tree_cover_loss__year'
     key_label: umd_tree_cover_loss__year
     key_value: area__ha
     area_source: gfw
@@ -41,7 +41,7 @@ indicators:
     start_year: 2018
     end_year: 2024
     query_url: /dataset/umd_tree_cover_loss_from_fires/latest/query
-    sql: "SELECT umd_tree_cover_loss_from_fires__year, SUM(area__ha) FROM results GROUP BY umd_tree_cover_loss_from_fires__year"
+    sql: 'SELECT umd_tree_cover_loss_from_fires__year, SUM(area__ha) FROM results GROUP BY umd_tree_cover_loss_from_fires__year'
     key_label: umd_tree_cover_loss_from_fires__year
     key_value: area__ha
     area_source: gfw
@@ -49,15 +49,16 @@ indicators:
   wwf_terrestrial_ecoregions:
     data_source: gfw
     query_url: /dataset/wwf_terrestrial_ecoregions/latest/query
-    sql: "SELECT eco_name FROM results"
+    sql: 'SELECT eco_name, realm FROM results'
     key_label: eco_name
+    realm_label: realm
     area_source: polygon
     zero_fill: False
   wri_tropical_tree_cover:
     data_source: tiles
     data_year: 2020
     query_url: /dataset/wri_tropical_tree_cover/latest/query
-    sql: "SELECT AVG(wri_tropical_tree_cover__percent) FROM results"
+    sql: 'SELECT AVG(wri_tropical_tree_cover__percent) FROM results'
     key_label: wri_tropical_tree_cover__percent
     download_tile_lookup: False
     small_sites_area_thresh: 0.5
@@ -66,11 +67,11 @@ indicators:
       input_path: C3S-LC-L4-LCCS-Map-300m-P1Y-2020-v2.1.1.tif
       temp_output_prefix: temp-lulc-
       target_crs: 4326
-      default_initial_crs: "EPSG:4326"
+      default_initial_crs: 'EPSG:4326'
       reproj_crs: 3857
       buffer_size: 500
-      gdf_project_key: "Project"
-      zonal_stats: "count majority"
+      gdf_project_key: 'Project'
+      zonal_stats: 'count majority'
     small_sites_error:
       zeroToNine:
         min: 0.0
