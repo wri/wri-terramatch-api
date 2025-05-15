@@ -25,10 +25,30 @@ def generate_indicator(feature, indicator_name, params, session):
             }
         else:
             key_label = params["indicators"][indicator_name]["key_label"]
-            polygon_data = {
-                row[key_label]: ttc.calculate_area(feature)
-                for row in polygon_gfw_data["data"]
-            }
+            # For wwf_terrestrial_ecoregions, also get the realm if available
+            if indicator_name == "wwf_terrestrial_ecoregions" and "realm_label" in params["indicators"][indicator_name]:
+                realm_label = params["indicators"][indicator_name]["realm_label"]
+                polygon_data = {}
+                realm = None
+                
+                # First calculate area for each eco region
+                for row in polygon_gfw_data["data"]:
+                    eco_name = row[key_label]
+                    area = ttc.calculate_area(feature)
+                    polygon_data[eco_name] = area
+                    
+                    # Get the realm from the first row (should be the same for all rows in a polygon)
+                    if realm_label in row and realm is None:
+                        realm = row[realm_label]
+                
+                # Add realm at the top level if available
+                if realm:
+                    polygon_data["realm"] = realm
+            else:
+                polygon_data = {
+                    row[key_label]: ttc.calculate_area(feature)
+                    for row in polygon_gfw_data["data"]
+                }
     elif params["indicators"][indicator_name]["data_source"] == "polygon":
         polygon_data = {
             feature.properties[
