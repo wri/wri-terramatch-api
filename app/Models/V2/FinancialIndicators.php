@@ -37,7 +37,7 @@ class FinancialIndicators extends Model implements MediaModel
     public $fileConfiguration = [
         'documentation' => [
             'validation' => 'general-documents',
-            'multiple' => false,
+            'multiple' => true,
         ],
     ];
 

@@ -14,17 +14,15 @@ class FinancialIndicatorsResource extends JsonResource
     {
         $documentation = $this->getMedia('documentation')->first();
 
-        return [
+        $data = [
             'uuid' => $this->uuid,
             'organisation_id' => $this->organisation_id,
             'collection' => $this->collection,
             'amount' => $this->amount,
             'year' => $this->year,
-            'documentation' => empty($documentation) ? null : array_merge(
-                $documentation->toArray(),
-                ['full_url' => $documentation->getFullUrl()]
-            ),
             'description' => $this->description,
         ];
+
+        return $this->appendFilesToResource($data);
     }
 }

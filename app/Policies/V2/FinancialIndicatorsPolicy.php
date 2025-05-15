@@ -10,20 +10,12 @@ class FinancialIndicatorsPolicy extends Policy
 {
     public function uploadFiles(?User $user, ?FinancialIndicators $financialIndicator = null): bool
     {
-        if ($user->can('projects-manage')) {
-            return true;
-        }
-
         return $this->isUser($user) || $this->isTheirs($user, $financialIndicator);
     }
 
     public function deleteFiles(?User $user, ?FinancialIndicators $financialIndicator = null): bool
     {
-        if ($user->can('projects-manage')) {
-            return true;
-        }
-
-        return $user->can('manage-own') && $this->isTheirs($user, $financialIndicator);
+        return $this->isUser($user) || $this->isTheirs($user, $financialIndicator);
     }
 
     protected function isTheirs(?User $user, ?FinancialIndicators $financialIndicator = null): bool
