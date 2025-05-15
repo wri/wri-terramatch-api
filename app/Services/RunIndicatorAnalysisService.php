@@ -70,8 +70,11 @@ class RunIndicatorAnalysisService
             $processedCount = 0;
             $skippedCount = 0;
             $errorCount = 0;
+            $updateExisting = isset($request['update_existing']) ? $request['update_existing'] : false;
 
-            Log::info("Starting analysis for slug: $slug with $totalPolygons polygons");
+            Log::info("Starting analysis for slug: $slug with $totalPolygons polygons", [
+                'update_existing' => $updateExisting,
+            ]);
 
             foreach ($request['uuids'] as $index => $uuid) {
                 try {
@@ -95,7 +98,8 @@ class RunIndicatorAnalysisService
                         ->where('i.year_of_analysis', Carbon::now()->year)
                         ->exists();
 
-                    if ($registerExist) {
+                    // Skip existing records unless update_existing is true or force is true
+                    if ($registerExist && ! $updateExisting && ! $request['force']) {
                         $skippedCount++;
 
                         continue;
@@ -123,6 +127,7 @@ class RunIndicatorAnalysisService
                 'processed' => $processedCount,
                 'skipped' => $skippedCount,
                 'errors' => $errorCount,
+                'update_existing' => $updateExisting,
             ]);
 
             return response()->json([

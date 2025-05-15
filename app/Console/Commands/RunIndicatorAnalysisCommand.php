@@ -14,14 +14,14 @@ class RunIndicatorAnalysisCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'run-indicator-analysis {--slugs=*} {--force} {--batch-size=100} {--skip=0}';
+    protected $signature = 'run-indicator-analysis {--slugs=*} {--force} {--batch-size=100} {--skip=0} {--update-existing}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Run indicator analysis for some slugs example: php artisan run-indicator-analysis --slugs=restorationByLandUse --slugs=restorationByStrategy, etc.';
+    protected $description = 'Run indicator analysis for some slugs example: php artisan run-indicator-analysis --slugs=restorationByLandUse --slugs=restorationByStrategy, etc. Use --update-existing to update records that already have values.';
 
     protected RunIndicatorAnalysisService $service;
 
@@ -46,6 +46,7 @@ class RunIndicatorAnalysisCommand extends Command
         $force = $this->option('force');
         $batchSize = (int) $this->option('batch-size');
         $skip = (int) $this->option('skip');
+        $updateExisting = $this->option('update-existing');
 
         if (empty($slugs)) {
             $this->error('No slugs provided. Please use --slugs=slug1 --slugs=slug2 ...');
@@ -66,6 +67,7 @@ class RunIndicatorAnalysisCommand extends Command
             'force' => $force,
             'batch_size' => $batchSize,
             'skip' => $skip,
+            'update_existing' => $updateExisting,
             'total_polygons' => $totalPolygons,
         ]);
 
@@ -80,7 +82,7 @@ class RunIndicatorAnalysisCommand extends Command
             ->when($skip > 0, function ($query) use ($skip) {
                 return $query->skip($skip);
             })
-            ->chunk($batchSize, function ($polygons) use ($slugs, $force, &$totalProcessed, &$batchStartTime, $batchSize) {
+            ->chunk($batchSize, function ($polygons) use ($slugs, $force, &$totalProcessed, &$batchStartTime, $batchSize, $updateExisting) {
                 $polygonsUuids = $polygons->pluck('poly_id')->toArray();
                 $batchCount = count($polygonsUuids);
 
@@ -89,6 +91,7 @@ class RunIndicatorAnalysisCommand extends Command
                 $request = [
                     'uuids' => $polygonsUuids,
                     'force' => $force,
+                    'update_existing' => $updateExisting,
                 ];
 
                 foreach ($slugs as $slug) {
