@@ -27,20 +27,16 @@ class UpsertFinancialIndicatorsController extends Controller
         $updatedRecords = [];
         $dataUuids = $request->uuids;
 
-        if (str_contains($model->type, 'for-profit')) {
-            foreach ($request->profit_analysis_data as $entry) {
-                $year = $entry['year'];
-                $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_REVENUE, 'revenueUuid', $entry['revenue'] ?? 0);
-                $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_EXPENSES, 'expensesUuid', $entry['expenses'] ?? 0);
-                $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_PROFIT, 'profitUuid', ($entry['revenue'] ?? 0) - ($entry['expenses'] ?? 0));
-            }
+        foreach ($request->profit_analysis_data as $entry) {
+            $year = $entry['year'];
+            $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_REVENUE, 'revenueUuid', $entry['revenue'] ?? 0);
+            $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_EXPENSES, 'expensesUuid', $entry['expenses'] ?? 0);
+            $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_PROFIT, 'profitUuid', ($entry['revenue'] ?? 0) - ($entry['expenses'] ?? 0));
         }
 
-        if (str_contains($model->type, 'non-profit')) {
-            foreach ($request->profit_analysis_data as $entry) {
-                $year = $entry['year'];
-                $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_BUDGET, 'budgetUuid', $entry['budget'] ?? 0);
-            }
+        foreach ($request->non_profit_analysis_data as $entry) {
+            $year = $entry['year'];
+            $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_BUDGET, 'budgetUuid', $entry['budget'] ?? 0);
         }
 
         foreach ($request->current_radio_data as $entry) {
