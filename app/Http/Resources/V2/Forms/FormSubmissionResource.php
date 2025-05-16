@@ -31,9 +31,9 @@ class FormSubmissionResource extends JsonResource
             'organisation_uuid' => $this->organisation_uuid,
             'organisation_attributes' => [
                 'uuid' => $this->organisation_uuid,
-                'type' => $this->organisation->type,
-                'currency' => $this->organisation->currency,
-                'start_month' => $this->organisation->fin_start_month,
+                'type' => $this->organisation?->type,
+                'currency' => $this->organisation?->currency,
+                'start_month' => $this->organisation?->fin_start_month,
             ],
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
