@@ -1232,9 +1232,6 @@
 /v2/projects/{UUID}/nurseries:
   get:
     $ref: './Projects/get-v2-projects-uuid-nurseries.yml'
-/v2/tasks/{UUID}/submit:
-  put:
-    $ref: './Tasks/put-v2-tasks-uuid-submit.yml'
 /v2/{ENTITY}/{UUID}:
   get:
     summary: View a specific entity as raw data

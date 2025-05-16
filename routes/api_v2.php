@@ -178,7 +178,6 @@ use App\Http\Controllers\V2\Stages\StoreStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
 use App\Http\Controllers\V2\Stages\ViewStageController;
-use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
@@ -501,10 +500,6 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
 
     Route::delete('/{project}/{email}/remove-partner', DeleteProjectMonitoringPartnersController::class);
-});
-
-Route::prefix('tasks')->group(function () {
-    Route::put('/{task}/submit', SubmitProjectTasksController::class);
 });
 
 ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], function () {
