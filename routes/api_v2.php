@@ -54,6 +54,7 @@ use App\Http\Controllers\V2\Files\Location\ProjectReportImageLocationsController
 use App\Http\Controllers\V2\Files\Location\SiteImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
 use App\Http\Controllers\V2\Files\UploadController;
+use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\Forms\AdminDeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\AdminIndexFormSubmissionController;
 use App\Http\Controllers\V2\Forms\CommonOptionsIndexController;
@@ -483,6 +484,10 @@ Route::prefix('ownership-stake')->group(function () {
 Route::prefix('leaderships')->group(function () {
     Route::post('/', StoreLeadershipsController::class);
     Route::delete('/{leaderships}', DeleteLeadershipsController::class);
+});
+
+Route::prefix('financial-indicators')->group(function () {
+    Route::patch('/', UpsertFinancialIndicatorsController::class);
 });
 
 Route::prefix('projects')->group(function () {

@@ -382,3 +382,7 @@ V2ImpactStoryCreate:
   $ref: './V2ImpactStoryCreate.yml'
 DashboardGetPolygonCentroidResponse:
   $ref: './DashboardGetPolygonCentroidResponse.yml'
+V2FinancialIndicatorsRead:
+  $ref: './V2FinancialIndicatorsRead.yml'
+V2FinancialIndicatorsUpdate:
+  $ref: './V2FinancialIndicatorsUpdate.yml'
