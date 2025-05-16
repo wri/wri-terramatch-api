@@ -2432,9 +2432,6 @@
 /v2/dashboard/active-countries:
   get:
     $ref: './Dashboard/get-v2-dashboard-active-countries.yml'
-/v2/dashboard/countries:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-countries.yml'
 /v2/dashboard/get-projects:
   get:
     $ref: './Dashboard/get-v2-dashboard-get-projects.yml'
