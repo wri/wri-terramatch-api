@@ -10,16 +10,11 @@ class FinancialIndicatorsPolicy extends Policy
 {
     public function uploadFiles(?User $user, ?FinancialIndicators $financialIndicator = null): bool
     {
-        return $this->isUser($user) || $this->isTheirs($user, $financialIndicator);
+        return $this->isUser($user);
     }
 
     public function deleteFiles(?User $user, ?FinancialIndicators $financialIndicator = null): bool
     {
-        return $this->isUser($user) || $this->isTheirs($user, $financialIndicator);
-    }
-
-    protected function isTheirs(?User $user, ?FinancialIndicators $financialIndicator = null): bool
-    {
-        return $user->organisation->id == $financialIndicator->organisation_id;
+        return $this->isUser($user);
     }
 }
