@@ -98,7 +98,7 @@ trait HasDemographics
                 : self::DEMOGRAPHIC_COLLECTIONS[$type][$definition['collections']];
 
             $demographicType = Str::camel($type);
-            if ($this->hasDemographics($demographicType, $collections)) {
+            if ($this->$demographicType()->exists()) {
                 return $this->sumTotalDemographicAmounts($demographicType, $collections);
             } else {
                 // Fall back to the potential DB column of the same name, and finally just return 0 if there is no data.
@@ -164,17 +164,12 @@ trait HasDemographics
         return in_array($demographicType, Demographic::VALID_TYPES) ? $demographicType : null;
     }
 
-    protected function hasDemographics(string $demographicType, array $collections): bool
-    {
-        return $this->$demographicType()->visible()->collections($collections)->exists();
-    }
-
     protected function sumTotalDemographicAmounts(string $demographicType, array $collections): int
     {
         // Gender is considered the canonical total value for all current types of demographics, so just pull and sum gender.
         return DemographicEntry::whereIn(
             'demographic_id',
             $this->$demographicType()->visible()->collections($collections)->select('id')
-        )->gender()->sum('amount');
+        )->gender()->sum('amount') ?? 0;
     }
 }
