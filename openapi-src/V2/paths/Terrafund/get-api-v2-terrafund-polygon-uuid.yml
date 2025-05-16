@@ -1,4 +1,3 @@
-
 summary: Get Site Polygon Data
 description: Retrieve site polygon data for the given UUID.
 parameters:
@@ -13,64 +12,60 @@ responses:
     schema:
       type: object
       properties:
-            site_polygon:
-              type: object
-              properties:
-                calc_area:
-                  type: number
-                created_at:
-                  type: string
-                  format: date-time
-                created_by:
-                  type: string
-                  nullable: true
-                deleted_at:
-                  type: string
-                  format: date-time
-                  nullable: true
-                distr:
-                  type: string
-                  nullable: true
-                id:
-                  type: integer
-                last_modified_by:
-                  type: string
-                  nullable: true
-                num_trees:
-                  type: integer
-                  nullable: true
-                plantend:
-                  type: string
-                  format: date
-                  nullable: true
-                plantstart:
-                  type: string
-                  format: date
-                point_id:
-                  type: string
-                  nullable: true
-                poly_id:
-                  type: string
-                poly_name:
-                  type: string
-                practice:
-                  type: string
-                  nullable: true
-                site_id:
-                  type: string
-                  nullable: true
-                site_name:
-                  type: string
-                status:
-                  type: string
-                target_sys:
-                  type: string
-                  nullable: true
-                updated_at:
-                  type: string
-                  format: date-time
-                uuid:
-                  type: string
+        site_polygon:
+          type: object
+          properties:
+            calc_area:
+              type: number
+            created_at:
+              type: string
+              format: date-time
+            created_by:
+              type: string
+              nullable: true
+            deleted_at:
+              type: string
+              format: date-time
+              nullable: true
+            distr:
+              type: string
+              nullable: true
+            id:
+              type: integer
+            last_modified_by:
+              type: string
+              nullable: true
+            num_trees:
+              type: integer
+              nullable: true
+            plantstart:
+              type: string
+              format: date
+            point_id:
+              type: string
+              nullable: true
+            poly_id:
+              type: string
+            poly_name:
+              type: string
+            practice:
+              type: string
+              nullable: true
+            site_id:
+              type: string
+              nullable: true
+            site_name:
+              type: string
+            status:
+              type: string
+            target_sys:
+              type: string
+              nullable: true
+            updated_at:
+              type: string
+              format: date-time
+            uuid:
+              type: string
   '404':
     description: No site polygons found for the given UUID
     schema:

@@ -14,15 +14,6 @@ class IndicatorEntitySlugExportController extends Controller
 {
     public function __invoke(EntityModel $entity, string $slug)
     {
-        if (! isset($slugMappings[$slug])) {
-            return response()->json(['message' => 'Indicator not found'], 404);
-        }
-
-        return $this->exportCsv($entity, $slug);
-    }
-
-    public function exportCsv($entity, $slug)
-    {
         $defaulHeaders = [
             'poly_name' => 'Polygon Name',
             'size' => 'Size (ha)',
@@ -64,6 +55,12 @@ class IndicatorEntitySlugExportController extends Controller
             'natural_forest' => 'Natural Forest',
             'mangrove' => 'Mangrove',
         ];
+        $treeCoverHeaders = [
+            ...$defaulHeaders,
+            'percent_cover' => 'Percent Cover',
+            'project_phase' => 'Project Phase',
+            'plus_minus_percent' => 'Plus Minus Percent',
+        ];
         $slugMappings = [
             'treeCoverLoss' => [
                 'relation_name' => 'treeCoverLossIndicator',
@@ -90,8 +87,21 @@ class IndicatorEntitySlugExportController extends Controller
                 'columns' => $restorationByEcoRegionHeaders,
                 'indicator_title' => 'Hectares Under Restoration By WWF EcoRegion',
             ],
+            'treeCover' => [
+                'relation_name' => 'treeCoverIndicator',
+                'columns' => $treeCoverHeaders,
+                'indicator_title' => 'Tree Cover',
+            ],
         ];
+        if (! isset($slugMappings[$slug])) {
+            return response()->json(['message' => 'Indicator not found'], 404);
+        }
 
+        return $this->exportCsv($entity, $slug, $slugMappings);
+    }
+
+    public function exportCsv($entity, $slug, $slugMappings)
+    {
         $sitePolygonsIndicator = SitePolygon::whereHas($slugMappings[$slug]['relation_name'], function ($query) use ($slug) {
             $query->where('indicator_slug', $slug)
                 ->where('year_of_analysis', date('Y'));
@@ -116,15 +126,29 @@ class IndicatorEntitySlugExportController extends Controller
             ->where('is_active', 1)
             ->get()
             ->map(function ($polygon) use ($slugMappings, $slug) {
-                $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
-                    ->where('indicator_slug', $slug)
-                    ->select([
-                        'indicator_slug',
-                        'year_of_analysis',
-                        'value',
-                        'created_at',
-                    ])
-                    ->first();
+                if ($slug == 'treeCover') {
+                    $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
+                        ->where('indicator_slug', $slug)
+                        ->select([
+                            'indicator_slug',
+                            'year_of_analysis',
+                            'percent_cover',
+                            'project_phase',
+                            'plus_minus_percent',
+                            'created_at',
+                        ])
+                        ->first();
+                } else {
+                    $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
+                        ->where('indicator_slug', $slug)
+                        ->select([
+                            'indicator_slug',
+                            'year_of_analysis',
+                            'value',
+                            'created_at',
+                        ])
+                        ->first();
+                }
                 $results = [
                     'poly_name' => $polygon->poly_name,
                     'status' => $polygon->status,
@@ -153,6 +177,11 @@ class IndicatorEntitySlugExportController extends Controller
                 if ($slug == 'restorationByLandUse' || $slug == 'restorationByStrategy') {
                     $values = json_decode($indicator->value, true);
                     $results = array_merge($results, $this->processValuesHectares($values));
+                }
+                if ($slug == 'treeCover') {
+                    $results['percent_cover'] = $indicator->percent_cover;
+                    $results['project_phase'] = $indicator->project_phase;
+                    $results['plus_minus_percent'] = $indicator->plus_minus_percent;
                 }
 
                 return $results;

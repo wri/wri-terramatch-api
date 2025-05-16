@@ -89,11 +89,6 @@ trait HasDemographics
 
     public function getAttribute($key)
     {
-        $attribute = parent::getAttribute($key);
-        if ($attribute != null) {
-            return $attribute;
-        }
-
         $keyNormalized = Str::camel($key);
         if (array_key_exists($keyNormalized, self::DEMOGRAPHIC_ATTRIBUTES)) {
             $definition = self::DEMOGRAPHIC_ATTRIBUTES[$keyNormalized];
@@ -102,7 +97,13 @@ trait HasDemographics
                 ? [self::DEMOGRAPHIC_COLLECTIONS[$type]]
                 : self::DEMOGRAPHIC_COLLECTIONS[$type][$definition['collections']];
 
-            return $this->sumTotalDemographicAmounts(Str::camel($type), $collections);
+            $demographicType = Str::camel($type);
+            if ($this->$demographicType()->exists()) {
+                return $this->sumTotalDemographicAmounts($demographicType, $collections);
+            } else {
+                // Fall back to the potential DB column of the same name, and finally just return 0 if there is no data.
+                return parent::getAttribute($key) ?? 0;
+            }
         }
 
         $otherDemographicType = $this->getDescriptionAttributeType($keyNormalized);
@@ -118,7 +119,7 @@ trait HasDemographics
                 ?->description;
         }
 
-        return $attribute;
+        return parent::getAttribute($key);
     }
 
     public function setAttribute($key, $value)
@@ -165,10 +166,10 @@ trait HasDemographics
 
     protected function sumTotalDemographicAmounts(string $demographicType, array $collections): int
     {
-        // Gender is considered the canonical total value for all current types of workdays, so just pull and sum gender.
+        // Gender is considered the canonical total value for all current types of demographics, so just pull and sum gender.
         return DemographicEntry::whereIn(
             'demographic_id',
             $this->$demographicType()->visible()->collections($collections)->select('id')
-        )->gender()->sum('amount');
+        )->gender()->sum('amount') ?? 0;
     }
 }

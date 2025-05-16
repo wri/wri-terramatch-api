@@ -31,6 +31,7 @@ class GeometryController extends Controller
         PolygonService::SPIKE_CRITERIA_ID => 'SPIKES_UUID',
         PolygonService::GEOMETRY_TYPE_CRITERIA_ID => 'GEOMETRY_TYPE_UUID',
         PolygonService::ESTIMATED_AREA_CRITERIA_ID => 'ESTIMATED_AREA',
+        PolygonService::PLANT_START_DATE_CRITERIA_ID => 'PLANT_START_DATE',
     ];
 
     public const NON_PERSISTED_VALIDATIONS = [

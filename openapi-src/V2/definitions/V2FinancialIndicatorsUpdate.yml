@@ -1,0 +1,21 @@
+title: V2FinancialIndicatorsUpdate
+type: object
+properties:
+  organisation_id:
+    type: string
+  profit_analysis_data:
+    type: array
+    items:
+      type: object
+  current_radio_data:
+    type: array
+    items:
+      type: object
+  documentation_data:
+    type: array
+    items:
+      type: object
+  local_currency:
+    type: string
+  financial_year_start_month:
+    type: integer

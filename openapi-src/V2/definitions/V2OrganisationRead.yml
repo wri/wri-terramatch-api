@@ -55,10 +55,6 @@ properties:
     type: array
     items:
       type: string
-  project_pitches:
-    type: array
-    items:
-      $ref: './_index.yml#/ProjectPitchRead'
   tree_species:
     type: array
     items:

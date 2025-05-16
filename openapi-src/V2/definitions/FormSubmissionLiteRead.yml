@@ -1,0 +1,32 @@
+title: FormSubmissionLiteRead
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  status:
+    type: string
+  readable_status:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  updated_by_uuid:
+    type: string
+  updated_by_name:
+    type: string
+  project_pitch_uuid:
+    type: string
+  form_uuid:
+    type: string
+  stage:
+    type: object
+    properties:
+      uuid:
+        type: string
+      name:
+        type: string
+      order:
+        type: string

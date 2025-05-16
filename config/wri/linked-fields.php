@@ -224,6 +224,12 @@ return [
                     'input_type' => 'employees',
                     'collection' => 'temp'
                 ],
+                'org-financial-indicators-financial-collection' => [
+                    'property' => 'financialCollection',
+                    'label' => 'Financial collection',
+                    'resource' => 'App\Http\Resources\V2\FinancialIndicatorsResource',
+                    'input_type' => 'financialIndicators',
+                ],
             ],
         ],
         'project-pitch' => [
@@ -841,6 +847,12 @@ return [
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'trainingBeneficiaries',
                     'collection' => 'training'
+                ],
+                'pro-rep-financial-indicators-financial-collection' => [
+                    'property' => 'financialCollection',
+                    'label' => 'Financial collection',
+                    'resource' => 'App\Http\Resources\V2\FinancialIndicatorsResource',
+                    'input_type' => 'financialIndicators',
                 ],
             ],
             'file-collections' => [

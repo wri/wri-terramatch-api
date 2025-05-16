@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Constants\PolygonFields;
 use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Helpers\GeometryHelper;
 use App\Helpers\PolygonGeometryHelper;
@@ -44,13 +45,13 @@ class PolygonService
     public const ESTIMATED_AREA_CRITERIA_ID = 12;
     public const SCHEMA_CRITERIA_ID = 13;
     public const DATA_CRITERIA_ID = 14;
+    public const PLANT_START_DATE_CRITERIA_ID = 15;
 
     public const UPLOADED_SOURCE = 'uploaded';
     public const TERRAMACH_SOURCE = 'terramatch';
     public const GREENHOUSE_SOURCE = 'greenhouse';
 
     public const EXCLUDED_VALIDATION_CRITERIA = [
-      self::DATA_CRITERIA_ID,
       self::ESTIMATED_AREA_CRITERIA_ID,
       self::WITHIN_COUNTRY_CRITERIA_ID,
     ];
@@ -58,16 +59,7 @@ class PolygonService
     // TODO: Remove this const and its usages when the point transformation ticket is complete.
     public const TEMP_FAKE_POLYGON_UUID = 'temp_fake_polygon_uuid';
 
-    protected const POINT_PROPERTIES = [
-        'site_id',
-        'poly_name',
-        'plantstart',
-        'plantend',
-        'practice',
-        'target_sys',
-        'distr',
-        'num_trees',
-    ];
+    protected const POINT_PROPERTIES = PolygonFields::POINT_PROPERTIES;
 
     private const VALID_PRACTICES = [
         'tree-planting',
@@ -472,11 +464,6 @@ class PolygonService
             $properties['plantstart'] = null;
         }
 
-        try {
-            $properties['plantend'] = empty($properties['plantend']) ? null : Carbon::parse($properties['plantend']);
-        } catch (\Exception $e) {
-            $properties['plantend'] = null;
-        }
         $properties['num_trees'] = is_int($properties['num_trees'] ?? null) ? $properties['num_trees'] : null;
 
         $distributionsValidValues = ['full', 'partial', 'single-line'];
@@ -490,7 +477,6 @@ class PolygonService
             'poly_name' => $properties['poly_name'] ?? null,
             'site_id' => $properties['site_id'] ?? null,
             'plantstart' => $properties['plantstart'],
-            'plantend' => $properties['plantend'],
             'practice' => $properties['practice'],
             'target_sys' => $properties['target_sys'],
             'distr' => $properties['distr'],
@@ -532,8 +518,6 @@ class PolygonService
 
         switch ($field) {
             case 'plantstart':
-                return ! $this->isValidDate($value);
-            case 'plantend':
                 return ! $this->isValidDate($value);
             case 'practice':
                 return ! $this->areValidItems($value, self::VALID_PRACTICES);
