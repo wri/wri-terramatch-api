@@ -29,6 +29,12 @@ class FormSubmissionResource extends JsonResource
             'status' => $this->status,
             'application_uuid' => data_get($this->application, 'uuid'),
             'organisation_uuid' => $this->organisation_uuid,
+            'organisation_attributes' => [
+                'uuid' => $this->organisation_uuid,
+                'type' => $this->organisation?->type,
+                'currency' => $this->organisation?->currency,
+                'start_month' => $this->organisation?->fin_start_month,
+            ],
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
             'stage' => new StageLiteResource($this->stage),
