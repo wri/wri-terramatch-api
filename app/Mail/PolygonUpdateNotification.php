@@ -101,7 +101,7 @@ class PolygonUpdateNotification extends I18nMail
         return implode('', $rows);
     }
 
-    private function getStatusRow(string $projectName, string $siteName, string $polygonName, PolygonUpdates $polygonUpdateRecord): string
+    private function getStatusRow($projectName, $siteName, $polygonName, $polygonUpdateRecord): string
     {
         $link = $this->getLink();
 
