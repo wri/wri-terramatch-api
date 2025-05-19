@@ -70,8 +70,11 @@ class RunIndicatorAnalysisService
             $processedCount = 0;
             $skippedCount = 0;
             $errorCount = 0;
+            $updateExisting = isset($request['update_existing']) ? $request['update_existing'] : false;
 
-            Log::info("Starting analysis for slug: $slug with $totalPolygons polygons");
+            Log::info("Starting analysis for slug: $slug with $totalPolygons polygons", [
+                'update_existing' => $updateExisting,
+            ]);
 
             foreach ($request['uuids'] as $index => $uuid) {
                 try {
@@ -89,22 +92,32 @@ class RunIndicatorAnalysisService
                     }
 
                     // Check if we already have a record for this polygon in the current year
-                    $registerExist = DB::table($slugMappings[$slug]['table_name'].' as i')
-                        ->where('i.site_polygon_id', $polygonGeometry['site_polygon_id'])
-                        ->where('i.indicator_slug', $slug)
-                        ->where('i.year_of_analysis', Carbon::now()->year)
+                    $registerExist = DB::table($slugMappings[$slug]['table_name'])
+                        ->where('site_polygon_id', $polygonGeometry['site_polygon_id'])
+                        ->where('indicator_slug', $slug)
+                        ->where('year_of_analysis', Carbon::now()->year)
                         ->exists();
 
-                    if ($registerExist) {
+                    // Debug logging to check if records are found
+                    Log::debug('Checking existing records', [
+                        'uuid' => $uuid,
+                        'site_polygon_id' => $polygonGeometry['site_polygon_id'],
+                        'table' => $slugMappings[$slug]['table_name'],
+                        'exists' => $registerExist,
+                    ]);
+
+                    // Skip existing records unless update_existing is true or force is true
+                    if ($registerExist && ! $updateExisting && ! $request['force']) {
                         $skippedCount++;
+                        Log::debug("Skipping existing record for polygon: $uuid");
 
                         continue;
                     }
 
                     if (str_contains($slug, 'restorationBy')) {
-                        $this->processRestorationAnalysis($uuid, $slug, $polygonGeometry, $slugMappings);
+                        $this->processRestorationAnalysis($uuid, $slug, $polygonGeometry, $slugMappings, $updateExisting);
                     } else {
-                        $this->processTreeCoverAnalysis($uuid, $slug, $polygonGeometry, $slugMappings);
+                        $this->processTreeCoverAnalysis($uuid, $slug, $polygonGeometry, $slugMappings, $updateExisting);
                     }
 
                     $processedCount++;
@@ -123,6 +136,7 @@ class RunIndicatorAnalysisService
                 'processed' => $processedCount,
                 'skipped' => $skippedCount,
                 'errors' => $errorCount,
+                'update_existing' => $updateExisting,
             ]);
 
             return response()->json([
@@ -154,9 +168,10 @@ class RunIndicatorAnalysisService
      * @param string $slug
      * @param array $polygonGeometry
      * @param array $slugMappings
+     * @param bool $updateExisting
      * @return void
      */
-    protected function processRestorationAnalysis($uuid, $slug, $polygonGeometry, $slugMappings)
+    protected function processRestorationAnalysis($uuid, $slug, $polygonGeometry, $slugMappings, $updateExisting)
     {
         $geojson = GeometryHelper::getPolygonGeojson($uuid);
 
@@ -194,15 +209,41 @@ class RunIndicatorAnalysisService
                     'value' => $value,
                 ];
 
-                // Insert the record, ignoring duplicates
-                $slugMappings[$slug]['model']::updateOrCreate(
-                    [
-                        'indicator_slug' => $slug,
-                        'site_polygon_id' => $polygonGeometry['site_polygon_id'],
-                        'year_of_analysis' => Carbon::now()->year,
-                    ],
-                    $data
-                );
+                // Insert or update the record based on the updateExisting flag
+                $searchCriteria = [
+                    'indicator_slug' => $slug,
+                    'site_polygon_id' => $polygonGeometry['site_polygon_id'],
+                    'year_of_analysis' => Carbon::now()->year,
+                ];
+
+                if ($updateExisting) {
+                    // Update existing record using direct update method
+                    Log::debug("Updating record for polygon UUID: $uuid with new data");
+
+                    // Try to find and update the existing record
+                    $model = $slugMappings[$slug]['model'];
+                    $record = $model::where($searchCriteria)->first();
+
+                    if ($record) {
+                        Log::debug("Found existing record ID: {$record->id}, updating");
+                        $record->value = $value;
+                        $record->save();
+
+                        // Log the value for debugging
+                        Log::debug("Updated record with value: {$value}");
+                    } else {
+                        Log::warning("Record expected for update but not found for polygon UUID: $uuid");
+                    }
+                } else {
+                    // Only create if it doesn't exist
+                    $exists = $slugMappings[$slug]['model']::where($searchCriteria)->exists();
+                    if (! $exists) {
+                        Log::debug("Creating new record for polygon UUID: $uuid");
+                        $slugMappings[$slug]['model']::create($data);
+                    } else {
+                        Log::debug("Record already exists for polygon UUID: $uuid - skipping");
+                    }
+                }
 
                 $success = true;
             } catch (\Exception $e) {
@@ -227,9 +268,10 @@ class RunIndicatorAnalysisService
      * @param string $slug
      * @param array $polygonGeometry
      * @param array $slugMappings
+     * @param bool $updateExisting
      * @return void
      */
-    protected function processTreeCoverAnalysis($uuid, $slug, $polygonGeometry, $slugMappings)
+    protected function processTreeCoverAnalysis($uuid, $slug, $polygonGeometry, $slugMappings, $updateExisting)
     {
         $retries = 0;
         $success = false;
@@ -254,14 +296,41 @@ class RunIndicatorAnalysisService
 
                 $data = $this->generateTreeCoverLossData($processedTreeCoverLossValue, $slug, $polygonGeometry);
 
-                $slugMappings[$slug]['model']::updateOrCreate(
-                    [
-                        'indicator_slug' => $slug,
-                        'site_polygon_id' => $polygonGeometry['site_polygon_id'],
-                        'year_of_analysis' => Carbon::now()->year,
-                    ],
-                    $data
-                );
+                // Insert or update the record based on the updateExisting flag
+                $searchCriteria = [
+                    'indicator_slug' => $slug,
+                    'site_polygon_id' => $polygonGeometry['site_polygon_id'],
+                    'year_of_analysis' => Carbon::now()->year,
+                ];
+
+                if ($updateExisting) {
+                    // Update existing record using direct update method
+                    Log::debug("Updating tree cover loss record for polygon UUID: $uuid with new data");
+
+                    // Try to find and update the existing record
+                    $model = $slugMappings[$slug]['model'];
+                    $record = $model::where($searchCriteria)->first();
+
+                    if ($record) {
+                        Log::debug("Found existing tree cover loss record ID: {$record->id}, updating");
+                        $record->value = $data['value'];
+                        $record->save();
+
+                        // Log the value for debugging
+                        Log::debug("Updated tree cover loss record with value: {$data['value']}");
+                    } else {
+                        Log::warning("Tree cover loss record expected for update but not found for polygon UUID: $uuid");
+                    }
+                } else {
+                    // Only create if it doesn't exist
+                    $exists = $slugMappings[$slug]['model']::where($searchCriteria)->exists();
+                    if (! $exists) {
+                        Log::debug("Creating new record for polygon UUID: $uuid");
+                        $slugMappings[$slug]['model']::create($data);
+                    } else {
+                        Log::debug("Record already exists for polygon UUID: $uuid - skipping");
+                    }
+                }
 
                 $success = true;
             } catch (\Exception $e) {

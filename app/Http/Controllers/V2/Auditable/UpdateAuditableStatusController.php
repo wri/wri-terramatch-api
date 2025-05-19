@@ -97,8 +97,8 @@ class UpdateAuditableStatusController extends Controller
             $criteriaArray = $criteriaList->toArray();
 
             $criteriaArray = array_filter($criteriaArray, function ($criteria) {
-                return $criteria['criteria_id'] !== PolygonService::ESTIMATED_AREA_CRITERIA_ID &&
-                    $criteria['criteria_id'] !== PolygonService::DATA_CRITERIA_ID;
+                return $criteria['criteria_id'] !== PolygonService::ESTIMATED_AREA_CRITERIA_ID
+                    && $criteria['criteria_id'] !== PolygonService::WITHIN_COUNTRY_CRITERIA_ID;
             });
 
             $canApprove = true;

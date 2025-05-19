@@ -6,6 +6,7 @@ use App\Models\Traits\HasUuid;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\MonitoredData\IndicatorHectares;
+use App\Models\V2\MonitoredData\IndicatorTreeCover;
 use App\Models\V2\MonitoredData\IndicatorTreeCoverLoss;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
@@ -42,7 +43,6 @@ class SitePolygon extends Model implements AuditableModel
       'site_id',
       'point_id',
       'plantstart',
-      'plantend',
       'practice',
       'target_sys',
       'distr',
@@ -106,6 +106,11 @@ class SitePolygon extends Model implements AuditableModel
         return $this->hasMany(IndicatorHectares::class, 'site_polygon_id');
     }
 
+    public function treeCoverIndicator()
+    {
+        return $this->hasMany(IndicatorTreeCover::class, 'site_polygon_id');
+    }
+
     public function treeCoverLossIndicator()
     {
         return $this->hasMany(IndicatorTreeCoverLoss::class, 'site_polygon_id');
@@ -166,7 +171,6 @@ class SitePolygon extends Model implements AuditableModel
         }
         $newSitePolygon->primary_uuid = $this->primary_uuid;
         $newSitePolygon->plantstart = $properties['plantstart'] ?? $this->plantstart;
-        $newSitePolygon->plantend = $properties['plantend'] ?? $this->plantend;
         $newSitePolygon->practice = $properties['practice'] ?? $this->practice;
         $newSitePolygon->target_sys = $properties['target_sys'] ?? $this->target_sys;
         $newSitePolygon->distr = $properties['distr'] ?? $this->distr;

@@ -80,6 +80,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 $validationService->getGeometryType($request);
                 $validationService->validateEstimatedArea($request);
                 $validationService->validateDataInDB($request);
+                $validationService->validatePlantStartDate($request);
                 $polygonService->updateSitePolygonValidity($polygonUuid);
 
                 $delayedJob->increment('processed_content');

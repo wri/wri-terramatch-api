@@ -15,6 +15,8 @@ class OrganisationLiteResource extends JsonResource
             'is_test' => $this->is_test,
             'readable_status' => $this->readable_status,
             'type' => $this->type,
+            'currency' => $this->currency,
+            'fin_start_month' => $this->fin_start_month,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at,
         ];

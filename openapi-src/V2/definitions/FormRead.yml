@@ -33,6 +33,8 @@ properties:
     type: boolean
   stage_id:
     type: string
+  funding_programme_uuid:
+    type: string
   options_other:
     type: boolean
   form_sections:

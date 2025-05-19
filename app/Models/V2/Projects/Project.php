@@ -484,19 +484,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             $this->getSelfReportedWorkdayCountAttribute(true);
     }
 
-    public function getTotalJobsCreatedAttribute(): int
-    {
-        $ftTotal = ProjectReport::where('project_id', $this->id)
-            ->approved()
-            ->sum('ft_total');
-
-        $ptTotal = ProjectReport::where('project_id', $this->id)
-            ->approved()
-            ->sum('pt_total');
-
-        return $ftTotal + $ptTotal;
-    }
-
     /**
      * Get the total number of approved jobs created (both full-time and part-time)
      *
@@ -504,10 +491,19 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
      */
     public function getTotalApprovedJobsCreatedAttribute(): int
     {
-        return $this->reports()
-            ->approved()
-            ->select(DB::raw('SUM(COALESCE(ft_total, 0) + COALESCE(pt_total, 0)) as total_jobs'))
-            ->value('total_jobs') ?? 0;
+        return DemographicEntry::whereIn(
+            'demographic_id',
+            Demographic::where([
+                'demographical_type' => ProjectReport::class,
+                'hidden' => false,
+                'type' => Demographic::JOBS_TYPE,
+            ])
+            ->whereIn('demographical_id', $this->reports()->approved()->select('id'))
+            ->select('id')
+        )
+        ->where('type', 'gender')
+        ->whereNull('deleted_at')
+        ->sum('amount') ?? 0;
     }
 
     /**
