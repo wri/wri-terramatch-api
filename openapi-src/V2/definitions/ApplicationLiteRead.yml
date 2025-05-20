@@ -6,7 +6,13 @@ properties:
   current_submission:
     $ref: './_index.yml#/FormSubmissionLiteRead'
   funding_programme_name:
-    type: integer
+    type: string
+  funding_programme_uuid:
+    type: string
+  organisation_name:
+    type: string
+  organisation_uuid:
+    type: string
   created_at:
     type: string
     format: date-time
