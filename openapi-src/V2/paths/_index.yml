@@ -31,9 +31,6 @@
 /v2/{ENTITY}/{UUID}/reports:
   get:
     $ref: './Entity/get-v2-entity-uuid-reports.yml'
-/v2/admin/tasks:
-  get:
-    $ref: './Tasks/get-v2-admin-tasks.yml'
 /v2/admin/forms:
   post:
     $ref: './Forms/post-v2-admin-forms.yml'
@@ -1175,21 +1172,6 @@
 /v2/projects/{UUID}/nurseries:
   get:
     $ref: './Projects/get-v2-projects-uuid-nurseries.yml'
-/v2/projects/{UUID}/tasks:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-tasks.yml'
-/v2/organisations/{UUID}/tasks:
-  get:
-    $ref: './Organisations/get-v2-organisations-uuid-tasks.yml'
-/v2/tasks/{UUID}:
-  get:
-    $ref: './Tasks/get-v2-tasks-uuid.yml'
-/v2/tasks/{UUID}/reports:
-  get:
-    $ref: './Tasks/get-v2-tasks-uuid-reports.yml'
-/v2/tasks/{UUID}/submit:
-  put:
-    $ref: './Tasks/put-v2-tasks-uuid-submit.yml'
 /v2/{ENTITY}/{UUID}:
   get:
     summary: View a specific entity as raw data
