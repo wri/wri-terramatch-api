@@ -2130,9 +2130,6 @@
 /v2/terrafund/site-polygon/{uuid}/{siteUuid}:
   post:
     $ref: './Terrafund/post-v2-site-polygon-data.yml'
-/v2/terrafund/polygon/bbox/{uuid}:
-  get:
-    $ref: './Terrafund/get-v2-polygon-bbox.yml'
 /v2/terrafund/geojson/complete:
   get:
     $ref: './Terrafund/get-v2-geojson-complete-download.yml'

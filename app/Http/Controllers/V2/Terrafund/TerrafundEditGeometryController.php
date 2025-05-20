@@ -397,19 +397,6 @@ class TerrafundEditGeometryController extends Controller
         }
     }
 
-    public function getPolygonBbox(string $uuid)
-    {
-        try {
-            $bboxCoordinates = GeometryHelper::getPolygonsBbox([$uuid]);
-
-            return response()->json(['bbox' => $bboxCoordinates]);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-
-            return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
-        }
-    }
-
     private function getDiff(SitePolygon $sitePolygon, SitePolygon $newSitePolygon): array
     {
         $diff = [];
