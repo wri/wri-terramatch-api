@@ -2124,9 +2124,6 @@
 /v2/sites/{site}/polygon:
   get:
     $ref: './Sites/get-v2-sites-polygons-data.yml'
-/v2/sites/{site}/bbox:
-  get:
-    $ref: './Sites/get-v2-sites-polygon-bbox.yml'
 /v2/terrafund/site-polygon/{uuid}/{siteUuid}:
   post:
     $ref: './Terrafund/post-v2-site-polygon-data.yml'

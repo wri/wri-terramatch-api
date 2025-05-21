@@ -49973,30 +49973,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  '/v2/sites/{site}/bbox':
-    get:
-      summary: Get bbox for a specific site
-      parameters:
-        - in: path
-          name: site
-          required: true
-          type: string
-          description: The ID of the site
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            title: SitePolygonsBboxResponse
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   '/v2/terrafund/site-polygon/{uuid}/{siteUuid}':
     post:
       summary: Create site polygon
@@ -50055,30 +50031,6 @@ paths:
                 type: number
                 format: double
                 description: Calculated area in hectares
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/polygon/bbox/{uuid}':
-    get:
-      summary: Get bbox for a polygon
-      parameters:
-        - in: path
-          name: uuid
-          required: true
-          type: string
-          description: The UUID of the polygon
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            title: SitePolygonsBboxResponse
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
         '400':
           description: Bad request
         '500':
