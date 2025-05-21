@@ -4,20 +4,13 @@ namespace App\Console\Commands;
 
 use App\Console\Commands\Traits\Abortable;
 use App\Console\Commands\Traits\AbortException;
-use App\Console\Commands\Traits\ExceptionLevel;
-use App\Models\SiteSubmission;
 use App\Models\Submission;
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;
 use App\Models\V2\Organisation;
 use App\Models\V2\ProjectPitch;
-use App\Models\V2\Projects\ProjectReport;
-use App\Models\V2\Sites\SiteReport;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromArray;
@@ -59,7 +52,7 @@ class BulkOrganisationImport extends Command
                 try {
                     $row = $this->parseRow($csvRow);
                     if ($rows->contains(fn ($existing) => $existing['name'] == $row['name'])) {
-                        $this->abort("Duplicate organisation name within CSV: " . $row['name']);
+                        $this->abort('Duplicate organisation name within CSV: ' . $row['name']);
                     }
 
                     $rows->push($row);
@@ -132,18 +125,17 @@ class BulkOrganisationImport extends Command
             $this->headerOrder[] = $header;
         }
 
-        $this->assert(in_array('name', $this->headerOrder), "No name column found");
-        $this->assert(in_array('type', $this->headerOrder), "No type column found");
-        $this->assert(in_array('hq_street_1', $this->headerOrder), "No hqStreet1 column found");
-        $this->assert(in_array('hq_street_2', $this->headerOrder), "No hqStreet1 column found");
-        $this->assert(in_array('hq_city', $this->headerOrder), "No hqCity column found");
-        $this->assert(in_array('hq_state', $this->headerOrder), "No hqState column found");
-        $this->assert(in_array('hq_zipcode', $this->headerOrder), "No hqZipcode column found");
-        $this->assert(in_array('hq_country', $this->headerOrder), "No hqCountry column found");
-        $this->assert(in_array('funding_programme_uuid', $this->headerOrder), "No fundingProgrammeUuid column found");
-        $this->assert(count($this->headerOrder) == 9, "Invalid number of columns found: " . json_encode($this->headerOrder));
+        $this->assert(in_array('name', $this->headerOrder), 'No name column found');
+        $this->assert(in_array('type', $this->headerOrder), 'No type column found');
+        $this->assert(in_array('hq_street_1', $this->headerOrder), 'No hqStreet1 column found');
+        $this->assert(in_array('hq_street_2', $this->headerOrder), 'No hqStreet1 column found');
+        $this->assert(in_array('hq_city', $this->headerOrder), 'No hqCity column found');
+        $this->assert(in_array('hq_state', $this->headerOrder), 'No hqState column found');
+        $this->assert(in_array('hq_zipcode', $this->headerOrder), 'No hqZipcode column found');
+        $this->assert(in_array('hq_country', $this->headerOrder), 'No hqCountry column found');
+        $this->assert(in_array('funding_programme_uuid', $this->headerOrder), 'No fundingProgrammeUuid column found');
+        $this->assert(count($this->headerOrder) == 9, 'Invalid number of columns found: ' . json_encode($this->headerOrder));
     }
-
 
     /**
      * @throws AbortException
@@ -164,21 +156,21 @@ class BulkOrganisationImport extends Command
             return null;
         }
 
-        $this->assert(!empty($row['name']), "No name found: " . json_encode($row));
-        $this->assert(!empty($row['type']), "No type found: " . json_encode($row));
-        $this->assert(!empty($row['hq_street_1']), "No hqStreet1 found: " . json_encode($row));
+        $this->assert(! empty($row['name']), 'No name found: ' . json_encode($row));
+        $this->assert(! empty($row['type']), 'No type found: ' . json_encode($row));
+        $this->assert(! empty($row['hq_street_1']), 'No hqStreet1 found: ' . json_encode($row));
         // We allow hq_street_2 to be empty
-        $this->assert(!empty($row['hq_city']), "No hqCity found: " . json_encode($row));
-        $this->assert(!empty($row['hq_state']), "No hqState found: " . json_encode($row));
-        $this->assert(!empty($row['hq_zipcode']), "No hqZipcode found: " . json_encode($row));
-        $this->assert(!empty($row['hq_country']), "No hqCountry found: " . json_encode($row));
-        $this->assert(!empty($row['funding_programme_uuid']), "No fundingProgrammeUuid found: " . json_encode($row));
+        $this->assert(! empty($row['hq_city']), 'No hqCity found: ' . json_encode($row));
+        $this->assert(! empty($row['hq_state']), 'No hqState found: ' . json_encode($row));
+        $this->assert(! empty($row['hq_zipcode']), 'No hqZipcode found: ' . json_encode($row));
+        $this->assert(! empty($row['hq_country']), 'No hqCountry found: ' . json_encode($row));
+        $this->assert(! empty($row['funding_programme_uuid']), 'No fundingProgrammeUuid found: ' . json_encode($row));
 
-        $this->assert(!Organisation::where('name', $row['name'])->exists(), "Organisation already exists: " . $row['name']);
-        $this->assert(FundingProgramme::isUuid($row['funding_programme_uuid'])->exists(), "Funding programme not found: " . $row['funding_programme_uuid']);
+        $this->assert(! Organisation::where('name', $row['name'])->exists(), 'Organisation already exists: ' . $row['name']);
+        $this->assert(FundingProgramme::isUuid($row['funding_programme_uuid'])->exists(), 'Funding programme not found: ' . $row['funding_programme_uuid']);
         $this->assert(
             FundingProgramme::isUuid($row['funding_programme_uuid'])->first()->stages()->count() > 0,
-            "Funding programme has no stages: " . $row['funding_programme_uuid']
+            'Funding programme has no stages: ' . $row['funding_programme_uuid']
         );
 
         return $row;
@@ -192,7 +184,7 @@ class BulkOrganisationImport extends Command
             'private' => false,
             'currency' => 'USD',
             // The script does not create test orgs
-            'is_test' => false
+            'is_test' => false,
         ]));
 
         // Create a blank application for the indicated funding programme. This code follows the pattern from
@@ -207,7 +199,7 @@ class BulkOrganisationImport extends Command
         ]);
         $application = Application::create([
             'organisation_uuid' => $org->uuid,
-            'funding_programme_uuid' => $fundingProgramme->uuid
+            'funding_programme_uuid' => $fundingProgramme->uuid,
         ]);
         FormSubmission::create([
             'form_id' => $fundingProgramme->stages()->first()->form->uuid,
