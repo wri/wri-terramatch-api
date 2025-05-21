@@ -9,7 +9,11 @@ use App\Models\SiteSubmission;
 use App\Models\Submission;
 use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Demographics\DemographicCollections;
+use App\Models\V2\Forms\Application;
+use App\Models\V2\Forms\FormSubmission;
+use App\Models\V2\FundingProgramme;
 use App\Models\V2\Organisation;
+use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
 use Illuminate\Console\Command;
@@ -136,7 +140,8 @@ class BulkOrganisationImport extends Command
         $this->assert(in_array('hq_state', $this->headerOrder), "No hqState column found");
         $this->assert(in_array('hq_zipcode', $this->headerOrder), "No hqZipcode column found");
         $this->assert(in_array('hq_country', $this->headerOrder), "No hqCountry column found");
-        $this->assert(count($this->headerOrder) == 8, "Invalid number of columns found: " . json_encode($this->headerOrder));
+        $this->assert(in_array('funding_programme_uuid', $this->headerOrder), "No fundingProgrammeUuid column found");
+        $this->assert(count($this->headerOrder) == 9, "Invalid number of columns found: " . json_encode($this->headerOrder));
     }
 
 
@@ -167,14 +172,21 @@ class BulkOrganisationImport extends Command
         $this->assert(!empty($row['hq_state']), "No hqState found: " . json_encode($row));
         $this->assert(!empty($row['hq_zipcode']), "No hqZipcode found: " . json_encode($row));
         $this->assert(!empty($row['hq_country']), "No hqCountry found: " . json_encode($row));
+        $this->assert(!empty($row['funding_programme_uuid']), "No fundingProgrammeUuid found: " . json_encode($row));
+
         $this->assert(!Organisation::where('name', $row['name'])->exists(), "Organisation already exists: " . $row['name']);
+        $this->assert(FundingProgramme::isUuid($row['funding_programme_uuid'])->exists(), "Funding programme not found: " . $row['funding_programme_uuid']);
+        $this->assert(
+            FundingProgramme::isUuid($row['funding_programme_uuid'])->first()->stages()->count() > 0,
+            "Funding programme has no stages: " . $row['funding_programme_uuid']
+        );
 
         return $row;
     }
 
     protected function createOrganisation($orgData): Organisation
     {
-        return Organisation::create(array_merge($orgData, [
+        $org = Organisation::create(array_merge($orgData, [
             'status' => Organisation::STATUS_DRAFT,
             // These two are required in the DB schema, but seem unused; all values in the DB are the same
             'private' => false,
@@ -182,5 +194,31 @@ class BulkOrganisationImport extends Command
             // The script does not create test orgs
             'is_test' => false
         ]));
+
+        // Create a blank application for the indicated funding programme. This code follows the pattern from
+        // StoreFormSubmissionController.
+        // Note: the application updated_by and form submission user_id must be left blank because we don't have a
+        // user in this context. The user import script that will be run after this one will add that data when the
+        // first user is added to the org.
+        $fundingProgramme = FundingProgramme::isUuid($orgData['funding_programme_uuid'])->first();
+        $projectPitch = ProjectPitch::create([
+            'organisation_id' => $org->uuid,
+            'funding_programme_id' => $fundingProgramme->uuid,
+        ]);
+        $application = Application::create([
+            'organisation_uuid' => $org->uuid,
+            'funding_programme_uuid' => $fundingProgramme->uuid
+        ]);
+        FormSubmission::create([
+            'form_id' => $fundingProgramme->stages()->first()->form->uuid,
+            'stage_uuid' => $fundingProgramme->stages()->first()->id,
+            'organisation_uuid' => $org->uuid,
+            'project_pitch_uuid' => $projectPitch->uuid,
+            'application_id' => $application->id,
+            'status' => FormSubmission::STATUS_STARTED,
+            'answers' => [],
+        ]);
+
+        return $org;
     }
 }
