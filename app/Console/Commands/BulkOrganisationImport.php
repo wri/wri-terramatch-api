@@ -203,7 +203,7 @@ class BulkOrganisationImport extends Command
         ]);
         FormSubmission::create([
             'form_id' => $fundingProgramme->stages()->first()->form->uuid,
-            'stage_uuid' => $fundingProgramme->stages()->first()->id,
+            'stage_uuid' => $fundingProgramme->stages()->first()->uuid,
             'organisation_uuid' => $org->uuid,
             'project_pitch_uuid' => $projectPitch->uuid,
             'application_id' => $application->id,
