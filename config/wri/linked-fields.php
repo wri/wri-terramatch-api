@@ -129,6 +129,20 @@ return [
                 'org-external-technical-assistance' => ['property' => 'external_technical_assistance', 'label' => 'Description of Non-Financial Technical Assistance Organisation has Received', 'input_type' => 'text'],
                 'org-barriers-to-funding' => ['property' => 'barriers_to_funding', 'label' => 'Barriers organisation faces to accessing funding, scaling operations, or delivering impact', 'input_type' => 'text'],
                 'org-capacity-building-support-needed' => ['property' => 'capacity_building_support_needed', 'label' => 'Where Support Needed for Project Capacity-Building', 'input_type' => 'text'],
+
+                'org-associations-cooperatives' => ['property' => 'associations_cooperatives', 'label' => 'Is the organization an association or cooperative?', 'input_type' => 'boolean'],
+                'org-territories-of-operation' => ['property' => 'territories_of_operation', 'label' => 'Territories in which the organization operates', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'territories-of-operation-collection'],
+                'org-decisionmaking-structure-description' => ['property' => 'decisionmaking_structure_description', 'label' => 'Organization’s decision-making structure', 'input_type' => 'text'],
+                'org-decisionmaking-structure-individuals-involved' => ['property' => 'decisionmaking_structure_individuals_involved', 'label' => 'Individuals involved in decision-making structure', 'input_type' => 'text'],
+                'org-average-worker-income' => ['property' => 'average_worker_income', 'label' => 'Average income per worker over the past year', 'input_type' => 'number'],
+                'org-anr-practices-past' => ['property' => 'anr_practices_past', 'label' => 'ANR practices that the organization has used', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'anr-practices-past-collection'],
+                'org-anr-monitoring-approaches' => ['property' => 'anr_monitoring_approaches', 'label' => 'Approaches the organization has used to monitor ANR progress', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'anr-monitoring-approaches-collection'],
+                'org-anr-monitoring-approaches-description' => ['property' => 'anr_monitoring_approaches_description', 'label' => 'Description of the approaches used to monitor ANR progress', 'input_type' => 'text'],
+                'org-anr-communication-funders' => ['property' => 'anr_communication_funders', 'label' => 'How the organization communicated ANR impact to funders', 'input_type' => 'text'],
+                'org-bioeconomy-products' => ['property' => 'bioeconomy_products', 'label' => 'Bioeconomy products cultivated by organization', 'input_type' => 'text'],
+                'org-bioeconomy-traditional-knowledge' => ['property' => 'bioeconomy_traditional_knowledge', 'label' => 'Traditional Knowledge within the bioeconomy production process', 'input_type' => 'text'],
+                'org-bioeconomy-product-processing' => ['property' => 'bioeconomy_product_processing', 'label' => 'How bioeconomy products are processed before selling', 'input_type' => 'text'],
+                'org-bioeconomy-buyers' => ['property' => 'bioeconomy_buyers', 'label' => 'Buyers of the bioeconomy products', 'input_type' => 'text'],
             ],
             'file-collections' => [
                 'org-fcol-cover' => ['property' => 'cover', 'label' => 'Cover image', 'input_type' => 'file', 'multichoice' => false],
@@ -247,7 +261,7 @@ return [
                 'pro-pit-bgt' => ['property' => 'project_budget', 'label' => 'Project budget', 'input_type' => 'number'],
                 'pro-pit-cap-bld-needs' => ['property' => 'capacity_building_needs', 'label' => 'Capacity building needs', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'building-needs'],
                 'pro-pit-how-discovered' => ['property' => 'how_discovered', 'label' => 'How discovered WRI', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'media-channels'],
-                'pro-pit-land-tenure-proj-area' => ['property' => 'land_tenure_proj_area', 'label' => 'Land tenure project area', 'input_type' => 'select', 'multichoice' => true],
+                'pro-pit-land-tenure-proj-area' => ['property' => 'land_tenure_proj_area', 'label' => 'Land tenure project area', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'land-tenure-proj-area-collection'],
 
                 'pro-pit-expected-active-rest-start-date' => ['property' => 'expected_active_restoration_start_date', 'label' => 'Expected active restoration start date', 'input_type' => 'date'],
                 'pro-pit-expected-active-rest-end-date' => ['property' => 'expected_active_restoration_end_date', 'label' => 'Expected active restoration end date', 'input_type' => 'date'],
@@ -339,6 +353,10 @@ return [
                 'pro-pit-barriers-project-activity' => ['property' => 'barriers_project_activity', 'label' => 'Barriers to Project Activities', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'barriers-project-collection'],
                 'pro-pit-barriers-project-activity-description' => ['property' => 'barriers_project_activity_description', 'label' => 'Barriers to Project Activities Descriptions', 'input_type' => 'text'],
                 'pro-pit-other-engage-women-youth' => ['property' => 'other_engage_women_youth', 'label' => 'Other Ways Project will Engage and Benefit Women/Youth', 'input_type' => 'text'],
+
+                'pro-pit-forest-fragments-distance' => ['property' => 'forest_fragments_distance', 'label' => 'Approximate distance in meters between project area and the center of the nearest forest fragment', 'input_type' => 'number'],
+                'pro-pit-anr-practices-proposed' => ['property' => 'anr_practices_proposed', 'label' => 'ANR practices that the organization will use during the project', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'anr-practices-proposed-collection'],
+                'pro-pit-information-authorization' => ['property' => 'information_authorization', 'label' => 'If the organization authorizes WRI to use their data for research', 'input_type' => 'boolean'],
             ],
             'file-collections' => [
                 'pro-pit-fcol-cover' => ['property' =>  'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],

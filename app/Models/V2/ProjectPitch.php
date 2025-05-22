@@ -61,6 +61,8 @@ class ProjectPitch extends Model implements MediaModel
         'level_2_proposed' => 'array',
         'lat_proposed' => 'float',
         'long_proposed' => 'float',
+        'anr_practices_proposed' => 'array',
+        'information_authorization' => 'boolean',
     ];
 
     public $fileConfiguration = [
