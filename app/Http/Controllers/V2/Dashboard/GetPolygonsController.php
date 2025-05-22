@@ -21,24 +21,6 @@ class GetPolygonsController extends Controller
         return response()->json(['centroid' => $centroid]);
     }
 
-    public function getPolygonsOfProject($projectId)
-    {
-        if (! $projectId) {
-            return response()->json(['error' => 'Project ID is required'], 400);
-        }
-        $project = Project::whereUuid($projectId)->firstOrFail();
-        $siteswithPolygons = $project->sites()
-            ->with(['sitePolygons' => function ($query) {
-                $query->select('uuid', 'site_id', 'poly_name', 'poly_id')
-                     ->where('status', 'approved')
-                     ->where('is_active', true);
-            }])
-            ->select('uuid', 'name')
-            ->get();
-
-        return response()->json($siteswithPolygons);
-    }
-
     public function getPolygonsDataByStatusOfProject(Request $request): GetPolygonsResource
     {
         $polygonsIdsByStatus = TerrafundDashboardQueryHelper::getPolygonsByStatusOfProjects($request);

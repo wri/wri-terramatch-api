@@ -21766,37 +21766,6 @@ definitions:
         type: integer
       treeSpeciesPercentage:
         type: number
-  DashboardGetProjectsResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          type: object
-          properties:
-            uuid:
-              type: string
-            name:
-              type: string
-            lat:
-              type: number
-              format: double
-            long:
-              type: number
-              format: double
-  DashboardGetProjectsData:
-    type: object
-    properties:
-      uuid:
-        type: string
-      name:
-        type: string
-      lat:
-        type: number
-        format: double
-      long:
-        type: number
-        format: double
   DashboardGetPolygonStatusResponse:
     properties:
       data:
@@ -51104,41 +51073,6 @@ paths:
           description: OK
           schema:
             type: file
-  /v2/dashboard/get-polygons:
-    get:
-      summary: Retrieve all polygons.
-      description: |
-        This endpoint returns all polygons by project uuid.
-      parameters:
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    name:
-                      type: string
-                    lat:
-                      type: number
-                      format: double
-                    long:
-                      type: number
-                      format: double
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   '/v2/dashboard/polygons/{poly_uuid}/centroid':
     get:
       summary: Retrieve the centroid of a polygon
@@ -51596,45 +51530,6 @@ paths:
                       type: integer
                     total_jobs_created:
                       type: integer
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  /v2/dashboard/get-projects:
-    get:
-      summary: Retrieve all project.
-      description: |
-        This endpoint returns all project location.
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    name:
-                      type: string
-                    lat:
-                      type: number
-                      format: double
-                    long:
-                      type: number
-                      format: double
         '400':
           description: Bad request
         '500':

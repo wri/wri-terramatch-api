@@ -668,7 +668,6 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
-    Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
@@ -680,7 +679,6 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
-    Route::get('/get-projects', GetProjectsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);

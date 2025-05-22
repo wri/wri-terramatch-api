@@ -2206,9 +2206,6 @@
 '/v2/dashboard/project-list-export':
   get:
     $ref: './Dashboard/get-v2-dashboard-project-list-export.yml'
-/v2/dashboard/get-polygons:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-get-polygons.yml'
 /v2/dashboard/polygons/{poly_uuid}/centroid:
   get:
     $ref: './Dashboard/get-v2-dashboard-polygons-poly_uuid-centroid.yml'
@@ -2248,9 +2245,6 @@
 /v2/dashboard/active-countries:
   get:
     $ref: './Dashboard/get-v2-dashboard-active-countries.yml'
-/v2/dashboard/get-projects:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-get-projects.yml'
 /v2/dashboard/frameworks:
   get:
     $ref: './Dashboard/get-v2-dashboard-frameworks.yml'
