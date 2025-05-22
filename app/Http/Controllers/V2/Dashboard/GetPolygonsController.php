@@ -7,7 +7,6 @@ use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\GetPolygonsResource;
 use App\Models\LandscapeGeom;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
