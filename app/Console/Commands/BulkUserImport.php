@@ -152,7 +152,7 @@ class BulkUserImport extends Command
 
             foreach ($application->formSubmissions as $formSubmission) {
                 if ($formSubmission->user_id == null) {
-                    $formSubmission->update(['user_id' => $user->id]);
+                    $formSubmission->update(['user_id' => $user->uuid]);
                 }
             }
         }
