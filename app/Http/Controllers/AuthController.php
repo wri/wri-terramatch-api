@@ -207,6 +207,7 @@ class AuthController extends Controller
 
         return JsonResponseHelper::success((object) [
             'email_address' => $user->email_address,
+            'locale' => $user->locale,
             'token_used' => false,
         ], 200);
     }

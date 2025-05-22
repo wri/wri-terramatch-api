@@ -47441,6 +47441,10 @@ paths:
                     type: boolean
                     example: false
                     description: 'Indicates whether the token has already been used. `true` if the token was used or does not exist, and `false` otherwise.'
+                  locale:
+                    type: string
+                    example: es-MX
+                    description: The locale to use for this user.
         '404':
           description: User not found for the associated token
           schema:

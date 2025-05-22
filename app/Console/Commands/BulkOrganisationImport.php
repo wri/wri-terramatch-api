@@ -172,7 +172,7 @@ class BulkOrganisationImport extends Command
         $countries = json_decode($row['countries']);
         $this->assert(is_array($countries), 'Invalid countries found: ' . json_encode($row));
         $this->assert(count($countries) > 0, 'No countries found: ' . json_encode($row));
-        $this->assert(!collect($countries)->contains(fn ($val) => !is_string($val)), 'Invalid country found: ' . json_encode($row));
+        $this->assert(! collect($countries)->contains(fn ($val) => ! is_string($val)), 'Invalid country found: ' . json_encode($row));
 
         $this->assert(! Organisation::where('name', $row['name'])->exists(), 'Organisation already exists: ' . $row['name']);
         $this->assert(FundingProgramme::isUuid($row['funding_programme_uuid'])->exists(), 'Funding programme not found: ' . $row['funding_programme_uuid']);
