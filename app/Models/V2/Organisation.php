@@ -234,6 +234,19 @@ class Organisation extends Model implements MediaModel
         'external_technical_assistance' => 'string',
         'barriers_to_funding' => 'string',
         'capacity_building_support_needed' => 'string',
+        'associations_cooperatives' => 'boolean',
+        'territories_of_operation' => 'array',
+        'decisionmaking_structure_description' => 'string',
+        'decisionmaking_structure_individuals_involved' => 'string',
+        'average_worker_income' => 'integer',
+        'anr_practices_past' => 'array',
+        'anr_monitoring_approaches' => 'array',
+        'anr_monitoring_approaches_description' => 'string',
+        'anr_communication_funders' => 'string',
+        'bioeconomy_products' => 'string',
+        'bioeconomy_traditional_knowledge' => 'string',
+        'bioeconomy_product_processing' => 'string',
+        'bioeconomy_buyers' => 'string',
     ];
 
     // Required by the HasDemographics trait
