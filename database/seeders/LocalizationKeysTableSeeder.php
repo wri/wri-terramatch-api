@@ -180,6 +180,20 @@ class LocalizationKeysTableSeeder extends Seeder
             'TerraMatch Support');
         $this->createLocalizationKey('send-login-details.cta', 'Set Password');
 
+        // bulk-user-creation
+        $this->createLocalizationKey('bulk-user-creation.subject', 'Welcome to TerraMatch!');
+        $this->createLocalizationKey('bulk-user-creation.title', 'Welcome to TerraMatch 🌱 !');
+        $this->createLocalizationKey('bulk-user-creation.body', 'Hi {userName},<br><br>' .
+            'We\'re thrilled to let you know that your access to TerraMatch is now active and it is time to begin your application to {fundingProgrammeName}!<br><br>' .
+            'Your user email used for your account is {mail}<br><br>' .
+            'Please click on the button below to set your new password. This link is valid for 7 days from the day you received this email.<br><br>' .
+            'If you have any questions or require assistance, our support team is ready to help at info@terramatch.org or +44 7456 289369 (WhatsApp only).<br><br>'.
+            'We look forward to working with you!<br><br>' .
+            '<br><br>' .
+            'Best regards,<br><br>' .
+            'TerraMatch Support');
+        $this->createLocalizationKey('bulk-user-creation.cta', 'Set Password');
+
         // polygon-operations-complete
         $this->createLocalizationKey('polygon-validation.subject', 'Your TerraMatch Polygon {operation} is Complete');
         $this->createLocalizationKey('polygon-validation.title', 'YOUR POLYGON {operationUpper} IS COMPLETE');
