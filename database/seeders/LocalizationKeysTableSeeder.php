@@ -238,13 +238,12 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('terrafund-programme-submission-received.cta', 'View Report');
 
         // terrafund-report-reminder
-        $this->createLocalizationKey('terrafund-report-reminder.subject', 'Terrafund Report Reminder');
+        $this->createLocalizationKey('terrafund-report-reminder.subject', 'It\'s Time to Report on TerraMatch!');
         $this->createLocalizationKey('terrafund-report-reminder.title', 'YOU HAVE A REPORT DUE!');
-        $this->createLocalizationKey('terrafund-report-reminder.body', 'Your next report is due on July 31. It should reflect any progress made between January 1, 2023 and June 30, 2022.<br><br>' .
-            'If you have any questions, feel free to message us at info@terramatch.org.' .
-            '<br><br>---<br><br>' .
-            'Votre prochain rapport doit être remis le 31 juillet. Il doit refléter tous les progrès réalisés entre le 1er janvier 2023 et le 30 juin 2023. ');
-        $this->createLocalizationKey('terrafund-report-reminder.cta', 'View Project');
+        $this->createLocalizationKey('terrafund-report-reminder.body',
+        'Your next report for {projectName} is due on {dueDate} and is ready for you on TerraMatch.<br><br>' .
+            'As always, your answers should reflect any progress made in the last six month. If you have any questions, feel free to message us at info@terramatch.org.'        );
+        $this->createLocalizationKey('terrafund-report-reminder.cta', 'View Reporting Task');
 
         // terrafund-site-and-nursery-reminder
         $this->createLocalizationKey('terrafund-site-and-nursery-reminder.subject', 'Terrafund Site & Nursery Reminder');
