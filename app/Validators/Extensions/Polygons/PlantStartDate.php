@@ -110,14 +110,14 @@ class PlantStartDate extends Extension
             $site = Site::isUuid($sitePolygon->site_id)->first();
             if ($site && ! empty($site->start_date)) {
                 $siteStartDate = Carbon::parse($site->start_date);
-                $oneYearBefore = $siteStartDate->copy()->subYear();
-                $oneYearAfter = $siteStartDate->copy()->addYear();
+                $twoYearsBefore = $siteStartDate->copy()->subYears(2);
+                $twoYearsAfter = $siteStartDate->copy()->addYears(2);
 
-                if ($plantStartDate->lt($oneYearBefore) || $plantStartDate->gt($oneYearAfter)) {
+                if ($plantStartDate->lt($twoYearsBefore) || $plantStartDate->gt($twoYearsAfter)) {
                     return [
                         'valid' => false,
                         'key' => 'PLANT_START_DATE_OUTSIDE_RANGE',
-                        'message' => 'Plant start date must be within one year of the site\'s establishment date.',
+                        'message' => 'Plant start date must be within two years of the site\'s establishment date.',
                         'extra_info' => [
                             'error_type' => 'DATE_OUTSIDE_SITE_RANGE',
                             'polygon_uuid' => $polygonUuid,
@@ -126,8 +126,8 @@ class PlantStartDate extends Extension
                             'provided_value' => $plantStart,
                             'site_start_date' => $site->start_date,
                             'allowed_range' => [
-                                'min' => $oneYearBefore->format('Y-m-d'),
-                                'max' => $oneYearAfter->format('Y-m-d'),
+                                'min' => $twoYearsBefore->format('Y-m-d'),
+                                'max' => $twoYearsAfter->format('Y-m-d'),
                             ],
                         ],
                     ];

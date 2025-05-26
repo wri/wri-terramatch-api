@@ -8445,8 +8445,8 @@ definitions:
               updated_at:
                 type: string
           organisation:
-            title: AdminOrganisationRead
             type: object
+            title: AdminOrganisationRead
             properties:
               uuid:
                 type: string
@@ -11429,7 +11429,13 @@ definitions:
               order:
                 type: string
       funding_programme_name:
-        type: integer
+        type: string
+      funding_programme_uuid:
+        type: string
+      organisation_name:
+        type: string
+      organisation_uuid:
+        type: string
       created_at:
         type: string
         format: date-time
@@ -11772,8 +11778,8 @@ definitions:
           updated_at:
             type: string
       organisation:
-        title: AdminOrganisationRead
         type: object
+        title: AdminOrganisationRead
         properties:
           uuid:
             type: string
@@ -21760,37 +21766,6 @@ definitions:
         type: integer
       treeSpeciesPercentage:
         type: number
-  DashboardGetProjectsResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          type: object
-          properties:
-            uuid:
-              type: string
-            name:
-              type: string
-            lat:
-              type: number
-              format: double
-            long:
-              type: number
-              format: double
-  DashboardGetProjectsData:
-    type: object
-    properties:
-      uuid:
-        type: string
-      name:
-        type: string
-      lat:
-        type: number
-        format: double
-      long:
-        type: number
-        format: double
   DashboardGetPolygonStatusResponse:
     properties:
       data:
@@ -29288,6 +29263,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -29298,8 +29274,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -29327,7 +29303,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       tags:
         - V2 Admin
         - V2 Organisations
@@ -34513,6 +34488,7 @@ paths:
                     date_added:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -34523,8 +34499,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -34552,7 +34528,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -39649,6 +39624,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -39659,8 +39635,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -39688,7 +39664,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       operationId: get-v2-funding-programme
   /v2/admin/funding-programme:
     get:
@@ -39986,6 +39961,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -39996,8 +39972,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -40025,7 +40001,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       operationId: get-v2-admin-funding-programme
     post:
       summary: Create a funding programme
@@ -44769,7 +44744,13 @@ paths:
                             order:
                               type: string
                     funding_programme_name:
-                      type: integer
+                      type: string
+                    funding_programme_uuid:
+                      type: string
+                    organisation_name:
+                      type: string
+                    organisation_uuid:
+                      type: string
                     created_at:
                       type: string
                       format: date-time
@@ -45165,8 +45146,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                title: AdminOrganisationRead
                 type: object
+                title: AdminOrganisationRead
                 properties:
                   uuid:
                     type: string
@@ -45774,7 +45755,13 @@ paths:
                             order:
                               type: string
                     funding_programme_name:
-                      type: integer
+                      type: string
+                    funding_programme_uuid:
+                      type: string
+                    organisation_name:
+                      type: string
+                    organisation_uuid:
+                      type: string
                     created_at:
                       type: string
                       format: date-time
@@ -45782,6 +45769,7 @@ paths:
                       type: string
                       format: date-time
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -45792,8 +45780,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -45821,7 +45809,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/applications/{UUID}':
     get:
       summary: Get a specific application
@@ -46172,8 +46159,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                title: AdminOrganisationRead
                 type: object
+                title: AdminOrganisationRead
                 properties:
                   uuid:
                     type: string
@@ -47423,6 +47410,10 @@ paths:
                     type: boolean
                     example: false
                     description: 'Indicates whether the token has already been used. `true` if the token was used or does not exist, and `false` otherwise.'
+                  locale:
+                    type: string
+                    example: es-MX
+                    description: The locale to use for this user.
         '404':
           description: User not found for the associated token
           schema:
@@ -51038,41 +51029,6 @@ paths:
           description: OK
           schema:
             type: file
-  /v2/dashboard/get-polygons:
-    get:
-      summary: Retrieve all polygons.
-      description: |
-        This endpoint returns all polygons by project uuid.
-      parameters:
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    name:
-                      type: string
-                    lat:
-                      type: number
-                      format: double
-                    long:
-                      type: number
-                      format: double
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   '/v2/dashboard/polygons/{poly_uuid}/centroid':
     get:
       summary: Retrieve the centroid of a polygon
@@ -51530,45 +51486,6 @@ paths:
                       type: integer
                     total_jobs_created:
                       type: integer
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  /v2/dashboard/get-projects:
-    get:
-      summary: Retrieve all project.
-      description: |
-        This endpoint returns all project location.
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    name:
-                      type: string
-                    lat:
-                      type: number
-                      format: double
-                    long:
-                      type: number
-                      format: double
         '400':
           description: Bad request
         '500':
@@ -53248,6 +53165,7 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -53258,8 +53176,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -53287,7 +53205,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
     post:
       summary: Create a new Impact Story
       operationId: v2-create-impact-story
@@ -53547,6 +53464,7 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -53557,8 +53475,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -53586,7 +53504,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story

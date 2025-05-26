@@ -22,7 +22,6 @@ use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
-use App\Http\Controllers\V2\Dashboard\GetProjectsController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
 use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
@@ -666,7 +665,6 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
-    Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
@@ -678,7 +676,6 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
-    Route::get('/get-projects', GetProjectsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);

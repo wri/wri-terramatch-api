@@ -3,7 +3,6 @@
 namespace App\Http\Resources\V2\Applications;
 
 use App\Http\Resources\V2\Forms\FormSubmissionLiteResource;
-use App\Models\V2\FundingProgramme;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ApplicationLiteResource extends JsonResource
@@ -13,7 +12,10 @@ class ApplicationLiteResource extends JsonResource
         $data = [
             'uuid' => $this->uuid,
             'current_submission' => new FormSubmissionLiteResource($this->currentSubmission),
-            'funding_programme_name' => FundingProgramme::where('uuid', $this->funding_programme_uuid)->select('name')->first()['name'],
+            'funding_programme_name' => data_get($this->fundingProgramme, 'name'),
+            'funding_programme_uuid' => data_get($this->fundingProgramme, 'uuid'),
+            'organisation_name' => data_get($this->organisation, 'name'),
+            'organisation_uuid' => data_get($this->organisation, 'uuid'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

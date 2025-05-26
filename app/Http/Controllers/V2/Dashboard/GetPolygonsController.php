@@ -7,7 +7,6 @@ use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\GetPolygonsResource;
 use App\Models\LandscapeGeom;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -19,24 +18,6 @@ class GetPolygonsController extends Controller
         $centroid = GeometryHelper::centroidOfPolygon($polyUUID);
 
         return response()->json(['centroid' => $centroid]);
-    }
-
-    public function getPolygonsOfProject($projectId)
-    {
-        if (! $projectId) {
-            return response()->json(['error' => 'Project ID is required'], 400);
-        }
-        $project = Project::whereUuid($projectId)->firstOrFail();
-        $siteswithPolygons = $project->sites()
-            ->with(['sitePolygons' => function ($query) {
-                $query->select('uuid', 'site_id', 'poly_name', 'poly_id')
-                     ->where('status', 'approved')
-                     ->where('is_active', true);
-            }])
-            ->select('uuid', 'name')
-            ->get();
-
-        return response()->json($siteswithPolygons);
     }
 
     public function getPolygonsDataByStatusOfProject(Request $request): GetPolygonsResource
