@@ -21,6 +21,13 @@ class PolygonNotificationMailHelper
                             '</strong>'.
                         '</p>'.
                         '<br style="display: {hasUpdateChange};">'.
+                        '<p style="text-align: start; margin: 0; display: {hasUpdateChange};">'.
+                            '<img src="cid:before" alt="before" style="width: 100%; max-width: 500px;" />'.
+                        '</p>'.
+                        '<p style="text-align: start; margin: 0; display: {hasUpdateChange};">'.
+                            '<img src="cid:after" alt="after" style="width: 100%; max-width: 500px;" />'.
+                        '</p>'.
+                        '<br style="display: {hasUpdateChange};">'.
                         '<table style="table-layout: fixed; display: {hasUpdateChange};">'.
                             '<tr>'.
                                 '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px;">'.

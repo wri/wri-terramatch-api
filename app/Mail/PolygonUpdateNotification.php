@@ -3,7 +3,14 @@
 namespace App\Mail;
 
 use App\Models\V2\PolygonUpdates;
+use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use App\Services\Polyline;
+
 
 class PolygonUpdateNotification extends I18nMail
 {
@@ -51,6 +58,39 @@ class PolygonUpdateNotification extends I18nMail
         $params['{hasStatusChange}'] = $hasStatusChange ? 'block' : 'none';
 
         if ($hasUpdateChange) {
+
+            $sitePolygonUpdate = $updateChanges->first();
+            $sitePolygonBefore = SitePolygon::where('version_name', $sitePolygonUpdate->version_name)->first();
+            Log::info('sitePolygonBefore', [$sitePolygonBefore->uuid]);
+            $sitePolygonAfter = SitePolygon::isUuid($this->sitePolygon->uuid)->where('created_at', '<', $sitePolygonBefore->created_at)->first();
+            Log::info('sitePolygonAfter', [$sitePolygonAfter->uuid]);
+
+            if ($sitePolygonBefore && $sitePolygonAfter) {
+                $beforeCoordinates = $this->getSitePolygonCoordinates($sitePolygonBefore);
+                $afterCoordinates = $this->getSitePolygonCoordinates($sitePolygonAfter);
+
+                //check if two arrays are the same
+                if ($this->areArraysEqual($beforeCoordinates, $afterCoordinates)) {
+                    Log::info(message: 'Before and after coordinates are the same');
+                } else {
+                    $this->storeMapboxImage($beforeCoordinates, 'before.png');
+                    $this->storeMapboxImage($afterCoordinates, 'after.png');
+
+                    $this->addAttachment([
+                        'imagePath' => Storage::disk('public')->path('before.png'),
+                        'cid' => 'before',
+                        'mime' => 'image/png'
+                    ]);
+                    $this->addAttachment([
+                        'imagePath' => Storage::disk('public')->path('after.png'),
+                        'cid' => 'after',
+                        'mime' => 'image/png'
+                    ]);
+                }
+            } else {
+                Log::info('No site polygon before or after found');
+            }
+
             $params['{polygonUpdateTable}'] = $this->getTable(
                 'update',
                 $project->name,
@@ -147,4 +187,40 @@ class PolygonUpdateNotification extends I18nMail
 
         return $link;
     }
+
+    private function getSitePolygonCoordinates(SitePolygon $sitePolygon)
+    {
+        $sitePolygon = SitePolygon::isUuid($sitePolygon->uuid)->first();
+        $polygonGeometry = PolygonGeometry::where('uuid', operator: $sitePolygon->poly_id)
+                    ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
+                    ->first();
+        $geometry = json_decode($polygonGeometry->geojsonGeometry, true);
+        return array_map(function ($item) {
+            return [$item[1], $item[0]];
+        }, $geometry['coordinates'][0]);
+    }
+
+    private function storeMapboxImage(array $coordinates, string $imageName)
+    {
+        $encoded = Polyline::encode($coordinates);
+        $url = "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/path-2+f44-0.5+fff-0.5($encoded)/auto/500x300";
+        $token = "pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng";
+
+        Log::info('url', [$url]);
+
+        $response = Http::withOptions(['stream' => true])->get($url, [
+            'access_token' => $token,
+        ]);
+
+        $imagePath = $imageName;
+        Log::info('imagePath', [$imagePath]);
+        Storage::disk('public')->put($imagePath, $response->body());
+    }
+
+    private function areArraysEqual(array $array1, array $array2): bool
+    {
+        Log::info('array1', [$array1]);
+        return json_encode($array1) === json_encode($array2);
+    }
+
 }
