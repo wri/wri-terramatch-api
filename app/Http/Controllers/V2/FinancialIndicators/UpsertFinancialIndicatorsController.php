@@ -77,10 +77,16 @@ class UpsertFinancialIndicatorsController extends Controller
             'collection' => $collection,
         ];
 
-        if (! empty($entry[$uuidKey])) {
-            $where['uuid'] = $entry[$uuidKey];
+        $existing = FinancialIndicators::where($where)->first();
+
+        if ($existing) {
+            if ($amount != 0) {
+                $existing->amount = $amount;
+                $existing->save();
+            }
+            return $existing;
         }
 
-        return FinancialIndicators::updateOrCreate($where, ['amount' => $amount ?? 0]);
+        return FinancialIndicators::create(array_merge($where, ['amount' => $amount]));
     }
 }
