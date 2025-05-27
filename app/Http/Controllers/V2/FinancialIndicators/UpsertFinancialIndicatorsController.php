@@ -57,11 +57,18 @@ class UpsertFinancialIndicatorsController extends Controller
                 'collection' => FinancialIndicators::COLLECTION_NOT_COLLECTION_DOCUMENTS,
             ];
 
-            if (! empty($entry['uuid'])) {
-                $where['uuid'] = $entry['uuid'];
-            }
+            $description = $entry['description'] ?? null;
+            $existing = FinancialIndicators::where($where)->first();
 
-            $updatedRecords[] = FinancialIndicators::updateOrCreate($where, ['description' => $entry['description'] ?? null]);
+            if ($existing) {
+                if ($description !== null && $existing->description !== $description) {
+                    $existing->description = $description;
+                    $existing->save();
+                }
+                $updatedRecords[] = $existing;
+            } else {
+                $updatedRecords[] = FinancialIndicators::create(array_merge($where, ['description' => $description]));
+            }
         }
 
         return response()->json(FinancialIndicatorsResource::collection($updatedRecords));
@@ -77,10 +84,17 @@ class UpsertFinancialIndicatorsController extends Controller
             'collection' => $collection,
         ];
 
-        if (! empty($entry[$uuidKey])) {
-            $where['uuid'] = $entry[$uuidKey];
+        $existing = FinancialIndicators::where($where)->first();
+
+        if ($existing) {
+            if ($amount != 0) {
+                $existing->amount = $amount;
+                $existing->save();
+            }
+
+            return $existing;
         }
 
-        return FinancialIndicators::updateOrCreate($where, ['amount' => $amount ?? 0]);
+        return FinancialIndicators::create(array_merge($where, ['amount' => $amount]));
     }
 }
