@@ -2363,6 +2363,3 @@
         name: body
         schema:
           $ref: '../definitions/_index.yml#/V2FinancialIndicatorsUpdate'
-/v2/dashboard/polygons:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-polygons.yml'
