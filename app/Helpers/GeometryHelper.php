@@ -93,34 +93,17 @@ class GeometryHelper
 
     }
 
-    public static function getPolygonsBbox($polygonsIds)
+    public function getPolygonCentroid(string $polyUuid)
     {
-        if (count($polygonsIds) === 0) {
+        $sitePolygon = SitePolygon::where('poly_id', $polyUuid)->first();
+
+        if (! $sitePolygon) {
             return null;
         }
-        $envelopes = PolygonGeometry::whereIn('uuid', $polygonsIds)
-          ->selectRaw('ST_ASGEOJSON(ST_Envelope(geom)) as envelope')
-          ->get();
-        $maxX = $maxY = PHP_INT_MIN;
-        $minX = $minY = PHP_INT_MAX;
-        if ($envelopes->isEmpty()) {
-            return null;
-        }
-        foreach ($envelopes as $envelope) {
-            $geojson = json_decode($envelope->envelope);
-            $coordinates = $geojson->coordinates[0];
 
-            foreach ($coordinates as $point) {
-                $x = $point[0];
-                $y = $point[1];
-                $maxX = max($maxX, $x);
-                $minX = min($minX, $x);
-                $maxY = max($maxY, $y);
-                $minY = min($minY, $y);
-            }
-        }
+        $centroid = DB::select("SELECT ST_AsGeoJSON(ST_Centroid(geometry)) as centroid FROM site_polygons WHERE poly_id = ?", [$polyUuid])[0]->centroid;
 
-        return [$minX, $minY, $maxX, $maxY];
+        return json_decode($centroid);
     }
 
     public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
