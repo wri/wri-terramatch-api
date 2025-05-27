@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands\OneOff;
 
-use App\Models\V2\Organisation;
-use App\Models\V2\FundingProgramme;
 use App\Models\V2\FinancialIndicators;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Models\V2\FundingProgramme;
+use App\Models\V2\Organisation;
 use Illuminate\Console\Command;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MigrateOrganisationToMediaData extends Command
 {
@@ -29,7 +29,7 @@ class MigrateOrganisationToMediaData extends Command
      */
     public function handle()
     {
-        $haritBharatEnterprisesProgrammeUuid = "86b3ea32-8541-4525-b342-2d8010b3cdf7";
+        $haritBharatEnterprisesProgrammeUuid = '86b3ea32-8541-4525-b342-2d8010b3cdf7';
 
         $revenueLabel = 'revenue';
         $budgetLabel = 'budget';
@@ -71,5 +71,4 @@ class MigrateOrganisationToMediaData extends Command
             $media->save();
         });
     }
-
 }
