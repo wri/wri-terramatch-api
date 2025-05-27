@@ -62,12 +62,25 @@ class MigrateOrganisationToMediaData extends Command
 
     public function safeUpdate($orgId, $label, $key, $year)
     {
-        $medias = Media::where('model_type', 'App\\Models\\V2\\Organisation')->where('model_id', $orgId)->where('collection', $key)->get();
-        $medias->each(function (Media $media) use ($year, $key, $label) {
-            $financial = FinancialIndicators::where('organisation_id', $media->model_id)->where('year', $year)->where('collection', $label)->update(['amount' => $media->name]);
+        $medias = Media::where('model_type', 'App\\Models\\V2\\Organisation')->where('model_id', $orgId)->where('collection_name', $key)->get();
+        $medias->each(function (Media $media) use ($year, $key, $label, $orgId) {
+            $existing = FinancialIndicators::where([
+                'organisation_id' => $orgId,
+                'year' => $year,
+                'collection' => 'description-documents',
+            ])->first();
+
+            if (! $existing) {
+                $existing = FinancialIndicators::create([
+                    'organisation_id' => $orgId,
+                    'year' => $year,
+                    'collection' => 'description-documents',
+                ]);
+            }
+
             $media->model_type = 'App\\Models\\V2\\FinancialIndicators';
-            $media->model_id = $financial->id;
-            $media->collection = $key;
+            $media->model_id = $existing->id;
+            $media->collection_name = 'documentation';
             $media->save();
         });
     }
