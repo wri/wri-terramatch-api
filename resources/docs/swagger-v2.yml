@@ -21795,27 +21795,6 @@ definitions:
             lat:
               type: number
             description: Latitude of polygon
-  DashboardBBOXProject:
-    type: object
-    properties:
-      bbox:
-        type: array
-        items:
-          type: number
-  DashboardBBOXLandscape:
-    type: object
-    properties:
-      bbox:
-        type: array
-        items:
-          type: number
-  DashboardBBOXCountry:
-    type: object
-    properties:
-      bbox:
-        type: array
-        items:
-          type: number
   DashboardPolygonData:
     type: object
     properties:
@@ -51096,79 +51075,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/dashboard/bbox/landscape:
-    get:
-      summary: Get Bbox of landscape geometries
-      tags:
-        - Landscapes
-      parameters:
-        - name: landscapes
-          type: string
-          in: query
-          description: 'Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)'
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
-        '404':
-          description: Project not found
-  /v2/dashboard/bbox/country-landscape:
-    get:
-      summary: Get Bbox of landscape geometries
-      tags:
-        - Landscapes
-      parameters:
-        - name: landscapes
-          type: string
-          in: query
-          description: 'Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)'
-          required: true
-        - name: country
-          type: string
-          in: query
-          description: Country iso name
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
-        '404':
-          description: Project not found
-  '/v2/dashboard/country/{country}':
-    get:
-      summary: Get the bounding box of a country
-      tags:
-        - Country
-      parameters:
-        - in: path
-          name: country
-          type: string
-          description: ISO code of the country
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
-        '404':
-          description: Country not found
   '/v2/dashboard/polygon-data/{uuid}':
     get:
       summary: Get Get allowed to project
