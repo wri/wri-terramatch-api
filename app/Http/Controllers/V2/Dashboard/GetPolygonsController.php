@@ -32,34 +32,6 @@ class GetPolygonsController extends Controller
         ]);
     }
 
-    public function getBboxOfCompleteProject(Request $request)
-    {
-        try {
-            $polygonsIds = TerrafundDashboardQueryHelper::getPolygonUuidsOfProject($request);
-            $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsIds);
-
-            return response()->json(['bbox' => $bboxCoordinates]);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-
-            return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
-        }
-    }
-
-    public function getProjectBbox(Request $request)
-    {
-        try {
-            $polygonsIds = TerrafundDashboardQueryHelper::getPolygonUuidsOfProject($request);
-            $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsIds);
-
-            return response()->json(['bbox' => $bboxCoordinates]);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-
-            return response()->json(['error' => 'An error occurred while fetching the bounding box coordinates'], 404);
-        }
-    }
-
     public function getLandscapeBbox(Request $request)
     {
         $landscapes = $request->input('landscapes');
