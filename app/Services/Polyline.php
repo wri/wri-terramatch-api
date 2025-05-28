@@ -55,7 +55,7 @@ class Polyline
      * 2) Float point arithmetic IS NOT real number arithmetic. PHP's internal
      *    float precision may contribute to undesired rounding.
      *
-     * @var int $precision
+     * @var int
      */
     protected static $precision = 5;
 
@@ -67,13 +67,13 @@ class Polyline
      *
      * @return string encoded string
      */
-    final public static function encode( $points )
+    final public static function encode($points)
     {
         $points = self::flatten($points);
         $encodedString = '';
         $index = 0;
-        $previous = array(0,0);
-        foreach ( $points as $number ) {
+        $previous = [0,0];
+        foreach ($points as $number) {
             $number = (float)($number);
             $number = (int)round($number * pow(10, static::$precision));
             $diff = $number - $previous[$index % 2];
@@ -82,13 +82,14 @@ class Polyline
             $index++;
             $number = ($number < 0) ? ~($number << 1) : ($number << 1);
             $chunk = '';
-            while ( $number >= 0x20 ) {
+            while ($number >= 0x20) {
                 $chunk .= chr((0x20 | ($number & 0x1f)) + 63);
                 $number >>= 5;
             }
             $chunk .= chr($number + 63);
             $encodedString .= $chunk;
         }
+
         return $encodedString;
     }
 
@@ -99,11 +100,11 @@ class Polyline
      *
      * @return array points
      */
-    final public static function decode( $string )
+    final public static function decode($string)
     {
-        $points = array();
+        $points = [];
         $index = $i = 0;
-        $previous = array(0,0);
+        $previous = [0,0];
         while ($i < strlen($string)) {
             $shift = $result = 0x00;
             do {
@@ -118,6 +119,7 @@ class Polyline
             $index++;
             $points[] = $number * 1 / pow(10, static::$precision);
         }
+
         return $points;
     }
 
@@ -128,15 +130,16 @@ class Polyline
      *
      * @return array flattened
      */
-    final public static function flatten( $array )
+    final public static function flatten($array)
     {
-        $flatten = array();
+        $flatten = [];
         array_walk_recursive(
             $array, // @codeCoverageIgnore
             function ($current) use (&$flatten) {
                 $flatten[] = $current;
             }
         );
+
         return $flatten;
     }
 
@@ -147,8 +150,8 @@ class Polyline
      *
      * @return array pairs
      */
-    final public static function pair( $list )
+    final public static function pair($list)
     {
-        return is_array($list) ? array_chunk($list, 2) : array();
+        return is_array($list) ? array_chunk($list, 2) : [];
     }
 }

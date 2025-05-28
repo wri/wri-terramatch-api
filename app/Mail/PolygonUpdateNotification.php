@@ -2,15 +2,14 @@
 
 namespace App\Mail;
 
-use App\Models\V2\PolygonUpdates;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Sites\SitePolygon;
+use App\Services\Polyline;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use App\Services\Polyline;
-
 
 class PolygonUpdateNotification extends I18nMail
 {
@@ -170,6 +169,7 @@ class PolygonUpdateNotification extends I18nMail
                     ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
                     ->first();
         $geometry = json_decode($polygonGeometry->geojsonGeometry, true);
+
         return array_map(function ($item) {
             return [$item[1], $item[0]];
         }, $geometry['coordinates'][0]);
@@ -179,7 +179,7 @@ class PolygonUpdateNotification extends I18nMail
     {
         $encoded = Polyline::encode($coordinates);
         $url = "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/path-2+f44-0.5+fff-0.5($encoded)/auto/500x300";
-        $token = "pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng";
+        $token = 'pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng';
 
         $response = Http::withOptions(['stream' => true])->get($url, [
             'access_token' => $token,
@@ -218,19 +218,21 @@ class PolygonUpdateNotification extends I18nMail
             $this->addAttachment([
                 'imagePath' => Storage::disk('public')->path(($firstUpdateWithGeometry->version_name ?? $firstUpdateWithGeometry->uuid) . '.png'),
                 'cid' => 'before',
-                'mime' => 'image/png'
+                'mime' => 'image/png',
             ]);
             $this->addAttachment([
                 'imagePath' => Storage::disk('public')->path(($lastUpdateWithGeometry->version_name ?? $lastUpdateWithGeometry->uuid) . '_.png'),
                 'cid' => 'after',
-                'mime' => 'image/png'
+                'mime' => 'image/png',
             ]);
+
             return [
                 'beforeVersionName' => $previousVersion->version_name ?? $previousVersion->uuid,
                 'afterVersionName' => $lastUpdateWithGeometry->version_name ?? $lastUpdateWithGeometry->uuid,
             ];
         } else {
             Log::info('No site polygon before or after found');
+
             return [];
         }
     }
@@ -248,5 +250,4 @@ class PolygonUpdateNotification extends I18nMail
             ->where('version_name', $updateChange->version_name)
             ->first();
     }
-
 }
