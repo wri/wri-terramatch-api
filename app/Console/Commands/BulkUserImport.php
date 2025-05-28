@@ -80,7 +80,7 @@ class BulkUserImport extends Command
                     $this->createUser($userData);
                 }
 
-                $this->info("Organisation import complete! Organisation export saved in organisations.csv\n\n");
+                $this->info("User import complete!\n\n");
             }
         });
     }
