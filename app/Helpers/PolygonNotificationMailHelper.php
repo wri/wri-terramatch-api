@@ -20,14 +20,20 @@ class PolygonNotificationMailHelper
                                 'Polygon Version Update'.
                             '</strong>'.
                         '</p>'.
-                        '<br style="display: {hasUpdateChange};">'.
-                        '<p style="text-align: start; margin: 0; display: {hasUpdateChange};">'.
+                        '<br style="display: {hasImageChange};">'.
+                        '<p style="text-align: start; margin: 0; display: {hasImageChange};">'.
+                            '<strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">'.
+                                'Before {beforeVersionName}'.
+                            '</strong>'.
                             '<img src="cid:before" alt="before" style="width: 100%; max-width: 500px;" />'.
                         '</p>'.
-                        '<p style="text-align: start; margin: 0; display: {hasUpdateChange};">'.
+                        '<p style="text-align: start; margin: 0; display: {hasImageChange};">'.
+                            '<strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">'.
+                                'After {afterVersionName}'.
+                            '</strong>'.
                             '<img src="cid:after" alt="after" style="width: 100%; max-width: 500px;" />'.
                         '</p>'.
-                        '<br style="display: {hasUpdateChange};">'.
+                        '<br style="display: {hasImageChange};">'.
                         '<table style="table-layout: fixed; display: {hasUpdateChange};">'.
                             '<tr>'.
                                 '<td style="overflow: hidden; border: 1px solid #ddd; border-radius:10px;">'.
