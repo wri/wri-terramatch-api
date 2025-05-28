@@ -23,13 +23,13 @@ class PolygonNotificationMailHelper
                         '<br style="display: {hasImageChange};">'.
                         '<p style="text-align: start; margin: 0; display: {hasImageChange};">'.
                             '<strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">'.
-                                'Before {beforeVersionName}'.
+                                'Before: {beforeVersionName}'.
                             '</strong>'.
                             '<img src="cid:before" alt="before" style="width: 100%; max-width: 500px;" />'.
                         '</p>'.
                         '<p style="text-align: start; margin: 0; display: {hasImageChange};">'.
                             '<strong style="font-size: 14px; color: #353535; font-family: \'Inter\', sans-serif;">'.
-                                'After {afterVersionName}'.
+                                'After: {afterVersionName}'.
                             '</strong>'.
                             '<img src="cid:after" alt="after" style="width: 100%; max-width: 500px;" />'.
                         '</p>'.
