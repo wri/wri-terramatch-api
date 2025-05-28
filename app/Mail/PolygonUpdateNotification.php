@@ -2,8 +2,14 @@
 
 namespace App\Mail;
 
+use App\Models\V2\PolygonGeometry;
 use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Sites\SitePolygon;
+use App\Services\Polyline;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class PolygonUpdateNotification extends I18nMail
 {
@@ -42,7 +48,7 @@ class PolygonUpdateNotification extends I18nMail
         ];
 
         $statusChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygon->uuid)->lastWeek()->isStatus()->get();
-        $updateChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygon->uuid)->lastWeek()->isUpdate()->get();
+        $updateChanges = PolygonUpdates::where('site_polygon_uuid', $this->sitePolygon->uuid)->lastWeek()->isUpdate()->orderBy('created_at', 'asc')->get();
 
         $hasUpdateChange = $updateChanges->count() > 0;
         $hasStatusChange = $statusChanges->count() > 0;
@@ -51,6 +57,14 @@ class PolygonUpdateNotification extends I18nMail
         $params['{hasStatusChange}'] = $hasStatusChange ? 'block' : 'none';
 
         if ($hasUpdateChange) {
+            $imageParams = $this->getImageParams($updateChanges);
+            if (! empty($imageParams)) {
+                $params['{hasImageChange}'] = 'block';
+                $params['{beforeVersionName}'] = $imageParams['beforeVersionName'];
+                $params['{afterVersionName}'] = $imageParams['afterVersionName'];
+            } else {
+                $params['{hasImageChange}'] = 'none';
+            }
             $params['{polygonUpdateTable}'] = $this->getTable(
                 'update',
                 $project->name,
@@ -146,5 +160,94 @@ class PolygonUpdateNotification extends I18nMail
         }
 
         return $link;
+    }
+
+    private function getSitePolygonCoordinates(SitePolygon $sitePolygon)
+    {
+        $sitePolygon = SitePolygon::isUuid($sitePolygon->uuid)->first();
+        $polygonGeometry = PolygonGeometry::where('uuid', operator: $sitePolygon->poly_id)
+                    ->select('uuid', DB::raw('ST_AsGeoJSON(geom) AS geojsonGeometry'))
+                    ->first();
+        $geometry = json_decode($polygonGeometry->geojsonGeometry, true);
+
+        return array_map(function ($item) {
+            return [$item[1], $item[0]];
+        }, $geometry['coordinates'][0]);
+    }
+
+    private function storeMapboxImage(array $coordinates, string $imageName)
+    {
+        $encoded = Polyline::encode($coordinates);
+        $url = "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/path-2+f44-0.5+fff-0.5($encoded)/auto/500x300";
+        $token = 'pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng';
+
+        $response = Http::withOptions(['stream' => true])->get($url, [
+            'access_token' => $token,
+        ]);
+
+        $imagePath = $imageName;
+        Storage::disk('public')->put($imagePath, $response->body());
+    }
+
+    private function areArraysEqual(array $array1, array $array2): bool
+    {
+        return json_encode($array1) === json_encode($array2);
+    }
+
+    private function getImageParams($updateChanges)
+    {
+        $firstUpdate = $updateChanges->first();
+        $firstUpdateWithGeometry = $this->getSitePolygonByVersionName($firstUpdate);
+        $previousVersion = $this->getPreviousSitePolygonVersion($firstUpdateWithGeometry);
+        $firstUpdateGeometryCoordinates = $this->getSitePolygonCoordinates($previousVersion);
+        $lastUpdateWithGeometry = null;
+        $lastUpdateGeometryCoordinates = null;
+
+        foreach ($updateChanges as $updateChange) {
+            $sitePolygon = $this->getSitePolygonByVersionName($updateChange);
+            $coordinates = $this->getSitePolygonCoordinates($sitePolygon);
+            if (! $this->areArraysEqual($firstUpdateGeometryCoordinates, $coordinates)) {
+                $lastUpdateWithGeometry = $sitePolygon;
+                $lastUpdateGeometryCoordinates = $coordinates;
+            }
+        }
+
+        if ($firstUpdateWithGeometry && $lastUpdateWithGeometry) {
+            $this->storeMapboxImage($firstUpdateGeometryCoordinates, ($firstUpdateWithGeometry->version_name ?? $firstUpdateWithGeometry->uuid) . '.png');
+            $this->storeMapboxImage($lastUpdateGeometryCoordinates, ($lastUpdateWithGeometry->version_name ?? $lastUpdateWithGeometry->uuid) . '_.png');
+            $this->addAttachment([
+                'imagePath' => Storage::disk('public')->path(($firstUpdateWithGeometry->version_name ?? $firstUpdateWithGeometry->uuid) . '.png'),
+                'cid' => 'before',
+                'mime' => 'image/png',
+            ]);
+            $this->addAttachment([
+                'imagePath' => Storage::disk('public')->path(($lastUpdateWithGeometry->version_name ?? $lastUpdateWithGeometry->uuid) . '_.png'),
+                'cid' => 'after',
+                'mime' => 'image/png',
+            ]);
+
+            return [
+                'beforeVersionName' => $previousVersion->version_name ?? $previousVersion->uuid,
+                'afterVersionName' => $lastUpdateWithGeometry->version_name ?? $lastUpdateWithGeometry->uuid,
+            ];
+        } else {
+            Log::info('No site polygon before or after found');
+
+            return [];
+        }
+    }
+
+    private function getPreviousSitePolygonVersion($sitePolygon)
+    {
+        return SitePolygon::where('created_at', '<', $sitePolygon->created_at)
+            ->where('primary_uuid', $sitePolygon->primary_uuid)
+            ->first();
+    }
+
+    private function getSitePolygonByVersionName($updateChange)
+    {
+        return SitePolygon::where('primary_uuid', $updateChange->site_polygon_uuid)
+            ->where('version_name', $updateChange->version_name)
+            ->first();
     }
 }
