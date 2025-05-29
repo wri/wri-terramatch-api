@@ -78,7 +78,12 @@ trait UsesLinkedFields
                                 $localAnswers[$question->uuid] = data_get($formData, $question->uuid);
                             }
 
-                            $entityProps[$property] = $value;
+                            if ($question->linked_field_key == 'pro-rep-landscape-com-con' && ! empty($question->parent_id) &&
+                                data_get($formData, $question->parent_id) === true) {
+                                $entityProps[$property] = '';
+                            } else {
+                                $entityProps[$property] = $value;
+                            }
                         }
                     } else {
                         $property = data_get($relationsConfig, "$question->linked_field_key.property");

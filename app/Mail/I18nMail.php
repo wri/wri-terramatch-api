@@ -25,6 +25,8 @@ abstract class I18nMail extends Mail
 
     protected array $titleParams;
 
+    protected array $attachs = [];
+
     public function __construct($user)
     {
         $this->userLocale = is_null($user) ? 'en-US' : $user->locale ?? $user['locale'] ?? 'en-US';
@@ -43,6 +45,21 @@ abstract class I18nMail extends Mail
         }
         if (isset($this->ctaKey)) {
             $this->cta = $this->getValueTranslated($this->ctaKey, $this->params);
+        }
+
+        if (! empty($this->attachs)) {
+            $cids = [];
+            foreach ($this->attachs as $attachment) {
+                $this->attach($attachment['imagePath'], [
+                    'as' => $attachment['cid'],
+                    'mime' => $attachment['mime'],
+                ]);
+                $cids[] = [
+                    $attachment['cid'] => $attachment['imagePath'],
+                ];
+                $this->attach($attachment['imagePath']);
+            }
+            $this->with($cids);
         }
 
         parent::build();
@@ -117,5 +134,10 @@ abstract class I18nMail extends Mail
         }
 
         return $localizationKey->translated_value;
+    }
+
+    public function addAttachment($attachment)
+    {
+        $this->attachs[] = $attachment;
     }
 }
