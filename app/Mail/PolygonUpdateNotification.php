@@ -179,10 +179,9 @@ class PolygonUpdateNotification extends I18nMail
     {
         $encoded = Polyline::encode($coordinates);
         $url = "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/path-2+f44-0.5+fff-0.5($encoded)/auto/500x300";
-        $token = 'pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng';
 
         $response = Http::withOptions(['stream' => true])->get($url, [
-            'access_token' => $token,
+            'access_token' => getenv('GLOBAL_MAPBOX_TOKEN'),
         ]);
 
         $imagePath = $imageName;
