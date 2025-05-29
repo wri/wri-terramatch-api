@@ -24,6 +24,8 @@ class TerrafundDashboardQueryHelper
                 'v2_projects.status',
                 'v2_projects.name',
                 'v2_projects.country',
+                'v2_projects.lat',
+                'v2_projects.long',
             ])
             ->with('organisation:id,type,name')
             ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')

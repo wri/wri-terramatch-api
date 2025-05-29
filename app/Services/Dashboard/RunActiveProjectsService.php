@@ -48,6 +48,7 @@ class RunActiveProjectsService
                 'uuid' => $project->uuid,
                 'name' => $project->name,
                 'organisation' => $project->organisation->name,
+                'organisationType' => $project->organisation->type,
                 'trees_under_restoration' => $project->approved_trees_planted_count,
                 'jobs_created' => $project->total_approved_jobs_created ?? 0,
                 'volunteers' => $project->approved_volunteers_count ?? 0,
@@ -55,6 +56,8 @@ class RunActiveProjectsService
                 'country_slug' => $project->country,
                 'hectares_under_restoration' => $project->total_hectares_restored_sum,
                 'programme' => $project->framework_key,
+                'lat' => (float) $project->lat,
+                'long' => (float) $project->long,
             ];
         });
     }
