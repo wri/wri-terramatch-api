@@ -45,14 +45,11 @@ class EntityTypeController extends Controller
         try {
             $project = Project::where('uuid', $uuid)->firstOrFail();
             $sitePolygons = $this->getSitePolygonsWithFiltersAndSorts($project->sitePolygons(), $request);
-            $polygonsUuids = $sitePolygons->pluck('poly_id');
-            $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsUuids);
 
             return response()->json([
                 'type' => 'project',
                 'uuid' => $uuid,
                 'polygonsData' => $sitePolygons,
-                'bbox' => $bboxCoordinates,
             ]);
         } catch (ModelNotFoundException $e) {
             Log::error($e);
@@ -74,26 +71,11 @@ class EntityTypeController extends Controller
         try {
             $site = Site::where('uuid', $uuid)->firstOrFail();
             $sitePolygons = $this->getSitePolygonsWithFiltersAndSorts($site->sitePolygons()->active(), $request);
-            $polygonsUuids = $sitePolygons->pluck('poly_id');
-
-            if ($sitePolygons->isEmpty() && $site) {
-                $project = $site->project;
-
-                if ($project && $project->country) {
-                    $countryBbox = App::make(PolygonService::class)->getCountryBbox($project->country);
-                    if ($countryBbox) {
-                        $bboxCoordinates = $countryBbox[1];
-                    }
-                }
-            } else {
-                $bboxCoordinates = GeometryHelper::getPolygonsBbox($polygonsUuids);
-            }
 
             return response()->json([
                 'type' => 'site',
                 'uuid' => $uuid,
                 'polygonsData' => $sitePolygons,
-                'bbox' => $bboxCoordinates,
             ]);
         } catch (ModelNotFoundException $e) {
             Log::error($e);

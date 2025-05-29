@@ -22166,11 +22166,6 @@ definitions:
               type: string
             validation_status:
               type: boolean
-      bbox:
-        type: array
-        items:
-          type: number
-        description: Bounding box of the entity
   EntityPolygonResponse:
     type: object
     properties:
@@ -51896,11 +51891,6 @@ paths:
                       type: string
                     validation_status:
                       type: boolean
-              bbox:
-                type: array
-                items:
-                  type: number
-                description: Bounding box of the entity
         '400':
           description: 'Bad request, UUID parameter is missing'
         '500':
