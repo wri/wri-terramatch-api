@@ -240,9 +240,11 @@ class LocalizationKeysTableSeeder extends Seeder
         // terrafund-report-reminder
         $this->createLocalizationKey('terrafund-report-reminder.subject', 'It\'s Time to Report on TerraMatch!');
         $this->createLocalizationKey('terrafund-report-reminder.title', 'YOU HAVE A REPORT DUE!');
-        $this->createLocalizationKey('terrafund-report-reminder.body',
-        'Your next report for {projectName} is due on {dueDate} and is ready for you on TerraMatch.<br><br>' .
-            'As always, your answers should reflect any progress made in the last six month. If you have any questions, feel free to message us at info@terramatch.org.'        );
+        $this->createLocalizationKey(
+            'terrafund-report-reminder.body',
+            'Your next report for {projectName} is due on {dueDate} and is ready for you on TerraMatch.<br><br>' .
+            'As always, your answers should reflect any progress made in the last six months. If you have any questions, feel free to message us at info@terramatch.org.'
+        );
         $this->createLocalizationKey('terrafund-report-reminder.cta', 'View Reporting Task');
 
         // terrafund-site-and-nursery-reminder

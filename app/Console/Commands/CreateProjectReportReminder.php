@@ -2,12 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\TerrafundReportReminder;
+use App\Models\Traits\SkipRecipientsTrait;
 use App\Models\V2\Tasks\Task;
 use Illuminate\Console\Command;
-use App\Mail\TerrafundReportReminder;
 use Illuminate\Support\Facades\Mail;
-use App\Models\Traits\SkipRecipientsTrait;
-use Illuminate\Support\Facades\Log;
 
 class CreateProjectReportReminder extends Command
 {
@@ -30,7 +29,6 @@ class CreateProjectReportReminder extends Command
     public function handle(): int
     {
         $after = $this->option('after');
-
         Task::where('created_at', '>=', $after)
             ->whereHas('project', function ($qry) {
                 $qry->whereIn('framework_key', ['terrafund', 'terrafund-landscapes', 'enterprises']);
@@ -38,13 +36,11 @@ class CreateProjectReportReminder extends Command
             ->chunk(100, function ($tasks) {
                 $tasks->each(function ($task) {
                     $project = $task->project;
-                    Log::info($project->name);
-                    // $usersPdWithSkip = $this->skipRecipients($project->users()->wherePivot('is_monitoring', true)->get());
-
-                    // foreach ($usersPdWithSkip as $user) {
-                    //     Mail::to($user->email_address)
-                    //         ->queue(new TerrafundReportReminder($project->id, $user, $task->due_at));
-                    // }
+                    $usersPdWithSkip = $this->skipRecipients($project->users()->wherePivot('is_monitoring', true)->get());
+                    foreach ($usersPdWithSkip as $user) {
+                        Mail::to($user->email_address)
+                            ->queue(new TerrafundReportReminder($task->uuid, $user));
+                    }
                 });
             });
 
