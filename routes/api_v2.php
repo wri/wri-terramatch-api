@@ -22,7 +22,6 @@ use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
-use App\Http\Controllers\V2\Dashboard\GetProjectsController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
 use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
@@ -114,7 +113,6 @@ use App\Http\Controllers\V2\Organisations\OrganisationListRequestedUsersControll
 use App\Http\Controllers\V2\Organisations\OrganisationRejectUserController;
 use App\Http\Controllers\V2\Organisations\OrganisationRetractMyDraftController;
 use App\Http\Controllers\V2\Organisations\OrganisationSubmitController;
-use App\Http\Controllers\V2\Organisations\ViewOrganisationTasksController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
@@ -146,8 +144,6 @@ use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\ViewProjectNurseriesController;
 use App\Http\Controllers\V2\Projects\ViewProjectSitesController;
-use App\Http\Controllers\V2\Projects\ViewProjectTasksController;
-use App\Http\Controllers\V2\Projects\ViewProjectTasksReportsController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminCreateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminDeleteReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminIndexReportingFrameworkController;
@@ -178,9 +174,6 @@ use App\Http\Controllers\V2\Stages\StoreStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
 use App\Http\Controllers\V2\Stages\ViewStageController;
-use App\Http\Controllers\V2\Tasks\AdminIndexTasksController;
-use App\Http\Controllers\V2\Tasks\SubmitProjectTasksController;
-use App\Http\Controllers\V2\Tasks\ViewTaskController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
@@ -287,10 +280,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::put('/{updateRequest}/{status}', AdminStatusUpdateRequestController::class);
     });
 
-    Route::prefix('tasks')->group(function () {
-        Route::get('', AdminIndexTasksController::class);
-    });
-
     Route::prefix('projects')->group(function () {
         Route::get('/multi', AdminProjectMultiController::class);
     });
@@ -388,7 +377,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
 /** NON ADMIN ROUTES */
 Route::prefix('organisations')->group(function () {
-    Route::get('/{organisation}/tasks', ViewOrganisationTasksController::class);
     Route::get('listing', OrganisationListingController::class);
     Route::post('join-existing', JoinExistingOrganisationController::class);
     Route::put('approve-user', OrganisationApproveUserController::class);
@@ -491,7 +479,6 @@ Route::prefix('financial-indicators')->group(function () {
 });
 
 Route::prefix('projects')->group(function () {
-    Route::get('/{project}/tasks', ViewProjectTasksController::class);
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
     Route::get('/{project}/sites', ViewProjectSitesController::class);
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
@@ -510,12 +497,6 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
 
     Route::delete('/{project}/{email}/remove-partner', DeleteProjectMonitoringPartnersController::class);
-});
-
-Route::prefix('tasks')->group(function () {
-    Route::get('/{task}', ViewTaskController::class);
-    Route::get('/{task}/reports', ViewProjectTasksReportsController::class);
-    Route::put('/{task}/submit', SubmitProjectTasksController::class);
 });
 
 ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], function () {
@@ -686,7 +667,6 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
-    Route::get('/get-polygons', [GetPolygonsController::class, 'getPolygonsOfProject']);
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);
     Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
     Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
@@ -698,7 +678,6 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
-    Route::get('/get-projects', GetProjectsController::class);
     Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);

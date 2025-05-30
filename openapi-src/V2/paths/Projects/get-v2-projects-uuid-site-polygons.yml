@@ -31,7 +31,7 @@ responses:
         data:
           type: array
           items:
-            $ref: '../../definitions/_index.yml#/V2TaskRead'
+            $ref: '../../definitions/_index.yml#/GeojsonRead'
         links:
           $ref: '../../definitions/_index.yml#/V2PaginationLinks'
         meta:
