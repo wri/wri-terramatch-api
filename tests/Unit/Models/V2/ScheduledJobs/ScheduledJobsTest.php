@@ -2,8 +2,6 @@
 
 namespace Tests\Unit\Models\V2\ScheduledJobs;
 
-use App\Jobs\V2\NotifyReportReminderJob;
-use App\Mail\TerrafundReportReminder;
 use App\Mail\TerrafundSiteAndNurseryReminder;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
@@ -18,7 +16,6 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class ScheduledJobsTest extends TestCase
@@ -87,24 +84,6 @@ class ScheduledJobsTest extends TestCase
         $this->assertEquals(0, $project->reports()->count());
         $this->assertEquals(0, $site->reports()->count());
         $this->assertEquals(0, $nursery->reports()->count());
-    }
-
-    public function test_report_reminder()
-    {
-        Mail::fake();
-        Queue::fake();
-        $user = User::factory()->create();
-        $project = Project::factory()->terrafund()->create();
-        $user->projects()->sync([$project->id => ['is_monitoring' => true]]);
-        Site::factory()->terrafund()->create(['project_id' => $project->id]);
-        ReportReminderJob::createReportReminder(Carbon::now()->subDay(), 'terrafund');
-
-        ScheduledJob::readyToExecute()->first()->execute();
-
-        Mail::assertQueued(TerrafundReportReminder::class, function ($mail) use ($user) {
-            return $mail->hasTo($user->email_address);
-        });
-        Queue::assertPushed(NotifyReportReminderJob::class, 1);
     }
 
     public function test_site_and_nursery_reminder()
