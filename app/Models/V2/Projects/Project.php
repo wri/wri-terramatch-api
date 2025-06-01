@@ -148,6 +148,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'landscape',
         'direct_seeding_survival_rate',
         'cohort',
+        'short_name',
     ];
 
     public $fileConfiguration = [
