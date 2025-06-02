@@ -27,7 +27,6 @@ use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
-use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
