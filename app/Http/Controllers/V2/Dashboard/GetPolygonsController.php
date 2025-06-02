@@ -6,10 +6,7 @@ use App\Helpers\GeometryHelper;
 use App\Helpers\TerrafundDashboardQueryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Dashboard\GetPolygonsResource;
-use App\Models\LandscapeGeom;
-use App\Models\V2\WorldCountryGeneralized;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class GetPolygonsController extends Controller
 {

@@ -101,7 +101,7 @@ class GeometryHelper
             return null;
         }
 
-        $centroid = DB::select("SELECT ST_AsGeoJSON(ST_Centroid(geometry)) as centroid FROM site_polygons WHERE poly_id = ?", [$polyUuid])[0]->centroid;
+        $centroid = DB::select('SELECT ST_AsGeoJSON(ST_Centroid(geometry)) as centroid FROM site_polygons WHERE poly_id = ?', [$polyUuid])[0]->centroid;
 
         return json_decode($centroid);
     }

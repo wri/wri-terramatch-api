@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers\V2\Entities;
 
-use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
-use App\Services\PolygonService;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
 class EntityTypeController extends Controller

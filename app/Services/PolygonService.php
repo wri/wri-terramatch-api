@@ -19,7 +19,6 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SitePolygonData;
 use App\Models\V2\User;
-use App\Models\V2\WorldCountryGeneralized;
 use App\Validators\SitePolygonValidator;
 use DateTime;
 use Exception;
@@ -733,7 +732,7 @@ class PolygonService
                 ['key' => 'num_trees', 'title' => 'Number of trees', 'value' => $sitePolygon->num_trees ?? null],
                 ['key' => 'plantstart', 'title' => 'Plant Start Date', 'value' => $sitePolygon->plantstart ?? null],
                 ['key' => 'status', 'title' => 'Status', 'value' => $sitePolygon->status ?? null],
-            ]
+            ],
         ];
     }
 
