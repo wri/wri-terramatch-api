@@ -264,7 +264,7 @@ class PolygonService
      */
     public function updateGeojsonModels(PolygonGeometry $polygonGeometry, array $geometry)
     {
-        $dbGeometry = $this->getGeomAndArea(data_get($geometry, 'features.0'));
+        $dbGeometry = $this->getGeomAndArea(data_get($geometry, 'features.0.geometry'));
         $polygonGeometry->update(['geom' => $dbGeometry['geom']]);
 
         $sitePolygon = $polygonGeometry->sitePolygon()->first();
