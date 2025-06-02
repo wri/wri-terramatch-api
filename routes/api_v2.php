@@ -662,7 +662,6 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
     Route::get('/jobs-created', GetJobsCreatedController::class);
     Route::get('/volunteers-survival-rate', VolunteersAndAverageSurvivalRateController::class);
-    Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);

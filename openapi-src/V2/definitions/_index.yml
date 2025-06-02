@@ -278,10 +278,6 @@ DashboardJobsCreatedData:
   $ref: './DashboardJobsCreatedData.yml'
 DashboardRestorationStrategyResponse:
   $ref: './DashboardRestorationStrategyResponse.yml'
-DashboardTreeRestorationGoalResponse:
-  $ref: './DashboardTreeRestorationGoalResponse.yml'
-DashboardTreesUnderRestorationActual:
-  $ref: './DashboardTreesUnderRestorationActual.yml'
 DashboardGetPolygonStatusResponse:
   $ref: './DashboardGetPolygonStatusResponse.yml'
 DashboardPolygonData:

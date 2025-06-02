@@ -1,9 +1,0 @@
-type: object
-properties:
-  dueDate:
-    type: string
-    format: date
-  treeSpeciesAmount:
-    type: integer
-  treeSpeciesPercentage:
-    type: number
