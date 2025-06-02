@@ -284,12 +284,6 @@ DashboardTreesUnderRestorationActual:
   $ref: './DashboardTreesUnderRestorationActual.yml'
 DashboardGetPolygonStatusResponse:
   $ref: './DashboardGetPolygonStatusResponse.yml'
-DashboardBBOXProject:
-  $ref: './DashboardBBOXProject.yml'
-DashboardBBOXLandscape:
-  $ref: './DashboardBBOXLandscape.yml'
-DashboardBBOXCountry:
-  $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
 DashboardActiveProjectsListViewResponse:

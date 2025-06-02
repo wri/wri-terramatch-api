@@ -518,7 +518,6 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
-    Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
     Route::get('/check-approve', SiteCheckApproveController::class);
 });
 Route::prefix('entity')->group(function () {
@@ -620,7 +619,6 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/project-polygon', [TerrafundEditGeometryController::class, 'getProjectPolygonData']);
     Route::delete('/project-polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndProjectPolygon']);
     Route::delete('/project-polygons', [TerrafundEditGeometryController::class, 'deleteMultiplePolygonsAndSitePolygons']);
-    Route::get('/polygon/bbox/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonBbox']);
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
     Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
@@ -668,11 +666,6 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
     Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);
-    Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
-    Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
-    Route::get('/country/{country}', [CountryAndPolygonDataController::class, 'getCountryBbox']);
-    Route::get('/bbox/landscape', [GetPolygonsController::class, 'getLandscapeBbox']);
-    Route::get('/bbox/country-landscape', [GetPolygonsController::class, 'getCountryLandscapeBbox']);
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
