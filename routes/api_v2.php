@@ -90,6 +90,7 @@ use App\Http\Controllers\V2\ImpactStory\ImpactStoryController;
 use App\Http\Controllers\V2\Indicators\GetHectaresRestoredController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
+use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
 use App\Http\Controllers\V2\MediaController;
 use App\Http\Controllers\V2\MonitoredData\GetIndicatorPolygonStatusController;
 use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisController;
@@ -472,6 +473,7 @@ Route::prefix('ownership-stake')->group(function () {
 Route::prefix('leaderships')->group(function () {
     Route::post('/', StoreLeadershipsController::class);
     Route::delete('/{leaderships}', DeleteLeadershipsController::class);
+    Route::patch('/{leaderships}', UpdateLeadershipsController::class);
 });
 
 Route::prefix('financial-indicators')->group(function () {

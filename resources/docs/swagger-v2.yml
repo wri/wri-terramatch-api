@@ -5482,6 +5482,22 @@ definitions:
         type: integer
       nationality:
         type: string
+  V2LeadershipsUpdate:
+    title: V2LeadershipsUpdate
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+      nationality:
+        type: string
   V2LeadershipsRead:
     title: V2LeadershipsRead
     x-stoplight:
@@ -5536,11 +5552,15 @@ definitions:
     title: V2OwnershipStakeUpdate
     type: object
     properties:
-      position:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      title:
         type: string
       gender:
         type: string
-      age:
+      year_of_birth:
         type: integer
       percent_ownership:
         type: integer
@@ -8445,8 +8465,8 @@ definitions:
               updated_at:
                 type: string
           organisation:
-            title: AdminOrganisationRead
             type: object
+            title: AdminOrganisationRead
             properties:
               uuid:
                 type: string
@@ -11778,8 +11798,8 @@ definitions:
           updated_at:
             type: string
       organisation:
-        title: AdminOrganisationRead
         type: object
+        title: AdminOrganisationRead
         properties:
           uuid:
             type: string
@@ -29237,6 +29257,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -29247,8 +29268,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -29276,7 +29297,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       tags:
         - V2 Admin
         - V2 Organisations
@@ -34462,6 +34482,7 @@ paths:
                     date_added:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -34472,8 +34493,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -34501,7 +34522,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -35730,6 +35750,57 @@ paths:
                 type: string
       tags:
         - V2 Leaderships
+    patch:
+      summary: Update a leaderships
+      operationId: patch-v2-leaderships-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: V2LeadershipsRead
+            x-stoplight:
+              id: 04vvsvyndvy8n
+            type: object
+            properties:
+              uuid:
+                type: string
+              organisation_id:
+                type: string
+              position:
+                type: string
+              gender:
+                type: string
+              age:
+                type: integer
+              nationality:
+                type: string
+              collection:
+                type: string
+      tags:
+        - V2 Leaderships
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            title: V2LeadershipsUpdate
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              position:
+                type: string
+              gender:
+                type: string
+              age:
+                type: integer
+              nationality:
+                type: string
   /v2/ownership-stake:
     post:
       summary: Create a ownership stake
@@ -35808,11 +35879,15 @@ paths:
             title: V2OwnershipStakeUpdate
             type: object
             properties:
-              position:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              title:
                 type: string
               gender:
                 type: string
-              age:
+              year_of_birth:
                 type: integer
               percent_ownership:
                 type: integer
@@ -39598,6 +39673,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -39608,8 +39684,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -39637,7 +39713,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       operationId: get-v2-funding-programme
   /v2/admin/funding-programme:
     get:
@@ -39935,6 +40010,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -39945,8 +40021,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -39974,7 +40050,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       operationId: get-v2-admin-funding-programme
     post:
       summary: Create a funding programme
@@ -45120,8 +45195,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                title: AdminOrganisationRead
                 type: object
+                title: AdminOrganisationRead
                 properties:
                   uuid:
                     type: string
@@ -45743,6 +45818,7 @@ paths:
                       type: string
                       format: date-time
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -45753,8 +45829,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -45782,7 +45858,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/applications/{UUID}':
     get:
       summary: Get a specific application
@@ -46133,8 +46208,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                title: AdminOrganisationRead
                 type: object
+                title: AdminOrganisationRead
                 properties:
                   uuid:
                     type: string
@@ -53015,6 +53090,7 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -53025,8 +53101,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -53054,7 +53130,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
     post:
       summary: Create a new Impact Story
       operationId: v2-create-impact-story
@@ -53314,6 +53389,7 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -53324,8 +53400,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -53353,7 +53429,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story

@@ -1056,6 +1056,25 @@
           $ref: '../definitions/_index.yml#/V2LeadershipsRead'
     tags:
       - V2 Leaderships
+  patch:
+    summary: Update a leaderships
+    operationId: patch-v2-leaderships-UUID
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2LeadershipsRead'
+    tags:
+      - V2 Leaderships
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+      - in: body
+        name: body
+        schema:
+          $ref: '../definitions/_index.yml#/V2LeadershipsUpdate'
 /v2/ownership-stake:
   post:
     summary: Create a ownership stake
