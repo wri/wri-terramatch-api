@@ -30,7 +30,7 @@ class SetInputTypeValuesForFormQuestions extends Command
             'org-consortium', 'org-female-youth-leadership-example', 'org-external-technical-assistance', 'org-barriers-to-funding', 'org-capacity-building-support-needed',
             'pro-pit-landowner-agreement-description', 'pro-pit-land-tenure-risks', 'pro-pit-non-tree-interventions-description', 'pro-pit-complement-existing-restoration',
         ])->each(function (FormQuestion $formQuestion): void {
-            $formQuestion->update(['input_type' => 'long-text']);
+            $formQuestion->update(['input_type' => 'long-text', 'min_character_limit' => 0, 'max_character_limit' => 90000]);
         });
     }
 }
