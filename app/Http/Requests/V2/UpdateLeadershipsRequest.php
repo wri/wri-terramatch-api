@@ -4,7 +4,7 @@ namespace App\Http\Requests\V2;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateOwnershipStakeRequest extends FormRequest
+class UpdateLeadershipsRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -16,10 +16,10 @@ class UpdateOwnershipStakeRequest extends FormRequest
         return [
             'first_name' => ['sometimes', 'string', 'nullable'],
             'last_name' => ['sometimes', 'string', 'nullable'],
-            'title' => ['sometimes', 'string', 'nullable'],
+            'position' => ['sometimes', 'string', 'min:1', 'max:65335'],
             'gender' => ['sometimes', 'string', 'min:1', 'max:65335'],
-            'percent_ownership' => ['sometimes', 'numeric', 'between:0,100'],
-            'year_of_birth' => ['sometimes', 'integer', 'min:1', 'max:3000'],
+            'age' => ['sometimes', 'integer', 'min:1', 'max:255'],
+            'nationality' => ['sometimes', 'string', 'min:1', 'max:65335'],
         ];
     }
 }
