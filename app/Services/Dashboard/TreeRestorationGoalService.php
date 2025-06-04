@@ -89,7 +89,6 @@ class TreeRestorationGoalService
             $month = $date['month'];
 
             $treeSpeciesAmount = $this->calculateTreeSpeciesAmountForPeriod($siteIds, $year, $month);
-
             $formattedDate = Carbon::create($year, $month, 1);
 
             $treesUnderRestorationActual->push([
@@ -110,7 +109,7 @@ class TreeRestorationGoalService
             ->whereMonth('v2_site_reports.due_at', $month)
             ->get()
             ->sum(function ($report) {
-                return $report->treeSpecies()->where('collection', TreeSpecies::COLLECTION_PLANTED)->sum('amount');
+                return $report->treeSpecies()->visible()->where('collection', TreeSpecies::COLLECTION_PLANTED)->sum('amount');
             });
     }
 
