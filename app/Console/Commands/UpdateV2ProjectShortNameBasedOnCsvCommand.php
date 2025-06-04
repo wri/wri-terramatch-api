@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\V2\Projects\Project;
+use Illuminate\Console\Command;
 
 class UpdateV2ProjectShortNameBasedOnCsvCommand extends Command
 {
@@ -28,8 +28,9 @@ class UpdateV2ProjectShortNameBasedOnCsvCommand extends Command
     {
         $path = storage_path('app/data/tf_project_codes.csv'); // Adjust path as needed
 
-        if (!file_exists($path) || !is_readable($path)) {
+        if (! file_exists($path) || ! is_readable($path)) {
             $this->error("CSV file not found or not readable at: $path");
+
             return 1;
         }
 
@@ -39,7 +40,7 @@ class UpdateV2ProjectShortNameBasedOnCsvCommand extends Command
         // Open and read the CSV
         if (($handle = fopen($path, 'r')) !== false) {
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                if (!$header) {
+                if (! $header) {
                     $header = $data; // First row is the header
                 } else {
                     $rows[] = array_combine($header, $data);
@@ -54,33 +55,38 @@ class UpdateV2ProjectShortNameBasedOnCsvCommand extends Command
 
             $project = Project::isUuid($row['TM Project UUID'])->first();
 
-            if (!$project) {
-                $this->error("Project not found for UUID: " . $row['TM Project UUID']);
+            if (! $project) {
+                $this->error('Project not found for UUID: ' . $row['TM Project UUID']);
+
                 continue;
             }
+
             try {
                 $project->short_name = $row['Project Code'];
                 $project->save();
             } catch (\Exception $e) {
-                $this->error("Error updating project short name: " . $e->getMessage());
+                $this->error('Error updating project short name: ' . $e->getMessage());
+
                 continue;
             }
 
             $organisation = $project->organisation;
 
-            if (!$organisation) {
-                $this->error("Organisation not found for project: " . $project->id);
+            if (! $organisation) {
+                $this->error('Organisation not found for project: ' . $project->id);
+
                 continue;
             }
-            
+
             if ($organisation->name !== $row['Organization Name (from Full RFP Vetting) (from Project Code)']) {
-                $this->error("Organisation name mismatch for project: " . $project->id);
-                $this->error("Expected: |" . $row['Organization Name (from Full RFP Vetting) (from Project Code)'] . "|");
-                $this->error("Actual: |" . $organisation->name . "|");
+                $this->error('Organisation name mismatch for project: ' . $project->id);
+                $this->error('Expected: |' . $row['Organization Name (from Full RFP Vetting) (from Project Code)'] . '|');
+                $this->error('Actual: |' . $organisation->name . '|');
             }
         }
 
-        $this->info("CSV processing complete. Rows processed: " . count($rows));
+        $this->info('CSV processing complete. Rows processed: ' . count($rows));
+
         return 0;
     }
 }
