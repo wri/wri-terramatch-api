@@ -26,7 +26,7 @@ class UpdateV2ProjectShortNameBasedOnCsvCommand extends Command
      */
     public function handle()
     {
-        $path = storage_path('app/data/tf_project_codes.csv'); // Adjust path as needed
+        $path = base_path('imports/tf_project_codes.csv'); // Adjust path as needed
 
         if (! file_exists($path) || ! is_readable($path)) {
             $this->error("CSV file not found or not readable at: $path");
