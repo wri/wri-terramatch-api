@@ -62,7 +62,7 @@ class UpdateV2ProjectShortNameBasedOnCsvCommand extends Command
             }
 
             try {
-                $project->short_name = $row['Project Code'];
+                $project->short_name = strtoupper($row['Project Code']);
                 $project->save();
             } catch (\Exception $e) {
                 $this->error('Error updating project short name: ' . $e->getMessage());
