@@ -300,8 +300,6 @@ DashboardProjectProfileResponse:
   $ref: './DashboardProjectProfileResponse.yml'
 DashboardProjectProfileData:
   $ref: './DashboardProjectProfileData.yml'
-DashboardTopProjectsResponse:
-  $ref: './DashboardTopProjectsResponse.yml'
 DashboardTopPlantedTree:
   $ref: './DashboardTopPlantedTree.yml'
 DashboardTopTreeSpecies:

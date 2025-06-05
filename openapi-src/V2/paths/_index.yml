@@ -2246,9 +2246,6 @@
 /v2/dashboard/frameworks:
   get:
     $ref: './Dashboard/get-v2-dashboard-frameworks.yml'
-/v2/dashboard/top-trees-planted:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-top-trees-planted.yml'
 /v2/dashboard/indicator/hectares-restoration:
   get:
     $ref: './Dashboard/get-v2-dashboard-indicator-hectares-restoration.yml'
