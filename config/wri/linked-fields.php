@@ -374,11 +374,25 @@ return [
                     'collection' => 'tree-planted',
                 ],
                 'pro-pit-all-jobs' => [
-                    'property' => 'employeesAll',
-                    'label' => 'All Employees',
+                    'property' => 'jobsAll',
+                    'label' => 'All Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
-                    'input_type' => 'employees',
+                    'input_type' => 'jobs',
                     'collection' => 'all'
+                ],
+                'pro-pit-full-time-jobs' => [
+                    'property' => 'jobsFullTime',
+                    'label' => 'Full-time Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'full-time'
+                ],
+                'pro-pit-part-time-jobs' => [
+                    'property' => 'jobsPartTime',
+                    'label' => 'Part-time Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'part-time'
                 ],
                 'pro-pit-volunteers' => [
                     'property' => 'volunteers',
@@ -489,11 +503,25 @@ return [
                     'collection' => 'tree-planted',
                 ],
                 'pro-all-jobs' => [
-                    'property' => 'employeesAll',
-                    'label' => 'All Employees',
+                    'property' => 'jobsAll',
+                    'label' => 'All Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
-                    'input_type' => 'employees',
+                    'input_type' => 'jobs',
                     'collection' => 'all'
+                ],
+                'pro-full-time-jobs' => [
+                    'property' => 'jobsFullTime',
+                    'label' => 'Full-time Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'full-time'
+                ],
+                'pro-part-time-jobs' => [
+                    'property' => 'jobsPartTime',
+                    'label' => 'Part-time Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'part-time'
                 ],
                 'pro-volunteers' => [
                     'property' => 'volunteers',

@@ -213,9 +213,15 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     // Required by the HasDemographics trait. What's specified here should be a super set of what's on ProjectPitch,
     // as those demographics are all copied to the project on establishment.
     public const DEMOGRAPHIC_COLLECTIONS = [
-        Demographic::EMPLOYEES_TYPE => [
+        Demographic::JOBS_TYPE => [
             'all' => [
                 DemographicCollections::ALL,
+            ],
+            'full-time' => [
+                DemographicCollections::FULL_TIME,
+            ],
+            'part-time' => [
+                DemographicCollections::PART_TIME,
             ],
         ],
         Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
