@@ -52,13 +52,13 @@ class DemographicFactory extends Factory
         });
     }
 
-    public function projectPitchEmployees(): Factory
+    public function projectPitchJobs(): Factory
     {
         return $this->state(function (array $attributes) {
             return [
                 'demographical_type' => ProjectPitch::class,
                 'demographical_id' => ProjectPitch::factory()->create(),
-                'type' => Demographic::EMPLOYEES_TYPE,
+                'type' => Demographic::JOBS_TYPE,
                 'collection' => DemographicCollections::ALL,
             ];
         });
