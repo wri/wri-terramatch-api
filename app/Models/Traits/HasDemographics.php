@@ -2,14 +2,16 @@
 
 namespace App\Models\Traits;
 
+use App\Exceptions\DemographicsException;
 use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Demographics\DemographicEntry;
 use Illuminate\Support\Str;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 
 trait HasDemographics
 {
-    public const DEMOGRAPHIC_ATTRIBUTES = [
+    public const DEMOGRAPHIC_TOTAL_ATTRIBUTES = [
         'workdaysPaid' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'paid'],
         'workdaysVolunteer' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'volunteer'],
         'workdaysDirectTotal' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'direct'],
@@ -27,6 +29,14 @@ trait HasDemographics
         'allBeneficiariesTotal' => ['type' => Demographic::ALL_BENEFICIARIES_TYPE],
         'trainingBeneficiariesTotal' => ['type' => Demographic::TRAINING_BENEFICIARIES_TYPE],
         'indirectBeneficiariesTotal' => ['type' => Demographic::INDIRECT_BENEFICIARIES_TYPE],
+    ];
+
+    public const DEMOGRAPHIC_AGGREGATE_ATTRIBUTES = [
+        'fullTimeJobsAggregate' => ['type' => Demographic::JOBS_TYPE, 'collection' => DemographicCollections::FULL_TIME],
+        'partTimeJobsAggregate' => ['type' => Demographic::JOBS_TYPE, 'collection' => DemographicCollections::PART_TIME],
+        'volunteersAggregate' => ['type' => Demographic::VOLUNTEERS_TYPE, 'collection' => DemographicCollections::VOLUNTEER],
+        'allBeneficiariesAggregate' => ['type' => Demographic::ALL_BENEFICIARIES_TYPE, 'collection' => DemographicCollections::ALL],
+        'allAssociatesAggregate' => ['type' => Demographic::ASSOCIATES_TYPE, 'collection' => DemographicCollections::ALL],
     ];
 
     public static function bootHasDemographics()
@@ -62,11 +72,12 @@ trait HasDemographics
                     data_get($collectionSets, 'part-time', []),
                     data_get($collectionSets, 'temp', []),
                 ])->flatten(),
-                // These three define a single collection each, and simply rely on the type level relation above
+                // These define a single collection each, and simply rely on the type level relation above
                 Demographic::VOLUNTEERS_TYPE,
                 Demographic::ALL_BENEFICIARIES_TYPE,
                 Demographic::TRAINING_BENEFICIARIES_TYPE,
-                Demographic::INDIRECT_BENEFICIARIES_TYPE => null,
+                Demographic::INDIRECT_BENEFICIARIES_TYPE,
+                Demographic::ASSOCIATES_TYPE => null,
                 default => throw new InternalErrorException("Unrecognized demographic type: $demographicType"),
             };
             if (! empty($collections)) {
@@ -90,8 +101,8 @@ trait HasDemographics
     public function getAttribute($key)
     {
         $keyNormalized = Str::camel($key);
-        if (array_key_exists($keyNormalized, self::DEMOGRAPHIC_ATTRIBUTES)) {
-            $definition = self::DEMOGRAPHIC_ATTRIBUTES[$keyNormalized];
+        if (array_key_exists($keyNormalized, self::DEMOGRAPHIC_TOTAL_ATTRIBUTES)) {
+            $definition = self::DEMOGRAPHIC_TOTAL_ATTRIBUTES[$keyNormalized];
             $type = $definition['type'];
             $collections = is_string(self::DEMOGRAPHIC_COLLECTIONS[$type])
                 ? [self::DEMOGRAPHIC_COLLECTIONS[$type]]
@@ -119,38 +130,78 @@ trait HasDemographics
                 ?->description;
         }
 
+        if ($this->hasAggregateDemographic($keyNormalized)) {
+            $definition = self::DEMOGRAPHIC_AGGREGATE_ATTRIBUTES[$keyNormalized];
+            $demographicType = Str::camel($definition['type']);
+
+            return $this->sumTotalDemographicAmounts($demographicType, [$definition['collection']]) ?? 0;
+        }
+
         return parent::getAttribute($key);
     }
 
+    /**
+     * @throws DemographicsException
+     */
     public function setAttribute($key, $value)
     {
-        $otherDemographicType = $this->getDescriptionAttributeType(Str::camel($key));
-
-        if ($otherDemographicType == null) {
-            return parent::setAttribute($key, $value);
-        }
-
-        $collections = self::DEMOGRAPHIC_COLLECTIONS[$otherDemographicType]['other'];
-        $attributeName = Str::camel($otherDemographicType);
-        if (! empty($value)) {
-            // If we're setting a non-null value, make sure that each of the appropriate "other" collections
-            // exist for this demographic type.
-            foreach ($collections as $collection) {
-                if (! $this->$attributeName()->collection($collection)->exists()) {
-                    Demographic::create([
-                        'demographical_type' => get_class($this),
-                        'demographical_id' => $this->id,
-                        'type' => $otherDemographicType,
-                        'collection' => $collection,
-                    ]);
+        $keyNormalized = Str::camel($key);
+        $otherDemographicType = $this->getDescriptionAttributeType($keyNormalized);
+        if ($otherDemographicType != null) {
+            $collections = self::DEMOGRAPHIC_COLLECTIONS[$otherDemographicType]['other'];
+            $attributeName = Str::camel($otherDemographicType);
+            if (! empty($value)) {
+                // If we're setting a non-null value, make sure that each of the appropriate "other" collections
+                // exists for this demographic type.
+                foreach ($collections as $collection) {
+                    if (! $this->$attributeName()->collection($collection)->exists()) {
+                        Demographic::create([
+                            'demographical_type' => get_class($this),
+                            'demographical_id' => $this->id,
+                            'type' => $otherDemographicType,
+                            'collection' => $collection,
+                        ]);
+                    }
                 }
             }
+
+            // We set the description on every appropriate "other" collection demographic regardless of visibility.
+            $this->$attributeName()->collections($collections)->update(['description' => $value]);
+
+            return $this;
         }
 
-        // We set the description on every appropriate "other" collection demographic regardless of visibility.
-        $this->$attributeName()->collections($collections)->update(['description' => $value]);
+        if ($this->hasAggregateDemographic($keyNormalized)) {
+            if (! is_int($value)) {
+                throw new DemographicsException('Illegal attempt to update an aggregate demographic with non-integer value.');
+            }
 
-        return $this;
+            $definition = self::DEMOGRAPHIC_AGGREGATE_ATTRIBUTES[$keyNormalized];
+            $type = $definition['type'];
+            $collection = $definition['collection'];
+            $demographicType = Str::camel($type);
+            $demographic = $this->$demographicType()->collection($collection)->first();
+            if ($demographic != null) {
+                // If this appears to have been used with something more complicated than this aggregate attribute setter,
+                // it's an error to try to update it this way.
+                if ($demographic->entries()->count() != 2 || $demographic->entries()->whereNot('subtype', 'unknown')->exists()) {
+                    throw new DemographicsException('Illegal attempt to update complicated demographics through aggregate accessor.');
+                }
+                // Make sure it's visible.
+                if ($demographic->hidden) {
+                    $demographic->update(['hidden' => false]);
+                }
+            } else {
+                $demographic = $this->demographics()->create(['type' => $type, 'collection' => $collection, 'hidden' => false]);
+            }
+
+            $demographic->entries()->updateOrCreate(['type' => 'gender', 'subtype' => 'unknown'], ['amount' => $value]);
+            $demographic->entries()->updateOrCreate(['type' => 'age', 'subtype' => 'unknown'], ['amount' => $value]);
+
+            return $this;
+        }
+
+        return parent::setAttribute($key, $value);
     }
 
     protected function getDescriptionAttributeType(string $keyNormalized): string | null
@@ -162,6 +213,26 @@ trait HasDemographics
         $demographicType = Str::kebab(Str::before(Str::after($keyNormalized, 'other'), 'Description'));
 
         return in_array($demographicType, Demographic::VALID_TYPES) ? $demographicType : null;
+    }
+
+    protected function hasAggregateDemographic(string $keyNormalized): bool
+    {
+        if (! array_key_exists($keyNormalized, self::DEMOGRAPHIC_AGGREGATE_ATTRIBUTES)) {
+            return false;
+        }
+
+        $definition = self::DEMOGRAPHIC_AGGREGATE_ATTRIBUTES[$keyNormalized];
+        $type = $definition['type'];
+        $collection = $definition['collection'];
+        $typeDefinition = data_get(self::DEMOGRAPHIC_COLLECTIONS, $type);
+        if (is_array($typeDefinition)) {
+            return array_key_exists($collection, $typeDefinition);
+        }
+        if (is_string($typeDefinition)) {
+            return $typeDefinition == $collection;
+        }
+
+        return false;
     }
 
     protected function sumTotalDemographicAmounts(string $demographicType, array $collections): int

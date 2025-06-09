@@ -5,6 +5,7 @@ namespace Database\Factories\V2\Demographics;
 use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\ProjectPitch;
+use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -59,6 +60,18 @@ class DemographicFactory extends Factory
                 'demographical_id' => ProjectPitch::factory()->create(),
                 'type' => Demographic::EMPLOYEES_TYPE,
                 'collection' => DemographicCollections::ALL,
+            ];
+        });
+    }
+
+    public function projectVolunteers(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'demographical_type' => Project::class,
+                'demographical_id' => Project::factory()->create(),
+                'type' => Demographic::VOLUNTEERS_TYPE,
+                'collection' => DemographicCollections::VOLUNTEER,
             ];
         });
     }

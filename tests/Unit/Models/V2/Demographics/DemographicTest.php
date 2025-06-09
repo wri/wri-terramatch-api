@@ -2,9 +2,11 @@
 
 namespace Tests\Unit\Models\V2\Demographics;
 
+use App\Exceptions\DemographicsException;
 use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Demographics\DemographicEntry;
+use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
 use Tests\TestCase;
@@ -186,5 +188,36 @@ class DemographicTest extends TestCase
         $this->assertEquals('Restoration Partner Description', $report->other_restoration_partners_description);
         $this->assertEquals('Restoration Partner Description', $report->restorationPartnersDirectOther()->first()->description);
         $this->assertEquals('Restoration Partner Description', $report->restorationPartnersIndirectOther()->first()->description);
+    }
+
+    public function test_aggregate_attributes()
+    {
+        $project = Project::factory()->create();
+        $this->assertEquals(0, $project->volunteersAggregate);
+
+        $demographic = Demographic::factory()->projectVolunteers()->create(['demographical_id' => $project->id]);
+        DemographicEntry::factory()->create([
+            'demographic_id' => $demographic->id,
+            'type' => 'gender',
+            'subtype' => 'female',
+        ]);
+
+        $this->expectException(DemographicsException::class);
+        $this->expectExceptionMessage('non-integer value.');
+        $project->volunteersAggregate = 'foo';
+        $demographic->delete();
+
+        $project->volunteersAggregate = 3;
+        $this->assertEquals(3, $project->volunteersAggregate);
+        $this->assertEquals(1, $project->demographics()->count());
+        $this->assertEquals(2, $project->demographics()->first()->entries()->count());
+
+        $project->demographics()->first()->update(['hidden' => true]);
+        $project->volunteersAggregate = 5;
+        $this->assertFalse($project->demographics()->first()->hidden);
+        $this->assertEquals(5, $project->volunteersAggregate);
+        $this->assertEquals(5, $project->demographics()->first()->entries()->gender()->sum('amount'));
+        $this->assertEquals(5, $project->demographics()->first()->entries()->age()->sum('amount'));
+        $this->assertFalse($project->demographics()->first()->entries()->whereNot('subtype', 'unknown')->exists());
     }
 }
