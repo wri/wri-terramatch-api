@@ -24,7 +24,7 @@ class ProjectLiteResource extends JsonResource
             'planting_start_date' => $this->planting_start_date,
             'has_monitoring_data' => $this->has_monitoring_data,
             'project_reports_total' => $this->project_reports_total,
-            'trees_planted_count' => $this->trees_planted_count
+            'trees_planted_count' => $this->trees_planted_count,
         ];
 
         return $data;
