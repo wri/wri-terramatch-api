@@ -219,5 +219,9 @@ class DemographicTest extends TestCase
         $this->assertEquals(5, $project->demographics()->first()->entries()->gender()->sum('amount'));
         $this->assertEquals(5, $project->demographics()->first()->entries()->age()->sum('amount'));
         $this->assertFalse($project->demographics()->first()->entries()->whereNot('subtype', 'unknown')->exists());
+
+        $this->expectException(DemographicsException::class);
+        $this->expectExceptionMessage('negative value');
+        $project->volunteersAggregate = -1;
     }
 }

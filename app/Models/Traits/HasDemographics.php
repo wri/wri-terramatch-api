@@ -175,6 +175,9 @@ trait HasDemographics
             if (! is_int($value)) {
                 throw new DemographicsException('Illegal attempt to update an aggregate demographic with non-integer value.');
             }
+            if ($value < 0) {
+                throw new DemographicsException('Illegal attempt to update an aggregate demographic with negative value.');
+            }
 
             $definition = self::DEMOGRAPHIC_AGGREGATE_ATTRIBUTES[$keyNormalized];
             $type = $definition['type'];
