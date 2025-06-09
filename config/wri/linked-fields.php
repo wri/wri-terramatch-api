@@ -353,10 +353,14 @@ return [
                 'pro-pit-barriers-project-activity' => ['property' => 'barriers_project_activity', 'label' => 'Barriers to Project Activities', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'barriers-project-collection'],
                 'pro-pit-barriers-project-activity-description' => ['property' => 'barriers_project_activity_description', 'label' => 'Barriers to Project Activities Descriptions', 'input_type' => 'text'],
                 'pro-pit-other-engage-women-youth' => ['property' => 'other_engage_women_youth', 'label' => 'Other Ways Project will Engage and Benefit Women/Youth', 'input_type' => 'text'],
-
                 'pro-pit-forest-fragments-distance' => ['property' => 'forest_fragments_distance', 'label' => 'Approximate distance in meters between project area and the center of the nearest forest fragment', 'input_type' => 'number'],
                 'pro-pit-anr-practices-proposed' => ['property' => 'anr_practices_proposed', 'label' => 'ANR practices that the organization will use during the project', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'anr-practices-proposed-collection'],
                 'pro-pit-information-authorization' => ['property' => 'information_authorization', 'label' => 'If the organization authorizes WRI to use their data for research', 'input_type' => 'boolean'],
+                'pro-pit-full-time-jobs-count' => ['property' => 'full_time_jobs_aggregate', 'label' => 'Aggregate full time jobs', 'input_type' => 'number'],
+                'pro-pit-part-time-jobs-count' => ['property' => 'part_time_jobs_aggregate', 'label' => 'Aggregate part time jobs', 'input_type' => 'number'],
+                'pro-pit-volunteers-count' => ['property' => 'volunteers_aggregate', 'label' => 'Aggregate volunteers', 'input_type' => 'number'],
+                'pro-pit-beneficiaries-count' => ['property' => 'all_beneficiaries_aggregate', 'label' => 'Aggregate beneficiaries', 'input_type' => 'number'],
+                'pro-pit-associates-count' => ['property' => 'all_associates_aggregate', 'label' => 'Aggregate associates', 'input_type' => 'number'],
             ],
             'file-collections' => [
                 'pro-pit-fcol-cover' => ['property' =>  'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],
@@ -481,6 +485,11 @@ return [
                 'pro-goal-trees-restored-anr' => ['property' => 'goal_trees_restored_anr', 'label' => 'Trees Restored Goal - ANR', 'input_type' => 'number'],
                 'pro-goal-trees-restored-direct-seeding' => ['property' => 'goal_trees_restored_direct_seeding', 'label' => 'Trees Restored Goal - Direct Seeding', 'input_type' => 'number'],
                 'pro-direct-seeding-survival-rate' => ['property' => 'direct_seeding_survival_rate', 'label' => 'Direct Seeding Survival Rate', 'input_type' => 'number-percentage'],
+                'pro-full-time-jobs-count' => ['property' => 'full_time_jobs_aggregate', 'label' => 'Aggregate full time jobs', 'input_type' => 'number'],
+                'pro-part-time-jobs-count' => ['property' => 'part_time_jobs_aggregate', 'label' => 'Aggregate part time jobs', 'input_type' => 'number'],
+                'pro-volunteers-count' => ['property' => 'volunteers_aggregate', 'label' => 'Aggregate volunteers', 'input_type' => 'number'],
+                'pro-beneficiaries-count' => ['property' => 'all_beneficiaries_aggregate', 'label' => 'Aggregate beneficiaries', 'input_type' => 'number'],
+                'pro-associates-count' => ['property' => 'all_associates_aggregate', 'label' => 'Aggregate associates', 'input_type' => 'number'],
             ],
             'file-collections' => [
                 'pro-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],

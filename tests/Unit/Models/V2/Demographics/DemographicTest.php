@@ -193,7 +193,7 @@ class DemographicTest extends TestCase
     public function test_aggregate_attributes()
     {
         $project = Project::factory()->create();
-        $this->assertEquals(0, $project->volunteersAggregate);
+        $this->assertEquals(0, $project->volunteers_aggregate);
 
         $demographic = Demographic::factory()->projectVolunteers()->create(['demographical_id' => $project->id]);
         DemographicEntry::factory()->create([
@@ -204,24 +204,24 @@ class DemographicTest extends TestCase
 
         $this->expectException(DemographicsException::class);
         $this->expectExceptionMessage('non-integer value.');
-        $project->volunteersAggregate = 'foo';
+        $project->volunteers_aggregate = 'foo';
         $demographic->delete();
 
-        $project->volunteersAggregate = 3;
-        $this->assertEquals(3, $project->volunteersAggregate);
+        $project->volunteers_aggregate = 3;
+        $this->assertEquals(3, $project->volunteers_aggregate);
         $this->assertEquals(1, $project->demographics()->count());
         $this->assertEquals(2, $project->demographics()->first()->entries()->count());
 
         $project->demographics()->first()->update(['hidden' => true]);
-        $project->volunteersAggregate = 5;
+        $project->volunteers_aggregate = 5;
         $this->assertFalse($project->demographics()->first()->hidden);
-        $this->assertEquals(5, $project->volunteersAggregate);
+        $this->assertEquals(5, $project->volunteers_aggregate);
         $this->assertEquals(5, $project->demographics()->first()->entries()->gender()->sum('amount'));
         $this->assertEquals(5, $project->demographics()->first()->entries()->age()->sum('amount'));
         $this->assertFalse($project->demographics()->first()->entries()->whereNot('subtype', 'unknown')->exists());
 
         $this->expectException(DemographicsException::class);
         $this->expectExceptionMessage('negative value');
-        $project->volunteersAggregate = -1;
+        $project->volunteers_aggregate = -1;
     }
 }
