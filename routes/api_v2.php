@@ -195,7 +195,6 @@ use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
-use App\Models\V2\MediaModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
