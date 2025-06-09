@@ -227,6 +227,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
         Demographic::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
+        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
