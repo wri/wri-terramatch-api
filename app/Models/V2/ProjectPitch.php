@@ -90,14 +90,21 @@ class ProjectPitch extends Model implements MediaModel
 
     // Required by the HasDemographics trait
     public const DEMOGRAPHIC_COLLECTIONS = [
-        Demographic::EMPLOYEES_TYPE => [
+        Demographic::JOBS_TYPE => [
             'all' => [
                 DemographicCollections::ALL,
+            ],
+            'full-time' => [
+                DemographicCollections::FULL_TIME,
+            ],
+            'part-time' => [
+                DemographicCollections::PART_TIME,
             ],
         ],
         Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
         Demographic::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
+        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
