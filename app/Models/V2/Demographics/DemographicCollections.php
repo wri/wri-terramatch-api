@@ -46,7 +46,9 @@ class DemographicCollections
 
     // jobs
     public const FULL_TIME = 'full-time';
+    public const FULL_TIME_CLT = 'full-time-clt';
     public const PART_TIME = 'part-time';
+    public const PART_TIME_CLT = 'part-time-clt';
     public const TEMP = 'temp';
 
     // volunteers

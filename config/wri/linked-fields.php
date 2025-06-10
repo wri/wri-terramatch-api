@@ -224,6 +224,13 @@ return [
                     'input_type' => 'employees',
                     'collection' => 'full-time'
                 ],
+                'org-employees-full-time-clt' => [
+                    'property' => 'employeesFullTimeClt',
+                    'label' => 'Full Time CLT Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'full-time-clt'
+                ],
                 'org-employees-part-time' => [
                     'property' => 'employeesPartTime',
                     'label' => 'Part Time Employees',
@@ -231,12 +238,26 @@ return [
                     'input_type' => 'employees',
                     'collection' => 'part-time'
                 ],
+                'org-employees-part-time-clt' => [
+                    'property' => 'employeesPartTimeClt',
+                    'label' => 'Part Time CLT Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'part-time-clt'
+                ],
                 'org-employees-temp' => [
                     'property' => 'employeesTemp',
                     'label' => 'Temp Employees',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'employees',
                     'collection' => 'temp'
+                ],
+                'org-associates' => [
+                    'property' => 'associates',
+                    'label' => 'Associates',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'associates',
+                    'collection' => 'all'
                 ],
                 'org-financial-indicators-financial-collection' => [
                     'property' => 'financialCollection',
@@ -875,12 +896,26 @@ return [
                     'input_type' => 'jobs',
                     'collection' => 'full-time'
                 ],
+                'pro-rep-full-time-clt-jobs' => [
+                    'property' => 'jobsFullTimeClt',
+                    'label' => 'Full-time CLT Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'full-time-clt'
+                ],
                 'pro-rep-part-time-jobs' => [
                     'property' => 'jobsPartTime',
                     'label' => 'Part-time Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
                     'collection' => 'part-time'
+                ],
+                'pro-rep-part-time-clt-jobs' => [
+                    'property' => 'jobsPartTimeClt',
+                    'label' => 'Part-time CLT Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'part-time-clt'
                 ],
                 'pro-rep-volunteers' => [
                     'property' => 'volunteers',
@@ -902,6 +937,13 @@ return [
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'trainingBeneficiaries',
                     'collection' => 'training'
+                ],
+                'pro-rep-associates' => [
+                    'property' => 'associates',
+                    'label' => 'Associates',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'associates',
+                    'collection' => 'all'
                 ],
                 'pro-rep-financial-indicators-financial-collection' => [
                     'property' => 'financialCollection',

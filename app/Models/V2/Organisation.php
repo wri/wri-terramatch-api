@@ -258,15 +258,18 @@ class Organisation extends Model implements MediaModel
             ],
             'full-time' => [
                 DemographicCollections::FULL_TIME,
+                DemographicCollections::FULL_TIME_CLT,
             ],
             'part-time' => [
                 DemographicCollections::PART_TIME,
+                DemographicCollections::PART_TIME_CLT,
             ],
             'temp' => [
                 DemographicCollections::TEMP,
             ],
         ],
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
