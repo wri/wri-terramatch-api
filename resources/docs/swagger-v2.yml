@@ -21731,61 +21731,6 @@ definitions:
             type: integer
           public:
             type: integer
-  DashboardTreeRestorationGoalResponse:
-    type: object
-    properties:
-      forProfitTreeCount:
-        type: integer
-      nonProfitTreeCount:
-        type: integer
-      totalTreesGrownGoal:
-        type: integer
-      treesUnderRestorationActualTotal:
-        type: array
-        items:
-          type: object
-          properties:
-            dueDate:
-              type: string
-              format: date
-            treeSpeciesAmount:
-              type: integer
-            treeSpeciesPercentage:
-              type: number
-      treesUnderRestorationActualForProfit:
-        type: array
-        items:
-          type: object
-          properties:
-            dueDate:
-              type: string
-              format: date
-            treeSpeciesAmount:
-              type: integer
-            treeSpeciesPercentage:
-              type: number
-      treesUnderRestorationActualNonProfit:
-        type: array
-        items:
-          type: object
-          properties:
-            dueDate:
-              type: string
-              format: date
-            treeSpeciesAmount:
-              type: integer
-            treeSpeciesPercentage:
-              type: number
-  DashboardTreesUnderRestorationActual:
-    type: object
-    properties:
-      dueDate:
-        type: string
-        format: date
-      treeSpeciesAmount:
-        type: integer
-      treeSpeciesPercentage:
-        type: number
   DashboardGetPolygonStatusResponse:
     properties:
       data:
@@ -50971,70 +50916,6 @@ paths:
                     type: integer
                   public:
                     type: integer
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  /v2/dashboard/tree-restoration-goal:
-    get:
-      summary: View Tree Restoration Goal for dashboard
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              forProfitTreeCount:
-                type: integer
-              nonProfitTreeCount:
-                type: integer
-              totalTreesGrownGoal:
-                type: integer
-              treesUnderRestorationActualTotal:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    dueDate:
-                      type: string
-                      format: date
-                    treeSpeciesAmount:
-                      type: integer
-                    treeSpeciesPercentage:
-                      type: number
-              treesUnderRestorationActualForProfit:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    dueDate:
-                      type: string
-                      format: date
-                    treeSpeciesAmount:
-                      type: integer
-                    treeSpeciesPercentage:
-                      type: number
-              treesUnderRestorationActualNonProfit:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    dueDate:
-                      type: string
-                      format: date
-                    treeSpeciesAmount:
-                      type: integer
-                    treeSpeciesPercentage:
-                      type: number
         '400':
           description: Bad request
         '500':
