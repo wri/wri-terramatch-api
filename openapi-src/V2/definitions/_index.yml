@@ -92,6 +92,8 @@ V2TreeSpeciesRead:
   $ref: './V2TreeSpeciesRead.yml'
 V2LeadershipsCreate:
   $ref: './V2LeadershipsCreate.yml'
+V2LeadershipsUpdate:
+  $ref: './V2LeadershipsUpdate.yml'
 V2LeadershipsRead:
   $ref: './V2LeadershipsRead.yml'
 V2OwnershipStakeCreate:
@@ -294,8 +296,6 @@ DashboardProjectProfileResponse:
   $ref: './DashboardProjectProfileResponse.yml'
 DashboardProjectProfileData:
   $ref: './DashboardProjectProfileData.yml'
-DashboardTopProjectsResponse:
-  $ref: './DashboardTopProjectsResponse.yml'
 DashboardTopPlantedTree:
   $ref: './DashboardTopPlantedTree.yml'
 DashboardTopTreeSpecies:

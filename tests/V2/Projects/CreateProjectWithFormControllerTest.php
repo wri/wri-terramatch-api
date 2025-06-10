@@ -106,14 +106,14 @@ class CreateProjectWithFormControllerTest extends TestCase
             );
         }
 
-        $this->assertEquals($projectPitch->employeesAllTotal, $project->employeesAllTotal);
+        $this->assertEquals($projectPitch->jobsAllTotal, $project->jobsAllTotal);
         $this->assertEquals(
-            $projectPitch->employeesAll()->first()->entries()->gender()->sum('amount'),
-            $project->employeesAll()->first()->entries()->gender()->sum('amount')
+            $projectPitch->jobsAll()->first()->entries()->gender()->sum('amount'),
+            $project->jobsAll()->first()->entries()->gender()->sum('amount')
         );
         $this->assertEquals(
-            $projectPitch->employeesAll()->first()->entries()->age()->sum('amount'),
-            $project->employeesAll()->first()->entries()->age()->sum('amount')
+            $projectPitch->jobsAll()->first()->entries()->age()->sum('amount'),
+            $project->jobsAll()->first()->entries()->age()->sum('amount')
         );
         $this->assertEquals($projectPitch->demographics()->count(), $project->demographics()->count());
     }
@@ -161,7 +161,7 @@ class CreateProjectWithFormControllerTest extends TestCase
             'speciesable_type' => ProjectPitch::class,
             'speciesable_id' => $projectPitch->id,
         ]);
-        $demographic = Demographic::factory()->projectPitchEmployees()->create(['demographical_id' => $projectPitch->id]);
+        $demographic = Demographic::factory()->projectPitchJobs()->create(['demographical_id' => $projectPitch->id]);
         DemographicEntry::factory()->gender()->create(['demographic_id' => $demographic->id]);
         DemographicEntry::factory()->age()->create(['demographic_id' => $demographic->id]);
         $formSubmissions = FormSubmission::factory()->create([

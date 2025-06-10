@@ -224,6 +224,13 @@ return [
                     'input_type' => 'employees',
                     'collection' => 'full-time'
                 ],
+                'org-employees-full-time-clt' => [
+                    'property' => 'employeesFullTimeClt',
+                    'label' => 'Full Time CLT Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'full-time-clt'
+                ],
                 'org-employees-part-time' => [
                     'property' => 'employeesPartTime',
                     'label' => 'Part Time Employees',
@@ -231,12 +238,26 @@ return [
                     'input_type' => 'employees',
                     'collection' => 'part-time'
                 ],
+                'org-employees-part-time-clt' => [
+                    'property' => 'employeesPartTimeClt',
+                    'label' => 'Part Time CLT Employees',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'employees',
+                    'collection' => 'part-time-clt'
+                ],
                 'org-employees-temp' => [
                     'property' => 'employeesTemp',
                     'label' => 'Temp Employees',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'employees',
                     'collection' => 'temp'
+                ],
+                'org-associates' => [
+                    'property' => 'associates',
+                    'label' => 'Associates',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'associates',
+                    'collection' => 'all'
                 ],
                 'org-financial-indicators-financial-collection' => [
                     'property' => 'financialCollection',
@@ -353,10 +374,14 @@ return [
                 'pro-pit-barriers-project-activity' => ['property' => 'barriers_project_activity', 'label' => 'Barriers to Project Activities', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'barriers-project-collection'],
                 'pro-pit-barriers-project-activity-description' => ['property' => 'barriers_project_activity_description', 'label' => 'Barriers to Project Activities Descriptions', 'input_type' => 'text'],
                 'pro-pit-other-engage-women-youth' => ['property' => 'other_engage_women_youth', 'label' => 'Other Ways Project will Engage and Benefit Women/Youth', 'input_type' => 'text'],
-
                 'pro-pit-forest-fragments-distance' => ['property' => 'forest_fragments_distance', 'label' => 'Approximate distance in meters between project area and the center of the nearest forest fragment', 'input_type' => 'number'],
                 'pro-pit-anr-practices-proposed' => ['property' => 'anr_practices_proposed', 'label' => 'ANR practices that the organization will use during the project', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'anr-practices-proposed-collection'],
                 'pro-pit-information-authorization' => ['property' => 'information_authorization', 'label' => 'If the organization authorizes WRI to use their data for research', 'input_type' => 'boolean'],
+                'pro-pit-full-time-jobs-count' => ['property' => 'full_time_jobs_aggregate', 'label' => 'Aggregate full time jobs', 'input_type' => 'number'],
+                'pro-pit-part-time-jobs-count' => ['property' => 'part_time_jobs_aggregate', 'label' => 'Aggregate part time jobs', 'input_type' => 'number'],
+                'pro-pit-volunteers-count' => ['property' => 'volunteers_aggregate', 'label' => 'Aggregate volunteers', 'input_type' => 'number'],
+                'pro-pit-beneficiaries-count' => ['property' => 'all_beneficiaries_aggregate', 'label' => 'Aggregate beneficiaries', 'input_type' => 'number'],
+                'pro-pit-associates-count' => ['property' => 'all_associates_aggregate', 'label' => 'Aggregate associates', 'input_type' => 'number'],
             ],
             'file-collections' => [
                 'pro-pit-fcol-cover' => ['property' =>  'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],
@@ -374,11 +399,25 @@ return [
                     'collection' => 'tree-planted',
                 ],
                 'pro-pit-all-jobs' => [
-                    'property' => 'employeesAll',
-                    'label' => 'All Employees',
+                    'property' => 'jobsAll',
+                    'label' => 'All Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
-                    'input_type' => 'employees',
+                    'input_type' => 'jobs',
                     'collection' => 'all'
+                ],
+                'pro-pit-full-time-jobs' => [
+                    'property' => 'jobsFullTime',
+                    'label' => 'Full-time Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'full-time'
+                ],
+                'pro-pit-part-time-jobs' => [
+                    'property' => 'jobsPartTime',
+                    'label' => 'Part-time Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'part-time'
                 ],
                 'pro-pit-volunteers' => [
                     'property' => 'volunteers',
@@ -467,6 +506,11 @@ return [
                 'pro-goal-trees-restored-anr' => ['property' => 'goal_trees_restored_anr', 'label' => 'Trees Restored Goal - ANR', 'input_type' => 'number'],
                 'pro-goal-trees-restored-direct-seeding' => ['property' => 'goal_trees_restored_direct_seeding', 'label' => 'Trees Restored Goal - Direct Seeding', 'input_type' => 'number'],
                 'pro-direct-seeding-survival-rate' => ['property' => 'direct_seeding_survival_rate', 'label' => 'Direct Seeding Survival Rate', 'input_type' => 'number-percentage'],
+                'pro-full-time-jobs-count' => ['property' => 'full_time_jobs_aggregate', 'label' => 'Aggregate full time jobs', 'input_type' => 'number'],
+                'pro-part-time-jobs-count' => ['property' => 'part_time_jobs_aggregate', 'label' => 'Aggregate part time jobs', 'input_type' => 'number'],
+                'pro-volunteers-count' => ['property' => 'volunteers_aggregate', 'label' => 'Aggregate volunteers', 'input_type' => 'number'],
+                'pro-beneficiaries-count' => ['property' => 'all_beneficiaries_aggregate', 'label' => 'Aggregate beneficiaries', 'input_type' => 'number'],
+                'pro-associates-count' => ['property' => 'all_associates_aggregate', 'label' => 'Aggregate associates', 'input_type' => 'number'],
             ],
             'file-collections' => [
                 'pro-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
@@ -489,11 +533,25 @@ return [
                     'collection' => 'tree-planted',
                 ],
                 'pro-all-jobs' => [
-                    'property' => 'employeesAll',
-                    'label' => 'All Employees',
+                    'property' => 'jobsAll',
+                    'label' => 'All Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
-                    'input_type' => 'employees',
+                    'input_type' => 'jobs',
                     'collection' => 'all'
+                ],
+                'pro-full-time-jobs' => [
+                    'property' => 'jobsFullTime',
+                    'label' => 'Full-time Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'full-time'
+                ],
+                'pro-part-time-jobs' => [
+                    'property' => 'jobsPartTime',
+                    'label' => 'Part-time Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'part-time'
                 ],
                 'pro-volunteers' => [
                     'property' => 'volunteers',
@@ -838,12 +896,26 @@ return [
                     'input_type' => 'jobs',
                     'collection' => 'full-time'
                 ],
+                'pro-rep-full-time-clt-jobs' => [
+                    'property' => 'jobsFullTimeClt',
+                    'label' => 'Full-time CLT Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'full-time-clt'
+                ],
                 'pro-rep-part-time-jobs' => [
                     'property' => 'jobsPartTime',
                     'label' => 'Part-time Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
                     'collection' => 'part-time'
+                ],
+                'pro-rep-part-time-clt-jobs' => [
+                    'property' => 'jobsPartTimeClt',
+                    'label' => 'Part-time CLT Jobs',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'jobs',
+                    'collection' => 'part-time-clt'
                 ],
                 'pro-rep-volunteers' => [
                     'property' => 'volunteers',
@@ -865,6 +937,13 @@ return [
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'trainingBeneficiaries',
                     'collection' => 'training'
+                ],
+                'pro-rep-associates' => [
+                    'property' => 'associates',
+                    'label' => 'Associates',
+                    'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
+                    'input_type' => 'associates',
+                    'collection' => 'all'
                 ],
                 'pro-rep-financial-indicators-financial-collection' => [
                     'property' => 'financialCollection',
