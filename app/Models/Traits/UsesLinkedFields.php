@@ -287,6 +287,7 @@ trait UsesLinkedFields
                 'allBeneficiaries',
                 'trainingBeneficiaries',
                 'indirectBeneficiaries',
+                'associates',
                 'stratas',
                 'invasive',
                 'seedings',
