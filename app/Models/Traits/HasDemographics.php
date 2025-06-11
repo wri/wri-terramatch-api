@@ -232,7 +232,7 @@ trait HasDemographics
         $collection = $definition['collection'];
         $typeDefinition = data_get(self::DEMOGRAPHIC_COLLECTIONS, $type);
         if (is_array($typeDefinition)) {
-            return array_key_exists($collection, $typeDefinition);
+            return collect($typeDefinition)->values()->flatten()->contains($collection);
         }
         if (is_string($typeDefinition)) {
             return $typeDefinition == $collection;
