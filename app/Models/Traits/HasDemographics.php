@@ -33,9 +33,12 @@ trait HasDemographics
 
     public const DEMOGRAPHIC_AGGREGATE_ATTRIBUTES = [
         'fullTimeJobsAggregate' => ['type' => Demographic::JOBS_TYPE, 'collection' => DemographicCollections::FULL_TIME],
+        'fullTimeCltJobsAggregate' => ['type' => Demographic::JOBS_TYPE, 'collection' => DemographicCollections::FULL_TIME_CLT],
         'partTimeJobsAggregate' => ['type' => Demographic::JOBS_TYPE, 'collection' => DemographicCollections::PART_TIME],
+        'partTimeCltJobsAggregate' => ['type' => Demographic::JOBS_TYPE, 'collection' => DemographicCollections::PART_TIME_CLT],
         'volunteersAggregate' => ['type' => Demographic::VOLUNTEERS_TYPE, 'collection' => DemographicCollections::VOLUNTEER],
         'allBeneficiariesAggregate' => ['type' => Demographic::ALL_BENEFICIARIES_TYPE, 'collection' => DemographicCollections::ALL],
+        'indirectBeneficiariesAggregate' => ['type' => Demographic::INDIRECT_BENEFICIARIES_TYPE, 'collection' => DemographicCollections::INDIRECT],
         'allAssociatesAggregate' => ['type' => Demographic::ASSOCIATES_TYPE, 'collection' => DemographicCollections::ALL],
     ];
 

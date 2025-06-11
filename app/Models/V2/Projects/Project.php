@@ -219,9 +219,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             ],
             'full-time' => [
                 DemographicCollections::FULL_TIME,
+                DemographicCollections::FULL_TIME_CLT,
             ],
             'part-time' => [
                 DemographicCollections::PART_TIME,
+                DemographicCollections::PART_TIME_CLT,
             ],
         ],
         Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
