@@ -14,6 +14,7 @@ class SitePolygonLightResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'poly_name' => $this->poly_name,
             'practice' => $this->practice,
             'target_sys' => $this->target_sys,

@@ -19,7 +19,6 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SitePolygonData;
 use App\Models\V2\User;
-use App\Models\V2\WorldCountryGeneralized;
 use App\Validators\SitePolygonValidator;
 use DateTime;
 use Exception;
@@ -265,7 +264,7 @@ class PolygonService
      */
     public function updateGeojsonModels(PolygonGeometry $polygonGeometry, array $geometry)
     {
-        $dbGeometry = $this->getGeomAndArea(data_get($geometry, 'features.0'));
+        $dbGeometry = $this->getGeomAndArea(data_get($geometry, 'features.0.geometry'));
         $polygonGeometry->update(['geom' => $dbGeometry['geom']]);
 
         $sitePolygon = $polygonGeometry->sitePolygon()->first();
@@ -705,29 +704,35 @@ class PolygonService
         return $sitePolygonsQuery;
     }
 
-    /**
-     * Get the bounding box of a country by its ISO code.
-     *
-     * @param string $iso
-     * @return array|null
-     */
-    public function getCountryBbox(string $iso): ?array
+    public function getPolygonData(string $uuid)
     {
-        $countryData = WorldCountryGeneralized::where('iso', $iso)
-            ->selectRaw('ST_AsGeoJSON(ST_Envelope(geometry)) AS bbox, country')
-            ->first();
+        $sitePolygon = SitePolygon::where('poly_id', $uuid)->first();
 
-        if (! $countryData) {
-            return null; // Country not found
+        if (! $sitePolygon) {
+            return ['error' => 'Polygon not found'];
         }
 
-        $geoJson = json_decode($countryData->bbox);
-        $coordinates = $geoJson->coordinates[0];
-        $countryName = $countryData->country;
+        $project = $sitePolygon->project()->first();
+
+        if (! $project) {
+            Log::error("Project not found for site polygon with ID: $sitePolygon->id");
+        }
+
+        $site = $sitePolygon->site()->first();
+
+        if (! $site) {
+            Log::error("Site not found for site polygon with ID: $sitePolygon->id");
+        }
 
         return [
-            $countryName,
-            [$coordinates[0][0], $coordinates[0][1], $coordinates[2][0], $coordinates[2][1]],
+            'data' => [
+                ['key' => 'poly_name', 'title' => 'title', 'value' => $sitePolygon->poly_name ?? null],
+                ['key' => 'project_name', 'title' => 'Project', 'value' => $project->name ?? null],
+                ['key' => 'site_name', 'title' => 'Site', 'value' => $site?->name ?? null],
+                ['key' => 'num_trees', 'title' => 'Number of trees', 'value' => $sitePolygon->num_trees ?? null],
+                ['key' => 'plantstart', 'title' => 'Plant Start Date', 'value' => $sitePolygon->plantstart ?? null],
+                ['key' => 'status', 'title' => 'Status', 'value' => $sitePolygon->status ?? null],
+            ],
         ];
     }
 

@@ -1392,6 +1392,8 @@ definitions:
                   type: string
                 funding_programme_uuid:
                   type: string
+                funding_programme_framework_key:
+                  type: string
                 options_other:
                   type: boolean
                 form_sections:
@@ -2049,6 +2051,8 @@ definitions:
       stage_id:
         type: string
       funding_programme_uuid:
+        type: string
+      funding_programme_framework_key:
         type: string
       options_other:
         type: boolean
@@ -5482,6 +5486,22 @@ definitions:
         type: integer
       nationality:
         type: string
+  V2LeadershipsUpdate:
+    title: V2LeadershipsUpdate
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      position:
+        type: string
+      gender:
+        type: string
+      age:
+        type: integer
+      nationality:
+        type: string
   V2LeadershipsRead:
     title: V2LeadershipsRead
     x-stoplight:
@@ -5536,11 +5556,15 @@ definitions:
     title: V2OwnershipStakeUpdate
     type: object
     properties:
-      position:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      title:
         type: string
       gender:
         type: string
-      age:
+      year_of_birth:
         type: integer
       percent_ownership:
         type: integer
@@ -8167,6 +8191,8 @@ definitions:
                       type: string
                     funding_programme_uuid:
                       type: string
+                    funding_programme_framework_key:
+                      type: string
                     options_other:
                       type: boolean
                     form_sections:
@@ -9023,6 +9049,8 @@ definitions:
             type: string
           funding_programme_uuid:
             type: string
+          funding_programme_framework_key:
+            type: string
           options_other:
             type: boolean
           form_sections:
@@ -9799,6 +9827,8 @@ definitions:
             type: string
           funding_programme_uuid:
             type: string
+          funding_programme_framework_key:
+            type: string
           options_other:
             type: boolean
           form_sections:
@@ -10444,6 +10474,8 @@ definitions:
             type: string
           funding_programme_uuid:
             type: string
+          funding_programme_framework_key:
+            type: string
           options_other:
             type: boolean
           form_sections:
@@ -10709,6 +10741,8 @@ definitions:
               type: string
             funding_programme_uuid:
               type: string
+            funding_programme_framework_key:
+              type: string
             options_other:
               type: boolean
             form_sections:
@@ -10927,6 +10961,8 @@ definitions:
               stage_id:
                 type: string
               funding_programme_uuid:
+                type: string
+              funding_programme_framework_key:
                 type: string
               options_other:
                 type: boolean
@@ -11161,6 +11197,8 @@ definitions:
           stage_id:
             type: string
           funding_programme_uuid:
+            type: string
+          funding_programme_framework_key:
             type: string
           options_other:
             type: boolean
@@ -11499,6 +11537,8 @@ definitions:
                 stage_id:
                   type: string
                 funding_programme_uuid:
+                  type: string
+                funding_programme_framework_key:
                   type: string
                 options_other:
                   type: boolean
@@ -21711,61 +21751,6 @@ definitions:
             type: integer
           public:
             type: integer
-  DashboardTreeRestorationGoalResponse:
-    type: object
-    properties:
-      forProfitTreeCount:
-        type: integer
-      nonProfitTreeCount:
-        type: integer
-      totalTreesGrownGoal:
-        type: integer
-      treesUnderRestorationActualTotal:
-        type: array
-        items:
-          type: object
-          properties:
-            dueDate:
-              type: string
-              format: date
-            treeSpeciesAmount:
-              type: integer
-            treeSpeciesPercentage:
-              type: number
-      treesUnderRestorationActualForProfit:
-        type: array
-        items:
-          type: object
-          properties:
-            dueDate:
-              type: string
-              format: date
-            treeSpeciesAmount:
-              type: integer
-            treeSpeciesPercentage:
-              type: number
-      treesUnderRestorationActualNonProfit:
-        type: array
-        items:
-          type: object
-          properties:
-            dueDate:
-              type: string
-              format: date
-            treeSpeciesAmount:
-              type: integer
-            treeSpeciesPercentage:
-              type: number
-  DashboardTreesUnderRestorationActual:
-    type: object
-    properties:
-      dueDate:
-        type: string
-        format: date
-      treeSpeciesAmount:
-        type: integer
-      treeSpeciesPercentage:
-        type: number
   DashboardGetPolygonStatusResponse:
     properties:
       data:
@@ -21795,27 +21780,6 @@ definitions:
             lat:
               type: number
             description: Latitude of polygon
-  DashboardBBOXProject:
-    type: object
-    properties:
-      bbox:
-        type: array
-        items:
-          type: number
-  DashboardBBOXLandscape:
-    type: object
-    properties:
-      bbox:
-        type: array
-        items:
-          type: number
-  DashboardBBOXCountry:
-    type: object
-    properties:
-      bbox:
-        type: array
-        items:
-          type: number
   DashboardPolygonData:
     type: object
     properties:
@@ -22009,33 +21973,6 @@ definitions:
             type: array
             items:
               type: string
-  DashboardTopProjectsResponse:
-    properties:
-      data:
-        type: object
-        properties:
-          top_projects_most_planted_trees:
-            type: array
-            items:
-              type: object
-              properties:
-                organization:
-                  type: string
-                project:
-                  type: string
-                uuid:
-                  type: string
-                trees_planted:
-                  type: integer
-          top_tree_species_planted:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                amount:
-                  type: integer
   DashboardTopPlantedTree:
     type: object
     properties:
@@ -22187,11 +22124,6 @@ definitions:
               type: string
             validation_status:
               type: boolean
-      bbox:
-        type: array
-        items:
-          type: number
-        description: Bounding box of the entity
   EntityPolygonResponse:
     type: object
     properties:
@@ -26118,6 +26050,8 @@ paths:
                       type: string
                     funding_programme_uuid:
                       type: string
+                    funding_programme_framework_key:
+                      type: string
                     options_other:
                       type: boolean
                     form_sections:
@@ -27364,6 +27298,8 @@ paths:
                       type: string
                     funding_programme_uuid:
                       type: string
+                    funding_programme_framework_key:
+                      type: string
                     options_other:
                       type: boolean
                     form_sections:
@@ -27570,6 +27506,8 @@ paths:
               stage_id:
                 type: string
               funding_programme_uuid:
+                type: string
+              funding_programme_framework_key:
                 type: string
               options_other:
                 type: boolean
@@ -28482,6 +28420,8 @@ paths:
               stage_id:
                 type: string
               funding_programme_uuid:
+                type: string
+              funding_programme_framework_key:
                 type: string
               options_other:
                 type: boolean
@@ -35756,6 +35696,57 @@ paths:
                 type: string
       tags:
         - V2 Leaderships
+    patch:
+      summary: Update a leaderships
+      operationId: patch-v2-leaderships-UUID
+      responses:
+        '200':
+          description: OK
+          schema:
+            title: V2LeadershipsRead
+            x-stoplight:
+              id: 04vvsvyndvy8n
+            type: object
+            properties:
+              uuid:
+                type: string
+              organisation_id:
+                type: string
+              position:
+                type: string
+              gender:
+                type: string
+              age:
+                type: integer
+              nationality:
+                type: string
+              collection:
+                type: string
+      tags:
+        - V2 Leaderships
+      parameters:
+        - type: string
+          name: UUID
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            title: V2LeadershipsUpdate
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              position:
+                type: string
+              gender:
+                type: string
+              age:
+                type: integer
+              nationality:
+                type: string
   /v2/ownership-stake:
     post:
       summary: Create a ownership stake
@@ -35834,11 +35825,15 @@ paths:
             title: V2OwnershipStakeUpdate
             type: object
             properties:
-              position:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              title:
                 type: string
               gender:
                 type: string
-              age:
+              year_of_birth:
                 type: integer
               percent_ownership:
                 type: integer
@@ -36897,6 +36892,8 @@ paths:
                           type: string
                         funding_programme_uuid:
                           type: string
+                        funding_programme_framework_key:
+                          type: string
                         options_other:
                           type: boolean
                         form_sections:
@@ -37643,6 +37640,8 @@ paths:
                     type: string
                   funding_programme_uuid:
                     type: string
+                  funding_programme_framework_key:
+                    type: string
                   options_other:
                     type: boolean
                   form_sections:
@@ -37925,6 +37924,8 @@ paths:
                         stage_id:
                           type: string
                         funding_programme_uuid:
+                          type: string
+                        funding_programme_framework_key:
                           type: string
                         options_other:
                           type: boolean
@@ -38239,6 +38240,8 @@ paths:
                           type: string
                         funding_programme_uuid:
                           type: string
+                        funding_programme_framework_key:
+                          type: string
                         options_other:
                           type: boolean
                         form_sections:
@@ -38523,6 +38526,8 @@ paths:
                 type: string
               funding_programme_uuid:
                 type: string
+              funding_programme_framework_key:
+                type: string
               options_other:
                 type: boolean
               form_sections:
@@ -38729,6 +38734,8 @@ paths:
                   stage_id:
                     type: string
                   funding_programme_uuid:
+                    type: string
+                  funding_programme_framework_key:
                     type: string
                   options_other:
                     type: boolean
@@ -38963,6 +38970,8 @@ paths:
                     type: string
                   funding_programme_uuid:
                     type: string
+                  funding_programme_framework_key:
+                    type: string
                   options_other:
                     type: boolean
                   form_sections:
@@ -39170,6 +39179,8 @@ paths:
                   stage_id:
                     type: string
                   funding_programme_uuid:
+                    type: string
+                  funding_programme_framework_key:
                     type: string
                   options_other:
                     type: boolean
@@ -39437,6 +39448,8 @@ paths:
                               stage_id:
                                 type: string
                               funding_programme_uuid:
+                                type: string
+                              funding_programme_framework_key:
                                 type: string
                               options_other:
                                 type: boolean
@@ -39775,6 +39788,8 @@ paths:
                                 type: string
                               funding_programme_uuid:
                                 type: string
+                              funding_programme_framework_key:
+                                type: string
                               options_other:
                                 type: boolean
                               form_sections:
@@ -40097,6 +40112,8 @@ paths:
                         stage_id:
                           type: string
                         funding_programme_uuid:
+                          type: string
+                        funding_programme_framework_key:
                           type: string
                         options_other:
                           type: boolean
@@ -40438,6 +40455,8 @@ paths:
                           type: string
                         funding_programme_uuid:
                           type: string
+                        funding_programme_framework_key:
+                          type: string
                         options_other:
                           type: boolean
                         form_sections:
@@ -40714,6 +40733,8 @@ paths:
                         stage_id:
                           type: string
                         funding_programme_uuid:
+                          type: string
+                        funding_programme_framework_key:
                           type: string
                         options_other:
                           type: boolean
@@ -40996,6 +41017,8 @@ paths:
                           type: string
                         funding_programme_uuid:
                           type: string
+                        funding_programme_framework_key:
+                          type: string
                         options_other:
                           type: boolean
                         form_sections:
@@ -41277,6 +41300,8 @@ paths:
                           type: string
                         funding_programme_uuid:
                           type: string
+                        funding_programme_framework_key:
+                          type: string
                         options_other:
                           type: boolean
                         form_sections:
@@ -41557,6 +41582,8 @@ paths:
                         stage_id:
                           type: string
                         funding_programme_uuid:
+                          type: string
+                        funding_programme_framework_key:
                           type: string
                         options_other:
                           type: boolean
@@ -41925,6 +41952,8 @@ paths:
                         type: string
                       funding_programme_uuid:
                         type: string
+                      funding_programme_framework_key:
+                        type: string
                       options_other:
                         type: boolean
                       form_sections:
@@ -42162,6 +42191,8 @@ paths:
                     type: string
                   funding_programme_uuid:
                     type: string
+                  funding_programme_framework_key:
+                    type: string
                   options_other:
                     type: boolean
                   form_sections:
@@ -42375,6 +42406,8 @@ paths:
                     type: string
                   funding_programme_uuid:
                     type: string
+                  funding_programme_framework_key:
+                    type: string
                   options_other:
                     type: boolean
                   form_sections:
@@ -42579,6 +42612,8 @@ paths:
                   stage_id:
                     type: string
                   funding_programme_uuid:
+                    type: string
+                  funding_programme_framework_key:
                     type: string
                   options_other:
                     type: boolean
@@ -42841,6 +42876,8 @@ paths:
                   stage_id:
                     type: string
                   funding_programme_uuid:
+                    type: string
+                  funding_programme_framework_key:
                     type: string
                   options_other:
                     type: boolean
@@ -43110,6 +43147,8 @@ paths:
                     type: string
                   funding_programme_uuid:
                     type: string
+                  funding_programme_framework_key:
+                    type: string
                   options_other:
                     type: boolean
                   form_sections:
@@ -43357,6 +43396,8 @@ paths:
                   stage_id:
                     type: string
                   funding_programme_uuid:
+                    type: string
+                  funding_programme_framework_key:
                     type: string
                   options_other:
                     type: boolean
@@ -43650,6 +43691,8 @@ paths:
                     type: string
                   funding_programme_uuid:
                     type: string
+                  funding_programme_framework_key:
+                    type: string
                   options_other:
                     type: boolean
                   form_sections:
@@ -43901,6 +43944,8 @@ paths:
                   stage_id:
                     type: string
                   funding_programme_uuid:
+                    type: string
+                  funding_programme_framework_key:
                     type: string
                   options_other:
                     type: boolean
@@ -44867,6 +44912,8 @@ paths:
                         stage_id:
                           type: string
                         funding_programme_uuid:
+                          type: string
+                        funding_programme_framework_key:
                           type: string
                         options_other:
                           type: boolean
@@ -45880,6 +45927,8 @@ paths:
                         stage_id:
                           type: string
                         funding_programme_uuid:
+                          type: string
+                        funding_programme_framework_key:
                           type: string
                         options_other:
                           type: boolean
@@ -49964,30 +50013,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  '/v2/sites/{site}/bbox':
-    get:
-      summary: Get bbox for a specific site
-      parameters:
-        - in: path
-          name: site
-          required: true
-          type: string
-          description: The ID of the site
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            title: SitePolygonsBboxResponse
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   '/v2/terrafund/site-polygon/{uuid}/{siteUuid}':
     post:
       summary: Create site polygon
@@ -50046,30 +50071,6 @@ paths:
                 type: number
                 format: double
                 description: Calculated area in hectares
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  '/v2/terrafund/polygon/bbox/{uuid}':
-    get:
-      summary: Get bbox for a polygon
-      parameters:
-        - in: path
-          name: uuid
-          required: true
-          type: string
-          description: The UUID of the polygon
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            title: SitePolygonsBboxResponse
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
         '400':
           description: Bad request
         '500':
@@ -51001,70 +51002,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/dashboard/tree-restoration-goal:
-    get:
-      summary: View Tree Restoration Goal for dashboard
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              forProfitTreeCount:
-                type: integer
-              nonProfitTreeCount:
-                type: integer
-              totalTreesGrownGoal:
-                type: integer
-              treesUnderRestorationActualTotal:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    dueDate:
-                      type: string
-                      format: date
-                    treeSpeciesAmount:
-                      type: integer
-                    treeSpeciesPercentage:
-                      type: number
-              treesUnderRestorationActualForProfit:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    dueDate:
-                      type: string
-                      format: date
-                    treeSpeciesAmount:
-                      type: integer
-                    treeSpeciesPercentage:
-                      type: number
-              treesUnderRestorationActualNonProfit:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    dueDate:
-                      type: string
-                      format: date
-                    treeSpeciesAmount:
-                      type: integer
-                    treeSpeciesPercentage:
-                      type: number
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   /v2/dashboard/project-list-export:
     get:
       summary: Export CSV document of active projects
@@ -51144,125 +51081,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/dashboard/get-bbox-project:
-    get:
-      summary: Get Bbox of all polygons of project
-      tags:
-        - Projects
-      parameters:
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
-        '404':
-          description: Project not found
-  /v2/dashboard/bbox/project:
-    get:
-      summary: Get Bbox of all polygons of project
-      tags:
-        - Projects
-      parameters:
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
-        '404':
-          description: Project not found
-  /v2/dashboard/bbox/landscape:
-    get:
-      summary: Get Bbox of landscape geometries
-      tags:
-        - Landscapes
-      parameters:
-        - name: landscapes
-          type: string
-          in: query
-          description: 'Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)'
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
-        '404':
-          description: Project not found
-  /v2/dashboard/bbox/country-landscape:
-    get:
-      summary: Get Bbox of landscape geometries
-      tags:
-        - Landscapes
-      parameters:
-        - name: landscapes
-          type: string
-          in: query
-          description: 'Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)'
-          required: true
-        - name: country
-          type: string
-          in: query
-          description: Country iso name
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
-        '404':
-          description: Project not found
-  '/v2/dashboard/country/{country}':
-    get:
-      summary: Get the bounding box of a country
-      tags:
-        - Country
-      parameters:
-        - in: path
-          name: country
-          type: string
-          description: ISO code of the country
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              bbox:
-                type: array
-                items:
-                  type: number
-        '404':
-          description: Country not found
   '/v2/dashboard/polygon-data/{uuid}':
     get:
       summary: Get Get allowed to project
@@ -51565,54 +51383,6 @@ paths:
                   type: string
                 name:
                   type: string
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  /v2/dashboard/top-trees-planted:
-    get:
-      summary: Retrieve top 10 projects and top 20 tree species planted
-      description: |
-        This endpoint returns Tops and metrics related to projects and tree species.
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            properties:
-              data:
-                type: object
-                properties:
-                  top_projects_most_planted_trees:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        organization:
-                          type: string
-                        project:
-                          type: string
-                        uuid:
-                          type: string
-                        trees_planted:
-                          type: integer
-                  top_tree_species_planted:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        amount:
-                          type: integer
         '400':
           description: Bad request
         '500':
@@ -52084,11 +51854,6 @@ paths:
                       type: string
                     validation_status:
                       type: boolean
-              bbox:
-                type: array
-                items:
-                  type: number
-                description: Bounding box of the entity
         '400':
           description: 'Bad request, UUID parameter is missing'
         '500':
