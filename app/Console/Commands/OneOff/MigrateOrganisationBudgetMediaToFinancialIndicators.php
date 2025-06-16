@@ -66,9 +66,8 @@ class MigrateOrganisationBudgetMediaToFinancialIndicators extends Command
 
         $indicatorYears = $existingIndicators->pluck('year')->unique()->sort()->values();
 
-        // Si no existen, crear años desde el año anterior hacia atrás
         if ($indicatorYears->isEmpty()) {
-            $startYear = Carbon::now()->year - 1; // <- CORRECCIÓN AQUÍ
+            $startYear = Carbon::now()->year - 1;
             foreach ($existingMediaCollections as $i => $collection) {
                 $newIndicator = FinancialIndicators::create([
                     'organisation_id' => $organisation->id,
