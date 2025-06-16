@@ -82,7 +82,6 @@ class MigrateOrganisationBudgetMediaToFinancialIndicators extends Command
             $this->info("Created indicators for org: {$organisation->id}");
         }
 
-        // Mapear las colecciones a los años correctamente
         $collectionOrder = [
             'op_budget_3year',
             'op_budget_2year',
