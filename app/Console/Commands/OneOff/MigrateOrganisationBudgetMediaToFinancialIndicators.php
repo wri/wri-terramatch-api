@@ -61,38 +61,42 @@ class MigrateOrganisationBudgetMediaToFinancialIndicators extends Command
         }
 
         $existingIndicators = FinancialIndicators::where('organisation_id', $organisation->id)
-            ->orderByDesc('year')
+            ->orderBy('year')
             ->get();
 
-        $indicatorYears = $existingIndicators->pluck('year')->unique()->sortDesc()->values();
+        $indicatorYears = $existingIndicators->pluck('year')->unique()->sort()->values();
 
+        // Si no existen, crear años desde el año anterior hacia atrás
         if ($indicatorYears->isEmpty()) {
-            $startYear = Carbon::now()->year;
+            $startYear = Carbon::now()->year - 1; // <- CORRECCIÓN AQUÍ
             foreach ($existingMediaCollections as $i => $collection) {
                 $newIndicator = FinancialIndicators::create([
                     'organisation_id' => $organisation->id,
-                    'year' => $startYear - $i,
+                    'year' => $startYear - (count($existingMediaCollections) - 1 - $i),
                     'collection' => FinancialIndicators::COLLECTION_NOT_COLLECTION_DOCUMENTS,
                 ]);
                 $existingIndicators->push($newIndicator);
-                $indicatorYears->push($newIndicator->year);
             }
 
-            $existingIndicators = $existingIndicators->sortByDesc('year')->values();
-            $indicatorYears = $existingIndicators->pluck('year')->unique()->sortDesc()->values();
+            $existingIndicators = $existingIndicators->sortBy('year')->values();
+            $indicatorYears = $existingIndicators->pluck('year')->unique()->sort()->values();
             $this->info("Created indicators for org: {$organisation->id}");
         }
+
+        // Mapear las colecciones a los años correctamente
+        $collectionOrder = [
+            'op_budget_3year',
+            'op_budget_2year',
+            'op_budget_1year',
+            'op_budget_next_year',
+        ];
 
         $yearMap = [];
         $yearIndex = 0;
 
-        if ($existingMediaCollections->contains('op_budget_next_year')) {
-            $yearMap['op_budget_next_year'] = $indicatorYears->get($yearIndex++);
-        }
-
-        foreach (['op_budget_1year', 'op_budget_2year', 'op_budget_3year'] as $key) {
-            if ($existingMediaCollections->contains($key)) {
-                $yearMap[$key] = $indicatorYears->get($yearIndex++);
+        foreach ($collectionOrder as $collection) {
+            if ($existingMediaCollections->contains($collection)) {
+                $yearMap[$collection] = $indicatorYears->get($yearIndex++);
             }
         }
 
