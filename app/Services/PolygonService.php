@@ -68,6 +68,7 @@ class PolygonService
 
     private const VALID_SYSTEMS = [
         'agroforest',
+        'grassland',
         'natural-forest',
         'mangrove',
         'peatland',
@@ -438,6 +439,7 @@ class PolygonService
     {
         $validValues = [
             'agroforest',
+            'grassland',
             'mangrove',
             'natural-forest',
             'peatland',
