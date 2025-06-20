@@ -42,7 +42,10 @@ class UpdateEntityWithFormController extends Controller
         }
 
         if (! empty($updateRequest)) {
-            $updateRequest->update(['content' => array_merge($updateRequest->content, $answers)]);
+            $existingContent = is_string($updateRequest->content)
+                ? json_decode($updateRequest->content, true) ?? []
+                : ($updateRequest->content ?? []);
+            $updateRequest->update(['content' => array_merge($existingContent, $answers)]);
             if (data_get($formSubmissionRequest, 'continue_later_action')) {
                 $this->saveAuditStatusProjectDeveloperSubmitDraft($entity);
             }
