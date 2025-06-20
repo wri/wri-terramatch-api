@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2\Forms;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Forms\FormsCollection;
+use App\Http\Resources\V2\Forms\FormsLightCollection;
 use App\Models\V2\Forms\Form;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -13,6 +14,7 @@ class IndexFormController extends Controller
 {
     public function __invoke(Request $request): FormsCollection
     {
+        $light = $request->query('light') ?? false;
         $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
         $query = QueryBuilder::for(Form::class)
             ->allowedFilters([
@@ -51,6 +53,6 @@ class IndexFormController extends Controller
         $collection = $query->paginate($perPage)
             ->appends(request()->query());
 
-        return new FormsCollection($collection);
+        return $light ? new FormsLightCollection($collection) : new FormsCollection($collection);
     }
 }
