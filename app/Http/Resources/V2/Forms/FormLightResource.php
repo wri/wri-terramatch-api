@@ -14,6 +14,7 @@ class FormLightResource extends JsonResource
             'type' => $this->type,
             'published' => $this->published,
         ];
+
         return $this->appendFilesToResource($data);
     }
 }
