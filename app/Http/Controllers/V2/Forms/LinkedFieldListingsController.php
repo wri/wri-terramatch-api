@@ -9,13 +9,22 @@ use App\Http\Resources\V2\General\ListingResource;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormOptionList;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Redis;
 
 class LinkedFieldListingsController extends Controller
 {
     public function __invoke(LinkedFieldListingRequest $linkedFieldListingRequest): ResourceCollection
     {
         $this->authorize('listLinkedFields', Form::class);
+        $sortedParam = $linkedFieldListingRequest->form_types;
+        sort($sortedParam);
+        $cacheKey = implode('|', $sortedParam);
+        $list = Redis::get('listLinkedFields|'.$cacheKey);
+        if ($list != null) {
+            $list = json_decode($list, true);
 
+            return ListingResource::collection($list);
+        }
 
         $config = config('wri.linked-fields', []);
         $includes = ['fields', 'file-collections', 'relations'];
@@ -57,6 +66,8 @@ class LinkedFieldListingsController extends Controller
         if ($linkedFieldListingRequest->form_types) {
             $list = array_filter($list, fn ($listItem) => in_array($listItem['model_key'], $linkedFieldListingRequest->form_types));
         }
+        $encoded = json_encode($list);
+        Redis::set('listLinkedFields|'.$cacheKey, $encoded);
 
         return ListingResource::collection($list);
     }
