@@ -153,7 +153,7 @@ class BulkOrganisationImport extends Command
             }
 
             $field = $this->headerOrder[$index];
-            if (!empty($field)) {
+            if (! empty($field)) {
                 $row[$field] = $cell;
             }
         }
@@ -203,8 +203,9 @@ class BulkOrganisationImport extends Command
             return [];
         }
 
-        $values = explode("|", $value);
+        $values = explode('|', $value);
         $this->assert(! collect($values)->contains(fn ($val) => empty($val)), "Invalid $field entry found: " . json_encode($row));
+
         return $values;
     }
 

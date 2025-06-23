@@ -115,7 +115,7 @@ class BulkUserImport extends Command
             }
 
             $field = $this->headerOrder[$index];
-            if (!empty($field)) {
+            if (! empty($field)) {
                 $row[$field] = $cell;
             }
         }
