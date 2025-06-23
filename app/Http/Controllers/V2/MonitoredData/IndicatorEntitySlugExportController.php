@@ -23,6 +23,11 @@ class IndicatorEntitySlugExportController extends Controller
         ];
         $treeCoverLossHeaders = [
             ...$defaulHeaders,
+            '2010' => '2010',
+            '2011' => '2011',
+            '2012' => '2012',
+            '2013' => '2013',
+            '2014' => '2014',
             '2015' => '2015',
             '2016' => '2016',
             '2017' => '2017',
@@ -33,6 +38,7 @@ class IndicatorEntitySlugExportController extends Controller
             '2022' => '2022',
             '2023' => '2023',
             '2024' => '2024',
+            '2025' => '2025',
         ];
         $restorationByEcoRegionHeaders = [
             ...$defaulHeaders,
@@ -159,6 +165,11 @@ class IndicatorEntitySlugExportController extends Controller
                 ];
                 if (str_contains($slug, 'treeCoverLoss')) {
                     $valueYears = json_decode($indicator->value, true);
+                    $results['2010'] = $valueYears['2010'];
+                    $results['2011'] = $valueYears['2011'];
+                    $results['2012'] = $valueYears['2012'];
+                    $results['2013'] = $valueYears['2013'];
+                    $results['2014'] = $valueYears['2014'];
                     $results['2015'] = $valueYears['2015'];
                     $results['2016'] = $valueYears['2016'];
                     $results['2017'] = (float) $valueYears['2017'];
@@ -169,6 +180,7 @@ class IndicatorEntitySlugExportController extends Controller
                     $results['2022'] = $valueYears['2022'];
                     $results['2023'] = $valueYears['2023'];
                     $results['2024'] = $valueYears['2024'];
+                    $results['2025'] = $valueYears['2025'];
                 }
                 if ($slug == 'restorationByEcoRegion') {
                     $values = json_decode($indicator->value, true);
