@@ -110,7 +110,8 @@ class IndicatorEntitySlugExportController extends Controller
     {
         $sitePolygonsIndicator = SitePolygon::whereHas($slugMappings[$slug]['relation_name'], function ($query) use ($slug) {
             $query->where('indicator_slug', $slug)
-                ->where('year_of_analysis', date('Y'));
+                ->where('year_of_analysis', date('Y'))
+                ->where('status', 'approved');
         })
             ->whereHas('site', function ($query) use ($entity) {
                 if (get_class($entity) == Site::class) {
@@ -165,22 +166,22 @@ class IndicatorEntitySlugExportController extends Controller
                 ];
                 if (str_contains($slug, 'treeCoverLoss')) {
                     $valueYears = json_decode($indicator->value, true);
-                    $results['2010'] = $valueYears['2010'];
-                    $results['2011'] = $valueYears['2011'];
-                    $results['2012'] = $valueYears['2012'];
-                    $results['2013'] = $valueYears['2013'];
-                    $results['2014'] = $valueYears['2014'];
-                    $results['2015'] = $valueYears['2015'];
-                    $results['2016'] = $valueYears['2016'];
-                    $results['2017'] = (float) $valueYears['2017'];
-                    $results['2018'] = $valueYears['2018'];
-                    $results['2019'] = $valueYears['2019'];
-                    $results['2020'] = $valueYears['2020'];
-                    $results['2021'] = $valueYears['2021'];
-                    $results['2022'] = $valueYears['2022'];
-                    $results['2023'] = $valueYears['2023'];
-                    $results['2024'] = $valueYears['2024'];
-                    $results['2025'] = $valueYears['2025'];
+                    $results['2010'] = $valueYears['2010'] ?? 0;
+                    $results['2011'] = $valueYears['2011'] ?? 0;
+                    $results['2012'] = $valueYears['2012'] ?? 0;
+                    $results['2013'] = $valueYears['2013'] ?? 0;
+                    $results['2014'] = $valueYears['2014'] ?? 0;
+                    $results['2015'] = $valueYears['2015'] ?? 0;
+                    $results['2016'] = $valueYears['2016'] ?? 0;
+                    $results['2017'] = (float) $valueYears['2017'] ?? 0;
+                    $results['2018'] = $valueYears['2018'] ?? 0;
+                    $results['2019'] = $valueYears['2019'] ?? 0;
+                    $results['2020'] = $valueYears['2020'] ?? 0;
+                    $results['2021'] = $valueYears['2021'] ?? 0;
+                    $results['2022'] = $valueYears['2022'] ?? 0;
+                    $results['2023'] = $valueYears['2023'] ?? 0;
+                    $results['2024'] = $valueYears['2024'] ?? 0;
+                    $results['2025'] = $valueYears['2025'] ?? 0;
                 }
                 if ($slug == 'restorationByEcoRegion') {
                     $values = json_decode($indicator->value, true);
