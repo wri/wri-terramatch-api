@@ -88,16 +88,9 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                     ];
                     if (str_contains($slug, 'treeCoverLoss')) {
                         $valueYears = json_decode($indicator->value, true);
-                        $results['data']['2015'] = round((float) $valueYears['2015'], 1);
-                        $results['data']['2016'] = round((float) $valueYears['2016'], 1);
-                        $results['data']['2017'] = round((float) $valueYears['2017'], 1);
-                        $results['data']['2018'] = round((float) $valueYears['2018'], 1);
-                        $results['data']['2019'] = round((float) $valueYears['2019'], 1);
-                        $results['data']['2020'] = round((float) $valueYears['2020'], 1);
-                        $results['data']['2021'] = round((float) $valueYears['2021'], 1);
-                        $results['data']['2022'] = round((float) $valueYears['2022'], 1);
-                        $results['data']['2023'] = round((float) $valueYears['2023'], 1);
-                        $results['data']['2024'] = round((float) $valueYears['2024'], 1);
+                        foreach (range(2010, 2025) as $year) {
+                            $results['data']["$year"] = round((float) ($valueYears["$year"] ?? 0), 1);
+                        }
                     }
 
                     if ($slug == 'restorationByEcoRegion') {
