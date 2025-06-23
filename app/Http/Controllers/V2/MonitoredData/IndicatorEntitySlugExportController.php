@@ -166,22 +166,9 @@ class IndicatorEntitySlugExportController extends Controller
                 ];
                 if (str_contains($slug, 'treeCoverLoss')) {
                     $valueYears = json_decode($indicator->value, true);
-                    $results['2010'] = $valueYears['2010'] ?? 0;
-                    $results['2011'] = $valueYears['2011'] ?? 0;
-                    $results['2012'] = $valueYears['2012'] ?? 0;
-                    $results['2013'] = $valueYears['2013'] ?? 0;
-                    $results['2014'] = $valueYears['2014'] ?? 0;
-                    $results['2015'] = $valueYears['2015'] ?? 0;
-                    $results['2016'] = $valueYears['2016'] ?? 0;
-                    $results['2017'] = (float) $valueYears['2017'] ?? 0;
-                    $results['2018'] = $valueYears['2018'] ?? 0;
-                    $results['2019'] = $valueYears['2019'] ?? 0;
-                    $results['2020'] = $valueYears['2020'] ?? 0;
-                    $results['2021'] = $valueYears['2021'] ?? 0;
-                    $results['2022'] = $valueYears['2022'] ?? 0;
-                    $results['2023'] = $valueYears['2023'] ?? 0;
-                    $results['2024'] = $valueYears['2024'] ?? 0;
-                    $results['2025'] = $valueYears['2025'] ?? 0;
+                    foreach (range(2010, 2025) as $year) {
+                        $results["$year"] = (float) $valueYears[$year] ?? 0;
+                    }
                 }
                 if ($slug == 'restorationByEcoRegion') {
                     $values = json_decode($indicator->value, true);
