@@ -50,6 +50,9 @@ class ReassignMediaCollectionsCommand extends Command
         'training_capacity_building_upload',
         'training_capacity_building_photos',
         'financial_report_upload',
+        'tree_planting_upload',
+        'soil_water_conservation_upload',
+        'soil_water_Conservation_photos',
     ];
 
     /**
