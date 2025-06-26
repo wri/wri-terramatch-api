@@ -10,6 +10,19 @@ use Illuminate\Support\Facades\Log;
 
 class TerrafundDashboardQueryHelper
 {
+    private static $landscapeCodeToNameMap = [
+        'gcb' => 'Ghana Cocoa Belt',
+        'grv' => 'Greater Rift Valley of Kenya',
+        'ikr' => 'Lake Kivu & Rusizi River Basin',
+    ];
+
+    private static function mapLandscapeCodesToNames(array $codes): array
+    {
+        return array_map(function ($code) {
+            return self::$landscapeCodeToNameMap[$code] ?? $code;
+        }, $codes);
+    }
+
     public static function buildQueryFromRequest(Request $request)
     {
         $filters = $request->all();
@@ -48,7 +61,8 @@ class TerrafundDashboardQueryHelper
         });
 
         $query->when(data_get($filters, 'filter.landscapes'), function ($query, $landscapes) {
-            $query->whereIn('v2_projects.landscape', $landscapes);
+            $mappedLandscapes = self::mapLandscapeCodesToNames($landscapes);
+            $query->whereIn('v2_projects.landscape', $mappedLandscapes);
         });
 
         $query->when(data_get($filters, 'filter.organisationType'), function ($query, $organisationType) {
