@@ -200,6 +200,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'answers' => 'array',
         'detailed_intervention_types' => 'array',
         'states' => 'array',
+        'cohort' => 'array',
     ];
 
     public const PROJECT_STATUS_NEW = 'new_project';
@@ -670,5 +671,68 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function getTotalHectaresRestoredSumAttribute(): float
     {
         return $this->approvedSitePolygons->where('status', 'approved')->sum('calc_area');
+    }
+
+    /**
+     * Helper method to check if project has a specific cohort
+     * Handles both old string format and new array format
+     */
+    public function hasCohort(string $cohortName): bool
+    {
+        if (empty($this->cohort)) {
+            return false;
+        }
+
+        if (is_array($this->cohort)) {
+            return in_array($cohortName, $this->cohort);
+        }
+
+        // Legacy support: if cohort is still a string, compare directly
+        return $this->cohort === $cohortName;
+    }
+
+    /**
+     * Helper method to get cohorts as array
+     * Handles both old string format and new array format
+     */
+    public function getCohortsArray(): array
+    {
+        if (empty($this->cohort)) {
+            return [];
+        }
+
+        if (is_array($this->cohort)) {
+            return $this->cohort;
+        }
+
+        // Legacy support: if cohort is still a string, return as single-element array
+        return [$this->cohort];
+    }
+
+    /**
+     * Helper method to add a cohort to the project
+     */
+    public function addCohort(string $cohortName): void
+    {
+        $cohorts = $this->getCohortsArray();
+
+        if (! in_array($cohortName, $cohorts)) {
+            $cohorts[] = $cohortName;
+            $this->cohort = $cohorts;
+        }
+    }
+
+    /**
+     * Helper method to remove a cohort from the project
+     */
+    public function removeCohort(string $cohortName): void
+    {
+        $cohorts = $this->getCohortsArray();
+
+        $cohorts = array_filter($cohorts, function ($cohort) use ($cohortName) {
+            return $cohort !== $cohortName;
+        });
+
+        $this->cohort = array_values($cohorts);
     }
 }
