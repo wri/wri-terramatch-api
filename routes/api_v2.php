@@ -442,7 +442,7 @@ Route::prefix('reporting-frameworks')->group(function () {
 
 Route::get('/my/applications', ViewMyApplicationController::class);
 Route::prefix('applications')->group(function () {
-    Route::get('/{application}', ViewApplicationController::class);
+    Route::get('/{application}', ViewApplicationController::class)->middleware('i18n');
     Route::get('/{application}/export', ExportApplicationController::class);
 });
 
