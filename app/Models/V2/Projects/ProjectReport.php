@@ -264,6 +264,18 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'tree_planting_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'soil_water_conservation_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'soil_water_conservation_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
     ];
 
     // Required by the HasDemographics trait.

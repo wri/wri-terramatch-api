@@ -979,7 +979,10 @@ return [
                 'pro-rep-col-indirect-community-partners-upload' => ['property' =>  'indirect_community_partners_upload', 'label' => 'Indirect Community Partners Upload', 'input_type' => 'file', 'multichoice' => true],
                 'pro-rep-col-training-capacity-building-upload' => ['property' =>  'training_capacity_building_upload', 'label' => 'Training or Capacity Building Upload', 'input_type' => 'file', 'multichoice' => true],
                 'pro-rep-col-training-capacity-building-photos' => ['property' =>  'training_capacity_building_photos', 'label' => 'Training or Capacity Building Photos', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-financial-report-upload' => ['property' =>  'financial_report_upload', 'label' => 'Financial Report Upload', 'input_type' => 'file', 'multichoice' => true],                
+                'pro-rep-col-financial-report-upload' => ['property' =>  'financial_report_upload', 'label' => 'Financial Report Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-tree-planting-upload' => ['property' =>  'tree_planting_upload', 'label' => 'Tree Planting Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-soil-water-conservation-upload' => ['property' =>  'soil_water_conservation_upload', 'label' => 'Soil or Water Conservation Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-soil-water-conservation-photos' => ['property' =>  'soil_water_conservation_photos', 'label' => 'Soil or Water Conservation Photos', 'input_type' => 'file', 'multichoice' => true],
             ],
         ],
         'site' => [
