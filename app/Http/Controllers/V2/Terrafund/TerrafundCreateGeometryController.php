@@ -1143,7 +1143,11 @@ class TerrafundCreateGeometryController extends Controller
             $cohorts = ['terrafund-landscapes', 'terrafund', 'enterprises'];
 
             $projects = Project::where('landscape', $landscape)
-                ->whereIn('cohort', $cohorts)
+                ->where(function ($query) use ($cohorts) {
+                    foreach ($cohorts as $cohort) {
+                        $query->orWhereJsonContains('cohort', $cohort);
+                    }
+                })
                 ->get();
 
             $siteUuids = Site::whereIn('project_id', $projects->pluck('id'))->pluck('uuid');

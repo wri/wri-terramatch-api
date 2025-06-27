@@ -86,6 +86,13 @@ trait HasCacheParameter
 
     private function getCacheParameterForCohort($cohort)
     {
-        return $cohort ?? '';
+        if (empty($cohort)) {
+            return '';
+        }
+
+        $sortedCohorts = is_array($cohort) ? $cohort : [$cohort];
+        sort($sortedCohorts);
+
+        return implode(',', $sortedCohorts);
     }
 }

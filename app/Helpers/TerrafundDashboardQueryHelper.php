@@ -42,9 +42,21 @@ class TerrafundDashboardQueryHelper
         });
 
         $query->when(data_get($filters, 'filter.cohort'), function ($query, $cohort) {
-            $query->where('v2_projects.cohort', $cohort);
+            // Handle both single cohort and array of cohorts
+            if (is_array($cohort)) {
+                $query->where(function ($subQuery) use ($cohort) {
+                    foreach ($cohort as $cohortValue) {
+                        $subQuery->orWhereJsonContains('v2_projects.cohort', $cohortValue);
+                    }
+                });
+            } else {
+                $query->whereJsonContains('v2_projects.cohort', $cohort);
+            }
         }, function ($query) {
-            $query->whereIn('v2_projects.cohort', ['terrafund', 'terrafund-landscapes']);
+            $query->where(function ($subQuery) {
+                $subQuery->whereJsonContains('v2_projects.cohort', 'terrafund')
+                         ->orWhereJsonContains('v2_projects.cohort', 'terrafund-landscapes');
+            });
         });
 
         $query->when(data_get($filters, 'filter.landscapes'), function ($query, $landscapes) {
