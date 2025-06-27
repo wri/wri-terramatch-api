@@ -42,16 +42,23 @@ class TerrafundDashboardQueryHelper
         });
 
         $query->when(data_get($filters, 'filter.cohort'), function ($query, $cohort) {
-            // Handle both single cohort and array of cohorts
+            $cohortValues = [];
+
             if (is_array($cohort)) {
-                $query->where(function ($subQuery) use ($cohort) {
-                    foreach ($cohort as $cohortValue) {
+                $cohortValues = $cohort;
+            } elseif (strpos($cohort, ',') !== false) {
+                $cohortValues = array_map('trim', explode(',', $cohort));
+            } else {
+                $cohortValues = [$cohort];
+            }
+
+            $query->where(function ($subQuery) use ($cohortValues) {
+                foreach ($cohortValues as $cohortValue) {
+                    if (! empty($cohortValue)) {
                         $subQuery->orWhereJsonContains('v2_projects.cohort', $cohortValue);
                     }
-                });
-            } else {
-                $query->whereJsonContains('v2_projects.cohort', $cohort);
-            }
+                }
+            });
         }, function ($query) {
             $query->where(function ($subQuery) {
                 $subQuery->whereJsonContains('v2_projects.cohort', 'terrafund')

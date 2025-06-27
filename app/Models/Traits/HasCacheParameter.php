@@ -6,12 +6,17 @@ trait HasCacheParameter
 {
     public function getParametersFromRequest($request)
     {
+        $cohort = data_get($request, 'filter.cohort', '');
+        if (is_array($cohort)) {
+            $cohort = implode(',', $cohort);
+        }
+
         return $this->getCacheParameter(
             data_get($request, 'filter.programmes', []),
             data_get($request, 'filter.landscapes', []),
             data_get($request, 'filter.country', ''),
             data_get($request, 'filter.organisationType', []),
-            data_get($request, 'filter.cohort', ''),
+            $cohort,
             data_get($request, 'filter.projectUuid', '')
         );
     }
