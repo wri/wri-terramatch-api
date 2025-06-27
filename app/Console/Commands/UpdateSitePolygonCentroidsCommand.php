@@ -22,6 +22,7 @@ class UpdateSitePolygonCentroidsCommand extends Command
 
         if ($totalCount === 0) {
             $this->info('No records to process');
+
             return 0;
         }
 
@@ -40,7 +41,7 @@ class UpdateSitePolygonCentroidsCommand extends Command
                 ->select([
                     'sp.id',
                     DB::raw('ST_Y(ST_Centroid(pg.geom)) as lat'),
-                    DB::raw('ST_X(ST_Centroid(pg.geom)) as lng')
+                    DB::raw('ST_X(ST_Centroid(pg.geom)) as lng'),
                 ])
                 ->whereNull('sp.deleted_at')
                 ->where('sp.id', '>', $currentId)
@@ -61,7 +62,7 @@ class UpdateSitePolygonCentroidsCommand extends Command
                             ->where('id', $record->id)
                             ->update([
                                 'lat' => $record->lat,
-                                'lng' => $record->lng
+                                'lng' => $record->lng,
                             ]);
                         $processedCount++;
                     } else {
@@ -72,7 +73,7 @@ class UpdateSitePolygonCentroidsCommand extends Command
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
-                $this->error("Error processing batch: " . $e->getMessage());
+                $this->error('Error processing batch: ' . $e->getMessage());
                 $errorCount += $batch->count();
             }
 
@@ -90,8 +91,8 @@ class UpdateSitePolygonCentroidsCommand extends Command
 
     private function isValidCoordinate($lat, $lng): bool
     {
-        return is_numeric($lat) && is_numeric($lng) 
-            && $lat >= -90 && $lat <= 90 
+        return is_numeric($lat) && is_numeric($lng)
+            && $lat >= -90 && $lat <= 90
             && $lng >= -180 && $lng <= 180;
     }
-} 
+}
