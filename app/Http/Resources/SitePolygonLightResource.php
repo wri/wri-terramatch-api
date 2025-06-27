@@ -28,6 +28,7 @@ class SitePolygonLightResource extends JsonResource
             'primary_uuid' => $this->primary_uuid,
             'calc_area' => $this->calc_area,
             'num_trees' => $this->num_trees,
+            'site_id' => $this->site_id,
         ];
     }
 }

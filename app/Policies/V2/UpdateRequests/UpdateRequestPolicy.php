@@ -48,17 +48,36 @@ class UpdateRequestPolicy extends Policy
 
     public function approve(?User $user, ?UpdateRequest $updateRequest = null): bool
     {
+        if ($user->hasRole('project-manager')) {
+            return $this->projectManagerCan($user, $updateRequest);
+        }
+
         return $user->can('framework-' .  $updateRequest->framework_key);
     }
 
     public function reject(?User $user, ?UpdateRequest $updateRequest = null): bool
     {
+        if ($user->hasRole('project-manager')) {
+            return $this->projectManagerCan($user, $updateRequest);
+        }
+
         return $user->can('framework-' .  $updateRequest->framework_key);
     }
 
     public function moreinfo(?User $user, ?UpdateRequest $updateRequest = null): bool
     {
+        if ($user->hasRole('project-manager')) {
+            return $this->projectManagerCan($user, $updateRequest);
+        }
+
         return $user->can('framework-' .  $updateRequest->framework_key);
+    }
+
+    public function projectManagerCan(?User $user, ?UpdateRequest $updateRequest = null): bool
+    {
+        $frameworkKeys = $user->projectsFrameworkKey();
+
+        return $frameworkKeys->contains($updateRequest->framework_key);
     }
 
     protected function isTheirs(?User $user, ?Project $project = null): bool
