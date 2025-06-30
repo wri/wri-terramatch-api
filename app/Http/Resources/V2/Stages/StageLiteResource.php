@@ -18,7 +18,7 @@ class StageLiteResource extends JsonResource
             'name' => $this->name,
             'status' => $this->status,
             'readable_status' => $this->readable_status,
-            'form' => new FormLightResource($this->form)
+            'form' => new FormLightResource($this->form),
         ];
     }
 }
