@@ -561,7 +561,7 @@ class GeometryHelper
 
     public static function updateSitePolygonCentroid(SitePolygon $sitePolygon): bool
     {
-        if (!$sitePolygon->poly_id) {
+        if (! $sitePolygon->poly_id) {
             return false;
         }
 
@@ -569,7 +569,7 @@ class GeometryHelper
             ->where('uuid', $sitePolygon->poly_id)
             ->first();
 
-        if (!$centroid) {
+        if (! $centroid) {
             return false;
         }
 
@@ -578,7 +578,7 @@ class GeometryHelper
             ->where('id', $sitePolygon->id)
             ->update([
                 'lat' => $centroid->lat,
-                'lng' => $centroid->lng
+                'lng' => $centroid->lng,
             ]);
 
         // Update the model instance in memory so it has the latest values

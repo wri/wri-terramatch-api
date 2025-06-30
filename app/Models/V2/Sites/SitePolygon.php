@@ -2,6 +2,7 @@
 
 namespace App\Models\V2\Sites;
 
+use App\Helpers\GeometryHelper;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -12,7 +13,6 @@ use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
-use App\Helpers\GeometryHelper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

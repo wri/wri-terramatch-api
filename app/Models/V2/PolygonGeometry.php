@@ -2,13 +2,12 @@
 
 namespace App\Models\V2;
 
+use App\Helpers\GeometryHelper;
 use App\Models\Traits\HasGeometry;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
-use App\Models\V2\User;
-use App\Helpers\GeometryHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
