@@ -41,7 +41,7 @@ class UpdateSitePolygonCentroidsCommand extends Command
                 ->select([
                     'sp.id',
                     DB::raw('ST_Y(ST_Centroid(pg.geom)) as lat'),
-                    DB::raw('ST_X(ST_Centroid(pg.geom)) as lng'),
+                    DB::raw('ST_X(ST_Centroid(pg.geom)) as long')
                 ])
                 ->whereNull('sp.deleted_at')
                 ->where('sp.id', '>', $currentId)
@@ -57,12 +57,12 @@ class UpdateSitePolygonCentroidsCommand extends Command
                 DB::beginTransaction();
 
                 foreach ($batch as $record) {
-                    if ($this->isValidCoordinate($record->lat, $record->lng)) {
+                    if ($this->isValidCoordinate($record->lat, $record->long)) {
                         DB::table('site_polygon')
                             ->where('id', $record->id)
                             ->update([
                                 'lat' => $record->lat,
-                                'lng' => $record->lng,
+                                'long' => $record->long
                             ]);
                         $processedCount++;
                     } else {
