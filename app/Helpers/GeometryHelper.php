@@ -558,4 +558,33 @@ class GeometryHelper
             }
         }
     }
+
+    public static function updateSitePolygonCentroid(SitePolygon $sitePolygon): bool
+    {
+        if (!$sitePolygon->poly_id) {
+            return false;
+        }
+
+        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS lng, ST_Y(ST_Centroid(geom)) AS lat')
+            ->where('uuid', $sitePolygon->poly_id)
+            ->first();
+
+        if (!$centroid) {
+            return false;
+        }
+
+        // Use direct DB update to avoid triggering model events (prevents infinite loop)
+        DB::table('site_polygon')
+            ->where('id', $sitePolygon->id)
+            ->update([
+                'lat' => $centroid->lat,
+                'lng' => $centroid->lng
+            ]);
+
+        // Update the model instance in memory so it has the latest values
+        $sitePolygon->lat = $centroid->lat;
+        $sitePolygon->lng = $centroid->lng;
+
+        return true;
+    }
 }

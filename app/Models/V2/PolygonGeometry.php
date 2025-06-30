@@ -7,6 +7,8 @@ use App\Models\Traits\HasUuid;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\SitePolygon;
+use App\Models\V2\User;
+use App\Helpers\GeometryHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -81,6 +83,18 @@ class PolygonGeometry extends Model
                 $this->projectPolygon->delete();
             }
             $this->delete();
+        });
+    }
+
+    protected static function booted()
+    {
+        static::updated(function ($instance) {
+            if ($instance->isDirty('geom')) {
+                $sitePolygon = $instance->sitePolygon;
+                if ($sitePolygon) {
+                    GeometryHelper::updateSitePolygonCentroid($sitePolygon);
+                }
+            }
         });
     }
 }

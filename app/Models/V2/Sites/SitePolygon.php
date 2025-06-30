@@ -12,6 +12,7 @@ use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
+use App\Helpers\GeometryHelper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -197,6 +198,12 @@ class SitePolygon extends Model implements AuditableModel
             }
             $instance->primary_uuid = $instance->uuid;
             $instance->save();
+        });
+
+        static::saved(function ($instance) {
+            if ($instance->poly_id) {
+                GeometryHelper::updateSitePolygonCentroid($instance);
+            }
         });
     }
 }
