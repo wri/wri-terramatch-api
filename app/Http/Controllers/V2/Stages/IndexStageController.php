@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2\Stages;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\Stages\StagesCollection;
+use App\Http\Resources\V2\Stages\StagesLightCollection;
 use App\Models\V2\Stages\Stage;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -13,6 +14,7 @@ class IndexStageController extends Controller
 {
     public function __invoke(Request $request): StagesCollection
     {
+        $light = $request->query('light') ?? false;
         $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
         $query = QueryBuilder::for(Stage::class)
             ->allowedFilters([
@@ -27,6 +29,6 @@ class IndexStageController extends Controller
         $collection = $query->paginate($perPage)
             ->appends(request()->query());
 
-        return new StagesCollection($collection);
+        return $light ? new StagesLightCollection($collection) : new StagesCollection($collection);
     }
 }
