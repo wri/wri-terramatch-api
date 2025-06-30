@@ -2,6 +2,7 @@
 
 namespace App\Models\V2\Sites;
 
+use App\Helpers\GeometryHelper;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -197,6 +198,12 @@ class SitePolygon extends Model implements AuditableModel
             }
             $instance->primary_uuid = $instance->uuid;
             $instance->save();
+        });
+
+        static::saved(function ($instance) {
+            if ($instance->poly_id) {
+                GeometryHelper::updateSitePolygonCentroid($instance);
+            }
         });
     }
 }
