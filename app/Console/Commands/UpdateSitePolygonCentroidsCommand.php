@@ -11,7 +11,8 @@ class UpdateSitePolygonCentroidsCommand extends Command
     protected $signature = 'site-polygons:update-centroids 
                             {--batch-size=1000 : Number of records to process per batch}';
 
-    protected $description = 'Update lat/lng fields for site polygons by calculating centroids';
+    protected $description = 'Update lat/long fields for site polygons by calculating centroids';
+    
 
     public function handle()
     {
@@ -41,7 +42,7 @@ class UpdateSitePolygonCentroidsCommand extends Command
                 ->select([
                     'sp.id',
                     DB::raw('ST_Y(ST_Centroid(pg.geom)) as lat'),
-                    DB::raw('ST_X(ST_Centroid(pg.geom)) as long')
+                    DB::raw('ST_X(ST_Centroid(pg.geom)) as `long`')
                 ])
                 ->whereNull('sp.deleted_at')
                 ->where('sp.id', '>', $currentId)
@@ -89,10 +90,14 @@ class UpdateSitePolygonCentroidsCommand extends Command
         return $errorCount > 0 ? 1 : 0;
     }
 
-    private function isValidCoordinate($lat, $lng): bool
+    private function isValidCoordinate($lat, $long): bool
+    
     {
-        return is_numeric($lat) && is_numeric($lng)
+        return is_numeric($lat) && is_numeric($long)
+        
             && $lat >= -90 && $lat <= 90
-            && $lng >= -180 && $lng <= 180;
+            && $long >= -180 && $long <= 180;
+            
+            
     }
 }
