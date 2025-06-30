@@ -230,7 +230,7 @@ class Organisation extends Model implements MediaModel
         'level_2_past_restoration' => 'array',
         'trees_naturally_regenerated_total' => 'integer',
         'trees_naturally_regenerated_3year' => 'integer',
-        'carbon_credits' => 'integer',
+        'carbon_credits' => 'boolean',
         'external_technical_assistance' => 'string',
         'barriers_to_funding' => 'string',
         'capacity_building_support_needed' => 'string',
