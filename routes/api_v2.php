@@ -52,6 +52,7 @@ use App\Http\Controllers\V2\Files\Location\SiteImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
 use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
+use App\Http\Controllers\V2\FinancialReports\FinancialReportsController;
 use App\Http\Controllers\V2\Forms\AdminDeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\AdminIndexFormSubmissionController;
 use App\Http\Controllers\V2\Forms\CommonOptionsIndexController;
@@ -477,6 +478,8 @@ Route::prefix('leaderships')->group(function () {
 Route::prefix('financial-indicators')->group(function () {
     Route::patch('/', UpsertFinancialIndicatorsController::class);
 });
+
+Route::resource('financial-reports', FinancialReportsController::class)->except('create');
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
