@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
@@ -13,8 +15,6 @@ use App\StateMachines\TaskStatusStateMachine;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
-use App\Models\V2\FinancialReport;
-use App\Models\V2\Organisation;
 
 class CreateReportCommand extends Command
 {
@@ -57,6 +57,7 @@ class CreateReportCommand extends Command
             case 'financial':
                 $entityModel = Organisation::class;
                 $reportModel = FinancialReport::class;
+
                 break;
 
             default:
@@ -101,6 +102,7 @@ class CreateReportCommand extends Command
                 'year_of_report' => $yearOfReport,
             ]);
             $this->info("Financial report created for organisation $uuid");
+
             return 0;
         } else {
             $task = Task::withTrashed()->where('project_id', $entity->project_id)->latest()->first();

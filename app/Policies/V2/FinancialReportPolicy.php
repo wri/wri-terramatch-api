@@ -2,9 +2,8 @@
 
 namespace App\Policies\V2;
 
-use App\Models\V2\Forms\Form;
-use App\Models\V2\User;
 use App\Models\V2\FinancialReport;
+use App\Models\V2\User;
 use App\Policies\Policy;
 
 class FinancialReportPolicy extends Policy
@@ -71,4 +70,4 @@ class FinancialReportPolicy extends Policy
     {
         return $user->organisation->id == $report->organisation_id;
     }
-} 
+}
