@@ -453,7 +453,7 @@ class GeometryHelper
 
     public static function centroidOfPolygon($polyUUID)
     {
-        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS lon, ST_Y(ST_Centroid(geom)) AS lat')
+        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS `long`, ST_Y(ST_Centroid(geom)) AS lat')
         ->where('uuid', $polyUUID)
         ->first();
 
@@ -461,7 +461,7 @@ class GeometryHelper
             return [];
         }
 
-        return [$centroid->lon, $centroid->lat];
+        return [$centroid->long, $centroid->lat];
     }
 
     public static function getCentroidsOfPolygons(array $polygonUuids)
@@ -565,7 +565,7 @@ class GeometryHelper
             return false;
         }
 
-        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS lng, ST_Y(ST_Centroid(geom)) AS lat')
+        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS `long`, ST_Y(ST_Centroid(geom)) AS lat')
             ->where('uuid', $sitePolygon->poly_id)
             ->first();
 
@@ -573,17 +573,16 @@ class GeometryHelper
             return false;
         }
 
-        // Use direct DB update to avoid triggering model events (prevents infinite loop)
         DB::table('site_polygon')
             ->where('id', $sitePolygon->id)
             ->update([
                 'lat' => $centroid->lat,
-                'lng' => $centroid->lng,
+                'long' => $centroid->long,
             ]);
 
         // Update the model instance in memory so it has the latest values
         $sitePolygon->lat = $centroid->lat;
-        $sitePolygon->lng = $centroid->lng;
+        $sitePolygon->long = $centroid->long;
 
         return true;
     }
