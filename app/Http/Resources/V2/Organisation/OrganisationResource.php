@@ -149,7 +149,6 @@ class OrganisationResource extends JsonResource
             'level_2_past_restoration' => $this->level_2_past_restoration,
             'trees_naturally_regenerated_total' => $this->trees_naturally_regenerated_total,
             'trees_naturally_regenerated_3year' => $this->trees_naturally_regenerated_3year,
-            'carbon_credits' => $this->carbon_credits,
             'external_technical_assistance' => $this->external_technical_assistance,
             'barriers_to_funding' => $this->barriers_to_funding,
             'capacity_building_support_needed' => $this->capacity_building_support_needed,
