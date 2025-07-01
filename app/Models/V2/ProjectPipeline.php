@@ -45,37 +45,26 @@ class ProjectPipeline extends Model
             return false;
         }
 
-        // If cohort is already an array, check if it contains the cohort
         if (is_array($this->cohort)) {
             return in_array($cohortName, $this->cohort);
         }
 
-        // Legacy support: if cohort is still a string, compare directly
         return $this->cohort === $cohortName;
     }
 
-    /**
-     * Helper method to get cohorts as array
-     * Handles both old string format and new array format
-     */
     public function getCohortsArray(): array
     {
         if (empty($this->cohort)) {
             return [];
         }
 
-        // If cohort is already an array, return it
         if (is_array($this->cohort)) {
             return $this->cohort;
         }
 
-        // Legacy support: if cohort is still a string, return as single-element array
         return [$this->cohort];
     }
 
-    /**
-     * Helper method to add a cohort to the project pipeline
-     */
     public function addCohort(string $cohortName): void
     {
         $cohorts = $this->getCohortsArray();
@@ -86,9 +75,6 @@ class ProjectPipeline extends Model
         }
     }
 
-    /**
-     * Helper method to remove a cohort from the project pipeline
-     */
     public function removeCohort(string $cohortName): void
     {
         $cohorts = $this->getCohortsArray();
@@ -97,6 +83,6 @@ class ProjectPipeline extends Model
             return $cohort !== $cohortName;
         });
 
-        $this->cohort = array_values($cohorts); // Re-index array
+        $this->cohort = array_values($cohorts);
     }
 }
