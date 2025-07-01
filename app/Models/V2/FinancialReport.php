@@ -94,4 +94,9 @@ class FinancialReport extends Model implements MediaModel, ReportModel
 
         return $form;
     }
+
+    public function getFinancialCollectionAttribute()
+    {
+        return $this->organisation?->financialCollection;
+    }
 }
