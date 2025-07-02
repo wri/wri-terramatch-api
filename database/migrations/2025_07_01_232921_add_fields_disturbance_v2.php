@@ -19,6 +19,7 @@ return new class () extends Migration {
             $table->string('property_affected', 255)->nullable()->after('action_description');
         });
     }
+
     /**
      * Reverse the migrations.
      */
