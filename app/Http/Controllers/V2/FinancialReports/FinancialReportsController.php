@@ -51,30 +51,30 @@ class FinancialReportsController extends Controller
 
     public function show(FinancialReport $financialReport, Request $request): FinancialReportResource
     {
-        // $this->authorize('read', $financialReports);
+        $this->authorize('read', $financialReport);
 
         return new FinancialReportResource($financialReport);
     }
 
-    // public function update(Organisation $organisation, UpdateOrganisationRequest $request): OrganisationResource
-    // {
-    //     $this->authorize('update', $organisation);
+    public function update(FinancialReport $financialReport, Request $request): FinancialReportResource
+    {
+        $this->authorize('update', $financialReport);
 
-    //     $organisation->update($request->all());
+        $financialReport->update($request->all());
 
-    //     if ($request->get('tags')) {
-    //         $organisation->syncTags($request->get('tags'));
-    //     }
+        if ($request->get('tags')) {
+            $financialReport->syncTags($request->get('tags'));
+        }
 
-    //     return new OrganisationResource($organisation);
-    // }
+        return new FinancialReportResource($financialReport);
+    }
 
-    // public function destroy(Organisation $organisation, Request $request): JsonResponse
-    // {
-    //     $this->authorize('delete', $organisation);
+    public function destroy(FinancialReport $financialReport, Request $request): JsonResponse
+    {
+        $this->authorize('delete', $financialReport);
 
-    //     $organisation->delete();
+        $financialReport->delete();
 
-    //     return JsonResponseHelper::success(['Organisation has been deleted.'], 200);
-    // }
+        return JsonResponseHelper::success(['FinancialReport has been deleted.'], 200);
+    }
 }

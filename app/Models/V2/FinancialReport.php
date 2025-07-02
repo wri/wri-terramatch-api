@@ -8,12 +8,14 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\Forms\Form;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class FinancialReport extends Model implements MediaModel, ReportModel
 {
@@ -26,6 +28,7 @@ class FinancialReport extends Model implements MediaModel, ReportModel
     use HasV2MediaCollections;
     use UsesLinkedFields;
     use HasEntityResources;
+    use BelongsToThroughTrait;
 
     protected $fillable = [
         'status',
@@ -34,14 +37,23 @@ class FinancialReport extends Model implements MediaModel, ReportModel
         'due_at',
         'organisation_id',
         'title',
+        'feedback',
+        'feedback_fields',
+        'answers',
+        'submitted_at',
     ];
 
     protected $casts = [
         'due_at' => 'datetime',
+        'submitted_at' => 'datetime',
         'year_of_report' => 'integer',
+        'nothing_to_report' => 'boolean',
+        'answers' => 'array',
     ];
 
     public $fileConfiguration = [];
+
+    public const FINANCIAL_FORM_TYPE = 'financial-report';
 
     public $table = 'financial_reports';
 
@@ -78,18 +90,28 @@ class FinancialReport extends Model implements MediaModel, ReportModel
         return true;
     }
 
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
     public function parentEntity(): BelongsTo
     {
         return $this->organisation();
     }
 
-    public function getForm(): \App\Models\V2\Forms\Form
+    public function getForm(): Form
     {
-        $form = \App\Models\V2\Forms\Form::where('uuid', '3489fe71-abbc-4b9f-9cfd-ef3a1903971f')
+        $form = Form::where('type', self::FINANCIAL_FORM_TYPE)
             ->first();
 
         if (! $form) {
-            throw new \RuntimeException('No form found for FinancialReport without a framework_key');
+            throw new \RuntimeException('No form found for FinancialReport without a form type');
         }
 
         return $form;
