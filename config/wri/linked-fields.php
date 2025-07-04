@@ -269,17 +269,23 @@ return [
         ],
         'financial-report' => [
             'label' => 'Financial Report',
-            'model' => 'App\Models\V2\Projects\FinancialReport',
+            'model' => App\Models\V2\FinancialReport::class,
             'fields' => [
                 'fin-rep-title' => ['property' => 'title', 'label' => 'Title', 'input_type' => 'text'],
                 'fin-rep-year-of-report' => ['property' => 'year_of_report', 'label' => 'Year of report', 'input_type' => 'number'],
             ],
             'relations' => [
-                'pro-rep-financial-indicators-financial-collection' => [
+                'fin-rep-financial-indicators-financial-collection' => [
                     'property' => 'financialCollection',
                     'label' => 'Financial collection',
                     'resource' => 'App\Http\Resources\V2\FinancialIndicatorsResource',
                     'input_type' => 'financialIndicators',
+                ],
+                'fin-rep-funding-types' => [
+                    'property' => 'fundingTypes',
+                    'label' => 'Funding Type',
+                    'resource' => 'App\Http\Resources\V2\FundingTypeResource',
+                    'input_type' => 'fundingType',
                 ],
             ],
             'file-collections' => [],

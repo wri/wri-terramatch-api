@@ -23,11 +23,11 @@ return new class extends Migration {
             $table->string('framework_key')->nullable();
             $table->dateTime('due_at')->nullable();
             $table->integer('completion')->nullable();
-            // $table->unsignedBigInteger('organisation_id');
             $table->text('feedback')->nullable();
             $table->json('feedback_fields')->nullable();
             $table->json('answers')->nullable();
-            // $table->integer('year_of_report')->nullable();
+            $table->integer('fin_start_month')->nullable();
+            $table->string('currency')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

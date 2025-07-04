@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FinancialReport extends Model implements MediaModel, ReportModel
 {
@@ -41,6 +42,8 @@ class FinancialReport extends Model implements MediaModel, ReportModel
         'feedback_fields',
         'answers',
         'submitted_at',
+        'fin_start_month',
+        'currency',
     ];
 
     protected $casts = [
@@ -56,6 +59,8 @@ class FinancialReport extends Model implements MediaModel, ReportModel
     public const FINANCIAL_FORM_TYPE = 'financial-report';
 
     public $table = 'financial_reports';
+
+    public $shortName = 'financial-report';
 
     public function registerMediaConversions(Media $media = null): void
     {
@@ -117,8 +122,13 @@ class FinancialReport extends Model implements MediaModel, ReportModel
         return $form;
     }
 
-    public function getFinancialCollectionAttribute()
+    public function financialCollection(): HasMany
     {
-        return $this->organisation?->financialCollection;
+        return $this->hasMany(FinancialIndicators::class, 'financial_report_id', 'id');
+    }
+
+    public function getFundingTypesAttribute()
+    {
+        return $this->project?->organisation?->fundingTypes;
     }
 }

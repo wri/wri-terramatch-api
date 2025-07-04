@@ -64,6 +64,12 @@ class Organisation extends Model
 
     public function financialCollection(): HasMany
     {
-        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id');
+        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
+                    ->whereNull('financial_report_id');
+    }
+
+    public function financialReports(): HasMany
+    {
+        return $this->hasMany(financialReports::class, 'organisation_id', 'id');
     }
 }

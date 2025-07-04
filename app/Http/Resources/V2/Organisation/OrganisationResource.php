@@ -3,6 +3,7 @@
 namespace App\Http\Resources\V2\Organisation;
 
 use App\Http\Resources\V2\FinancialIndicatorsResource;
+use App\Http\Resources\V2\FinancialReports\FinancialReportLiteResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\General\ShapefileResource;
 use App\Http\Resources\V2\LeadershipsResource;
@@ -153,6 +154,7 @@ class OrganisationResource extends JsonResource
             'barriers_to_funding' => $this->barriers_to_funding,
             'capacity_building_support_needed' => $this->capacity_building_support_needed,
             'financialCollection' => FinancialIndicatorsResource::collection($this->financialCollection),
+            'financialReports' => FinancialReportLiteResource::collection($this->financialReports),
             'associations_cooperatives' => $this->associations_cooperatives,
             'territories_of_operation' => $this->territories_of_operation,
             'decisionmaking_structure_description' => $this->decisionmaking_structure_description,

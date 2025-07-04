@@ -19,6 +19,8 @@ class FinancialReportResource extends JsonResource
             'feedback_fields' => $this->feedback_fields,
             'nothing_to_report' => $this->nothing_to_report,
             'submitted_at' => $this->submitted_at,
+            'currency' => $this->currency,
+            'fin_start_month' => $this->fin_start_month,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'financialCollection' => FinancialIndicatorsResource::collection($this->financialCollection),
