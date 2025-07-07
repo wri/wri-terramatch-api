@@ -48,6 +48,11 @@ class CustomFormHelper
                 $model = NurseryReport::class;
 
                 break;
+            case 'financial-report':
+                $model = \App\Models\V2\FinancialReport::class;
+                break;
+            default:
+                throw new \InvalidArgumentException("Unknown form type: $type");
         }
 
         $form = Form::where(['framework_key' => $framework, 'model' => $model])->first();
