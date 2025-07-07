@@ -2424,3 +2424,18 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/V2FinancialReportRead'
+  delete:
+    summary: Delete a financial report by uuid
+    operationId: delete-v2-admin-financial-report-UUID
+    tags:
+      - V2 financial reports
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialReportRead'

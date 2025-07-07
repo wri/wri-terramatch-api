@@ -46,7 +46,7 @@ class FinancialReportPolicy extends Policy
 
     public function delete(?User $user, ?FinancialReport $report = null): bool
     {
-        if ($this->isTheirs($user, $report) || $this->isAdmin($user)) {
+        if ($this->isTheirs($user, $report) || $this->isAdmin($user) || $this->isVerifiedAdmin($user)) {
             return true;
         }
 

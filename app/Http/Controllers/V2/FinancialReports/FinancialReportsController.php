@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\V2\FinancialReports;
 
 use App\Events\V2\General\EntityStatusChangeEvent;
+use App\Helpers\JsonResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\FinancialReports\FinancialReportResource;
 use App\Http\Resources\V2\FinancialReports\FinancialReportsCollection;
 use App\Models\V2\FinancialReport;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -79,28 +81,4 @@ class FinancialReportsController extends Controller
 
         return JsonResponseHelper::success(['FinancialReport has been deleted.'], 200);
     }
-
-    // public function store(Request $request): FinancialReportResource
-    // {
-    //     $this->authorize('create', FinancialReport::class);
-
-    //     $data = $request->validate([
-    //         'organisation_id' => 'required|exists:organisations,id',
-    //         'year_of_report' => 'required|integer',
-    //         // agrega aquí las demás validaciones necesarias
-    //     ]);
-
-    //     $financialReport = FinancialReport::create($data);
-
-    //     // Disparar el evento justo después de crear el reporte
-    //     EntityStatusChangeEvent::dispatch(
-    //         $request->user(),
-    //         $financialReport,
-    //         $financialReport->title ?? '',
-    //         '',
-    //         $financialReport->status
-    //     );
-
-    //     return new FinancialReportResource($financialReport);
-    // }
 }
