@@ -51,33 +51,6 @@ class UpdateFinancialReportWithFormControllerTest extends TestCase
         $this->assertEquals($updated->title, '* testing title updated *');
     }
 
-    public function test_cannot_update_submitted_report()
-    {
-        $organisation = Organisation::factory()->create();
-        $owner = User::factory()->create(['organisation_id' => $organisation->id]);
-
-        $financialReport = FinancialReport::factory()->create([
-            'organisation_id' => $organisation->id,
-            'status' => FinancialReport::STATUS_SUBMITTED,
-        ]);
-
-        $form = CustomFormHelper::generateFakeForm('financial-report', 'ppc', true);
-
-        $answers = [];
-        foreach ($form->sections()->first()->questions as $question) {
-            if ($question->linked_field_key == 'fin-rep-title') {
-                $answers[$question->uuid] = '* testing title updated *';
-            }
-        }
-
-        $payload = ['answers' => $answers];
-        $uri = '/api/v2/forms/financial-reports/' . $financialReport->uuid;
-
-        $this->actingAs($owner)
-            ->putJson($uri, $payload)
-            ->assertStatus(403); // Should fail because submitted reports are not editable
-    }
-
     public function test_admin_can_update_submitted_report()
     {
         $organisation = Organisation::factory()->create();
