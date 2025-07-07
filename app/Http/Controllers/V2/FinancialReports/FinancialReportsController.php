@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\V2\FinancialReports;
 
-use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Helpers\JsonResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\FinancialReports\FinancialReportResource;
