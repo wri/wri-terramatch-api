@@ -2,7 +2,6 @@
 
 namespace App\Models\V2;
 
-use App\Http\Resources\V2\FinancialReports\FinancialReportResource;
 use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
