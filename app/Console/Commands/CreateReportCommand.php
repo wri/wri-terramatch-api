@@ -92,13 +92,10 @@ class CreateReportCommand extends Command
             ]);
         } elseif ($type === 'financial') {
             // For financial reports, no task is required by default, but you can link if needed
-            $dueAt = $this->option('due_at') ? Carbon::parse($this->option('due_at')) : now();
             $yearOfReport = $this->option('year_of_report') ?? $dueAt->year;
             $reportModel::create([
-                'framework_key' => $entity->framework_key ?? null,
                 'organisation_id' => $entity->id,
                 'status' => 'due',
-                'due_at' => $dueAt,
                 'year_of_report' => $yearOfReport,
             ]);
             $this->info("Financial report created for organisation $uuid");
