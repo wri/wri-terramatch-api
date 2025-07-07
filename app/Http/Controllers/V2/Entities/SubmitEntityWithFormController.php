@@ -33,7 +33,7 @@ class SubmitEntityWithFormController extends Controller
         // Handle FinancialReport differently - it goes directly to submitted status
         if ($entity instanceof FinancialReport) {
             $entity->submitForApproval();
-            
+
             return $entity->createSchemaResource();
         }
 

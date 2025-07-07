@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V2\FinancialReports;
 
+use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\FinancialReports\FinancialReportResource;
 use App\Http\Resources\V2\FinancialReports\FinancialReportsCollection;
@@ -9,7 +10,6 @@ use App\Models\V2\FinancialReport;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-use App\Events\V2\General\EntityStatusChangeEvent;
 
 class FinancialReportsController extends Controller
 {

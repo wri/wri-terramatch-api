@@ -66,4 +66,4 @@ class FinancialReportFactory extends Factory
             ];
         });
     }
-} 
+}

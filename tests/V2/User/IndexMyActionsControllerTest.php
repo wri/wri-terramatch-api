@@ -3,9 +3,9 @@
 namespace Tests\V2\User;
 
 use App\Models\V2\Action;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
-use App\Models\V2\FinancialReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

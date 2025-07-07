@@ -87,4 +87,4 @@ class SubmitFinancialReportControllerTest extends TestCase
             ->putJson($uri)
             ->assertSuccessful(); // Should still work since we're just setting the same status
     }
-} 
+}

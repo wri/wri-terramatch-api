@@ -12,11 +12,11 @@ use App\Models\V2\Forms\Form;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FinancialReport extends Model implements MediaModel, ReportModel
 {
@@ -62,7 +62,6 @@ class FinancialReport extends Model implements MediaModel, ReportModel
 
     public $shortName = 'financial-report';
 
-    // Simple status constants
     public const STATUS_DUE = 'due';
     public const STATUS_STARTED = 'started';
     public const STATUS_SUBMITTED = 'submitted';
@@ -145,5 +144,30 @@ class FinancialReport extends Model implements MediaModel, ReportModel
         }
         $this->status = self::STATUS_SUBMITTED;
         $this->save();
+
+        if ($this->organisation) {
+            $indicators = FinancialIndicators::where('financial_report_id', $this->id)->get();
+            foreach ($indicators as $indicator) {
+                $orgIndicator = FinancialIndicators::updateOrCreate(
+                    [
+                        'organisation_id' => $this->organisation->id,
+                        'year' => $indicator->year,
+                        'collection' => $indicator->collection,
+                        'financial_report_id' => null,
+                    ],
+                    [
+                        'amount' => $indicator->amount,
+                        'description' => $indicator->description,
+                    ]
+                );
+                $mediaItems = $indicator->getMedia('documentation');
+                foreach ($mediaItems as $media) {
+                    if ($media->model_id !== $orgIndicator->id) {
+                        $media->model_id = $orgIndicator->id;
+                        $media->save();
+                    }
+                }
+            }
+        }
     }
 }

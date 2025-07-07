@@ -5,8 +5,8 @@ namespace App\Http\Controllers\V2\FinancialIndicators;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\FinancialIndicatorsResource;
 use App\Models\V2\FinancialIndicators;
-use App\Models\V2\Organisation;
 use App\Models\V2\FinancialReport;
+use App\Models\V2\Organisation;
 use Illuminate\Http\Request;
 
 class UpsertFinancialIndicatorsController extends Controller
@@ -33,7 +33,7 @@ class UpsertFinancialIndicatorsController extends Controller
             if (! is_null($request->financial_year_start_month) && $request->financial_year_start_month !== '') {
                 $model->fin_start_month = $request->financial_year_start_month;
             }
-    
+
             if (! is_null($request->local_currency) && $request->local_currency !== '') {
                 $model->currency = $request->local_currency;
             }

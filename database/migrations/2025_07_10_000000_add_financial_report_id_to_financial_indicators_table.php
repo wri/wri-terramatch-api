@@ -18,4 +18,4 @@ return new class extends Migration {
             $table->dropColumn('financial_report_id');
         });
     }
-}; 
+};

@@ -107,4 +107,4 @@ class UpdateFinancialReportWithFormControllerTest extends TestCase
         $updated = $financialReport->fresh();
         $this->assertEquals($updated->title, '* testing title updated by admin *');
     }
-} 
+}
