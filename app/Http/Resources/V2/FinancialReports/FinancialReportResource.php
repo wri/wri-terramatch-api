@@ -3,9 +3,9 @@
 namespace App\Http\Resources\V2\FinancialReports;
 
 use App\Http\Resources\V2\FinancialIndicatorsResource;
+use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\Organisation\OrganisationResource;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\V2\FundingTypeResource;
 
 class FinancialReportResource extends JsonResource
 {
