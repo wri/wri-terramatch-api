@@ -1,0 +1,15 @@
+title: V2FinancialLiteReportRead
+type: object
+properties:
+  uuid:
+    type: string
+  status:
+    type: string
+  name:
+    type: string
+  year_of_report:
+    type: integer
+  created_at:
+    type: string
+  updated_at:
+    type: string

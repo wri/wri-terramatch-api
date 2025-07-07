@@ -10,64 +10,51 @@ class FinancialReportPolicy extends Policy
 {
     public function read(?User $user, ?FinancialReport $report = null): bool
     {
-        return true;
-        // if ($user->can('framework-' . $report->framework_key)) {
-        //     return true;
-        // }
+        if ($this->isTheirs($user, $report) || $this->isAdmin($user)) {
+            return true;
+        }
 
-        // if ($user->can('manage-own') && $this->isTheirs($user, $report)) {
-        //     return true;
-        // }
-
-        // if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
-        //     return true;
-        // }
-
-        // if ($user->can('view-dashboard')) {
-        //     return true;
-        // }
-
-        // return false;
+        return false;
     }
 
     public function readAll(?User $user, ?FinancialReport $report = null): bool
     {
-        return true;
-        // return $user->hasAnyPermission(['projects-manage', 'framework-terrafund', 'framework-ppc', 'framework-hbf']);
+        if ($this->isTheirs($user, $report) || $this->isAdmin($user)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function update(?User $user, ?FinancialReport $report = null): bool
     {
-        return true;
-        // if ($user->can('manage-own') && $this->isTheirs($user, $report)) {
-        //     return true;
-        // }
+        if ($this->isTheirs($user, $report) || $this->isAdmin($user)) {
+            return true;
+        }
 
-        // return $this->isTheirs($user, $report);
+        return false;
     }
 
     public function submit(?User $user, ?FinancialReport $report = null): bool
     {
-        return true;
-        // if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
-        //     return true;
-        // }
+        if ($this->isTheirs($user, $report) || $this->isAdmin($user)) {
+            return true;
+        }
 
-        // return $user->can('manage-own') && $this->isTheirs($user, $report);
+        return false;
     }
 
     public function delete(?User $user, ?FinancialReport $report = null): bool
     {
-        return true;
-        // if ($user->can('projects-manage') && $this->isManaging($user, $report)) {
-        //     return true;
-        // }
+        if ($this->isTheirs($user, $report) || $this->isAdmin($user)) {
+            return true;
+        }
 
-        // return $user->can('framework-' . $report->framework_key);
+        return false;
     }
 
     protected function isTheirs(?User $user, ?FinancialReport $report = null): bool
     {
-        return $user->organisation->id == $report->organisation_id;
+        return $user?->organisation?->id == $report->organisation_id;
     }
 }

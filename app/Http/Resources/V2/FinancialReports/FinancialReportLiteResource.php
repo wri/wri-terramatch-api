@@ -14,7 +14,7 @@ class FinancialReportLiteResource extends JsonResource
             'status' => $this->status,
             'year_of_report' => $this->year_of_report,
             'due_at' => $this->due_at,
-            'update_request_status' => $this->update_request_status,
+            'submitted_at' => $this->submitted_at,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at,
         ];

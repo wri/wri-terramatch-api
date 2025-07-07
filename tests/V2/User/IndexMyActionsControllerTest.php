@@ -5,6 +5,7 @@ namespace Tests\V2\User;
 use App\Models\V2\Action;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
+use App\Models\V2\FinancialReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -79,6 +80,26 @@ class IndexMyActionsControllerTest extends TestCase
             ])
             ->assertJsonMissing([
                 'uuid' => $siteReportAction->uuid,
+            ]);
+    }
+
+    public function test_users_can_view_their_financial_report_actions()
+    {
+        $user = User::factory()->create();
+        $organisation = $user->organisation;
+        $financialReport = FinancialReport::factory()->create([
+            'organisation_id' => $organisation->id,
+        ]);
+        $financialAction = Action::factory()->create([
+            'organisation_id' => $organisation->id,
+            'targetable_type' => FinancialReport::class,
+            'targetable_id' => $financialReport->id,
+        ]);
+        $this->actingAs($user)
+            ->getJson('/api/v2/my/actions')
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'uuid' => $financialAction->uuid,
             ]);
     }
 }

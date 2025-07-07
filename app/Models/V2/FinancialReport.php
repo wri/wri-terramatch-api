@@ -62,6 +62,11 @@ class FinancialReport extends Model implements MediaModel, ReportModel
 
     public $shortName = 'financial-report';
 
+    // Simple status constants
+    public const STATUS_DUE = 'due';
+    public const STATUS_STARTED = 'started';
+    public const STATUS_SUBMITTED = 'submitted';
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumbnail')
@@ -130,5 +135,15 @@ class FinancialReport extends Model implements MediaModel, ReportModel
     public function getFundingTypesAttribute()
     {
         return $this->project?->organisation?->fundingTypes;
+    }
+
+    public function submitForApproval(): void
+    {
+        if (empty($this->submitted_at)) {
+            $this->completion = 100;
+            $this->submitted_at = now();
+        }
+        $this->status = self::STATUS_SUBMITTED;
+        $this->save();
     }
 }

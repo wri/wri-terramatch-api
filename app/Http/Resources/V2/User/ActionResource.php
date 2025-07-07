@@ -3,6 +3,7 @@
 namespace App\Http\Resources\V2\User;
 
 use App\Http\Resources\V2\Nurseries\NurseryLiteResource;
+use App\Http\Resources\V2\FinancialReports\FinancialReportLiteResource;
 use App\Http\Resources\V2\NurseryReports\NurseryReportLiteResource;
 use App\Http\Resources\V2\ProjectReports\ProjectReportLiteResource;
 use App\Http\Resources\V2\Projects\ProjectLiteResource;
@@ -16,6 +17,7 @@ use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\UpdateRequests\UpdateRequest;
+use App\Models\V2\FinancialReport;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ActionResource extends JsonResource
@@ -55,6 +57,8 @@ class ActionResource extends JsonResource
                     ->withReportingTask();
             case Nursery::class:
                 return NurseryLiteResource::make($this->targetable);
+            case FinancialReport::class:
+                return FinancialReportLiteResource::make($this->targetable);
             case NurseryReport::class:
                 return NurseryReportLiteResource::make($this->targetable)
                     ->withReportingTask();
@@ -80,6 +84,8 @@ class ActionResource extends JsonResource
                 return 'Nursery';
             case NurseryReport::class:
                 return 'NurseryReport';
+            case FinancialReport::class:
+                return 'FinancialReport';
             case UpdateRequest::class:
                 return 'UpdateRequest';
             default:

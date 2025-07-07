@@ -1,0 +1,26 @@
+title: V2FinancialReportRead
+type: object
+properties:
+  uuid:
+    type: string
+  status:
+    type: string
+  name:
+    type: string
+  year_of_report:
+    type: integer
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  organisation:
+    $ref: './_index.yml#/V2OrganisationRead'
+  currency:
+    type: string
+  fin_start_month:
+    type: integer
+  financialCollection:
+    type: array
+    items:
+      $ref: './_index.yml#/V2FinancialIndicatorsRead'
+
