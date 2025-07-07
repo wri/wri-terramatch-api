@@ -44,19 +44,24 @@ class UpsertFinancialIndicatorsController extends Controller
         $updatedRecords = [];
         $dataUuids = $request->uuids;
 
-        foreach ($request->profit_analysis_data as $entry) {
+        $profitAnalysisData = $request->profit_analysis_data ?? [];
+        $nonProfitAnalysisData = $request->non_profit_analysis_data ?? [];
+        $currentRadioData = $request->current_radio_data ?? [];
+        $documentationData = $request->documentation_data ?? [];
+
+        foreach ($profitAnalysisData as $entry) {
             $year = $entry['year'];
             $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_REVENUE, 'revenueUuid', $entry['revenue'] ?? 0, $financialReportId);
             $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_EXPENSES, 'expensesUuid', $entry['expenses'] ?? 0, $financialReportId);
             $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_PROFIT, 'profitUuid', ($entry['revenue'] ?? 0) - ($entry['expenses'] ?? 0), $financialReportId);
         }
 
-        foreach ($request->non_profit_analysis_data as $entry) {
+        foreach ($nonProfitAnalysisData as $entry) {
             $year = $entry['year'];
             $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_BUDGET, 'budgetUuid', $entry['budget'] ?? 0, $financialReportId);
         }
 
-        foreach ($request->current_radio_data as $entry) {
+        foreach ($currentRadioData as $entry) {
             $year = $entry['year'];
             $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_CURRENT_ASSETS, 'currentAssetsUuid', $entry['currentAssets'] ?? 0, $financialReportId);
             $updatedRecords[] = $this->safeUpdateOrCreate($orgId, $year, FinancialIndicators::COLLECTION_CURRENT_LIABILITIES, 'currentLiabilitiesUuid', $entry['currentLiabilities'] ?? 0, $financialReportId);
@@ -65,7 +70,7 @@ class UpsertFinancialIndicatorsController extends Controller
             : 0, $financialReportId);
         }
 
-        foreach ($request->documentation_data as $entry) {
+        foreach ($documentationData as $entry) {
             $year = $entry['year'];
 
             $where = [
