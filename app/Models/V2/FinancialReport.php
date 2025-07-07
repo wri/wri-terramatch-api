@@ -116,7 +116,7 @@ class FinancialReport extends Model implements MediaModel, ReportModel
 
     public function getForm(): Form
     {
-        $form = Form::where('model', self::class)
+        $form = Form::where('type', self::FINANCIAL_FORM_TYPE)
             ->first();
 
         if (! $form) {
