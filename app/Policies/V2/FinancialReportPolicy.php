@@ -28,6 +28,10 @@ class FinancialReportPolicy extends Policy
 
     public function update(?User $user, ?FinancialReport $report = null): bool
     {
+        if ($report->status == FinancialReport::STATUS_SUBMITTED) {
+            return false;
+        }
+
         if ($this->isTheirs($user, $report) || $this->isAdmin($user)) {
             return true;
         }
