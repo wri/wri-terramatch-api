@@ -23512,13 +23512,31 @@ definitions:
         type: string
       fin_start_month:
         type: integer
-      financialCollection:
+      financial_collection:
         type: array
         items:
           title: V2FinancialIndicatorsRead
           type: array
           items:
             type: object
+      funding_types:
+        type: array
+        items:
+          title: V2FundingTypeRead
+          x-stoplight:
+            id: 04vvsvyndvy8n
+          type: object
+          properties:
+            uuid:
+              type: string
+            organisation_id:
+              type: string
+            amount:
+              type: integer
+            year:
+              type: integer
+            type:
+              type: string
   V2FinancialLiteReportRead:
     title: V2FinancialLiteReportRead
     type: object
@@ -54623,10 +54641,28 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              financialCollection:
+              financial_collection:
                 type: array
                 items:
                   title: V2FinancialIndicatorsRead
                   type: array
                   items:
                     type: object
+              funding_types:
+                type: array
+                items:
+                  title: V2FundingTypeRead
+                  x-stoplight:
+                    id: 04vvsvyndvy8n
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    organisation_id:
+                      type: string
+                    amount:
+                      type: integer
+                    year:
+                      type: integer
+                    type:
+                      type: string

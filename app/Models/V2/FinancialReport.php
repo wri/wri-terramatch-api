@@ -133,7 +133,7 @@ class FinancialReport extends Model implements MediaModel, ReportModel
 
     public function getFundingTypesAttribute()
     {
-        return $this->project?->organisation?->fundingTypes;
+        return $this->organisation?->fundingTypes;
     }
 
     public function submitForApproval(): void
