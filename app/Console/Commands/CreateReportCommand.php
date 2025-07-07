@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
@@ -21,7 +23,7 @@ class CreateReportCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'create-report {uuid} {--T|type=} {--D|due_at=} {--A|all_reports}';
+    protected $signature = 'create-report {uuid} {--T|type=} {--D|due_at=} {--A|all_reports} {--Y|year_of_report=}';
 
     /**
      * The console command description.
@@ -52,8 +54,14 @@ class CreateReportCommand extends Command
 
                 break;
 
+            case 'financial':
+                $entityModel = Organisation::class;
+                $reportModel = FinancialReport::class;
+
+                break;
+
             default:
-                $this->error('Type must be one of "site" or "nursery"');
+                $this->error('Type must be one of "site", "nursery", "project", or "financial"');
 
                 return 1;
         }
@@ -82,6 +90,17 @@ class CreateReportCommand extends Command
                 'period_key' => $dueAt->year . '-' . $dueAt->month,
                 'due_at' => $dueAt,
             ]);
+        } elseif ($type === 'financial') {
+            // For financial reports, no task is required by default, but you can link if needed
+            $yearOfReport = $this->option('year_of_report') ?? $dueAt->year;
+            $reportModel::create([
+                'organisation_id' => $entity->id,
+                'status' => 'due',
+                'year_of_report' => $yearOfReport,
+            ]);
+            $this->info("Financial report created for organisation $uuid");
+
+            return 0;
         } else {
             $task = Task::withTrashed()->where('project_id', $entity->project_id)->latest()->first();
         }

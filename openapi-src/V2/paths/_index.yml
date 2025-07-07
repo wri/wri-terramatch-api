@@ -2364,3 +2364,78 @@
         name: body
         schema:
           $ref: '../definitions/_index.yml#/V2FinancialIndicatorsUpdate'
+/v2/financial-reports:
+  get:
+    summary: Get a collection of financial reports
+    operationId: v2-admin-get-financial-reports
+    description: 'Currently available sort is status, name, year, created_at'
+    parameters:
+      - name: search
+        type: string
+        in: query
+        description: 'search term to use on the collection'
+      - name: filter
+        type: string
+        in: query
+        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
+      - name: sort
+        type: string
+        in: query
+        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
+      - name: per_page
+        type: integer
+        in: query
+        description: 'number of results (per page) to return'
+      - name: page
+        type: integer
+        in: query
+        description: 'page number you want results from'
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '../definitions/_index.yml#/V2FinancialLiteReportRead'
+            links:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationLinks'
+            meta:
+              type: object
+              $ref: '../definitions/_index.yml#/V2PaginationMeta'
+    tags:
+      - V2 financial reports
+'/v2/financial-reports/{UUID}':
+  get:
+    summary: Get a financial report by uuid
+    operationId: v2-admin-get-financial-reports-by-uuid
+    tags:
+      - V2 financial reports
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialReportRead'
+  delete:
+    summary: Delete a financial report by uuid
+    operationId: delete-v2-admin-financial-report-UUID
+    tags:
+      - V2 financial reports
+    parameters:
+      - type: string
+        name: UUID
+        in: path
+        required: true
+    responses:
+      '200':
+        description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2FinancialReportRead'
