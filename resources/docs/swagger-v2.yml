@@ -21985,7 +21985,9 @@ definitions:
           program:
             type: string
           cohort:
-            type: string
+            type: array
+            items:
+              type: string
           publish_for:
             type: string
           url:
@@ -22009,7 +22011,9 @@ definitions:
       program:
         type: string
       cohort:
-        type: string
+        type: array
+        items:
+          type: string
       publish_for:
         type: string
       url:
@@ -52061,7 +52065,9 @@ paths:
                     program:
                       type: string
                     cohort:
-                      type: string
+                      type: array
+                      items:
+                        type: string
                     publish_for:
                       type: string
                     url:
@@ -52098,7 +52104,9 @@ paths:
               program:
                 type: string
               cohort:
-                type: string
+                type: array
+                items:
+                  type: string
               publish_for:
                 type: string
               url:
@@ -52119,7 +52127,9 @@ paths:
               program:
                 type: string
               cohort:
-                type: string
+                type: array
+                items:
+                  type: string
               publish_for:
                 type: string
               url:
@@ -52162,7 +52172,9 @@ paths:
                   program:
                     type: string
                   cohort:
-                    type: string
+                    type: array
+                    items:
+                      type: string
                   publish_for:
                     type: string
                   url:
@@ -52200,7 +52212,9 @@ paths:
               program:
                 type: string
               cohort:
-                type: string
+                type: array
+                items:
+                  type: string
               publish_for:
                 type: string
               url:
@@ -52221,7 +52235,9 @@ paths:
               program:
                 type: string
               cohort:
-                type: string
+                type: array
+                items:
+                  type: string
               publish_for:
                 type: string
               url:
@@ -55289,3 +55305,14 @@ paths:
                       type: integer
                     type:
                       type: string
+  /v2/financial-reports/export:
+    get:
+      summary: Export financia reports
+      tags:
+        - V2 financial reports
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+      operationId: get-v2-financial-reports-export
