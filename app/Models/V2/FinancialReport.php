@@ -146,6 +146,10 @@ class FinancialReport extends Model implements MediaModel, ReportModel
         $this->save();
 
         if ($this->organisation) {
+            $this->organisation->fin_start_month = $this->fin_start_month;
+            $this->organisation->currency = $this->currency;
+            $this->organisation->save();
+
             $indicators = FinancialIndicators::where('financial_report_id', $this->id)->get();
             foreach ($indicators as $indicator) {
                 $orgIndicator = FinancialIndicators::updateOrCreate(
