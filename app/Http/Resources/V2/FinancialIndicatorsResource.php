@@ -12,8 +12,6 @@ class FinancialIndicatorsResource extends JsonResource
      */
     public function toArray($request)
     {
-        $documentation = $this->getMedia('documentation')->first();
-
         $data = [
             'uuid' => $this->uuid,
             'organisation_id' => $this->organisation_id,

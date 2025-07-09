@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
@@ -166,9 +167,16 @@ class FinancialReport extends Model implements MediaModel, ReportModel
                 );
                 $mediaItems = $indicator->getMedia('documentation');
                 foreach ($mediaItems as $media) {
-                    if ($media->model_id !== $orgIndicator->id) {
-                        $media->model_id = $orgIndicator->id;
-                        $media->save();
+                    $exists = $orgIndicator->getMedia('documentation')
+                        ->where('file_name', $media->file_name)
+                        ->where('size', $media->size)
+                        ->count() > 0;
+
+                    if (! $exists) {
+                        $newMedia = $media->replicate();
+                        $newMedia->model_id = $orgIndicator->id;
+                        $newMedia->uuid = (string) Str::uuid();
+                        $newMedia->save();
                     }
                 }
             }
