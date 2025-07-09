@@ -91,6 +91,8 @@ class UpsertFinancialIndicatorsController extends Controller
             }
         }
 
+        $updatedRecords = array_filter($updatedRecords);
+
         return response()->json(FinancialIndicatorsResource::collection($updatedRecords));
     }
 
@@ -117,6 +119,15 @@ class UpsertFinancialIndicatorsController extends Controller
             return $existing;
         }
 
-        return FinancialIndicators::create(array_merge($where, ['amount' => $amount]));
+        if ($this->isInvalidAmount($amount) === false) {
+            return FinancialIndicators::create(array_merge($where, ['amount' => $amount]));
+        }
+
+        return null;
+    }
+
+    public function isInvalidAmount($value)
+    {
+        return $value === null || $value == 0;
     }
 }
