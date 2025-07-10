@@ -148,6 +148,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'landscape',
         'direct_seeding_survival_rate',
         'cohort',
+        'short_name',
     ];
 
     public $fileConfiguration = [
@@ -199,6 +200,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'answers' => 'array',
         'detailed_intervention_types' => 'array',
         'states' => 'array',
+        'cohort' => 'array',
     ];
 
     public const PROJECT_STATUS_NEW = 'new_project';
@@ -212,14 +214,23 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     // Required by the HasDemographics trait. What's specified here should be a super set of what's on ProjectPitch,
     // as those demographics are all copied to the project on establishment.
     public const DEMOGRAPHIC_COLLECTIONS = [
-        Demographic::EMPLOYEES_TYPE => [
+        Demographic::JOBS_TYPE => [
             'all' => [
                 DemographicCollections::ALL,
+            ],
+            'full-time' => [
+                DemographicCollections::FULL_TIME,
+                DemographicCollections::FULL_TIME_CLT,
+            ],
+            'part-time' => [
+                DemographicCollections::PART_TIME,
+                DemographicCollections::PART_TIME_CLT,
             ],
         ],
         Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
         Demographic::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
+        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -660,5 +671,58 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function getTotalHectaresRestoredSumAttribute(): float
     {
         return $this->approvedSitePolygons->where('status', 'approved')->sum('calc_area');
+    }
+
+    /**
+     * Helper method to check if project has a specific cohort
+     */
+    public function hasCohort(string $cohortName): bool
+    {
+        if (empty($this->cohort)) {
+            return false;
+        }
+
+        if (is_array($this->cohort)) {
+            return in_array($cohortName, $this->cohort);
+        }
+
+        return $this->cohort === $cohortName;
+    }
+
+    public function getCohortsArray(): array
+    {
+        if (empty($this->cohort)) {
+            return [];
+        }
+
+        if (is_array($this->cohort)) {
+            return $this->cohort;
+        }
+
+        return [$this->cohort];
+    }
+
+    public function addCohort(string $cohortName): void
+    {
+        $cohorts = $this->getCohortsArray();
+
+        if (! in_array($cohortName, $cohorts)) {
+            $cohorts[] = $cohortName;
+            $this->cohort = $cohorts;
+        }
+    }
+
+    /**
+     * Helper method to remove a cohort from the project
+     */
+    public function removeCohort(string $cohortName): void
+    {
+        $cohorts = $this->getCohortsArray();
+
+        $cohorts = array_filter($cohorts, function ($cohort) use ($cohortName) {
+            return $cohort !== $cohortName;
+        });
+
+        $this->cohort = array_values($cohorts);
     }
 }

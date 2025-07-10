@@ -117,18 +117,16 @@ class BulkOrganisationImport extends Command
     {
         foreach ($headerRow as $header) {
             // Excel puts some garbage at the beginning of the file that we need to filter out.
-            $header = Str::snake(trim($header, "\xEF\xBB\xBF"));
-            if (Str::startsWith($header, 'hq_street')) {
-                // Str::snake doesn't add an underscore before numbers, so hack in a quick fix for hqStreet1 and hqStreet2
-                $header = Str::replace('hq_street', 'hq_street_', $header);
-            }
+            $header = trim($header, "\xEF\xBB\xBF");
+            // Str::snake doesn't add an underscore before numbers, so add a regex search to handle that case
+            $header = Str::snake(Str::replaceMatches('/[0-9]+/', fn ($matches) => "_$matches[0]", $header));
             $this->headerOrder[] = $header;
         }
 
         $this->assert(in_array('name', $this->headerOrder), 'No name column found');
         $this->assert(in_array('type', $this->headerOrder), 'No type column found');
         $this->assert(in_array('hq_street_1', $this->headerOrder), 'No hqStreet1 column found');
-        $this->assert(in_array('hq_street_2', $this->headerOrder), 'No hqStreet1 column found');
+        $this->assert(in_array('hq_street_2', $this->headerOrder), 'No hqStreet2 column found');
         $this->assert(in_array('hq_city', $this->headerOrder), 'No hqCity column found');
         $this->assert(in_array('hq_state', $this->headerOrder), 'No hqState column found');
         $this->assert(in_array('hq_zipcode', $this->headerOrder), 'No hqZipcode column found');
@@ -136,7 +134,11 @@ class BulkOrganisationImport extends Command
         $this->assert(in_array('phone', $this->headerOrder), 'No phone column found');
         $this->assert(in_array('countries', $this->headerOrder), 'No countries column found');
         $this->assert(in_array('funding_programme_uuid', $this->headerOrder), 'No fundingProgrammeUuid column found');
-        $this->assert(count($this->headerOrder) == 11, 'Invalid number of columns found: ' . json_encode($this->headerOrder));
+        $this->assert(in_array('currency', $this->headerOrder), 'No currency column found');
+        $this->assert(in_array('level_0_proposed', $this->headerOrder), 'No level0Proposed column found');
+        $this->assert(in_array('level_1_proposed', $this->headerOrder), 'No level1Proposed column found');
+        $this->assert(in_array('level_0_past_restoration', $this->headerOrder), 'No level0PastRestoration column found');
+        $this->assert(in_array('level_1_past_restoration', $this->headerOrder), 'No level1PastRestoration column found');
     }
 
     /**
@@ -151,14 +153,17 @@ class BulkOrganisationImport extends Command
             }
 
             $field = $this->headerOrder[$index];
-            $row[$field] = $cell;
+            if (! empty($field)) {
+                $row[$field] = $cell;
+            }
         }
 
         if (empty($row)) {
             return null;
         }
 
-        // hq_street_2 and hq_zipcode are not required
+        // hq_street_2, hq_zipcode, currency, level_0_proposed, level_1_proposed, level_0_past_restoration,
+        // and level_1_past_restoration are not required
         $this->assert(! empty($row['name']), 'No name found: ' . json_encode($row));
         $this->assert(! empty($row['type']), 'No type found: ' . json_encode($row));
         $this->assert(! empty($row['hq_street_1']), 'No hqStreet1 found: ' . json_encode($row));
@@ -169,10 +174,14 @@ class BulkOrganisationImport extends Command
         $this->assert(! empty($row['countries']), 'No countries found: ' . json_encode($row));
         $this->assert(! empty($row['funding_programme_uuid']), 'No fundingProgrammeUuid found: ' . json_encode($row));
 
-        $countries = json_decode($row['countries']);
-        $this->assert(is_array($countries), 'Invalid countries found: ' . json_encode($row));
-        $this->assert(count($countries) > 0, 'No countries found: ' . json_encode($row));
-        $this->assert(! collect($countries)->contains(fn ($val) => ! is_string($val)), 'Invalid country found: ' . json_encode($row));
+        // Default to USD, since all current rows in the DB use this value.
+        $row['currency'] = empty($row['currency']) ? 'USD' : $row['currency'];
+
+        $row['countries'] = $this->decodeArray($row, 'countries');
+        $row['level_0_proposed'] = $this->decodeArray($row, 'level_0_proposed');
+        $row['level_1_proposed'] = $this->decodeArray($row, 'level_1_proposed');
+        $row['level_0_past_restoration'] = $this->decodeArray($row, 'level_0_past_restoration');
+        $row['level_1_past_restoration'] = $this->decodeArray($row, 'level_1_past_restoration');
 
         $this->assert(! Organisation::where('name', $row['name'])->exists(), 'Organisation already exists: ' . $row['name']);
         $this->assert(FundingProgramme::isUuid($row['funding_programme_uuid'])->exists(), 'Funding programme not found: ' . $row['funding_programme_uuid']);
@@ -184,14 +193,28 @@ class BulkOrganisationImport extends Command
         return $row;
     }
 
+    /**
+     * @throws AbortException
+     */
+    protected function decodeArray(array $row, string $field): array
+    {
+        $value = $row[$field];
+        if (empty($value)) {
+            return [];
+        }
+
+        $values = explode('|', $value);
+        $this->assert(! collect($values)->contains(fn ($val) => empty($val)), "Invalid $field entry found: " . json_encode($row));
+
+        return $values;
+    }
+
     protected function createOrganisation($orgData): Organisation
     {
         $org = Organisation::create(array_merge($orgData, [
             'status' => Organisation::STATUS_PENDING,
-            'countries' => json_decode($orgData['countries']),
-            // These two are required in the DB schema, but seem unused; all values in the DB are the same
+            // This one is required in the DB schema, but seems unused; all values in the DB are the same
             'private' => false,
-            'currency' => 'USD',
             // The script does not create test orgs
             'is_test' => false,
         ]));
@@ -205,6 +228,8 @@ class BulkOrganisationImport extends Command
         $projectPitch = ProjectPitch::create([
             'organisation_id' => $org->uuid,
             'funding_programme_id' => $fundingProgramme->uuid,
+            'level_0_proposed' => $orgData['level_0_proposed'],
+            'level_1_proposed' => $orgData['level_1_proposed'],
         ]);
         $application = Application::create([
             'organisation_uuid' => $org->uuid,

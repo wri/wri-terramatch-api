@@ -93,34 +93,17 @@ class GeometryHelper
 
     }
 
-    public static function getPolygonsBbox($polygonsIds)
+    public function getPolygonCentroid(string $polyUuid)
     {
-        if (count($polygonsIds) === 0) {
+        $sitePolygon = SitePolygon::where('poly_id', $polyUuid)->first();
+
+        if (! $sitePolygon) {
             return null;
         }
-        $envelopes = PolygonGeometry::whereIn('uuid', $polygonsIds)
-          ->selectRaw('ST_ASGEOJSON(ST_Envelope(geom)) as envelope')
-          ->get();
-        $maxX = $maxY = PHP_INT_MIN;
-        $minX = $minY = PHP_INT_MAX;
-        if ($envelopes->isEmpty()) {
-            return null;
-        }
-        foreach ($envelopes as $envelope) {
-            $geojson = json_decode($envelope->envelope);
-            $coordinates = $geojson->coordinates[0];
 
-            foreach ($coordinates as $point) {
-                $x = $point[0];
-                $y = $point[1];
-                $maxX = max($maxX, $x);
-                $minX = min($minX, $x);
-                $maxY = max($maxY, $y);
-                $minY = min($minY, $y);
-            }
-        }
+        $centroid = DB::select('SELECT ST_AsGeoJSON(ST_Centroid(geometry)) as centroid FROM site_polygons WHERE poly_id = ?', [$polyUuid])[0]->centroid;
 
-        return [$minX, $minY, $maxX, $maxY];
+        return json_decode($centroid);
     }
 
     public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
@@ -470,7 +453,7 @@ class GeometryHelper
 
     public static function centroidOfPolygon($polyUUID)
     {
-        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS lon, ST_Y(ST_Centroid(geom)) AS lat')
+        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS `long`, ST_Y(ST_Centroid(geom)) AS lat')
         ->where('uuid', $polyUUID)
         ->first();
 
@@ -478,7 +461,7 @@ class GeometryHelper
             return [];
         }
 
-        return [$centroid->lon, $centroid->lat];
+        return [$centroid->long, $centroid->lat];
     }
 
     public static function getCentroidsOfPolygons(array $polygonUuids)
@@ -574,5 +557,33 @@ class GeometryHelper
                 $failedUuids[] = ['uuid' => $uuid, 'error' => $e->getMessage()];
             }
         }
+    }
+
+    public static function updateSitePolygonCentroid(SitePolygon $sitePolygon): bool
+    {
+        if (! $sitePolygon->poly_id) {
+            return false;
+        }
+
+        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS `long`, ST_Y(ST_Centroid(geom)) AS lat')
+            ->where('uuid', $sitePolygon->poly_id)
+            ->first();
+
+        if (! $centroid) {
+            return false;
+        }
+
+        DB::table('site_polygon')
+            ->where('id', $sitePolygon->id)
+            ->update([
+                'lat' => $centroid->lat,
+                'long' => $centroid->long,
+            ]);
+
+        // Update the model instance in memory so it has the latest values
+        $sitePolygon->lat = $centroid->lat;
+        $sitePolygon->long = $centroid->long;
+
+        return true;
     }
 }

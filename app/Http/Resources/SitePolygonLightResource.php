@@ -14,6 +14,7 @@ class SitePolygonLightResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'poly_name' => $this->poly_name,
             'practice' => $this->practice,
             'target_sys' => $this->target_sys,
@@ -26,6 +27,8 @@ class SitePolygonLightResource extends JsonResource
             'poly_id' => $this->poly_id,
             'primary_uuid' => $this->primary_uuid,
             'calc_area' => $this->calc_area,
+            'num_trees' => $this->num_trees,
+            'site_id' => $this->site_id,
         ];
     }
 }

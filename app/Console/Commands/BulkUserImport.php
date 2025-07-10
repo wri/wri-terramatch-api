@@ -80,7 +80,7 @@ class BulkUserImport extends Command
                     $this->createUser($userData);
                 }
 
-                $this->info("Organisation import complete! Organisation export saved in organisations.csv\n\n");
+                $this->info("User import complete!\n\n");
             }
         });
     }
@@ -101,7 +101,6 @@ class BulkUserImport extends Command
         $this->assert(in_array('email_address', $this->headerOrder), 'No emailAddress column found');
         $this->assert(in_array('role', $this->headerOrder), 'No role column found');
         $this->assert(in_array('locale', $this->headerOrder), 'No locale column found');
-        $this->assert(count($this->headerOrder) == 6, 'Invalid number of columns found: ' . json_encode($this->headerOrder));
     }
 
     /**
@@ -116,7 +115,9 @@ class BulkUserImport extends Command
             }
 
             $field = $this->headerOrder[$index];
-            $row[$field] = $cell;
+            if (! empty($field)) {
+                $row[$field] = $cell;
+            }
         }
 
         if (empty($row)) {

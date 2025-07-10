@@ -16,7 +16,6 @@ class UpdateOwnershipStakeRequest extends FormRequest
         return [
             'first_name' => ['sometimes', 'string', 'nullable'],
             'last_name' => ['sometimes', 'string', 'nullable'],
-            'organisation_id' => ['sometimes', 'string', 'exists:organisations,uuid'],
             'title' => ['sometimes', 'string', 'nullable'],
             'gender' => ['sometimes', 'string', 'min:1', 'max:65335'],
             'percent_ownership' => ['sometimes', 'numeric', 'between:0,100'],

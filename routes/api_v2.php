@@ -23,11 +23,9 @@ use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
-use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
-use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
@@ -90,6 +88,7 @@ use App\Http\Controllers\V2\ImpactStory\ImpactStoryController;
 use App\Http\Controllers\V2\Indicators\GetHectaresRestoredController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
+use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
 use App\Http\Controllers\V2\MediaController;
 use App\Http\Controllers\V2\MonitoredData\GetIndicatorPolygonStatusController;
 use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisController;
@@ -443,7 +442,7 @@ Route::prefix('reporting-frameworks')->group(function () {
 
 Route::get('/my/applications', ViewMyApplicationController::class);
 Route::prefix('applications')->group(function () {
-    Route::get('/{application}', ViewApplicationController::class);
+    Route::get('/{application}', ViewApplicationController::class)->middleware('i18n');
     Route::get('/{application}/export', ExportApplicationController::class);
 });
 
@@ -472,6 +471,7 @@ Route::prefix('ownership-stake')->group(function () {
 Route::prefix('leaderships')->group(function () {
     Route::post('/', StoreLeadershipsController::class);
     Route::delete('/{leaderships}', DeleteLeadershipsController::class);
+    Route::patch('/{leaderships}', UpdateLeadershipsController::class);
 });
 
 Route::prefix('financial-indicators')->group(function () {
@@ -518,7 +518,6 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
-    Route::get('/bbox', [SitePolygonDataController::class, 'getBboxOfCompleteSite']);
     Route::get('/check-approve', SiteCheckApproveController::class);
 });
 Route::prefix('entity')->group(function () {
@@ -620,7 +619,6 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/project-polygon', [TerrafundEditGeometryController::class, 'getProjectPolygonData']);
     Route::delete('/project-polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndProjectPolygon']);
     Route::delete('/project-polygons', [TerrafundEditGeometryController::class, 'deleteMultiplePolygonsAndSitePolygons']);
-    Route::get('/polygon/bbox/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonBbox']);
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
     Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
@@ -664,21 +662,13 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
     Route::get('/jobs-created', GetJobsCreatedController::class);
     Route::get('/volunteers-survival-rate', VolunteersAndAverageSurvivalRateController::class);
-    Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
-    Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);
-    Route::get('/get-bbox-project', [GetPolygonsController::class, 'getBboxOfCompleteProject']);
-    Route::get('/bbox/project', [GetPolygonsController::class, 'getProjectBbox']);
-    Route::get('/country/{country}', [CountryAndPolygonDataController::class, 'getCountryBbox']);
-    Route::get('/bbox/landscape', [GetPolygonsController::class, 'getLandscapeBbox']);
-    Route::get('/bbox/country-landscape', [GetPolygonsController::class, 'getCountryLandscapeBbox']);
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
-    Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
     Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);

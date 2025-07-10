@@ -230,7 +230,7 @@ class Organisation extends Model implements MediaModel
         'level_2_past_restoration' => 'array',
         'trees_naturally_regenerated_total' => 'integer',
         'trees_naturally_regenerated_3year' => 'integer',
-        'carbon_credits' => 'integer',
+        'carbon_credits' => 'boolean',
         'external_technical_assistance' => 'string',
         'barriers_to_funding' => 'string',
         'capacity_building_support_needed' => 'string',
@@ -258,15 +258,18 @@ class Organisation extends Model implements MediaModel
             ],
             'full-time' => [
                 DemographicCollections::FULL_TIME,
+                DemographicCollections::FULL_TIME_CLT,
             ],
             'part-time' => [
                 DemographicCollections::PART_TIME,
+                DemographicCollections::PART_TIME_CLT,
             ],
             'temp' => [
                 DemographicCollections::TEMP,
             ],
         ],
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void

@@ -35,6 +35,8 @@ properties:
     type: string
   funding_programme_uuid:
     type: string
+  funding_programme_framework_key:
+    type: string
   options_other:
     type: boolean
   form_sections:

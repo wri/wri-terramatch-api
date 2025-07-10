@@ -361,6 +361,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Framework::class)->withTimestamps();
     }
 
+    public function projectsFrameworkKey()
+    {
+        return $this->projects()->select('framework_key')->distinct('framework_key')->pluck('framework_key');
+    }
+
     public function wipeData()
     {
         $this->email_address = Str::uuid();

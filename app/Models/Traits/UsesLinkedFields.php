@@ -73,7 +73,9 @@ trait UsesLinkedFields
                         $property = data_get($fieldConfig, 'property', null);
                         $value = data_get($formData, $question->uuid, null);
 
-                        if (! is_null($value)) {
+                        $validation = data_get($question, 'validation', null);
+                        $isDate = $question->input_type === 'date' && empty($validation['required']);
+                        if (! is_null($value) || $isDate) {
                             if (empty($property)) {
                                 $localAnswers[$question->uuid] = data_get($formData, $question->uuid);
                             }
@@ -285,6 +287,7 @@ trait UsesLinkedFields
                 'allBeneficiaries',
                 'trainingBeneficiaries',
                 'indirectBeneficiaries',
+                'associates',
                 'stratas',
                 'invasive',
                 'seedings',

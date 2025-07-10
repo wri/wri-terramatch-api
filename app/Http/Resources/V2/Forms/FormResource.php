@@ -38,6 +38,7 @@ class FormResource extends JsonResource
             'published' => $this->published,
             'stage_id' => $this->stage_id,
             'funding_programme_uuid' => $this->stage?->funding_programme_id,
+            'funding_programme_framework_key' => $this->stage?->funding_programme?->framework_key,
             'form_sections' => (new FormSectionCollection($this->sections))
                 ->params($this->params),
         ];

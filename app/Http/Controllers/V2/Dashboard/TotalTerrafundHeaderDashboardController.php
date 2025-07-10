@@ -34,6 +34,9 @@ class TotalTerrafundHeaderDashboardController extends Controller
                 $organisations = data_get($request, 'filter.organisationType', []);
                 $country = data_get($request, 'filter.country', '');
                 $cohort = data_get($request, 'filter.cohort', '');
+                if (is_array($cohort)) {
+                    $cohort = implode(',', $cohort);
+                }
                 $uuid = data_get($request, 'filter.projectUuid', '');
 
                 $delayedJob = DelayedJob::create();

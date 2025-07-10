@@ -92,6 +92,8 @@ V2TreeSpeciesRead:
   $ref: './V2TreeSpeciesRead.yml'
 V2LeadershipsCreate:
   $ref: './V2LeadershipsCreate.yml'
+V2LeadershipsUpdate:
+  $ref: './V2LeadershipsUpdate.yml'
 V2LeadershipsRead:
   $ref: './V2LeadershipsRead.yml'
 V2OwnershipStakeCreate:
@@ -278,18 +280,6 @@ DashboardJobsCreatedData:
   $ref: './DashboardJobsCreatedData.yml'
 DashboardRestorationStrategyResponse:
   $ref: './DashboardRestorationStrategyResponse.yml'
-DashboardTreeRestorationGoalResponse:
-  $ref: './DashboardTreeRestorationGoalResponse.yml'
-DashboardTreesUnderRestorationActual:
-  $ref: './DashboardTreesUnderRestorationActual.yml'
-DashboardGetPolygonStatusResponse:
-  $ref: './DashboardGetPolygonStatusResponse.yml'
-DashboardBBOXProject:
-  $ref: './DashboardBBOXProject.yml'
-DashboardBBOXLandscape:
-  $ref: './DashboardBBOXLandscape.yml'
-DashboardBBOXCountry:
-  $ref: './DashboardBBOXCountry.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
 DashboardActiveProjectsListViewResponse:
@@ -304,8 +294,6 @@ DashboardProjectProfileResponse:
   $ref: './DashboardProjectProfileResponse.yml'
 DashboardProjectProfileData:
   $ref: './DashboardProjectProfileData.yml'
-DashboardTopProjectsResponse:
-  $ref: './DashboardTopProjectsResponse.yml'
 DashboardTopPlantedTree:
   $ref: './DashboardTopPlantedTree.yml'
 DashboardTopTreeSpecies:
