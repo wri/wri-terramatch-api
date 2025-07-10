@@ -52,7 +52,7 @@ class UpdateEntityWithFormController extends Controller
         } else {
             UpdateRequest::create([
                 'organisation_id' => $entity->organisation ? $entity->organisation->id : $entity->project->organisation_id,
-                'project_id' => $entity->project ? $entity->project->id : $entity->id,
+                'project_id' => get_class($entity) instanceof App\Models\V2\FinancialReport ? null : ($entity->project ? $entity->project->id : $entity->id),
                 'created_by_id' => Auth::user()->id,
                 'framework_key' => $entity->framework_key,
                 'updaterequestable_type' => get_class($entity),

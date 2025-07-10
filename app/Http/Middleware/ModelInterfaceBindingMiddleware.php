@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\FinancialIndicators;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestionOption;
 use App\Models\V2\FundingProgramme;
@@ -58,6 +59,8 @@ class ModelInterfaceBindingMiddleware
         'audit-status' => AuditStatus::class,
         'financial-indicators' => FinancialIndicators::class,
         'financial-indicator' => FinancialIndicators::class,
+        'financial-reports' => FinancialReport::class,
+        'financial-report' => FinancialReport::class,
 
     ];
 

@@ -364,3 +364,7 @@ V2FinancialIndicatorsRead:
   $ref: './V2FinancialIndicatorsRead.yml'
 V2FinancialIndicatorsUpdate:
   $ref: './V2FinancialIndicatorsUpdate.yml'
+V2FinancialReportRead:
+  $ref: './V2FinancialReportRead.yml'
+V2FinancialLiteReportRead:
+  $ref: './V2FinancialLiteReportRead.yml'

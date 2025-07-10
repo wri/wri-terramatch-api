@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\User;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\User\ActionResource;
 use App\Models\V2\Action;
+use App\Models\V2\FinancialReport;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,22 @@ class IndexMyActionsController extends Controller
             ->pending()
             ->projectIds($projectIds);
 
-        $actions = $qry->get();
+        $projectActions = $qry->get();
+
+        $organisationId = optional($user->organisation)->id;
+        if ($organisationId) {
+            $financialReportIds = FinancialReport::where('organisation_id', $organisationId)->pluck('id')->toArray();
+            $financialReportActions = Action::query()
+                ->with('targetable')
+                ->pending()
+                ->where('targetable_type', FinancialReport::class)
+                ->whereIn('targetable_id', $financialReportIds)
+                ->get();
+        } else {
+            $financialReportActions = collect();
+        }
+
+        $actions = $projectActions->concat($financialReportActions);
 
         return ActionResource::collection($actions);
     }

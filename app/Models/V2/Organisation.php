@@ -338,7 +338,13 @@ class Organisation extends Model implements MediaModel
 
     public function financialCollection(): HasMany
     {
-        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id');
+        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
+                        ->whereNull('financial_report_id');
+    }
+
+    public function financialReports(): HasMany
+    {
+        return $this->hasMany(financialReport::class, 'organisation_id', 'id');
     }
 
     public function partners(): BelongsToMany
