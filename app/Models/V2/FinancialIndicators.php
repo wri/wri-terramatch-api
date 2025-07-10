@@ -27,6 +27,7 @@ class FinancialIndicators extends Model implements MediaModel
         'amount',
         'year',
         'description',
+        'financial_report_id',
     ];
 
     public $casts = [
@@ -63,6 +64,11 @@ class FinancialIndicators extends Model implements MediaModel
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(Organisation::class, 'organisation_id', 'id');
+    }
+
+    public function financialReport()
+    {
+        return $this->belongsTo(FinancialReport::class, 'financial_report_id', 'id');
     }
 
     public function getRouteKeyName()

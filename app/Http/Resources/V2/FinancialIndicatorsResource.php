@@ -12,11 +12,10 @@ class FinancialIndicatorsResource extends JsonResource
      */
     public function toArray($request)
     {
-        $documentation = $this->getMedia('documentation')->first();
-
         $data = [
             'uuid' => $this->uuid,
             'organisation_id' => $this->organisation_id,
+            'financial_report_id' => $this->financial_report_id,
             'collection' => $this->collection,
             'amount' => $this->amount,
             'year' => $this->year,

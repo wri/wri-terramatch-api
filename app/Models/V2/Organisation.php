@@ -230,7 +230,7 @@ class Organisation extends Model implements MediaModel
         'level_2_past_restoration' => 'array',
         'trees_naturally_regenerated_total' => 'integer',
         'trees_naturally_regenerated_3year' => 'integer',
-        'carbon_credits' => 'integer',
+        'carbon_credits' => 'boolean',
         'external_technical_assistance' => 'string',
         'barriers_to_funding' => 'string',
         'capacity_building_support_needed' => 'string',
@@ -338,7 +338,13 @@ class Organisation extends Model implements MediaModel
 
     public function financialCollection(): HasMany
     {
-        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id');
+        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
+                        ->whereNull('financial_report_id');
+    }
+
+    public function financialReports(): HasMany
+    {
+        return $this->hasMany(financialReport::class, 'organisation_id', 'id');
     }
 
     public function partners(): BelongsToMany

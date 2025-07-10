@@ -3,6 +3,7 @@
 namespace App\Http\Resources\V2\Organisation;
 
 use App\Http\Resources\V2\FinancialIndicatorsResource;
+use App\Http\Resources\V2\FinancialReports\FinancialReportLiteResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\General\ShapefileResource;
 use App\Http\Resources\V2\LeadershipsResource;
@@ -149,11 +150,11 @@ class OrganisationResource extends JsonResource
             'level_2_past_restoration' => $this->level_2_past_restoration,
             'trees_naturally_regenerated_total' => $this->trees_naturally_regenerated_total,
             'trees_naturally_regenerated_3year' => $this->trees_naturally_regenerated_3year,
-            'carbon_credits' => $this->carbon_credits,
             'external_technical_assistance' => $this->external_technical_assistance,
             'barriers_to_funding' => $this->barriers_to_funding,
             'capacity_building_support_needed' => $this->capacity_building_support_needed,
             'financialCollection' => FinancialIndicatorsResource::collection($this->financialCollection),
+            'financialReports' => FinancialReportLiteResource::collection($this->financialReports),
             'associations_cooperatives' => $this->associations_cooperatives,
             'territories_of_operation' => $this->territories_of_operation,
             'decisionmaking_structure_description' => $this->decisionmaking_structure_description,
