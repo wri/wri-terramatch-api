@@ -19,6 +19,7 @@ use App\Jobs\ResetPasswordJob;
 use App\Jobs\SendLoginDetailsJob;
 use App\Jobs\UserVerificationJob;
 use App\Models\PasswordReset as PasswordResetModel;
+use App\Models\V2\Organisations\OrganisationInvite;
 use App\Models\V2\Projects\ProjectInvite;
 use App\Models\V2\User as UserModel;
 use App\Models\Verification as VerificationModel;
@@ -288,13 +289,26 @@ class AuthController extends Controller
         $data = $request->json()->all();
         $passwordReset = PasswordResetModel::where('token', '=', $data['token'])->firstOrFail();
         $user = UserModel::findOrFail($passwordReset->user_id);
-        $projectInvites = ProjectInvite::where('email_address', $user->email_address)->get();
-        foreach ($projectInvites as $invite) {
-            $invite->email_address = $data['email_address'];
-            $user->projects()->sync([$invite->project_id => ['is_monitoring' => true]]);
-            if ($invite->accepted_at === null) {
-                $invite->accepted_at = now();
-                $invite->saveOrFail();
+        $organisationInvites = OrganisationInvite::where('email_address', $user->email_address)
+            ->whereNull('accepted_at')
+            ->get();
+        if ($organisationInvites) {
+            foreach ($organisationInvites as $invite) {
+                $invite->email_address = $data['email_address'];
+                if ($invite->accepted_at === null) {
+                    $invite->accepted_at = now();
+                    $invite->saveOrFail();
+                }
+            }
+        } else {
+            $projectInvites = ProjectInvite::where('email_address', $user->email_address)->get();
+            foreach ($projectInvites as $invite) {
+                $invite->email_address = $data['email_address'];
+                $user->projects()->sync([$invite->project_id => ['is_monitoring' => true]]);
+                if ($invite->accepted_at === null) {
+                    $invite->accepted_at = now();
+                    $invite->saveOrFail();
+                }
             }
         }
         $user->first_name = $data['first_name'];
