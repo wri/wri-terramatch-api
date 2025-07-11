@@ -105,6 +105,7 @@ use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
 use App\Http\Controllers\V2\Organisations\AdminOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminOrganisationMultiController;
 use App\Http\Controllers\V2\Organisations\AdminRejectOrganisationController;
+use App\Http\Controllers\V2\Organisations\CreateOrganisationInviteController;
 use App\Http\Controllers\V2\Organisations\JoinExistingOrganisationController;
 use App\Http\Controllers\V2\Organisations\OrganisationApprovedUsersController;
 use App\Http\Controllers\V2\Organisations\OrganisationApproveUserController;
@@ -386,6 +387,9 @@ Route::prefix('organisations')->group(function () {
     Route::get('user-requests/{organisation}', OrganisationListRequestedUsersController::class);
     Route::get('approved-users/{organisation}', OrganisationApprovedUsersController::class);
     Route::delete('retract-my-draft', OrganisationRetractMyDraftController::class);
+
+    Route::post('/{organisation}/invite', CreateOrganisationInviteController::class);
+    // Route::post('/invite/accept', ProjectInviteAcceptController::class);
 });
 Route::resource('organisations', OrganisationController::class);
 

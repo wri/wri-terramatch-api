@@ -407,6 +407,12 @@ class LocalizationKeysTableSeeder extends Seeder
             'terrafund-polygon-update.pd.body',
             PolygonNotificationMailHelper::getPolygonNotificationMail(false)
         );
+
+        $this->createLocalizationKey('v2-organisation-invite-received-create.subject', 'YOU HAVE BEEN INVITED TO JOIN TERRAMATCH');
+        $this->createLocalizationKey('v2-organisation-invite-received-create.title', 'YOU HAVE BEEN INVITED TO JOIN TERRAMATCH');
+        $this->createLocalizationKey('v2-organisation-invite-received-create.body', '{organisationName} has invited you to join TerraMatch as a team member.
+            Click the link below to create your account and set your password so you can see the ongoing applications for this organization.');
+        $this->createLocalizationKey('v2-organisation-invite-received-create.cta', 'CREATE ACCOUNT');
     }
 
     public function createLocalizationKey($key, $value): void

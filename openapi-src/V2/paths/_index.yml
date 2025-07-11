@@ -2450,3 +2450,6 @@
         schema:
           type: object
     operationId: get-v2-financial-reports-export
+/v2/organisations/{UUID}/invite:
+  post:
+    $ref: './Organisations/post-v2-organisations-uuid-invite.yml'
