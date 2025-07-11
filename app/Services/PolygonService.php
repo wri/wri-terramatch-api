@@ -53,6 +53,7 @@ class PolygonService
     public const EXCLUDED_VALIDATION_CRITERIA = [
       self::ESTIMATED_AREA_CRITERIA_ID,
       self::WITHIN_COUNTRY_CRITERIA_ID,
+      self::PLANT_START_DATE_CRITERIA_ID,
     ];
 
     // TODO: Remove this const and its usages when the point transformation ticket is complete.
