@@ -76,6 +76,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     protected $fillable = [
         'name',
         'status',
+        'planting_status',
         'is_test',
         'update_request_status',
         'project_status',
