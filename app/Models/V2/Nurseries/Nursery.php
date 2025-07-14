@@ -58,6 +58,7 @@ class Nursery extends Model implements MediaModel, AuditableContract, EntityMode
         'framework_key',
         'project_id',
         'status',
+        'planting_status',
         'update_request_status',
         'type',
         'name',

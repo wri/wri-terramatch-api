@@ -50,6 +50,7 @@ class SitePolygon extends Model implements AuditableModel
       'num_trees',
       'calc_area',
       'status',
+      'planting_status',
       'created_by',
       'source',
       'is_active',
