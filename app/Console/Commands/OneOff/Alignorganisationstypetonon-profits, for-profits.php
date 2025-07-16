@@ -48,7 +48,8 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
             'corporation' => Organisation::TYPE_FOR_PROFIT,
             
             // Government types
-            'government' => Organisation::TYPE_GOVERNMENT,
+            'government' => 'government',
+            'government-agency' => 'government',
             
             // Other types (se mantiene como 'other')
             'other' => 'other',
@@ -69,16 +70,28 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
         // Group by current type for display
         $groupedByType = $organisationsToUpdate->groupBy('type');
         foreach ($groupedByType as $currentType => $organisations) {
-            $newType = $typeMapping[$currentType] ?? 'NULL';
-            $this->line("   - '{$currentType}' → '{$newType}': {$organisations->count()} organisations");
+            if ($currentType === null) {
+                // Organizaciones que ya tienen type NULL se mantienen como NULL
+                $newType = 'NULL';
+            } else {
+                $newType = $typeMapping[$currentType] ?? $currentType;
+            }
+            $currentTypeDisplay = $currentType ?? 'NULL';
+            $this->line("   - '{$currentTypeDisplay}' → '{$newType}': {$organisations->count()} organisations");
         }
 
         if ($dryRun) {
             $this->info('DRY RUN - No changes will be made. Here are the conversions that would happen:');
             foreach ($organisationsToUpdate as $organisation) {
-                $newType = $typeMapping[$organisation->type] ?? null;
+                if ($organisation->type === null) {
+                    // Organizaciones que ya tienen type NULL se mantienen como NULL
+                    $newType = null;
+                } else {
+                    $newType = $typeMapping[$organisation->type] ?? $organisation->type;
+                }
                 $newTypeDisplay = $newType ?? 'NULL';
-                $this->line("   Organisation ID {$organisation->id} ('{$organisation->name}'): '{$organisation->type}' → '{$newTypeDisplay}'");
+                $oldTypeDisplay = $organisation->type ?? 'NULL';
+                $this->line("   Organisation ID {$organisation->id} ('{$organisation->name}'): '{$oldTypeDisplay}' → '{$newTypeDisplay}'");
             }
             return 0;
         }
@@ -95,7 +108,13 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
 
         foreach ($organisationsToUpdate as $organisation) {
             try {
-                $newType = $typeMapping[$organisation->type] ?? null;
+                if ($organisation->type === null) {
+                    // Organizaciones que ya tienen type NULL se mantienen como NULL
+                    $newType = null;
+                } else {
+                    $newType = $typeMapping[$organisation->type] ?? $organisation->type;
+                }
+                
                 $oldType = $organisation->type ?? 'NULL';
                 $newTypeDisplay = $newType ?? 'NULL';
 
