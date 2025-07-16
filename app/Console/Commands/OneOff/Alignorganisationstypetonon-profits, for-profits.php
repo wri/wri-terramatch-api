@@ -41,16 +41,16 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
             'international_ngo' => Organisation::TYPE_NON_PROFIT,
             'nonprofit' => Organisation::TYPE_NON_PROFIT,
             'foundation' => Organisation::TYPE_NON_PROFIT,
-            
+
             // For-profit types
             'llc' => Organisation::TYPE_FOR_PROFIT,
             'b_corporation' => Organisation::TYPE_FOR_PROFIT,
             'corporation' => Organisation::TYPE_FOR_PROFIT,
-            
+
             // Government types
             'government' => 'government',
             'government-agency' => 'government',
-            
+
             // Other types (se mantiene como 'other')
             'other' => 'other',
         ];
@@ -62,6 +62,7 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
 
         if ($organisationsToUpdate->isEmpty()) {
             $this->info('No organisations found that need type alignment.');
+
             return 0;
         }
 
@@ -93,11 +94,13 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
                 $oldTypeDisplay = $organisation->type ?? 'NULL';
                 $this->line("   Organisation ID {$organisation->id} ('{$organisation->name}'): '{$oldTypeDisplay}' → '{$newTypeDisplay}'");
             }
+
             return 0;
         }
 
-        if (!$force && !$this->confirm('Do you want to proceed with the type alignment?')) {
+        if (! $force && ! $this->confirm('Do you want to proceed with the type alignment?')) {
             $this->info('Operation cancelled.');
+
             return 1;
         }
 
@@ -114,7 +117,7 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
                 } else {
                     $newType = $typeMapping[$organisation->type] ?? $organisation->type;
                 }
-                
+
                 $oldType = $organisation->type ?? 'NULL';
                 $newTypeDisplay = $newType ?? 'NULL';
 
