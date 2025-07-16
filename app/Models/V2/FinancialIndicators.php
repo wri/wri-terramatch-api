@@ -28,6 +28,7 @@ class FinancialIndicators extends Model implements MediaModel
         'year',
         'description',
         'financial_report_id',
+        'exchange_rate',
     ];
 
     public $casts = [
