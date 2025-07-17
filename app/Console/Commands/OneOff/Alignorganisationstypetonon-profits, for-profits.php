@@ -51,7 +51,7 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
             'government' => 'government',
             'government-agency' => 'government',
 
-            // Other types (se mantiene como 'other')
+            // Other types (remains as 'other')
             'other' => 'other',
         ];
 
@@ -72,7 +72,7 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
         $groupedByType = $organisationsToUpdate->groupBy('type');
         foreach ($groupedByType as $currentType => $organisations) {
             if ($currentType === null) {
-                // Organizaciones que ya tienen type NULL se mantienen como NULL
+                // Organizations that already have type NULL remain as NULL
                 $newType = 'NULL';
             } else {
                 $newType = $typeMapping[$currentType] ?? $currentType;
@@ -85,7 +85,7 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
             $this->info('DRY RUN - No changes will be made. Here are the conversions that would happen:');
             foreach ($organisationsToUpdate as $organisation) {
                 if ($organisation->type === null) {
-                    // Organizaciones que ya tienen type NULL se mantienen como NULL
+                    // Organizations that already have type NULL remain as NULL
                     $newType = null;
                 } else {
                     $newType = $typeMapping[$organisation->type] ?? $organisation->type;
@@ -112,7 +112,7 @@ class AlignOrganisationsTypeToNonProfitsForProfits extends Command
         foreach ($organisationsToUpdate as $organisation) {
             try {
                 if ($organisation->type === null) {
-                    // Organizaciones que ya tienen type NULL se mantienen como NULL
+                    // Organizations that already have type NULL remain as NULL
                     $newType = null;
                 } else {
                     $newType = $typeMapping[$organisation->type] ?? $organisation->type;
