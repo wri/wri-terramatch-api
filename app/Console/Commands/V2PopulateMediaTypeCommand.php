@@ -1,37 +1,35 @@
 <?php
 
-namespace App\Observers;
+namespace App\Console\Commands;
 
-use App\Jobs\NotifyGreenhouseJob;
-use App\Models\V2\User;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Console\Command;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class MediaObserver
+class V2PopulateMediaTypeCommand extends Command
 {
-    public function deleting(Media $media): void
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'v2-populate-media-type';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Populate the new type field in media table based on mime_type';
+
+    public function handle()
     {
-        Log::info('deleting: ' . $media->uuid);
-        if (empty($media->created_by)) {
-            Log::info('no created by');
-
-            return;
-        }
-
-        $owner = User::where('id', $media->created_by)->first();
-        if ($owner?->primaryRole?->name != 'greenhouse-service-account') {
-            Log::info('not owned by GH');
-
-            return;
-        }
-
-        Log::info('dispatching');
-        NotifyGreenhouseJob::dispatch('notifyMediaDeleted', $media->uuid);
-    }
-
-    public function saving(Media $media): void
-    {
-        $media->type = $this->mapType($media->mime_type);
+        Media::chunk(500, function ($chunk) {
+            foreach ($chunk as $media) {
+                $media->type = $this->mapType($media->mime_type);
+                $media->save();
+            }
+        });
+        $this->info('Media type field populated successfully.');
     }
 
     private function mapType($mime)
