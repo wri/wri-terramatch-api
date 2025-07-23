@@ -34,6 +34,10 @@ class V2PopulateMediaTypeCommand extends Command
 
     private function mapType($mime)
     {
+        if (strpos($mime, 'vnd.openxmlformats-officedocument.spreadsheetml.sheetapplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet') !== false) {
+            return 'xlsx';
+        }
+
         $map = [
             'image/jpeg' => 'jpg',
             'image/png' => 'png',
