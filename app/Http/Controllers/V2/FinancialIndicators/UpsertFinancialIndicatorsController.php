@@ -78,6 +78,7 @@ class UpsertFinancialIndicatorsController extends Controller
             }
 
             $description = $entry['description'] ?? null;
+            $exchangeRate = $entry['exchange_rate'] ?? null;
             $existing = FinancialIndicators::where($where)->first();
 
             if ($existing) {
@@ -85,9 +86,13 @@ class UpsertFinancialIndicatorsController extends Controller
                     $existing->description = $description;
                     $existing->save();
                 }
+                if ($exchangeRate !== null && $existing->exchange_rate !== $exchangeRate) {
+                    $existing->exchange_rate = $exchangeRate;
+                    $existing->save();
+                }
                 $updatedRecords[] = $existing;
             } else {
-                $updatedRecords[] = FinancialIndicators::create(array_merge($where, ['description' => $description]));
+                $updatedRecords[] = FinancialIndicators::create(array_merge($where, ['description' => $description, 'exchange_rate' => $exchangeRate]));
             }
         }
 

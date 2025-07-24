@@ -107,4 +107,9 @@ class OrganisationPolicy extends Policy
     {
         return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user);
     }
+
+    public function inviteUser(?User $user, ?Organisation $model = null): bool
+    {
+        return $this->isAdminOwnerOrMonitoringPartner($user, $model);
+    }
 }

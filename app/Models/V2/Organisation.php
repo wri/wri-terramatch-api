@@ -19,6 +19,7 @@ use App\Models\Traits\NamedEntityTrait;
 use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Forms\Application;
+use App\Models\V2\Organisations\OrganisationInvite;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Database\Factories\V2\OrganisationFactory;
@@ -441,5 +442,10 @@ class Organisation extends Model implements MediaModel
     public function scopeIsType($query, $type): Builder
     {
         return $query->where('type', $type);
+    }
+
+    public function invites(): HasMany
+    {
+        return $this->HasMany(OrganisationInvite::class);
     }
 }
