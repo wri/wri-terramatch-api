@@ -38,7 +38,9 @@ class CreateSiteWithFormController extends Controller
             $createReport = $now <= $lastTask->due_at;
             if (! $createReport) {
                 // Also, if we're more than 4 weeks before the next task's due date, create a backdated report
-                $nextTask = TaskDueJob::framework($site->framework_key)->first();
+                $nextTask = TaskDueJob::whereJsonContains('task_definition->framework_key', $site->framework_key)
+                    ->orderBy('execution_time')
+                    ->first();
                 $createReport = ! empty($nextTask) && $nextTask->due_at > $now->addWeeks(4);
             }
             if ($createReport) {
