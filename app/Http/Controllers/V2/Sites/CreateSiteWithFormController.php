@@ -30,7 +30,7 @@ class CreateSiteWithFormController extends Controller
             'project_id' => $project->id,
             'status' => EntityStatusStateMachine::STARTED,
         ]);
-        
+
         $lastTask = $project->tasks()->orderby('due_at', 'desc')->first();
         if (! empty($lastTask)) {
             $now = Carbon::now();
