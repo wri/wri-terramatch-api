@@ -65,10 +65,11 @@ class UpdateV2OrganisationNameBasedOnCsvCommand extends Command
             }
 
             // Validate required columns exist
-            if (!isset($cleanedRow['uuid']) || !isset($cleanedRow['name'])) {
+            if (! isset($cleanedRow['uuid']) || ! isset($cleanedRow['name'])) {
                 $this->error("Row #$index: Missing required columns 'uuid' or 'name'");
-                $this->error("Available columns: " . implode(', ', array_keys($cleanedRow)));
+                $this->error('Available columns: ' . implode(', ', array_keys($cleanedRow)));
                 $errorCount++;
+
                 continue;
             }
 
@@ -77,6 +78,7 @@ class UpdateV2OrganisationNameBasedOnCsvCommand extends Command
             if (! $organisation) {
                 $this->error("Row #$index: Organisation not found for UUID: " . $cleanedRow['uuid']);
                 $notFoundCount++;
+
                 continue;
             }
 
@@ -84,22 +86,23 @@ class UpdateV2OrganisationNameBasedOnCsvCommand extends Command
                 $oldName = $organisation->name;
                 $organisation->name = trim($cleanedRow['name']);
                 $organisation->save();
-                
+
                 $this->info("Row #$index: Updated organisation '{$oldName}' to '{$organisation->name}'");
                 $updatedCount++;
             } catch (\Exception $e) {
                 $this->error("Row #$index: Error updating organisation name: " . $e->getMessage());
                 $errorCount++;
+
                 continue;
             }
         }
 
         $this->info('CSV processing complete.');
-        $this->info("Total rows processed: " . count($rows));
+        $this->info('Total rows processed: ' . count($rows));
         $this->info("Successfully updated: $updatedCount");
         $this->info("Organisations not found: $notFoundCount");
         $this->info("Errors encountered: $errorCount");
 
         return 0;
     }
-} 
+}
