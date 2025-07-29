@@ -12,7 +12,7 @@ class UpdateV2OrganisationNameBasedOnCsvCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'update-v2-organisation-name-based-on-csv-command';
+    protected $signature = 'one-off:update-v2-organisation-name-based-on-csv-command';
 
     /**
      * The console command description.
