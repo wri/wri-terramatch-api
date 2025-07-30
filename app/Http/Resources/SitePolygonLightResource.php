@@ -29,6 +29,7 @@ class SitePolygonLightResource extends JsonResource
             'calc_area' => $this->calc_area,
             'num_trees' => $this->num_trees,
             'site_id' => $this->site_id,
+            'planting_status' => $this->planting_status,
         ];
     }
 }
