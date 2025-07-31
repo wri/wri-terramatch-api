@@ -4,7 +4,9 @@ namespace App\Http\Resources\V2\Forms;
 
 use App\Http\Resources\V2\AuditResource;
 use App\Http\Resources\V2\Stages\StageLiteResource;
+use App\Models\V2\I18n\I18nItem;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\App;
 
 class FormSubmissionResource extends JsonResource
 {
@@ -19,16 +21,26 @@ class FormSubmissionResource extends JsonResource
             'project_pitch_uuid' => $this->project_pitch_uuid,
         ];
 
-        $form = $this->form;
-        $questions = $form->questions;
-        $translatedFeedbackFields = collect($questions)
-            ->filter(function ($question) {
-                return $this->feedback_fields && in_array($question->label, $this->feedback_fields);
-            })
-            ->map(function ($question) {
-                return $question->translated_label;
-            })
-            ->toArray();
+        $translatedFeedbackFields = collect($this->feedback_fields)->map(function ($field) {
+            $label = $field;
+            $type = 'short';
+            if (strlen($label) > 255) {
+                $type = 'long';
+            }
+            $i18nItemQuery = I18nItem::where('type', $type);
+            if ($type === 'long') {
+                $i18nItemQuery->where('long_value', $label);
+            } else {
+                $i18nItemQuery->where('short_value', $label);
+            }
+            $i18nItem = $i18nItemQuery->first();
+            $translatedValue = $i18nItem->getTranslated(App::getLocale());
+            if ($type === 'long') {
+                return $translatedValue->long_value;
+            } else {
+                return $translatedValue->short_value;
+            }
+        });
 
         return [
             'id' => $this->id,
