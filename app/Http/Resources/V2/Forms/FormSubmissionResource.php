@@ -21,14 +21,14 @@ class FormSubmissionResource extends JsonResource
 
         $form = $this->form;
         $questions = $form->questions;
-
-        $translatedFeedbackFields = $questions
+        $translatedFeedbackFields = collect($questions)
             ->filter(function ($question) {
                 return $this->feedback_fields && in_array($question->label, $this->feedback_fields);
             })
             ->map(function ($question) {
                 return $question->translated_label;
-            });
+            })
+            ->toArray();
 
         return [
             'id' => $this->id,
