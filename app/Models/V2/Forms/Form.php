@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -173,5 +174,17 @@ class Form extends Model implements MediaModel
     public function getTranslatedSubmissionMessageAttribute(): ?string
     {
         return $this->getTranslation('i18nSubmissionMessage', 'submission_message');
+    }
+
+    public function questions(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            FormQuestion::class,
+            FormSection::class,
+            'form_id',
+            'form_section_id',
+            'id',
+            'uuid'
+        );
     }
 }

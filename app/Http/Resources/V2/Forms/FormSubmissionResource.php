@@ -19,6 +19,17 @@ class FormSubmissionResource extends JsonResource
             'project_pitch_uuid' => $this->project_pitch_uuid,
         ];
 
+        $form = $this->form;
+        $questions = $form->questions;
+
+        $translatedFeedbackFields = $questions
+            ->filter(function ($question) {
+                return $this->feedback_fields && in_array($question->label, $this->feedback_fields);
+            })
+            ->map(function ($question) {
+                return $question->translated_label;
+            });
+
         return [
             'id' => $this->id,
             'uuid' => $this->uuid,
@@ -37,6 +48,7 @@ class FormSubmissionResource extends JsonResource
             ],
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
+            'translated_feedback_fields' => $translatedFeedbackFields,
             'stage' => new StageLiteResource($this->stage),
             'next_stage_uuid' => $this->getNextStageUuid(),
             'previous_stage_uuid' => $this->getPreviousStageUuid(),
