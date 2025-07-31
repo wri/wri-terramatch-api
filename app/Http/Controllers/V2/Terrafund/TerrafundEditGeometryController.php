@@ -241,6 +241,7 @@ class TerrafundEditGeometryController extends Controller
               'num_trees' => 'nullable|integer',
               'calc_area' => 'nullable|numeric',
               'target_sys' => 'nullable|string',
+              'planting_status' => 'nullable|string',
             ]);
 
             $sitePolygon->update($validatedData);
@@ -267,6 +268,7 @@ class TerrafundEditGeometryController extends Controller
               'num_trees' => 'nullable|integer',
               'calc_area' => 'nullable|numeric',
               'target_sys' => 'nullable|string',
+              'planting_status' => 'nullable|string',
             ]);
 
             $validatedData = App::make(PolygonService::class)->validateSitePolygonProperties($uuid, $validatedData);
@@ -344,6 +346,7 @@ class TerrafundEditGeometryController extends Controller
                   'distr' => null,
                   'num_trees' => null,
                   'target_sys' => null,
+                  'planting_status' => null,
                 ];
             } else {
                 $validatedData = $request->validate([
@@ -353,6 +356,7 @@ class TerrafundEditGeometryController extends Controller
                   'distr' => 'nullable|string',
                   'num_trees' => 'nullable|integer',
                   'target_sys' => 'nullable|string',
+                  'planting_status' => 'nullable|string',
                 ]);
             }
 
@@ -379,6 +383,7 @@ class TerrafundEditGeometryController extends Controller
                 'status' => 'draft',
                 'source' => PolygonService::TERRAMACH_SOURCE,
                 'site_id' => $siteUuid,
+                'planting_status' => $validatedData['planting_status'],
             ]);
             $sitePolygon->save();
 

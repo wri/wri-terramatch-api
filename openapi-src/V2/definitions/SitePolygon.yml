@@ -60,3 +60,5 @@ properties:
     type: string
   validation_status:
     type: boolean
+  planting_status:
+    type: string
