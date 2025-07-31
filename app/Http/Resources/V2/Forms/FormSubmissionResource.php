@@ -34,6 +34,9 @@ class FormSubmissionResource extends JsonResource
                 $i18nItemQuery->where('short_value', $label);
             }
             $i18nItem = $i18nItemQuery->first();
+            if (! $i18nItem) {
+                return $label;
+            }
             $translatedValue = $i18nItem->getTranslated(App::getLocale());
             if (! $translatedValue) {
                 return $label;
