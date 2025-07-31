@@ -174,5 +174,4 @@ class Form extends Model implements MediaModel
     {
         return $this->getTranslation('i18nSubmissionMessage', 'submission_message');
     }
-
 }
