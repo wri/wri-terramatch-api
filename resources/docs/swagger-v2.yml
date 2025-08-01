@@ -8471,8 +8471,8 @@ definitions:
               updated_at:
                 type: string
           organisation:
-            type: object
             title: AdminOrganisationRead
+            type: object
             properties:
               uuid:
                 type: string
@@ -11818,8 +11818,8 @@ definitions:
           updated_at:
             type: string
       organisation:
-        type: object
         title: AdminOrganisationRead
+        type: object
         properties:
           uuid:
             type: string
@@ -21573,6 +21573,8 @@ definitions:
         format: float
       status:
         type: string
+      planting_status:
+        type: string
   SitePolygonCreateResponse:
     type: object
     properties:
@@ -22383,6 +22385,8 @@ definitions:
           type: boolean
         version_name:
           type: string
+        planting_status:
+          type: string
   SitePolygonLoaded:
     title: SitePolygonLoaded
     type: object
@@ -22445,6 +22449,8 @@ definitions:
       is_present:
         type: boolean
       version_name:
+        type: string
+      planting_status:
         type: string
   ClippedPolygonResponse:
     title: ClippedPolygonResponse
@@ -29838,7 +29844,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -29849,8 +29854,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -29878,6 +29883,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       tags:
         - V2 Admin
         - V2 Organisations
@@ -35063,7 +35069,6 @@ paths:
                     date_added:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -35074,8 +35079,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -35103,6 +35108,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -40272,7 +40278,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -40283,8 +40288,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -40312,6 +40317,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       operationId: get-v2-funding-programme
   /v2/admin/funding-programme:
     get:
@@ -40611,7 +40617,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -40622,8 +40627,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -40651,6 +40656,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       operationId: get-v2-admin-funding-programme
     post:
       summary: Create a funding programme
@@ -45828,8 +45834,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                type: object
                 title: AdminOrganisationRead
+                type: object
                 properties:
                   uuid:
                     type: string
@@ -46451,7 +46457,6 @@ paths:
                       type: string
                       format: date-time
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -46462,8 +46467,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -46491,6 +46496,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/applications/{UUID}':
     get:
       summary: Get a specific application
@@ -46843,8 +46849,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                type: object
                 title: AdminOrganisationRead
+                type: object
                 properties:
                   uuid:
                     type: string
@@ -50694,6 +50700,8 @@ paths:
                 format: float
               status:
                 type: string
+              planting_status:
+                type: string
       responses:
         '201':
           description: Successful response
@@ -50834,6 +50842,8 @@ paths:
                     type: string
                     format: date-time
                   uuid:
+                    type: string
+                  planting_status:
                     type: string
         '404':
           description: No site polygons found for the given UUID
@@ -51256,6 +51266,8 @@ paths:
                 format: float
               status:
                 type: string
+              planting_status:
+                type: string
       responses:
         '200':
           description: Successful response
@@ -51283,6 +51295,8 @@ paths:
                 type: number
                 format: float
               status:
+                type: string
+              planting_status:
                 type: string
         '400':
           description: Bad request
@@ -51325,6 +51339,8 @@ paths:
                 format: float
               status:
                 type: string
+              planting_status:
+                type: string
       responses:
         '201':
           description: Successful response
@@ -51352,6 +51368,8 @@ paths:
                 type: number
                 format: float
               status:
+                type: string
+              planting_status:
                 type: string
         '400':
           description: Bad request
@@ -52471,168 +52489,6 @@ paths:
               error:
                 type: string
                 description: Error message
-  /v2/entity/polygons/count:
-    get:
-      summary: Get Entity Type
-      description: |
-        Determine the type of entity based on UUID.
-      parameters:
-        - in: query
-          name: uuid
-          required: true
-          description: UUID of the entity
-          type: string
-        - in: query
-          name: type
-          required: true
-          description: type of the entity
-          type: string
-        - in: query
-          name: status
-          required: false
-          description: Comma-separated list of status values to filter by
-          type: string
-        - in: query
-          name: sort
-          required: false
-          description: 'Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`'
-          type: string
-        - in: query
-          name: valid
-          required: false
-          description: Valid value to filter by
-          type: string
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              count:
-                type: number
-        '500':
-          description: Internal server error
-  /v2/entity/polygons:
-    get:
-      summary: Get Entity Type
-      description: |
-        Determine the type of entity based on UUID.
-      parameters:
-        - in: query
-          name: uuid
-          required: true
-          description: UUID of the entity
-          type: string
-        - in: query
-          name: type
-          required: true
-          description: type of the entity
-          type: string
-        - in: query
-          name: status
-          required: false
-          description: Comma-separated list of status values to filter by
-          type: string
-        - in: query
-          name: sort
-          required: false
-          description: 'Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`'
-          type: string
-        - in: query
-          name: valid
-          required: false
-          description: Valid value to filter by
-          type: string
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              type:
-                type: string
-                description: 'Type of the entity (''project'', ''site'', ''unknown'')'
-              uuid:
-                type: string
-                format: uuid
-                description: UUID of the entity
-              polygonsData:
-                type: array
-                items:
-                  title: SitePolygon
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    uuid:
-                      type: string
-                    primary_uuid:
-                      type: string
-                    project_id:
-                      type: string
-                    proj_name:
-                      type: string
-                    org_name:
-                      type: string
-                    poly_id:
-                      type: string
-                    poly_name:
-                      type: string
-                    site_id:
-                      type: string
-                    site_name:
-                      type: string
-                    plantstart:
-                      type: string
-                      format: date
-                    practice:
-                      type: string
-                    target_sys:
-                      type: string
-                    distr:
-                      type: string
-                    num_trees:
-                      type: integer
-                    calc_area:
-                      type: number
-                      format: float
-                    created_by:
-                      type: string
-                    last_modified_by:
-                      type: string
-                    deleted_at:
-                      type: string
-                      format: date-time
-                    created_at:
-                      type: string
-                      format: date-time
-                    updated_at:
-                      type: string
-                      format: date-time
-                    status:
-                      type: string
-                    source:
-                      type: string
-                    country:
-                      type: string
-                    is_active:
-                      type: boolean
-                    version_name:
-                      type: string
-                    validation_status:
-                      type: boolean
-                    planting_status:
-                      type: string
-        '400':
-          description: 'Bad request, UUID parameter is missing'
-        '500':
-          description: Internal server error
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                description: Error message
   '/v2/{ENTITY}/{UUID}/status':
     put:
       summary: Update the status of a specific entity
@@ -53597,7 +53453,6 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -53608,8 +53463,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -53637,6 +53492,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
     post:
       summary: Create a new Impact Story
       operationId: v2-create-impact-story
@@ -53896,7 +53752,6 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -53907,8 +53762,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -53936,6 +53791,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story
@@ -54068,7 +53924,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -54079,8 +53934,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -54108,6 +53963,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       tags:
         - V2 financial reports
   '/v2/financial-reports/{UUID}':
