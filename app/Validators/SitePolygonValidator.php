@@ -73,6 +73,7 @@ class SitePolygonValidator extends Validator
         'features.*.properties.target_sys' => 'required',
         'features.*.properties.distr' => 'required',
         'features.*.properties.num_trees' => 'required',
+        'features.*.properties.planting_status' => 'required',
     ];
 
     public const DATA = [
@@ -83,5 +84,6 @@ class SitePolygonValidator extends Validator
         'features.*.properties.target_sys' => 'string|not_in:null,NULL|filled',
         'features.*.properties.distr' => 'string|not_in:null,NULL|filled',
         'features.*.properties.num_trees' => 'integer',
+        'features.*.properties.planting_status' => 'string|not_in:null,NULL|filled',
     ];
 }

@@ -60,3 +60,6 @@ properties:
     type: boolean
   version_name:
     type: string
+  planting_status:
+    type: string
+

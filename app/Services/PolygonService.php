@@ -474,6 +474,7 @@ class PolygonService
         $practicesValidValues = ['assisted-natural-regeneration', 'direct-seeding','tree-planting'];
         $properties['practice'] = $this->orderCommaSeparatedPropertiesAlphabetically($properties['practice'] ?? '', $practicesValidValues);
         $properties['target_sys'] = $this->validateTargetSys($properties['target_sys'] ?? '');
+        $properties['planting_status'] = $properties['planting_status'] ?? null;
 
         return [
             'poly_name' => $properties['poly_name'] ?? null,
@@ -487,6 +488,7 @@ class PolygonService
             'status' => 'draft',
             'point_id' => $properties['point_id'] ?? null,
             'source' => $properties['source'] ?? null,
+            'planting_status' => $properties['planting_status'] ?? null,
         ];
     }
 
