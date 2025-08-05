@@ -186,7 +186,6 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->created_by = $user->id;
         $newSitePolygon->validation_status = null;
-        $newSitePolygon->planting_status = $properties['planting_status'] ?? $this->planting_status;
         $newSitePolygon->save();
 
         return $newSitePolygon;
