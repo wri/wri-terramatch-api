@@ -344,7 +344,6 @@ class TerrafundEditGeometryController extends Controller
                   'distr' => null,
                   'num_trees' => null,
                   'target_sys' => null,
-
                 ];
             } else {
                 $validatedData = $request->validate([
@@ -354,7 +353,6 @@ class TerrafundEditGeometryController extends Controller
                   'distr' => 'nullable|string',
                   'num_trees' => 'nullable|integer',
                   'target_sys' => 'nullable|string',
-
                 ]);
             }
 
