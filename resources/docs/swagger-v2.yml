@@ -50821,8 +50821,6 @@ paths:
                     format: date-time
                   uuid:
                     type: string
-                  planting_status:
-                    type: string
         '404':
           description: No site polygons found for the given UUID
           schema:
