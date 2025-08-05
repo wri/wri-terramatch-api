@@ -14,7 +14,6 @@ class PolygonFields
         'target_sys',
         'distr',
         'num_trees',
-        'planting_status',
     ];
 
     /**
@@ -29,7 +28,6 @@ class PolygonFields
         'num_trees',
         'site_id',
         'uuid',
-        'planting_status',
     ];
 
     /**
@@ -45,7 +43,6 @@ class PolygonFields
         'site_id',
         'uuid',
         'id',
-        'planting_status',
     ];
 
     /**
@@ -59,7 +56,6 @@ class PolygonFields
         'target_sys',
         'distr',
         'num_trees',
-        'planting_status',
     ];
     /**
      * Basic polygon property fields for validation and export
@@ -70,6 +66,5 @@ class PolygonFields
       'target_sys',
       'distr',
       'num_trees',
-      'planting_status',
   ];
 }
