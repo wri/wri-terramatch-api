@@ -34,9 +34,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('send-weekly-polygon-update-notifications')->weeklyOn(1, '00:00')->timezone('Europe/Sofia')->onOneServer();
         $schedule->command('dashboard:cache-data')->weeklyOn(6, '23:59')->onOneServer();
 
-        // Close Fundo Flora funding programmes on August 8th at 4pm EST
+        // Close Fundo Flora funding programmes on August 8th at midnight EST
         $schedule->command('close-fundo-flora-funding-programmes')
-            ->monthlyOn(8, '16:00')
+            ->monthlyOn(8, '00:00')
             ->timezone('America/New_York')
             ->onOneServer()
             ->withoutOverlapping();
