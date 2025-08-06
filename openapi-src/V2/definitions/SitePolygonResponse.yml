@@ -22,6 +22,4 @@ properties:
     format: float
   status:
     type: string
-  planting_status:
-    type: string
 
