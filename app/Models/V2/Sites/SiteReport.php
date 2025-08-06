@@ -11,6 +11,7 @@ use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -58,6 +59,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     use HasEntityResources;
     use BelongsToThroughTrait;
     use HasDemographics;
+    use ReportsStatusChange;
 
     protected $auditInclude = [
         'status',
