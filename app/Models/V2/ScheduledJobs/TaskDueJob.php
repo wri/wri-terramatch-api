@@ -3,6 +3,7 @@
 namespace App\Models\V2\ScheduledJobs;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Parental\HasParent;
 
 /**
@@ -19,9 +20,25 @@ class TaskDueJob extends ScheduledJob
         return self::create([
             'execution_time' => $executionTime,
             'task_definition' => [
-                'framework_key' => $frameworkKey,
-                'due_at' => $dueAt,
+                'frameworkKey' => $frameworkKey,
+                'dueAt' => $dueAt,
             ],
         ]);
+    }
+
+    public function scopeFramework(Builder $query, string $frameworkKey): Builder
+    {
+        return $query->whereJsonContains('task_definition->frameworkKey', $frameworkKey)
+            ->orderBy('execution_time');
+    }
+
+    public function getFrameworkKeyAttribute(): string
+    {
+        return $this->task_definition['frameworkKey'];
+    }
+
+    public function getDueAtAttribute(): Carbon
+    {
+        return Carbon::parse($this->task_definition['dueAt']);
     }
 }
