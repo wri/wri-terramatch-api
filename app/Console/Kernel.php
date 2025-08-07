@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
 
         // Close Fundo Flora funding programmes on August 8th at midnight EST
         $schedule->command('close-fundo-flora-funding-programmes')
-            ->monthlyOn(9, '00:00')
+            ->yearlyOn(8, 9, '00:00')
             ->timezone('America/New_York')
             ->onOneServer()
             ->withoutOverlapping();
