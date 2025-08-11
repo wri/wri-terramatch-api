@@ -15,6 +15,9 @@ class GetPolygonsIndicatorAnalysisController extends Controller
     public function __invoke(EntityModel $entity, string $slug)
     {
         $slugMappings = [
+            'treeCover' => [
+                'relation_name' => 'treeCoverIndicator',
+            ],
             'treeCoverLoss' => [
                 'relation_name' => 'treeCoverLossIndicator',
                 'extra_columns' => '',
@@ -38,8 +41,7 @@ class GetPolygonsIndicatorAnalysisController extends Controller
 
         try {
             return SitePolygon::whereHas($slugMappings[$slug]['relation_name'], function ($query) use ($slug) {
-                $query->where('indicator_slug', $slug)
-                    ->where('year_of_analysis', date('Y'));
+                $query->where('indicator_slug', $slug);
             })
                 ->whereHas('site', function ($query) use ($entity) {
                     if (get_class($entity) == Site::class) {
@@ -62,15 +64,29 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                 ->where('status', 'approved')
                 ->get()
                 ->map(function ($polygon) use ($slugMappings, $slug) {
-                    $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
-                        ->where('indicator_slug', $slug)
-                        ->select([
-                            'indicator_slug',
-                            'year_of_analysis',
-                            'value',
-                            'created_at',
-                        ])
-                        ->first();
+                    if ($slug == 'treeCover') {
+                        $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
+                            ->where('indicator_slug', $slug)
+                            ->select([
+                                'indicator_slug',
+                                'year_of_analysis',
+                                'percent_cover',
+                                'project_phase',
+                                'plus_minus_percent',
+                                'created_at',
+                            ])
+                            ->first();
+                    } else {
+                        $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
+                            ->where('indicator_slug', $slug)
+                            ->select([
+                                'indicator_slug',
+                                'year_of_analysis',
+                                'value',
+                                'created_at',
+                            ])
+                            ->first();
+                    }
                     $results = [
                         'id' => $polygon->id,
                         'poly_name' => $polygon->poly_name ?? '-',
@@ -101,6 +117,12 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                     if ($slug == 'restorationByLandUse' || $slug == 'restorationByStrategy') {
                         $values = json_decode($indicator->value, true);
                         $results = array_merge($results, $this->processValuesHectares($values));
+                    }
+
+                    if ($slug == 'treeCover') {
+                        $results['project_phase'] = $indicator->project_phase ?? '';
+                        $results['plus_minus_percent'] = $indicator->plus_minus_percent ?? 0;
+                        $results['percent_cover'] = $indicator->percent_cover ?? 0;
                     }
 
                     return $results;
