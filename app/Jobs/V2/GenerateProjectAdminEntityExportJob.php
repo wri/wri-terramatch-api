@@ -65,9 +65,9 @@ class GenerateProjectAdminEntityExportJob implements ShouldQueue
 
             $ids = [];
             if ($user->hasRole('project-manager')) {
-                $ids = $user->managedProjects()->pluck('v2_projects.id');
+                $ids = $user->managedProjects()->excludeTestData()->pluck('v2_projects.id');
             } else {
-                $ids = $user->projects()->pluck('v2_projects.id');
+                $ids = $user->projects()->excludeTestData()->pluck('v2_projects.id');
             }
             Log::info('ids for: '. $ids);
 

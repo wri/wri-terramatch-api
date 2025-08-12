@@ -631,4 +631,11 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     {
         return $this->project?->organisation?->financialCollection;
     }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('project', function ($query) {
+            $query->where('is_test', false);
+        });
+    }
 }

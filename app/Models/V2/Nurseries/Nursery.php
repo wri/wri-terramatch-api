@@ -227,4 +227,11 @@ class Nursery extends Model implements MediaModel, AuditableContract, EntityMode
     {
         return $this->title ?? '';
     }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('project', function ($query) {
+            $query->where('is_test', false);
+        });
+    }
 }

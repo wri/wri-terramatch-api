@@ -447,4 +447,13 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     {
         return $this->task?->projectReport?->only(['name', 'status', 'uuid']) ?? '';
     }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('site', function ($query) {
+            $query->whereHas('project', function ($query) {
+                $query->where('is_test', false);
+            });
+        });
+    }
 }
