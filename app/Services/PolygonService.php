@@ -668,7 +668,7 @@ class PolygonService
         }
 
         // Only update delayed job if it exists and there are processed polygons
-        if ($delayedJob && !empty($uuids)) {
+        if ($delayedJob && ! empty($uuids)) {
             $delayedJob->total_content = count($newPolygonUuids);
             $delayedJob->save();
             foreach ($newPolygonUuids as $polygonUuid) {
