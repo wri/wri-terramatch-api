@@ -1,5 +1,5 @@
 ## PHP
-FROM php:8.2-apache AS php
+FROM php:8.2-apache-bookworm AS php
 
 # Set GDAL version
 ENV GDAL_VERSION=3.5.3
@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y \
     libmagickwand-dev \
     mariadb-client \
     libzip-dev \
-    python3-venv \
-    python3-dev \
+    python3.11-venv \
+    python3.11-dev \
     exiftool \
     build-essential \
     wget \
@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y \
     libgeos-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install GDAL 3.4.3 from source
+# Install GDAL 3.5.3 from source
 RUN wget https://github.com/OSGeo/gdal/releases/download/v${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz \
     && tar xzf gdal-${GDAL_VERSION}.tar.gz \
     && cd gdal-${GDAL_VERSION} \
