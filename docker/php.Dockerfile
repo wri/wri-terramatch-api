@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y \
     libmagickwand-dev \
     mariadb-client \
     libzip-dev \
-    python3.11-venv \
-    python3.11-dev \
+    python3-venv \
+    python3-dev \
     exiftool \
     build-essential \
     wget \
@@ -71,7 +71,7 @@ COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/php.ini /usr/local/etc/php/php.ini
 
 # Python virtual environment setup
-RUN python3.11 -m venv /opt/python
+RUN python3 -m venv /opt/python
 ENV PATH="/opt/python/bin:${PATH}"
 
 # Install Python dependencies in the correct order
