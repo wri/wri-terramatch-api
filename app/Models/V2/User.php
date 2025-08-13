@@ -351,6 +351,13 @@ class User extends Authenticatable implements JWTSubject
         return $this->projects()->wherePivot('is_managing', true);
     }
 
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('projects', function ($query) {
+            $query->where('is_test', false);
+        });
+    }
+
     public function terrafundProgrammes()
     {
         return $this->belongsToMany(TerrafundProgramme::class);
