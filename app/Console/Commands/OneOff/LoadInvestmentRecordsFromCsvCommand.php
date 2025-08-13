@@ -37,13 +37,15 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
         $splitsFile = $this->argument('splits_file');
         $isDryRun = $this->option('dry-run');
 
-        if (!file_exists($investmentsFile)) {
+        if (! file_exists($investmentsFile)) {
             $this->error("Investments file not found: {$investmentsFile}");
+
             return 1;
         }
 
-        if (!file_exists($splitsFile)) {
+        if (! file_exists($splitsFile)) {
             $this->error("Splits file not found: {$splitsFile}");
+
             return 1;
         }
 
@@ -52,7 +54,7 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
         }
 
         try {
-            if (!$isDryRun) {
+            if (! $isDryRun) {
                 DB::beginTransaction();
             }
 
@@ -60,11 +62,11 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
 
             // Process investments first
             $investmentUuidMapping = $this->processInvestmentsFile($investmentsFile, $isDryRun);
-            
+
             // Then process investment splits using the investments as guide
             $this->processInvestmentSplitsFile($splitsFile, $investmentUuidMapping, $isDryRun);
 
-            if (!$isDryRun) {
+            if (! $isDryRun) {
                 DB::commit();
                 $this->info('All investment records loaded successfully!');
             } else {
@@ -74,10 +76,11 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
             return 0;
 
         } catch (\Exception $e) {
-            if (!$isDryRun) {
+            if (! $isDryRun) {
                 DB::rollBack();
             }
             $this->error('Failed to load investment records: ' . $e->getMessage());
+
             return 1;
         }
     }
@@ -90,17 +93,18 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
         $this->info("Processing investments from: {$filename}");
 
         $handle = fopen($filename, 'r');
-        if (!$handle) {
+        if (! $handle) {
             throw new \Exception("Unable to open file: {$filename}");
         }
 
         $header = fgetcsv($handle, 1000, ';'); // Using semicolon as delimiter
-        if (!$header) {
+        if (! $header) {
             fclose($handle);
+
             throw new \Exception("Unable to read header from file: {$filename}");
         }
 
-        $this->info("Headers found: " . implode(', ', $header));
+        $this->info('Headers found: ' . implode(', ', $header));
 
         $uuidMapping = [];
         $processedCount = 0;
@@ -115,9 +119,10 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
             }
 
             $record = array_combine($header, $row);
-            if (!$record) {
+            if (! $record) {
                 $this->warn("Skipping malformed row {$rowNumber}");
                 $skippedCount++;
+
                 continue;
             }
 
@@ -129,38 +134,41 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
             }
 
             // Validate required fields
-            if (empty($cleanedRecord['UUID']) || empty($cleanedRecord['projectUuid']) || 
+            if (empty($cleanedRecord['UUID']) || empty($cleanedRecord['projectUuid']) ||
                 empty($cleanedRecord['investmentDate']) || empty($cleanedRecord['type'])) {
                 $this->warn("Row {$rowNumber}: Missing required fields. Skipping.");
-                $this->warn("Available fields: " . json_encode($cleanedRecord));
+                $this->warn('Available fields: ' . json_encode($cleanedRecord));
                 $skippedCount++;
+
                 continue;
             }
 
             // Validate project exists
             $project = Project::find($cleanedRecord['projectUuid']);
-            if (!$project) {
+            if (! $project) {
                 $this->warn("Row {$rowNumber}: Project ID {$cleanedRecord['projectUuid']} not found. Skipping.");
                 $skippedCount++;
+
                 continue;
             }
 
             // Parse and validate date
             $investmentDate = $this->parseDate($cleanedRecord['investmentDate']);
-            if (!$investmentDate) {
+            if (! $investmentDate) {
                 $this->warn("Row {$rowNumber}: Invalid date format '{$cleanedRecord['investmentDate']}'. Skipping.");
                 $skippedCount++;
+
                 continue;
             }
 
-            if (!$isDryRun) {
+            if (! $isDryRun) {
                 $investment = Investment::create([
                     'uuid' => $cleanedRecord['UUID'],
                     'project_id' => $cleanedRecord['projectUuid'],
                     'investment_date' => $investmentDate,
                     'type' => $cleanedRecord['type'],
                 ]);
-                
+
                 $uuidMapping[$cleanedRecord['UUID']] = $investment->id;
                 $this->info("Created investment with UUID: {$investment->uuid} for project {$cleanedRecord['projectUuid']}");
             } else {
@@ -185,17 +193,18 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
         $this->info("Processing investment splits from: {$filename}");
 
         $handle = fopen($filename, 'r');
-        if (!$handle) {
+        if (! $handle) {
             throw new \Exception("Unable to open file: {$filename}");
         }
 
         $header = fgetcsv($handle, 1000, ';'); // Using semicolon as delimiter
-        if (!$header) {
+        if (! $header) {
             fclose($handle);
+
             throw new \Exception("Unable to read header from file: {$filename}");
         }
 
-        $this->info("Headers found: " . implode(', ', $header));
+        $this->info('Headers found: ' . implode(', ', $header));
 
         $processedCount = 0;
         $skippedCount = 0;
@@ -209,9 +218,10 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
             }
 
             $record = array_combine($header, $row);
-            if (!$record) {
+            if (! $record) {
                 $this->warn("Skipping malformed row {$rowNumber}");
                 $skippedCount++;
+
                 continue;
             }
 
@@ -223,19 +233,21 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
             }
 
             // Validate required fields
-            if (empty($cleanedRecord['uuid']) || empty($cleanedRecord['funder']) || !isset($cleanedRecord['amount'])) {
+            if (empty($cleanedRecord['uuid']) || empty($cleanedRecord['funder']) || ! isset($cleanedRecord['amount'])) {
                 $this->warn("Row {$rowNumber}: Missing required fields. Skipping.");
-                $this->warn("Available fields: " . json_encode($cleanedRecord));
+                $this->warn('Available fields: ' . json_encode($cleanedRecord));
                 $skippedCount++;
+
                 continue;
             }
 
             // The uuid in splits file corresponds to the investment UUID
             $investmentUuid = $cleanedRecord['uuid'];
-            
-            if (!isset($investmentUuidMapping[$investmentUuid])) {
+
+            if (! isset($investmentUuidMapping[$investmentUuid])) {
                 $this->warn("Row {$rowNumber}: Investment UUID {$investmentUuid} not found in investments file. Skipping.");
                 $skippedCount++;
+
                 continue;
             }
 
@@ -244,16 +256,18 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
             if ($amount === null) {
                 $this->warn("Row {$rowNumber}: Invalid amount format '{$cleanedRecord['amount']}'. Skipping.");
                 $skippedCount++;
+
                 continue;
             }
 
-            if (!$isDryRun) {
+            if (! $isDryRun) {
                 $investmentId = $investmentUuidMapping[$investmentUuid];
                 $investment = Investment::find($investmentId);
 
-                if (!$investment) {
+                if (! $investment) {
                     $this->warn("Row {$rowNumber}: Investment with ID {$investmentId} not found. Skipping.");
                     $skippedCount++;
+
                     continue;
                 }
 
@@ -312,7 +326,7 @@ class LoadInvestmentRecordsFromCsvCommand extends Command
     {
         // Remove currency symbols and commas
         $cleanAmount = preg_replace('/[$,]/', '', $amountString);
-        
+
         // Try to convert to float
         if (is_numeric($cleanAmount)) {
             return (float) $cleanAmount;
