@@ -44,15 +44,17 @@ class UploadInvestmentCsvCommand extends Command
         $this->info("📁 Splits file: {$splitsFile}");
 
         // Check file existence
-        if (!file_exists($investmentsFile) && !$force) {
+        if (! file_exists($investmentsFile) && ! $force) {
             $this->error("❌ Investments file not found: {$investmentsFile}");
-            $this->warn("💡 Use --force to continue or specify a different path with --investments-file");
+            $this->warn('💡 Use --force to continue or specify a different path with --investments-file');
+
             return 1;
         }
 
-        if (!file_exists($splitsFile) && !$force) {
+        if (! file_exists($splitsFile) && ! $force) {
             $this->error("❌ Splits file not found: {$splitsFile}");
-            $this->warn("💡 Use --force to continue or specify a different path with --splits-file");
+            $this->warn('💡 Use --force to continue or specify a different path with --splits-file');
+
             return 1;
         }
 
@@ -61,7 +63,7 @@ class UploadInvestmentCsvCommand extends Command
         }
 
         try {
-            if (!$isDryRun) {
+            if (! $isDryRun) {
                 DB::beginTransaction();
                 $this->info('💾 Starting database transaction...');
             }
@@ -71,17 +73,17 @@ class UploadInvestmentCsvCommand extends Command
             if (file_exists($investmentsFile)) {
                 $investmentUuidMapping = $this->importInvestments($investmentsFile, $isDryRun);
             } else {
-                $this->warn("⚠️ Investments file not found, continuing with splits only...");
+                $this->warn('⚠️ Investments file not found, continuing with splits only...');
             }
-            
+
             // Process splits file
             if (file_exists($splitsFile)) {
                 $this->importInvestmentSplits($splitsFile, $investmentUuidMapping, $isDryRun);
             } else {
-                $this->warn("⚠️ Splits file not found, continuing with investments only...");
+                $this->warn('⚠️ Splits file not found, continuing with investments only...');
             }
 
-            if (!$isDryRun) {
+            if (! $isDryRun) {
                 DB::commit();
                 $this->info('✅ Import completed successfully!');
             } else {
@@ -91,12 +93,13 @@ class UploadInvestmentCsvCommand extends Command
             return 0;
 
         } catch (\Exception $e) {
-            if (!$isDryRun) {
+            if (! $isDryRun) {
                 DB::rollBack();
                 $this->error('💥 Transaction error, rolling back...');
             }
             $this->error('❌ Error during import: ' . $e->getMessage());
             $this->error('📋 Stack trace: ' . $e->getTraceAsString());
+
             return 1;
         }
     }
@@ -122,10 +125,11 @@ class UploadInvestmentCsvCommand extends Command
         $header = fgetcsv($handle, 1000, ';');
         if (! $header) {
             fclose($handle);
+
             throw new \Exception("Unable to read header from file: {$filename}");
         }
 
-        $this->info("📋 Headers found: " . implode(', ', $header));
+        $this->info('📋 Headers found: ' . implode(', ', $header));
 
         $uuidMapping = [];
         $processedCount = 0;
@@ -143,6 +147,7 @@ class UploadInvestmentCsvCommand extends Command
             if (! $record) {
                 $this->warn("⚠️ Row {$rowNumber} malformed, skipping...");
                 $skippedCount++;
+
                 continue;
             }
 
@@ -154,11 +159,12 @@ class UploadInvestmentCsvCommand extends Command
             }
 
             // Validate required fields according to Investments.csv structure
-            if (empty($cleanedRecord['projectUuid']) || 
+            if (empty($cleanedRecord['projectUuid']) ||
                 empty($cleanedRecord['investmentDate']) || empty($cleanedRecord['type'])) {
                 $this->warn("⚠️ Row {$rowNumber}: Missing required fields. Skipping...");
-                $this->warn("📋 Available fields: " . json_encode($cleanedRecord));
+                $this->warn('📋 Available fields: ' . json_encode($cleanedRecord));
                 $skippedCount++;
+
                 continue;
             }
 
@@ -167,20 +173,22 @@ class UploadInvestmentCsvCommand extends Command
             if (! $project) {
                 $this->warn("⚠️ Row {$rowNumber}: Project ID {$cleanedRecord['projectUuid']} not found. Skipping...");
                 $skippedCount++;
+
                 continue;
             }
 
             // Parse and validate date
             $investmentDate = $this->parseDate($cleanedRecord['investmentDate']);
-            if (!$investmentDate) {
+            if (! $investmentDate) {
                 $this->warn("⚠️ Row {$rowNumber}: Invalid date format '{$cleanedRecord['investmentDate']}'. Skipping...");
                 $skippedCount++;
+
                 continue;
             }
 
             // Generate UUID if it doesn't exist
-            $investmentUuid = !empty($cleanedRecord['UUID']) ? $cleanedRecord['UUID'] : Str::uuid()->toString();
-            
+            $investmentUuid = ! empty($cleanedRecord['UUID']) ? $cleanedRecord['UUID'] : Str::uuid()->toString();
+
             if (! $isDryRun) {
                 $investment = Investment::create([
                     'uuid' => $investmentUuid,
@@ -225,10 +233,11 @@ class UploadInvestmentCsvCommand extends Command
         $header = fgetcsv($handle, 1000, ';');
         if (! $header) {
             fclose($handle);
+
             throw new \Exception("Unable to read header from file: {$filename}");
         }
 
-        $this->info("📋 Headers found: " . implode(', ', $header));
+        $this->info('📋 Headers found: ' . implode(', ', $header));
 
         $processedCount = 0;
         $skippedCount = 0;
@@ -245,6 +254,7 @@ class UploadInvestmentCsvCommand extends Command
             if (! $record) {
                 $this->warn("⚠️ Row {$rowNumber} malformed, skipping...");
                 $skippedCount++;
+
                 continue;
             }
 
@@ -256,19 +266,21 @@ class UploadInvestmentCsvCommand extends Command
             }
 
             // Validate required fields according to Investment splits.csv structure
-            if (empty($cleanedRecord['investmentUuid']) || empty($cleanedRecord['funder']) || !isset($cleanedRecord['amount'])) {
+            if (empty($cleanedRecord['investmentUuid']) || empty($cleanedRecord['funder']) || ! isset($cleanedRecord['amount'])) {
                 $this->warn("⚠️ Row {$rowNumber}: Missing required fields. Skipping...");
-                $this->warn("📋 Available fields: " . json_encode($cleanedRecord));
+                $this->warn('📋 Available fields: ' . json_encode($cleanedRecord));
                 $skippedCount++;
+
                 continue;
             }
 
             // The investmentUuid in the splits file corresponds to the projectUuid of the investment
             $projectUuid = $cleanedRecord['investmentUuid'];
-            
-            if (!isset($investmentUuidMapping[$projectUuid])) {
+
+            if (! isset($investmentUuidMapping[$projectUuid])) {
                 $this->warn("⚠️ Row {$rowNumber}: ProjectUuid {$projectUuid} not found in investments file. Skipping...");
                 $skippedCount++;
+
                 continue;
             }
 
@@ -277,6 +289,7 @@ class UploadInvestmentCsvCommand extends Command
             if ($amount === null) {
                 $this->warn("⚠️ Row {$rowNumber}: Invalid amount format '{$cleanedRecord['amount']}'. Skipping...");
                 $skippedCount++;
+
                 continue;
             }
 
@@ -287,11 +300,12 @@ class UploadInvestmentCsvCommand extends Command
                 if (! $investment) {
                     $this->warn("⚠️ Row {$rowNumber}: Investment with ID {$investmentId} not found. Skipping...");
                     $skippedCount++;
+
                     continue;
                 }
 
                 // Generate UUID for split if it doesn't exist
-                $splitUuid = !empty($cleanedRecord['uuid']) ? $cleanedRecord['uuid'] : Str::uuid()->toString();
+                $splitUuid = ! empty($cleanedRecord['uuid']) ? $cleanedRecord['uuid'] : Str::uuid()->toString();
 
                 $investmentSplit = InvestmentSplit::create([
                     'uuid' => $splitUuid,
@@ -348,7 +362,7 @@ class UploadInvestmentCsvCommand extends Command
     {
         // Remove currency symbols and commas
         $cleanAmount = preg_replace('/[$,]/', '', $amountString);
-        
+
         // Try to convert to float
         if (is_numeric($cleanAmount)) {
             return (float) $cleanAmount;
