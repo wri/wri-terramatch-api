@@ -38,6 +38,7 @@ class UserResource extends JsonResource
             'email_address_verified_at' => $this->email_address_verified_at,
             'verified' => ! empty($this->email_address_verified_at),
             'date_added' => $this->created_at,
+            'locale' => $this->locale,
 
             'banners' => $this->banners,
 

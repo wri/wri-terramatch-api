@@ -9,6 +9,7 @@ use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -43,6 +44,7 @@ class Nursery extends Model implements MediaModel, AuditableContract, EntityMode
     use HasUpdateRequests;
     use HasEntityStatus;
     use HasEntityResources;
+    use ReportsStatusChange;
 
     protected $auditInclude = [
         'status',
@@ -224,5 +226,12 @@ class Nursery extends Model implements MediaModel, AuditableContract, EntityMode
     public function getAuditableNameAttribute(): string
     {
         return $this->title ?? '';
+    }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('project', function ($query) {
+            $query->where('is_test', false);
+        });
     }
 }

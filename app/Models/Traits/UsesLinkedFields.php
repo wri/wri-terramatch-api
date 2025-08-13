@@ -336,7 +336,7 @@ trait UsesLinkedFields
         $entityProps = [];
 
         $childQuestions = [];
-        $conditionalsToBeCleaned = [];
+        $conditionalValues = [];
 
         foreach ($form->sections as $section) {
             foreach ($section->questions as $question) {
@@ -345,16 +345,16 @@ trait UsesLinkedFields
                         $childQuestions[] = $question;
                     }
                 } else {
-                    $conditionalValue = data_get($modelAnswers, $question->uuid, null);
-                    if ($conditionalValue == false) {
-                        $conditionalsToBeCleaned[] = $question->uuid;
+                    $value = data_get($modelAnswers, $question->uuid, null);
+                    if (! is_null($value)) {
+                        $conditionalValues[$question->uuid] = $value;
                     }
                 }
             }
         }
 
         foreach ($childQuestions as $child) {
-            if (in_array($child->parent_id, $conditionalsToBeCleaned)) {
+            if (array_key_exists($child->parent_id, $conditionalValues) && $child->show_on_parent_condition != $conditionalValues[$child->parent_id]) {
                 $fieldConfig = data_get($fieldsConfig, $child->linked_field_key);
                 $property = data_get($fieldConfig, 'property');
                 if ($this->isPlainField($child->input_type) && ! empty($property)) {

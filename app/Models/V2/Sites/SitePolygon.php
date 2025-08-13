@@ -4,6 +4,7 @@ namespace App\Models\V2\Sites;
 
 use App\Helpers\GeometryHelper;
 use App\Models\Traits\HasUuid;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\MonitoredData\IndicatorHectares;
@@ -34,6 +35,7 @@ class SitePolygon extends Model implements AuditableModel
     use SoftDeletes;
     use BelongsToThroughTrait;
     use HasFactory;
+    use ReportsStatusChange;
 
     protected $table = 'site_polygon';
 
@@ -186,7 +188,6 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->created_by = $user->id;
         $newSitePolygon->validation_status = null;
-        $newSitePolygon->planting_status = $properties['planting_status'] ?? $this->planting_status;
         $newSitePolygon->save();
 
         return $newSitePolygon;

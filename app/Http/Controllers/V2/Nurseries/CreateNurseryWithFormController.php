@@ -37,9 +37,7 @@ class CreateNurseryWithFormController extends Controller
             $createReport = $now <= $lastTask->due_at;
             if (! $createReport) {
                 // Also, if we're more than 4 weeks before the next task's due date, create a backdated report
-                $nextTask = TaskDueJob::whereJsonContains('task_definition->framework_key', $nursery->framework_key)
-                    ->orderBy('execution_time')
-                    ->first();
+                $nextTask = TaskDueJob::framework($nursery->framework_key)->first();
                 $createReport = ! empty($nextTask) && $nextTask->due_at > $now->addWeeks(4);
             }
             if ($createReport) {

@@ -10,6 +10,7 @@ use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -54,6 +55,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use HasEntityResources;
     use BelongsToThroughTrait;
     use HasDemographics;
+    use ReportsStatusChange;
 
     protected $auditInclude = [
         'status',
@@ -628,5 +630,12 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function getFinancialCollectionAttribute()
     {
         return $this->project?->organisation?->financialCollection;
+    }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('project', function ($query) {
+            $query->where('is_test', false);
+        });
     }
 }

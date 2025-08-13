@@ -21465,8 +21465,6 @@ definitions:
         type: string
       validation_status:
         type: boolean
-      planting_status:
-        type: string
   GeometryString:
     type: object
     properties:
@@ -21538,8 +21536,6 @@ definitions:
           type: string
         validation_status:
           type: boolean
-        planting_status:
-          type: string
   SitePolygonsBboxResponse:
     title: SitePolygonsBboxResponse
     type: object
@@ -21572,8 +21568,6 @@ definitions:
         type: number
         format: float
       status:
-        type: string
-      planting_status:
         type: string
   SitePolygonCreateResponse:
     type: object
@@ -22105,8 +22099,6 @@ definitions:
               type: string
             validation_status:
               type: boolean
-            planting_status:
-              type: string
   EntityPolygonResponse:
     type: object
     properties:
@@ -22182,8 +22174,6 @@ definitions:
               type: string
             validation_status:
               type: boolean
-            planting_status:
-              type: string
   AuditStatusUpdateRequest:
     title: AuditStatusUpdateRequest
     type: object
@@ -22294,8 +22284,6 @@ definitions:
           type: string
         validation_status:
           type: boolean
-        planting_status:
-          type: string
   PolygonChangeStatusUpdate:
     type: object
     properties:
@@ -22385,8 +22373,6 @@ definitions:
           type: boolean
         version_name:
           type: string
-        planting_status:
-          type: string
   SitePolygonLoaded:
     title: SitePolygonLoaded
     type: object
@@ -22449,8 +22435,6 @@ definitions:
       is_present:
         type: boolean
       version_name:
-        type: string
-      planting_status:
         type: string
   ClippedPolygonResponse:
     title: ClippedPolygonResponse
@@ -48912,8 +48896,6 @@ paths:
                   type: string
                 validation_status:
                   type: boolean
-                planting_status:
-                  type: string
         '500':
           description: Internal server error
   '/v2/sites/{UUID}/polygons/count':
@@ -50652,8 +50634,6 @@ paths:
                   type: string
                 validation_status:
                   type: boolean
-                planting_status:
-                  type: string
         '400':
           description: Bad request
         '500':
@@ -50699,8 +50679,6 @@ paths:
                 type: number
                 format: float
               status:
-                type: string
-              planting_status:
                 type: string
       responses:
         '201':
@@ -51266,8 +51244,6 @@ paths:
                 format: float
               status:
                 type: string
-              planting_status:
-                type: string
       responses:
         '200':
           description: Successful response
@@ -51295,8 +51271,6 @@ paths:
                 type: number
                 format: float
               status:
-                type: string
-              planting_status:
                 type: string
         '400':
           description: Bad request
@@ -51339,8 +51313,6 @@ paths:
                 format: float
               status:
                 type: string
-              planting_status:
-                type: string
       responses:
         '201':
           description: Successful response
@@ -51368,8 +51340,6 @@ paths:
                 type: number
                 format: float
               status:
-                type: string
-              planting_status:
                 type: string
         '400':
           description: Bad request
@@ -52477,8 +52447,6 @@ paths:
                       type: string
                     validation_status:
                       type: boolean
-                    planting_status:
-                      type: string
         '400':
           description: 'Bad request, UUID parameter is missing'
         '500':
@@ -52691,8 +52659,6 @@ paths:
                       type: string
                     validation_status:
                       type: boolean
-                    planting_status:
-                      type: string
   '/v2/site-polygon/{uuid}':
     get:
       summary: get a site polygon by uuid
@@ -52775,8 +52741,6 @@ paths:
                     type: string
                   validation_status:
                     type: boolean
-                  planting_status:
-                    type: string
   '/v2/site-polygon/{uuid}/versions':
     get:
       summary: list of site polygon versions
@@ -52861,8 +52825,6 @@ paths:
                       type: string
                     validation_status:
                       type: boolean
-                    planting_status:
-                      type: string
   '/v2/site-polygon/{uuid}/new-version':
     post:
       summary: create a new site polygon version
@@ -52945,8 +52907,6 @@ paths:
                     type: string
                   validation_status:
                     type: boolean
-                  planting_status:
-                    type: string
   '/v2/site-polygon/{uuid}/make-active':
     put:
       summary: update a site polygon to make active the site polygon uuid version and inactive the rest with same primary_uuid
@@ -53029,8 +52989,6 @@ paths:
                     type: string
                   validation_status:
                     type: boolean
-                  planting_status:
-                    type: string
   '/v2/terrafund/clip-polygons/polygon/{uuid}':
     post:
       summary: Clip Overlapping Polygons by Polygon
