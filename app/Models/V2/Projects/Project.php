@@ -11,6 +11,7 @@ use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -62,6 +63,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     use HasEntityStatus;
     use HasEntityResources;
     use HasDemographics;
+    use ReportsStatusChange;
 
     protected $auditInclude = [
         'status',
@@ -590,6 +592,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $hasMonitoringData
             ? $query->has('monitoring')
             : $query->doesntHave('monitoring');
+    }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->where('is_test', false);
     }
 
     // All Entities are expected to have a project attribute.

@@ -110,7 +110,6 @@ class IndicatorEntitySlugExportController extends Controller
     {
         $sitePolygonsIndicator = SitePolygon::whereHas($slugMappings[$slug]['relation_name'], function ($query) use ($slug) {
             $query->where('indicator_slug', $slug)
-                ->where('year_of_analysis', date('Y'))
                 ->where('status', 'approved');
         })
             ->whereHas('site', function ($query) use ($entity) {
@@ -167,7 +166,7 @@ class IndicatorEntitySlugExportController extends Controller
                 if (str_contains($slug, 'treeCoverLoss')) {
                     $valueYears = json_decode($indicator->value, true);
                     foreach (range(2010, 2025) as $year) {
-                        $results["$year"] = (float) $valueYears[$year] ?? 0;
+                        $results["$year"] = array_key_exists($year, $valueYears) ? (float) $valueYears[$year] : 0;
                     }
                 }
                 if ($slug == 'restorationByEcoRegion') {

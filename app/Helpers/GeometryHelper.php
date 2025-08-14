@@ -385,7 +385,6 @@ class GeometryHelper
                 'distr' => $polygonData->distr ?? '',
                 'num_trees' => $polygonData->num_trees ?? '',
                 'site_id' => $polygonData->site_id ?? '',
-                'planting_status' => $polygonData->planting_status ?? '',
             ],
             'geometry' => $geometry,
         ];
