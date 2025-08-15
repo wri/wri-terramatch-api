@@ -594,6 +594,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             : $query->doesntHave('monitoring');
     }
 
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->where('is_test', false);
+    }
+
     // All Entities are expected to have a project attribute.
     public function getProjectAttribute(): Project
     {

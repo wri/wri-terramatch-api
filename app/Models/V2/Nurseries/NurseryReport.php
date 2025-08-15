@@ -291,4 +291,13 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
     {
         return $this->task?->projectReport?->only(['name', 'status', 'uuid']) ?? '';
     }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('nursery', function ($query) {
+            $query->whereHas('project', function ($query) {
+                $query->where('is_test', false);
+            });
+        });
+    }
 }

@@ -638,8 +638,10 @@ class PolygonService
 
         $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
         $uuids = [];
-
-        $delayedJob = DelayedJobProgress::findOrFail($delayed_job_id);
+        $delayedJob = null;
+        if ($delayed_job_id) {
+            $delayedJob = DelayedJobProgress::findOrFail($delayed_job_id);
+        }
 
         Log::info('test now selected plygons');
         if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
@@ -663,7 +665,8 @@ class PolygonService
             throw new \Exception('Error processing polygons', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        if (! empty($uuids)) {
+        // Only update delayed job if it exists and there are processed polygons
+        if ($delayedJob && ! empty($uuids)) {
             $delayedJob->total_content = count($newPolygonUuids);
             $delayedJob->save();
             foreach ($newPolygonUuids as $polygonUuid) {

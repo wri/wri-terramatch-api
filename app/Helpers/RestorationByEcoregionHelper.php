@@ -11,6 +11,7 @@ class RestorationByEcoregionHelper
             'PAL' => 'Palearctic',
             'NA' => 'Nearctic',
             'AF' => 'Afrotropical',
+            'AT' => 'Afrotropical',
             'IM' => 'Indomalayan',
             'AU' => 'Australasian',
             'OC' => 'Oceanian',

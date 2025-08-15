@@ -482,4 +482,11 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     {
         return $this->approvedReports()->select('id');
     }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('project', function ($query) {
+            $query->where('is_test', false);
+        });
+    }
 }

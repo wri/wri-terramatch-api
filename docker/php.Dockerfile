@@ -1,5 +1,5 @@
 ## PHP
-FROM php:8.2-apache AS php
+FROM php:8.2-apache-bookworm AS php
 
 # Set GDAL version
 ENV GDAL_VERSION=3.5.3
@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y \
     libgeos-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install GDAL 3.4.3 from source
+# Install GDAL 3.5.3 from source
 RUN wget https://github.com/OSGeo/gdal/releases/download/v${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz \
     && tar xzf gdal-${GDAL_VERSION}.tar.gz \
     && cd gdal-${GDAL_VERSION} \
@@ -43,7 +43,7 @@ RUN wget https://github.com/OSGeo/gdal/releases/download/v${GDAL_VERSION}/gdal-$
 # Set GDAL environment variables
 ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
 ENV C_INCLUDE_PATH=/usr/include/gdal
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install \
@@ -71,7 +71,7 @@ COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/php.ini /usr/local/etc/php/php.ini
 
 # Python virtual environment setup
-RUN python3.11 -m venv /opt/python
+RUN python3 -m venv /opt/python
 ENV PATH="/opt/python/bin:${PATH}"
 
 # Install Python dependencies in the correct order

@@ -89,22 +89,6 @@
 /v2/update-requests/{ENTITY}/{UUID}:
   get:
     $ref: './UpdateRequests/get-v2-update-requests-entity-uuid.yml'
-/v2/forms:
-  get:
-    summary: View all forms as a user
-    tags:
-      - Forms
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2SearchFilterSort'
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormPaginated'
-    operationId: get-v2-user-forms
 '/v2/admin/forms/{UUID}/publish':
   parameters:
     - type: string
@@ -119,23 +103,6 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/FormRead'
-    tags:
-      - Forms
-/v2/admin/forms/section:
-  parameters: []
-  post:
-    summary: Create a form section
-    operationId: post-v2-admin-forms-section
-    responses:
-      '201':
-        description: Created
-        schema:
-          $ref: '../definitions/_index.yml#/FormSectionRead'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/FormSectionCreate'
     tags:
       - Forms
 '/v2/admin/forms/question/{UUID}':
@@ -168,21 +135,6 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/FormSectionRead'
-    tags:
-      - Forms
-  patch:
-    summary: Update a form section
-    operationId: patch-v2-admin-form-section-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormSectionRead'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/FormSectionUpdate'
     tags:
       - Forms
 '/v2/admin/forms/{UUID}':
@@ -230,27 +182,6 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/V2GenericList'
-    tags:
-      - Forms
-'/v2/admin/forms/common-options/{BUCKET}':
-  get:
-    summary: Search for common options on a bucket
-    operationId: get-v2-admin-form-common-options-bucket
-    parameters:
-      - type: string
-        name: BUCKET
-        in: path
-        required: true
-        description: 'name of the bucket/collection of common options'
-      - name: search
-        type: string
-        in: query
-        description: 'search term to use on the collection'
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2CommonOptions'
     tags:
       - Forms
 /v2/admin/organisations:
@@ -1220,27 +1151,6 @@
           properties:
             data:
               type: object
-/v2/forms/sites/{UUID}:
-  get:
-    summary: View a specific site as answers with form schema
-    tags:
-      - V2 Sites
-      - Forms
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '../definitions/_index.yml#/SiteWithSchemaRead'
 /v2/admin/project-pitches/export:
   get:
     summary: Export project pitches as an admin
@@ -1285,36 +1195,6 @@
         description: OK
     tags:
       - Project Pitches
-'/v2/admin/forms/submissions/{UUID}':
-  get:
-    summary: Get a form submission
-    tags:
-      - Form Submissions
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormSubmissionRead'
-    operationId: get-v2-admin-forms-submissions-UUID
-  delete:
-    summary: Delete a form submission
-    operationId: delete-v2-admin-forms-submissions-UUID
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-    tags:
-      - Form Submissions
-    description: ''
 '/v2/admin/forms/submissions/{UUID}/export':
   get:
     summary: Export form submissions
@@ -1331,76 +1211,6 @@
         schema:
           type: object
     operationId: get-v2-admin-forms-submissions-uuid-export
-/v2/admin/forms/submissions:
-  get:
-    summary: Get form submissions
-    tags:
-      - Form Submissions
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '../definitions/_index.yml#/FormSubmissionRead'
-            links:
-              $ref: '../definitions/_index.yml#/V2PaginationLinks'
-            meta:
-              $ref: '../definitions/_index.yml#/V2PaginationMeta'
-    operationId: get-v2-admin-forms-submissions
-    parameters:
-      - name: search
-        type: string
-        in: query
-        description: 'search term to use on the collection'
-      - name: filter
-        type: string
-        in: query
-        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      - name: sort
-        type: string
-        in: query
-        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
-      - name: per_page
-        type: integer
-        in: query
-        description: 'number of results (per page) to return'
-      - name: page
-        type: integer
-        in: query
-        description: 'page number you want results from'
-/v2/forms/my/submissions:
-  get:
-    summary: Get the authenticated users form submissions
-    tags:
-      - Form Submissions
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '../definitions/_index.yml#/FormSubmissionRead'
-            links:
-              $ref: '../definitions/_index.yml#/V2PaginationLinks'
-            meta:
-              $ref: '../definitions/_index.yml#/V2PaginationMeta'
-    operationId: get-v2-my-forms-submissions
-    parameters:
-      - name: per_page
-        type: integer
-        in: query
-        description: 'number of results (per page) to return'
-      - name: page
-        type: integer
-        in: query
-        description: 'page number you want results from'
 '/v2/forms/{UUID}':
   get:
     summary: Get a form
@@ -2015,9 +1825,6 @@
 /auth/login:
   post:
     $ref: './Auth/post-auth-login.yml'
-/v2/admin/forms/submissions/export:
-  get:
-    $ref: './FormSubmissions/get-v2-admin-forms-submissions-export.yml'
 /v2/forms/option-labels:
   get:
     $ref: './Forms/get-v2-form-option-labels-listing.yml'
@@ -2267,12 +2074,6 @@
 /v2/type-entity:
   get:
     $ref: './Entity/get-v2-type-entity.yml'
-/v2/entity/polygons/count:
-  get:
-    $ref: './Entity/get-v2-entity-count.yml'
-/v2/entity/polygons:
-  get:
-    $ref: './Entity/get-v2-entity-polygon.yml'
 /v2/{ENTITY}/{UUID}/status:
   put:
     $ref: './Entity/put-v2-entity-uuid-status.yml'
