@@ -40,8 +40,6 @@ FormQuestionRead:
   $ref: './FormQuestionRead.yml'
 FormQuestionCreate:
   $ref: './FormQuestionCreate.yml'
-FormSectionUpdate:
-  $ref: './FormSectionUpdate.yml'
 FormUpdate:
   $ref: './FormUpdate.yml'
 GeojsonRead:
@@ -68,8 +66,6 @@ V2AdminOrganisationUpdate:
   $ref: './V2AdminOrganisationUpdate.yml'
 V2GenericList:
   $ref: './V2GenericList.yml'
-V2CommonOptions:
-  $ref: './V2CommonOptions.yml'
 V2OrganisationApproveRejectUser:
   $ref: './V2OrganisationApproveRejectUser.yml'
 V2OrganisationUpdate:
@@ -150,8 +146,6 @@ ProjectWithSchemaRead:
   $ref: './ProjectWithSchemaRead.yml'
 SiteFullRead:
   $ref: './SiteFullRead.yml'
-SiteWithSchemaRead:
-  $ref: './SiteWithSchemaRead.yml'
 ProjectPitchRead:
   $ref: './ProjectPitchRead.yml'
 AuditRead:

@@ -54,9 +54,6 @@ use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\FinancialReports\FinancialReportsController;
-use App\Http\Controllers\V2\Forms\AdminDeleteFormSubmissionController;
-use App\Http\Controllers\V2\Forms\AdminIndexFormSubmissionController;
-use App\Http\Controllers\V2\Forms\CommonOptionsIndexController;
 use App\Http\Controllers\V2\Forms\DeleteFormController;
 use App\Http\Controllers\V2\Forms\DeleteFormQuestionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSectionController;
@@ -65,20 +62,16 @@ use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormOptionsLabelController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
 use App\Http\Controllers\V2\Forms\IndexFormController;
-use App\Http\Controllers\V2\Forms\IndexFormSubmissionController;
 use App\Http\Controllers\V2\Forms\LinkedFieldListingsController;
 use App\Http\Controllers\V2\Forms\PublishFormController;
 use App\Http\Controllers\V2\Forms\StoreFormController;
-use App\Http\Controllers\V2\Forms\StoreFormSectionController;
 use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormController;
-use App\Http\Controllers\V2\Forms\UpdateFormSectionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
 use App\Http\Controllers\V2\Forms\ViewFormController;
 use App\Http\Controllers\V2\Forms\ViewFormSubmissionController;
-use App\Http\Controllers\V2\Forms\ViewMyFormSubmissionsController;
 use App\Http\Controllers\V2\FundingProgramme\AdminFundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\FundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusController;
@@ -337,22 +330,14 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::post('impact-stories/bulk-delete', [ImpactStoryController::class, 'bulkDestroy']);
     Route::resource('impact-stories', ImpactStoryController::class);
 
-
     Route::prefix('forms')->group(function () {
         Route::post('/', StoreFormController::class);
         Route::get('/', IndexFormController::class);
-        Route::post('/section', StoreFormSectionController::class);
-        Route::patch('/section/{formSection}', UpdateFormSectionController::class);
         Route::delete('/section/{formSection}', DeleteFormSectionController::class);
         Route::delete('/question/{formQuestion}', DeleteFormQuestionController::class);
-        Route::get('/common-options/{key}', CommonOptionsIndexController::class);
         Route::prefix('submissions')->group(function () {
-            Route::get('/', AdminIndexFormSubmissionController::class);
-            //            Route::get('/export', ExportFormSubmissionController::class);
             Route::get('/{form}/export', ExportFormSubmissionController::class);
             Route::prefix('{formSubmission}')->group(function () {
-                Route::get('/', ViewFormSubmissionController::class)->middleware('i18n');
-                Route::delete('/', AdminDeleteFormSubmissionController::class);
                 Route::patch('/status', UpdateFormSubmissionStatusController::class);
             });
         });
@@ -368,7 +353,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
             Route::patch('/', UpdateFormController::class);
             Route::delete('/', DeleteFormController::class);
             Route::patch('/publish', PublishFormController::class);
-            Route::get('/submissions', IndexFormSubmissionController::class);
         });
     });
 
@@ -405,7 +389,6 @@ Route::prefix('my')->group(function () {
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
 
 Route::prefix('forms')->group(function () {
-    Route::get('/my/submissions', ViewMyFormSubmissionsController::class)->middleware('i18n');
     Route::prefix('submissions')->group(function () {
         Route::post('/', StoreFormSubmissionController::class);
         Route::patch('/{formSubmission}', UpdateFormSubmissionController::class);
@@ -417,7 +400,6 @@ Route::prefix('forms')->group(function () {
     Route::get('/linked-field-listing', LinkedFieldListingsController::class);
     Route::get('/option-labels', FormOptionsLabelController::class)->middleware('i18n');
 
-    Route::get('/', IndexFormController::class);
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
