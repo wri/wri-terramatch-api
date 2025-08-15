@@ -3,6 +3,7 @@ services:
         build:
             context: "."
             dockerfile: "docker/mariadb.Dockerfile"
+            network: host
         ports:
             - "3360:3306"
         networks:
@@ -22,6 +23,7 @@ services:
         build:
             context: "."
             dockerfile: "docker/php.Dockerfile"
+            network: host
         ports:
             - "8080:80"
         networks:
