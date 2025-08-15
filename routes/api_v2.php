@@ -156,8 +156,6 @@ use App\Http\Controllers\V2\Reports\NothingToReportReportController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
-use App\Http\Controllers\V2\Sites\AdminSitesPolygonController;
-use App\Http\Controllers\V2\Sites\AdminSitesPolygonCountController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
@@ -530,10 +528,6 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/check-approve', SiteCheckApproveController::class);
-});
-Route::prefix('entity')->group(function () {
-    Route::get('/polygons/count', AdminSitesPolygonCountController::class);
-    Route::get('/polygons', AdminSitesPolygonController::class);
 });
 
 Route::prefix('geometry')->group(function () {
