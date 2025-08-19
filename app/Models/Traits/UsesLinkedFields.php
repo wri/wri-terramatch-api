@@ -5,9 +5,9 @@ namespace App\Models\Traits;
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestion;
-use App\StateMachines\EntityStatusStateMachine;
-use App\Models\V2\Projects\ProjectPolygon;
 use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Projects\ProjectPolygon;
+use App\StateMachines\EntityStatusStateMachine;
 
 trait UsesLinkedFields
 {
