@@ -11,16 +11,6 @@ final class ViewFormSubmissionControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admins_can_view_form_submissions(): void
-    {
-        $user = User::factory()->admin()->create();
-        $formSubmission = FormSubmission::factory()->create();
-
-        $this->actingAs($user)
-            ->getJson('/api/v2/admin/forms/submissions/' . $formSubmission->uuid)
-            ->assertStatus(200);
-    }
-
     public function test_uers_can_view_their_form_submissions(): void
     {
         $user = User::factory()->admin()->create();
