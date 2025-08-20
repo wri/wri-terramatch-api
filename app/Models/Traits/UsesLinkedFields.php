@@ -5,6 +5,8 @@ namespace App\Models\Traits;
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestion;
+use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Projects\ProjectPolygon;
 use App\StateMachines\EntityStatusStateMachine;
 
 trait UsesLinkedFields
@@ -231,6 +233,14 @@ trait UsesLinkedFields
     {
         switch ($linkedFieldInfo['link-type']) {
             case 'fields':
+                $inputType = strtolower((string) data_get($linkedFieldInfo, 'input_type'));
+                if ($inputType === 'mapinput' && $property === 'proj_boundary') {
+                    $geojson = $this->getProjectBoundaryGeometryFromPolygons($model);
+                    if ($geojson != null) {
+                        return $geojson;
+                    }
+                }
+
                 return data_get($model, $property);
             case 'file-collections':
                 $colCfg = data_get($model->fileConfiguration, $property);
@@ -250,6 +260,33 @@ trait UsesLinkedFields
             default:
                 return null;
         }
+    }
+
+    private function getProjectBoundaryGeometryFromPolygons($entity): ?array
+    {
+        $projectPolygon = ProjectPolygon::where('entity_type', get_class($entity))
+            ->where('entity_id', $entity->id)
+            ->orderByDesc('created_at')
+            ->first();
+
+        if ($projectPolygon == null) {
+            return null;
+        }
+
+        $row = PolygonGeometry::isUuid($projectPolygon->poly_uuid)
+            ->selectRaw('ST_AsGeoJSON(geom) as geojson_string')
+            ->first();
+
+        if ($row == null) {
+            return null;
+        }
+        if (empty($row->geojson_string)) {
+            return null;
+        }
+
+        $decoded = json_decode($row->geojson_string, true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 
     private function updateLinkedFieldValue(array $linkedFieldInfo, $answer, bool $hidden): void
