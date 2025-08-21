@@ -70,12 +70,13 @@ class GeometryController extends Controller
 
             foreach ($groupedByType as $type => $typeGeometries) {
                 $polygonUuids = $service->createGeojsonModels($typeGeometries, ['source' => PolygonService::GREENHOUSE_SOURCE]);
-                $polygonErrors = $this->validateStoredGeometries($polygonUuids);
+                $polygonErrors = [];
 
                 $results[] = [
                     'site_id' => $siteId,
                     'geometry_type' => $type,
                     'polygon_uuids' => $polygonUuids,
+                    // TODO: this will be used in the future to return errors for duplicate geometries
                     'errors' => empty($polygonErrors) ? new stdClass() : $polygonErrors,
                 ];
             }
