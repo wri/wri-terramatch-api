@@ -62,7 +62,7 @@ class RecalculatePolygonAreas extends Command
                     }
                     $geometry = json_decode($polygonGeometry->geojsonGeometry, true);
 
-                    $calculatedArea = $areaService->getArea($geometry);
+                    $calculatedArea = $areaService->calculateArea($geometry);
 
                     $sitePolygon->calc_area = $calculatedArea;
                     $sitePolygon->save();

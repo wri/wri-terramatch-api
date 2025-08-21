@@ -17,7 +17,7 @@ class PolygonGeometryHelper
 
             if ($sitePolygon) {
                 $areaCalculationService = app(AreaCalculationService::class);
-                $areaHectares = $areaCalculationService->getArea((array) $geometry->geometry);
+                $areaHectares = $areaCalculationService->calculateArea((array) $geometry->geometry);
 
                 $sitePolygon->calc_area = $areaHectares;
                 $sitePolygon->save();
