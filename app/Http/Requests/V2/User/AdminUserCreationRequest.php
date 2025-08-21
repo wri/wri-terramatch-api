@@ -28,7 +28,7 @@ class AdminUserCreationRequest extends FormRequest
             ],
             'role' => 'required|string',
             'job_role' => 'sometimes|nullable|string|max:255',
-            'country' => 'sometimes|nullable|string|max:2',
+            'country' => 'sometimes|nullable|string|max:3',
             'phone_number' => 'sometimes|nullable|string|max:20',
             'program' => 'sometimes|nullable|string|max:255',
             'organisation' => [
