@@ -4,82 +4,48 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\Process\Process;
 
 class AreaCalculationService
 {
-    protected function calculateArea(array $geometry): float
+    public function calculateArea(array $geometry): float
     {
-        $geojson = json_encode([
-            'type' => 'Feature',
-            'geometry' => $geometry,
-            'crs' => ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']],
-        ]);
-
-        $inputGeojson = tempnam(sys_get_temp_dir(), 'input_') . '.geojson';
-        $outputGeojson = tempnam(sys_get_temp_dir(), 'output_') . '.geojson';
-
         try {
-            file_put_contents($inputGeojson, $geojson);
+            $geojson = json_encode($geometry);
+            $result = DB::selectOne("
+                SELECT 
+                    ST_Area(ST_GeomFromGeoJSON(?)) * 
+                    POW(6378137 * PI() / 180, 2) * 
+                    COS(RADIANS(ST_Y(ST_Centroid(ST_GeomFromGeoJSON(?))))) / 10000 as area_hectares
+            ", [$geojson, $geojson]);
 
-            $process = new Process([
-                'python3',
-                base_path() . '/resources/python/polygon-area/app.py',
-                $inputGeojson,
-                $outputGeojson,
-            ]);
-
-            $process->run();
-
-            if (! $process->isSuccessful()) {
-                Log::error('Area calculation failed: ' . $process->getErrorOutput());
-
-                throw new \RuntimeException('Area calculation failed: ' . $process->getErrorOutput());
-            }
-
-            $result = json_decode(file_get_contents($outputGeojson), true);
-
-            return $result['area_hectares'];
+            return (float) $result->area_hectares;
 
         } catch (\Exception $e) {
             Log::error('Error calculating area: ' . $e->getMessage());
-
-            throw $e;
-        } finally {
-            @unlink($inputGeojson);
-            @unlink($outputGeojson);
+            throw new \RuntimeException('Area calculation failed: ' . $e->getMessage());
         }
     }
 
     public function getGeomAndArea(array $geometry): array
     {
-        $geojson = json_encode([
-            'type' => 'Feature',
-            'geometry' => $geometry,
-            'crs' => ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']],
-        ]);
+        try {
+            $geojson = json_encode($geometry);
+            $result = DB::selectOne("
+                SELECT 
+                    ST_GeomFromGeoJSON(?) as geom,
+                    ST_Area(ST_GeomFromGeoJSON(?)) * 
+                    POW(6378137 * PI() / 180, 2) * 
+                    COS(RADIANS(ST_Y(ST_Centroid(ST_GeomFromGeoJSON(?))))) / 10000 as area_hectares
+            ", [$geojson, $geojson, $geojson]);
 
-        $geom = DB::raw("ST_GeomFromGeoJSON('$geojson')");
-        $areaHectares = $this->calculateArea($geometry);
+            return [
+                'geom' => DB::raw("ST_GeomFromGeoJSON('" . addslashes($geojson) . "')"),
+                'area' => (float) $result->area_hectares
+            ];
 
-        return ['geom' => $geom, 'area' => $areaHectares];
-    }
-
-    public function getArea(array $geometry): float
-    {
-        if ($geometry['type'] === 'MultiPolygon') {
-            $totalArea = 0;
-            foreach ($geometry['coordinates'] as $polygon) {
-                $polygonGeometry = [
-                    'type' => 'Polygon',
-                    'coordinates' => $polygon,
-                ];
-                $totalArea += $this->calculateArea($polygonGeometry);
-            }
-
-            return $totalArea;
+        } catch (\Exception $e) {
+            Log::error('Error calculating geometry and area: ' . $e->getMessage());
+            throw new \RuntimeException('Geometry and area calculation failed: ' . $e->getMessage());
         }
-
-        return $this->calculateArea($geometry);
     }
 }
