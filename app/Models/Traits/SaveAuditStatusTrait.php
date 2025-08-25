@@ -10,6 +10,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\FinancialReport;
 use Illuminate\Support\Facades\Auth;
 
 trait SaveAuditStatusTrait
@@ -144,6 +145,8 @@ trait SaveAuditStatusTrait
                 return 'project-report';
             case NurseryReport::class:
                 return 'nursery-report';
+            case FinancialReport::class:
+                return 'financial-report';
             default:
                 return 'entity';
         }

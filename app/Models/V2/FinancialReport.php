@@ -15,11 +15,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
-class FinancialReport extends Model implements MediaModel, ReportModel
+class FinancialReport extends Model implements MediaModel, ReportModel, AuditableContract
 {
     use HasFactory;
     use HasUuid;
@@ -31,6 +33,7 @@ class FinancialReport extends Model implements MediaModel, ReportModel
     use UsesLinkedFields;
     use HasEntityResources;
     use BelongsToThroughTrait;
+    use Auditable;
 
     protected $fillable = [
         'status',
@@ -53,6 +56,12 @@ class FinancialReport extends Model implements MediaModel, ReportModel
         'year_of_report' => 'integer',
         'nothing_to_report' => 'boolean',
         'answers' => 'array',
+    ];
+
+    protected $auditInclude = [
+        'status',
+        'feedback',
+        'feedback_fields',
     ];
 
     public $fileConfiguration = [];
