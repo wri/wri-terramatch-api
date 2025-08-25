@@ -77,9 +77,9 @@ class GeometryController extends Controller
                 $featureCount = count($typeGeometries['features'] ?? []);
 
                 if ($featureCount > 1000) {
-                    $polygonUuids = $this->processLargeGeometryBatch($service, $typeGeometries, $featureCount);
+                    $polygonUuids = $this->processLargeGeometryBatch($service, $typeGeometries, $featureCount, $siteId);
                 } else {
-                    $polygonUuids = $service->createGeojsonModelsBulk($typeGeometries, ['source' => PolygonService::GREENHOUSE_SOURCE]);
+                    $polygonUuids = $service->createGeojsonModelsBulk($typeGeometries, ['site_id' => $siteId, 'source' => PolygonService::GREENHOUSE_SOURCE]);
                 }
 
                 $polygonErrors = [];
@@ -99,7 +99,7 @@ class GeometryController extends Controller
         return $results;
     }
 
-    protected function processLargeGeometryBatch(PolygonService $service, array $typeGeometries, int $featureCount): array
+    protected function processLargeGeometryBatch(PolygonService $service, array $typeGeometries, int $featureCount, string $siteId): array
     {
         $chunkSize = 500;
         $allPolygonUuids = [];
@@ -111,7 +111,7 @@ class GeometryController extends Controller
                 'features' => $chunk,
             ];
 
-            $chunkUuids = $service->createGeojsonModelsBulk($chunkGeometry, ['source' => PolygonService::GREENHOUSE_SOURCE]);
+            $chunkUuids = $service->createGeojsonModelsBulk($chunkGeometry, ['site_id' => $siteId, 'source' => PolygonService::GREENHOUSE_SOURCE]);
             $allPolygonUuids = array_merge($allPolygonUuids, $chunkUuids);
         }
 

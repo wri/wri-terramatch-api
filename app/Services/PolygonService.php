@@ -392,6 +392,7 @@ class PolygonService
                 $validatedProperties,
                 [
                     'uuid' => $sitePolygonUuid,
+                    'primary_uuid' => $sitePolygonUuid,
                     'poly_id' => $polygon['uuid'],
                     'created_by' => Auth::user()?->id,
                     'is_active' => true,
