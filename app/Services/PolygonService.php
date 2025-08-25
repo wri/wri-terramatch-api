@@ -19,6 +19,7 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SitePolygonData;
 use App\Models\V2\User;
+use App\StateMachines\SiteStatusStateMachine;
 use App\Validators\SitePolygonValidator;
 use DateTime;
 use Exception;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class PolygonService
@@ -137,49 +139,188 @@ class PolygonService
         }
     }
 
-    public function createGeojsonModels($geojson, $sitePolygonProperties = [], ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false): array
+    public function createGeojsonModelsBulk(array $geojson, array $sitePolygonProperties = [], ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false): array
     {
         try {
             if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
                 return $this->transformAndStorePoints($geojson, $sitePolygonProperties);
             }
+
+            $polygonData = [];
+            $polygonInserts = [];
             $uuids = [];
+            $geometriesToProcess = [];
+            $geometryIndexMap = [];
+
+            // First pass: collect all geometries for batch processing
+            $geometryIndex = 0;
             foreach ($geojson['features'] as $feature) {
-                DB::beginTransaction();
+                if ($feature['geometry']['type'] === 'Polygon') {
+                    $uuid = Str::uuid()->toString();
+                    $geometriesToProcess[] = $feature['geometry'];
+                    $geometryIndexMap[$geometryIndex] = [
+                        'uuid' => $uuid,
+                        'feature' => $feature,
+                        'sitePolygonProperties' => $sitePolygonProperties,
+                        'primary_uuid' => $primary_uuid,
+                        'submit_polygon_loaded' => $submit_polygon_loaded,
+                    ];
+                    $uuids[] = $uuid;
+                    $geometryIndex++;
 
-                try {
-                    if ($feature['geometry']['type'] === 'Polygon') {
-                        $data = $this->insertSinglePolygon($feature['geometry']);
-                        $sitePolygonProperties['area'] = $data['area'];
-                        $this->attemptPolygonInsert($data['uuid'], $sitePolygonProperties, $feature, $primary_uuid, $submit_polygon_loaded);
-                        DB::commit();
-                        $uuids[] = $data['uuid'];
-
-                    } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
-                        foreach ($feature['geometry']['coordinates'] as $polygon) {
-                            $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
-                            $data = $this->insertSinglePolygon($singlePolygon);
-                            $sitePolygonProperties['area'] = $data['area'];
-                            $this->attemptPolygonInsert($data['uuid'], $sitePolygonProperties, $feature, $primary_uuid, $submit_polygon_loaded);
-                            DB::commit();
-                            $uuids[] = $data['uuid'];
-                        }
+                } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+                    foreach ($feature['geometry']['coordinates'] as $polygon) {
+                        $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
+                        $uuid = Str::uuid()->toString();
+                        $geometriesToProcess[] = $singlePolygon;
+                        $geometryIndexMap[$geometryIndex] = [
+                            'uuid' => $uuid,
+                            'feature' => $feature,
+                            'sitePolygonProperties' => $sitePolygonProperties,
+                            'primary_uuid' => $primary_uuid,
+                            'submit_polygon_loaded' => $submit_polygon_loaded,
+                        ];
+                        $uuids[] = $uuid;
+                        $geometryIndex++;
                     }
-                } catch (\Exception $e) {
-                    DB::rollBack();
-                    Log::error('Error with polygon, rolled back current transaction', [
-                        'uuid' => $feature['properties']['uuid'] ?? 'unknown',
-                        'error' => $e->getMessage(),
-                    ]);
-
-                    continue;
                 }
             }
+
+            $areaCalculationService = app(AreaCalculationService::class);
+            $geometryResults = $areaCalculationService->batchGetGeomsAndAreas($geometriesToProcess);
+
+            foreach ($geometryResults as $index => $geometryAndArea) {
+                $mapping = $geometryIndexMap[$index];
+
+                $polygonInserts[] = [
+                    'uuid' => $mapping['uuid'],
+                    'geom' => $geometryAndArea['geom'],
+                    'created_by' => Auth::user()?->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+
+                $polygonData[] = [
+                    'uuid' => $mapping['uuid'],
+                    'area' => $geometryAndArea['area'],
+                    'feature' => $mapping['feature'],
+                    'sitePolygonProperties' => $mapping['sitePolygonProperties'],
+                    'primary_uuid' => $mapping['primary_uuid'],
+                    'submit_polygon_loaded' => $mapping['submit_polygon_loaded'],
+                ];
+            }
+
+            DB::beginTransaction();
+
+            try {
+                $chunkSize = 500;
+                foreach (array_chunk($polygonInserts, $chunkSize) as $chunk) {
+                    DB::table('polygon_geometry')->insert($chunk);
+                }
+
+                $this->bulkInsertSitePolygons($polygonData, $chunkSize);
+
+                DB::commit();
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Error with bulk polygon insertion, rolled back all transactions', [
+                    'error' => $e->getMessage(),
+                    'polygons_count' => count($polygonData),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+
+                throw $e;
+            }
+            // TODO: will need to move indicators to async job
+            // $this->batchUpdateIndicators($uuids);
 
             return $uuids;
 
         } catch (\Exception $e) {
-            return response()->json(['error at create geojson models' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Error at bulk create geojson models', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw new \RuntimeException('Error creating geojson models: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    public function createGeojsonModels(array $geojson, array $sitePolygonProperties = [], ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false): array
+    {
+        try {
+            if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
+                /** @var array $sitePolygonProperties */
+                return $this->transformAndStorePoints($geojson, $sitePolygonProperties);
+            }
+            $uuids = [];
+            $polygonData = [];
+            foreach ($geojson['features'] as $feature) {
+                if ($feature['geometry']['type'] === 'Polygon') {
+                    $data = $this->insertSinglePolygon($feature['geometry']);
+                    $polygonData[] = [
+                        'uuid' => $data['uuid'],
+                        'area' => $data['area'],
+                        'feature' => $feature,
+                        'sitePolygonProperties' => $sitePolygonProperties,
+                        'primary_uuid' => $primary_uuid,
+                        'submit_polygon_loaded' => $submit_polygon_loaded,
+                    ];
+                    $uuids[] = $data['uuid'];
+                } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+                    foreach ($feature['geometry']['coordinates'] as $polygon) {
+                        $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
+                        $data = $this->insertSinglePolygon($singlePolygon);
+                        $polygonData[] = [
+                            'uuid' => $data['uuid'],
+                            'area' => $data['area'],
+                            'feature' => $feature,
+                            'sitePolygonProperties' => $sitePolygonProperties,
+                            'primary_uuid' => $primary_uuid,
+                            'submit_polygon_loaded' => $submit_polygon_loaded,
+                        ];
+                        $uuids[] = $data['uuid'];
+                    }
+                }
+            }
+
+            DB::beginTransaction();
+
+            try {
+                foreach ($polygonData as $polygon) {
+                    $sitePolygonProps = $polygon['sitePolygonProperties'];
+                    $sitePolygonProps['area'] = $polygon['area'];
+                    $this->attemptPolygonInsert(
+                        $polygon['uuid'],
+                        $sitePolygonProps,
+                        $polygon['feature'],
+                        $polygon['primary_uuid'],
+                        $polygon['submit_polygon_loaded']
+                    );
+                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Error with batch polygon insertion, rolled back all transactions', [
+                    'error' => $e->getMessage(),
+                    'polygons_count' => count($polygonData),
+                ]);
+
+                throw $e;
+            }
+            // TODO: will need to move indicators to async job
+            // $this->batchUpdateIndicators($uuids);
+
+            return $uuids;
+
+        } catch (\Exception $e) {
+            Log::error('Error at create geojson models', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw new \RuntimeException('Error creating geojson models: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -214,8 +355,6 @@ class PolygonService
                 );
             }
 
-            $this->updateIndicatorsForPolygon($uuid);
-
         } catch (\Exception $e) {
             Log::error('Error inserting polygon', [
               'uuid' => $uuid,
@@ -225,6 +364,92 @@ class PolygonService
             ]);
 
             throw new \Exception('Error inserting polygon: ' . $e->getMessage());
+        }
+    }
+
+    protected function bulkInsertSitePolygons(array $polygonData, int $chunkSize = 500): void
+    {
+        $sitePolygonInserts = [];
+        $sitePolygonDataInserts = [];
+
+        foreach ($polygonData as $polygon) {
+            $sitePolygonProps = $polygon['sitePolygonProperties'];
+            $sitePolygonProps['area'] = $polygon['area'];
+            $feature = $polygon['feature'];
+            if (isset($sitePolygonProps['site_id']) && $sitePolygonProps['site_id'] !== null) {
+                $feature['properties']['site_id'] = $sitePolygonProps['site_id'];
+            }
+
+            $allProperties = array_merge($sitePolygonProps, $feature['properties']);
+            $validatedProperties = $this->validateSitePolygonProperties($polygon['uuid'], $allProperties);
+            $extraProperties = array_diff_key($allProperties, $validatedProperties);
+            $columnsToRemove = ['area', 'uuid'];
+            $extraDataToStore = array_diff_key($extraProperties, array_flip($columnsToRemove));
+
+            $sitePolygonUuid = Str::uuid()->toString();
+
+            $sitePolygonInserts[] = array_merge(
+                $validatedProperties,
+                [
+                    'uuid' => $sitePolygonUuid,
+                    'primary_uuid' => $sitePolygonUuid,
+                    'poly_id' => $polygon['uuid'],
+                    'created_by' => Auth::user()?->id,
+                    'is_active' => true,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            if (! empty($extraDataToStore)) {
+                $sitePolygonDataInserts[] = [
+                    'site_polygon_uuid' => $sitePolygonUuid,
+                    'data' => json_encode($extraDataToStore),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
+
+        foreach (array_chunk($sitePolygonInserts, $chunkSize) as $chunk) {
+            DB::table('site_polygon')->insert($chunk);
+        }
+
+        if (! empty($sitePolygonDataInserts)) {
+            foreach (array_chunk($sitePolygonDataInserts, $chunkSize) as $chunk) {
+                DB::table('site_polygon_data')->insert($chunk);
+            }
+        }
+
+        $this->deferSiteRestorationUpdates($sitePolygonInserts);
+    }
+
+    protected function deferSiteRestorationUpdates(array $sitePolygonInserts): void
+    {
+        $siteIds = array_unique(array_filter(array_column($sitePolygonInserts, 'site_id')));
+
+        if (! empty($siteIds)) {
+            DB::table('v2_sites')
+              ->whereIn('uuid', $siteIds)
+              ->whereNotIn('status', [SiteStatusStateMachine::RESTORATION_IN_PROGRESS])
+              ->update([
+                  'status' => SiteStatusStateMachine::RESTORATION_IN_PROGRESS,
+                  'updated_at' => now(),
+              ]);
+        }
+    }
+
+    public function batchUpdateIndicators(array $polygonUuids): void
+    {
+        foreach ($polygonUuids as $uuid) {
+            try {
+                $this->updateIndicatorsForPolygon($uuid);
+            } catch (\Exception $e) {
+                Log::warning('Failed to update indicators for polygon', [
+                    'uuid' => $uuid,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
     }
 
@@ -324,6 +549,7 @@ class PolygonService
             if (! $site) {
                 throw new \Exception('SitePolygon not found for site_id: ' . $properties['site_id']);
             }
+
             $validatedProperties = $this->validateSitePolygonProperties($polygonUuid, $properties);
             $extraProperties = array_diff_key($properties, $validatedProperties);
             $columnsToRemove = ['area', 'uuid'];
@@ -334,7 +560,7 @@ class PolygonService
                 [
                     'poly_id' => $polygonUuid ?? null,
                     'created_by' => Auth::user()?->id,
-                    'is_active' => true,
+                  'is_active' => true,
                 ],
             ));
 
@@ -346,12 +572,6 @@ class PolygonService
                 $sitePolygonData->save();
             }
 
-            $site = $sitePolygon->site()->first();
-            if (! $site) {
-                Log::error('Site not found', ['site polygon uuid' => $sitePolygon->uuid, 'site id' => $sitePolygon->site_id]);
-
-                return response()->json(['error' => 'Site not found'], Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
             $site->restorationInProgress();
             $project = $sitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
@@ -359,7 +579,13 @@ class PolygonService
 
             return null;
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Error inserting site polygon', [
+                'polygon_uuid' => $polygonUuid,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw new \RuntimeException('Error inserting site polygon: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -415,9 +641,14 @@ class PolygonService
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Error inserting site polygon version', ['polygon uuid' => $polygonUuid, 'error' => $e->getMessage()]);
+            Log::error('Error inserting site polygon version', [
+                'polygon_uuid' => $polygonUuid,
+                'primary_uuid' => $primary_uuid,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            throw new \RuntimeException('Error inserting site polygon version: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -610,7 +841,7 @@ class PolygonService
             SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
             SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
 
-            return $this->createGeojsonModels($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
+            return $this->createGeojsonModelsBulk($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
 
         } catch (Exception $e) {
             $errorMessage = $e->getMessage();

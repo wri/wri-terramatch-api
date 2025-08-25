@@ -65,11 +65,23 @@ class GeometryController extends Controller
         $results = [];
         $groupedGeometries = $this->groupGeometriesBySiteId($geometries);
 
+        $totalPolygons = 0;
+        foreach ($groupedGeometries as $siteGeometries) {
+            $totalPolygons += count($siteGeometries['features'] ?? []);
+        }
+
         foreach ($groupedGeometries as $siteId => $siteGeometries) {
             $groupedByType = $this->groupGeometriesByType($siteGeometries);
 
             foreach ($groupedByType as $type => $typeGeometries) {
-                $polygonUuids = $service->createGeojsonModels($typeGeometries, ['source' => PolygonService::GREENHOUSE_SOURCE]);
+                $featureCount = count($typeGeometries['features'] ?? []);
+
+                if ($featureCount > 1000) {
+                    $polygonUuids = $this->processLargeGeometryBatch($service, $typeGeometries, $featureCount, $siteId);
+                } else {
+                    $polygonUuids = $service->createGeojsonModelsBulk($typeGeometries, ['site_id' => $siteId, 'source' => PolygonService::GREENHOUSE_SOURCE]);
+                }
+
                 $polygonErrors = [];
 
                 $results[] = [
@@ -79,10 +91,31 @@ class GeometryController extends Controller
                     // TODO: this will be used in the future to return errors for duplicate geometries
                     'errors' => empty($polygonErrors) ? new stdClass() : $polygonErrors,
                 ];
+
             }
         }
+        $this->batchUpdateProjectCentroids($results);
 
         return $results;
+    }
+
+    protected function processLargeGeometryBatch(PolygonService $service, array $typeGeometries, int $featureCount, string $siteId): array
+    {
+        $chunkSize = 500;
+        $allPolygonUuids = [];
+        $features = $typeGeometries['features'];
+        for ($i = 0; $i < $featureCount; $i += $chunkSize) {
+            $chunk = array_slice($features, $i, $chunkSize);
+            $chunkGeometry = [
+                'type' => 'FeatureCollection',
+                'features' => $chunk,
+            ];
+
+            $chunkUuids = $service->createGeojsonModelsBulk($chunkGeometry, ['site_id' => $siteId, 'source' => PolygonService::GREENHOUSE_SOURCE]);
+            $allPolygonUuids = array_merge($allPolygonUuids, $chunkUuids);
+        }
+
+        return $allPolygonUuids;
     }
 
     protected function validateStoredGeometries(array $polygonUuids): array
@@ -148,6 +181,32 @@ class GeometryController extends Controller
         }
 
         return $grouped;
+    }
+
+    protected function batchUpdateProjectCentroids(array $results): void
+    {
+        $allPolygonUuids = [];
+        foreach ($results as $result) {
+            $allPolygonUuids = array_merge($allPolygonUuids, $result['polygon_uuids']);
+        }
+
+        if (empty($allPolygonUuids)) {
+            return;
+        }
+
+        $projectUuids = \Illuminate\Support\Facades\DB::table('site_polygon')
+            ->join('v2_sites', 'site_polygon.site_id', '=', 'v2_sites.uuid')
+            ->join('v2_projects', 'v2_sites.project_id', '=', 'v2_projects.id')
+            ->whereIn('site_polygon.poly_id', $allPolygonUuids)
+            ->distinct()
+            ->pluck('v2_projects.uuid')
+            ->toArray();
+
+        $geometryHelper = new GeometryHelper();
+        foreach ($projectUuids as $projectUuid) {
+            $geometryHelper->updateProjectCentroid($projectUuid);
+        }
+
     }
 
     public function validateGeometries(Request $request): JsonResponse
