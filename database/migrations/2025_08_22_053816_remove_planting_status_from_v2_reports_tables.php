@@ -21,6 +21,10 @@ return new class extends Migration {
         Schema::table('site_polygon', function (Blueprint $table) {
             $table->dropColumn('planting_status');
         });
+
+        Schema::table('v2_nurseries', function (Blueprint $table) {
+            $table->dropColumn('planting_status');
+        });
     }
 
     /**
@@ -49,6 +53,16 @@ return new class extends Migration {
         });
 
         Schema::table('site_polygon', function (Blueprint $table) {
+            $table->enum('planting_status', [
+                'no-restoration-expected',
+                'not-started',
+                'in-progress',
+                'replacement-planting',
+                'completed',
+            ])->nullable()->after('status');
+        });
+
+        Schema::table('v2_nurseries', function (Blueprint $table) {
             $table->enum('planting_status', [
                 'no-restoration-expected',
                 'not-started',
