@@ -75,13 +75,13 @@ class GeometryController extends Controller
 
             foreach ($groupedByType as $type => $typeGeometries) {
                 $featureCount = count($typeGeometries['features'] ?? []);
-                
+
                 if ($featureCount > 1000) {
                     $polygonUuids = $this->processLargeGeometryBatch($service, $typeGeometries, $featureCount);
                 } else {
                     $polygonUuids = $service->createGeojsonModelsBulk($typeGeometries, ['source' => PolygonService::GREENHOUSE_SOURCE]);
                 }
-                
+
                 $polygonErrors = [];
 
                 $results[] = [
@@ -95,6 +95,7 @@ class GeometryController extends Controller
             }
         }
         $this->batchUpdateProjectCentroids($results);
+
         return $results;
     }
 
@@ -107,9 +108,9 @@ class GeometryController extends Controller
             $chunk = array_slice($features, $i, $chunkSize);
             $chunkGeometry = [
                 'type' => 'FeatureCollection',
-                'features' => $chunk
+                'features' => $chunk,
             ];
-            
+
             $chunkUuids = $service->createGeojsonModelsBulk($chunkGeometry, ['source' => PolygonService::GREENHOUSE_SOURCE]);
             $allPolygonUuids = array_merge($allPolygonUuids, $chunkUuids);
         }
@@ -181,6 +182,7 @@ class GeometryController extends Controller
 
         return $grouped;
     }
+
     protected function batchUpdateProjectCentroids(array $results): void
     {
         $allPolygonUuids = [];

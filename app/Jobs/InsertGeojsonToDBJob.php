@@ -88,7 +88,7 @@ class InsertGeojsonToDBJob implements ShouldQueue
             }
 
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
-              
+
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
                 'payload' => json_encode($uuids),

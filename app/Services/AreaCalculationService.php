@@ -52,6 +52,7 @@ class AreaCalculationService
             throw new \RuntimeException('Geometry and area calculation failed: ' . $e->getMessage());
         }
     }
+
     public function batchGetGeomsAndAreas(array $geometries): array
     {
         if (empty($geometries)) {
@@ -65,7 +66,7 @@ class AreaCalculationService
 
             foreach ($geometries as $index => $geometry) {
                 $geojson = json_encode($geometry);
-                $placeholders[] = "
+                $placeholders[] = '
                     SELECT 
                         ? as geom_json,
                         ST_Area(
@@ -74,7 +75,7 @@ class AreaCalculationService
                         POW(6378137 * PI() / 180, 2) * 
                         COS(RADIANS(ST_Y(ST_Centroid(ST_GeomFromGeoJSON(?))))) / 10000 as area_hectares,
                         ? as batch_index
-                ";
+                ';
                 $params = array_merge($params, [$geojson, $geojson, $geojson, $index]);
             }
 
@@ -97,6 +98,7 @@ class AreaCalculationService
             foreach ($geometries as $index => $geometry) {
                 $results[$index] = $this->getGeomAndArea($geometry);
             }
+
             return $results;
         }
     }
