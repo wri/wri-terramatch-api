@@ -365,7 +365,7 @@ class TerrafundEditGeometryController extends Controller
             ->first();
             $geometry = json_decode($polygonGeom->geojsonGeometry, true);
             $areaCalculationService = app(AreaCalculationService::class);
-            $areaHectares = $areaCalculationService->getArea($geometry);
+            $areaHectares = $areaCalculationService->calculateArea($geometry);
             $sitePolygon = new SitePolygon([
                 'poly_name' => $validatedData['poly_name'],
                 'plantstart' => $validatedData['plantstart'],
