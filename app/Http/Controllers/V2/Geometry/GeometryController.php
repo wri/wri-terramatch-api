@@ -5,6 +5,8 @@ namespace App\Http\Controllers\V2\Geometry;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Geometry\StoreGeometryRequest;
+use App\Jobs\ProcessPolygonIndicatorsJob;
+use App\Models\DelayedJob;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\Site;
@@ -63,6 +65,7 @@ class GeometryController extends Controller
         /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
         $results = [];
+        $allPolygonUuids = [];
         $groupedGeometries = $this->groupGeometriesBySiteId($geometries);
 
         $totalPolygons = 0;
@@ -82,6 +85,7 @@ class GeometryController extends Controller
                     $polygonUuids = $service->createGeojsonModelsBulk($typeGeometries, ['site_id' => $siteId, 'source' => PolygonService::GREENHOUSE_SOURCE]);
                 }
 
+                $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
                 $polygonErrors = [];
 
                 $results[] = [
@@ -95,6 +99,10 @@ class GeometryController extends Controller
             }
         }
         $this->batchUpdateProjectCentroids($results);
+
+        if (! empty($allPolygonUuids)) {
+            $this->queueIndicatorAnalysis($allPolygonUuids);
+        }
 
         return $results;
     }
@@ -372,5 +380,25 @@ class GeometryController extends Controller
         }
 
         return $errors;
+    }
+
+    protected function queueIndicatorAnalysis(array $polygonUuids): void
+    {
+        try {
+            $delayedJob = DelayedJob::create();
+
+            $job = new ProcessPolygonIndicatorsJob(
+                $delayedJob->id,
+                $polygonUuids,
+                ['include_details' => false]
+            );
+
+            dispatch($job);
+        } catch (\Exception $e) {
+            Log::error('Failed to queue indicator analysis', [
+                'error' => $e->getMessage(),
+                'polygon_count' => count($polygonUuids),
+            ]);
+        }
     }
 }
