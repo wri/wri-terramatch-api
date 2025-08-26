@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportFinancialReportController extends Controller
 {
-    public function __invoke(ExportFinancialReportRequest $exportFinancialReportRequest, ?string $financialReport = null): StreamedResponse
+    public function __invoke(ExportFinancialReportRequest $exportFinancialReportRequest): StreamedResponse
     {
         $header = [
             'ID', 'UUID', 'Organisation ID', 'Organisation Name', 'Status',
@@ -21,14 +21,7 @@ class ExportFinancialReportController extends Controller
         ];
         $records = [];
 
-        // Si se proporciona un UUID específico, exportar solo ese reporte
-        if ($financialReport) {
-            $report = FinancialReport::where('uuid', $financialReport)->firstOrFail();
-            $reports = collect([$report]);
-        } else {
-            // Exportar todos los reportes
-            $reports = FinancialReport::with(['organisation.fundingTypes', 'financialCollection'])->get();
-        }
+        $reports = FinancialReport::with(['organisation.fundingTypes', 'financialCollection'])->get();
 
         foreach ($reports as $report) {
             $financialIndicators = $report->financialCollection->map(function ($indicator) {
@@ -62,13 +55,9 @@ class ExportFinancialReportController extends Controller
         $csv->insertOne($header);
         $csv->insertAll($records);
 
-        $filename = $financialReport 
-            ? "Financial Report {$financialReport} - " . now() . '.csv'
-            : 'Financial Reports Export - ' . now() . '.csv';
-
         return response()->streamDownload(function () use ($csv) {
             echo $csv->toString();
-        }, $filename, [
+        }, 'Financial Reports Export - ' . now() . '.csv', [
             'Content-Type' => 'text/csv',
         ]);
     }

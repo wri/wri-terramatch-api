@@ -2,6 +2,7 @@
 
 namespace App\Models\V2;
 
+use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,8 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Models\V2\FinancialReport;
 
-class FinancialIndicators extends Model implements MediaModel
+class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFieldSync
 {
     use HasFactory;
     use SoftDeletes;
@@ -62,6 +64,75 @@ class FinancialIndicators extends Model implements MediaModel
         self::COLLECTION_CURRENT_RATIO => 'Current Ratio',
     ];
 
+    /**
+     * Sync financial indicators data with the entity
+     */
+    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden): void
+    {
+        if (empty($data)) {
+            $entity->$property()->delete();
+            return;
+        }
+
+        $firstRecord = $data[0];
+        $startMonth = $firstRecord['start_month'] ?? null;
+        $currency = $firstRecord['currency'] ?? null;
+        $organisationId = $firstRecord['organisation_id'] ?? null;
+        $financialReport = null;
+        if ($firstRecord['financial_report_id']) {
+            $financialReport =  FinancialReport::isUuid($firstRecord['financial_report_id'])->first();
+        }
+
+
+        $newUuids = collect($data)->pluck('uuid')->filter();
+        $entity->$property()->whereNotIn('uuid', $newUuids)->delete();
+
+        foreach ($data as $entry) {
+            $uuid = $entry['uuid'] ?? null;
+            
+            if ($uuid) {
+                $existing = $entity->$property()->where('uuid', $uuid)->first();
+                
+                if ($existing) {
+                    $existing->update([
+                        'collection' => $entry['collection'],
+                        'amount' => $entry['amount'],
+                        'year' => $entry['year'],
+                        'description' => $entry['description'],
+                        'exchange_rate' => $entry['exchange_rate'],
+                    ]);
+                } else {
+                    $entity->$property()->create([
+                        'collection' => $entry['collection'],
+                        'amount' => $entry['amount'],
+                        'year' => $entry['year'],
+                        'description' => $entry['description'],
+                        'exchange_rate' => $entry['exchange_rate'],
+                        'organisation_id' => $entry['organisation_id'],
+                        'financial_report_id' => $financialReport?->id,
+                    ]);
+                }
+            } else {
+                $entity->$property()->create([
+                    'collection' => $entry['collection'],
+                    'amount' => $entry['amount'],
+                    'year' => $entry['year'],
+                    'description' => $entry['description'],
+                    'exchange_rate' => $entry['exchange_rate'],
+                    'organisation_id' => $entry['organisation_id'],
+                    'financial_report_id' => $financialReport?->id,
+                ]);
+            }
+        }
+
+        if (($startMonth !== null || $currency !== null) && $financialReport) {
+            $financialReport->update([
+                'fin_start_month' => $startMonth,
+                'currency' => $currency,
+            ]);
+        }
+    }
+
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(Organisation::class, 'organisation_id', 'id');
@@ -70,6 +141,15 @@ class FinancialIndicators extends Model implements MediaModel
     public function financialReport()
     {
         return $this->belongsTo(FinancialReport::class, 'financial_report_id', 'id');
+    }
+    public function getStartMonthAttribute()
+    {
+        return $this->financialReport?->fin_start_month;
+    }
+
+    public function getCurrencyAttribute()
+    {
+        return $this->financialReport?->currency;
     }
 
     public function getRouteKeyName()

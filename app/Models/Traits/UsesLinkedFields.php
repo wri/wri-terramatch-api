@@ -328,6 +328,7 @@ trait UsesLinkedFields
                 'stratas',
                 'invasive',
                 'seedings',
+                'financialIndicators',
             ])
         ) {
             return;

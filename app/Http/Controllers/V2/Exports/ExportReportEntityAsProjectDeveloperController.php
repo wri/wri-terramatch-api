@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\Exports;
 use App\Exports\V2\EntityExport;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Forms\Form;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
@@ -15,16 +16,13 @@ use Maatwebsite\Excel\Excel;
 
 class ExportReportEntityAsProjectDeveloperController extends Controller
 {
-    public function __invoke(Request $request, string $uuid)
+    public function __invoke(Request $request, string $entity, string $uuid)
     {
         ini_set('memory_limit', '-1');
-        
-        // Determinar el tipo de entidad basándose en la ruta actual
-        $entity = $this->determineEntityType($request);
         $modelClass = $this->getModelClass($entity);
 
         Validator::make(['entity' => $entity, 'uuid' => $uuid], [
-            'entity' => 'required|in:site-reports,nursery-reports,project-reports',
+            'entity' => 'required|in:site-reports,nursery-reports,project-reports,financial-reports',
             'uuid' => 'required|exists:'.$modelClass.',uuid|max:255',
         ])->validate();
 
@@ -49,27 +47,16 @@ class ExportReportEntityAsProjectDeveloperController extends Controller
         return response()->download($zipFilename)->deleteFileAfterSend();
     }
 
-    private function determineEntityType(Request $request): string
-    {
-        $path = $request->path();
-        
-        if (Str::contains($path, 'nursery-reports')) {
-            return 'nursery-reports';
-        } elseif (Str::contains($path, 'site-reports')) {
-            return 'site-reports';
-        } elseif (Str::contains($path, 'project-reports')) {
-            return 'project-reports';
-        }
-        
-        // Fallback por si acaso
-        return 'site-reports';
-    }
-
     private function getForm(string $modelClass, string $framework)
     {
-        return Form::where('model', $modelClass)
-            ->where('framework_key', $framework)
-            ->firstOrFail();
+        if ($modelClass === FinancialReport::class) {
+            return Form::where('model', FinancialReport::class)
+                ->firstOrFail();
+        } else {
+            return Form::where('model', $modelClass)
+                ->where('framework_key', $framework)
+                ->firstOrFail();
+        }
     }
 
     private function getModelClass(string $entity)
@@ -87,6 +74,11 @@ class ExportReportEntityAsProjectDeveloperController extends Controller
                 break;
             case 'nursery-reports':
                 $model = NurseryReport::class;
+
+                break;
+
+            case 'financial-reports':
+                $model = FinancialReport::class;
 
                 break;
         }
