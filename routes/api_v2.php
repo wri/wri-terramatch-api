@@ -59,7 +59,6 @@ use App\Http\Controllers\V2\Forms\DeleteFormQuestionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSectionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
-use App\Http\Controllers\V2\Forms\FormOptionsLabelController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
 use App\Http\Controllers\V2\Forms\IndexFormController;
 use App\Http\Controllers\V2\Forms\LinkedFieldListingsController;
@@ -396,7 +395,6 @@ Route::prefix('forms')->group(function () {
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
     Route::get('/linked-field-listing', LinkedFieldListingsController::class);
-    Route::get('/option-labels', FormOptionsLabelController::class)->middleware('i18n');
 
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 

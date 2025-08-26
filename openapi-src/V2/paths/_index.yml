@@ -1825,9 +1825,6 @@
 /auth/login:
   post:
     $ref: './Auth/post-auth-login.yml'
-/v2/forms/option-labels:
-  get:
-    $ref: './Forms/get-v2-form-option-labels-listing.yml'
 /auth/change:
   patch:
     $ref: './Auth/patch-auth-change.yml'
