@@ -541,8 +541,6 @@ Route::prefix('nursery-reports')->group(function () {
     Route::get('/{nurseryReport}/image/locations', NurseryReportImageLocationsController::class);
 });
 
-Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
-
 Route::prefix('funding-type')->group(function () {
     Route::post('/', StoreFundingTypeController::class);
     Route::patch('/{fundingType}', UpdateFundingTypeController::class);
@@ -689,3 +687,5 @@ Route::prefix('site-polygon')->group(function () {
 });
 
 Route::get('/type-entity', EntityTypeController::class);
+
+Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
