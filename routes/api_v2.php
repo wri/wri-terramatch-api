@@ -149,6 +149,8 @@ use App\Http\Controllers\V2\Reports\NothingToReportReportController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
+// use App\Http\Controllers\V2\Sites\AdminSitesPolygonController;
+// use App\Http\Controllers\V2\Sites\AdminSitesPolygonCountController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
@@ -466,6 +468,7 @@ Route::prefix('financial-indicators')->group(function () {
 
 Route::prefix('financial-reports')->group(function () {
     Route::get('/export', ExportFinancialReportController::class);
+    Route::get('/{financialReport}/export', ExportFinancialReportController::class);
 });
 Route::resource('financial-reports', FinancialReportsController::class)->except('create');
 
@@ -501,6 +504,7 @@ ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
 
 Route::prefix('project-reports')->group(function () {
     Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
+    Route::get('/{projectReport}/export', ExportReportEntityAsProjectDeveloperController::class);
 });
 
 Route::prefix('sites/{site}')->group(function () {
@@ -511,6 +515,10 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/check-approve', SiteCheckApproveController::class);
 });
+// Route::prefix('entity')->group(function () {
+//     Route::get('/polygons/count', AdminSitesPolygonCountController::class);
+//     Route::get('/polygons', AdminSitesPolygonController::class);
+// });
 
 Route::prefix('geometry')->group(function () {
     Route::post('', [GeometryController::class, 'storeGeometry']);
@@ -529,6 +537,7 @@ Route::prefix('site-monitorings')->group(function () {
 
 Route::prefix('site-reports')->group(function () {
     Route::get('/{siteReport}/image/locations', SiteReportImageLocationsController::class);
+    Route::get('/{siteReport}/export', ExportReportEntityAsProjectDeveloperController::class);
 });
 
 Route::prefix('nurseries')->group(function () {
@@ -539,6 +548,7 @@ Route::prefix('nurseries')->group(function () {
 
 Route::prefix('nursery-reports')->group(function () {
     Route::get('/{nurseryReport}/image/locations', NurseryReportImageLocationsController::class);
+    Route::get('/{nurseryReport}/export', ExportReportEntityAsProjectDeveloperController::class);
 });
 
 Route::prefix('funding-type')->group(function () {
@@ -687,5 +697,3 @@ Route::prefix('site-polygon')->group(function () {
 });
 
 Route::get('/type-entity', EntityTypeController::class);
-
-Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);

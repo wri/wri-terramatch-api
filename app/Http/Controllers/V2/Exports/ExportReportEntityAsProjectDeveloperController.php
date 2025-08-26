@@ -15,9 +15,12 @@ use Maatwebsite\Excel\Excel;
 
 class ExportReportEntityAsProjectDeveloperController extends Controller
 {
-    public function __invoke(Request $request, string $entity, string $uuid)
+    public function __invoke(Request $request, string $uuid)
     {
         ini_set('memory_limit', '-1');
+        
+        // Determinar el tipo de entidad basándose en la ruta actual
+        $entity = $this->determineEntityType($request);
         $modelClass = $this->getModelClass($entity);
 
         Validator::make(['entity' => $entity, 'uuid' => $uuid], [
@@ -44,6 +47,22 @@ class ExportReportEntityAsProjectDeveloperController extends Controller
         $zip->close();
 
         return response()->download($zipFilename)->deleteFileAfterSend();
+    }
+
+    private function determineEntityType(Request $request): string
+    {
+        $path = $request->path();
+        
+        if (Str::contains($path, 'nursery-reports')) {
+            return 'nursery-reports';
+        } elseif (Str::contains($path, 'site-reports')) {
+            return 'site-reports';
+        } elseif (Str::contains($path, 'project-reports')) {
+            return 'project-reports';
+        }
+        
+        // Fallback por si acaso
+        return 'site-reports';
     }
 
     private function getForm(string $modelClass, string $framework)
