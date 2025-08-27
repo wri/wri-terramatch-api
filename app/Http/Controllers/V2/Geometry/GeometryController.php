@@ -45,6 +45,7 @@ class GeometryController extends Controller
         'GEOMETRY_TYPE',
         'SCHEMA',
         'DATA',
+        'DUPLICATE_GEOMETRY',
     ];
 
     /**
