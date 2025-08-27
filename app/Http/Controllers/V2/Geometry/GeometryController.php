@@ -9,14 +9,15 @@ use App\Jobs\ProcessPolygonIndicatorsJob;
 use App\Models\DelayedJob;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
+use App\Validators\Extensions\Polygons\DuplicateGeometry;
 use App\Validators\SitePolygonValidator;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use stdClass;
@@ -79,23 +80,41 @@ class GeometryController extends Controller
             foreach ($groupedByType as $type => $typeGeometries) {
                 $featureCount = count($typeGeometries['features'] ?? []);
 
-                if ($featureCount > 1000) {
-                    $polygonUuids = $this->processLargeGeometryBatch($service, $typeGeometries, $featureCount, $siteId);
-                } else {
-                    $polygonUuids = $service->createGeojsonModelsBulk($typeGeometries, ['site_id' => $siteId, 'source' => PolygonService::GREENHOUSE_SOURCE]);
+                $duplicateCheck = DuplicateGeometry::checkNewFeaturesDuplicates($typeGeometries['features'], $siteId);
+                $filteredFeatures = [];
+                $duplicateErrors = [];
+                foreach ($typeGeometries['features'] as $index => $feature) {
+                    if (in_array($index, $duplicateCheck['duplicates'])) {
+                        $duplicateErrors[] = [
+                            'index' => $index,
+                            'key' => 'DUPLICATE_GEOMETRY',
+                            'message' => 'The geometry already exists in the project',
+                        ];
+                    } else {
+                        $filteredFeatures[] = $feature;
+                    }
                 }
+                if (! empty($filteredFeatures)) {
+                    $filteredGeometries = [
+                        'type' => 'FeatureCollection',
+                        'features' => $filteredFeatures,
+                    ];
 
+                    if (count($filteredFeatures) > 1000) {
+                        $polygonUuids = $this->processLargeGeometryBatch($service, $filteredGeometries, count($filteredFeatures), $siteId);
+                    } else {
+                        $polygonUuids = $service->createGeojsonModelsBulk($filteredGeometries, ['site_id' => $siteId, 'source' => PolygonService::GREENHOUSE_SOURCE]);
+                    }
+                } else {
+                    $polygonUuids = [];
+                }
                 $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
-                $polygonErrors = [];
-
                 $results[] = [
                     'site_id' => $siteId,
                     'geometry_type' => $type,
                     'polygon_uuids' => $polygonUuids,
-                    // TODO: this will be used in the future to return errors for duplicate geometries
-                    'errors' => empty($polygonErrors) ? new stdClass() : $polygonErrors,
+                    'errors' => empty($duplicateErrors) ? new stdClass() : $duplicateErrors,
                 ];
-
             }
         }
         $this->batchUpdateProjectCentroids($results);
@@ -171,7 +190,7 @@ class GeometryController extends Controller
             if (! isset($geometryCollection['features'])) {
                 Log::warning('No features found in this geometry collection', $geometryCollection);
 
-                continue; // Skip if there are no features
+                continue;
             }
 
             foreach ($geometryCollection['features'] as $feature) {
@@ -202,7 +221,7 @@ class GeometryController extends Controller
             return;
         }
 
-        $projectUuids = \Illuminate\Support\Facades\DB::table('site_polygon')
+        $projectUuids = DB::table('site_polygon')
             ->join('v2_sites', 'site_polygon.site_id', '=', 'v2_sites.uuid')
             ->join('v2_projects', 'v2_sites.project_id', '=', 'v2_projects.id')
             ->whereIn('site_polygon.poly_id', $allPolygonUuids)
@@ -303,7 +322,6 @@ class GeometryController extends Controller
         $this->authorize('update', $polygon);
 
         $geometry = $request->input('geometry');
-        /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
         $service->updateGeojsonModels($polygon, $geometry);
 
@@ -358,8 +376,6 @@ class GeometryController extends Controller
             $service->createCriteriaSite($polygonUuid, $criteriaId, $valid);
         }
 
-        // For these two, the polygon service already handled creating the site criteria, so we just need to
-        // report on them if not valid
         $polygon = PolygonGeometry::isUuid($polygonUuid)->select('uuid')->first();
         $schemaCriteria = $polygon->criteriaSite()->forCriteria(PolygonService::SCHEMA_CRITERIA_ID)->first();
         if ($schemaCriteria != null && ! $schemaCriteria->valid) {
@@ -368,8 +384,6 @@ class GeometryController extends Controller
                 'message' => 'The properties for the geometry are missing some required values.',
             ];
         } else {
-            // only report data validation if the schema was valid. When the schema is invalid, the data is
-            // always invalid as well.
             $dataCriteria = $polygon->criteriaSite()->forCriteria(PolygonService::DATA_CRITERIA_ID)->first();
             if ($dataCriteria != null && ! $dataCriteria->valid) {
                 $errors[] = [
