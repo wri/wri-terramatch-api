@@ -371,6 +371,7 @@ class PolygonService
     {
         $sitePolygonInserts = [];
         $sitePolygonDataInserts = [];
+        $polygonUuidsForCentroidUpdate = [];
 
         foreach ($polygonData as $polygon) {
             $sitePolygonProps = $polygon['sitePolygonProperties'];
@@ -401,6 +402,9 @@ class PolygonService
                 ]
             );
 
+            // Collect polygon UUIDs for bulk centroid update
+            $polygonUuidsForCentroidUpdate[] = $polygon['uuid'];
+
             if (! empty($extraDataToStore)) {
                 $sitePolygonDataInserts[] = [
                     'site_polygon_uuid' => $sitePolygonUuid,
@@ -414,6 +418,9 @@ class PolygonService
         foreach (array_chunk($sitePolygonInserts, $chunkSize) as $chunk) {
             DB::table('site_polygon')->insert($chunk);
         }
+
+        // Bulk update centroids for all inserted site polygons
+        $this->bulkUpdateSitePolygonCentroids($polygonUuidsForCentroidUpdate);
 
         if (! empty($sitePolygonDataInserts)) {
             foreach (array_chunk($sitePolygonDataInserts, $chunkSize) as $chunk) {
@@ -587,6 +594,22 @@ class PolygonService
 
             throw new \RuntimeException('Error inserting site polygon: ' . $e->getMessage(), 0, $e);
         }
+    }
+
+    protected function bulkUpdateSitePolygonCentroids(array $polygonUuids): void
+    {
+        if (empty($polygonUuids)) {
+            return;
+        }
+
+        DB::statement("
+            UPDATE site_polygon sp
+            JOIN polygon_geometry pg ON sp.poly_id = pg.uuid
+            SET 
+                sp.lat = ST_Y(ST_Centroid(pg.geom)),
+                sp.long = ST_X(ST_Centroid(pg.geom))
+            WHERE sp.poly_id IN ('" . implode("','", $polygonUuids) . "')
+        ");
     }
 
     protected function insertSitePolygonVersion(string $polygonUuid, string $primary_uuid, ?bool $submit_polygon_loaded = false, ?array $properties)
