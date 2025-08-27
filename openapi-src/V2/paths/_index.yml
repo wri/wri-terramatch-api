@@ -702,21 +702,6 @@
         description: Created
         schema:
           $ref: '../definitions/_index.yml#/V2AdminUserRead'
-/v2/admin/users/export:
-  get:
-    summary: Export CSV document of all users
-    operationId: v2-admin-users-export
-    tags:
-      - V2 Admin
-      - V2 Users
-      - Export
-    produces:
-      - text/plain
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: file
 /v2/admin/users/reset-password/{UUID}:
   put:
     summary: Update a specific users password

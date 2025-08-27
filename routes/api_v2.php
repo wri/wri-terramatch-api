@@ -174,7 +174,6 @@ use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestControlle
 use App\Http\Controllers\V2\UpdateRequests\AdminStatusUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\AdminViewUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\EntityUpdateRequestsController;
-use App\Http\Controllers\V2\User\AdminExportUsersController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
 use App\Http\Controllers\V2\User\AdminUserController;
 use App\Http\Controllers\V2\User\AdminUserCreationController;
@@ -317,7 +316,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('users')->group(function () {
         Route::get('multi', AdminUserMultiController::class);
-        Route::get('export', AdminExportUsersController::class);
         Route::put('reset-password/{user}', AdminResetPasswordController::class);
         Route::patch('verify/{user}', AdminVerifyUserController::class);
         Route::get('users-organisation-list/{organisation}', AdminUsersOrganizationController::class);
