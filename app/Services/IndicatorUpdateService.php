@@ -103,11 +103,9 @@ class IndicatorUpdateService
         $batchResults = [];
         
         try {
-            // Pre-load all geometries in a single query to reduce DB calls
-            $geometries = $this->preloadGeometries($polygonUuids);
-            
             foreach ($polygonUuids as $polygonUuid) {
-                if (!isset($geometries[$polygonUuid])) {
+                $polygonGeometry = $this->getGeometry($polygonUuid);
+                if (!$polygonGeometry) {
                     $batchResults[$polygonUuid] = [
                         'error' => [
                             'status' => 'error',
@@ -116,8 +114,6 @@ class IndicatorUpdateService
                     ];
                     continue;
                 }
-
-                $polygonGeometry = $geometries[$polygonUuid];
                 $results = [];
 
                 foreach ($this->slugMappings as $slug => $slugMapping) {
@@ -182,30 +178,7 @@ class IndicatorUpdateService
         return $batchResults;
     }
 
-    protected function preloadGeometries(array $polygonUuids): array
-    {
-        $geometries = [];
-        
-        try {
-            $polygonData = DB::table('polygon_geometry as pg')
-                ->join('site_polygon as sp', 'pg.uuid', '=', 'sp.poly_id')
-                ->whereIn('pg.uuid', $polygonUuids)
-                ->select('pg.uuid', 'sp.uuid as site_polygon_id', 'pg.geom')
-                ->get();
 
-            foreach ($polygonData as $data) {
-                $geometries[$data->uuid] = [
-                    'site_polygon_id' => $data->site_polygon_id,
-                    'geo' => json_decode(DB::selectOne('SELECT ST_AsGeoJSON(?) as geojson', [$data->geom])->geojson, true),
-                ];
-            }
-
-        } catch (\Exception $e) {
-            Log::error('Error preloading geometries: ' . $e->getMessage());
-        }
-
-        return $geometries;
-    }
 
     protected function processRestorationIndicatorOptimized($slug, $polygonUuid, $sitePolygonId)
     {
