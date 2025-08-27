@@ -31,7 +31,7 @@ class UpdateEntityWithFormController extends Controller
         $updateRequest = $entity->updateRequests()->isUnapproved()->first();
         $isAdmin = Auth::user()->can("framework-$entity->framework_key");
         if ($entity->isEditable() || ($isAdmin && empty($updateRequest))) {
-            $entity->updateFromForm($answers);
+            $entity->updateFromForm($answers, false);
             if ($entity instanceof ReportModel) {
                 $entity->updateInProgress($isAdmin);
             }
