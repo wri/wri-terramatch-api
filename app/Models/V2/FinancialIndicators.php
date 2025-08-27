@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use App\Models\V2\FinancialReport;
 
 class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFieldSync
 {
@@ -71,6 +70,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
     {
         if (empty($data)) {
             $entity->$property()->delete();
+
             return;
         }
 
@@ -81,7 +81,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
         $financialReport = null;
         $financialReportId = $firstRecord['financial_report_id'] ?? null;
         if ($financialReportId) {
-            $financialReport =  FinancialReport::isUuid($financialReportId)->first();
+            $financialReport = FinancialReport::isUuid($financialReportId)->first();
         }
 
 
@@ -90,10 +90,10 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
 
         foreach ($data as $entry) {
             $uuid = $entry['uuid'] ?? null;
-            
+
             if ($uuid) {
                 $existing = $entity->$property()->where('uuid', $uuid)->first();
-                
+
                 if ($existing) {
                     $existing->update([
                         'collection' => $entry['collection'],
@@ -143,6 +143,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
     {
         return $this->belongsTo(FinancialReport::class, 'financial_report_id', 'id');
     }
+
     public function getStartMonthAttribute()
     {
         return $this->financialReport?->fin_start_month;

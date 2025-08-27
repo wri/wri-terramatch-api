@@ -3,6 +3,7 @@
 namespace App\Models\Traits;
 
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
@@ -10,7 +11,6 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\FinancialReport;
 use Illuminate\Support\Facades\Auth;
 
 trait SaveAuditStatusTrait
