@@ -95,7 +95,7 @@ trait UsesLinkedFields
                             $inputType = data_get($relationsConfig, "$question->linked_field_key.input_type");
                             $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
                                 data_get($formData, $question->parent_id) === false;
-                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)), $hidden, $isApproval);
+                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)), $hidden, null, $isApproval);
                         }
                     }
 
@@ -304,11 +304,11 @@ trait UsesLinkedFields
             $model->save();
         } elseif ($linkedFieldInfo['link-type'] == 'relations') {
             $inputType = data_get($linkedFieldInfo, 'input_type');
-            $this->syncRelation($property, $inputType, collect($answer), $hidden, $isApproval, $model);
+            $this->syncRelation($property, $inputType, collect($answer), $hidden, $model, $isApproval);
         }
     }
 
-    private function syncRelation(string $property, string $inputType, $data, bool $hidden, bool $isApproval = false, $entity = null): void
+    private function syncRelation(string $property, string $inputType, $data, bool $hidden, $entity = null, bool $isApproval = false): void
     {
         $entity ??= $this;
 
