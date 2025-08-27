@@ -67,7 +67,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
     /**
      * Sync financial indicators data with the entity
      */
-    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden, bool $isApproval): void
+    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden, ?bool $isApproval): void
     {
         if (empty($data)) {
             $entity->$property()->delete();

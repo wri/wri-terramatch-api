@@ -34,7 +34,7 @@ trait UsesLinkedFields
         return config('wri.linked-fields.models.' . $this->shortName);
     }
 
-    public function updateAllAnswers(array $input, bool $isApproval = false): array
+    public function updateAllAnswers(array $input, ?bool $isApproval = false): array
     {
         $localAnswers = [];
         foreach ($this->getform()->sections as $section) {
@@ -58,7 +58,7 @@ trait UsesLinkedFields
         return $localAnswers;
     }
 
-    public function updateFromForm(array $formData, bool $isApproval = false): void
+    public function updateFromForm(array $formData, ?bool $isApproval = false): void
     {
         $form = $this->getForm();
         $formConfig = $this->getFormConfig();
@@ -289,7 +289,7 @@ trait UsesLinkedFields
         return is_array($decoded) ? $decoded : null;
     }
 
-    private function updateLinkedFieldValue(array $linkedFieldInfo, $answer, bool $hidden, bool $isApproval = false): void
+    private function updateLinkedFieldValue(array $linkedFieldInfo, $answer, bool $hidden, ?bool $isApproval = false): void
     {
         $class = app($linkedFieldInfo['model']);
         $model = $class::isUuid($linkedFieldInfo['uuid'])->first();
@@ -308,7 +308,7 @@ trait UsesLinkedFields
         }
     }
 
-    private function syncRelation(string $property, string $inputType, $data, bool $hidden, $entity = null, bool $isApproval = false): void
+    private function syncRelation(string $property, string $inputType, $data, bool $hidden, $entity = null, ?bool $isApproval = false): void
     {
         $entity ??= $this;
 

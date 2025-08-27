@@ -970,13 +970,7 @@ return [
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'associates',
                     'collection' => 'all'
-                ],
-                'pro-rep-financial-indicators-financial-collection' => [
-                    'property' => 'financialCollection',
-                    'label' => 'Financial collection',
-                    'resource' => 'App\Http\Resources\V2\FinancialIndicatorsResource',
-                    'input_type' => 'financialIndicators',
-                ],
+                ]
             ],
             'file-collections' => [
                 'pro-rep-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],

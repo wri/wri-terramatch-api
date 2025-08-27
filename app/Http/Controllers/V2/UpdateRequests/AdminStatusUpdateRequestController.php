@@ -75,7 +75,7 @@ class AdminStatusUpdateRequestController extends Controller
         }
     }
 
-    private function applyUpdates(UpdateRequest $updateRequest, bool $isApproval = false)
+    private function applyUpdates(UpdateRequest $updateRequest, ?bool $isApproval = false)
     {
         /** @var EntityModel $entity */
         $entity = $updateRequest->updaterequestable;

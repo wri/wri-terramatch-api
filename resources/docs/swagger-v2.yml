@@ -23299,13 +23299,6 @@ definitions:
         type: string
       fin_start_month:
         type: integer
-      financial_collection:
-        type: array
-        items:
-          title: V2FinancialIndicatorsRead
-          type: array
-          items:
-            type: object
       funding_types:
         type: array
         items:

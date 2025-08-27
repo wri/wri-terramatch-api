@@ -70,7 +70,7 @@ class Demographic extends Model implements HandlesLinkedFieldSync
     /**
      * @throws \Exception
      */
-    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden, bool $isApproval): void
+    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden, ?bool $isApproval): void
     {
         $morph = $entity->$property();
         if (count($data) == 0) {
