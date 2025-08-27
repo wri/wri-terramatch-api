@@ -54,10 +54,13 @@ class ProcessPolygonIndicatorsJob implements ShouldQueue
                 'total_polygons' => $totalPolygons,
             ]);
 
-            foreach ($this->polygonUuids as $polygonUuid) {
-                try {
-                    $results = $indicatorService->updateIndicatorsForPolygon($polygonUuid);
+            $batchSize = 50;
+            $polygonBatches = array_chunk($this->polygonUuids, $batchSize);
 
+            foreach ($polygonBatches as $batchIndex => $polygonBatch) {
+                $batchResults = $indicatorService->updateIndicatorsForPolygonBatch($polygonBatch);
+                
+                foreach ($batchResults as $polygonUuid => $results) {
                     foreach ($results as $slug => $result) {
                         if ($result['status'] === 'success') {
                             $successfulIndicators++;
@@ -65,18 +68,20 @@ class ProcessPolygonIndicatorsJob implements ShouldQueue
                             $failedIndicators++;
                         }
                     }
+                }
 
-                    Log::debug('Processed polygon indicators', [
-                        'polygon_uuid' => $polygonUuid,
-                        'results' => $results,
-                    ]);
+                $processedSoFar = ($batchIndex + 1) * $batchSize;
+                $processedSoFar = min($processedSoFar, $totalPolygons);
+                
+                $delayedJob->update([
+                    'payload' => [
+                        'message' => "Processing polygon indicators: {$processedSoFar}/{$totalPolygons}",
+                        'progress' => round(($processedSoFar / $totalPolygons) * 100, 2),
+                    ],
+                ]);
 
-                } catch (Exception $e) {
-                    $failedIndicators++;
-                    Log::error('Failed to process indicators for polygon', [
-                        'polygon_uuid' => $polygonUuid,
-                        'error' => $e->getMessage(),
-                    ]);
+                if ($batchIndex < count($polygonBatches) - 1) {
+                    sleep(1);
                 }
             }
 
@@ -89,13 +94,6 @@ class ProcessPolygonIndicatorsJob implements ShouldQueue
                     'failed_indicators' => $failedIndicators,
                 ],
                 'status_code' => Response::HTTP_OK,
-            ]);
-
-            Log::info('Polygon indicators processing completed', [
-                'delayed_job_id' => $this->delayed_job_id,
-                'total_polygons' => $totalPolygons,
-                'successful_indicators' => $successfulIndicators,
-                'failed_indicators' => $failedIndicators,
             ]);
 
         } catch (Exception $e) {

@@ -14,25 +14,6 @@ use Illuminate\Support\Facades\Log;
 class IndicatorUpdateService
 {
     protected $slugMappings = [
-        'treeCoverLoss' => [
-            'sql' => 'SELECT umd_tree_cover_loss__year, SUM(area__ha) FROM results GROUP BY umd_tree_cover_loss__year',
-            'query_url' => '/dataset/umd_tree_cover_loss/latest/query',
-            'indicator' => 'umd_tree_cover_loss',
-            'model' => IndicatorTreeCoverLoss::class,
-            'table_name' => 'indicator_output_tree_cover_loss',
-        ],
-        'treeCoverLossFires' => [
-            'sql' => 'SELECT umd_tree_cover_loss_from_fires__year, SUM(area__ha) FROM results GROUP BY umd_tree_cover_loss_from_fires__year',
-            'query_url' => '/dataset/umd_tree_cover_loss_from_fires/latest/query',
-            'indicator' => 'umd_tree_cover_loss_from_fires',
-            'model' => IndicatorTreeCoverLoss::class,
-            'table_name' => 'indicator_output_tree_cover_loss',
-        ],
-        'restorationByEcoRegion' => [
-            'indicator' => 'wwf_terrestrial_ecoregions',
-            'model' => IndicatorHectares::class,
-            'table_name' => 'indicator_output_hectares',
-        ],
         'restorationByStrategy' => [
             'indicator' => 'restoration_practice',
             'model' => IndicatorHectares::class,
@@ -99,13 +80,6 @@ class IndicatorUpdateService
 
                     continue;
                 }
-
-                if (str_contains($slug, 'treeCoverLoss')) {
-                    $result = $this->processTreeCoverLossIndicator($slug, $polygonGeometry);
-                    $results[$slug] = $result;
-
-                    continue;
-                }
             } catch (\Exception $e) {
                 Log::error('Error updating indicator for polygon: ' . $polygonUuid . ' - ' . $e->getMessage());
                 $results[$slug] = [
@@ -116,6 +90,166 @@ class IndicatorUpdateService
         }
 
         return $results;
+    }
+
+    /**
+     * Update indicator values for a batch of polygons with optimized connection management
+     *
+     * @param array $polygonUuids Array of polygon UUIDs to process
+     * @return array Results of the batch update operation
+     */
+    public function updateIndicatorsForPolygonBatch(array $polygonUuids): array
+    {
+        $batchResults = [];
+        
+        try {
+            // Pre-load all geometries in a single query to reduce DB calls
+            $geometries = $this->preloadGeometries($polygonUuids);
+            
+            foreach ($polygonUuids as $polygonUuid) {
+                if (!isset($geometries[$polygonUuid])) {
+                    $batchResults[$polygonUuid] = [
+                        'error' => [
+                            'status' => 'error',
+                            'message' => 'Geometry not found for polygon: ' . $polygonUuid,
+                        ],
+                    ];
+                    continue;
+                }
+
+                $polygonGeometry = $geometries[$polygonUuid];
+                $results = [];
+
+                foreach ($this->slugMappings as $slug => $slugMapping) {
+                    $results[$slug] = [
+                        'status' => 'skipped',
+                        'message' => 'No processing needed',
+                    ];
+
+                    try {
+                        $existingRecord = $this->getExistingRecord($slug, $polygonGeometry['site_polygon_id']);
+                        if ($existingRecord) {
+                            $results[$slug] = [
+                                'status' => 'skipped',
+                                'message' => 'Record already exists for current year',
+                            ];
+                            continue;
+                        }
+
+                        $indicatorModel = $this->getOrCreateIndicatorRecord($slug, $polygonGeometry['site_polygon_id']);
+
+                        if (!$indicatorModel) {
+                            $results[$slug] = [
+                                'status' => 'error',
+                                'message' => 'Failed to create indicator record',
+                            ];
+                            continue;
+                        }
+
+                        if (str_contains($slug, 'restorationBy')) {
+                            DB::disconnect();
+                            
+                            try {
+                                $result = $this->processRestorationIndicatorOptimized($slug, $polygonUuid, $polygonGeometry['site_polygon_id']);
+                                $results[$slug] = $result;
+                            } finally {
+                                DB::reconnect();
+                            }
+                        }
+
+                    } catch (\Exception $e) {
+                        Log::error('Error updating indicator for polygon: ' . $polygonUuid . ' - ' . $e->getMessage());
+                        $results[$slug] = [
+                            'status' => 'error',
+                            'message' => $e->getMessage(),
+                        ];
+                    }
+                }
+
+                $batchResults[$polygonUuid] = $results;
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error in batch processing: ' . $e->getMessage());
+            
+            foreach ($polygonUuids as $polygonUuid) {
+                if (!isset($batchResults[$polygonUuid])) {
+                    $batchResults[$polygonUuid] = $this->updateIndicatorsForPolygon($polygonUuid);
+                }
+            }
+        }
+
+        return $batchResults;
+    }
+
+    protected function preloadGeometries(array $polygonUuids): array
+    {
+        $geometries = [];
+        
+        try {
+            $polygonData = DB::table('polygon_geometry as pg')
+                ->join('site_polygon as sp', 'pg.uuid', '=', 'sp.poly_id')
+                ->whereIn('pg.uuid', $polygonUuids)
+                ->select('pg.uuid', 'sp.uuid as site_polygon_id', 'pg.geom')
+                ->get();
+
+            foreach ($polygonData as $data) {
+                $geometries[$data->uuid] = [
+                    'site_polygon_id' => $data->site_polygon_id,
+                    'geo' => json_decode(DB::selectOne('SELECT ST_AsGeoJSON(?) as geojson', [$data->geom])->geojson, true),
+                ];
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error preloading geometries: ' . $e->getMessage());
+        }
+
+        return $geometries;
+    }
+
+    protected function processRestorationIndicatorOptimized($slug, $polygonUuid, $sitePolygonId)
+    {
+        try {
+            $geojson = GeometryHelper::getPolygonGeojson($polygonUuid);
+            
+            $indicatorResponse = App::make(PythonService::class)->IndicatorPolygon(
+                $geojson,
+                $this->slugMappings[$slug]['indicator'],
+                getenv('GFW_SECRET_KEY')
+            );
+
+            if (empty($indicatorResponse) || !isset($indicatorResponse['area'][$this->slugMappings[$slug]['indicator']])) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Invalid response from Python service',
+                ];
+            }
+
+            if ($slug == 'restorationByEcoRegion') {
+                $value = json_encode($indicatorResponse['area'][$this->slugMappings[$slug]['indicator']]);
+            } else {
+                $value = $this->formatKeysValues($indicatorResponse['area'][$this->slugMappings[$slug]['indicator']]);
+            }
+
+            $data = ['value' => $value];
+
+            $this->slugMappings[$slug]['model']::where('site_polygon_id', $sitePolygonId)
+                ->where('indicator_slug', $slug)
+                ->where('year_of_analysis', Carbon::now()->year)
+                ->update($data);
+
+            return [
+                'status' => 'success',
+                'message' => 'Restoration indicator updated successfully',
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('Error in processRestorationIndicatorOptimized: ' . $e->getMessage());
+            return [
+                'status' => 'error',
+                'message' => 'Failed to process restoration indicator: ' . $e->getMessage(),
+            ];
+        }
     }
 
     protected function getExistingRecord($slug, $sitePolygonId)
@@ -194,38 +328,7 @@ class IndicatorUpdateService
         ];
     }
 
-    /**
-     * Process tree cover loss indicator
-     */
-    protected function processTreeCoverLossIndicator($slug, $polygonGeometry)
-    {
-        $response = $this->sendApiRequestIndicator(
-            getenv('GFW_SECRET_KEY'),
-            $this->slugMappings[$slug]['query_url'],
-            $this->slugMappings[$slug]['sql'],
-            $polygonGeometry['geo']
-        );
 
-        if (! $response->successful()) {
-            return [
-                'status' => 'error',
-                'message' => 'API request failed with status: ' . $response->status(),
-            ];
-        }
-
-        $processedValue = $this->processTreeCoverLossValue($response->json()['data'], $this->slugMappings[$slug]['indicator']);
-        $data = $this->generateTreeCoverLossData($processedValue);
-
-        $this->slugMappings[$slug]['model']::where('site_polygon_id', $polygonGeometry['site_polygon_id'])
-            ->where('indicator_slug', $slug)
-            ->where('year_of_analysis', Carbon::now()->year)
-            ->update($data);
-
-        return [
-            'status' => 'success',
-            'message' => 'Tree cover loss indicator updated successfully',
-        ];
-    }
 
     /**
      * Get geometry data for a polygon
