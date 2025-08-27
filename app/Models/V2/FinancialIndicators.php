@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -66,7 +67,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
     /**
      * Sync financial indicators data with the entity
      */
-    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden): void
+    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden, bool $isApproval): void
     {
         if (empty($data)) {
             $entity->$property()->delete();
@@ -132,6 +133,64 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                 'currency' => $currency,
             ]);
         }
+
+        if (! empty($organisationId) && empty($financialReportId)) {
+            if ($startMonth !== null || $currency !== null) {
+                $organisation = Organisation::isUuid($organisationId)->first();
+                $organisation->update([
+                    'fin_start_month' => $startMonth,
+                    'currency' => $currency,
+                ]);
+            }
+        }
+
+        if ($isApproval) {
+            $organisation = Organisation::isUuid($organisationId)->first();
+            if ($organisation && $financialReport) {
+                if ($startMonth !== null || $currency !== null) {
+                    $organisation->update([
+                        'fin_start_month' => $startMonth,
+                        'currency' => $currency,
+                    ]);
+                }
+
+                foreach ($data as $entry) {
+                    $orgIndicator = FinancialIndicators::updateOrCreate(
+                        [
+                            'organisation_id' => $organisation->id,
+                            'year' => $entry['year'],
+                            'collection' => $entry['collection'],
+                            'financial_report_id' => null,
+                        ],
+                        [
+                            'amount' => $entry['amount'],
+                            'description' => $entry['description'],
+                            'exchange_rate' => $entry['exchange_rate'] ?? null,
+                        ]
+                    );
+
+                    if (isset($entry['uuid'])) {
+                        $reportIndicator = $entity->$property()->where('uuid', $entry['uuid'])->first();
+                        if ($reportIndicator) {
+                            $mediaItems = $reportIndicator->getMedia('documentation');
+                            foreach ($mediaItems as $media) {
+                                $exists = $orgIndicator->getMedia('documentation')
+                                    ->where('file_name', $media->file_name)
+                                    ->where('size', $media->size)
+                                    ->count() > 0;
+
+                                if (! $exists) {
+                                    $newMedia = $media->replicate();
+                                    $newMedia->model_id = $orgIndicator->id;
+                                    $newMedia->uuid = (string) Str::uuid();
+                                    $newMedia->save();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public function organisation(): BelongsTo
@@ -146,12 +205,12 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
 
     public function getStartMonthAttribute()
     {
-        return $this->financialReport?->fin_start_month;
+        return $this->financialReport?->fin_start_month ?? $this->organisation?->fin_start_month;
     }
 
     public function getCurrencyAttribute()
     {
-        return $this->financialReport?->currency;
+        return $this->financialReport?->currency ?? $this->organisation?->currency;
     }
 
     public function getRouteKeyName()
