@@ -79,8 +79,9 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
         $currency = $firstRecord['currency'] ?? null;
         $organisationId = $firstRecord['organisation_id'] ?? null;
         $financialReport = null;
-        if ($firstRecord['financial_report_id']) {
-            $financialReport =  FinancialReport::isUuid($firstRecord['financial_report_id'])->first();
+        $financialReportId = $firstRecord['financial_report_id'] ?? null;
+        if ($financialReportId) {
+            $financialReport =  FinancialReport::isUuid($financialReportId)->first();
         }
 
 
