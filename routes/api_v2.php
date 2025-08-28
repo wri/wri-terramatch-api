@@ -59,7 +59,6 @@ use App\Http\Controllers\V2\Forms\DeleteFormQuestionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSectionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
-use App\Http\Controllers\V2\Forms\FormOptionsLabelController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
 use App\Http\Controllers\V2\Forms\IndexFormController;
 use App\Http\Controllers\V2\Forms\LinkedFieldListingsController;
@@ -175,7 +174,6 @@ use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestControlle
 use App\Http\Controllers\V2\UpdateRequests\AdminStatusUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\AdminViewUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\EntityUpdateRequestsController;
-use App\Http\Controllers\V2\User\AdminExportUsersController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
 use App\Http\Controllers\V2\User\AdminUserController;
 use App\Http\Controllers\V2\User\AdminUserCreationController;
@@ -318,7 +316,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('users')->group(function () {
         Route::get('multi', AdminUserMultiController::class);
-        Route::get('export', AdminExportUsersController::class);
         Route::put('reset-password/{user}', AdminResetPasswordController::class);
         Route::patch('verify/{user}', AdminVerifyUserController::class);
         Route::get('users-organisation-list/{organisation}', AdminUsersOrganizationController::class);
@@ -396,7 +393,6 @@ Route::prefix('forms')->group(function () {
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
     Route::get('/linked-field-listing', LinkedFieldListingsController::class);
-    Route::get('/option-labels', FormOptionsLabelController::class)->middleware('i18n');
 
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 

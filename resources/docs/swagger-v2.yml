@@ -34845,21 +34845,6 @@ paths:
                 type: string
               date_added:
                 type: string
-  /v2/admin/users/export:
-    get:
-      summary: Export CSV document of all users
-      operationId: v2-admin-users-export
-      tags:
-        - V2 Admin
-        - V2 Users
-        - Export
-      produces:
-        - text/plain
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: file
   '/v2/admin/users/reset-password/{UUID}':
     put:
       summary: Update a specific users password
@@ -45822,42 +45807,6 @@ paths:
             properties:
               token:
                 type: string
-  /v2/forms/option-labels:
-    get:
-      summary: Get a the labels for options
-      operationId: get-v2-form-option-labels-listing
-      parameters:
-        - name: keys
-          type: string
-          in: query
-          description: the option keys you want to retrieve
-        - name: lang
-          type: string
-          in: query
-          description: the language to use for the label translation
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2GenericList
-            type: object
-            properties:
-              uuid:
-                type: string
-              name:
-                type: string
-              input_type:
-                type: string
-              model_key:
-                type: string
-              option_list_key:
-                type: string
-              options:
-                type: array
-                items:
-                  type: string
-      tags:
-        - Forms
   /auth/change:
     patch:
       operationId: patch-auth-change

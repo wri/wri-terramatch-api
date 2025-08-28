@@ -55,6 +55,16 @@ class IndicatorUpdateService
     {
         $results = [];
 
+        $polygonGeometry = $this->getGeometry($polygonUuid);
+        if (! $polygonGeometry) {
+            Log::warning("Could not retrieve geometry for polygon UUID: $polygonUuid");
+
+            return [
+                'error' => 'Invalid polygon geometry',
+                'status' => 'error',
+            ];
+        }
+
         foreach ($this->slugMappings as $slug => $slugMapping) {
             $results[$slug] = [
                 'status' => 'skipped',
@@ -62,7 +72,16 @@ class IndicatorUpdateService
             ];
 
             try {
-                $polygonGeometry = $this->getGeometry($polygonUuid);
+                $existingRecord = $this->getExistingRecord($slug, $polygonGeometry['site_polygon_id']);
+                if ($existingRecord) {
+                    $results[$slug] = [
+                        'status' => 'skipped',
+                        'message' => 'Record already exists for current year',
+                    ];
+
+                    continue;
+                }
+
                 $indicatorModel = $this->getOrCreateIndicatorRecord($slug, $polygonGeometry['site_polygon_id']);
 
                 if (! $indicatorModel) {
@@ -97,6 +116,17 @@ class IndicatorUpdateService
         }
 
         return $results;
+    }
+
+    protected function getExistingRecord($slug, $sitePolygonId)
+    {
+        $modelClass = $this->slugMappings[$slug]['model'];
+        $yearOfAnalysis = Carbon::now()->year;
+
+        return $modelClass::where('site_polygon_id', $sitePolygonId)
+            ->where('indicator_slug', $slug)
+            ->where('year_of_analysis', $yearOfAnalysis)
+            ->first();
     }
 
     /**
