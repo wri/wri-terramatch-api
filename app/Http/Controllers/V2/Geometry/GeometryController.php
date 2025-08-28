@@ -397,22 +397,29 @@ class GeometryController extends Controller
         return $errors;
     }
 
-    protected function queueIndicatorAnalysis(array $polygonUuids): void
+    protected function queueIndicatorAnalysis(array $polygonUuids, array $targetSlugs = []): void
     {
         try {
+            if (empty($targetSlugs)) {
+                $targetSlugs = ['restorationByStrategy', 'restorationByLandUse'];
+            }
+
             $delayedJob = DelayedJob::create();
 
             $job = new ProcessPolygonIndicatorsJob(
                 $delayedJob->id,
                 $polygonUuids,
-                ['include_details' => false]
+                ['include_details' => false],
+                $targetSlugs
             );
 
             dispatch($job);
+
         } catch (\Exception $e) {
             Log::error('Failed to queue indicator analysis', [
                 'error' => $e->getMessage(),
                 'polygon_count' => count($polygonUuids),
+                'target_slugs' => $targetSlugs ?? [],
             ]);
         }
     }

@@ -28,11 +28,14 @@ class ProcessPolygonIndicatorsJob implements ShouldQueue
 
     protected $options;
 
-    public function __construct(string $delayed_job_id, array $polygonUuids, array $options = [])
+    protected $targetSlugs;
+
+    public function __construct(string $delayed_job_id, array $polygonUuids, array $options = [], array $targetSlugs = [])
     {
         $this->delayed_job_id = $delayed_job_id;
         $this->polygonUuids = $polygonUuids;
         $this->options = $options;
+        $this->targetSlugs = $targetSlugs;
     }
 
     public function handle(IndicatorUpdateService $indicatorService)
@@ -56,7 +59,7 @@ class ProcessPolygonIndicatorsJob implements ShouldQueue
 
             foreach ($this->polygonUuids as $polygonUuid) {
                 try {
-                    $results = $indicatorService->updateIndicatorsForPolygon($polygonUuid);
+                    $results = $indicatorService->updateIndicatorsForPolygon($polygonUuid, $this->targetSlugs);
 
                     foreach ($results as $slug => $result) {
                         if ($result['status'] === 'success') {

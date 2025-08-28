@@ -128,6 +128,11 @@ class RunIndicatorAnalysisService
                         'error' => $e->getMessage(),
                         'trace' => $e->getTraceAsString(),
                     ]);
+                } finally {
+                    // Clean up database connections after each polygon to prevent connection pooling issues
+                    if (($index + 1) % 50 === 0) {
+                        DB::disconnect();
+                    }
                 }
             }
 
