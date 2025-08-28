@@ -31,7 +31,7 @@ class AdminStatusUpdateRequestController extends Controller
 
         switch ($status) {
             case 'approve':
-                $this->applyUpdates($updateRequest);
+                $this->applyUpdates($updateRequest, true);
                 $updateRequest->approve(data_get($data, 'feedback'));
                 $this->saveAuditStatusAdminApprove($data, $entity);
 
@@ -75,11 +75,11 @@ class AdminStatusUpdateRequestController extends Controller
         }
     }
 
-    private function applyUpdates(UpdateRequest $updateRequest)
+    private function applyUpdates(UpdateRequest $updateRequest, ?bool $isApproval = false)
     {
         /** @var EntityModel $entity */
         $entity = $updateRequest->updaterequestable;
-        $entity->updateFromForm($updateRequest->content);
+        $entity->updateFromForm($updateRequest->content, $isApproval);
     }
 
     private function handleAction(StatusChangeRequest $request, UpdateRequest $updateRequest)

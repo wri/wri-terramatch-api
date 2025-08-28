@@ -29,7 +29,7 @@ class DemographicTest extends TestCase
                 ],
             ],
         ];
-        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false);
+        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false, false);
 
         /** @var Demographic $workday */
         $workday = $siteReport->workdaysVolunteerPlanting()->first();
@@ -45,7 +45,7 @@ class DemographicTest extends TestCase
             ['type' => 'gender', 'subtype' => 'female', 'amount' => 20],
             ['type' => 'ethnicity', 'subtype' => 'indigenous', 'name' => 'Ohlone', 'amount' => 40],
         ];
-        Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false);
+        Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false, false);
         $workday->refresh();
         $this->assertEquals(4, $workday->entries()->count());
         $this->assertEquals(40, $workday->entries()->isAge('youth')->first()->amount);
@@ -55,7 +55,7 @@ class DemographicTest extends TestCase
 
         // Test remove demographics
         $data[0]['demographics'] = [];
-        Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false);
+        Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false, false);
         $workday->refresh();
         $this->assertEquals(0, $workday->entries()->count());
 
@@ -75,8 +75,8 @@ class DemographicTest extends TestCase
             ],
         ];
         $siteReport = SiteReport::factory()->create();
-        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false);
-        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false);
+        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false, false);
+        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false, false);
 
         /** @var Demographic $workday */
         $workday = $siteReport->workdaysVolunteerPlanting()->first();

@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 interface HandlesLinkedFieldSync
 {
-    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden): void;
+    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden, ?bool $isApproval): void;
 }

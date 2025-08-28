@@ -17,7 +17,7 @@ class UpdateFormSubmissionController extends Controller
 
         $data = $updateFormSubmissionRequest->validated();
 
-        $data['answers'] = $formSubmission->updateAllAnswers($updateFormSubmissionRequest->get('answers'));
+        $data['answers'] = $formSubmission->updateAllAnswers($updateFormSubmissionRequest->get('answers'), false);
         $data['user_id'] = Auth::user()->uuid;
 
         $formSubmission->update($data);

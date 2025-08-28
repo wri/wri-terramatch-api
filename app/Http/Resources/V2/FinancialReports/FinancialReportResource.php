@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\V2\FinancialReports;
 
-use App\Http\Resources\V2\FinancialIndicatorsResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\Organisation\OrganisationResource;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -24,7 +23,6 @@ class FinancialReportResource extends JsonResource
             'fin_start_month' => $this->fin_start_month,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'financial_collection' => FinancialIndicatorsResource::collection($this->financialCollection),
             'organisation' => new OrganisationResource($this->organisation),
             'funding_types' => FundingTypeResource::collection($this->fundingTypes),
         ];

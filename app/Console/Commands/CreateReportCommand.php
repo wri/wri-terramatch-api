@@ -101,6 +101,7 @@ class CreateReportCommand extends Command
                 'year_of_report' => $yearOfReport,
                 'currency' => $entity?->currency,
                 'fin_start_month' => $entity?->fin_start_month,
+                'update_request_status' => 'no-update',
             ]);
             $this->info("Financial report created for organisation $uuid");
 

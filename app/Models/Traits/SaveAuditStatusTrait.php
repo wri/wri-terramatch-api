@@ -3,6 +3,7 @@
 namespace App\Models\Traits;
 
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
@@ -144,6 +145,8 @@ trait SaveAuditStatusTrait
                 return 'project-report';
             case NurseryReport::class:
                 return 'nursery-report';
+            case FinancialReport::class:
+                return 'financial-report';
             default:
                 return 'entity';
         }

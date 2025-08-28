@@ -15,11 +15,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
-class FinancialReport extends Model implements MediaModel, ReportModel
+class FinancialReport extends Model implements MediaModel, ReportModel, AuditableContract
 {
     use HasFactory;
     use HasUuid;
@@ -31,6 +33,7 @@ class FinancialReport extends Model implements MediaModel, ReportModel
     use UsesLinkedFields;
     use HasEntityResources;
     use BelongsToThroughTrait;
+    use Auditable;
 
     protected $fillable = [
         'status',
@@ -53,6 +56,12 @@ class FinancialReport extends Model implements MediaModel, ReportModel
         'year_of_report' => 'integer',
         'nothing_to_report' => 'boolean',
         'answers' => 'array',
+    ];
+
+    protected $auditInclude = [
+        'status',
+        'feedback',
+        'feedback_fields',
     ];
 
     public $fileConfiguration = [];
@@ -137,46 +146,46 @@ class FinancialReport extends Model implements MediaModel, ReportModel
         return $this->organisation?->fundingTypes;
     }
 
-    public function submitForApproval(): void
+    public function updateFinancialCollectionToOrganisation(): void
     {
-        if (empty($this->submitted_at)) {
-            $this->completion = 100;
-            $this->submitted_at = now();
-        }
-        $this->status = self::STATUS_SUBMITTED;
-        $this->save();
+        $financialCollection = $this->financialCollection;
+        $organisation = $this->organisation();
 
-        if ($this->organisation) {
-            $this->organisation->fin_start_month = $this->fin_start_month;
-            $this->organisation->currency = $this->currency;
-            $this->organisation->save();
+        if ($organisation) {
+            $organisation->update([
+                'fin_start_month' => $this->fin_start_month,
+                'currency' => $this->currency,
+            ]);
 
-            $indicators = FinancialIndicators::where('financial_report_id', $this->id)->get();
-            foreach ($indicators as $indicator) {
+            foreach ($financialCollection as $entry) {
                 $orgIndicator = FinancialIndicators::updateOrCreate(
                     [
-                        'organisation_id' => $this->organisation->id,
-                        'year' => $indicator->year,
-                        'collection' => $indicator->collection,
+                        'organisation_id' => $this->organisation_id,
+                        'year' => $entry->year,
+                        'collection' => $entry->collection,
                         'financial_report_id' => null,
                     ],
                     [
-                        'amount' => $indicator->amount,
-                        'description' => $indicator->description,
+                        'amount' => $entry->amount,
+                        'description' => $entry->description,
+                        'exchange_rate' => $entry->exchange_rate ?? null,
                     ]
                 );
-                $mediaItems = $indicator->getMedia('documentation');
-                foreach ($mediaItems as $media) {
-                    $exists = $orgIndicator->getMedia('documentation')
-                        ->where('file_name', $media->file_name)
-                        ->where('size', $media->size)
-                        ->count() > 0;
 
-                    if (! $exists) {
-                        $newMedia = $media->replicate();
-                        $newMedia->model_id = $orgIndicator->id;
-                        $newMedia->uuid = (string) Str::uuid();
-                        $newMedia->save();
+                if (! empty($entry->uuid)) {
+                    $mediaItems = $entry->getMedia('documentation');
+                    foreach ($mediaItems as $media) {
+                        $exists = $orgIndicator->getMedia('documentation')
+                            ->where('file_name', $media->file_name)
+                            ->where('size', $media->size)
+                            ->count() > 0;
+
+                        if (! $exists) {
+                            $newMedia = $media->replicate();
+                            $newMedia->model_id = $orgIndicator->id;
+                            $newMedia->uuid = (string) Str::uuid();
+                            $newMedia->save();
+                        }
                     }
                 }
             }

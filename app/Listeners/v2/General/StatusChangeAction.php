@@ -4,6 +4,7 @@ namespace App\Listeners\v2\General;
 
 use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Models\V2\Action;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Projects\Project;
 
 //use App\Http\Resources\V2\User\ActionResource;
@@ -40,7 +41,7 @@ class StatusChangeAction
                 'sub_title' => $event->subTitle,
                 'text' => $event->text,
                 'organisation_id' => $this->getOrganisationId($event->entity),
-                'project_id' => $this->getProjectId($event->entity),
+                'project_id' => get_class($event->entity) == FinancialReport::class ? null : $this->getProjectId($event->entity),
             ]);
         }
     }

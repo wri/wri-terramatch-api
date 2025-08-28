@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Forms\UpdateFormSubmissionRequest;
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\EntityModel;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\ReportModel;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\StateMachines\UpdateRequestStatusStateMachine;
@@ -30,7 +31,7 @@ class UpdateEntityWithFormController extends Controller
         $updateRequest = $entity->updateRequests()->isUnapproved()->first();
         $isAdmin = Auth::user()->can("framework-$entity->framework_key");
         if ($entity->isEditable() || ($isAdmin && empty($updateRequest))) {
-            $entity->updateFromForm($answers);
+            $entity->updateFromForm($answers, false);
             if ($entity instanceof ReportModel) {
                 $entity->updateInProgress($isAdmin);
             }
@@ -52,7 +53,7 @@ class UpdateEntityWithFormController extends Controller
         } else {
             UpdateRequest::create([
                 'organisation_id' => $entity->organisation ? $entity->organisation->id : $entity->project->organisation_id,
-                'project_id' => get_class($entity) instanceof App\Models\V2\FinancialReport ? null : ($entity->project ? $entity->project->id : $entity->id),
+                'project_id' => get_class($entity) == FinancialReport::class ? null : ($entity->project ? $entity->project->id : $entity->id),
                 'created_by_id' => Auth::user()->id,
                 'framework_key' => $entity->framework_key,
                 'updaterequestable_type' => get_class($entity),

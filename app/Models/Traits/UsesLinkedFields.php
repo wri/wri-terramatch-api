@@ -34,7 +34,7 @@ trait UsesLinkedFields
         return config('wri.linked-fields.models.' . $this->shortName);
     }
 
-    public function updateAllAnswers(array $input): array
+    public function updateAllAnswers(array $input, ?bool $isApproval = false): array
     {
         $localAnswers = [];
         foreach ($this->getform()->sections as $section) {
@@ -48,7 +48,7 @@ trait UsesLinkedFields
                     if (! empty($linkedFieldInfo)) {
                         $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
                             data_get($input, $question->parent_id) === false;
-                        $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid), $hidden);
+                        $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid), $hidden, $isApproval);
                     }
                 }
                 $localAnswers[$question->uuid] = data_get($input, $question->uuid);
@@ -58,7 +58,7 @@ trait UsesLinkedFields
         return $localAnswers;
     }
 
-    public function updateFromForm(array $formData): void
+    public function updateFromForm(array $formData, ?bool $isApproval = false): void
     {
         $form = $this->getForm();
         $formConfig = $this->getFormConfig();
@@ -95,7 +95,7 @@ trait UsesLinkedFields
                             $inputType = data_get($relationsConfig, "$question->linked_field_key.input_type");
                             $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
                                 data_get($formData, $question->parent_id) === false;
-                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)), $hidden);
+                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)), $hidden, null, $isApproval);
                         }
                     }
 
@@ -289,7 +289,7 @@ trait UsesLinkedFields
         return is_array($decoded) ? $decoded : null;
     }
 
-    private function updateLinkedFieldValue(array $linkedFieldInfo, $answer, bool $hidden): void
+    private function updateLinkedFieldValue(array $linkedFieldInfo, $answer, bool $hidden, ?bool $isApproval = false): void
     {
         $class = app($linkedFieldInfo['model']);
         $model = $class::isUuid($linkedFieldInfo['uuid'])->first();
@@ -304,11 +304,11 @@ trait UsesLinkedFields
             $model->save();
         } elseif ($linkedFieldInfo['link-type'] == 'relations') {
             $inputType = data_get($linkedFieldInfo, 'input_type');
-            $this->syncRelation($property, $inputType, collect($answer), $hidden, $model);
+            $this->syncRelation($property, $inputType, collect($answer), $hidden, $model, $isApproval);
         }
     }
 
-    private function syncRelation(string $property, string $inputType, $data, bool $hidden, $entity = null): void
+    private function syncRelation(string $property, string $inputType, $data, bool $hidden, $entity = null, ?bool $isApproval = false): void
     {
         $entity ??= $this;
 
@@ -328,6 +328,7 @@ trait UsesLinkedFields
                 'stratas',
                 'invasive',
                 'seedings',
+                'financialIndicators',
             ])
         ) {
             return;
@@ -335,7 +336,7 @@ trait UsesLinkedFields
 
         $class = get_class($entity->$property()->make());
         if (is_a($class, HandlesLinkedFieldSync::class, true)) {
-            $class::syncRelation($entity, $property, $inputType, $data, $hidden);
+            $class::syncRelation($entity, $property, $inputType, $data, $hidden, $isApproval);
 
             return;
         }

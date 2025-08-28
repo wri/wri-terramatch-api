@@ -21,6 +21,8 @@ class FinancialIndicatorsResource extends JsonResource
             'year' => $this->year,
             'description' => $this->description,
             'exchange_rate' => $this->exchange_rate,
+            'start_month' => $this->start_month,
+            'currency' => $this->currency,
         ];
 
         return $this->appendFilesToResource($data);

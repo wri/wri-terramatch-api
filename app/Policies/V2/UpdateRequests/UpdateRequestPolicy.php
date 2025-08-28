@@ -2,10 +2,12 @@
 
 namespace App\Policies\V2\UpdateRequests;
 
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use App\Models\V2\User;
 use App\Policies\Policy;
+use Illuminate\Support\Facades\Log;
 
 class UpdateRequestPolicy extends Policy
 {
@@ -48,8 +50,15 @@ class UpdateRequestPolicy extends Policy
 
     public function approve(?User $user, ?UpdateRequest $updateRequest = null): bool
     {
+        Log::info($updateRequest->updaterequestable instanceof FinancialReport);
+        Log::info(is_null($updateRequest->framework_key));
+        Log::info($updateRequest->updaterequestable instanceof FinancialReport && is_null($updateRequest->framework_key));
         if ($user->hasRole('project-manager')) {
-            return $this->projectManagerCan($user, $updateRequest);
+            return $this->projectManagerCan($user, $updateRequest) || $this->isFinancialReport($updateRequest);
+        }
+
+        if ($this->isFinancialReport($updateRequest)) {
+            return true;
         }
 
         return $user->can('framework-' .  $updateRequest->framework_key);
@@ -67,7 +76,11 @@ class UpdateRequestPolicy extends Policy
     public function moreinfo(?User $user, ?UpdateRequest $updateRequest = null): bool
     {
         if ($user->hasRole('project-manager')) {
-            return $this->projectManagerCan($user, $updateRequest);
+            return $this->projectManagerCan($user, $updateRequest) || $this->isFinancialReport($updateRequest);
+        }
+
+        if ($this->isFinancialReport($updateRequest)) {
+            return true;
         }
 
         return $user->can('framework-' .  $updateRequest->framework_key);
@@ -83,5 +96,10 @@ class UpdateRequestPolicy extends Policy
     protected function isTheirs(?User $user, ?Project $project = null): bool
     {
         return $user->organisation_id == $project->organisation_id || ($user->projects && $user->projects->contains($project->id));
+    }
+
+    protected function isFinancialReport(?UpdateRequest $updateRequest): bool
+    {
+        return $updateRequest->updaterequestable instanceof FinancialReport && is_null($updateRequest->framework_key);
     }
 }
