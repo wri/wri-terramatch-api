@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -143,5 +144,51 @@ class FinancialReport extends Model implements MediaModel, ReportModel, Auditabl
     public function getFundingTypesAttribute()
     {
         return $this->organisation?->fundingTypes;
+    }
+
+    public function updateFinancialCollectionToOrganisation(): void
+    {
+        $financialCollection = $this->financialCollection;
+        $organisation = $this->organisation();
+
+        if ($organisation) {
+            $organisation->update([
+                'fin_start_month' => $this->fin_start_month,
+                'currency' => $this->currency,
+            ]);
+
+            foreach ($financialCollection as $entry) {
+                $orgIndicator = FinancialIndicators::updateOrCreate(
+                    [
+                        'organisation_id' => $this->organisation_id,
+                        'year' => $entry->year,
+                        'collection' => $entry->collection,
+                        'financial_report_id' => null,
+                    ],
+                    [
+                        'amount' => $entry->amount,
+                        'description' => $entry->description,
+                        'exchange_rate' => $entry->exchange_rate ?? null,
+                    ]
+                );
+
+                if (! empty($entry->uuid)) {
+                    $mediaItems = $entry->getMedia('documentation');
+                    foreach ($mediaItems as $media) {
+                        $exists = $orgIndicator->getMedia('documentation')
+                            ->where('file_name', $media->file_name)
+                            ->where('size', $media->size)
+                            ->count() > 0;
+
+                        if (! $exists) {
+                            $newMedia = $media->replicate();
+                            $newMedia->model_id = $orgIndicator->id;
+                            $newMedia->uuid = (string) Str::uuid();
+                            $newMedia->save();
+                        }
+                    }
+                }
+            }
+        }
     }
 }
