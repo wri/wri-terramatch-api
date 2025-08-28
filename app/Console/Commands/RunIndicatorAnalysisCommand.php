@@ -50,9 +50,8 @@ class RunIndicatorAnalysisCommand extends Command
         $updateExisting = $this->option('update-existing');
 
         if (empty($slugs)) {
-            $this->error('No slugs provided. Please use --slugs=slug1 --slugs=slug2 ...');
-
-            return 1;
+            $slugs = ['restorationByStrategy', 'restorationByLandUse'];
+            $this->info('No slugs provided. Using default slugs for restoration analysis: ' . implode(', ', $slugs));
         }
 
         // Get total count for progress tracking

@@ -49,9 +49,10 @@ class IndicatorUpdateService
      * Update indicator values for a specific polygon
      *
      * @param string $polygonUuid The UUID of the polygon
+     * @param array $targetSlugs Optional array of specific slugs to process. If empty, processes all slugs.
      * @return array Results of the update operation
      */
-    public function updateIndicatorsForPolygon(string $polygonUuid)
+    public function updateIndicatorsForPolygon(string $polygonUuid, array $targetSlugs = [])
     {
         $results = [];
 
@@ -65,7 +66,9 @@ class IndicatorUpdateService
             ];
         }
 
-        foreach ($this->slugMappings as $slug => $slugMapping) {
+        $slugsToProcess = empty($targetSlugs) ? $this->slugMappings : array_intersect_key($this->slugMappings, array_flip($targetSlugs));
+
+        foreach ($slugsToProcess as $slug => $slugMapping) {
             $results[$slug] = [
                 'status' => 'skipped',
                 'message' => 'No processing needed',
@@ -114,6 +117,8 @@ class IndicatorUpdateService
                 ];
             }
         }
+
+        DB::disconnect();
 
         return $results;
     }

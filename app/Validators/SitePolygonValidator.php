@@ -84,4 +84,9 @@ class SitePolygonValidator extends Validator
         'features.*.properties.distr' => 'string|not_in:null,NULL|filled',
         'features.*.properties.num_trees' => 'integer',
     ];
+
+    public const DUPLICATE_GEOMETRY = [
+        'features' => 'required|array',
+        'features.*' => 'duplicate_geometry',
+    ];
 }
