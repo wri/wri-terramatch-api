@@ -61,7 +61,6 @@ use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
 use App\Http\Controllers\V2\Forms\IndexFormController;
-use App\Http\Controllers\V2\Forms\LinkedFieldListingsController;
 use App\Http\Controllers\V2\Forms\PublishFormController;
 use App\Http\Controllers\V2\Forms\StoreFormController;
 use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
@@ -392,7 +391,6 @@ Route::prefix('forms')->group(function () {
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
-    Route::get('/linked-field-listing', LinkedFieldListingsController::class);
 
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
