@@ -14,7 +14,7 @@ class StoreImpactStoryRequest extends FormRequest
         return [
             'title' => 'required|string|max:71',
             'status' => 'required|string',
-            'organization_id' => 'exists:organisations,id',
+            'organization_id' => 'exists:organisations,uuid',
             'date' => 'date',
             'category' => 'array',
             'thumbnail' => 'string',
