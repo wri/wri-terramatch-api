@@ -28281,40 +28281,6 @@ paths:
                 type: string
               options_other:
                 type: boolean
-  /v2/forms/linked-field-listing:
-    get:
-      summary: Get a list of available linked fields
-      operationId: get-v2-form-linked-field-listing
-      parameters:
-        - name: form_types
-          type: array
-          items:
-            type: string
-          in: query
-          description: array of form types
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2GenericList
-            type: object
-            properties:
-              uuid:
-                type: string
-              name:
-                type: string
-              input_type:
-                type: string
-              model_key:
-                type: string
-              option_list_key:
-                type: string
-              options:
-                type: array
-                items:
-                  type: string
-      tags:
-        - Forms
   /v2/admin/organisations:
     get:
       summary: Get a collection of organisations
