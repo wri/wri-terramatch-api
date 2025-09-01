@@ -702,9 +702,9 @@ class RunMigrateFoncetProject extends Command
 
         $foncetProjectUUid = '3ca98137-ad7a-4849-bdf9-f1e6ccdfb40f';
 
-        $project = Project::where('uuid', $foncetProjectUUid)->first();
-        if (! $project) {
-            $this->error('Project not found.');
+        $foncetProject = Project::where('uuid', $foncetProjectUUid)->first();
+        if (! $foncetProject) {
+            $this->error('FONCET Project not found.');
 
             return Command::FAILURE;
         }
@@ -717,10 +717,13 @@ class RunMigrateFoncetProject extends Command
         ];
 
 
+        $lastPpcExternalId = $this->getLastPpcExternalId() ?? 0;
 
         foreach ($newProjects as $newProject) {
-            $project = Project::firstOrCreate(['name' => $newProject['name']], ['uuid' => Str::uuid()]);
+            $project = Project::firstOrCreate(array_merge($foncetProject->toArray(), ['uuid' => Str::uuid()], ['ppc_external_id' => ++$lastPpcExternalId], ['name' => $newProject['name']]));
             $this->info("Project '{$project->name}' ensured with UUID: {$project->uuid}");
+
+            
             // $this->moveSitesToProject($project, $sitesAssociation[$newProject['name']]);
             // $this->moveTasks($foncetProjectUUid, $project);
         }
@@ -757,5 +760,20 @@ class RunMigrateFoncetProject extends Command
             }
         }
         return true;
+    }
+
+    /**
+     * Get the last value for ppc_external_id from the projects table.
+     *
+     * @return int|null
+     */
+    private function getLastPpcExternalId(): ?int
+    {
+        $lastPpcExternalId = \DB::table('v2_projects')
+            ->whereNotNull('ppc_external_id')
+            ->orderBy('ppc_external_id', 'desc')
+            ->value('ppc_external_id');
+
+        return $lastPpcExternalId;
     }
 }
