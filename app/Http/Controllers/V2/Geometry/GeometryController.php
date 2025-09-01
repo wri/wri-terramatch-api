@@ -83,10 +83,20 @@ class GeometryController extends Controller
 
                 $duplicateCheck = DuplicateGeometry::checkNewFeaturesDuplicates($typeGeometries['features'], $siteId);
                 $filteredFeatures = [];
-                $duplicateErrors = [];
+                $duplicateErrorsMap = [];
+
+                $duplicateIndexToUuid = [];
+                foreach ($duplicateCheck['duplicates'] as $pair) {
+                    $duplicateIndexToUuid[(int) $pair['index']] = $pair['existing_uuid'];
+                }
+
                 foreach ($typeGeometries['features'] as $index => $feature) {
-                    if (in_array($index, $duplicateCheck['duplicates'])) {
-                        $duplicateErrors[] = [
+                    if (isset($duplicateIndexToUuid[$index])) {
+                        $existingUuid = $duplicateIndexToUuid[$index];
+                        if (! isset($duplicateErrorsMap[$existingUuid])) {
+                            $duplicateErrorsMap[$existingUuid] = [];
+                        }
+                        $duplicateErrorsMap[$existingUuid][] = [
                             'index' => $index,
                             'key' => 'DUPLICATE_GEOMETRY',
                             'message' => 'The geometry already exists in the project',
@@ -110,11 +120,13 @@ class GeometryController extends Controller
                     $polygonUuids = [];
                 }
                 $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
+                $errorsForResponse = empty($duplicateErrorsMap) ? new stdClass() : $duplicateErrorsMap;
+
                 $results[] = [
                     'site_id' => $siteId,
                     'geometry_type' => $type,
                     'polygon_uuids' => $polygonUuids,
-                    'errors' => empty($duplicateErrors) ? new stdClass() : $duplicateErrors,
+                    'errors' => $errorsForResponse,
                 ];
             }
         }
