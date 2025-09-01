@@ -31,7 +31,12 @@ class DuplicateGeometryValidator extends Extension
         if (preg_match('/features\.(\d+)/', $attribute, $matches)) {
             $currentIndex = (int)$matches[1];
 
-            return ! in_array($currentIndex, $result['duplicates']);
+            foreach ($result['duplicates'] as $pair) {
+                if (isset($pair['index']) && (int)$pair['index'] === $currentIndex) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         return $result['valid'];
