@@ -36,6 +36,7 @@ class DuplicateGeometryValidator extends Extension
                     return false;
                 }
             }
+
             return true;
         }
 
