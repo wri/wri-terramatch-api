@@ -27,7 +27,7 @@ class RunMigrateFoncetProject extends Command
     protected $description = 'Command description';
 
     private $rebivtaSites = [
-        'b06b6beb-710e-4be8-8959-be91c4a754bb',
+'b06b6beb-710e-4be8-8959-be91c4a754bb',
 '712825ee-86ab-4a4a-9e45-c06e12aebbc1',
 '31ddd4b6-be7a-4691-abc7-ee88f9ddb88e',
 'b7b1017a-534b-4aab-81ef-f144d5e82c72',
@@ -709,11 +709,13 @@ class RunMigrateFoncetProject extends Command
             return Command::FAILURE;
         }
 
-        $newProjects = [ ['name' => 'REBIVTA'], ['name' => 'REBITRI'], ['name' => 'REBISO'] ];
+        $newProjects = [ ['name' => 'REBIVTA'], ['name' => 'REBITRI'], ['name' => 'REBISO'], ['name' => 'REBISE'], ['name' => 'APRN FRAILESCANA']];
         $sitesAssociation = [
             'REBIVTA' => $this->rebivtaSites,
             'REBITRI' => $this->rebitriSites,
             'REBISO' => $this->rebisoSites,
+            'REBISE' => $this->rebiseSites,
+            'APRN FRAILESCANA' => $this->AprnSites,
         ];
 
 
@@ -723,42 +725,45 @@ class RunMigrateFoncetProject extends Command
             $project = Project::firstOrCreate(array_merge($foncetProject->toArray(), ['uuid' => Str::uuid()], ['ppc_external_id' => ++$lastPpcExternalId], ['name' => $newProject['name']]));
             $this->info("Project '{$project->name}' ensured with UUID: {$project->uuid}");
 
-            
-            // $this->moveSitesToProject($project, $sitesAssociation[$newProject['name']]);
-            // $this->moveTasks($foncetProjectUUid, $project);
+            //$this->moveSitesToProject($project, $sitesAssociation[$newProject['name']]);
+            $this->moveTasks($foncetProject, $project);
         }
+
+        // $rebivtaProject = Project::where('uuid', '96e7450b-c30a-4491-85a1-4eb0f6b31ff6')->first();
+        // $this->moveTasks($foncetProject, $rebivtaProject);
+        // $this->moveSitesToProject($rebivtaProject, $this->rebisoSites);
+
 
     }
 
-    private function moveSitesToProject($project, mixed $sitesUuids)
+    private function moveSitesToProject($newProject, mixed $sitesUuids)
     {
         foreach ($sitesUuids as $siteUuid) {
-            $site = Site::whereIn('uuid', $siteUuid)->get()[0];
-            $oldProject = $site->project;
-            $site->project()->associate($project);
+            $site = Site::where('uuid', $siteUuid)->first();
+            if (! $site) {
+                $this->error("Site with UUID '{$siteUuid}' not found. Skipping...");
+
+                continue;
+            }
+            $oldProject = $site->project()->first();
+            $site->project()->associate($newProject);
             $site->save();
-            $this->info("Site '{$site->name}' moved from project '{$oldProject->name}' to '{$project->name}'");
+            $this->info("Site '{$site->name}' moved from project '{$oldProject->name}' to '{$newProject->name}'");
         }
+
         return true;
     }
 
-    private function moveTasks(string $foncetProjectUUid, $project)
+    private function moveTasks($foncetProject, $project)
     {
-        $tasks = Task::whereHas('site', function ($query) use ($foncetProjectUUid) {
-            $query->where('project_uuid', $foncetProjectUUid);
-        })->get();
+        $tasks = Task::where('project_id', $foncetProject->id)->get();
+        $this->info('Found ' . count($tasks) . " tasks to copy from project ID '{$foncetProject->id}' to project '{$project->name}'");
 
         foreach ($tasks as $task) {
-            $oldSite = $task->site;
-            $newSite = Site::where('name', $oldSite->name)->where('project_uuid', $project->uuid)->first();
-            if ($newSite) {
-                $task->site()->associate($newSite);
-                $task->save();
-                $this->info("Task '{$task->name}' moved from site '{$oldSite->name}' to '{$newSite->name}'");
-            } else {
-                $this->warn("No matching site found for task '{$task->name}' in project '{$project->name}'");
-            }
+            $newTask = Task::firstOrCreate(array_merge($task->toArray(), ['uuid' => Str::uuid()], ['project_id' => $project->id, 'created_at' => now(), 'updated_at' => now()]));
+            $this->info("Task uuid: {$newTask->uuid} created a copy for project '{$project->name}'");
         }
+
         return true;
     }
 
