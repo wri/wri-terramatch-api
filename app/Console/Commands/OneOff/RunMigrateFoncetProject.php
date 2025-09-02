@@ -10,8 +10,6 @@ use Illuminate\Support\Str;
 
 class RunMigrateFoncetProject extends Command
 {
-    // php artisan app:migrate-foncet-project migrate
-
     /**
      * The name and signature of the console command.
      *
@@ -722,14 +720,12 @@ class RunMigrateFoncetProject extends Command
         ];
 
 
-        $lastPpcExternalId = $this->getLastPpcExternalId() ?? 0;
-
         foreach ($newProjects as $newProject) {
-            $project = Project::firstOrCreate(array_merge($foncetProject->toArray(), ['uuid' => Str::uuid()], ['ppc_external_id' => ++$lastPpcExternalId], ['name' => $newProject['name']]));
+            $project = Project::firstOrCreate(array_merge($foncetProject->toArray(), ['uuid' => Str::uuid()], ['name' => $newProject['name']]));
             $this->info("Project '{$project->name}' ensured with UUID: {$project->uuid}");
 
             $this->moveSitesToProject($project, $sitesAssociation[$newProject['name']]);
-            // $this->moveTasks($foncetProject, $project);
+            $this->moveTasks($foncetProject, $project);
         }
 
     }
@@ -773,18 +769,5 @@ class RunMigrateFoncetProject extends Command
             $this->info("Task uuid: {$newTask->uuid} created a copy for project '{$project->name}'");
         }
 
-    }
-
-    /**
-     * Get the last value for ppc_external_id from the projects table.
-     *
-     * @return int|null
-     */
-    private function getLastPpcExternalId(): ?int
-    {
-        return \DB::table('v2_projects')
-            ->whereNotNull('ppc_external_id')
-            ->orderBy('ppc_external_id', 'desc')
-            ->value('ppc_external_id');
     }
 }
