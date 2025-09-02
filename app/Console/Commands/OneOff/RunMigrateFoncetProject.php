@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
@@ -17,7 +17,7 @@ class RunMigrateFoncetProject extends Command
      *
      * @var string
      */
-    protected $signature = 'app:migrate-foncet-project';
+    protected $signature = 'one-off:migrate-foncet-project';
 
     /**
      * The console command description.
