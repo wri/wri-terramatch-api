@@ -83,6 +83,7 @@ class GeometryController extends Controller
 
                 $duplicateCheck = DuplicateGeometry::checkNewFeaturesDuplicates($typeGeometries['features'], $siteId);
                 $filteredFeatures = [];
+                $filteredIndexOrder = [];
                 $duplicateErrorsMap = [];
 
                 $duplicateIndexToUuid = [];
@@ -103,6 +104,7 @@ class GeometryController extends Controller
                         ];
                     } else {
                         $filteredFeatures[] = $feature;
+                        $filteredIndexOrder[] = $index;
                     }
                 }
                 if (! empty($filteredFeatures)) {
@@ -120,12 +122,27 @@ class GeometryController extends Controller
                     $polygonUuids = [];
                 }
                 $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
+                $createdIndexToUuid = [];
+                foreach ($polygonUuids as $i => $uuid) {
+                    if (isset($filteredIndexOrder[$i])) {
+                        $createdIndexToUuid[$filteredIndexOrder[$i]] = $uuid;
+                    }
+                }
+
+                $orderedPolygonUuids = array_fill(0, $featureCount, null);
+                foreach ($createdIndexToUuid as $idx => $uuid) {
+                    $orderedPolygonUuids[$idx] = $uuid;
+                }
+                foreach ($duplicateIndexToUuid as $idx => $existingUuid) {
+                    $orderedPolygonUuids[$idx] = $existingUuid;
+                }
+
                 $errorsForResponse = empty($duplicateErrorsMap) ? new stdClass() : $duplicateErrorsMap;
 
                 $results[] = [
                     'site_id' => $siteId,
                     'geometry_type' => $type,
-                    'polygon_uuids' => $polygonUuids,
+                    'polygon_uuids' => $orderedPolygonUuids,
                     'errors' => $errorsForResponse,
                 ];
             }
