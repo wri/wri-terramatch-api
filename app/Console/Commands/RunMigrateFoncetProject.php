@@ -17,7 +17,7 @@ class RunMigrateFoncetProject extends Command
      *
      * @var string
      */
-    protected $signature = 'app:migrate-foncet-project {operation}';
+    protected $signature = 'app:migrate-foncet-project';
 
     /**
      * The console command description.
