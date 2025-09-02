@@ -697,8 +697,7 @@ class RunMigrateFoncetProject extends Command
      */
     public function handle()
     {
-        $name = $this->argument('operation');
-        $this->info("Hello, {$name}! This is your custom command 🚀");
+        $this->info('Starting the project FONCET and site migration process...');
 
         $foncetProjectUUid = '3ca98137-ad7a-4849-bdf9-f1e6ccdfb40f';
 
@@ -725,18 +724,20 @@ class RunMigrateFoncetProject extends Command
             $project = Project::firstOrCreate(array_merge($foncetProject->toArray(), ['uuid' => Str::uuid()], ['ppc_external_id' => ++$lastPpcExternalId], ['name' => $newProject['name']]));
             $this->info("Project '{$project->name}' ensured with UUID: {$project->uuid}");
 
-            //$this->moveSitesToProject($project, $sitesAssociation[$newProject['name']]);
+            $this->moveSitesToProject($project, $sitesAssociation[$newProject['name']]);
             $this->moveTasks($foncetProject, $project);
         }
 
-        // $rebivtaProject = Project::where('uuid', '96e7450b-c30a-4491-85a1-4eb0f6b31ff6')->first();
-        // $this->moveTasks($foncetProject, $rebivtaProject);
-        // $this->moveSitesToProject($rebivtaProject, $this->rebisoSites);
-
-
     }
 
-    private function moveSitesToProject($newProject, mixed $sitesUuids)
+    /**
+     * Move sites from the FONCET project to the new project.
+     *
+     * @param $newProject
+     * @param mixed $sitesUuids
+     * @return void
+     */
+    private function moveSitesToProject($newProject, mixed $sitesUuids): void
     {
         foreach ($sitesUuids as $siteUuid) {
             $site = Site::where('uuid', $siteUuid)->first();
@@ -750,11 +751,15 @@ class RunMigrateFoncetProject extends Command
             $site->save();
             $this->info("Site '{$site->name}' moved from project '{$oldProject->name}' to '{$newProject->name}'");
         }
-
-        return true;
     }
 
-    private function moveTasks($foncetProject, $project)
+    /**
+     * Move tasks from the FONCET project to the new project.
+     * @param $foncetProject
+     * @param $project
+     * @return void
+     */
+    private function moveTasks($foncetProject, $project): void
     {
         $tasks = Task::where('project_id', $foncetProject->id)->get();
         $this->info('Found ' . count($tasks) . " tasks to copy from project ID '{$foncetProject->id}' to project '{$project->name}'");
@@ -764,7 +769,6 @@ class RunMigrateFoncetProject extends Command
             $this->info("Task uuid: {$newTask->uuid} created a copy for project '{$project->name}'");
         }
 
-        return true;
     }
 
     /**
@@ -774,11 +778,9 @@ class RunMigrateFoncetProject extends Command
      */
     private function getLastPpcExternalId(): ?int
     {
-        $lastPpcExternalId = \DB::table('v2_projects')
+        return \DB::table('v2_projects')
             ->whereNotNull('ppc_external_id')
             ->orderBy('ppc_external_id', 'desc')
             ->value('ppc_external_id');
-
-        return $lastPpcExternalId;
     }
 }
