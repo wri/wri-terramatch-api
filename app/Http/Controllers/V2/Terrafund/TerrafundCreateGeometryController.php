@@ -1490,7 +1490,7 @@ class TerrafundCreateGeometryController extends Controller
                         'organisation_type' => $project->organisation->type ?? null,
                         'project_uuid' => $project->uuid,
                         'project_short_name' => $project->short_name ?? $project->name,
-                        'country' => $project->country,
+                        'project_country' => $project->country,
                         'site_uuid' => $sitePolygon->site->uuid ?? null,
                         'site_name' => $sitePolygon->site->name ?? null,
                         'site_polygon_uuid' => $sitePolygon->uuid,
