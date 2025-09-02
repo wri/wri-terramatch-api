@@ -1457,7 +1457,7 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('upload_max_filesize', '300M');
 
         try {
-            $projects = Project::where('framework_key', 'terrafund-landscapes')
+            $projects = Project::where('cohort', 'LIKE', '%terrafund-landscapes%')
                 ->whereIn('country', ['KEN', 'RWA'])
                 ->with([
                     'organisation', 
@@ -1487,6 +1487,7 @@ class TerrafundCreateGeometryController extends Controller
 
                     $properties = [
                         'organisation_name' => $project->organisation->name ?? null,
+                        'organisation_type' => $project->organisation->type ?? null,
                         'project_uuid' => $project->uuid,
                         'project_short_name' => $project->short_name ?? $project->name,
                         'country' => $project->country,
