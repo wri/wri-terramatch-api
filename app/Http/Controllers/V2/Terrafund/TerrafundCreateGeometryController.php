@@ -1448,4 +1448,82 @@ class TerrafundCreateGeometryController extends Controller
             PolygonService::PLANT_START_DATE_CRITERIA_ID
         );
     }
+
+    public function exportTerrafundLandscapesPolygonsForCifor(Request $request)
+    {
+        ini_set('max_execution_time', '-1');
+        ini_set('memory_limit', '-1');
+        ini_set('post_max_size', '300M');
+        ini_set('upload_max_filesize', '300M');
+
+        try {
+            $projects = Project::where('framework_key', 'terrafund-landscapes')
+                ->whereIn('country', ['KEN', 'RWA'])
+                ->with([
+                    'organisation', 
+                    'sitePolygons.site',
+                    'sitePolygons.polygonGeometry'
+                ])
+                ->get();
+
+            Log::info('Found TerraFund Landscapes projects', ['count' => $projects->count()]);
+
+            $features = [];
+
+            foreach ($projects as $project) {
+                foreach ($project->sitePolygons as $sitePolygon) {
+                    $polygonGeometry = $sitePolygon->polygonGeometry;
+
+                    if (!$polygonGeometry || !$polygonGeometry->geom) {
+                        Log::warning('No geometry found for Polygon UUID:', ['uuid' => $sitePolygon->poly_id]);
+                        continue;
+                    }
+                    $geometryGeoJson = $polygonGeometry->geo_json;
+                    
+                    if (!$geometryGeoJson) {
+                        Log::warning('Failed to convert geometry to GeoJSON for Polygon UUID:', ['uuid' => $sitePolygon->poly_id]);
+                        continue;
+                    }
+
+                    $properties = [
+                        'organisation_name' => $project->organisation->name ?? null,
+                        'project_uuid' => $project->uuid,
+                        'project_short_name' => $project->short_name ?? $project->name,
+                        'country' => $project->country,
+                        'site_uuid' => $sitePolygon->site->uuid ?? null,
+                        'site_name' => $sitePolygon->site->name ?? null,
+                        'site_polygon_uuid' => $sitePolygon->uuid,
+                        'restoration_strategy' => $sitePolygon->practice,
+                        'target_land_use' => $sitePolygon->target_sys,
+                        'number_of_trees_planted' => $sitePolygon->num_trees,
+                    ];
+
+                    $feature = [
+                        'type' => 'Feature',
+                        'geometry' => $geometryGeoJson,
+                        'properties' => $properties,
+                    ];
+
+                    $features[] = $feature;
+                }
+            }
+
+            Log::info('Generated features for CIFOR export', ['count' => count($features)]);
+
+            $featureCollection = [
+                'type' => 'FeatureCollection',
+                'features' => $features,
+            ];
+
+            return response()->json($featureCollection)
+                ->header('Content-Disposition', 'attachment; filename="terrafund_landscapes_polygons_kenya_rwanda_' . date('Y-m-d') . '.geojson"');
+
+        } catch (\Exception $e) {
+            Log::error('Error exporting TerraFund Landscapes polygons for CIFOR: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to generate GeoJSON export for CIFOR.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
