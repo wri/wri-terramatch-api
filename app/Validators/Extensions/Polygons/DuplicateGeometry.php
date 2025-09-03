@@ -88,11 +88,11 @@ class DuplicateGeometry extends Extension
             return ['valid' => true, 'duplicates' => []];
         }
 
-        $duplicateIndices = self::bulkDuplicateCheck($geojsonFeatures, $existingPolyIds);
+        $duplicatePairs = self::bulkDuplicateCheck($geojsonFeatures, $existingPolyIds);
 
         return [
-            'valid' => empty($duplicateIndices),
-            'duplicates' => array_values($duplicateIndices),
+            'valid' => empty($duplicatePairs),
+            'duplicates' => array_values($duplicatePairs),
             'site_id' => $siteId,
             'project_id' => $sitePolygon->project_id,
         ];
@@ -132,7 +132,7 @@ class DuplicateGeometry extends Extension
         $allParams = array_merge($allParams, $existingPolyIds->toArray());
 
         $sql = '
-            SELECT DISTINCT ng.idx
+            SELECT DISTINCT ng.idx, pg.uuid as existing_uuid
             FROM (
                 ' . implode(' UNION ALL ', $unionParts) . "
             ) ng
@@ -144,7 +144,10 @@ class DuplicateGeometry extends Extension
         try {
             $results = DB::select($sql, $allParams);
 
-            return array_map(fn ($row) => (int)$row->idx, $results);
+            return array_map(fn ($row) => [
+                'index' => (int) $row->idx,
+                'existing_uuid' => $row->existing_uuid,
+            ], $results);
         } catch (\Exception $e) {
             // Emergency fallback: Process in smaller chunks
             return self::emergencyFallback($geojsonFeatures, $existingPolyIds);
@@ -153,7 +156,7 @@ class DuplicateGeometry extends Extension
 
     private static function emergencyFallback($geojsonFeatures, $existingPolyIds): array
     {
-        $duplicateIndices = [];
+        $duplicatePairs = [];
         $existingPlaceholders = str_repeat('?,', $existingPolyIds->count() - 1) . '?';
 
         $batchSize = 20;
@@ -167,23 +170,25 @@ class DuplicateGeometry extends Extension
 
                 $geomJson = json_encode($feature['geometry']);
 
-                // Single optimized query with both conditions
-                $isDuplicate = DB::selectOne(
-                    "SELECT EXISTS(
-                        SELECT 1 FROM polygon_geometry pg
+                // Return one matching uuid if exists
+                $match = DB::selectOne(
+                    "SELECT pg.uuid as existing_uuid FROM polygon_geometry pg
                         WHERE pg.uuid IN ({$existingPlaceholders})
                         AND ST_Intersects(ST_Envelope(pg.geom), ST_Envelope(ST_GeomFromGeoJSON(?)))
                         AND ST_Equals(pg.geom, ST_GeomFromGeoJSON(?))
-                    ) as duplicate_exists",
+                        LIMIT 1",
                     array_merge($existingPolyIds->toArray(), [$geomJson, $geomJson])
                 );
 
-                if ($isDuplicate->duplicate_exists) {
-                    $duplicateIndices[] = $index;
+                if ($match && isset($match->existing_uuid)) {
+                    $duplicatePairs[] = [
+                        'index' => $index,
+                        'existing_uuid' => $match->existing_uuid,
+                    ];
                 }
             }
         }
 
-        return $duplicateIndices;
+        return $duplicatePairs;
     }
 }

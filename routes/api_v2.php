@@ -338,7 +338,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
         Route::prefix('applications')->group(function () {
             Route::get('/', AdminIndexApplicationController::class);
-            Route::get('/{application}', AdminViewApplicationController::class);
+            Route::get('/{application}', AdminViewApplicationController::class)->middleware('i18n');
             Route::delete('/{application}', AdminDeleteApplicationController::class);
             Route::get('/{fundingProgramme}/export', AdminExportApplicationController::class);
         });
