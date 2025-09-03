@@ -721,7 +721,10 @@ class RunMigrateFoncetProject extends Command
 
 
         foreach ($newProjects as $newProject) {
-            $project = Project::firstOrCreate(array_merge($foncetProject->toArray(), ['uuid' => Str::uuid()], ['name' => $newProject['name']]));
+            $projectData = $foncetProject->toArray();
+            unset($projectData['ppc_external_id']);
+
+            $project = Project::firstOrCreate(array_merge($projectData, ['uuid' => Str::uuid()], ['name' => $newProject['name']]));
             $this->info("Project '{$project->name}' ensured with UUID: {$project->uuid}");
 
             $this->moveSitesToProject($project, $sitesAssociation[$newProject['name']]);
