@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\V2\DisturbanceReport;
 use App\Models\V2\FinancialIndicators;
 use App\Models\V2\FinancialReport;
 use App\Models\V2\Nurseries\Nursery;
@@ -62,8 +63,14 @@ class CreateReportCommand extends Command
 
                 break;
 
+            case 'disturbance':
+                $entityModel = Project::class;
+                $reportModel = DisturbanceReport::class;
+
+                break;
+
             default:
-                $this->error('Type must be one of "site", "nursery", "project", or "financial"');
+                $this->error('Type must be one of "site", "nursery", "project", "financial", or "disturbance"');
 
                 return 1;
         }
@@ -128,6 +135,22 @@ class CreateReportCommand extends Command
                         }
                     }
                 });
+
+            return 0;
+        } elseif ($type === 'disturbance') {
+            // For disturbance reports, no task is required, but it's related to a project
+            $dueAtOption = $this->option('due_at');
+            $dueAt = ! empty($dueAtOption) ? Carbon::parse($dueAtOption) : null;
+
+            $reportModel::create([
+                'framework_key' => $entity->framework_key,
+                'project_id' => $entity->id,
+                'status' => 'due',
+                'due_at' => $dueAt,
+                'update_request_status' => 'no-update',
+            ]);
+
+            $this->info("Disturbance report created for project $uuid");
 
             return 0;
         } else {
