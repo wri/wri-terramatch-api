@@ -348,6 +348,18 @@ class Organisation extends Model implements MediaModel
         return $this->hasMany(financialReport::class, 'organisation_id', 'id');
     }
 
+    public function updateFinancialReportsToOrganisation(): void
+    {
+        $latestApprovedReport = $this->financialReports()
+            ->where('status', 'approved')
+            ->orderBy('updated_at', 'desc')
+            ->first();
+
+        if ($latestApprovedReport) {
+            $latestApprovedReport->updateFinancialCollectionToOrganisation();
+        }
+    }
+
     public function partners(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withPivot('status');

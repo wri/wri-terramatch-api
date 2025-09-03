@@ -3,6 +3,7 @@ import pandas as pd
 # from rasterstats import zonal_stats
 import geopandas as gpd
 import os
+import math
 from shapely.geometry import Polygon, shape, box
 from shapely.ops import transform
 from exactextract import exact_extract
@@ -22,13 +23,59 @@ def get_gfw_data(geometry, session, dataset, params):
     return response.json()
 
 
-def calculate_area(feature):
-    geometry = shape(feature["geometry"])
-    gdf = gpd.GeoDataFrame(geometry=[geometry], crs="EPSG:4326")
-    gdf_projected = gdf.to_crs('ESRI:54009')
+def calculate_area_query(geojson):
+    try:
+        EARTH_RADIUS = 6378137  # Earth radius in meters
+        PI = math.pi
         
-    area_ha = gdf_projected.geometry.area[0] / 10000
-    return area_ha
+        if geojson.get('type') == 'FeatureCollection':
+            if not geojson.get('features'):
+                raise ValueError("FeatureCollection has no features")
+            feature = geojson['features'][0]
+        elif geojson.get('type') == 'Feature':
+            feature = geojson
+        else:
+            raise ValueError("Invalid GeoJSON structure")
+        
+        geometry = shape(feature['geometry'])
+        
+        area_degrees_squared = geometry.area
+        
+        centroid = geometry.centroid
+        latitude_degrees = centroid.y  # Y coordinate = latitude
+        
+        earth_radius_factor = (EARTH_RADIUS * PI / 180) ** 2
+        
+        latitude_radians = math.radians(latitude_degrees)
+        cos_latitude = math.cos(latitude_radians)
+        
+        area_hectares = (
+            area_degrees_squared * 
+            earth_radius_factor * 
+            cos_latitude / 10000  # Convert m² to hectares
+        )
+
+        return area_hectares
+        
+    except Exception as e:
+        print(f"Error in MariaDB-style area calculation: {e}")
+        return None
+
+
+def calculate_area(feature):
+    
+    if 'calc_area' in feature['properties']:
+        calc_area = feature['properties']['calc_area']
+        
+        if calc_area is not None and calc_area > 0:
+            return calc_area
+    
+    geojson_for_calculation = {
+        'type': 'Feature',
+        'geometry': feature['geometry']
+    }
+    
+    return calculate_area_query(geojson_for_calculation)
 
 
 def calculate_tree_cover(feature, project_name, params, logger):

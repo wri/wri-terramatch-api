@@ -19,10 +19,6 @@ properties:
     type: string
   fin_start_month:
     type: integer
-  financial_collection:
-    type: array
-    items:
-      $ref: './_index.yml#/V2FinancialIndicatorsRead'
   funding_types:
     type: array
     items:

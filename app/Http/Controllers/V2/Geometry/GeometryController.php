@@ -5,16 +5,19 @@ namespace App\Http\Controllers\V2\Geometry;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Geometry\StoreGeometryRequest;
+use App\Jobs\ProcessPolygonIndicatorsJob;
+use App\Models\DelayedJob;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
-use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
+use App\Validators\Extensions\Polygons\DuplicateGeometry;
 use App\Validators\SitePolygonValidator;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use stdClass;
@@ -42,6 +45,7 @@ class GeometryController extends Controller
         'GEOMETRY_TYPE',
         'SCHEMA',
         'DATA',
+        'DUPLICATE_GEOMETRY',
     ];
 
     /**
@@ -63,25 +67,112 @@ class GeometryController extends Controller
         /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
         $results = [];
+        $allPolygonUuids = [];
         $groupedGeometries = $this->groupGeometriesBySiteId($geometries);
+
+        $totalPolygons = 0;
+        foreach ($groupedGeometries as $siteGeometries) {
+            $totalPolygons += count($siteGeometries['features'] ?? []);
+        }
 
         foreach ($groupedGeometries as $siteId => $siteGeometries) {
             $groupedByType = $this->groupGeometriesByType($siteGeometries);
 
             foreach ($groupedByType as $type => $typeGeometries) {
-                $polygonUuids = $service->createGeojsonModels($typeGeometries, ['source' => PolygonService::GREENHOUSE_SOURCE]);
-                $polygonErrors = $this->validateStoredGeometries($polygonUuids);
+                $featureCount = count($typeGeometries['features'] ?? []);
+
+                $duplicateCheck = DuplicateGeometry::checkNewFeaturesDuplicates($typeGeometries['features'], $siteId);
+                $filteredFeatures = [];
+                $filteredIndexOrder = [];
+                $duplicateErrorsMap = [];
+
+                $duplicateIndexToUuid = [];
+                foreach ($duplicateCheck['duplicates'] as $pair) {
+                    $duplicateIndexToUuid[(int) $pair['index']] = $pair['existing_uuid'];
+                }
+
+                foreach ($typeGeometries['features'] as $index => $feature) {
+                    if (isset($duplicateIndexToUuid[$index])) {
+                        $existingUuid = $duplicateIndexToUuid[$index];
+                        if (! isset($duplicateErrorsMap[$existingUuid])) {
+                            $duplicateErrorsMap[$existingUuid] = [];
+                        }
+                        $duplicateErrorsMap[$existingUuid][] = [
+                            'index' => $index,
+                            'key' => 'DUPLICATE_GEOMETRY',
+                            'message' => 'The geometry already exists in the project',
+                        ];
+                    } else {
+                        $filteredFeatures[] = $feature;
+                        $filteredIndexOrder[] = $index;
+                    }
+                }
+                if (! empty($filteredFeatures)) {
+                    $filteredGeometries = [
+                        'type' => 'FeatureCollection',
+                        'features' => $filteredFeatures,
+                    ];
+
+                    if (count($filteredFeatures) > 1000) {
+                        $polygonUuids = $this->processLargeGeometryBatch($service, $filteredGeometries, count($filteredFeatures), $siteId);
+                    } else {
+                        $polygonUuids = $service->createGeojsonModelsBulk($filteredGeometries, ['site_id' => $siteId, 'source' => PolygonService::GREENHOUSE_SOURCE]);
+                    }
+                } else {
+                    $polygonUuids = [];
+                }
+                $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
+                $createdIndexToUuid = [];
+                foreach ($polygonUuids as $i => $uuid) {
+                    if (isset($filteredIndexOrder[$i])) {
+                        $createdIndexToUuid[$filteredIndexOrder[$i]] = $uuid;
+                    }
+                }
+
+                $orderedPolygonUuids = array_fill(0, $featureCount, null);
+                foreach ($createdIndexToUuid as $idx => $uuid) {
+                    $orderedPolygonUuids[$idx] = $uuid;
+                }
+                foreach ($duplicateIndexToUuid as $idx => $existingUuid) {
+                    $orderedPolygonUuids[$idx] = $existingUuid;
+                }
+
+                $errorsForResponse = empty($duplicateErrorsMap) ? new stdClass() : $duplicateErrorsMap;
 
                 $results[] = [
                     'site_id' => $siteId,
                     'geometry_type' => $type,
-                    'polygon_uuids' => $polygonUuids,
-                    'errors' => empty($polygonErrors) ? new stdClass() : $polygonErrors,
+                    'polygon_uuids' => $orderedPolygonUuids,
+                    'errors' => $errorsForResponse,
                 ];
             }
         }
+        $this->batchUpdateProjectCentroids($results);
+
+        if (! empty($allPolygonUuids)) {
+            $this->queueIndicatorAnalysis($allPolygonUuids);
+        }
 
         return $results;
+    }
+
+    protected function processLargeGeometryBatch(PolygonService $service, array $typeGeometries, int $featureCount, string $siteId): array
+    {
+        $chunkSize = 500;
+        $allPolygonUuids = [];
+        $features = $typeGeometries['features'];
+        for ($i = 0; $i < $featureCount; $i += $chunkSize) {
+            $chunk = array_slice($features, $i, $chunkSize);
+            $chunkGeometry = [
+                'type' => 'FeatureCollection',
+                'features' => $chunk,
+            ];
+
+            $chunkUuids = $service->createGeojsonModelsBulk($chunkGeometry, ['site_id' => $siteId, 'source' => PolygonService::GREENHOUSE_SOURCE]);
+            $allPolygonUuids = array_merge($allPolygonUuids, $chunkUuids);
+        }
+
+        return $allPolygonUuids;
     }
 
     protected function validateStoredGeometries(array $polygonUuids): array
@@ -129,7 +220,7 @@ class GeometryController extends Controller
             if (! isset($geometryCollection['features'])) {
                 Log::warning('No features found in this geometry collection', $geometryCollection);
 
-                continue; // Skip if there are no features
+                continue;
             }
 
             foreach ($geometryCollection['features'] as $feature) {
@@ -147,6 +238,32 @@ class GeometryController extends Controller
         }
 
         return $grouped;
+    }
+
+    protected function batchUpdateProjectCentroids(array $results): void
+    {
+        $allPolygonUuids = [];
+        foreach ($results as $result) {
+            $allPolygonUuids = array_merge($allPolygonUuids, $result['polygon_uuids']);
+        }
+
+        if (empty($allPolygonUuids)) {
+            return;
+        }
+
+        $projectUuids = DB::table('site_polygon')
+            ->join('v2_sites', 'site_polygon.site_id', '=', 'v2_sites.uuid')
+            ->join('v2_projects', 'v2_sites.project_id', '=', 'v2_projects.id')
+            ->whereIn('site_polygon.poly_id', $allPolygonUuids)
+            ->distinct()
+            ->pluck('v2_projects.uuid')
+            ->toArray();
+
+        $geometryHelper = new GeometryHelper();
+        foreach ($projectUuids as $projectUuid) {
+            $geometryHelper->updateProjectCentroid($projectUuid);
+        }
+
     }
 
     public function validateGeometries(Request $request): JsonResponse
@@ -235,7 +352,6 @@ class GeometryController extends Controller
         $this->authorize('update', $polygon);
 
         $geometry = $request->input('geometry');
-        /** @var PolygonService $service */
         $service = App::make(PolygonService::class);
         $service->updateGeojsonModels($polygon, $geometry);
 
@@ -290,8 +406,6 @@ class GeometryController extends Controller
             $service->createCriteriaSite($polygonUuid, $criteriaId, $valid);
         }
 
-        // For these two, the polygon service already handled creating the site criteria, so we just need to
-        // report on them if not valid
         $polygon = PolygonGeometry::isUuid($polygonUuid)->select('uuid')->first();
         $schemaCriteria = $polygon->criteriaSite()->forCriteria(PolygonService::SCHEMA_CRITERIA_ID)->first();
         if ($schemaCriteria != null && ! $schemaCriteria->valid) {
@@ -300,8 +414,6 @@ class GeometryController extends Controller
                 'message' => 'The properties for the geometry are missing some required values.',
             ];
         } else {
-            // only report data validation if the schema was valid. When the schema is invalid, the data is
-            // always invalid as well.
             $dataCriteria = $polygon->criteriaSite()->forCriteria(PolygonService::DATA_CRITERIA_ID)->first();
             if ($dataCriteria != null && ! $dataCriteria->valid) {
                 $errors[] = [
@@ -312,5 +424,32 @@ class GeometryController extends Controller
         }
 
         return $errors;
+    }
+
+    protected function queueIndicatorAnalysis(array $polygonUuids, array $targetSlugs = []): void
+    {
+        try {
+            if (empty($targetSlugs)) {
+                $targetSlugs = ['restorationByStrategy', 'restorationByLandUse'];
+            }
+
+            $delayedJob = DelayedJob::create();
+
+            $job = new ProcessPolygonIndicatorsJob(
+                $delayedJob->id,
+                $polygonUuids,
+                ['include_details' => false],
+                $targetSlugs
+            );
+
+            dispatch($job);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to queue indicator analysis', [
+                'error' => $e->getMessage(),
+                'polygon_count' => count($polygonUuids),
+                'target_slugs' => $targetSlugs ?? [],
+            ]);
+        }
     }
 }

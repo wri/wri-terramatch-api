@@ -18,7 +18,6 @@ trait IndicatorUpdateTrait
     {
         try {
             $indicatorService = App::make(IndicatorUpdateService::class);
-            Log::info("Updating indicators for polygon {$polygonUuid}");
             $results = $indicatorService->updateIndicatorsForPolygon($polygonUuid);
 
             $success = true;

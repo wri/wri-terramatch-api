@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2\Exports;
 
 use App\Exports\V2\EntityExport;
 use App\Http\Controllers\Controller;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\ProjectReport;
@@ -21,7 +22,7 @@ class ExportReportEntityAsProjectDeveloperController extends Controller
         $modelClass = $this->getModelClass($entity);
 
         Validator::make(['entity' => $entity, 'uuid' => $uuid], [
-            'entity' => 'required|in:site-reports,nursery-reports,project-reports',
+            'entity' => 'required|in:site-reports,nursery-reports,project-reports,financial-reports',
             'uuid' => 'required|exists:'.$modelClass.',uuid|max:255',
         ])->validate();
 
@@ -48,9 +49,14 @@ class ExportReportEntityAsProjectDeveloperController extends Controller
 
     private function getForm(string $modelClass, string $framework)
     {
-        return Form::where('model', $modelClass)
-            ->where('framework_key', $framework)
-            ->firstOrFail();
+        if ($modelClass === FinancialReport::class) {
+            return Form::where('model', FinancialReport::class)
+                ->firstOrFail();
+        } else {
+            return Form::where('model', $modelClass)
+                ->where('framework_key', $framework)
+                ->firstOrFail();
+        }
     }
 
     private function getModelClass(string $entity)
@@ -68,6 +74,11 @@ class ExportReportEntityAsProjectDeveloperController extends Controller
                 break;
             case 'nursery-reports':
                 $model = NurseryReport::class;
+
+                break;
+
+            case 'financial-reports':
+                $model = FinancialReport::class;
 
                 break;
         }

@@ -49,20 +49,42 @@ class IndicatorUpdateService
      * Update indicator values for a specific polygon
      *
      * @param string $polygonUuid The UUID of the polygon
+     * @param array $targetSlugs Optional array of specific slugs to process. If empty, processes all slugs.
      * @return array Results of the update operation
      */
-    public function updateIndicatorsForPolygon(string $polygonUuid)
+    public function updateIndicatorsForPolygon(string $polygonUuid, array $targetSlugs = [])
     {
         $results = [];
 
-        foreach ($this->slugMappings as $slug => $slugMapping) {
+        $polygonGeometry = $this->getGeometry($polygonUuid);
+        if (! $polygonGeometry) {
+            Log::warning("Could not retrieve geometry for polygon UUID: $polygonUuid");
+
+            return [
+                'error' => 'Invalid polygon geometry',
+                'status' => 'error',
+            ];
+        }
+
+        $slugsToProcess = empty($targetSlugs) ? $this->slugMappings : array_intersect_key($this->slugMappings, array_flip($targetSlugs));
+
+        foreach ($slugsToProcess as $slug => $slugMapping) {
             $results[$slug] = [
                 'status' => 'skipped',
                 'message' => 'No processing needed',
             ];
 
             try {
-                $polygonGeometry = $this->getGeometry($polygonUuid);
+                $existingRecord = $this->getExistingRecord($slug, $polygonGeometry['site_polygon_id']);
+                if ($existingRecord) {
+                    $results[$slug] = [
+                        'status' => 'skipped',
+                        'message' => 'Record already exists for current year',
+                    ];
+
+                    continue;
+                }
+
                 $indicatorModel = $this->getOrCreateIndicatorRecord($slug, $polygonGeometry['site_polygon_id']);
 
                 if (! $indicatorModel) {
@@ -96,7 +118,20 @@ class IndicatorUpdateService
             }
         }
 
+        DB::disconnect();
+
         return $results;
+    }
+
+    protected function getExistingRecord($slug, $sitePolygonId)
+    {
+        $modelClass = $this->slugMappings[$slug]['model'];
+        $yearOfAnalysis = Carbon::now()->year;
+
+        return $modelClass::where('site_polygon_id', $sitePolygonId)
+            ->where('indicator_slug', $slug)
+            ->where('year_of_analysis', $yearOfAnalysis)
+            ->first();
     }
 
     /**

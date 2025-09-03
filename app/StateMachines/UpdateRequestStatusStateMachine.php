@@ -48,9 +48,10 @@ class UpdateRequestStatusStateMachine extends StateMachine
             if ($updateRequest->status == self::APPROVED) {
                 $model->approve($updateRequest->feedback);
                 $model->update(['nothing_to_report' => false]);
-            } elseif ($model instanceof ReportModel) {
+            } elseif ($model instanceof ReportModel && $model->task) {
                 // Changing the model status caused a task status check in the block above. Here we have a catch-all
                 // to make sure that if this update request is attached to a report model that a task check happens.
+                // Only check task status if the model has a task (excludes FinancialReport which has no task)
                 $model->task->checkStatus();
             }
         };

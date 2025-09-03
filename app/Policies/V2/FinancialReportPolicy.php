@@ -57,4 +57,13 @@ class FinancialReportPolicy extends Policy
     {
         return $user?->organisation?->id == $report->organisation_id;
     }
+
+    public function approve(?User $user, ?FinancialReport $report = null): bool
+    {
+        if ($user->can('manage-own') && $this->isTheirs($user, $report)) {
+            return true;
+        }
+
+        return $this->isAdmin($user);
+    }
 }

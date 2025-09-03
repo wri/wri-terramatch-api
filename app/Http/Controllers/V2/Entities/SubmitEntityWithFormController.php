@@ -8,7 +8,6 @@ use App\Jobs\V2\SendTaskDigestProjectManagerJob as SendTaskDigestProjectManagerJ
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\Action;
 use App\Models\V2\EntityModel;
-use App\Models\V2\FinancialReport;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\UpdateRequests\UpdateRequest;
@@ -28,13 +27,6 @@ class SubmitEntityWithFormController extends Controller
             // The form is needed internally for generating the schema resource, so let's blow up early if there
             // isn't one found.
             return new JsonResponse('No form schema found for this framework.', 404);
-        }
-
-        // Handle FinancialReport differently - it goes directly to submitted status
-        if ($entity instanceof FinancialReport) {
-            $entity->submitForApproval();
-
-            return $entity->createSchemaResource();
         }
 
         /** @var UpdateRequest $updateRequest */
