@@ -10,7 +10,7 @@ properties:
   readable_status:
     type: string
   content:
-    type: string
+    type: object
   feedback:
     type: string
   feedback_fields:
