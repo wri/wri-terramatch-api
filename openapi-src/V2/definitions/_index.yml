@@ -142,8 +142,6 @@ ProjectLiteRead:
   $ref: './ProjectLiteRead.yml'
 ProjectFullRead:
   $ref: './ProjectFullRead.yml'
-ProjectWithSchemaRead:
-  $ref: './ProjectWithSchemaRead.yml'
 SiteFullRead:
   $ref: './SiteFullRead.yml'
 ProjectPitchRead:

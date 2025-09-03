@@ -7,8 +7,8 @@ properties:
     type: string
   status:
     type: string
-  form:
-    type: object
+  form_uuid:
+    type: string
   answers:
     type: object
   form_title:
