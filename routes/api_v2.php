@@ -54,6 +54,7 @@ use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\FinancialReports\FinancialReportsController;
+use App\Http\Controllers\V2\DisturbanceReports\DisturbanceReportsController;
 use App\Http\Controllers\V2\Forms\DeleteFormController;
 use App\Http\Controllers\V2\Forms\DeleteFormQuestionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSectionController;
@@ -464,6 +465,8 @@ Route::prefix('financial-reports')->group(function () {
     Route::get('/export', ExportFinancialReportController::class);
 });
 Route::resource('financial-reports', FinancialReportsController::class)->except('create');
+
+Route::resource('disturbance-reports', DisturbanceReportsController::class)->except('create');
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
