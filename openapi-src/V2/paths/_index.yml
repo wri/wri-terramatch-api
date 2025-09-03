@@ -166,24 +166,6 @@
         name: body
         schema:
           $ref: '../definitions/_index.yml#/FormUpdate'
-'/v2/forms/linked-field-listing':
-  get:
-    summary: Get a list of available linked fields
-    operationId: get-v2-form-linked-field-listing
-    parameters:
-      - name: form_types
-        type: array
-        items:
-          type: string
-        in: query
-        description: 'array of form types'
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2GenericList'
-    tags:
-      - Forms
 /v2/admin/organisations:
   get:
     summary: Get a collection of organisations
