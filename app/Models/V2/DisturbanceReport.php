@@ -8,9 +8,10 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\Projects\Project;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -55,6 +56,16 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
         'answers' => 'array',
     ];
 
+    protected $auditInclude = [
+        'status',
+        'feedback',
+        'feedback_fields',
+    ];
+
+    public $fileConfiguration = [];
+
+    public const FINANCIAL_FORM_TYPE = 'financial-report';
+
     public $shortName = 'disturbance-report';
 
     public function registerMediaConversions(Media $media = null): void
@@ -70,16 +81,47 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
         return 'uuid';
     }
 
-    /**
-     * Polymorphic relation (any model can have disturbance reports).
-     */
-    public function disturbanceable(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
     public function getAuditableNameAttribute(): string
     {
         return "Disturbance Report #{$this->id}";
+    }
+
+    public function getParentNameAttribute(): string
+    {
+        return $this->project?->name ?? '';
+    }
+
+    public function supportsNothingToReport(): bool
+    {
+        return true;
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function organisation(): BelongsToThrough
+    {
+        return $this->belongsToThrough(
+            Organisation::class,
+            Project::class,
+            foreignKeyLookup: [Project::class => 'project_id']
+        );
+    }
+
+    public function parentEntity(): BelongsTo
+    {
+        return $this->project();
     }
 }
