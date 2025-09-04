@@ -133,7 +133,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                     'fin_start_month' => $startMonth,
                     'currency' => $currency,
                 ]);
-            } else if (! empty($organisationId)) {
+            } elseif (! empty($organisationId)) {
                 $organisation = Organisation::find($organisationId);
                 if ($organisation) {
                     $organisation->update([
@@ -233,6 +233,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
     {
         $record = collect($data)->first(fn ($record) => ! empty($record['uuid']));
         $indicator = $record == null ? null : FinancialIndicators::where('uuid', $record['uuid'])->first();
+
         return $indicator == null ? null : $indicator->organisation_id;
     }
 }
