@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -137,6 +138,8 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
         if (! empty($organisationId) && empty($financialReportId)) {
             if ($startMonth !== null || $currency !== null) {
                 $organisation = Organisation::isUuid($organisationId)->first();
+                Log::info('organisation');
+                Log::info($organisationId);
                 if ($organisation) {
                     $organisation->update([
                         'fin_start_month' => $startMonth,
