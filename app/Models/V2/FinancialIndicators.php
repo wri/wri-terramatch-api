@@ -78,7 +78,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
         $firstRecord = $data[0];
         $startMonth = $firstRecord['start_month'] ?? null;
         $currency = $firstRecord['currency'] ?? null;
-        $organisationId = $firstRecord['organisation_id'] ?? null;
+        $organisationId = self::getOrganisationIdFromData($data);
         $financialReport = null;
         $financialReportId = $firstRecord['financial_report_id'] ?? null;
         if ($financialReportId) {
@@ -101,7 +101,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                         'amount' => $entry['amount'],
                         'year' => $entry['year'],
                         'description' => $entry['description'],
-                        'exchange_rate' => $entry['exchange_rate'],
+                        'exchange_rate' => $entry['exchange_rate'] ?? null,
                     ]);
                 } else {
                     $entity->$property()->create([
@@ -109,7 +109,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                         'amount' => $entry['amount'],
                         'year' => $entry['year'],
                         'description' => $entry['description'],
-                        'exchange_rate' => $entry['exchange_rate'],
+                        'exchange_rate' => $entry['exchange_rate'] ?? null,
                         'organisation_id' => $entry['organisation_id'],
                         'financial_report_id' => $financialReport?->id,
                     ]);
@@ -120,32 +120,32 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                     'amount' => $entry['amount'],
                     'year' => $entry['year'],
                     'description' => $entry['description'],
-                    'exchange_rate' => $entry['exchange_rate'],
+                    'exchange_rate' => $entry['exchange_rate'] ?? null,
                     'organisation_id' => $entry['organisation_id'],
                     'financial_report_id' => $financialReport?->id,
                 ]);
             }
         }
 
-        if (($startMonth !== null || $currency !== null) && $financialReport) {
-            $financialReport->update([
-                'fin_start_month' => $startMonth,
-                'currency' => $currency,
-            ]);
-        }
-
-        if (! empty($organisationId) && empty($financialReportId)) {
-            if ($startMonth !== null || $currency !== null) {
-                $organisation = Organisation::isUuid($organisationId)->first();
-                $organisation->update([
+        if ($startMonth !== null || $currency !== null) {
+            if (! empty($financialReport)) {
+                $financialReport->update([
                     'fin_start_month' => $startMonth,
                     'currency' => $currency,
                 ]);
+            } elseif (! empty($organisationId)) {
+                $organisation = Organisation::find($organisationId);
+                if ($organisation) {
+                    $organisation->update([
+                        'fin_start_month' => $startMonth,
+                        'currency' => $currency,
+                    ]);
+                }
             }
         }
 
         if ($isApproval) {
-            $organisation = Organisation::isUuid($organisationId)->first();
+            $organisation = Organisation::find($organisationId);
             if ($organisation && $financialReport) {
                 if ($startMonth !== null || $currency !== null) {
                     $organisation->update([
@@ -224,5 +224,16 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
             ->width(350)
             ->height(211)
             ->nonQueued();
+    }
+
+    /**
+     * Get organisation_id from data, searching in financial_indicators table if uuid exists
+     */
+    private static function getOrganisationIdFromData($data): ?int
+    {
+        $record = collect($data)->first(fn ($record) => ! empty($record['uuid']));
+        $indicator = $record == null ? null : FinancialIndicators::where('uuid', $record['uuid'])->first();
+
+        return $indicator == null ? null : $indicator->organisation_id;
     }
 }
