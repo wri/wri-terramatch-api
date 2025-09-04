@@ -37,7 +37,7 @@ class OrganisationResource extends JsonResource
             'countries' => $this->countries,
             'languages' => $this->languages,
 
-            'founding_date' => $this->founding_date,
+            'founding_date' => $this->founding_date ? $this->founding_date->format('Y-m-d') : null,
             'description' => $this->description,
 
             'tree_species_historical' => TreeSpeciesResource::collection($this->treeSpeciesHistorical),
