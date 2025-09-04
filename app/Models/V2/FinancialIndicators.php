@@ -231,16 +231,8 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
      */
     private static function getOrganisationIdFromData($data): ?int
     {
-        $firstRecord = collect($data)->first(function ($record) {
-            return ! empty($record['uuid']);
-        });
-
-        if (! $firstRecord || empty($firstRecord['uuid'])) {
-            return null;
-        }
-
-        $existingIndicator = FinancialIndicators::where('uuid', $firstRecord['uuid'])->first();
-
-        return $existingIndicator ? $existingIndicator->organisation_id : null;
+        $record = collect($data)->first(fn ($record) => ! empty($record['uuid']));
+        $indicator = $record == null ? null : FinancialIndicators::where('uuid', $record['uuid'])->first();
+        return $indicator == null ? null : $indicator->organisation_id;
     }
 }
