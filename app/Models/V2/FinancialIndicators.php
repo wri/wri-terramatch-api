@@ -101,7 +101,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                         'amount' => $entry['amount'],
                         'year' => $entry['year'],
                         'description' => $entry['description'],
-                        'exchange_rate' => $entry['exchange_rate'],
+                        'exchange_rate' => $entry['exchange_rate'] ?? null,
                     ]);
                 } else {
                     $entity->$property()->create([
@@ -109,7 +109,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                         'amount' => $entry['amount'],
                         'year' => $entry['year'],
                         'description' => $entry['description'],
-                        'exchange_rate' => $entry['exchange_rate'],
+                        'exchange_rate' => $entry['exchange_rate'] ?? null,
                         'organisation_id' => $entry['organisation_id'],
                         'financial_report_id' => $financialReport?->id,
                     ]);
@@ -120,7 +120,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                     'amount' => $entry['amount'],
                     'year' => $entry['year'],
                     'description' => $entry['description'],
-                    'exchange_rate' => $entry['exchange_rate'],
+                    'exchange_rate' => $entry['exchange_rate'] ?? null,
                     'organisation_id' => $entry['organisation_id'],
                     'financial_report_id' => $financialReport?->id,
                 ]);
