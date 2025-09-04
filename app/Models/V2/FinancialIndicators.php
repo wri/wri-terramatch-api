@@ -137,10 +137,12 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
         if (! empty($organisationId) && empty($financialReportId)) {
             if ($startMonth !== null || $currency !== null) {
                 $organisation = Organisation::isUuid($organisationId)->first();
-                $organisation->update([
-                    'fin_start_month' => $startMonth,
-                    'currency' => $currency,
-                ]);
+                if ($organisation) {
+                    $organisation->update([
+                        'fin_start_month' => $startMonth,
+                        'currency' => $currency,
+                    ]);
+                }
             }
         }
 
