@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -75,11 +74,10 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
 
             return;
         }
-
         $firstRecord = $data[0];
         $startMonth = $firstRecord['start_month'] ?? null;
         $currency = $firstRecord['currency'] ?? null;
-        $organisationId = $firstRecord['organisation_id'] ?? null;
+        $organisationId = self::getOrganisationIdFromData($data);
         $financialReport = null;
         $financialReportId = $firstRecord['financial_report_id'] ?? null;
         if ($financialReportId) {
@@ -137,9 +135,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
 
         if (! empty($organisationId) && empty($financialReportId)) {
             if ($startMonth !== null || $currency !== null) {
-                $organisation = Organisation::isUuid($organisationId)->first();
-                Log::info('organisation');
-                Log::info($organisationId);
+                $organisation = Organisation::find($organisationId);
                 if ($organisation) {
                     $organisation->update([
                         'fin_start_month' => $startMonth,
@@ -150,7 +146,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
         }
 
         if ($isApproval) {
-            $organisation = Organisation::isUuid($organisationId)->first();
+            $organisation = Organisation::find($organisationId);
             if ($organisation && $financialReport) {
                 if ($startMonth !== null || $currency !== null) {
                     $organisation->update([
@@ -229,5 +225,23 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
             ->width(350)
             ->height(211)
             ->nonQueued();
+    }
+
+    /**
+     * Get organisation_id from data, searching in financial_indicators table if uuid exists
+     */
+    private static function getOrganisationIdFromData($data): ?int
+    {
+        $firstRecord = collect($data)->first(function ($record) {
+            return ! empty($record['uuid']);
+        });
+
+        if (! $firstRecord || empty($firstRecord['uuid'])) {
+            return null;
+        }
+
+        $existingIndicator = FinancialIndicators::where('uuid', $firstRecord['uuid'])->first();
+
+        return $existingIndicator ? $existingIndicator->organisation_id : null;
     }
 }
