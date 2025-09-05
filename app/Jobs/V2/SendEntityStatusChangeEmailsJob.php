@@ -38,8 +38,8 @@ class SendEntityStatusChangeEmailsJob implements ShouldQueue
         }
 
         if ($this->entity instanceof FinancialReport) {
-            $usersFromOrganisation = $this->entity->createdBy;
-            Mail::to($usersFromOrganisation->email_address)->send(new EntityStatusChangeMail($this->entity, $usersFromOrganisation));
+            $reportUser = $this->entity->createdBy;
+            Mail::to($reportUser->email_address)->send(new EntityStatusChangeMail($this->entity, $reportUser));
 
             return;
         }
