@@ -83,16 +83,28 @@ class GeometryController extends Controller
 
                 $duplicateCheck = DuplicateGeometry::checkNewFeaturesDuplicates($typeGeometries['features'], $siteId);
                 $filteredFeatures = [];
-                $duplicateErrors = [];
+                $filteredIndexOrder = [];
+                $duplicateErrorsMap = [];
+
+                $duplicateIndexToUuid = [];
+                foreach ($duplicateCheck['duplicates'] as $pair) {
+                    $duplicateIndexToUuid[(int) $pair['index']] = $pair['existing_uuid'];
+                }
+
                 foreach ($typeGeometries['features'] as $index => $feature) {
-                    if (in_array($index, $duplicateCheck['duplicates'])) {
-                        $duplicateErrors[] = [
+                    if (isset($duplicateIndexToUuid[$index])) {
+                        $existingUuid = $duplicateIndexToUuid[$index];
+                        if (! isset($duplicateErrorsMap[$existingUuid])) {
+                            $duplicateErrorsMap[$existingUuid] = [];
+                        }
+                        $duplicateErrorsMap[$existingUuid][] = [
                             'index' => $index,
                             'key' => 'DUPLICATE_GEOMETRY',
                             'message' => 'The geometry already exists in the project',
                         ];
                     } else {
                         $filteredFeatures[] = $feature;
+                        $filteredIndexOrder[] = $index;
                     }
                 }
                 if (! empty($filteredFeatures)) {
@@ -110,11 +122,28 @@ class GeometryController extends Controller
                     $polygonUuids = [];
                 }
                 $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
+                $createdIndexToUuid = [];
+                foreach ($polygonUuids as $i => $uuid) {
+                    if (isset($filteredIndexOrder[$i])) {
+                        $createdIndexToUuid[$filteredIndexOrder[$i]] = $uuid;
+                    }
+                }
+
+                $orderedPolygonUuids = array_fill(0, $featureCount, null);
+                foreach ($createdIndexToUuid as $idx => $uuid) {
+                    $orderedPolygonUuids[$idx] = $uuid;
+                }
+                foreach ($duplicateIndexToUuid as $idx => $existingUuid) {
+                    $orderedPolygonUuids[$idx] = $existingUuid;
+                }
+
+                $errorsForResponse = empty($duplicateErrorsMap) ? new stdClass() : $duplicateErrorsMap;
+
                 $results[] = [
                     'site_id' => $siteId,
                     'geometry_type' => $type,
-                    'polygon_uuids' => $polygonUuids,
-                    'errors' => empty($duplicateErrors) ? new stdClass() : $duplicateErrors,
+                    'polygon_uuids' => $orderedPolygonUuids,
+                    'errors' => $errorsForResponse,
                 ];
             }
         }

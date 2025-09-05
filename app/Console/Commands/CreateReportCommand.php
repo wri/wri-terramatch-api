@@ -26,7 +26,7 @@ class CreateReportCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'create-report {uuid} {--T|type=} {--D|due_at=} {--A|all_reports} {--Y|year_of_report=}';
+    protected $signature = 'create-report {uuid} {--T|type=} {--D|due_at=} {--A|all_reports}';
 
     /**
      * The console command description.
@@ -101,7 +101,9 @@ class CreateReportCommand extends Command
             ]);
         } elseif ($type === 'financial') {
             // For financial reports, no task is required by default, but you can link if needed
-            $yearOfReport = $this->option('year_of_report') ?? $dueAt->year;
+            $dueAtOption = $this->option('due_at');
+            $dueAt = ! empty($dueAtOption) ? Carbon::parse($dueAtOption) : null;
+            $yearOfReport = $dueAt?->year ?? Carbon::now()->year;
             $report = $reportModel::create([
                 'organisation_id' => $entity->id,
                 'status' => 'due',
@@ -109,6 +111,7 @@ class CreateReportCommand extends Command
                 'currency' => $entity?->currency,
                 'fin_start_month' => $entity?->fin_start_month,
                 'update_request_status' => 'no-update',
+                'due_at' => $dueAt,
             ]);
             $this->info("Financial report created for organisation $uuid");
 
