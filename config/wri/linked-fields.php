@@ -287,6 +287,13 @@ return [
             ],
             'file-collections' => [],
         ],
+        'disturbance-report' => [
+            'label' => 'Disturbance Report',
+            'model' => App\Models\V2\DisturbanceReport::class,
+            'fields' => [],
+            'relations' => [],
+            'file-collections' => [],
+        ],
         'project-pitch' => [
             'label' => 'Project Pitch',
             'model' => App\Models\V2\ProjectPitch::class,

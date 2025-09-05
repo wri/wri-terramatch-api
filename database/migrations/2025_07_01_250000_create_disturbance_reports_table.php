@@ -12,6 +12,14 @@ return new class extends Migration {
             $table->uuid('uuid')->unique();
             $table->string('status');
             $table->string('title');
+            $table->string('disturbance_type')->nullable();
+            $table->string('disturbance_subtype')->nullable();
+            $table->string('extent')->nullable();
+            $table->integer('people_affected')->nullable();
+            $table->date('date_of_disturbance')->nullable();
+            $table->decimal('monetary_damage', 15, 2)->nullable();
+            $table->text('description')->nullable();
+            $table->text('action_description')->nullable();
             $table->string('update_request_status')->nullable();
             $table->unsignedBigInteger('project_id')->nullable();
             $table->boolean('nothing_to_report')->nullable();
