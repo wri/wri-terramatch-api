@@ -5,6 +5,7 @@ namespace App\Jobs\V2;
 use App\Mail\EntityStatusChange as EntityStatusChangeMail;
 use App\Models\Traits\SkipRecipientsTrait;
 use App\Models\V2\EntityModel;
+use App\Models\V2\FinancialReport;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,6 +34,13 @@ class SendEntityStatusChangeEmailsJob implements ShouldQueue
         if ($this->entity->status != EntityStatusStateMachine::APPROVED &&
             $this->entity->status != EntityStatusStateMachine::NEEDS_MORE_INFORMATION &&
             $this->entity->update_request_status != EntityStatusStateMachine::NEEDS_MORE_INFORMATION) {
+            return;
+        }
+
+        if ($this->entity instanceof FinancialReport) {
+            $usersFromOrganisation = $this->entity->createdBy;
+            Mail::to($usersFromOrganisation->email_address)->send(new EntityStatusChangeMail($this->entity, $usersFromOrganisation));
+
             return;
         }
 
