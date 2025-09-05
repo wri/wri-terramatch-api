@@ -287,10 +287,21 @@ return [
             ],
             'file-collections' => [],
         ],
-        'disturbance-report' => [
+        'disturbance-report' => [ 
             'label' => 'Disturbance Report',
             'model' => App\Models\V2\DisturbanceReport::class,
-            'fields' => [],
+            'fields' => [
+                'dis-rep-disturbance-type' => ['property' => 'disturbance_type', 'label' => 'Disturbance Type', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'disturbance-types'],
+                'dis-rep-disturbance-subtype' => ['property' => 'disturbance_subtype', 'label' => 'Disturbance Subtype', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'disturbance-subtypes'],
+                'dis-rep-extent' => ['property' => 'extent', 'label' => 'Extent', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'disturbance-extents'],
+                'dis-rep-intensity' => ['property' => 'intensity', 'label' => 'Intensity', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'disturbance-intensity-levels'],
+                'dis-rep-people-affected' => ['property' => 'people_affected', 'label' => 'People Affected', 'input_type' => 'number'],
+                'dis-rep-monetary-damage' => ['property' => 'monetary_damage', 'label' => 'Monetary Damage', 'input_type' => 'number'],
+                'dis-rep-description' => ['property' => 'description', 'label' => 'Description', 'input_type' => 'long-text'],
+                'dis-rep-action-description' => ['property' => 'action_description', 'label' => 'Action Description', 'input_type' => 'long-text'],
+                'dis-rep-date-of-disturbance' => ['property' => 'date_of_disturbance', 'label' => 'Date of Disturbance', 'input_type' => 'date'],
+                'dis-rep-media-assets' => ['property' => 'media_assets', 'label' => 'Media Assets', 'input_type' => 'media'],
+            ],
             'relations' => [],
             'file-collections' => [],
         ],
