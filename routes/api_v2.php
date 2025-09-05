@@ -27,6 +27,7 @@ use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
+use App\Http\Controllers\V2\DisturbanceReports\DisturbanceReportsController;
 use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
@@ -467,6 +468,8 @@ Route::resource('financial-reports', FinancialReportsController::class)->except(
 Route::prefix('disturbance-reports')->group(function () {
     Route::get('/export', ExportDisturbanceReportController::class);
 });
+
+Route::resource('disturbance-reports', DisturbanceReportsController::class)->except('create');
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
