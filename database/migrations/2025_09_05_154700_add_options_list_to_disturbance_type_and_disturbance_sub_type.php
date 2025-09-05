@@ -13,18 +13,10 @@ return new class () extends Migration {
      */
     public function up(): void
     {
+        //
         $collections = [
-            'disturbance-report-status' => [
-                'started',
-                'awaiting review', 
-                'more info requested',
-                'approved'
-            ],
-            'disturbance-intensity-levels' => [
-                'High',
-                'Medium', 
-                'Low'
-            ]
+            'disturbance-types-collection' => ['Ecological', 'Climatic', 'Man-made'],
+            'disturbance-subtypes-collection' => ['Flooding', 'Pests-Disease', 'Extreme Heat'],
         ];
 
         foreach ($collections as $key => $items) {

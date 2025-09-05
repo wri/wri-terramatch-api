@@ -287,7 +287,7 @@ return [
             ],
             'file-collections' => [],
         ],
-        'disturbance-report' => [ 
+        'disturbance-report' => [
             'label' => 'Disturbance Report',
             'model' => App\Models\V2\DisturbanceReport::class,
             'fields' => [
@@ -305,9 +305,6 @@ return [
             'file-collections' => [
                 'dis-rep-media-assets' => ['property' => 'media', 'label' => 'Media Assets', 'input_type' => 'file', 'multichoice' => true],
             ],
-
-            'relations' => [],
-            'file-collections' => [],
         ],
         'project-pitch' => [
             'label' => 'Project Pitch',

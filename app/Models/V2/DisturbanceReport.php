@@ -8,6 +8,7 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -74,9 +75,14 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
         'feedback_fields',
     ];
 
-    public $fileConfiguration = [];
+    public $fileConfiguration = [
+        'media' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+    ];
 
-    public const FINANCIAL_FORM_TYPE = 'financial-report';
+    public const DISTURBANCE_FORM_TYPE = 'disturbance-report';
 
     public $shortName = 'disturbance-report';
 
@@ -101,6 +107,18 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
     public function getParentNameAttribute(): string
     {
         return $this->project?->name ?? '';
+    }
+
+    public function getForm(): Form
+    {
+        $form = Form::where('type', self::DISTURBANCE_FORM_TYPE)
+            ->first();
+
+        if (! $form) {
+            throw new \RuntimeException('No form found for DisturbanceReport without a form type');
+        }
+
+        return $form;
     }
 
     public function supportsNothingToReport(): bool
