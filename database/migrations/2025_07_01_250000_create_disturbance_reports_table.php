@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('disturbance_type')->nullable();
             $table->text('disturbance_subtype')->nullable();
             $table->string('extent')->nullable();
+            $table->string('property_affected')->nullable();
             $table->integer('people_affected')->nullable();
             $table->date('date_of_disturbance')->nullable();
             $table->decimal('monetary_damage', 15, 2)->nullable();

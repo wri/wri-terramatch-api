@@ -31,6 +31,7 @@ class DisturbanceReportResource extends JsonResource
             'monetary_damage' => $this->monetary_damage,
             'description' => $this->description,
             'action_description' => $this->action_description,
+            'property_affected' => $this->property_affected,
         ];
 
         return $this->appendFilesToResource($data);
