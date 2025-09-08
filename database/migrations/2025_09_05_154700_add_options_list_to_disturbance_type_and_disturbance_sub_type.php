@@ -17,6 +17,7 @@ return new class () extends Migration {
         $collections = [
             'disturbance-types-collection' => ['Ecological', 'Climatic', 'Man-made'],
             'disturbance-subtypes-collection' => ['Flooding', 'Pests-Disease', 'Extreme Heat'],
+            'intensity-collection' => ['Low', 'Medium', 'High'],
         ];
 
         foreach ($collections as $key => $items) {

@@ -293,7 +293,7 @@ return [
             'fields' => [
                 'dis-rep-disturbance-type' => ['property' => 'disturbance_type', 'label' => 'Disturbance Type', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'disturbance-types-collection'],
                 'dis-rep-disturbance-subtype' => ['property' => 'disturbance_subtype', 'label' => 'Disturbance Subtype', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'disturbance-subtypes-collection'],
-                'dis-rep-intensity' => ['property' => 'intensity', 'label' => 'Intensity', 'input_type' => 'number'],
+                'dis-rep-intensity' => ['property' => 'intensity', 'label' => 'Intensity', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'intensity-collection'],
                 'dis-rep-extent' => ['property' => 'extent', 'label' => 'Extent', 'input_type' => 'text'],
                 'dis-rep-people-affected' => ['property' => 'people_affected', 'label' => 'People Affected', 'input_type' => 'number'],
                 'dis-rep-date-of-disturbance' => ['property' => 'date_of_disturbance', 'label' => 'Date of Disturbance', 'input_type' => 'date'],
