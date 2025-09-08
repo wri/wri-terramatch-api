@@ -18,7 +18,7 @@ return new class () extends Migration {
             'disturbance-types-collection' => ['Ecological', 'Climatic', 'Man-made'],
             'disturbance-subtypes-collection' => ['Flooding', 'Pests-Disease', 'Extreme Heat'],
             'intensity-collection' => ['Low', 'Medium', 'High'],
-            'property-affected-collection' => ['seedlings-nursery', 'structure-tree-sapling'],
+            'property-affected-collection' => ['Seedlings Nursery', 'Structure Tree Sapling'],
             'extent-collection' => ['0-20', '21-40', '41-60', '61-80', '81-100'],
         ];
 
