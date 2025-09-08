@@ -67,6 +67,7 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
         'monetary_damage' => 'float',
         'nothing_to_report' => 'boolean',
         'answers' => 'array',
+        'disturbance_subtype' => 'array',
     ];
 
     protected $auditInclude = [
