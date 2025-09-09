@@ -13,12 +13,13 @@ return new class extends Migration {
             $table->string('status');
             $table->string('title');
             $table->string('disturbance_type')->nullable();
-            $table->text('disturbance_subtype')->nullable();
+            $table->string('disturbance_subtype')->nullable();
+            $table->string('intensity')->nullable();
             $table->string('extent')->nullable();
-            $table->string('property_affected')->nullable();
             $table->integer('people_affected')->nullable();
-            $table->date('date_of_disturbance')->nullable();
             $table->decimal('monetary_damage', 15, 2)->nullable();
+            $table->string('property_affected')->nullable();
+            $table->date('date_of_disturbance')->nullable();
             $table->text('description')->nullable();
             $table->text('action_description')->nullable();
             $table->string('update_request_status')->nullable();
@@ -35,7 +36,6 @@ return new class extends Migration {
             $table->json('feedback_fields')->nullable();
             $table->json('answers')->nullable();
             $table->date('date_of_incident')->nullable();
-            $table->string('intensity')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
