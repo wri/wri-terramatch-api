@@ -15,8 +15,8 @@ return new class () extends Migration {
     {
         //
         $collections = [
-            'disturbance-types-collection' => ['Ecological', 'Climatic', 'Man-made'],
-            'disturbance-subtypes-collection' => ['Flooding', 'Pests-Disease', 'Extreme Heat'],
+            'disturbance-types-collection' => ['Climatic', 'Ecological', 'Manmade'],
+            'disturbance-subtypes-collection' => ['Flooding', 'Landslide Erosion', 'Drought', 'Fire', 'Heavy Rains', 'Hail', 'Strong Winds', 'Pests Disease', 'Poor Soil', 'Invasive Species', 'Poaching', 'Logging', 'Vandalism', 'Land Use Change Conflict', 'Grazing', 'Mining', 'Lack Community Ownership', 'Cultural Conflict', 'Labor Shortage', 'Inflation', 'Lack Political Will', 'Insecurity'],
             'intensity-collection' => ['Low', 'Medium', 'High'],
             'property-affected-collection' => ['Seedlings Nursery', 'Structure Tree Sapling'],
             'extent-collection' => ['0-20', '21-40', '41-60', '61-80', '81-100'],

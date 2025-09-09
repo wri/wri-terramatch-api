@@ -13,9 +13,11 @@ class ExportDisturbanceReportController extends Controller
     public function __invoke(ExportDisturbanceReportRequest $exportDisturbanceReportRequest): StreamedResponse
     {
         $header = [
-            'ID', 'UUID', 'Project ID', 'Project Name', 'Status',
-            'Date of Incident', 'Intensity', 'Title', 'Due At', 'Submitted At',
-            'Created At', 'Updated At',
+            'ID', 'UUID', 'Project UUID', 'Project Name', 'Status',
+            'Date of Incident', 'Date of Disturbance', 'Extent', 'Property Affected',
+            'People Affected', 'Monetary Damage', 'Description', 'Action Description',
+            'Disturbance Type', 'Disturbance Subtype', 'Intensity',
+            'Created At', 'Updated At', 'Submitted At',
         ];
         $records = [];
 
@@ -33,16 +35,23 @@ class ExportDisturbanceReportController extends Controller
             $records[] = [
                 $report->id,
                 $report->uuid,
-                $report->project_id,
+                $report->project->uuid,
                 $report->project->name ?? null,
                 $report->status,
                 $report->date_of_incident,
+                $report->date_of_disturbance,
+                $report->extent,
+                is_array($report->property_affected) ? implode(',', $report->property_affected) : $report->property_affected,
+                $report->people_affected,
+                $report->monetary_damage,
+                $report->description,
+                $report->action_description,
+                $report->disturbance_type,
+                is_array($report->disturbance_subtype) ? implode(',', $report->disturbance_subtype) : $report->disturbance_subtype,
                 $report->intensity,
-                $report->title,
-                $report->due_at,
-                $report->submitted_at,
                 $report->created_at,
                 $report->updated_at,
+                $report->submitted_at,
             ];
         }
 
