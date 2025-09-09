@@ -710,13 +710,14 @@ class RunMigrateFoncetProject extends Command
             return Command::FAILURE;
         }
 
-        $newProjects = [ ['name' => 'REBIVTA'], ['name' => 'REBITRI'], ['name' => 'REBISO'], ['name' => 'Restauración del Área Natural Protegida La Sepultura REBISE'], ['name' => 'APRN FRAILESCANA']];
+        $newProjects = [ ['name' => 'REBIVTA', 'uuid' => '9c125294-6d15-4df8-9026-c643c244d4a9'], ['name' => 'REBITRI', 'uuid' => '7f81c17f-4c27-4374-8871-d1eb0de6742b'],
+            ['name' => 'REBISO', 'uuid' => '2a1a3f39-d5fe-4601-aef2-3a036c59ae21'], ['name' => 'REBISE', 'uuid' => '77ffd3e4-42fa-4e81-a149-6f334ad4b7f6'], ['name' => 'APRN', 'uuid' => '0c9b0b33-94e9-46d3-b8e8-c26bc70e76d7']];
         $sitesAssociation = [
             'REBIVTA' => $this->rebivtaSites,
             'REBITRI' => $this->rebitriSites,
             'REBISO' => $this->rebisoSites,
             'REBISE' => $this->rebiseSites,
-            'APRN FRAILESCANA' => $this->AprnSites,
+            'APRN' => $this->AprnSites,
         ];
 
 
@@ -724,7 +725,7 @@ class RunMigrateFoncetProject extends Command
             $projectData = $foncetProject->toArray();
             unset($projectData['ppc_external_id']);
 
-            $project = Project::firstOrCreate(['name' => $newProject['name']], array_merge($projectData));
+            $project = Project::firstOrCreate(['uuid' => $newProject['uuid']], array_merge($projectData));
             $this->info("Project '{$project->name}' ensured with UUID: {$project->uuid}");
 
             $this->moveSitesToProject($project, $sitesAssociation[$newProject['name']]);
