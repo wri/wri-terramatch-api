@@ -289,6 +289,68 @@ class TerrafundCreateGeometryController extends Controller
         return $shpFile;
     }
 
+    private function validateCoordinateSystemAndBounds($geojsonPath)
+    {
+        try {
+            $geojsonData = file_get_contents($geojsonPath);
+            $geojson = json_decode($geojsonData, true);
+            
+            if (!$geojson || !isset($geojson['features'])) {
+                return [
+                    'valid' => false,
+                    'message' => 'Invalid GeoJSON format'
+                ];
+            }
+
+            $invalidFeatures = [];
+            foreach ($geojson['features'] as $index => $feature) {
+                if (!FeatureBounds::geoJsonValid($feature)) {
+                    $invalidFeatures[] = [
+                        'feature_index' => $index,
+                        'feature_name' => $feature['properties']['name'] ?? "Feature {$index}",
+                        'reason' => 'Coordinates outside valid bounds (lat: -90 to 90, lng: -180 to 180) or invalid projection'
+                    ];
+                }
+            }
+
+            if (!empty($invalidFeatures)) {
+                return [
+                    'valid' => false,
+                    'message' => 'Invalid coordinate system or bounds detected',
+                    'details' => $invalidFeatures
+                ];
+            }
+
+            return ['valid' => true];
+        } catch (Exception $e) {
+            Log::error('Error validating coordinate system: ' . $e->getMessage());
+            return [
+                'valid' => false,
+                'message' => 'Error validating coordinate system: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    private function cleanupDirectory($directory)
+    {
+        try {
+            if (is_dir($directory)) {
+                $files = scandir($directory);
+                foreach ($files as $file) {
+                    if ($file !== '.' && $file !== '..') {
+                        $filePath = $directory . DIRECTORY_SEPARATOR . $file;
+                        if (is_file($filePath)) {
+                            unlink($filePath);
+                        }
+                    }
+                }
+                rmdir($directory);
+            }
+        } catch (Exception $e) {
+            Log::warning('Error cleaning up directory: ' . $e->getMessage());
+        }
+    }
+
     public function parseValidationErrors($errors)
     {
         $parsedErrors = [];
@@ -345,10 +407,31 @@ class TerrafundCreateGeometryController extends Controller
 
                 return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
             }
+
+            // Validate coordinate system and bounds before inserting to DB
+            $coordinateValidation = $this->validateCoordinateSystemAndBounds($geojsonPath);
+            if (!$coordinateValidation['valid']) {
+                // Clean up temporary files
+                if (file_exists($geojsonPath)) {
+                    unlink($geojsonPath);
+                }
+                $this->cleanupDirectory($directory);
+                
+                return response()->json([
+                    'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).'
+                ], 400);
+            }
+
             $uuid = App::make(PolygonService::class)->insertGeojsonToDB($geojsonFilename, $entity_uuid, $entity_type);
             if (isset($uuid['error'])) {
                 return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
             }
+
+            // Clean up temporary files
+            if (file_exists($geojsonPath)) {
+                unlink($geojsonPath);
+            }
+            $this->cleanupDirectory($directory);
 
             return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
