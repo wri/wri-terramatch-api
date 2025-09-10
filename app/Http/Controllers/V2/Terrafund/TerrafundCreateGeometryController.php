@@ -176,16 +176,16 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         $coordinateValidation = $this->validateCoordinateSystemAndBounds($geojsonPath);
-        if (!$coordinateValidation['valid']) {
+        if (! $coordinateValidation['valid']) {
             if (file_exists($geojsonPath)) {
                 unlink($geojsonPath);
             }
             if (file_exists($kmlPath)) {
                 unlink($kmlPath);
             }
-            
+
             return response()->json([
-                'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).'
+                'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).',
             ], 400);
         }
 
@@ -316,39 +316,40 @@ class TerrafundCreateGeometryController extends Controller
         try {
             $geojsonData = file_get_contents($geojsonPath);
             $geojson = json_decode($geojsonData, true);
-            
-            if (!$geojson || !isset($geojson['features'])) {
+
+            if (! $geojson || ! isset($geojson['features'])) {
                 return [
                     'valid' => false,
-                    'message' => 'Invalid GeoJSON format'
+                    'message' => 'Invalid GeoJSON format',
                 ];
             }
 
             $invalidFeatures = [];
             foreach ($geojson['features'] as $index => $feature) {
-                if (!FeatureBounds::geoJsonValid($feature)) {
+                if (! FeatureBounds::geoJsonValid($feature)) {
                     $invalidFeatures[] = [
                         'feature_index' => $index,
                         'feature_name' => $feature['properties']['name'] ?? "Feature {$index}",
-                        'reason' => 'Coordinates outside valid bounds (lat: -90 to 90, lng: -180 to 180) or invalid projection'
+                        'reason' => 'Coordinates outside valid bounds (lat: -90 to 90, lng: -180 to 180) or invalid projection',
                     ];
                 }
             }
 
-            if (!empty($invalidFeatures)) {
+            if (! empty($invalidFeatures)) {
                 return [
                     'valid' => false,
                     'message' => 'Invalid coordinate system or bounds detected',
-                    'details' => $invalidFeatures
+                    'details' => $invalidFeatures,
                 ];
             }
 
             return ['valid' => true];
         } catch (Exception $e) {
             Log::error('Error validating coordinate system: ' . $e->getMessage());
+
             return [
                 'valid' => false,
-                'message' => 'Error validating coordinate system: ' . $e->getMessage()
+                'message' => 'Error validating coordinate system: ' . $e->getMessage(),
             ];
         }
     }
@@ -432,15 +433,15 @@ class TerrafundCreateGeometryController extends Controller
 
             // Validate coordinate system and bounds before inserting to DB
             $coordinateValidation = $this->validateCoordinateSystemAndBounds($geojsonPath);
-            if (!$coordinateValidation['valid']) {
+            if (! $coordinateValidation['valid']) {
                 // Clean up temporary files
                 if (file_exists($geojsonPath)) {
                     unlink($geojsonPath);
                 }
                 $this->cleanupDirectory($directory);
-                
+
                 return response()->json([
-                    'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).'
+                    'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).',
                 ], 400);
             }
 
@@ -744,14 +745,14 @@ class TerrafundCreateGeometryController extends Controller
 
         // Validate coordinate system and bounds before inserting to DB
         $coordinateValidation = $this->validateCoordinateSystemAndBounds($geojsonPath);
-        if (!$coordinateValidation['valid']) {
+        if (! $coordinateValidation['valid']) {
             // Clean up temporary files
             if (file_exists($geojsonPath)) {
                 unlink($geojsonPath);
             }
-            
+
             return response()->json([
-                'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).'
+                'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).',
             ], 400);
         }
 
