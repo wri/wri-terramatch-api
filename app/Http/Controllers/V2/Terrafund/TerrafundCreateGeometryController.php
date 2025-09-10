@@ -175,12 +175,34 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
         }
 
+        $coordinateValidation = $this->validateCoordinateSystemAndBounds($geojsonPath);
+        if (!$coordinateValidation['valid']) {
+            if (file_exists($geojsonPath)) {
+                unlink($geojsonPath);
+            }
+            if (file_exists($kmlPath)) {
+                unlink($kmlPath);
+            }
+            
+            return response()->json([
+                'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).'
+            ], 400);
+        }
+
         $uuid = App::make(PolygonService::class)->insertGeojsonToDB($geojsonFilename, $entity_uuid, $entity_type);
         if (isset($uuid['error'])) {
             return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
         }
 
         App::make(SiteService::class)->setSiteToRestorationInProgress($entity_uuid);
+
+        // Clean up temporary files
+        if (file_exists($geojsonPath)) {
+            unlink($geojsonPath);
+        }
+        if (file_exists($kmlPath)) {
+            unlink($kmlPath);
+        }
 
         return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
 
@@ -718,9 +740,29 @@ class TerrafundCreateGeometryController extends Controller
         $tempDir = sys_get_temp_dir();
         $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
         $file->move($tempDir, $filename);
+        $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+
+        // Validate coordinate system and bounds before inserting to DB
+        $coordinateValidation = $this->validateCoordinateSystemAndBounds($geojsonPath);
+        if (!$coordinateValidation['valid']) {
+            // Clean up temporary files
+            if (file_exists($geojsonPath)) {
+                unlink($geojsonPath);
+            }
+            
+            return response()->json([
+                'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).'
+            ], 400);
+        }
+
         $uuid = App::make(PolygonService::class)->insertGeojsonToDB($filename, $entity_uuid, $entity_type);
         if (is_array($uuid) && isset($uuid['error'])) {
             return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
+        }
+
+        // Clean up temporary files
+        if (file_exists($geojsonPath)) {
+            unlink($geojsonPath);
         }
 
         return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
