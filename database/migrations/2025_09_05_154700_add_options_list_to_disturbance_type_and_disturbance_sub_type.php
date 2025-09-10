@@ -20,6 +20,8 @@ return new class () extends Migration {
             'intensity-collection' => ['Low', 'Medium', 'High'],
             'property-affected-collection' => ['Seedlings', 'Nursery Structure', 'Trees', 'Saplings', 'Animals', 'People', 'Fencing'],
             'extent-collection' => ['0-20', '21-40', '41-60', '61-80', '81-100'],
+            'site-affected-collection' => ['Site 1', 'Site 2', 'Site 3'],
+            'polygon-affected-collection' => ['Polygon 1', 'Polygon 2', 'Polygon 3'],
         ];
 
         foreach ($collections as $key => $items) {

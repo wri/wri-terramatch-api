@@ -13,7 +13,7 @@ class DisturbanceReportLiteResource extends JsonResource
             'project_name' => $this->project->name ?? null,
             'status' => $this->status,
             'update_request_status' => $this->update_request_status,
-            'date_of_incident' => $this->date_of_incident,
+            'date_of_disturbance' => $this->date_of_disturbance,
             'intensity' => $this->intensity,
             'submitted_at' => $this->submitted_at,
             'updated_at' => $this->updated_at,

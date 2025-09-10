@@ -38,7 +38,6 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
 
     protected $fillable = [
         'status',
-        'date_of_incident',
         'intensity',
         'title',
         'disturbance_type',
@@ -48,6 +47,8 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
         'property_affected',
         'date_of_disturbance',
         'monetary_damage',
+        'site_affected',
+        'polygon_affected',
         'description',
         'action_description',
         'due_at',
@@ -63,13 +64,14 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
     protected $casts = [
         'due_at' => 'datetime',
         'submitted_at' => 'datetime',
-        'date_of_incident' => 'date',
         'date_of_disturbance' => 'date',
         'property_affected' => 'array',
         'monetary_damage' => 'float',
         'nothing_to_report' => 'boolean',
         'answers' => 'array',
         'disturbance_subtype' => 'array',
+        'site_affected' => 'array',
+        'polygon_affected' => 'array',
     ];
 
     protected $auditInclude = [

@@ -14,9 +14,9 @@ class ExportDisturbanceReportController extends Controller
     {
         $header = [
             'ID', 'UUID', 'Project UUID', 'Project Name', 'Status',
-            'Date of Incident', 'Date of Disturbance', 'Extent', 'Property Affected',
+            'Date of Disturbance', 'Extent', 'Property Affected',
             'People Affected', 'Monetary Damage', 'Description', 'Action Description',
-            'Disturbance Type', 'Disturbance Subtype', 'Intensity',
+            'Disturbance Type', 'Disturbance Subtype', 'Intensity', 'Site Affected', 'Polygon Affected',
             'Created At', 'Updated At', 'Submitted At',
         ];
         $records = [];
@@ -38,7 +38,6 @@ class ExportDisturbanceReportController extends Controller
                 $report->project->uuid,
                 $report->project->name ?? null,
                 $report->status,
-                $report->date_of_incident,
                 $report->date_of_disturbance,
                 $report->extent,
                 is_array($report->property_affected) ? implode(',', $report->property_affected) : $report->property_affected,
@@ -49,6 +48,8 @@ class ExportDisturbanceReportController extends Controller
                 $report->disturbance_type,
                 is_array($report->disturbance_subtype) ? implode(',', $report->disturbance_subtype) : $report->disturbance_subtype,
                 $report->intensity,
+                $this->formatSiteAffected($report->site_affected),
+                $this->formatPolygonAffected($report->polygon_affected),
                 $report->created_at,
                 $report->updated_at,
                 $report->submitted_at,
@@ -64,5 +65,45 @@ class ExportDisturbanceReportController extends Controller
         }, 'Disturbance Reports Export - ' . now() . '.csv', [
             'Content-Type' => 'text/csv',
         ]);
+    }
+
+    private function formatSiteAffected($siteAffected): string
+    {
+        if (empty($siteAffected) || ! is_array($siteAffected)) {
+            return '';
+        }
+
+        $formatted = [];
+        foreach ($siteAffected as $site) {
+            if (is_object($site) && isset($site->siteName)) {
+                $formatted[] = $site->siteName;
+            } elseif (is_array($site) && isset($site['siteName'])) {
+                $formatted[] = $site['siteName'];
+            }
+        }
+
+        return implode(', ', $formatted);
+    }
+
+    private function formatPolygonAffected($polygonAffected): string
+    {
+        if (empty($polygonAffected) || ! is_array($polygonAffected)) {
+            return '';
+        }
+
+        $formatted = [];
+        foreach ($polygonAffected as $polygonGroup) {
+            if (is_array($polygonGroup)) {
+                foreach ($polygonGroup as $polygon) {
+                    if (is_object($polygon) && isset($polygon->polyName)) {
+                        $formatted[] = $polygon->polyName;
+                    } elseif (is_array($polygon) && isset($polygon['polyName'])) {
+                        $formatted[] = $polygon['polyName'];
+                    }
+                }
+            }
+        }
+
+        return implode(', ', $formatted);
     }
 }

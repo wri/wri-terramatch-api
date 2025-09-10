@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->decimal('monetary_damage', 15, 2)->nullable();
             $table->string('property_affected')->nullable();
             $table->date('date_of_disturbance')->nullable();
+            $table->text('site_affected')->nullable();
+            $table->text('polygon_affected')->nullable();
             $table->text('description')->nullable();
             $table->text('action_description')->nullable();
             $table->string('update_request_status')->nullable();
@@ -35,7 +37,6 @@ return new class extends Migration {
             $table->text('feedback')->nullable();
             $table->json('feedback_fields')->nullable();
             $table->json('answers')->nullable();
-            $table->date('date_of_incident')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
