@@ -17,7 +17,7 @@ class ExportDisturbanceReportController extends Controller
             'Date of Disturbance', 'Extent', 'Property Affected',
             'People Affected', 'Monetary Damage', 'Description', 'Action Description',
             'Disturbance Type', 'Disturbance Subtype', 'Intensity', 'Site Affected', 'Polygon Affected',
-            'Created At', 'Updated At', 'Submitted At',
+            'Media Files', 'Created At', 'Updated At', 'Submitted At',
         ];
         $records = [];
 
@@ -50,6 +50,7 @@ class ExportDisturbanceReportController extends Controller
                 $report->intensity,
                 $this->formatSiteAffected($report->site_affected),
                 $this->formatPolygonAffected($report->polygon_affected),
+                $this->formatMediaFiles($report),
                 $report->created_at,
                 $report->updated_at,
                 $report->submitted_at,
@@ -105,5 +106,25 @@ class ExportDisturbanceReportController extends Controller
         }
 
         return implode(', ', $formatted);
+    }
+
+    private function formatMediaFiles($report): string
+    {
+        try {
+            $mediaFiles = $report->getMedia('media');
+
+            if ($mediaFiles->isEmpty()) {
+                return '';
+            }
+
+            $formatted = [];
+            foreach ($mediaFiles as $media) {
+                $formatted[] = $media->getUrl() . ' (' . $media->name . ')';
+            }
+
+            return implode(', ', $formatted);
+        } catch (\Exception $e) {
+            return 'Error loading media files';
+        }
     }
 }
