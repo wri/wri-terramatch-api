@@ -7,6 +7,7 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\ReportsStatusChange;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\Disturbance;
 use App\Models\V2\MonitoredData\IndicatorHectares;
 use App\Models\V2\MonitoredData\IndicatorTreeCover;
 use App\Models\V2\MonitoredData\IndicatorTreeCoverLoss;
@@ -58,6 +59,7 @@ class SitePolygon extends Model implements AuditableModel
       'is_active',
       'version_name',
       'validation_status',
+      'disturbance_id',
       'lat',
       'long',
     ];
@@ -95,6 +97,11 @@ class SitePolygon extends Model implements AuditableModel
     public function createdBy(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'created_by');
+    }
+
+    public function disturbance(): BelongsTo
+    {
+        return $this->belongsTo(Disturbance::class, 'disturbance_id');
     }
 
     public function getRouteKeyName()
@@ -188,6 +195,7 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->created_by = $user->id;
         $newSitePolygon->validation_status = null;
+        $newSitePolygon->disturbance_id = $properties['disturbance_id'] ?? $this->disturbance_id;
         $newSitePolygon->save();
 
         return $newSitePolygon;
