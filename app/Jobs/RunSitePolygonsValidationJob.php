@@ -81,16 +81,27 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
             $totalPolygons = count($this->sitePolygonsUuids);
             $processedCount = 0;
+            $jobStartTime = microtime(true);
             $polygonChunks = array_chunk($this->sitePolygonsUuids, $this->chunkSize);
 
             foreach ($polygonChunks as $chunkIndex => $polygonChunk) {
                 try {
                     foreach ($polygonChunk as $polygonIndex => $polygonUuid) {
+                        $elapsedTime = microtime(true) - $jobStartTime;
+                        if ($elapsedTime > 40) {
+                            Log::warning("Job approaching timeout after {$elapsedTime}s, stopping at polygon {$processedCount}");
+                            break 2;
+                        }
+                        
                         $this->validateSinglePolygon($polygonUuid, $validationService, $polygonService);
                         $processedCount++;
 
                         $delayedJob->increment('processed_content');
                         $delayedJob->processMessage();
+                        
+                        if (($polygonIndex + 1) % 2 === 0) {
+                            $this->clearMemoryAndConnections();
+                        }
                     }
 
                     $progress = min(100, round(($processedCount / $totalPolygons) * 100, 2));
@@ -106,12 +117,27 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 }
             }
 
-            $delayedJob->update([
-                'status' => DelayedJobProgress::STATUS_SUCCEEDED,
-                'payload' => ['message' => 'Validation completed for all site polygons'],
-                'status_code' => Response::HTTP_OK,
-                'progress' => 100,
-            ]);
+            if ($processedCount < $totalPolygons) {
+                $remainingPolygons = array_slice($this->sitePolygonsUuids, $processedCount);
+                $continuationJob = new RunSitePolygonsValidationJob($this->delayed_job_id, $remainingPolygons);
+                dispatch($continuationJob)->delay(now()->addSeconds(5));
+                
+                Log::info("Partial completion: processed {$processedCount}/{$totalPolygons} polygons. Scheduled continuation job.");
+                
+                $delayedJob->update([
+                    'status' => DelayedJobProgress::STATUS_PENDING,
+                    'payload' => ['message' => "Processed {$processedCount} of {$totalPolygons} polygons. Continuing..."],
+                    'status_code' => Response::HTTP_OK,
+                    'progress' => round(($processedCount / $totalPolygons) * 100, 2),
+                ]);
+            } else {
+                $delayedJob->update([
+                    'status' => DelayedJobProgress::STATUS_SUCCEEDED,
+                    'payload' => ['message' => 'Validation completed for all site polygons'],
+                    'status_code' => Response::HTTP_OK,
+                    'progress' => 100,
+                ]);
+            }
 
             if ($user && $user->email_address) {
                 Mail::to($user->email_address)
