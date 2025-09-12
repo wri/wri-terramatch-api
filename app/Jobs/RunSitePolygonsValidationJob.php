@@ -28,6 +28,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     use SerializesModels;
 
     public $timeout = 0;
+
     public $tries = 1;
 
     protected $uuid;
@@ -37,7 +38,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     protected $sitePolygonsUuids;
 
     protected $chunkSize = 200;
-    
+
     protected $memoryClearFrequency = 100;
 
     /**
@@ -64,14 +65,15 @@ class RunSitePolygonsValidationJob implements ShouldQueue
             $user = $delayedJob->creator;
             $metadata = $delayedJob->metadata;
 
-            if (!$user) {
+            if (! $user) {
                 Log::warning('No creator found for delayed job: ' . $this->delayed_job_id);
             }
 
             $entityId = $metadata['entity_id'] ?? null;
 
-            if (!$entityId) {
+            if (! $entityId) {
                 Log::error('entityId is null, unable to find site');
+
                 throw new Exception('Entity ID is null in delayed job metadata.');
             }
 
@@ -97,8 +99,9 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
                     $this->clearMemoryAndConnections();
                 } catch (Exception $chunkException) {
-                    Log::error("Error processing chunk " . ($chunkIndex + 1) . ": " . $chunkException->getMessage());
-                    Log::error("Chunk exception trace: " . $chunkException->getTraceAsString());
+                    Log::error('Error processing chunk ' . ($chunkIndex + 1) . ': ' . $chunkException->getMessage());
+                    Log::error('Chunk exception trace: ' . $chunkException->getTraceAsString());
+
                     throw $chunkException;
                 }
             }
@@ -151,7 +154,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     {
         try {
             $request = new Request(['uuid' => $polygonUuid]);
-            
+
             $validationService->validateOverlapping($request);
             $validationService->checkSelfIntersection($request);
             $validationService->validateCoordinateSystem($request);
@@ -165,6 +168,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
             $polygonService->updateSitePolygonValidity($polygonUuid);
         } catch (Exception $e) {
             Log::error("Error validating polygon {$polygonUuid}: " . $e->getMessage());
+
             throw $e;
         }
     }
