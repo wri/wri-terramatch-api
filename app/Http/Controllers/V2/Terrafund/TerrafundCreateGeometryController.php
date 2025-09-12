@@ -6,8 +6,8 @@ use App\Constants\PolygonFields;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DelayedJobResource;
+use App\Jobs\ChunkedPolygonValidationJob;
 use App\Jobs\InsertGeojsonToDBJob;
-use App\Jobs\RunSitePolygonsValidationJob;
 use App\Models\DelayedJob;
 use App\Models\DelayedJobProgress;
 use App\Models\V2\PolygonGeometry;
@@ -1516,7 +1516,9 @@ class TerrafundCreateGeometryController extends Controller
               'is_acknowledged' => false,
               'name' => 'Polygon Validation',
           ]);
-            $job = new RunSitePolygonsValidationJob($delayedJob->id, $sitePolygonsUuids);
+            // Use chunked approach for better reliability
+            $chunkSize = 50; // Process 50 polygons per chunk
+            $job = new ChunkedPolygonValidationJob($delayedJob->id, $sitePolygonsUuids, 0, $chunkSize);
             dispatch($job);
 
             return (new DelayedJobResource($delayedJob))->additional(['message' => 'Validation completed for all site polygons']);
@@ -1549,7 +1551,9 @@ class TerrafundCreateGeometryController extends Controller
                 'is_acknowledged' => false,
                 'name' => 'Polygon Validation',
             ]);
-            $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
+            // Use chunked approach for better reliability
+            $chunkSize = 50; // Process 50 polygons per chunk
+            $job = new ChunkedPolygonValidationJob($delayedJob->id, $uuids, 0, $chunkSize);
             dispatch($job);
 
             return (new DelayedJobResource($delayedJob))->additional(['message' => 'Validation completed for these polygons']);
