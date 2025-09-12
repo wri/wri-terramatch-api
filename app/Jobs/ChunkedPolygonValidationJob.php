@@ -28,17 +28,22 @@ class ChunkedPolygonValidationJob implements ShouldQueue
     use SerializesModels;
 
     public $timeout = 300; // 5 minutes per chunk
+
     public $tries = 3;
 
     protected $delayed_job_id;
+
     protected $polygonUuids;
+
     protected $currentChunkIndex;
+
     protected $chunkSize;
+
     protected $totalChunks;
 
     public function __construct(
-        string $delayed_job_id, 
-        array $polygonUuids, 
+        string $delayed_job_id,
+        array $polygonUuids,
         int $currentChunkIndex = 0,
         int $chunkSize = 50
     ) {
@@ -56,13 +61,14 @@ class ChunkedPolygonValidationJob implements ShouldQueue
             $user = $delayedJob->creator;
             $metadata = $delayedJob->metadata;
 
-            if (!$user) {
+            if (! $user) {
                 Log::warning('No creator found for delayed job: ' . $this->delayed_job_id);
             }
 
             $entityId = $metadata['entity_id'] ?? null;
-            if (!$entityId) {
+            if (! $entityId) {
                 Log::error('entityId is null, unable to find site');
+
                 throw new Exception('Entity ID is null in delayed job metadata.');
             }
 
@@ -84,7 +90,7 @@ class ChunkedPolygonValidationJob implements ShouldQueue
             $totalProcessed = $delayedJob->processed_content;
             $totalPolygons = count($this->polygonUuids);
             $progress = min(100, round(($totalProcessed / $totalPolygons) * 100, 2));
-            
+
             $delayedJob->update(['progress' => $progress]);
             $delayedJob->save();
 
@@ -97,10 +103,10 @@ class ChunkedPolygonValidationJob implements ShouldQueue
                     $nextChunkIndex,
                     $this->chunkSize
                 );
-                
+
                 dispatch($nextJob)->delay(now()->addSeconds(2));
-                
-                Log::info("Scheduled next chunk " . ($nextChunkIndex + 1) . "/{$this->totalChunks}");
+
+                Log::info('Scheduled next chunk ' . ($nextChunkIndex + 1) . "/{$this->totalChunks}");
             } else {
                 // All chunks completed
                 $delayedJob->update([
@@ -162,6 +168,7 @@ class ChunkedPolygonValidationJob implements ShouldQueue
             $polygonService->updateSitePolygonValidity($polygonUuid);
         } catch (Exception $e) {
             Log::error("Error validating polygon {$polygonUuid}: " . $e->getMessage());
+
             throw $e;
         }
     }
@@ -171,7 +178,7 @@ class ChunkedPolygonValidationJob implements ShouldQueue
         try {
             DB::disconnect();
             gc_collect_cycles();
-            
+
             if (function_exists('gc_mem_caches')) {
                 gc_mem_caches();
             }
