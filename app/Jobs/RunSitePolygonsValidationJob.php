@@ -90,15 +90,16 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                         $elapsedTime = microtime(true) - $jobStartTime;
                         if ($elapsedTime > 40) {
                             Log::warning("Job approaching timeout after {$elapsedTime}s, stopping at polygon {$processedCount}");
+
                             break 2;
                         }
-                        
+
                         $this->validateSinglePolygon($polygonUuid, $validationService, $polygonService);
                         $processedCount++;
 
                         $delayedJob->increment('processed_content');
                         $delayedJob->processMessage();
-                        
+
                         if (($polygonIndex + 1) % 2 === 0) {
                             $this->clearMemoryAndConnections();
                         }
@@ -121,9 +122,9 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 $remainingPolygons = array_slice($this->sitePolygonsUuids, $processedCount);
                 $continuationJob = new RunSitePolygonsValidationJob($this->delayed_job_id, $remainingPolygons);
                 dispatch($continuationJob)->delay(now()->addSeconds(5));
-                
+
                 Log::info("Partial completion: processed {$processedCount}/{$totalPolygons} polygons. Scheduled continuation job.");
-                
+
                 $delayedJob->update([
                     'status' => DelayedJobProgress::STATUS_PENDING,
                     'payload' => ['message' => "Processed {$processedCount} of {$totalPolygons} polygons. Continuing..."],
