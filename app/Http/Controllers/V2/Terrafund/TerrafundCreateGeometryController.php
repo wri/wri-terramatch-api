@@ -725,7 +725,23 @@ class TerrafundCreateGeometryController extends Controller
         $rules = [
           'entity_uuid' => 'required|string',
           'entity_type' => 'required|string',
-          'file' => 'required|file|mimes:json,geojson',
+          'file' => [
+              'required',
+              'file',
+              'mimetypes:application/json,application/geo+json,text/plain',
+              function ($attribute, $value, $fail) {
+                  $allowedExtensions = ['json', 'geojson'];
+                  $extension = strtolower($value->getClientOriginalExtension());
+                  if (! in_array($extension, $allowedExtensions)) {
+                      return $fail('The file must have a .json or .geojson extension.');
+                  }
+                  $content = file_get_contents($value->getPathname());
+                  json_decode($content, true);
+                  if (json_last_error() !== JSON_ERROR_NONE) {
+                      return $fail('The file must contain valid JSON data.');
+                  }
+              },
+          ],
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -775,7 +791,26 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $rules = [
-          'file' => 'required|file|mimes:json,geojson',
+          'file' => [
+              'required',
+              'file',
+              'mimetypes:application/json,application/geo+json,text/plain',
+              function ($attribute, $value, $fail) {
+                  $allowedExtensions = ['json', 'geojson'];
+                  $extension = strtolower($value->getClientOriginalExtension());
+
+                  if (! in_array($extension, $allowedExtensions)) {
+                      return $fail('The file must have a .json or .geojson extension.');
+                  }
+
+                  $content = file_get_contents($value->getPathname());
+                  json_decode($content, true);
+
+                  if (json_last_error() !== JSON_ERROR_NONE) {
+                      return $fail('The file must contain valid JSON data.');
+                  }
+              },
+          ],
         ];
         $body = $request->all();
         $validator = Validator::make($request->all(), $rules);
@@ -951,7 +986,26 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $rules = [
-          'file' => 'required|file|mimes:json,geojson',
+          'file' => [
+              'required',
+              'file',
+              'mimetypes:application/json,application/geo+json,text/plain',
+              function ($attribute, $value, $fail) {
+                  $allowedExtensions = ['json', 'geojson'];
+                  $extension = strtolower($value->getClientOriginalExtension());
+
+                  if (! in_array($extension, $allowedExtensions)) {
+                      return $fail('The file must have a .json or .geojson extension.');
+                  }
+
+                  $content = file_get_contents($value->getPathname());
+                  json_decode($content, true);
+
+                  if (json_last_error() !== JSON_ERROR_NONE) {
+                      return $fail('The file must contain valid JSON data.');
+                  }
+              },
+          ],
         ];
 
         $validator = Validator::make($request->all(), $rules);
