@@ -14,7 +14,7 @@ properties:
   stage:
     $ref: './_index.yml#/StageLiteRead'
   answers:
-    type: string
+    type: object
   status:
     type: string
   readable_status:

@@ -8320,7 +8320,7 @@ definitions:
                     readable_status:
                       type: string
                 answers:
-                  type: string
+                  type: object
                 status:
                   type: string
                 readable_status:
@@ -10209,7 +10209,7 @@ definitions:
           readable_status:
             type: string
       answers:
-        type: string
+        type: object
       status:
         type: string
       readable_status:
@@ -11273,7 +11273,7 @@ definitions:
                 readable_status:
                   type: string
             answers:
-              type: string
+              type: object
             status:
               type: string
             readable_status:
@@ -41079,7 +41079,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -41343,7 +41343,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -41613,7 +41613,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -41863,7 +41863,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -42157,7 +42157,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -42411,7 +42411,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -43379,7 +43379,7 @@ paths:
                         readable_status:
                           type: string
                     answers:
-                      type: string
+                      type: object
                     status:
                       type: string
                     readable_status:
@@ -44394,7 +44394,7 @@ paths:
                         readable_status:
                           type: string
                     answers:
-                      type: string
+                      type: object
                     status:
                       type: string
                     readable_status:
