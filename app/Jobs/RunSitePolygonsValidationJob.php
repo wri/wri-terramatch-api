@@ -27,7 +27,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $timeout = 0;
+    public $timeout = 50;
 
     public $tries = 1;
 
@@ -37,7 +37,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
     protected $sitePolygonsUuids;
 
-    protected $chunkSize = 200;
+    protected $chunkSize = 10;
 
     protected $memoryClearFrequency = 100;
 

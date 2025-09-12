@@ -27,7 +27,7 @@ class ChunkedPolygonValidationJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $timeout = 300; // 5 minutes per chunk
+    public $timeout = 50; // 50 seconds per chunk (under Horizon's 60s limit)
 
     public $tries = 3;
 
@@ -52,6 +52,8 @@ class ChunkedPolygonValidationJob implements ShouldQueue
         $this->currentChunkIndex = $currentChunkIndex;
         $this->chunkSize = $chunkSize;
         $this->totalChunks = (int) ceil(count($polygonUuids) / $chunkSize);
+
+        // Use default queue to avoid Horizon configuration changes
     }
 
     public function handle(PolygonValidationService $validationService, PolygonService $polygonService)
