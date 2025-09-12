@@ -283,18 +283,6 @@ definitions:
             type: string
           fin_start_month:
             type: integer
-          fin_budget_3year:
-            type: number
-            format: float
-          fin_budget_2year:
-            type: number
-            format: float
-          fin_budget_1year:
-            type: number
-            format: float
-          fin_budget_current_year:
-            type: number
-            format: float
           ha_restored_total:
             type: number
             format: float
@@ -842,18 +830,6 @@ definitions:
               type: string
             fin_start_month:
               type: integer
-            fin_budget_3year:
-              type: number
-              format: float
-            fin_budget_2year:
-              type: number
-              format: float
-            fin_budget_1year:
-              type: number
-              format: float
-            fin_budget_current_year:
-              type: number
-              format: float
             ha_restored_total:
               type: number
               format: float
@@ -3046,18 +3022,6 @@ definitions:
         type: string
       fin_start_month:
         type: integer
-      fin_budget_3year:
-        type: number
-        format: float
-      fin_budget_2year:
-        type: number
-        format: float
-      fin_budget_1year:
-        type: number
-        format: float
-      fin_budget_current_year:
-        type: number
-        format: float
       ha_restored_total:
         type: number
         format: float
@@ -3563,18 +3527,6 @@ definitions:
         type: string
       fin_start_month:
         type: integer
-      fin_budget_3year:
-        type: number
-        format: float
-      fin_budget_2year:
-        type: number
-        format: float
-      fin_budget_1year:
-        type: number
-        format: float
-      fin_budget_current_year:
-        type: number
-        format: float
       ha_restored_total:
         type: number
         format: float
@@ -3950,18 +3902,6 @@ definitions:
         type: string
       fin_start_month:
         type: integer
-      fin_budget_3year:
-        type: number
-        format: float
-      fin_budget_2year:
-        type: number
-        format: float
-      fin_budget_1year:
-        type: number
-        format: float
-      fin_budget_current_year:
-        type: number
-        format: float
       ha_restored_total:
         type: number
         format: float
@@ -4040,8 +3980,6 @@ definitions:
         type: string
       subtype:
         type: string
-      organisation_revenue_this_year:
-        type: number
       shapefiles:
         type: array
         items:
@@ -4196,8 +4134,6 @@ definitions:
         type: string
       subtype:
         type: string
-      organisation_revenue_this_year:
-        type: number
       languages:
         type: array
         items:
@@ -4226,18 +4162,6 @@ definitions:
         type: string
       fin_start_month:
         type: integer
-      fin_budget_3year:
-        type: number
-        format: float
-      fin_budget_2year:
-        type: number
-        format: float
-      fin_budget_1year:
-        type: number
-        format: float
-      fin_budget_current_year:
-        type: number
-        format: float
       ha_restored_total:
         type: number
         format: float
@@ -4416,18 +4340,6 @@ definitions:
         type: string
       fin_start_month:
         type: integer
-      fin_budget_3year:
-        type: number
-        format: float
-      fin_budget_2year:
-        type: number
-        format: float
-      fin_budget_1year:
-        type: number
-        format: float
-      fin_budget_current_year:
-        type: number
-        format: float
       ha_restored_total:
         type: number
         format: float
@@ -4506,8 +4418,6 @@ definitions:
         type: string
       subtype:
         type: string
-      organisation_revenue_this_year:
-        type: number
       shapefiles:
         type: array
         items:
@@ -5037,18 +4947,6 @@ definitions:
               type: string
             fin_start_month:
               type: integer
-            fin_budget_3year:
-              type: number
-              format: float
-            fin_budget_2year:
-              type: number
-              format: float
-            fin_budget_1year:
-              type: number
-              format: float
-            fin_budget_current_year:
-              type: number
-              format: float
             ha_restored_total:
               type: number
               format: float
@@ -6311,18 +6209,6 @@ definitions:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -6401,8 +6287,6 @@ definitions:
                 type: string
               subtype:
                 type: string
-              organisation_revenue_this_year:
-                type: number
               shapefiles:
                 type: array
                 items:
@@ -7063,18 +6947,6 @@ definitions:
             type: string
           fin_start_month:
             type: integer
-          fin_budget_3year:
-            type: number
-            format: float
-          fin_budget_2year:
-            type: number
-            format: float
-          fin_budget_1year:
-            type: number
-            format: float
-          fin_budget_current_year:
-            type: number
-            format: float
           ha_restored_total:
             type: number
             format: float
@@ -7153,8 +7025,6 @@ definitions:
             type: string
           subtype:
             type: string
-          organisation_revenue_this_year:
-            type: number
           shapefiles:
             type: array
             items:
@@ -7648,18 +7518,6 @@ definitions:
             type: string
           fin_start_month:
             type: integer
-          fin_budget_3year:
-            type: number
-            format: float
-          fin_budget_2year:
-            type: number
-            format: float
-          fin_budget_1year:
-            type: number
-            format: float
-          fin_budget_current_year:
-            type: number
-            format: float
           ha_restored_total:
             type: number
             format: float
@@ -7738,8 +7596,6 @@ definitions:
             type: string
           subtype:
             type: string
-          organisation_revenue_this_year:
-            type: number
           shapefiles:
             type: array
             items:
@@ -8524,18 +8380,6 @@ definitions:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -9294,18 +9138,6 @@ definitions:
             type: string
           fin_start_month:
             type: integer
-          fin_budget_3year:
-            type: number
-            format: float
-          fin_budget_2year:
-            type: number
-            format: float
-          fin_budget_1year:
-            type: number
-            format: float
-          fin_budget_current_year:
-            type: number
-            format: float
           ha_restored_total:
             type: number
             format: float
@@ -9384,8 +9216,6 @@ definitions:
             type: string
           subtype:
             type: string
-          organisation_revenue_this_year:
-            type: number
           shapefiles:
             type: array
             items:
@@ -11674,18 +11504,6 @@ definitions:
             type: string
           fin_start_month:
             type: integer
-          fin_budget_3year:
-            type: number
-            format: float
-          fin_budget_2year:
-            type: number
-            format: float
-          fin_budget_1year:
-            type: number
-            format: float
-          fin_budget_current_year:
-            type: number
-            format: float
           ha_restored_total:
             type: number
             format: float
@@ -12252,18 +12070,6 @@ definitions:
                   type: string
                 fin_start_month:
                   type: integer
-                fin_budget_3year:
-                  type: number
-                  format: float
-                fin_budget_2year:
-                  type: number
-                  format: float
-                fin_budget_1year:
-                  type: number
-                  format: float
-                fin_budget_current_year:
-                  type: number
-                  format: float
                 ha_restored_total:
                   type: number
                   format: float
@@ -12342,8 +12148,6 @@ definitions:
                   type: string
                 subtype:
                   type: string
-                organisation_revenue_this_year:
-                  type: number
                 shapefiles:
                   type: array
                   items:
@@ -12863,18 +12667,6 @@ definitions:
             type: string
           fin_start_month:
             type: integer
-          fin_budget_3year:
-            type: number
-            format: float
-          fin_budget_2year:
-            type: number
-            format: float
-          fin_budget_1year:
-            type: number
-            format: float
-          fin_budget_current_year:
-            type: number
-            format: float
           ha_restored_total:
             type: number
             format: float
@@ -12953,8 +12745,6 @@ definitions:
             type: string
           subtype:
             type: string
-          organisation_revenue_this_year:
-            type: number
           shapefiles:
             type: array
             items:
@@ -13484,18 +13274,6 @@ definitions:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -13574,8 +13352,6 @@ definitions:
                 type: string
               subtype:
                 type: string
-              organisation_revenue_this_year:
-                type: number
               shapefiles:
                 type: array
                 items:
@@ -14087,18 +13863,6 @@ definitions:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -14177,8 +13941,6 @@ definitions:
                 type: string
               subtype:
                 type: string
-              organisation_revenue_this_year:
-                type: number
               shapefiles:
                 type: array
                 items:
@@ -14702,18 +14464,6 @@ definitions:
                     type: string
                   fin_start_month:
                     type: integer
-                  fin_budget_3year:
-                    type: number
-                    format: float
-                  fin_budget_2year:
-                    type: number
-                    format: float
-                  fin_budget_1year:
-                    type: number
-                    format: float
-                  fin_budget_current_year:
-                    type: number
-                    format: float
                   ha_restored_total:
                     type: number
                     format: float
@@ -14792,8 +14542,6 @@ definitions:
                     type: string
                   subtype:
                     type: string
-                  organisation_revenue_this_year:
-                    type: number
                   shapefiles:
                     type: array
                     items:
@@ -15294,18 +15042,6 @@ definitions:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -15851,18 +15587,6 @@ definitions:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -16413,18 +16137,6 @@ definitions:
             type: string
           fin_start_month:
             type: integer
-          fin_budget_3year:
-            type: number
-            format: float
-          fin_budget_2year:
-            type: number
-            format: float
-          fin_budget_1year:
-            type: number
-            format: float
-          fin_budget_current_year:
-            type: number
-            format: float
           ha_restored_total:
             type: number
             format: float
@@ -16503,8 +16215,6 @@ definitions:
             type: string
           subtype:
             type: string
-          organisation_revenue_this_year:
-            type: number
           shapefiles:
             type: array
             items:
@@ -17014,18 +16724,6 @@ definitions:
                     type: string
                   fin_start_month:
                     type: integer
-                  fin_budget_3year:
-                    type: number
-                    format: float
-                  fin_budget_2year:
-                    type: number
-                    format: float
-                  fin_budget_1year:
-                    type: number
-                    format: float
-                  fin_budget_current_year:
-                    type: number
-                    format: float
                   ha_restored_total:
                     type: number
                     format: float
@@ -17104,8 +16802,6 @@ definitions:
                     type: string
                   subtype:
                     type: string
-                  organisation_revenue_this_year:
-                    type: number
                   shapefiles:
                     type: array
                     items:
@@ -17598,18 +17294,6 @@ definitions:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -18155,18 +17839,6 @@ definitions:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -18855,18 +18527,6 @@ definitions:
             type: string
           fin_start_month:
             type: integer
-          fin_budget_3year:
-            type: number
-            format: float
-          fin_budget_2year:
-            type: number
-            format: float
-          fin_budget_1year:
-            type: number
-            format: float
-          fin_budget_current_year:
-            type: number
-            format: float
           ha_restored_total:
             type: number
             format: float
@@ -18945,8 +18605,6 @@ definitions:
             type: string
           subtype:
             type: string
-          organisation_revenue_this_year:
-            type: number
           shapefiles:
             type: array
             items:
@@ -19638,18 +19296,6 @@ definitions:
             type: string
           fin_start_month:
             type: integer
-          fin_budget_3year:
-            type: number
-            format: float
-          fin_budget_2year:
-            type: number
-            format: float
-          fin_budget_1year:
-            type: number
-            format: float
-          fin_budget_current_year:
-            type: number
-            format: float
           ha_restored_total:
             type: number
             format: float
@@ -19728,8 +19374,6 @@ definitions:
             type: string
           subtype:
             type: string
-          organisation_revenue_this_year:
-            type: number
           shapefiles:
             type: array
             items:
@@ -20202,18 +19846,6 @@ definitions:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -20952,12 +20584,13 @@ definitions:
           items:
             type: string
           description: |
-            The UUIDs generated by the system for the uploaded geometry at this index. For a polygon geometry, this
-            always be an array with 1 member. For Point geometry, there will be the same number of UUIDS associated as
-            there were Points in the request payload at this index, and the order will be the same.
+            For each geometry feature in the request (in order), this array contains the UUID assigned to that feature.
+            If the feature was newly created, it will contain the new UUID; if it was detected as a duplicate, it will
+            contain the UUID of the existing polygon in the database.
+            For Point geometry, there will be one UUID per point and the order is preserved.
         errors:
           type: object
-          description: Mapping of polygon UUID to the errors associated with the polygon. The geometry was saved in the DB and must be updated instead of created once the issues are resolved.
+          description: 'Mapping of existing polygon UUID to the errors associated with the polygon. Currently, only duplicate detection errors are returned during create operations.'
           additionalProperties:
             type: array
             items:
@@ -20966,6 +20599,7 @@ definitions:
                 key:
                   type: string
                   enum:
+                    - DUPLICATE_GEOMETRY
                     - OVERLAPPING_POLYGON
                     - SELF_INTERSECTION
                     - COORDINATE_SYSTEM
@@ -22830,18 +22464,6 @@ definitions:
             type: string
           fin_start_month:
             type: integer
-          fin_budget_3year:
-            type: number
-            format: float
-          fin_budget_2year:
-            type: number
-            format: float
-          fin_budget_1year:
-            type: number
-            format: float
-          fin_budget_current_year:
-            type: number
-            format: float
           ha_restored_total:
             type: number
             format: float
@@ -22920,8 +22542,6 @@ definitions:
             type: string
           subtype:
             type: string
-          organisation_revenue_this_year:
-            type: number
           shapefiles:
             type: array
             items:
@@ -23542,18 +23162,6 @@ paths:
                       type: string
                     fin_start_month:
                       type: integer
-                    fin_budget_3year:
-                      type: number
-                      format: float
-                    fin_budget_2year:
-                      type: number
-                      format: float
-                    fin_budget_1year:
-                      type: number
-                      format: float
-                    fin_budget_current_year:
-                      type: number
-                      format: float
                     ha_restored_total:
                       type: number
                       format: float
@@ -23632,8 +23240,6 @@ paths:
                       type: string
                     subtype:
                       type: string
-                    organisation_revenue_this_year:
-                      type: number
                     shapefiles:
                       type: array
                       items:
@@ -24154,18 +23760,6 @@ paths:
                           type: string
                         fin_start_month:
                           type: integer
-                        fin_budget_3year:
-                          type: number
-                          format: float
-                        fin_budget_2year:
-                          type: number
-                          format: float
-                        fin_budget_1year:
-                          type: number
-                          format: float
-                        fin_budget_current_year:
-                          type: number
-                          format: float
                         ha_restored_total:
                           type: number
                           format: float
@@ -24244,8 +23838,6 @@ paths:
                           type: string
                         subtype:
                           type: string
-                        organisation_revenue_this_year:
-                          type: number
                         shapefiles:
                           type: array
                           items:
@@ -24774,18 +24366,6 @@ paths:
                           type: string
                         fin_start_month:
                           type: integer
-                        fin_budget_3year:
-                          type: number
-                          format: float
-                        fin_budget_2year:
-                          type: number
-                          format: float
-                        fin_budget_1year:
-                          type: number
-                          format: float
-                        fin_budget_current_year:
-                          type: number
-                          format: float
                         ha_restored_total:
                           type: number
                           format: float
@@ -24864,8 +24444,6 @@ paths:
                           type: string
                         subtype:
                           type: string
-                        organisation_revenue_this_year:
-                          type: number
                         shapefiles:
                           type: array
                           items:
@@ -25403,18 +24981,6 @@ paths:
                     type: string
                   fin_start_month:
                     type: integer
-                  fin_budget_3year:
-                    type: number
-                    format: float
-                  fin_budget_2year:
-                    type: number
-                    format: float
-                  fin_budget_1year:
-                    type: number
-                    format: float
-                  fin_budget_current_year:
-                    type: number
-                    format: float
                   ha_restored_total:
                     type: number
                     format: float
@@ -28285,7 +27851,7 @@ paths:
     get:
       summary: Get a collection of organisations
       operationId: v2-admin-get-organisations
-      description: 'Currently available sort is status, type, trees_grown_total, name, fin_budget_1year, created_at'
+      description: 'Currently available sort is status, type, trees_grown_total, name, created_at'
       parameters:
         - name: search
           type: string
@@ -28389,18 +27955,6 @@ paths:
                       type: string
                     fin_start_month:
                       type: integer
-                    fin_budget_3year:
-                      type: number
-                      format: float
-                    fin_budget_2year:
-                      type: number
-                      format: float
-                    fin_budget_1year:
-                      type: number
-                      format: float
-                    fin_budget_current_year:
-                      type: number
-                      format: float
                     ha_restored_total:
                       type: number
                       format: float
@@ -28966,18 +28520,6 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -29498,18 +29040,6 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -30018,18 +29548,6 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -30108,8 +29626,6 @@ paths:
                 type: string
               subtype:
                 type: string
-              organisation_revenue_this_year:
-                type: number
               shapefiles:
                 type: array
                 items:
@@ -30215,18 +29731,6 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -30760,18 +30264,6 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -30850,8 +30342,6 @@ paths:
                 type: string
               subtype:
                 type: string
-              organisation_revenue_this_year:
-                type: number
               shapefiles:
                 type: array
                 items:
@@ -30964,18 +30454,6 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -31054,8 +30532,6 @@ paths:
                 type: string
               subtype:
                 type: string
-              organisation_revenue_this_year:
-                type: number
               shapefiles:
                 type: array
                 items:
@@ -31204,8 +30680,6 @@ paths:
                 type: string
               subtype:
                 type: string
-              organisation_revenue_this_year:
-                type: number
               languages:
                 type: array
                 items:
@@ -31234,18 +30708,6 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -31442,18 +30904,6 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -31532,8 +30982,6 @@ paths:
                 type: string
               subtype:
                 type: string
-              organisation_revenue_this_year:
-                type: number
               shapefiles:
                 type: array
                 items:
@@ -32021,8 +31469,6 @@ paths:
                 type: string
               subtype:
                 type: string
-              organisation_revenue_this_year:
-                type: number
               languages:
                 type: array
                 items:
@@ -32051,18 +31497,6 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -32302,18 +31736,6 @@ paths:
                 type: string
               fin_start_month:
                 type: integer
-              fin_budget_3year:
-                type: number
-                format: float
-              fin_budget_2year:
-                type: number
-                format: float
-              fin_budget_1year:
-                type: number
-                format: float
-              fin_budget_current_year:
-                type: number
-                format: float
               ha_restored_total:
                 type: number
                 format: float
@@ -32392,8 +31814,6 @@ paths:
                 type: string
               subtype:
                 type: string
-              organisation_revenue_this_year:
-                type: number
               shapefiles:
                 type: array
                 items:
@@ -32879,18 +32299,6 @@ paths:
                       type: string
                     fin_start_month:
                       type: integer
-                    fin_budget_3year:
-                      type: number
-                      format: float
-                    fin_budget_2year:
-                      type: number
-                      format: float
-                    fin_budget_1year:
-                      type: number
-                      format: float
-                    fin_budget_current_year:
-                      type: number
-                      format: float
                     ha_restored_total:
                       type: number
                       format: float
@@ -33453,18 +32861,6 @@ paths:
                       type: string
                     fin_start_month:
                       type: integer
-                    fin_budget_3year:
-                      type: number
-                      format: float
-                    fin_budget_2year:
-                      type: number
-                      format: float
-                    fin_budget_1year:
-                      type: number
-                      format: float
-                    fin_budget_current_year:
-                      type: number
-                      format: float
                     ha_restored_total:
                       type: number
                       format: float
@@ -34324,18 +33720,6 @@ paths:
                       type: string
                     fin_start_month:
                       type: integer
-                    fin_budget_3year:
-                      type: number
-                      format: float
-                    fin_budget_2year:
-                      type: number
-                      format: float
-                    fin_budget_1year:
-                      type: number
-                      format: float
-                    fin_budget_current_year:
-                      type: number
-                      format: float
                     ha_restored_total:
                       type: number
                       format: float
@@ -35885,18 +35269,6 @@ paths:
                               type: string
                             fin_start_month:
                               type: integer
-                            fin_budget_3year:
-                              type: number
-                              format: float
-                            fin_budget_2year:
-                              type: number
-                              format: float
-                            fin_budget_1year:
-                              type: number
-                              format: float
-                            fin_budget_current_year:
-                              type: number
-                              format: float
                             ha_restored_total:
                               type: number
                               format: float
@@ -35975,8 +35347,6 @@ paths:
                               type: string
                             subtype:
                               type: string
-                            organisation_revenue_this_year:
-                              type: number
                             shapefiles:
                               type: array
                               items:
@@ -42751,18 +42121,6 @@ paths:
                     type: string
                   fin_start_month:
                     type: integer
-                  fin_budget_3year:
-                    type: number
-                    format: float
-                  fin_budget_2year:
-                    type: number
-                    format: float
-                  fin_budget_1year:
-                    type: number
-                    format: float
-                  fin_budget_current_year:
-                    type: number
-                    format: float
                   ha_restored_total:
                     type: number
                     format: float
@@ -43778,18 +43136,6 @@ paths:
                     type: string
                   fin_start_month:
                     type: integer
-                  fin_budget_3year:
-                    type: number
-                    format: float
-                  fin_budget_2year:
-                    type: number
-                    format: float
-                  fin_budget_1year:
-                    type: number
-                    format: float
-                  fin_budget_current_year:
-                    type: number
-                    format: float
                   ha_restored_total:
                     type: number
                     format: float
@@ -44793,18 +44139,6 @@ paths:
                     type: string
                   fin_start_month:
                     type: integer
-                  fin_budget_3year:
-                    type: number
-                    format: float
-                  fin_budget_2year:
-                    type: number
-                    format: float
-                  fin_budget_1year:
-                    type: number
-                    format: float
-                  fin_budget_current_year:
-                    type: number
-                    format: float
                   ha_restored_total:
                     type: number
                     format: float
@@ -46184,18 +45518,6 @@ paths:
                           type: string
                         fin_start_month:
                           type: integer
-                        fin_budget_3year:
-                          type: number
-                          format: float
-                        fin_budget_2year:
-                          type: number
-                          format: float
-                        fin_budget_1year:
-                          type: number
-                          format: float
-                        fin_budget_current_year:
-                          type: number
-                          format: float
                         ha_restored_total:
                           type: number
                           format: float
@@ -46274,8 +45596,6 @@ paths:
                           type: string
                         subtype:
                           type: string
-                        organisation_revenue_this_year:
-                          type: number
                         shapefiles:
                           type: array
                           items:
@@ -47978,12 +47298,13 @@ paths:
                   items:
                     type: string
                   description: |
-                    The UUIDs generated by the system for the uploaded geometry at this index. For a polygon geometry, this
-                    always be an array with 1 member. For Point geometry, there will be the same number of UUIDS associated as
-                    there were Points in the request payload at this index, and the order will be the same.
+                    For each geometry feature in the request (in order), this array contains the UUID assigned to that feature.
+                    If the feature was newly created, it will contain the new UUID; if it was detected as a duplicate, it will
+                    contain the UUID of the existing polygon in the database.
+                    For Point geometry, there will be one UUID per point and the order is preserved.
                 errors:
                   type: object
-                  description: Mapping of polygon UUID to the errors associated with the polygon. The geometry was saved in the DB and must be updated instead of created once the issues are resolved.
+                  description: 'Mapping of existing polygon UUID to the errors associated with the polygon. Currently, only duplicate detection errors are returned during create operations.'
                   additionalProperties:
                     type: array
                     items:
@@ -47992,6 +47313,7 @@ paths:
                         key:
                           type: string
                           enum:
+                            - DUPLICATE_GEOMETRY
                             - OVERLAPPING_POLYGON
                             - SELF_INTERSECTION
                             - COORDINATE_SYSTEM
