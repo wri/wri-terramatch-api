@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\V2\DisturbanceReports;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V2\DisturbanceReports\ExportDisturbanceReportRequest;
 use App\Models\V2\DisturbanceReport;
 use League\Csv\Writer;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Http\Request;
 
 class ExportDisturbanceReportController extends Controller
 {
-    public function __invoke(ExportDisturbanceReportRequest $exportDisturbanceReportRequest): StreamedResponse
+    public function __invoke(Request $request): StreamedResponse
     {
         $header = [
             'ID', 'UUID', 'Project UUID', 'Project Name', 'Status',
