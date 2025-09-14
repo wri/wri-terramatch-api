@@ -4,9 +4,9 @@ namespace App\Http\Controllers\V2\DisturbanceReports;
 
 use App\Http\Controllers\Controller;
 use App\Models\V2\DisturbanceReport;
+use Illuminate\Http\Request;
 use League\Csv\Writer;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Illuminate\Http\Request;
 
 class ExportDisturbanceReportController extends Controller
 {
