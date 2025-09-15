@@ -28,10 +28,7 @@ class Leaderships extends Model
         'nationality',
     ];
 
-    public const COLLECTION_LEADERSHIP_TEAM = 'leadership-team';
-
     public static $collections = [
-        self::COLLECTION_LEADERSHIP_TEAM => 'Leadership Team',
     ];
 
     public function organisation(): BelongsTo

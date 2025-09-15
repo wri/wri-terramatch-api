@@ -91,7 +91,6 @@ class FormQuestionResource extends JsonResource
             case 'fundingTypes':
             case 'tableInput':
             case 'selectImage':
-            case 'leadershipTeam':
             case 'financialCollection':
             case 'ownershipStake':
             case 'workdays':
