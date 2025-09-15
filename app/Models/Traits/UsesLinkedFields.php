@@ -406,7 +406,7 @@ trait UsesLinkedFields
 
     private function isPlainField($input_type)
     {
-        $plainFields = ['long-text', 'date', 'number', 'text', 'number-percentage', 'boolean'];
+        $plainFields = ['long-text', 'date', 'number', 'text', 'number-percentage', 'boolean', 'disturbanceAffectedSite', 'disturbanceAffectedPolygon'];
 
         return in_array($input_type, $plainFields);
     }
