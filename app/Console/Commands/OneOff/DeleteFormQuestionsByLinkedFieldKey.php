@@ -31,6 +31,7 @@ class DeleteFormQuestionsByLinkedFieldKey extends Command
             'org-fin-bgt-1year',
             'org-fin-bgt-2year',
             'org-fin-bgt-3year',
+            'org-rev-this-year',
         ])->delete();
     }
 }
