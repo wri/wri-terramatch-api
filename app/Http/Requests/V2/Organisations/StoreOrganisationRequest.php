@@ -41,6 +41,10 @@ class StoreOrganisationRequest extends FormRequest
             'hq_country' => 'sometimes|nullable|string',
 
             'fin_start_month' => 'sometimes|nullable|integer',
+            'fin_budget_3year' => 'sometimes|nullable|numeric|between:0,999999999999',
+            'fin_budget_2year' => 'sometimes|nullable|numeric|between:0,999999999999',
+            'fin_budget_1year' => 'sometimes|nullable|numeric|between:0,999999999999',
+            'fin_budget_current_year' => 'sometimes|nullable|numeric|between:0,999999999999',
 
             'ha_restored_total' => 'sometimes|nullable|numeric|min:0',
             'ha_restored_3year' => 'sometimes|nullable|numeric|min:0',
@@ -61,6 +65,7 @@ class StoreOrganisationRequest extends FormRequest
             'community_experience' => 'sometimes|nullable|string',
             'engagement_non_youth' => 'sometimes|nullable|array',
             'tree_restoration_practices' => 'sometimes|nullable|array',
+            'organisation_revenue_this_year' => 'sometimes|nullable|numeric',
             'business_model' => 'sometimes|nullable|string',
             'total_engaged_community_members_3yr' => 'sometimes|nullable|numeric|min:0',
             'percent_engaged_women_3yr' => 'sometimes|nullable|numeric|min:0|max:100',

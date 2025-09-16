@@ -55,6 +55,10 @@ class OrganisationResource extends JsonResource
             'twitter_url' => $this->twitter_url,
 
             'fin_start_month' => $this->fin_start_month,
+            'fin_budget_3year' => $this->fin_budget_3year,
+            'fin_budget_2year' => $this->fin_budget_2year,
+            'fin_budget_1year' => $this->fin_budget_1year,
+            'fin_budget_current_year' => $this->fin_budget_current_year,
 
             'ha_restored_total' => $this->ha_restored_total,
             'ha_restored_3year' => $this->ha_restored_3year,
@@ -77,6 +81,7 @@ class OrganisationResource extends JsonResource
             'tree_restoration_practices' => $this->tree_restoration_practices,
             'business_model' => $this->business_model,
             'subtype' => $this->subtype,
+            'organisation_revenue_this_year' => $this->organisation_revenue_this_year,
             'total_engaged_community_members_3yr' => $this->total_engaged_community_members_3yr,
             'percent_engaged_women_3yr' => $this->percent_engaged_women_3yr,
             'percent_engaged_men_3yr' => $this->percent_engaged_men_3yr,
