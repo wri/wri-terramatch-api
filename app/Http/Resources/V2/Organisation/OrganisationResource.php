@@ -6,7 +6,6 @@ use App\Http\Resources\V2\FinancialIndicatorsResource;
 use App\Http\Resources\V2\FinancialReports\FinancialReportLiteResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\General\ShapefileResource;
-use App\Http\Resources\V2\LeadershipsResource;
 use App\Http\Resources\V2\OwnershipStakeResource;
 use App\Http\Resources\V2\ProjectPitches\ProjectPitchResource;
 use App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource;

@@ -325,8 +325,6 @@ class Organisation extends Model implements MediaModel
         return $this->hasMany(OwnershipStake::class, 'organisation_id', 'uuid');
     }
 
-
-
     public function financialCollection(): HasMany
     {
         return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
