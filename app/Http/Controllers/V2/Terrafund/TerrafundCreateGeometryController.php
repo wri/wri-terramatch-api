@@ -1549,6 +1549,7 @@ class TerrafundCreateGeometryController extends Controller
                 'is_acknowledged' => false,
                 'name' => 'Polygon Validation',
             ]);
+            // Use optimized single job with small chunks
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);
 
