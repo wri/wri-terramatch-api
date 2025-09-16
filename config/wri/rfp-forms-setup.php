@@ -69,19 +69,6 @@ return [
                     ],
                 ],
                 [
-                    'linked_field_key' => 'org-leadership-team',
-                    'name' => 'Leadership team (providing your senior leaders by position, gender, and age)',
-                    'input_type' => 'leadershipTeam',
-                    'label' => [
-                        'non-profit' => 'List Your Organization’s Board Members',
-                        'enterprise' => 'List the people who have a ownership stake in your company',
-                    ],
-                    'description' => [
-                        'non-profit' => 'Please list the members of your organization’s board of directors. For each person listed, indicate their name, title, gender, and age: Name, Title, Gender, Age',
-                        'enterprise' => 'Please list the individuals who own your company. For each person listed, please indicate their name, title, gender and age: Name, Title, Gender, Age',
-                    ],
-                ],
-                [
                     'name' => 'Your employees',
                     'input_type' => 'tableInput',
                     'table_headers' => ['Employee type', 'Employee Count'],

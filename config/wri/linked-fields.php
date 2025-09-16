@@ -183,20 +183,6 @@ return [
                     'input_type' => 'treeSpecies',
                     'collection' => 'historical-tree-species'
                 ],
-                'org-leadership-team' => [
-                    'property' => 'leadershipTeam',
-                    'label' => 'Leadership Team',
-                    'resource' => 'App\Http\Resources\V2\LeadershipsResource',
-                    'input_type' => 'leaderships',
-                    'collection' => 'leadership-team'
-                ],
-                'org-core-team-leaders' => [
-                    'property' => 'coreTeamLeaders',
-                    'label' => 'Core Team Leaders',
-                    'resource' => 'App\Http\Resources\V2\LeadershipsResource',
-                    'input_type' => 'leaderships',
-                    'collection' => 'core-team-leaders'
-                ],
                 'org-tree-species-restored' => [
                     'property' => 'treeSpeciesHistorical',
                     'label' => 'Tree species restored in landscape',
