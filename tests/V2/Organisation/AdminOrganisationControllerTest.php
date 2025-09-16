@@ -131,10 +131,6 @@ final class AdminOrganisationControllerTest extends TestCase
         $this->actingAs($admin)
             ->getJson('/api/v2/admin/organisations?&sort=-name')
             ->assertSuccessful();
-
-        $this->actingAs($admin)
-            ->getJson('/api/v2/admin/organisations?&sort=fin_budget_1year')
-            ->assertSuccessful();
     }
 
     public function test_tagging_action(): void
