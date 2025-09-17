@@ -6,6 +6,7 @@ use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use App\Validators\Extensions\Extension;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DuplicateGeometry extends Extension
 {
@@ -83,6 +84,16 @@ class DuplicateGeometry extends Extension
             return ['valid' => true, 'duplicates' => []];
         }
 
+        $firstGeometryType = $geojsonFeatures[0]['geometry']['type'] ?? null;
+        if ($firstGeometryType === 'Point') {
+            return self::checkNewPointsDuplicates($geojsonFeatures, $sitePolygon);
+        }
+
+        return self::checkNewPolygonsDuplicates($geojsonFeatures, $sitePolygon);
+    }
+
+    private static function checkNewPolygonsDuplicates($geojsonFeatures, $sitePolygon): array
+    {
         $existingPolyIds = $sitePolygon->project->sitePolygons()->pluck('poly_id');
         if ($existingPolyIds->isEmpty()) {
             return ['valid' => true, 'duplicates' => []];
@@ -93,9 +104,76 @@ class DuplicateGeometry extends Extension
         return [
             'valid' => empty($duplicatePairs),
             'duplicates' => array_values($duplicatePairs),
-            'site_id' => $siteId,
+            'site_id' => $sitePolygon->site_id,
             'project_id' => $sitePolygon->project_id,
         ];
+    }
+
+    private static function checkNewPointsDuplicates($geojsonFeatures, $sitePolygon): array
+    {
+        $projectSiteIds = $sitePolygon->project->sites()->pluck('uuid');
+        if ($projectSiteIds->isEmpty()) {
+            return ['valid' => true, 'duplicates' => []];
+        }
+
+        $geometryParams = [];
+        $indexMap = [];
+
+        foreach ($geojsonFeatures as $index => $feature) {
+            if (! isset($feature['geometry'])) {
+                continue;
+            }
+            $geomJson = json_encode($feature['geometry']);
+            $geometryParams[] = $geomJson;
+            $indexMap[] = $index;
+        }
+
+        if (empty($geometryParams)) {
+            return ['valid' => true, 'duplicates' => []];
+        }
+
+        $unionParts = [];
+        $allParams = [];
+
+        foreach ($geometryParams as $i => $geomJson) {
+            $unionParts[] = "SELECT {$indexMap[$i]} as idx, ST_GeomFromGeoJSON(?) as geom";
+            $allParams[] = $geomJson;
+        }
+
+        $sitePlaceholders = str_repeat('?,', $projectSiteIds->count() - 1) . '?';
+        $allParams = array_merge($allParams, $projectSiteIds->toArray());
+
+        $sql = '
+            SELECT DISTINCT ng.idx, sp.poly_id as existing_uuid
+            FROM (
+                ' . implode(' UNION ALL ', $unionParts) . "
+            ) ng
+            INNER JOIN point_geometry pg ON ST_Equals(ng.geom, pg.geom)
+            INNER JOIN site_polygon sp ON sp.point_id = pg.uuid
+            WHERE sp.site_id IN ({$sitePlaceholders})
+        ";
+
+        try {
+            $results = DB::select($sql, $allParams);
+            $duplicateData = [];
+            foreach ($results as $row) {
+                $duplicateData[] = [
+                    'index' => (int)$row->idx,
+                    'existing_uuid' => $row->existing_uuid,
+                ];
+            }
+
+            return [
+                'valid' => empty($duplicateData),
+                'duplicates' => $duplicateData,
+                'site_id' => $sitePolygon->site_id,
+                'project_id' => $sitePolygon->project_id,
+            ];
+        } catch (\Exception $e) {
+            Log::error('Error checking new points duplicates: ' . $e->getMessage());
+
+            return ['valid' => true, 'duplicates' => []];
+        }
     }
 
     private static function bulkDuplicateCheck($geojsonFeatures, $existingPolyIds): array

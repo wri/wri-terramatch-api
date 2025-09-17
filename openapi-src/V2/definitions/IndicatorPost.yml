@@ -4,3 +4,12 @@ properties:
     type: array
     items:
       type: string
+    description: "Array of polygon UUIDs to process. If not provided, all eligible polygons will be processed."
+  force:
+    type: boolean
+    default: false
+    description: "Force rerun even if records already exist for this polygon and indicator."
+  update_existing:
+    type: boolean
+    default: false
+    description: "Update existing records instead of skipping them."
