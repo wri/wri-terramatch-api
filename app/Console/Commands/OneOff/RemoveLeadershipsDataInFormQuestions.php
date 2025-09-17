@@ -35,7 +35,7 @@ class RemoveLeadershipsDataInFormQuestions extends Command
 
     private function removeLeaderships()
     {
-        $leaderFormQuestions = FormQuestion::whereIn('linked_field_key', ['org-leadership-team', 'org-core-team-leaders'])
+        $leaderFormQuestions = FormQuestion::whereIn('linked_field_key', ['org-leadership-team', 'org-core-team-leaders', 'org-total-board-members', 'org-pct-board-women', 'org-pct-board-men', 'org-pct-board-youth', 'org-pct-board-non-youth', 'org-num-of-farmers-on-board'])
             ->get();
 
         foreach ($leaderFormQuestions as $record) {
