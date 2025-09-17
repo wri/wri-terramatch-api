@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\RunIndicatorAnalysisService;
 use Illuminate\Console\Command;
@@ -15,14 +16,14 @@ class RunIndicatorAnalysisCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'run-indicator-analysis {--slugs=*} {--force} {--batch-size=100} {--skip=0} {--update-existing}';
+    protected $signature = 'run-indicator-analysis {--slugs=*} {--force} {--batch-size=100} {--skip=0} {--update-existing} {--site-uuid=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Run indicator analysis for some slugs example: php artisan run-indicator-analysis --slugs=restorationByLandUse --slugs=restorationByStrategy, etc. Use --update-existing to update records that already have values.';
+    protected $description = 'Run indicator analysis for some slugs example: php artisan run-indicator-analysis --slugs=restorationByLandUse --slugs=restorationByStrategy, etc. Use --update-existing to update records that already have values. Use --site-uuid to process a specific site.';
 
     protected RunIndicatorAnalysisService $service;
 
@@ -48,10 +49,15 @@ class RunIndicatorAnalysisCommand extends Command
         $batchSize = (int) $this->option('batch-size');
         $skip = (int) $this->option('skip');
         $updateExisting = $this->option('update-existing');
+        $siteUuid = $this->option('site-uuid');
 
         if (empty($slugs)) {
             $slugs = ['restorationByStrategy', 'restorationByLandUse'];
             $this->info('No slugs provided. Using default slugs for restoration analysis: ' . implode(', ', $slugs));
+        }
+
+        if ($siteUuid) {
+            return $this->handleSiteUuidProcessing($siteUuid, $slugs, $force, $batchSize, $updateExisting);
         }
 
         // Get total count for progress tracking
@@ -68,6 +74,7 @@ class RunIndicatorAnalysisCommand extends Command
             'batch_size' => $batchSize,
             'skip' => $skip,
             'update_existing' => $updateExisting,
+            'site_uuid' => $siteUuid,
             'total_polygons' => $totalPolygons,
         ]);
 
@@ -278,6 +285,136 @@ class RunIndicatorAnalysisCommand extends Command
         ));
 
         Log::info('Indicator analysis completed', [
+            'total_processed' => $totalProcessed,
+            'duration_seconds' => $overallDuration,
+        ]);
+
+        return 0;
+    }
+
+    /**
+     * Handle processing for a specific site UUID
+     *
+     * @param string $siteUuid
+     * @param array $slugs
+     * @param bool $force
+     * @param int $batchSize
+     * @param bool $updateExisting
+     * @return int
+     */
+    private function handleSiteUuidProcessing(string $siteUuid, array $slugs, bool $force, int $batchSize, bool $updateExisting): int
+    {
+        $this->info("Processing site UUID: $siteUuid");
+
+        $site = Site::where('uuid', $siteUuid)->first();
+        if (! $site) {
+            $this->error("Site with UUID '$siteUuid' not found.");
+
+            return 1;
+        }
+
+        $this->info("Found site: {$site->name} (ID: {$site->id})");
+
+        $polygons = SitePolygon::where('site_id', $site->uuid)
+            ->where('is_active', true)
+            ->where('status', 'approved')
+            ->get();
+
+        if ($polygons->isEmpty()) {
+            $this->warn("No active approved polygons found for site '$siteUuid'.");
+
+            return 0;
+        }
+
+        $totalPolygons = $polygons->count();
+        $this->info("Found $totalPolygons active approved polygons for this site");
+
+        Log::info('Starting indicator analysis for specific site', [
+            'site_uuid' => $siteUuid,
+            'site_name' => $site->name,
+            'slugs' => $slugs,
+            'force' => $force,
+            'batch_size' => $batchSize,
+            'update_existing' => $updateExisting,
+            'total_polygons' => $totalPolygons,
+        ]);
+
+        $batchStartTime = microtime(true);
+        $overallStartTime = $batchStartTime;
+        $totalProcessed = 0;
+
+        foreach ($polygons->chunk($batchSize) as $polygonBatch) {
+            $polygonsUuids = $polygonBatch->pluck('poly_id')->toArray();
+            $batchCount = count($polygonsUuids);
+
+            $this->info("Processing batch of $batchCount polygons (total processed: $totalProcessed)");
+
+            $request = [
+                'uuids' => $polygonsUuids,
+                'force' => $force,
+                'update_existing' => $updateExisting,
+            ];
+
+            foreach ($slugs as $slug) {
+                $this->info('Analysis started for slug: ' . $slug);
+
+                try {
+                    $response = $this->service->run($request, $slug);
+                    $responseData = json_decode($response->getContent(), true);
+
+                    if (isset($responseData['stats'])) {
+                        $this->table(
+                            ['Total', 'Processed', 'Skipped', 'Errors'],
+                            [[$responseData['stats']['total_polygons'],
+                              $responseData['stats']['processed'],
+                              $responseData['stats']['skipped'],
+                              $responseData['stats']['errors']]]
+                        );
+
+                        if ($updateExisting) {
+                            $this->info("Successfully updated {$responseData['stats']['processed']} existing records for slug: " . $slug);
+                        } else {
+                            $this->info("Successfully processed {$responseData['stats']['processed']} records for slug: " . $slug);
+                        }
+                    }
+                } catch (\Exception $e) {
+                    $this->error('Error during analysis: ' . $e->getMessage());
+                    Log::error('Error during analysis for slug: ' . $slug, [
+                        'site_uuid' => $siteUuid,
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                }
+
+                $this->info('Analysis finished for slug: ' . $slug);
+            }
+
+            $totalProcessed += $batchCount;
+
+            $batchEndTime = microtime(true);
+            $batchDuration = $batchEndTime - $batchStartTime;
+            $recordsPerSecond = $batchCount / $batchDuration;
+
+            $this->info(sprintf(
+                'Batch completed in %.2f seconds (%.2f records/sec)',
+                $batchDuration,
+                $recordsPerSecond
+            ));
+
+            $batchStartTime = microtime(true);
+        }
+
+        $overallDuration = microtime(true) - $overallStartTime;
+        $this->info(sprintf(
+            'Complete! Processed %d polygons for site %s in %.2f seconds',
+            $totalProcessed,
+            $siteUuid,
+            $overallDuration
+        ));
+
+        Log::info('Indicator analysis completed for specific site', [
+            'site_uuid' => $siteUuid,
+            'site_name' => $site->name,
             'total_processed' => $totalProcessed,
             'duration_seconds' => $overallDuration,
         ]);
