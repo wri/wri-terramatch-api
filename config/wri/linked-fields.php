@@ -405,6 +405,8 @@ return [
                 'pro-pit-beneficiaries-count' => ['property' => 'all_beneficiaries_aggregate', 'label' => 'Aggregate beneficiaries', 'input_type' => 'number'],
                 'pro-pit-indirect-beneficiaries-count' => ['property' => 'indirect_beneficiaries_aggregate', 'label' => 'Aggregate indirect beneficiaries', 'input_type' => 'number'],
                 'pro-pit-associates-count' => ['property' => 'all_associates_aggregate', 'label' => 'Aggregate associates', 'input_type' => 'number'],
+                'pro-pit-goal-trees-restored-description' => ['property' => 'goal_trees_restored_description', 'label' => 'How did you calculate the estimated number of trees planted-restored?', 'input_type' => 'long-text'],
+                'pro-pit-jobs-created-beneficiaries-description' => ['property' => 'jobs_created_beneficiaries_description', 'label' => 'How did you arrive at the provided estimate of number of jobs created, direct and indirect beneficiaries?', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'pro-pit-fcol-cover' => ['property' =>  'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],
