@@ -75,6 +75,7 @@ class UpdateFormController extends Controller
         $form->title_id = I18nHelper::generateI18nItem($form, 'title');
         $form->subtitle_id = I18nHelper::generateI18nItem($form, 'subtitle');
         $form->description_id = I18nHelper::generateI18nItem($form, 'description');
+        $form->submission_message_id = I18nHelper::generateI18nItem($form, 'submission_message');
         $form->save();
 
         return $form;
