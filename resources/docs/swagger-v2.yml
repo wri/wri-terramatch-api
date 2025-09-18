@@ -5570,6 +5570,8 @@ definitions:
         type: string
       organisation_id:
         type: string
+      financial_report_id:
+        type: string
       amount:
         type: integer
       year:
@@ -23322,6 +23324,8 @@ definitions:
               type: string
             organisation_id:
               type: string
+            financial_report_id:
+              type: string
             amount:
               type: integer
             year:
@@ -35148,6 +35152,8 @@ paths:
                 type: string
               organisation_id:
                 type: string
+              financial_report_id:
+                type: string
               amount:
                 type: integer
               year:
@@ -35187,6 +35193,8 @@ paths:
               uuid:
                 type: string
               organisation_id:
+                type: string
+              financial_report_id:
                 type: string
               amount:
                 type: integer
@@ -35233,6 +35241,8 @@ paths:
               uuid:
                 type: string
               organisation_id:
+                type: string
+              financial_report_id:
                 type: string
               amount:
                 type: integer

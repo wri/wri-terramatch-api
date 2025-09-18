@@ -408,7 +408,8 @@ class Organisation extends Model implements MediaModel
 
     public function fundingTypes(): HasMany
     {
-        return $this->hasMany(FundingType::class, 'organisation_id', 'uuid');
+        return $this->hasMany(FundingType::class, 'organisation_id', 'uuid')
+            ->whereNull('financial_report_id');
     }
 
     public function projects()
