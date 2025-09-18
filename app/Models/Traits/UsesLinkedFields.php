@@ -329,6 +329,7 @@ trait UsesLinkedFields
                 'invasive',
                 'seedings',
                 'financialIndicators',
+                'fundingType',
             ])
         ) {
             return;

@@ -141,14 +141,15 @@ class FinancialReport extends Model implements MediaModel, ReportModel, Auditabl
         return $this->hasMany(FinancialIndicators::class, 'financial_report_id', 'id');
     }
 
-    public function getFundingTypesAttribute()
+    public function fundingTypes(): HasMany
     {
-        return $this->organisation?->fundingTypes;
+        return $this->hasMany(FundingType::class, 'financial_report_id', 'id');
     }
 
     public function updateFinancialCollectionToOrganisation(): void
     {
         $financialCollection = $this->financialCollection;
+        $fundingTypes = $this->fundingTypes;
         $organisation = $this->organisation();
 
         if ($organisation) {
@@ -188,6 +189,21 @@ class FinancialReport extends Model implements MediaModel, ReportModel, Auditabl
                         }
                     }
                 }
+            }
+
+            FundingType::where('organisation_id', $organisation->value('uuid'))
+                ->whereNull('financial_report_id')
+                ->delete();
+
+            foreach ($fundingTypes as $fundingType) {
+                FundingType::create([
+                    'organisation_id' => $organisation->value('uuid'),
+                    'source' => $fundingType->source,
+                    'year' => $fundingType->year,
+                    'type' => $fundingType->type,
+                    'amount' => $fundingType->amount,
+                    'financial_report_id' => null,
+                ]);
             }
         }
     }

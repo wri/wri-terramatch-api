@@ -76,6 +76,7 @@ class Organisation extends Model
 
     public function fundingTypes(): HasMany
     {
-        return $this->hasMany(FundingType::class, 'organisation_id', 'uuid');
+        return $this->hasMany(FundingType::class, 'organisation_id', 'uuid')
+            ->whereNull('financial_report_id');
     }
 }

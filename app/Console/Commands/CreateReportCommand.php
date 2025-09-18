@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\V2\DisturbanceReport;
 use App\Models\V2\FinancialIndicators;
 use App\Models\V2\FinancialReport;
+use App\Models\V2\FundingType;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Organisation;
@@ -137,6 +138,20 @@ class CreateReportCommand extends Command
                             $newMedia->save();
                         }
                     }
+                });
+
+            FundingType::where('organisation_id', $entity->uuid)
+                ->whereNull('financial_report_id')
+                ->get()
+                ->each(function ($fundingType) use ($entity, $report) {
+                    FundingType::create([
+                        'organisation_id' => $entity->uuid,
+                        'financial_report_id' => $report->id,
+                        'source' => $fundingType->source,
+                        'amount' => $fundingType->amount,
+                        'year' => $fundingType->year,
+                        'type' => $fundingType->type,
+                    ]);
                 });
 
             return 0;
