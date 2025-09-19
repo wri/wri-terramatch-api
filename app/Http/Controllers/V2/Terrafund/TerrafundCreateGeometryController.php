@@ -639,7 +639,6 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
-
     public function getCriteriaDataForMultiple(Request $request)
     {
         $uuids = $request->input('uuids');
@@ -1542,8 +1541,6 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'An error occurred during validation'], 500);
         }
     }
-
-
 
     public function validatePlantStartDate(Request $request)
     {
