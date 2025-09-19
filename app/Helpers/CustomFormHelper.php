@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\V2\DisturbanceReport;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Forms\FormSection;
@@ -50,6 +51,10 @@ class CustomFormHelper
                 break;
             case 'financial-report':
                 $model = \App\Models\V2\FinancialReport::class;
+
+                break;
+            case 'disturbance-report':
+                $model = DisturbanceReport::class;
 
                 break;
             default:
