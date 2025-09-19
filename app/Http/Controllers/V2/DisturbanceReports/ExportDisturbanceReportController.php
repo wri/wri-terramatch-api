@@ -21,35 +21,27 @@ class ExportDisturbanceReportController extends Controller
         ];
         $records = [];
 
-        $reports = DisturbanceReport::with(['project'])->get();
+        $reports = DisturbanceReport::with(['project', 'entries'])->get();
 
         foreach ($reports as $report) {
-            $answers = collect($report->answers ?? [])->map(function ($answer) {
-                return "{$answer->question}:{$answer->answer}";
-            })->implode('|');
-
-            $feedbackFields = collect($report->feedback_fields ?? [])->map(function ($feedbackField) {
-                return "{$feedbackField->question}:{$feedbackField->answer}";
-            })->implode('|');
-
             $records[] = [
                 $report->id,
                 $report->uuid,
                 $report->project->uuid,
                 $report->project->name ?? null,
                 $report->status,
-                $report->date_of_disturbance,
-                $report->extent,
-                is_array($report->property_affected) ? implode(',', $report->property_affected) : $report->property_affected,
-                $report->people_affected,
-                $report->monetary_damage,
+                $this->formatEntries($report->entries, 'date-of-disturbance'),
+                $this->formatEntries($report->entries, 'extent'),
+                $this->formatEntries($report->entries, 'property-affected'),
+                $this->formatEntries($report->entries, 'people-affected'),
+                $this->formatEntries($report->entries, 'monetary-damage'),
                 $report->description,
                 $report->action_description,
-                $report->disturbance_type,
-                is_array($report->disturbance_subtype) ? implode(',', $report->disturbance_subtype) : $report->disturbance_subtype,
-                $report->intensity,
-                $this->formatSiteAffected($report->site_affected),
-                $this->formatPolygonAffected($report->polygon_affected),
+                $this->formatEntries($report->entries, 'disturbance-type'),
+                $this->formatEntries($report->entries, 'disturbance-subtype'),
+                $this->formatEntries($report->entries, 'intensity'),
+                $this->formatEntries($report->entries, 'site-affected'),
+                $this->formatEntries($report->entries, 'polygon-affected'),
                 $this->formatMediaFiles($report),
                 $report->created_at,
                 $report->updated_at,
@@ -68,8 +60,29 @@ class ExportDisturbanceReportController extends Controller
         ]);
     }
 
+    private function formatEntries($entries, $name): string
+    {
+        $entriesData = $entries->filter(function ($entry) use ($name) {
+            return $entry->name === $name;
+        })->map(function ($entry) use ($name) {
+            if ($name == 'site-affected') {
+                return $this->formatSiteAffected($entry->value);
+            } elseif ($name == 'polygon-affected') {
+                return $this->formatPolygonAffected($entry->value);
+            } else {
+                return  is_array($entry->value) ? implode(', ', $entry->value) : $entry->value;
+            }
+        })->implode('|');
+
+        return $entriesData;
+    }
+
     private function formatSiteAffected($siteAffected): string
     {
+        if (is_string($siteAffected) && $this->isJson($siteAffected)) {
+            $siteAffected = json_decode($siteAffected, true);
+        }
+
         if (empty($siteAffected) || ! is_array($siteAffected)) {
             return '';
         }
@@ -88,6 +101,10 @@ class ExportDisturbanceReportController extends Controller
 
     private function formatPolygonAffected($polygonAffected): string
     {
+        if (is_string($polygonAffected) && $this->isJson($polygonAffected)) {
+            $polygonAffected = json_decode($polygonAffected, true);
+        }
+
         if (empty($polygonAffected) || ! is_array($polygonAffected)) {
             return '';
         }
@@ -106,6 +123,13 @@ class ExportDisturbanceReportController extends Controller
         }
 
         return implode(', ', $formatted);
+    }
+
+    private function isJson($string): bool
+    {
+        json_decode($string);
+
+        return json_last_error() === JSON_ERROR_NONE;
     }
 
     private function formatMediaFiles($report): string

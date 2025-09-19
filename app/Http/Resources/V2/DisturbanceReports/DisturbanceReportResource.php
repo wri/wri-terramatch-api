@@ -22,17 +22,7 @@ class DisturbanceReportResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'project' => new ProjectResource($this->project),
-            'disturbance_type' => $this->disturbance_type,
-            'disturbance_subtype' => $this->disturbance_subtype,
-            'extent' => $this->extent,
-            'people_affected' => $this->people_affected,
-            'date_of_disturbance' => $this->date_of_disturbance,
-            'monetary_damage' => $this->monetary_damage,
-            'site_affected' => $this->site_affected,
-            'polygon_affected' => $this->polygon_affected,
-            'description' => $this->description,
-            'action_description' => $this->action_description,
-            'property_affected' => $this->property_affected,
+            'entries' => $this->entries,
         ];
 
         return $this->appendFilesToResource($data);

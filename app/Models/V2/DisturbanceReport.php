@@ -13,6 +13,7 @@ use App\Models\V2\Projects\Project;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -38,17 +39,8 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
 
     protected $fillable = [
         'status',
-        'intensity',
         'title',
-        'disturbance_type',
-        'disturbance_subtype',
-        'extent',
-        'people_affected',
-        'property_affected',
         'date_of_disturbance',
-        'monetary_damage',
-        'site_affected',
-        'polygon_affected',
         'description',
         'action_description',
         'due_at',
@@ -65,13 +57,8 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
         'due_at' => 'datetime',
         'submitted_at' => 'datetime',
         'date_of_disturbance' => 'date',
-        'property_affected' => 'array',
-        'monetary_damage' => 'float',
         'nothing_to_report' => 'boolean',
         'answers' => 'array',
-        'disturbance_subtype' => 'array',
-        'site_affected' => 'array',
-        'polygon_affected' => 'array',
     ];
 
     protected $auditInclude = [
@@ -102,6 +89,28 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
     public function getRouteKeyName(): string
     {
         return 'uuid';
+    }
+
+    protected static function booted(): void
+    {
+        static::created(function (DisturbanceReport $report) {
+            $defaults = [
+                ['name' => 'disturbance-type', 'input_type' => 'select', 'title' => 'Disturbance Type'],
+                ['name' => 'disturbance-subtype', 'input_type' => 'select-multi', 'title' => 'Disturbance Subtype'],
+                ['name' => 'intensity', 'input_type' => 'select', 'title' => 'Intensity'],
+                ['name' => 'extent', 'input_type' => 'select', 'title' => 'Extent'],
+                ['name' => 'people-affected', 'input_type' => 'number', 'title' => 'People Affected'],
+                ['name' => 'monetary-damage', 'input_type' => 'number', 'title' => 'Monetary Damage'],
+                ['name' => 'property-affected', 'input_type' => 'select-multi', 'title' => 'Property Affected'],
+                ['name' => 'date-of-disturbance', 'input_type' => 'date', 'title' => 'Date of Disturbance'],
+                ['name' => 'site-affected', 'input_type' => 'disturbanceAffectedSite', 'title' => 'Site Affected'],
+                ['name' => 'polygon-affected', 'input_type' => 'disturbanceAffectedPolygon', 'title' => 'Polygon Affected'],
+            ];
+
+            foreach ($defaults as $row) {
+                $report->entries()->create($row);
+            }
+        });
     }
 
     public function getAuditableNameAttribute(): string
@@ -158,5 +167,10 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
     public function parentEntity(): BelongsTo
     {
         return $this->project();
+    }
+
+    public function entries(): HasMany
+    {
+        return $this->hasMany(DisturbanceReportEntry::class, 'disturbance_report_id', 'id');
     }
 }

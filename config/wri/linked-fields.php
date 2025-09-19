@@ -291,20 +291,17 @@ return [
             'label' => 'Disturbance Report',
             'model' => App\Models\V2\DisturbanceReport::class,
             'fields' => [
-                'dis-rep-disturbance-type' => ['property' => 'disturbance_type', 'label' => 'Disturbance Type', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'disturbance-types-collection'],
-                'dis-rep-disturbance-subtype' => ['property' => 'disturbance_subtype', 'label' => 'Disturbance Subtype', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'disturbance-subtypes-collection'],
-                'dis-rep-intensity' => ['property' => 'intensity', 'label' => 'Intensity', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'intensity-collection'],
-                'dis-rep-extent' => ['property' => 'extent', 'label' => 'Extent', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'extent-collection'],
-                'dis-rep-people-affected' => ['property' => 'people_affected', 'label' => 'People Affected', 'input_type' => 'number'],
-                'dis-rep-monetary-damage' => ['property' => 'monetary_damage', 'label' => 'Monetary Damage', 'input_type' => 'number'],
-                'dis-rep-property-affected' => ['property' => 'property_affected', 'label' => 'Property Affected', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'property-affected-collection'],
-                'dis-rep-date-of-disturbance' => ['property' => 'date_of_disturbance', 'label' => 'Date of Disturbance', 'input_type' => 'date'],
-                'dis-rep-site-affected' => ['property' => 'site_affected', 'label' => 'Site Affected', 'input_type' => 'disturbanceAffectedSite'],
-                'dis-rep-polygon-affected' => ['property' => 'polygon_affected', 'label' => 'Polygon Affected', 'input_type' => 'disturbanceAffectedPolygon'],
                 'dis-rep-description' => ['property' => 'description', 'label' => 'Description', 'input_type' => 'long-text'],
                 'dis-rep-action-description' => ['property' => 'action_description', 'label' => 'Action Description', 'input_type' => 'long-text'],
             ],
-            'relations' => [],
+            'relations' => [
+                'dis-rep-entries' => [
+                    'property' => 'entries',
+                    'label' => 'Disturbance Entries',
+                    'resource' => 'App\Http\Resources\V2\DisturbanceReportEntryResource',
+                    'input_type' => 'disturbanceReportEntries',
+                ],
+            ],
             'file-collections' => [
                 'dis-rep-media-assets' => ['property' => 'media', 'label' => 'Media Assets', 'input_type' => 'file', 'multichoice' => true],
             ],
