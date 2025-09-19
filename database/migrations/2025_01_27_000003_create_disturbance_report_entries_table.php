@@ -18,9 +18,6 @@ return new class extends Migration {
             $table->text('value')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('disturbance_report_id')->references('id')->on('disturbance_reports');
-            $table->index(['disturbance_report_id', 'name']);
         });
     }
 
