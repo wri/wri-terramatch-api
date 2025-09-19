@@ -13,7 +13,7 @@ class UpdatePlantingStatusFromCsvV2Command extends Command
      *
      * @var string
      */
-    protected $signature = 'one-off:update-planting-status-from-csv-v2';
+    protected $signature = 'one-off:update-planting-status-from-csv-v2 {projectsCsv} {sitesCsv}';
 
     /**
      * The console command description.
@@ -29,6 +29,8 @@ class UpdatePlantingStatusFromCsvV2Command extends Command
     {
         $this->info('Starting planting status updates from CSV files...');
 
+        $this->validateArguments();
+
         // Update Project Reports
         $this->updateProjectReportsPlantingStatus();
 
@@ -42,19 +44,44 @@ class UpdatePlantingStatusFromCsvV2Command extends Command
     }
 
     /**
+     * Validate that both CSV file arguments are provided and exist
+     */
+    private function validateArguments(): void
+    {
+        $projectsCsv = $this->argument('projectsCsv');
+        $sitesCsv = $this->argument('sitesCsv');
+
+        if (empty($projectsCsv)) {
+            $this->error('Projects CSV file path is required');
+            exit(1);
+        }
+
+        if (empty($sitesCsv)) {
+            $this->error('Sites CSV file path is required');
+            exit(1);
+        }
+
+        if (! file_exists($projectsCsv) || ! is_readable($projectsCsv)) {
+            $this->error("Projects CSV file not found or not readable at: $projectsCsv");
+            exit(1);
+        }
+
+        if (! file_exists($sitesCsv) || ! is_readable($sitesCsv)) {
+            $this->error("Sites CSV file not found or not readable at: $sitesCsv");
+            exit(1);
+        }
+
+        $this->info("Validation passed. Projects CSV: $projectsCsv, Sites CSV: $sitesCsv");
+    }
+
+    /**
      * Update Projects planting_status from CSV
      */
     private function updateProjectReportsPlantingStatus(): void
     {
         $this->info('Processing Projects Reports planting status...');
 
-        $path = base_path('imports/project_report_planting_status_import.csv');
-
-        if (! file_exists($path) || ! is_readable($path)) {
-            $this->error("CSV file not found or not readable at: $path");
-
-            return;
-        }
+        $path = $this->argument('projectsCsv');
 
         $rows = $this->readCsvFile($path);
         $updatedCount = 0;
@@ -95,13 +122,7 @@ class UpdatePlantingStatusFromCsvV2Command extends Command
     {
         $this->info('Processing SiteReport status...');
 
-        $path = base_path('imports/site_report_planting_status_import.csv');
-
-        if (! file_exists($path) || ! is_readable($path)) {
-            $this->error("CSV file not found or not readable at: $path");
-
-            return;
-        }
+        $path = $this->argument('sitesCsv');
 
         $rows = $this->readCsvFile($path);
         $updatedCount = 0;
