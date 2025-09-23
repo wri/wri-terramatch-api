@@ -208,6 +208,7 @@ class MigrateOrganisationFieldsToFinancialIndicators extends Command
         }
 
         $this->error("No field mapping found for funding programme '{$fundingProgrammeUuid}' and organisation type '{$organisationType}'.");
+
         return [];
     }
 
