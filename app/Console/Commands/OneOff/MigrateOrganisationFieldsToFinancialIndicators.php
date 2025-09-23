@@ -230,7 +230,7 @@ class MigrateOrganisationFieldsToFinancialIndicators extends Command
             'organisation_id' => $organisationId,
             'year' => $year,
             'collection' => $collection,
-            'financial_report_id' => null, // Organisation-level indicators
+            'financial_report_id' => null,
         ];
 
         $existing = FinancialIndicators::where($where)->first();
