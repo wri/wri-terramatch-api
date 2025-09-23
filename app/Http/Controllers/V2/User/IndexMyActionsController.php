@@ -20,6 +20,7 @@ class IndexMyActionsController extends Controller
 
         $qry = Action::query()
             ->with('targetable')
+            ->whereHas('targetable')
             ->pending()
             ->projectIds($projectIds);
 
@@ -31,6 +32,7 @@ class IndexMyActionsController extends Controller
             $financialReportActions = Action::query()
                 ->with('targetable')
                 ->pending()
+                ->whereHas('targetable')
                 ->where('targetable_type', FinancialReport::class)
                 ->whereIn('targetable_id', $financialReportIds)
                 ->get();
@@ -38,7 +40,10 @@ class IndexMyActionsController extends Controller
             $financialReportActions = collect();
         }
 
-        $actions = $projectActions->concat($financialReportActions);
+        $actions = $projectActions->concat($financialReportActions)
+            ->sortByDesc('updated_at')
+            ->take(1000)
+            ->values();
 
         return ActionResource::collection($actions);
     }
