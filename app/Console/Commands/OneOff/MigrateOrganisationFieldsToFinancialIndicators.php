@@ -173,7 +173,6 @@ class MigrateOrganisationFieldsToFinancialIndicators extends Command
         if ($fundingProgrammeUuid === '86b3ea32-8541-4525-b342-2d8010b3cdf7') {
             if ($organisationType === 'for-profit-organization') {
                 return [
-                    'fin_budget_current_year' => date('Y'), // Current year
                     'fin_budget_1year' => 2022,
                     'fin_budget_2year' => 2021,
                     'fin_budget_3year' => 2020,
@@ -181,7 +180,6 @@ class MigrateOrganisationFieldsToFinancialIndicators extends Command
                 ];
             } elseif ($organisationType === 'non-profit-organization') {
                 return [
-                    'fin_budget_current_year' => date('Y'), // Current year
                     'fin_budget_1year' => 2022,
                     'fin_budget_2year' => 2021,
                     'fin_budget_3year' => 2020,
@@ -198,7 +196,6 @@ class MigrateOrganisationFieldsToFinancialIndicators extends Command
                     'fin_budget_1year' => 2022,
                     'fin_budget_2year' => 2021,
                     'fin_budget_3year' => 2020,
-                    'organisation_revenue_this_year' => date('Y'), // Current year
                 ];
             } elseif ($organisationType === 'non-profit-organization') {
                 return [
@@ -206,7 +203,6 @@ class MigrateOrganisationFieldsToFinancialIndicators extends Command
                     'fin_budget_1year' => 2022,
                     'fin_budget_2year' => 2021,
                     'fin_budget_3year' => 2020,
-                    'organisation_revenue_this_year' => date('Y'), // Current year
                 ];
             }
         }
