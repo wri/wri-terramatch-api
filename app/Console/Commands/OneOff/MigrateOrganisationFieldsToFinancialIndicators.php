@@ -207,14 +207,8 @@ class MigrateOrganisationFieldsToFinancialIndicators extends Command
             }
         }
 
-        // Default mapping for other programmes
-        return [
-            'fin_budget_current_year' => date('Y'),
-            'fin_budget_1year' => date('Y') - 1,
-            'fin_budget_2year' => date('Y') - 2,
-            'fin_budget_3year' => date('Y') - 3,
-            'organisation_revenue_this_year' => date('Y'),
-        ];
+        $this->error("No field mapping found for funding programme '{$fundingProgrammeUuid}' and organisation type '{$organisationType}'.");
+        return [];
     }
 
     /**
