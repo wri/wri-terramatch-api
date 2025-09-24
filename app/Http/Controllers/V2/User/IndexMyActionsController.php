@@ -3,48 +3,31 @@
 namespace App\Http\Controllers\V2\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\User\ActionResource;
-use App\Models\V2\Action;
-use App\Models\V2\FinancialReport;
+use App\Http\Resources\DelayedJobResource;
+use App\Jobs\RunIndexMyActionsJob;
+use App\Models\DelayedJob;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
 class IndexMyActionsController extends Controller
 {
-    public function __invoke(Request $request): AnonymousResourceCollection
+    public function __invoke(Request $request)
     {
-        $user = Auth::user();
+        try {
+            $user = Auth::user();
 
-        $projectIds = $user->projects()->pluck('v2_projects.id')->toArray();
+            $delayedJob = DelayedJob::create();
+            $job = new RunIndexMyActionsJob(
+                $delayedJob->id,
+                $user
+            );
+            dispatch($job);
 
-        $qry = Action::query()
-            ->with('targetable')
-            ->whereHas('targetable')
-            ->pending()
-            ->projectIds($projectIds);
+            return (new DelayedJobResource($delayedJob))->additional(['message' => 'My actions are being processed']);
+        } catch (\Exception $e) {
+            Log::error('Error during my actions : ' . $e->getMessage());
 
-        $projectActions = $qry->get();
-
-        $organisationId = optional($user->organisation)->id;
-        if ($organisationId) {
-            $financialReportIds = FinancialReport::where('organisation_id', $organisationId)->pluck('id')->toArray();
-            $financialReportActions = Action::query()
-                ->with('targetable')
-                ->pending()
-                ->whereHas('targetable')
-                ->where('targetable_type', FinancialReport::class)
-                ->whereIn('targetable_id', $financialReportIds)
-                ->get();
-        } else {
-            $financialReportActions = collect();
+            return response()->json(['error' => 'An error occurred during my actions'], 500);
         }
-
-        $actions = $projectActions->concat($financialReportActions)
-            ->sortByDesc('updated_at')
-            ->take(1000)
-            ->values();
-
-        return ActionResource::collection($actions);
     }
 }
