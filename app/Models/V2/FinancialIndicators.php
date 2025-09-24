@@ -78,13 +78,18 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
         $firstRecord = $data[0];
         $startMonth = $firstRecord['start_month'] ?? null;
         $currency = $firstRecord['currency'] ?? null;
-        $organisationId = self::getOrganisationIdFromData($data);
+        $organisationId = null;
         $financialReport = null;
         $financialReportId = $firstRecord['financial_report_id'] ?? null;
         if ($financialReportId) {
             $financialReport = FinancialReport::isUuid($financialReportId)->first();
         }
 
+        if ($entity instanceof Organisation) {
+            $organisationId = $entity->id;
+        } else {
+            $organisationId = $entity->organisation_id;
+        }
 
         $newUuids = collect($data)->pluck('uuid')->filter();
         $entity->$property()->whereNotIn('uuid', $newUuids)->delete();
@@ -110,7 +115,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                         'year' => $entry['year'],
                         'description' => $entry['description'],
                         'exchange_rate' => $entry['exchange_rate'] ?? null,
-                        'organisation_id' => $entry['organisation_id'],
+                        'organisation_id' => $organisationId,
                         'financial_report_id' => $financialReport?->id,
                     ]);
                 }
@@ -121,7 +126,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                     'year' => $entry['year'],
                     'description' => $entry['description'],
                     'exchange_rate' => $entry['exchange_rate'] ?? null,
-                    'organisation_id' => $entry['organisation_id'],
+                    'organisation_id' => $organisationId,
                     'financial_report_id' => $financialReport?->id,
                 ]);
             }
@@ -133,7 +138,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                     'fin_start_month' => $startMonth,
                     'currency' => $currency,
                 ]);
-            } elseif (! empty($organisationId)) {
+            } else {
                 $organisation = Organisation::find($organisationId);
                 if ($organisation) {
                     $organisation->update([
@@ -224,16 +229,5 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
             ->width(350)
             ->height(211)
             ->nonQueued();
-    }
-
-    /**
-     * Get organisation_id from data, searching in financial_indicators table if uuid exists
-     */
-    private static function getOrganisationIdFromData($data): ?int
-    {
-        $record = collect($data)->first(fn ($record) => ! empty($record['uuid']));
-        $indicator = $record == null ? null : FinancialIndicators::where('uuid', $record['uuid'])->first();
-
-        return $indicator == null ? null : $indicator->organisation_id;
     }
 }
