@@ -41,20 +41,6 @@ class PlantStartDate extends Extension
 
         $plantStart = $sitePolygon->plantstart;
 
-        if (empty($plantStart)) {
-            return [
-                'valid' => false,
-                'key' => 'MISSING_PLANT_START_DATE',
-                'message' => 'Plant start date cannot be empty.',
-                'extra_info' => [
-                    'error_type' => 'MISSING_VALUE',
-                    'polygon_uuid' => $polygonUuid,
-                    'polygon_name' => $sitePolygon->poly_name,
-                    'site_name' => $sitePolygon->site->name ?? null,
-                ],
-            ];
-        }
-
         if ($plantStart === '0000-00-00') {
             return [
                 'valid' => false,
