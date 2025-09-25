@@ -1019,12 +1019,14 @@ class PolygonService
         if (! $hasAnyFailing) {
             $newIsValid = 'passed';
         } else {
-            $excludedCriteria = $allCriteria->filter(function ($c) {
-                return in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
+            $dynamicExcludedCriteria = $this->getDynamicExcludedCriteria($polygonUuid, $allCriteria);
+
+            $excludedCriteria = $allCriteria->filter(function ($c) use ($dynamicExcludedCriteria) {
+                return in_array($c->criteria_id, $dynamicExcludedCriteria);
             });
 
-            $nonExcludedCriteria = $allCriteria->filter(function ($c) {
-                return ! in_array($c->criteria_id, self::EXCLUDED_VALIDATION_CRITERIA);
+            $nonExcludedCriteria = $allCriteria->filter(function ($c) use ($dynamicExcludedCriteria) {
+                return ! in_array($c->criteria_id, $dynamicExcludedCriteria);
             });
 
             $hasFailingNonExcluded = $nonExcludedCriteria->contains(function ($c) {
@@ -1040,5 +1042,37 @@ class PolygonService
 
         $sitePolygon->validation_status = $newIsValid;
         $sitePolygon->save();
+    }
+
+    private function getDynamicExcludedCriteria(string $polygonUuid, $allCriteria): array
+    {
+        $baseExcludedCriteria = self::EXCLUDED_VALIDATION_CRITERIA;
+
+        $dataCriteria = $allCriteria->firstWhere('criteria_id', self::DATA_CRITERIA_ID);
+
+        if ($dataCriteria != null && $dataCriteria->valid == 0) {
+            $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
+            if ($sitePolygon != null) {
+                $fieldsToCheck = array_diff(PolygonFields::VALIDATION_FIELDS, ['num_trees']);
+                $onlyNumTreesMissing = true;
+
+                foreach ($fieldsToCheck as $field) {
+                    $value = $sitePolygon->$field;
+                    if ($this->isInvalidField($field, $value)) {
+                        $onlyNumTreesMissing = false;
+
+                        break;
+                    }
+                }
+
+                $numTreesMissing = is_null($sitePolygon->num_trees) || $sitePolygon->num_trees === '' || $sitePolygon->num_trees === 0;
+
+                if ($onlyNumTreesMissing && $numTreesMissing) {
+                    $baseExcludedCriteria[] = self::DATA_CRITERIA_ID;
+                }
+            }
+        }
+
+        return $baseExcludedCriteria;
     }
 }
