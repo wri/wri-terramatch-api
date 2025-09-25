@@ -8358,6 +8358,17 @@ definitions:
                   type: string
                 organisation_uuid:
                   type: string
+                organisation_attributes:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    type:
+                      type: string
+                    currency:
+                      type: string
+                    start_month:
+                      type: string
                 updated_by:
                   type: string
                 deleted_at:
@@ -10251,6 +10262,17 @@ definitions:
         type: string
       organisation_uuid:
         type: string
+      organisation_attributes:
+        type: object
+        properties:
+          uuid:
+            type: string
+          type:
+            type: string
+          currency:
+            type: string
+          start_month:
+            type: string
       updated_by:
         type: string
       deleted_at:
@@ -11319,6 +11341,17 @@ definitions:
               type: string
             organisation_uuid:
               type: string
+            organisation_attributes:
+              type: object
+              properties:
+                uuid:
+                  type: string
+                type:
+                  type: string
+                currency:
+                  type: string
+                start_month:
+                  type: string
             updated_by:
               type: string
             deleted_at:
@@ -41129,6 +41162,17 @@ paths:
                 type: string
               organisation_uuid:
                 type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41397,6 +41441,17 @@ paths:
                 type: string
               organisation_uuid:
                 type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41671,6 +41726,17 @@ paths:
                 type: string
               organisation_uuid:
                 type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41925,6 +41991,17 @@ paths:
                 type: string
               organisation_uuid:
                 type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
               updated_by:
                 type: string
               deleted_at:
@@ -42223,6 +42300,17 @@ paths:
                 type: string
               organisation_uuid:
                 type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
               updated_by:
                 type: string
               deleted_at:
@@ -42481,6 +42569,17 @@ paths:
                 type: string
               organisation_uuid:
                 type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
               updated_by:
                 type: string
               deleted_at:
@@ -43453,6 +43552,17 @@ paths:
                       type: string
                     organisation_uuid:
                       type: string
+                    organisation_attributes:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        type:
+                          type: string
+                        currency:
+                          type: string
+                        start_month:
+                          type: string
                     updated_by:
                       type: string
                     deleted_at:
@@ -44472,6 +44582,17 @@ paths:
                       type: string
                     organisation_uuid:
                       type: string
+                    organisation_attributes:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        type:
+                          type: string
+                        currency:
+                          type: string
+                        start_month:
+                          type: string
                     updated_by:
                       type: string
                     deleted_at:
