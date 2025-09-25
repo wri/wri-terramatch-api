@@ -1053,9 +1053,21 @@ class PolygonService
         if ($dataCriteria != null && $dataCriteria->valid == 0) {
             $sitePolygon = SitePolygon::forPolygonGeometry($polygonUuid)->first();
             if ($sitePolygon != null) {
-                $hasNumTrees = ! is_null($sitePolygon->num_trees) && $sitePolygon->num_trees !== '';
+                $fieldsToCheck = array_diff(PolygonFields::VALIDATION_FIELDS, ['num_trees']);
+                $onlyNumTreesMissing = true;
 
-                if (! $hasNumTrees) {
+                foreach ($fieldsToCheck as $field) {
+                    $value = $sitePolygon->$field;
+                    if ($this->isInvalidField($field, $value)) {
+                        $onlyNumTreesMissing = false;
+
+                        break;
+                    }
+                }
+
+                $numTreesMissing = is_null($sitePolygon->num_trees) || $sitePolygon->num_trees === '' || $sitePolygon->num_trees === 0;
+
+                if ($onlyNumTreesMissing && $numTreesMissing) {
                     $baseExcludedCriteria[] = self::DATA_CRITERIA_ID;
                 }
             }
