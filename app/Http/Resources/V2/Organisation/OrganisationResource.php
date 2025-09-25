@@ -6,7 +6,6 @@ use App\Http\Resources\V2\FinancialIndicatorsResource;
 use App\Http\Resources\V2\FinancialReports\FinancialReportLiteResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\General\ShapefileResource;
-use App\Http\Resources\V2\LeadershipsResource;
 use App\Http\Resources\V2\OwnershipStakeResource;
 use App\Http\Resources\V2\ProjectPitches\ProjectPitchResource;
 use App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource;
@@ -42,8 +41,6 @@ class OrganisationResource extends JsonResource
 
             'tree_species_historical' => TreeSpeciesResource::collection($this->treeSpeciesHistorical),
             'project_pitches' => ProjectPitchResource::collection($this->projectPitches),
-            'leadership_team' => LeadershipsResource::collection($this->leadershipTeam),
-            'core_team_leaders' => LeadershipsResource::collection($this->coreTeamLeaders),
             'funding_types' => FundingTypeResource::collection($this->fundingTypes),
             'ownership_stake' => OwnershipStakeResource::collection($this->ownershipStake),
 
