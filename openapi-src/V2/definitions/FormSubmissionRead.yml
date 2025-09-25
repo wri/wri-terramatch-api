@@ -9,6 +9,8 @@ properties:
     type: string
   name:
     type: string
+  form_uuid:
+    type: string
   form:
     $ref: './_index.yml#/FormRead'
   stage:

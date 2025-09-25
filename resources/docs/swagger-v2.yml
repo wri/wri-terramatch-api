@@ -8133,6 +8133,8 @@ definitions:
                   type: string
                 name:
                   type: string
+                form_uuid:
+                  type: string
                 form:
                   title: FormRead
                   x-stoplight:
@@ -10024,6 +10026,8 @@ definitions:
         type: string
       name:
         type: string
+      form_uuid:
+        type: string
       form:
         title: FormRead
         x-stoplight:
@@ -11089,6 +11093,8 @@ definitions:
             uuid:
               type: string
             name:
+              type: string
+            form_uuid:
               type: string
             form:
               title: FormRead
@@ -40898,6 +40904,8 @@ paths:
                 type: string
               name:
                 type: string
+              form_uuid:
+                type: string
               form:
                 title: FormRead
                 x-stoplight:
@@ -41163,6 +41171,8 @@ paths:
               uuid:
                 type: string
               name:
+                type: string
+              form_uuid:
                 type: string
               form:
                 title: FormRead
@@ -41436,6 +41446,8 @@ paths:
                 type: string
               name:
                 type: string
+              form_uuid:
+                type: string
               form:
                 title: FormRead
                 x-stoplight:
@@ -41687,6 +41699,8 @@ paths:
               uuid:
                 type: string
               name:
+                type: string
+              form_uuid:
                 type: string
               form:
                 title: FormRead
@@ -41984,6 +41998,8 @@ paths:
                 type: string
               name:
                 type: string
+              form_uuid:
+                type: string
               form:
                 title: FormRead
                 x-stoplight:
@@ -42239,6 +42255,8 @@ paths:
               uuid:
                 type: string
               name:
+                type: string
+              form_uuid:
                 type: string
               form:
                 title: FormRead
@@ -43209,6 +43227,8 @@ paths:
                     uuid:
                       type: string
                     name:
+                      type: string
+                    form_uuid:
                       type: string
                     form:
                       title: FormRead
@@ -44226,6 +44246,8 @@ paths:
                     uuid:
                       type: string
                     name:
+                      type: string
+                    form_uuid:
                       type: string
                     form:
                       title: FormRead
