@@ -8354,6 +8354,8 @@ definitions:
                     type: string
                 project_pitch_uuid:
                   type: string
+                organisation_uuid:
+                  type: string
                 updated_by:
                   type: string
                 deleted_at:
@@ -10243,6 +10245,8 @@ definitions:
           type: string
       project_pitch_uuid:
         type: string
+      organisation_uuid:
+        type: string
       updated_by:
         type: string
       deleted_at:
@@ -11306,6 +11310,8 @@ definitions:
               items:
                 type: string
             project_pitch_uuid:
+              type: string
+            organisation_uuid:
               type: string
             updated_by:
               type: string
@@ -41113,6 +41119,8 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              organisation_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41376,6 +41384,8 @@ paths:
                 items:
                   type: string
               project_pitch_uuid:
+                type: string
+              organisation_uuid:
                 type: string
               updated_by:
                 type: string
@@ -41647,6 +41657,8 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              organisation_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41896,6 +41908,8 @@ paths:
                 items:
                   type: string
               project_pitch_uuid:
+                type: string
+              organisation_uuid:
                 type: string
               updated_by:
                 type: string
@@ -42191,6 +42205,8 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              organisation_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -42444,6 +42460,8 @@ paths:
                 items:
                   type: string
               project_pitch_uuid:
+                type: string
+              organisation_uuid:
                 type: string
               updated_by:
                 type: string
@@ -43412,6 +43430,8 @@ paths:
                       items:
                         type: string
                     project_pitch_uuid:
+                      type: string
+                    organisation_uuid:
                       type: string
                     updated_by:
                       type: string
@@ -44427,6 +44447,8 @@ paths:
                       items:
                         type: string
                     project_pitch_uuid:
+                      type: string
+                    organisation_uuid:
                       type: string
                     updated_by:
                       type: string

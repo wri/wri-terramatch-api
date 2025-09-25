@@ -30,6 +30,8 @@ properties:
       type: string
   project_pitch_uuid:
     type: string
+  organisation_uuid:
+    type: string
   updated_by:
     type: string
   deleted_at:
