@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
 use App\StateMachines\TaskStatusStateMachine;
 use Carbon\Carbon;
