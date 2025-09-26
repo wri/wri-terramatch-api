@@ -11,8 +11,6 @@ properties:
     type: string
   form_uuid:
     type: string
-  form:
-    $ref: './_index.yml#/FormRead'
   stage:
     $ref: './_index.yml#/StageLiteRead'
   answers:

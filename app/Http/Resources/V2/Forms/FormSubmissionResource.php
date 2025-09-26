@@ -16,11 +16,6 @@ class FormSubmissionResource extends JsonResource
      */
     public function toArray($request)
     {
-        $params = [
-            'organisation_uuid' => $this->organisation_uuid,
-            'project_pitch_uuid' => $this->project_pitch_uuid,
-        ];
-
         $translatedFeedbackFields = collect($this->feedback_fields)->map(function ($field) {
             $label = $field;
             $type = 'short';
@@ -53,8 +48,6 @@ class FormSubmissionResource extends JsonResource
             'uuid' => $this->uuid,
             'name' => $this->name,
             'form_uuid' => $this->form_id,
-            'form' => (new FormResource($this->form))
-                ->params($params),
             'answers' => $this->getAllAnswers(['organisation' => $this->organisation, 'project-pitch' => $this->projectPitch]),
             'status' => $this->status,
             'application_uuid' => data_get($this->application, 'uuid'),
