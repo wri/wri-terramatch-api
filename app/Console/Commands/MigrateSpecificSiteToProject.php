@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\OneOff;
+namespace App\Console\Commands;
 
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Reports\Report;
@@ -17,7 +17,7 @@ class MigrateSpecificSiteToProject extends Command
      *
      * @var string
      */
-    protected $signature = 'one-off:migrate-specific-site-to-project 
+    protected $signature = 'migrate:site-to-project 
                             {site_uuid : UUID of the site to migrate}
                             {destination_project_uuid : UUID of the destination project}';
 
