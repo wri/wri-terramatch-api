@@ -48,6 +48,7 @@ class FormSubmissionResource extends JsonResource
             'uuid' => $this->uuid,
             'name' => $this->name,
             'form_uuid' => $this->form_id,
+            'framework_key' => $this->form->framework_key,
             'answers' => $this->getAllAnswers(['organisation' => $this->organisation, 'project-pitch' => $this->projectPitch]),
             'status' => $this->status,
             'application_uuid' => data_get($this->application, 'uuid'),

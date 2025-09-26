@@ -8135,6 +8135,8 @@ definitions:
                   type: string
                 form_uuid:
                   type: string
+                framework_key:
+                  type: string
                 stage:
                   title: StageLiteRead
                   type: object
@@ -9865,6 +9867,8 @@ definitions:
         type: string
       form_uuid:
         type: string
+      framework_key:
+        type: string
       stage:
         title: StageLiteRead
         type: object
@@ -10769,6 +10773,8 @@ definitions:
             name:
               type: string
             form_uuid:
+              type: string
+            framework_key:
               type: string
             stage:
               title: StageLiteRead
@@ -40417,6 +40423,8 @@ paths:
                 type: string
               form_uuid:
                 type: string
+              framework_key:
+                type: string
               stage:
                 title: StageLiteRead
                 type: object
@@ -40521,6 +40529,8 @@ paths:
               name:
                 type: string
               form_uuid:
+                type: string
+              framework_key:
                 type: string
               stage:
                 title: StageLiteRead
@@ -40633,6 +40643,8 @@ paths:
                 type: string
               form_uuid:
                 type: string
+              framework_key:
+                type: string
               stage:
                 title: StageLiteRead
                 type: object
@@ -40723,6 +40735,8 @@ paths:
               name:
                 type: string
               form_uuid:
+                type: string
+              framework_key:
                 type: string
               stage:
                 title: StageLiteRead
@@ -40859,6 +40873,8 @@ paths:
                 type: string
               form_uuid:
                 type: string
+              framework_key:
+                type: string
               stage:
                 title: StageLiteRead
                 type: object
@@ -40953,6 +40969,8 @@ paths:
               name:
                 type: string
               form_uuid:
+                type: string
+              framework_key:
                 type: string
               stage:
                 title: StageLiteRead
@@ -41762,6 +41780,8 @@ paths:
                     name:
                       type: string
                     form_uuid:
+                      type: string
+                    framework_key:
                       type: string
                     stage:
                       title: StageLiteRead
@@ -42618,6 +42638,8 @@ paths:
                     name:
                       type: string
                     form_uuid:
+                      type: string
+                    framework_key:
                       type: string
                     stage:
                       title: StageLiteRead
