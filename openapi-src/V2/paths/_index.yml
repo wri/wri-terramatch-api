@@ -352,6 +352,8 @@
     responses:
       '200':
         description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2OrganisationRead'
 '/v2/organisations/{UUID}':
   get:
     summary: Get a specific organisation
@@ -387,6 +389,8 @@
     responses:
       '200':
         description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2OrganisationRead'
 /v2/organisations/listing:
   get:
     summary: Get a list of organisations names and uuid
