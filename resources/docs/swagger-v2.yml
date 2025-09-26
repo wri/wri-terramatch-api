@@ -10707,18 +10707,7 @@ definitions:
       status:
         type: string
       answers:
-        type: array
-        items:
-          type: object
-          properties:
-            question_id:
-              type: integer
-            value:
-              type: string
-            options:
-              type: array
-              items:
-                type: string
+        type: object
   ApplicationLiteRead:
     title: ApplicationLiteRead
     type: object
@@ -40890,18 +40879,7 @@ paths:
               status:
                 type: string
               answers:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    question_id:
-                      type: integer
-                    value:
-                      type: string
-                    options:
-                      type: array
-                      items:
-                        type: string
+                type: object
     delete:
       summary: Deletes a specific form submission
       operationId: delete-v2-form-submission-UUID
