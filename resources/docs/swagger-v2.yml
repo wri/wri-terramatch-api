@@ -8197,6 +8197,16 @@ definitions:
                       type: string
                     start_month:
                       type: string
+                feedback:
+                  type: string;
+                feedback_fields:
+                  type: array
+                  items:
+                    type: string
+                translated_feedback_fields:
+                  type: array
+                  items:
+                    type: string
                 updated_by:
                   type: string
                 deleted_at:
@@ -9929,6 +9939,16 @@ definitions:
             type: string
           start_month:
             type: string
+      feedback:
+        type: string;
+      feedback_fields:
+        type: array
+        items:
+          type: string
+      translated_feedback_fields:
+        type: array
+        items:
+          type: string
       updated_by:
         type: string
       deleted_at:
@@ -10836,6 +10856,16 @@ definitions:
                   type: string
                 start_month:
                   type: string
+            feedback:
+              type: string;
+            feedback_fields:
+              type: array
+              items:
+                type: string
+            translated_feedback_fields:
+              type: array
+              items:
+                type: string
             updated_by:
               type: string
             deleted_at:
@@ -40485,6 +40515,16 @@ paths:
                     type: string
                   start_month:
                     type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -40592,6 +40632,16 @@ paths:
                     type: string
                   start_month:
                     type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -40705,6 +40755,16 @@ paths:
                     type: string
                   start_month:
                     type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -40798,6 +40858,16 @@ paths:
                     type: string
                   start_month:
                     type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -40935,6 +41005,16 @@ paths:
                     type: string
                   start_month:
                     type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41032,6 +41112,16 @@ paths:
                     type: string
                   start_month:
                     type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41843,6 +41933,16 @@ paths:
                           type: string
                         start_month:
                           type: string
+                    feedback:
+                      type: string;
+                    feedback_fields:
+                      type: array
+                      items:
+                        type: string
+                    translated_feedback_fields:
+                      type: array
+                      items:
+                        type: string
                     updated_by:
                       type: string
                     deleted_at:
@@ -42701,6 +42801,16 @@ paths:
                           type: string
                         start_month:
                           type: string
+                    feedback:
+                      type: string;
+                    feedback_fields:
+                      type: array
+                      items:
+                        type: string
+                    translated_feedback_fields:
+                      type: array
+                      items:
+                        type: string
                     updated_by:
                       type: string
                     deleted_at:
