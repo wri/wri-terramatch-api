@@ -8186,6 +8186,8 @@ definitions:
                     type: string
                 project_pitch_uuid:
                   type: string
+                application_uuid:
+                  type: string
                 organisation_uuid:
                   type: string
                 organisation_attributes:
@@ -9928,6 +9930,8 @@ definitions:
           type: string
       project_pitch_uuid:
         type: string
+      application_uuid:
+        type: string
       organisation_uuid:
         type: string
       organisation_attributes:
@@ -10833,6 +10837,8 @@ definitions:
               items:
                 type: string
             project_pitch_uuid:
+              type: string
+            application_uuid:
               type: string
             organisation_uuid:
               type: string
@@ -26476,9 +26482,6 @@ paths:
         - V2 Projects
         - V2 Sites
         - V2 Nurseries
-        - V2 Project Reports
-        - V2 Site Reports
-        - V2 Nursery Reports
         - Forms
       parameters:
         - type: string
@@ -41628,6 +41631,8 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
               organisation_uuid:
                 type: string
               organisation_attributes:
@@ -41744,6 +41749,8 @@ paths:
                 items:
                   type: string
               project_pitch_uuid:
+                type: string
+              application_uuid:
                 type: string
               organisation_uuid:
                 type: string
@@ -41868,6 +41875,8 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
               organisation_uuid:
                 type: string
               organisation_attributes:
@@ -41970,6 +41979,8 @@ paths:
                 items:
                   type: string
               project_pitch_uuid:
+                type: string
+              application_uuid:
                 type: string
               organisation_uuid:
                 type: string
@@ -42107,6 +42118,8 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
               organisation_uuid:
                 type: string
               organisation_attributes:
@@ -42213,6 +42226,8 @@ paths:
                 items:
                   type: string
               project_pitch_uuid:
+                type: string
+              application_uuid:
                 type: string
               organisation_uuid:
                 type: string
@@ -43034,6 +43049,8 @@ paths:
                       items:
                         type: string
                     project_pitch_uuid:
+                      type: string
+                    application_uuid:
                       type: string
                     organisation_uuid:
                       type: string
@@ -43902,6 +43919,8 @@ paths:
                       items:
                         type: string
                     project_pitch_uuid:
+                      type: string
+                    application_uuid:
                       type: string
                     organisation_uuid:
                       type: string
