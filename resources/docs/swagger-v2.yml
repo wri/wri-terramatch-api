@@ -26486,11 +26486,6 @@ paths:
           in: path
           required: true
           description: allowed values projects/sites/nurseries
-        - type: string
-          name: UUID
-          in: path
-          required: true
-          description: this is the uuid of the form
         - in: body
           name: body
           schema:
