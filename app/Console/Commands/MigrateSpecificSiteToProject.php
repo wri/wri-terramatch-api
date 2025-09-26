@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Reports\Report;
+use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Tasks\Task;
 use App\StateMachines\TaskStatusStateMachine;
@@ -90,7 +90,7 @@ class MigrateSpecificSiteToProject extends Command
     private function migrateReportsAndTasks(Site $site, Project $destinationProject): void
     {
         // Get all reports for this site
-        $reports = Report::where('site_id', $site->id)->get();
+        $reports = SiteReport::where('site_id', $site->id)->get();
 
         $this->info('Found ' . $reports->count() . ' reports to migrate');
 
@@ -102,9 +102,9 @@ class MigrateSpecificSiteToProject extends Command
     /**
      * Handle migration of a single report and its task.
      */
-    private function handleReportMigration(Report $report, Project $destinationProject): void
+    private function handleReportMigration(SiteReport $report, Project $destinationProject): void
     {
-        $this->info("Processing report: {$report->name} (Due: {$report->due_at})");
+        $this->info("Processing report: {$report->title} (Due: {$report->due_at})");
 
         // Look for existing task with the same due date
         $existingTask = Task::where('project_id', $destinationProject->id)
@@ -116,7 +116,7 @@ class MigrateSpecificSiteToProject extends Command
             $report->task_id = $existingTask->id;
             $report->save();
 
-            $this->info("  ✓ Updated report to use existing task: {$existingTask->name} (ID: {$existingTask->id})");
+            $this->info("  ✓ Updated report to use existing task: {$existingTask->id}");
         } else {
             // Task doesn't exist, create a new one
             $dueAt = Carbon::parse($report->due_at);
