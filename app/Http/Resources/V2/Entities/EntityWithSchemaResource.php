@@ -15,6 +15,7 @@ class EntityWithSchemaResource extends JsonResource
             'uuid' => $this->uuid,
             'name' => $this->name,
             'form_uuid' => $this->getForm()->uuid,
+            'framework_key' => $this->framework_key,
             'answers' => $this->getEntityAnswers($this->getForm()),
             'status' => $this->status,
             'form_title' => $this->report_title ?? $this->title ?? $this->name,
