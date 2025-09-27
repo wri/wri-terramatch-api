@@ -29,6 +29,8 @@ class Leaderships extends Model
     ];
 
     public static $collections = [
+        'leadership-team',
+        'core-team-leaders',
     ];
 
     public function organisation(): BelongsTo
