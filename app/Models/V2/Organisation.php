@@ -449,4 +449,9 @@ class Organisation extends Model implements MediaModel
     {
         return $this->HasMany(OrganisationInvite::class);
     }
+
+    public function leaderships(): HasMany
+    {
+        return $this->hasMany(Leaderships::class, 'organisation_id', 'id');
+    }
 }
