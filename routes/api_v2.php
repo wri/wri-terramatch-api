@@ -60,7 +60,6 @@ use App\Http\Controllers\V2\Forms\DeleteFormSectionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
-use App\Http\Controllers\V2\Forms\IndexFormController;
 use App\Http\Controllers\V2\Forms\PublishFormController;
 use App\Http\Controllers\V2\Forms\StoreFormController;
 use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
@@ -326,7 +325,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('forms')->group(function () {
         Route::post('/', StoreFormController::class);
-        Route::get('/', IndexFormController::class);
         Route::delete('/section/{formSection}', DeleteFormSectionController::class);
         Route::delete('/question/{formQuestion}', DeleteFormQuestionController::class);
         Route::prefix('submissions')->group(function () {

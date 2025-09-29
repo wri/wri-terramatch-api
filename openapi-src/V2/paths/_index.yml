@@ -34,8 +34,6 @@
 /v2/admin/forms:
   post:
     $ref: './Forms/post-v2-admin-forms.yml'
-  get:
-    $ref: './Forms/get-v2-admin-forms.yml'
 /v2/admin/reporting-frameworks:
   get:
     $ref: './ReportingFrameworks/get-v2-admin-reporting-frameworks.yml'
