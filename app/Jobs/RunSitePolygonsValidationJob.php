@@ -42,9 +42,11 @@ class RunSitePolygonsValidationJob implements ShouldQueue, ShouldBeUnique
 
     protected $sitePolygonsUuids;
 
-    protected $chunkSize = 5;
+    protected $chunkSize = 3;
 
-    protected $memoryClearFrequency = 3;
+    protected $memoryClearFrequency = 2;
+
+    protected $safetyBuffer = 20;
 
     /**
      * The unique ID of the job - global lock for ALL polygon validations
@@ -59,11 +61,19 @@ class RunSitePolygonsValidationJob implements ShouldQueue, ShouldBeUnique
      *
      * @return void
      */
-    public function __construct(string $delayed_job_id, array $sitePolygonsUuids, int $chunkSize = 5)
+    public function __construct(string $delayed_job_id, array $sitePolygonsUuids, int $chunkSize = 3)
     {
         $this->sitePolygonsUuids = $sitePolygonsUuids;
         $this->delayed_job_id = $delayed_job_id;
         $this->chunkSize = $chunkSize;
+    }
+
+    /**
+     * The unique ID of the job.
+     */
+    public function uniqueId(): string
+    {
+        return $this->delayed_job_id;
     }
 
     /**
@@ -101,7 +111,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue, ShouldBeUnique
                 try {
                     foreach ($polygonChunk as $polygonIndex => $polygonUuid) {
                         $elapsedTime = microtime(true) - $jobStartTime;
-                        if ($elapsedTime > ($this->timeout - 10)) {
+                        if ($elapsedTime > ($this->timeout - $this->safetyBuffer)) {
                             Log::warning("Job approaching timeout after {$elapsedTime}s, stopping at polygon {$processedCount}");
 
                             break 2;
