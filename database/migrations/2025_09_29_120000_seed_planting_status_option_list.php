@@ -15,7 +15,7 @@ return new class () extends Migration {
     {
         $key = 'planting-status';
 
-        if (!FormOptionList::where('key', $key)->exists()) {
+        if (! FormOptionList::where('key', $key)->exists()) {
             $formOptionList = FormOptionList::create(['key' => $key]);
 
             $items = [
