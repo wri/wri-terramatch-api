@@ -37,7 +37,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
     protected $sitePolygonsUuids;
 
-    protected $chunkSize = 10;
+    protected $chunkSize = 5;
 
     protected $memoryClearFrequency = 5;
 

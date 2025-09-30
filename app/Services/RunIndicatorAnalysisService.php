@@ -20,6 +20,17 @@ class RunIndicatorAnalysisService
     protected const MAX_RETRIES = 3;
 
     /**
+     * Default batch size for processing polygons
+     * This prevents "too many attempts" errors when processing large datasets
+     */
+    protected const DEFAULT_BATCH_SIZE = 50;
+
+    /**
+     * Maximum batch size to prevent memory issues
+     */
+    protected const MAX_BATCH_SIZE = 100;
+
+    /**
      * Run the indicator analysis for the given polygons and slug
      *
      * @param array $request
@@ -65,94 +76,23 @@ class RunIndicatorAnalysisService
                 return response()->json(['message' => 'Slug Not Found'], 400);
             }
 
-            // Count total and processed polygons for logging
             $totalPolygons = count($request['uuids']);
-            $processedCount = 0;
-            $skippedCount = 0;
-            $errorCount = 0;
             $updateExisting = isset($request['update_existing']) ? $request['update_existing'] : false;
 
             Log::info("Starting analysis for slug: $slug with $totalPolygons polygons", [
                 'update_existing' => $updateExisting,
             ]);
 
-            foreach ($request['uuids'] as $index => $uuid) {
-                try {
-                    if ($index % 100 === 0) {
-                        Log::info("Processing polygon $index of $totalPolygons for slug: $slug");
-                    }
+            $needsBatching = $this->shouldUseBatching($slug, $totalPolygons);
+            $batchSize = $needsBatching ? self::DEFAULT_BATCH_SIZE : $totalPolygons;
 
-                    $polygonGeometry = $this->getGeometry($uuid);
+            if ($needsBatching) {
+                Log::info("Using batched processing for slug: $slug with batch size: $batchSize");
 
-                    if (! $polygonGeometry) {
-                        Log::warning("Could not retrieve geometry for polygon UUID: $uuid");
-                        $errorCount++;
-
-                        continue;
-                    }
-
-                    // Check if we already have a record for this polygon in the current year
-                    $registerExist = DB::table($slugMappings[$slug]['table_name'])
-                        ->where('site_polygon_id', $polygonGeometry['site_polygon_id'])
-                        ->where('indicator_slug', $slug)
-                        ->where('year_of_analysis', Carbon::now()->year)
-                        ->exists();
-
-                    // Debug logging to check if records are found
-                    Log::debug('Checking existing records', [
-                        'uuid' => $uuid,
-                        'site_polygon_id' => $polygonGeometry['site_polygon_id'],
-                        'table' => $slugMappings[$slug]['table_name'],
-                        'exists' => $registerExist,
-                    ]);
-
-                    // Skip existing records unless update_existing is true or force is true
-                    if ($registerExist && ! $updateExisting && ! $request['force']) {
-                        $skippedCount++;
-                        Log::debug("Skipping existing record for polygon: $uuid");
-
-                        continue;
-                    }
-
-                    if (str_contains($slug, 'restorationBy')) {
-                        $this->processRestorationAnalysis($uuid, $slug, $polygonGeometry, $slugMappings, $updateExisting);
-                    } else {
-                        $this->processTreeCoverAnalysis($uuid, $slug, $polygonGeometry, $slugMappings, $updateExisting);
-                    }
-
-                    $processedCount++;
-
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    Log::error("Error processing polygon UUID: $uuid", [
-                        'error' => $e->getMessage(),
-                        'trace' => $e->getTraceAsString(),
-                    ]);
-                } finally {
-                    // Clean up database connections after each polygon to prevent connection pooling issues
-                    if (($index + 1) % 50 === 0) {
-                        DB::disconnect();
-                    }
-                }
+                return $this->processBatchedAnalysis($request, $slug, $slugMappings, $batchSize);
+            } else {
+                return $this->processSingleBatch($request, $slug, $slugMappings);
             }
-
-            Log::info("Analysis completed for slug: $slug", [
-                'total_polygons' => $totalPolygons,
-                'processed' => $processedCount,
-                'skipped' => $skippedCount,
-                'errors' => $errorCount,
-                'update_existing' => $updateExisting,
-            ]);
-
-            return response()->json([
-                'message' => 'Analysis completed',
-                'stats' => [
-                    'total_polygons' => $totalPolygons,
-                    'processed' => $processedCount,
-                    'skipped' => $skippedCount,
-                    'errors' => $errorCount,
-                ],
-            ]);
         } catch (\Exception $e) {
             Log::error('Global error in indicator analysis', [
                 'error' => $e->getMessage(),
@@ -164,6 +104,224 @@ class RunIndicatorAnalysisService
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Determine if batching should be used based on slug and polygon count
+     *
+     * @param string $slug
+     * @param int $totalPolygons
+     * @return bool
+     */
+    protected function shouldUseBatching(string $slug, int $totalPolygons): bool
+    {
+        $treeCoverSlugs = ['treeCoverLoss', 'treeCoverLossFires', 'restorationByEcoRegion'];
+
+        return in_array($slug, $treeCoverSlugs) && $totalPolygons > self::DEFAULT_BATCH_SIZE;
+    }
+
+    /**
+     * Validate and adjust batch size to prevent memory issues
+     *
+     * @param int $batchSize
+     * @return int
+     */
+    protected function validateBatchSize(int $batchSize): int
+    {
+        if ($batchSize <= 0) {
+            return self::DEFAULT_BATCH_SIZE;
+        }
+
+        if ($batchSize > self::MAX_BATCH_SIZE) {
+            Log::warning("Batch size $batchSize exceeds maximum, adjusting to " . self::MAX_BATCH_SIZE);
+
+            return self::MAX_BATCH_SIZE;
+        }
+
+        return $batchSize;
+    }
+
+    /**
+     * Process analysis in batches for large datasets
+     *
+     * @param array $request
+     * @param string $slug
+     * @param array $slugMappings
+     * @param int $batchSize
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function processBatchedAnalysis(array $request, string $slug, array $slugMappings, int $batchSize)
+    {
+        $totalPolygons = count($request['uuids']);
+        $updateExisting = isset($request['update_existing']) ? $request['update_existing'] : false;
+        $force = isset($request['force']) ? $request['force'] : false;
+
+        $batchSize = $this->validateBatchSize($batchSize);
+
+        $totalProcessed = 0;
+        $totalSkipped = 0;
+        $totalErrors = 0;
+
+        $batches = array_chunk($request['uuids'], $batchSize);
+        $totalBatches = count($batches);
+
+        Log::info("Processing $totalBatches batches for slug: $slug", [
+            'total_polygons' => $totalPolygons,
+            'batch_size' => $batchSize,
+        ]);
+
+        foreach ($batches as $batchIndex => $batchUuids) {
+            $batchNumber = $batchIndex + 1;
+            Log::info("Processing batch $batchNumber of $totalBatches for slug: $slug", [
+                'batch_size' => count($batchUuids),
+            ]);
+
+            $batchRequest = [
+                'uuids' => $batchUuids,
+                'update_existing' => $updateExisting,
+                'force' => $force,
+            ];
+
+            try {
+                $batchResult = $this->processSingleBatch($batchRequest, $slug, $slugMappings);
+
+                if (isset($batchResult->getData(true)['stats'])) {
+                    $stats = $batchResult->getData(true)['stats'];
+                    $totalProcessed += $stats['processed'] ?? 0;
+                    $totalSkipped += $stats['skipped'] ?? 0;
+                    $totalErrors += $stats['errors'] ?? 0;
+                }
+
+                Log::info("Batch $batchNumber completed successfully", [
+                    'batch_processed' => $stats['processed'] ?? 0,
+                    'batch_skipped' => $stats['skipped'] ?? 0,
+                    'batch_errors' => $stats['errors'] ?? 0,
+                ]);
+
+            } catch (\Exception $e) {
+                $totalErrors += count($batchUuids);
+                Log::error("Batch $batchNumber failed", [
+                    'error' => $e->getMessage(),
+                    'batch_size' => count($batchUuids),
+                ]);
+            }
+
+            if ($batchNumber < $totalBatches) {
+                sleep(2);
+            }
+
+            DB::disconnect();
+        }
+
+        Log::info("Batched analysis completed for slug: $slug", [
+            'total_polygons' => $totalPolygons,
+            'total_processed' => $totalProcessed,
+            'total_skipped' => $totalSkipped,
+            'total_errors' => $totalErrors,
+            'total_batches' => $totalBatches,
+        ]);
+
+        return response()->json([
+            'message' => 'Batched analysis completed',
+            'stats' => [
+                'total_polygons' => $totalPolygons,
+                'processed' => $totalProcessed,
+                'skipped' => $totalSkipped,
+                'errors' => $totalErrors,
+                'total_batches' => $totalBatches,
+            ],
+        ]);
+    }
+
+    /**
+     * Process a single batch of polygons
+     *
+     * @param array $request
+     * @param string $slug
+     * @param array $slugMappings
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function processSingleBatch(array $request, string $slug, array $slugMappings)
+    {
+        $totalPolygons = count($request['uuids']);
+        $processedCount = 0;
+        $skippedCount = 0;
+        $errorCount = 0;
+        $updateExisting = isset($request['update_existing']) ? $request['update_existing'] : false;
+
+        foreach ($request['uuids'] as $index => $uuid) {
+            try {
+                if ($index % 100 === 0) {
+                    Log::info("Processing polygon $index of $totalPolygons for slug: $slug");
+                }
+
+                $polygonGeometry = $this->getGeometry($uuid);
+
+                if (! $polygonGeometry) {
+                    Log::warning("Could not retrieve geometry for polygon UUID: $uuid");
+                    $errorCount++;
+
+                    continue;
+                }
+
+                $registerExist = DB::table($slugMappings[$slug]['table_name'])
+                    ->where('site_polygon_id', $polygonGeometry['site_polygon_id'])
+                    ->where('indicator_slug', $slug)
+                    ->where('year_of_analysis', Carbon::now()->year)
+                    ->exists();
+
+                Log::debug('Checking existing records', [
+                    'uuid' => $uuid,
+                    'site_polygon_id' => $polygonGeometry['site_polygon_id'],
+                    'table' => $slugMappings[$slug]['table_name'],
+                    'exists' => $registerExist,
+                ]);
+
+                if ($registerExist && ! $updateExisting && ! $request['force']) {
+                    $skippedCount++;
+                    Log::debug("Skipping existing record for polygon: $uuid");
+
+                    continue;
+                }
+
+                if (str_contains($slug, 'restorationBy')) {
+                    $this->processRestorationAnalysis($uuid, $slug, $polygonGeometry, $slugMappings, $updateExisting);
+                } else {
+                    $this->processTreeCoverAnalysis($uuid, $slug, $polygonGeometry, $slugMappings, $updateExisting);
+                }
+
+                $processedCount++;
+
+            } catch (\Exception $e) {
+                $errorCount++;
+                Log::error("Error processing polygon UUID: $uuid", [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+            } finally {
+                if (($index + 1) % 50 === 0) {
+                    DB::disconnect();
+                }
+            }
+        }
+
+        Log::info("Single batch analysis completed for slug: $slug", [
+            'total_polygons' => $totalPolygons,
+            'processed' => $processedCount,
+            'skipped' => $skippedCount,
+            'errors' => $errorCount,
+            'update_existing' => $updateExisting,
+        ]);
+
+        return response()->json([
+            'message' => 'Analysis completed',
+            'stats' => [
+                'total_polygons' => $totalPolygons,
+                'processed' => $processedCount,
+                'skipped' => $skippedCount,
+                'errors' => $errorCount,
+            ],
+        ]);
     }
 
     /**
@@ -222,10 +380,7 @@ class RunIndicatorAnalysisService
                 ];
 
                 if ($updateExisting) {
-                    // Update existing record using direct update method
-                    Log::debug("Updating record for polygon UUID: $uuid with new data");
-
-                    // Try to find and update the existing record
+                    // Update existing record or create if it doesn't exist (when force = true)
                     $model = $slugMappings[$slug]['model'];
                     $record = $model::where($searchCriteria)->first();
 
@@ -233,11 +388,11 @@ class RunIndicatorAnalysisService
                         Log::debug("Found existing record ID: {$record->id}, updating");
                         $record->value = $value;
                         $record->save();
-
-                        // Log the value for debugging
                         Log::debug("Updated record with value: {$value}");
                     } else {
-                        Log::warning("Record expected for update but not found for polygon UUID: $uuid");
+                        Log::debug("Record not found, creating new record for polygon UUID: $uuid");
+                        $slugMappings[$slug]['model']::create($data);
+                        Log::debug("Created new record with value: {$value}");
                     }
                 } else {
                     // Only create if it doesn't exist
@@ -309,10 +464,6 @@ class RunIndicatorAnalysisService
                 ];
 
                 if ($updateExisting) {
-                    // Update existing record using direct update method
-                    Log::debug("Updating tree cover loss record for polygon UUID: $uuid with new data");
-
-                    // Try to find and update the existing record
                     $model = $slugMappings[$slug]['model'];
                     $record = $model::where($searchCriteria)->first();
 
@@ -320,14 +471,13 @@ class RunIndicatorAnalysisService
                         Log::debug("Found existing tree cover loss record ID: {$record->id}, updating");
                         $record->value = $data['value'];
                         $record->save();
-
-                        // Log the value for debugging
                         Log::debug("Updated tree cover loss record with value: {$data['value']}");
                     } else {
-                        Log::warning("Tree cover loss record expected for update but not found for polygon UUID: $uuid");
+                        Log::debug("Tree cover loss record not found, creating new record for polygon UUID: $uuid");
+                        $slugMappings[$slug]['model']::create($data);
+                        Log::debug("Created new tree cover loss record with value: {$data['value']}");
                     }
                 } else {
-                    // Only create if it doesn't exist
                     $exists = $slugMappings[$slug]['model']::where($searchCriteria)->exists();
                     if (! $exists) {
                         Log::debug("Creating new record for polygon UUID: $uuid");
@@ -378,12 +528,16 @@ class RunIndicatorAnalysisService
                 return null;
             }
 
+            $sitePolygon = $geojson['geometry']->sitePolygon;
+            $plantstart = $sitePolygon ? $sitePolygon->plantstart : null;
+
             return [
                 'geo' => [
                     'type' => 'Polygon',
                     'coordinates' => $geoJsonObject['coordinates'],
                 ],
                 'site_polygon_id' => $geojson['site_polygon_id'],
+                'plantstart' => $plantstart,
             ];
         } catch (\Exception $e) {
             Log::error("Error retrieving geometry for polygon UUID: $polygonUuid", [
@@ -516,7 +670,7 @@ class RunIndicatorAnalysisService
      */
     public function generateTreeCoverLossData($processedTreeCoverLossValue, $slug, $polygonGeometry)
     {
-        $yearsOfAnalysis = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+        $yearsOfAnalysis = $this->getDynamicYearsOfAnalysis($polygonGeometry['plantstart']);
         $responseData = [];
         foreach ($yearsOfAnalysis as $year) {
             if (isset($processedTreeCoverLossValue[$year])) {
@@ -532,6 +686,37 @@ class RunIndicatorAnalysisService
             'year_of_analysis' => Carbon::now()->year,
             'value' => json_encode($responseData),
         ];
+    }
+
+    /**
+     * Get dynamic years of analysis based on plantstart date
+     *
+     * @param string|null $plantstart
+     * @return array
+     */
+    protected function getDynamicYearsOfAnalysis($plantstart = null)
+    {
+        $currentYear = Carbon::now()->year;
+        $startYear = 2010;
+
+        if ($plantstart != null) {
+            try {
+                $plantstartYear = Carbon::parse($plantstart)->year;
+                $endYear = max($plantstartYear, $currentYear);
+                $startYear = max(2010, $endYear - 15);
+
+            } catch (\Exception $e) {
+                Log::warning("Invalid plantstart date: $plantstart, using default years", [
+                    'error' => $e->getMessage(),
+                ]);
+                $endYear = $currentYear;
+            }
+        } else {
+            $endYear = $currentYear;
+            Log::debug('No plantstart date provided, using current year as end year');
+        }
+
+        return range($startYear, $endYear);
     }
 
     /**
