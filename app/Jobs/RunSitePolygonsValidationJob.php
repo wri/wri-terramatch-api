@@ -11,6 +11,7 @@ use App\Services\PolygonValidationService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class RunSitePolygonsValidationJob implements ShouldQueue
+class RunSitePolygonsValidationJob implements ShouldQueue, ShouldBeUniqueUntilProcessing
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -31,6 +32,8 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
     public $tries = 1;
 
+    public $uniqueFor = 7200;
+
     protected $uuid;
 
     protected $delayed_job_id;
@@ -40,6 +43,14 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     protected $chunkSize = 5;
 
     protected $memoryClearFrequency = 3;
+
+    /**
+     * The unique ID of the job - global lock for ALL polygon validations
+     */
+    public function uniqueId(): string
+    {
+        return 'polygon-validation-global-lock';
+    }
 
     /**
      * Create a new job instance.
