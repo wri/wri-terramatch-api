@@ -27,7 +27,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $timeout = 55;
+    public $timeout = 50;
 
     public $tries = 1;
 
@@ -37,16 +37,16 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
     protected $sitePolygonsUuids;
 
-    protected $chunkSize = 10;
+    protected $chunkSize = 5;
 
-    protected $memoryClearFrequency = 5;
+    protected $memoryClearFrequency = 3;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(string $delayed_job_id, array $sitePolygonsUuids, int $chunkSize = 10)
+    public function __construct(string $delayed_job_id, array $sitePolygonsUuids, int $chunkSize = 5)
     {
         $this->sitePolygonsUuids = $sitePolygonsUuids;
         $this->delayed_job_id = $delayed_job_id;
@@ -88,7 +88,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 try {
                     foreach ($polygonChunk as $polygonIndex => $polygonUuid) {
                         $elapsedTime = microtime(true) - $jobStartTime;
-                        if ($elapsedTime > 50) {
+                        if ($elapsedTime > ($this->timeout - 10)) {
                             Log::warning("Job approaching timeout after {$elapsedTime}s, stopping at polygon {$processedCount}");
 
                             break 2;
