@@ -10,6 +10,7 @@ use App\Services\PolygonService;
 use App\Services\PolygonValidationService;
 use Exception;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class RunSitePolygonsValidationJob implements ShouldQueue
+class RunSitePolygonsValidationJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -31,26 +32,38 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
     public $tries = 1;
 
+    public $uniqueFor = 3600;
+
     protected $uuid;
 
     protected $delayed_job_id;
 
     protected $sitePolygonsUuids;
 
-    protected $chunkSize = 5;
+    protected $chunkSize = 3;
 
-    protected $memoryClearFrequency = 3;
+    protected $memoryClearFrequency = 2;
+
+    protected $safetyBuffer = 20;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(string $delayed_job_id, array $sitePolygonsUuids, int $chunkSize = 5)
+    public function __construct(string $delayed_job_id, array $sitePolygonsUuids, int $chunkSize = 3)
     {
         $this->sitePolygonsUuids = $sitePolygonsUuids;
         $this->delayed_job_id = $delayed_job_id;
         $this->chunkSize = $chunkSize;
+    }
+
+    /**
+     * The unique ID of the job.
+     */
+    public function uniqueId(): string
+    {
+        return $this->delayed_job_id;
     }
 
     /**
@@ -88,7 +101,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 try {
                     foreach ($polygonChunk as $polygonIndex => $polygonUuid) {
                         $elapsedTime = microtime(true) - $jobStartTime;
-                        if ($elapsedTime > ($this->timeout - 10)) {
+                        if ($elapsedTime > ($this->timeout - $this->safetyBuffer)) {
                             Log::warning("Job approaching timeout after {$elapsedTime}s, stopping at polygon {$processedCount}");
 
                             break 2;
