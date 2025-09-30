@@ -27,7 +27,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $timeout = 50;
+    public $timeout = 55;
 
     public $tries = 1;
 

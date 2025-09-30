@@ -42,10 +42,9 @@ class OrganisationResource extends JsonResource
 
             'tree_species_historical' => TreeSpeciesResource::collection($this->treeSpeciesHistorical),
             'project_pitches' => ProjectPitchResource::collection($this->projectPitches),
-            'leadership_team' => LeadershipsResource::collection($this->leadershipTeam),
-            'core_team_leaders' => LeadershipsResource::collection($this->coreTeamLeaders),
             'funding_types' => FundingTypeResource::collection($this->fundingTypes),
             'ownership_stake' => OwnershipStakeResource::collection($this->ownershipStake),
+            'leaderships' => LeadershipsResource::collection($this->leaderships),
 
             'leadership_team_txt' => $this->leadership_team_txt,
             'web_url' => $this->web_url,

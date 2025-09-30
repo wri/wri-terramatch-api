@@ -22,6 +22,8 @@ class LeadershipsResource extends JsonResource
             'position' => $this->position,
             'gender' => $this->gender,
             'age' => $this->age,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
