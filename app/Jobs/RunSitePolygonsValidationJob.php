@@ -27,7 +27,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $timeout = 50;
+    public $timeout = 300;
 
     public $tries = 1;
 
@@ -37,16 +37,16 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
     protected $sitePolygonsUuids;
 
-    protected $chunkSize = 10;
+    protected $chunkSize = 5;
 
-    protected $memoryClearFrequency = 100;
+    protected $memoryClearFrequency = 50;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(string $delayed_job_id, array $sitePolygonsUuids, int $chunkSize = 100)
+    public function __construct(string $delayed_job_id, array $sitePolygonsUuids, int $chunkSize = 5)
     {
         $this->sitePolygonsUuids = $sitePolygonsUuids;
         $this->delayed_job_id = $delayed_job_id;
@@ -88,19 +88,24 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 try {
                     foreach ($polygonChunk as $polygonIndex => $polygonUuid) {
                         $elapsedTime = microtime(true) - $jobStartTime;
-                        if ($elapsedTime > 40) {
+                        if ($elapsedTime > 250) {
                             Log::warning("Job approaching timeout after {$elapsedTime}s, stopping at polygon {$processedCount}");
 
                             break 2;
                         }
 
-                        $this->validateSinglePolygon($polygonUuid, $validationService, $polygonService);
-                        $processedCount++;
+                        try {
+                            $this->validateSinglePolygon($polygonUuid, $validationService, $polygonService);
+                            $processedCount++;
+                        } catch (Exception $polygonException) {
+                            Log::error("Failed to validate polygon {$polygonUuid}: " . $polygonException->getMessage());
+                            $processedCount++;
+                        }
 
                         $delayedJob->increment('processed_content');
                         $delayedJob->processMessage();
 
-                        if (($polygonIndex + 1) % 2 === 0) {
+                        if (($polygonIndex + 1) % $this->memoryClearFrequency === 0) {
                             $this->clearMemoryAndConnections();
                         }
                     }
@@ -120,10 +125,10 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
             if ($processedCount < $totalPolygons) {
                 $remainingPolygons = array_slice($this->sitePolygonsUuids, $processedCount);
-                $continuationJob = new RunSitePolygonsValidationJob($this->delayed_job_id, $remainingPolygons);
-                dispatch($continuationJob)->delay(now()->addSeconds(5));
+                $continuationJob = new RunSitePolygonsValidationJob($this->delayed_job_id, $remainingPolygons, $this->chunkSize);
+                dispatch($continuationJob)->delay(now()->addSeconds(2));
 
-                Log::info("Partial completion: processed {$processedCount}/{$totalPolygons} polygons. Scheduled continuation job.");
+                Log::info("Partial completion: processed {$processedCount}/{$totalPolygons} polygons. Scheduled continuation job with {$this->chunkSize} chunk size.");
 
                 $delayedJob->update([
                     'status' => DelayedJobProgress::STATUS_PENDING,
@@ -195,6 +200,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
             $polygonService->updateSitePolygonValidity($polygonUuid);
         } catch (Exception $e) {
             Log::error("Error validating polygon {$polygonUuid}: " . $e->getMessage());
+            Log::error('Polygon validation error trace: ' . $e->getTraceAsString());
 
             throw $e;
         }
@@ -212,6 +218,9 @@ class RunSitePolygonsValidationJob implements ShouldQueue
             gc_collect_cycles();
             if (function_exists('gc_mem_caches')) {
                 gc_mem_caches();
+            }
+            if (function_exists('opcache_reset')) {
+                opcache_reset();
             }
         } catch (Exception $e) {
             Log::warning('Error during memory cleanup: ' . $e->getMessage());
