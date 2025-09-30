@@ -10,8 +10,8 @@ use App\Services\PolygonService;
 use App\Services\PolygonValidationService;
 use Exception;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class RunSitePolygonsValidationJob implements ShouldQueue, ShouldBeUniqueUntilProcessing
+class RunSitePolygonsValidationJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -33,6 +33,8 @@ class RunSitePolygonsValidationJob implements ShouldQueue, ShouldBeUniqueUntilPr
     public $tries = 1;
 
     public $uniqueFor = 7200;
+
+    public $uniqueVia = 'database';
 
     protected $uuid;
 
