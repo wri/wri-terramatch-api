@@ -67,7 +67,6 @@ use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
-use App\Http\Controllers\V2\Forms\ViewFormController;
 use App\Http\Controllers\V2\Forms\ViewFormSubmissionController;
 use App\Http\Controllers\V2\FundingProgramme\AdminFundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\FundingProgrammeController;
@@ -389,8 +388,6 @@ Route::prefix('forms')->group(function () {
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
-
-    Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');

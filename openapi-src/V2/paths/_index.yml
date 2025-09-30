@@ -1180,22 +1180,6 @@
         schema:
           type: object
     operationId: get-v2-admin-forms-submissions-uuid-export
-'/v2/forms/{UUID}':
-  get:
-    summary: Get a form
-    tags:
-      - Forms
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormRead'
-    operationId: get-v2-forms
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
 /v2/admin/funding-programme/stage:
   post:
     summary: Create a stage
