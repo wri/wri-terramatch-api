@@ -50,6 +50,7 @@ class ProjectReportResource extends JsonResource
             'volunteer_smallholder_farmers' => $this->volunteer_smallholder_farmers,
             'shared_drive_link' => $this->shared_drive_link,
             'planted_trees' => $this->planted_trees,
+            'planting_status' => $this->planting_status,
             'new_jobs_description' => $this->new_jobs_description,
             'volunteers_work_description' => $this->volunteers_work_description,
             'beneficiaries_description' => $this->beneficiaries_description,
