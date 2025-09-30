@@ -27,7 +27,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $timeout = 300;
+    public $timeout = 55;
 
     public $tries = 1;
 
@@ -37,16 +37,16 @@ class RunSitePolygonsValidationJob implements ShouldQueue
 
     protected $sitePolygonsUuids;
 
-    protected $chunkSize = 5;
+    protected $chunkSize = 10;
 
-    protected $memoryClearFrequency = 50;
+    protected $memoryClearFrequency = 5;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(string $delayed_job_id, array $sitePolygonsUuids, int $chunkSize = 5)
+    public function __construct(string $delayed_job_id, array $sitePolygonsUuids, int $chunkSize = 10)
     {
         $this->sitePolygonsUuids = $sitePolygonsUuids;
         $this->delayed_job_id = $delayed_job_id;
@@ -88,7 +88,7 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                 try {
                     foreach ($polygonChunk as $polygonIndex => $polygonUuid) {
                         $elapsedTime = microtime(true) - $jobStartTime;
-                        if ($elapsedTime > 250) {
+                        if ($elapsedTime > 50) {
                             Log::warning("Job approaching timeout after {$elapsedTime}s, stopping at polygon {$processedCount}");
 
                             break 2;
@@ -143,18 +143,8 @@ class RunSitePolygonsValidationJob implements ShouldQueue
                     'status_code' => Response::HTTP_OK,
                     'progress' => 100,
                 ]);
-            }
 
-            if ($user && $user->email_address) {
-                Mail::to($user->email_address)
-                    ->send(new PolygonOperationsComplete(
-                        $site,
-                        'Check',
-                        $user,
-                        now()
-                    ));
-            } else {
-                Log::warning('User or email address not found, skipping email notification');
+                $this->sendCompletionEmailSafely($user, $site);
             }
 
         } catch (Exception $e) {
@@ -224,6 +214,37 @@ class RunSitePolygonsValidationJob implements ShouldQueue
             }
         } catch (Exception $e) {
             Log::warning('Error during memory cleanup: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send completion email safely - never fails the job
+     * Email is queued asynchronously and any errors are logged but not thrown
+     *
+     * @param $user
+     * @param Site $site
+     * @return void
+     */
+    protected function sendCompletionEmailSafely($user, Site $site): void
+    {
+        try {
+            if (! $user || ! $user->email_address) {
+                Log::info('Validation completed successfully. No email sent: user or email address not found.');
+
+                return;
+            }
+
+            Mail::to($user->email_address)
+                ->queue(new PolygonOperationsComplete(
+                    $site,
+                    'Check',
+                    $user,
+                    now()
+                ));
+
+            Log::info("Validation completed successfully. Completion email queued for: {$user->email_address}");
+        } catch (Exception $e) {
+            Log::warning('Validation completed successfully. Email notification failed but validation succeeded: ' . $e->getMessage());
         }
     }
 }
