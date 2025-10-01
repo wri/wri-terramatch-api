@@ -140,7 +140,7 @@ class MigrateOrganisationFieldsToFinancialIndicators extends Command
         $collection = $this->getCollectionType($orgData->organisation_type);
 
         // Define field mappings based on the image table
-        $fieldMappings = $this->getFieldMappings($fundingProgramme->uuid, $orgData->organisation_type);
+        $fieldMappings = $this->getFieldMappings($fundingProgramme->uuid);
 
         foreach ($fieldMappings as $field => $year) {
             $amount = $orgData->$field ?? 0;
@@ -158,7 +158,7 @@ class MigrateOrganisationFieldsToFinancialIndicators extends Command
     {
         return match ($organisationType) {
             'for-profit-organization' => FinancialIndicators::COLLECTION_REVENUE,
-            'non-profit-organization', 'government-agency' => FinancialIndicators::COLLECTION_BUDGET,
+            'non-profit-organization', 'government' => FinancialIndicators::COLLECTION_BUDGET,
             default => FinancialIndicators::COLLECTION_BUDGET,
         };
     }
@@ -167,47 +167,29 @@ class MigrateOrganisationFieldsToFinancialIndicators extends Command
      * Get field mappings based on funding programme and organisation type
      * Based on the mapping table in the image
      */
-    private function getFieldMappings(string $fundingProgrammeUuid, string $organisationType): array
+    private function getFieldMappings(string $fundingProgrammeUuid): array
     {
         // Harit Bharat Fund - Enterprises
         if ($fundingProgrammeUuid === '86b3ea32-8541-4525-b342-2d8010b3cdf7') {
-            if ($organisationType === 'for-profit-organization') {
-                return [
-                    'fin_budget_1year' => 2022,
-                    'fin_budget_2year' => 2021,
-                    'fin_budget_3year' => 2020,
-                    'organisation_revenue_this_year' => 2023,
-                ];
-            } elseif ($organisationType === 'non-profit-organization') {
-                return [
-                    'fin_budget_1year' => 2022,
-                    'fin_budget_2year' => 2021,
-                    'fin_budget_3year' => 2020,
-                    'organisation_revenue_this_year' => 2023,
-                ];
-            }
+            return [
+                'fin_budget_1year' => 2022,
+                'fin_budget_2year' => 2021,
+                'fin_budget_3year' => 2020,
+                'organisation_revenue_this_year' => 2023,
+            ];
         }
 
         // Harit Bharat Fund - Non-Profits
         if ($fundingProgrammeUuid === 'a8a453a8-658c-48f3-ab79-cf23217bc8ed') {
-            if ($organisationType === 'government-agency') {
-                return [
-                    'fin_budget_current_year' => 2023,
-                    'fin_budget_1year' => 2022,
-                    'fin_budget_2year' => 2021,
-                    'fin_budget_3year' => 2020,
-                ];
-            } elseif ($organisationType === 'non-profit-organization') {
-                return [
-                    'fin_budget_current_year' => 2023,
-                    'fin_budget_1year' => 2022,
-                    'fin_budget_2year' => 2021,
-                    'fin_budget_3year' => 2020,
-                ];
-            }
+            return [
+                'fin_budget_current_year' => 2023,
+                'fin_budget_1year' => 2022,
+                'fin_budget_2year' => 2021,
+                'fin_budget_3year' => 2020,
+            ];
         }
 
-        $this->error("No field mapping found for funding programme '{$fundingProgrammeUuid}' and organisation type '{$organisationType}'.");
+        $this->error("No field mapping found for funding programme '{$fundingProgrammeUuid}'");
 
         return [];
     }
