@@ -246,7 +246,197 @@ class PolygonService
             throw new \RuntimeException('Error creating geojson models: ' . $e->getMessage(), 0, $e);
         }
     }
+    /**
+     * Create geojson models with versioning support for uploads
+     * This function handles both new polygons and versioning while maintaining bulk performance
+     */
+    public function createGeojsonModelsBulkWithVersioning(array $geojson, array $sitePolygonProperties = [], ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false): array
+    {
+        try {
+            if (data_get($geojson, 'features.0.geometry.type') == 'Point') {
+                return $this->transformAndStorePoints($geojson, $sitePolygonProperties);
+            }
 
+            $versioningPolygons = [];
+            $newPolygons = [];
+            $allUuids = [];
+
+            foreach ($geojson['features'] as $feature) {
+                if ($this->shouldCreateVersion($feature, $submit_polygon_loaded, $primary_uuid)) {
+                    $versioningPolygons[] = $feature;
+                } else {
+                    $newPolygons[] = $feature;
+                }
+            }
+
+            if (!empty($versioningPolygons)) {
+                $versionUuids = $this->processVersioningPolygons($versioningPolygons, $sitePolygonProperties, $submit_polygon_loaded);
+                $allUuids = array_merge($allUuids, $versionUuids);
+            }
+
+            if (!empty($newPolygons)) {
+                $newUuids = $this->processNewPolygonsBulk($newPolygons, $sitePolygonProperties);
+                $allUuids = array_merge($allUuids, $newUuids);
+            }
+
+            return $allUuids;
+
+        } catch (\Exception $e) {
+            Log::error('Error at bulk create geojson models with versioning', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw new \RuntimeException('Error creating geojson models with versioning: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    private function shouldCreateVersion(array $feature, ?bool $submit_polygon_loaded, ?string $primary_uuid): bool
+    {
+        if ($submit_polygon_loaded && isset($feature['properties']['uuid'])) {
+            return true;
+        }
+        
+        if ($primary_uuid != null) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    private function processVersioningPolygons(array $features, array $sitePolygonProperties, ?bool $submit_polygon_loaded): array
+    {
+        $uuids = [];
+        
+        DB::beginTransaction();
+        
+        try {
+            foreach ($features as $feature) {
+                if ($feature['geometry']['type'] === 'Polygon') {
+                    $data = $this->insertSinglePolygon($feature['geometry']);
+                    $sitePolygonProperties['area'] = $data['area'];
+                    $this->attemptPolygonInsert(
+                        $data['uuid'],
+                        $sitePolygonProperties,
+                        $feature,
+                        null,
+                        $submit_polygon_loaded
+                    );
+                    $uuids[] = $data['uuid'];
+                } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+                    foreach ($feature['geometry']['coordinates'] as $polygon) {
+                        $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
+                        $data = $this->insertSinglePolygon($singlePolygon);
+                        $sitePolygonProperties['area'] = $data['area'];
+                        $this->attemptPolygonInsert(
+                            $data['uuid'],
+                            $sitePolygonProperties,
+                            $feature,
+                            null,
+                            $submit_polygon_loaded
+                        );
+                        $uuids[] = $data['uuid'];
+                    }
+                }
+            }
+            
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error processing versioning polygons', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
+        }
+        
+        return $uuids;
+    }
+
+    private function processNewPolygonsBulk(array $features, array $sitePolygonProperties): array
+    {
+        $polygonData = [];
+        $polygonInserts = [];
+        $uuids = [];
+        $geometriesToProcess = [];
+        $geometryIndexMap = [];
+
+        $geometryIndex = 0;
+        foreach ($features as $feature) {
+            if ($feature['geometry']['type'] === 'Polygon') {
+                $uuid = Str::uuid()->toString();
+                $geometriesToProcess[] = $feature['geometry'];
+                $geometryIndexMap[$geometryIndex] = [
+                    'uuid' => $uuid,
+                    'feature' => $feature,
+                    'sitePolygonProperties' => $sitePolygonProperties,
+                ];
+                $uuids[] = $uuid;
+                $geometryIndex++;
+
+            } elseif ($feature['geometry']['type'] === 'MultiPolygon') {
+                foreach ($feature['geometry']['coordinates'] as $polygon) {
+                    $singlePolygon = ['type' => 'Polygon', 'coordinates' => $polygon];
+                    $uuid = Str::uuid()->toString();
+                    $geometriesToProcess[] = $singlePolygon;
+                    $geometryIndexMap[$geometryIndex] = [
+                        'uuid' => $uuid,
+                        'feature' => $feature,
+                        'sitePolygonProperties' => $sitePolygonProperties,
+                    ];
+                    $uuids[] = $uuid;
+                    $geometryIndex++;
+                }
+            }
+        }
+
+        $areaCalculationService = app(AreaCalculationService::class);
+        $geometryResults = $areaCalculationService->batchGetGeomsAndAreas($geometriesToProcess);
+
+        foreach ($geometryResults as $index => $geometryAndArea) {
+            $mapping = $geometryIndexMap[$index];
+
+            $polygonInserts[] = [
+                'uuid' => $mapping['uuid'],
+                'geom' => $geometryAndArea['geom'],
+                'created_by' => Auth::user()?->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+
+            $polygonData[] = [
+                'uuid' => $mapping['uuid'],
+                'area' => $geometryAndArea['area'],
+                'feature' => $mapping['feature'],
+                'sitePolygonProperties' => $mapping['sitePolygonProperties'],
+            ];
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 500;
+            foreach (array_chunk($polygonInserts, $chunkSize) as $chunk) {
+                DB::table('polygon_geometry')->insert($chunk);
+            }
+
+            $this->bulkInsertSitePolygons($polygonData, $chunkSize);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error with bulk polygon insertion for new polygons, rolled back all transactions', [
+                'error' => $e->getMessage(),
+                'polygons_count' => count($polygonData),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw $e;
+        }
+
+        return $uuids;
+    }
     public function createGeojsonModels(array $geojson, array $sitePolygonProperties = [], ?string $primary_uuid = null, ?bool $submit_polygon_loaded = false): array
     {
         try {
@@ -286,7 +476,6 @@ class PolygonService
             }
 
             DB::beginTransaction();
-
             try {
                 foreach ($polygonData as $polygon) {
                     $sitePolygonProps = $polygon['sitePolygonProperties'];
@@ -617,8 +806,10 @@ class PolygonService
         try {
             $sitePolygon = SitePolygon::isUuid($primary_uuid)->active()->first();
             if (! $sitePolygon) {
+                Log::warning('No active polygon found for primary_uuid', ['primary_uuid' => $primary_uuid]);
                 return false;
             }
+
             $user = Auth::check() ? Auth::user() : null;
 
             if ($user) {
@@ -847,7 +1038,7 @@ class PolygonService
             if (json_last_error() === JSON_ERROR_NONE) {
                 return ['error' => $decodedErrorMessage];
             } else {
-                Log::info('Error inserting geojson to DB', ['error' => $errorMessage]);
+                Log::error('Error inserting geojson to DB', ['error' => $errorMessage]);
 
                 return ['error' => $errorMessage];
             }
@@ -864,7 +1055,7 @@ class PolygonService
             SitePolygonValidator::validate('FEATURE_BOUNDS', $geojson, false);
             SitePolygonValidator::validate('GEOMETRY_TYPE', $geojson, false);
 
-            return $this->createGeojsonModelsBulk($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
+            return $this->createGeojsonModelsBulkWithVersioning($geojson, ['site_id' => $entity_uuid, 'source' => PolygonService::UPLOADED_SOURCE], $primary_uuid, $submit_polygon_loaded);
 
         } catch (Exception $e) {
             $errorMessage = $e->getMessage();
@@ -896,8 +1087,6 @@ class PolygonService
         if ($delayed_job_id) {
             $delayedJob = DelayedJobProgress::findOrFail($delayed_job_id);
         }
-
-        Log::info('test now selected plygons');
         if (isset($clippedPolygons['type']) && $clippedPolygons['type'] === 'FeatureCollection' && isset($clippedPolygons['features'])) {
             foreach ($clippedPolygons['features'] as $feature) {
                 if (isset($feature['properties']['poly_id'])) {
