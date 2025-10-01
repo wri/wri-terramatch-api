@@ -150,10 +150,12 @@ definitions:
         type: string
       status:
         type: string
-      form:
-        type: object
+      form_uuid:
+        type: string
       answers:
         type: object
+      framework_key:
+        type: string
       form_title:
         type: string
       feedback:
@@ -175,7 +177,7 @@ definitions:
           readable_status:
             type: string
           content:
-            type: string
+            type: object
           feedback:
             type: string
           feedback_fields:
@@ -8133,180 +8135,10 @@ definitions:
                   type: string
                 name:
                   type: string
-                form:
-                  title: FormRead
-                  x-stoplight:
-                    id: e0u0etkn01z17
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    uuid:
-                      type: string
-                    type:
-                      type: string
-                    version:
-                      type: integer
-                    title:
-                      type: string
-                    subtitle:
-                      type: string
-                    description:
-                      type: string
-                    framework_key:
-                      type: string
-                    duration:
-                      type: string
-                    deadline_at:
-                      type: string
-                    documentation:
-                      type: string
-                    documentation_label:
-                      type: string
-                    submission_message:
-                      type: string
-                    published:
-                      type: boolean
-                    stage_id:
-                      type: string
-                    funding_programme_uuid:
-                      type: string
-                    funding_programme_framework_key:
-                      type: string
-                    options_other:
-                      type: boolean
-                    form_sections:
-                      type: array
-                      items:
-                        title: FormSectionRead
-                        x-stoplight:
-                          id: scpnof2zuz3q3
-                        type: object
-                        properties:
-                          order:
-                            type: integer
-                          form_id:
-                            type: integer
-                          form_questions:
-                            type: array
-                            items:
-                              title: FormQuestionRead
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                uuid:
-                                  type: string
-                                form_section_id:
-                                  type: integer
-                                label:
-                                  type: string
-                                validation:
-                                  type: array
-                                  items:
-                                    type: string
-                                parent_id:
-                                  type: string
-                                linked_field_key:
-                                  type: string
-                                children:
-                                  type: array
-                                  items:
-                                    type: object
-                                multichoice:
-                                  type: boolean
-                                order:
-                                  type: integer
-                                options:
-                                  type: array
-                                  items:
-                                    title: FormQuestionOptionRead
-                                    x-stoplight:
-                                      id: ihpffrpq780e4
-                                    type: object
-                                    properties:
-                                      id:
-                                        type: integer
-                                      uuid:
-                                        type: string
-                                      form_question_id:
-                                        type: integer
-                                      label:
-                                        type: string
-                                      order:
-                                        type: integer
-                                      created_at:
-                                        type: string
-                                      updated_at:
-                                        type: string
-                                      deleted_at:
-                                        type: string
-                                table_headers:
-                                  type: array
-                                  items:
-                                    title: FormTableHeaderRead
-                                    type: object
-                                    properties:
-                                      id:
-                                        type: integer
-                                      uuid:
-                                        type: string
-                                      form_question_id:
-                                        type: integer
-                                      label:
-                                        type: string
-                                      order:
-                                        type: integer
-                                      created_at:
-                                        type: string
-                                      updated_at:
-                                        type: string
-                                      deleted_at:
-                                        type: string
-                                additional_text:
-                                  type: string
-                                additional_url:
-                                  type: string
-                                show_on_parent_condition:
-                                  type: boolean
-                                input_type:
-                                  type: string
-                                  enum:
-                                    - date
-                                    - text
-                                    - long-text
-                                    - select
-                                    - checkboxes
-                                    - radio
-                                    - number
-                                    - image
-                                    - file
-                                    - conditional
-                                created_at:
-                                  type: string
-                                updated_at:
-                                  type: string
-                                deleted_at:
-                                  type: string
-                          created_at:
-                            type: string
-                          updated_at:
-                            type: string
-                          deleted_at:
-                            type: string
-                    tags:
-                      type: array
-                      description: 'this is a list of key value pairs eg. slug: name'
-                      items:
-                        type: string
-                    updated_by:
-                      type: integer
-                    deleted_at:
-                      type: string
-                    created_at:
-                      type: string
-                    updated_at:
-                      type: string
+                form_uuid:
+                  type: string
+                framework_key:
+                  type: string
                 stage:
                   title: StageLiteRead
                   type: object
@@ -8320,7 +8152,7 @@ definitions:
                     readable_status:
                       type: string
                 answers:
-                  type: string
+                  type: object
                 status:
                   type: string
                 readable_status:
@@ -8354,6 +8186,31 @@ definitions:
                     type: string
                 project_pitch_uuid:
                   type: string
+                application_uuid:
+                  type: string
+                organisation_uuid:
+                  type: string
+                organisation_attributes:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    type:
+                      type: string
+                    currency:
+                      type: string
+                    start_month:
+                      type: string
+                feedback:
+                  type: string;
+                feedback_fields:
+                  type: array
+                  items:
+                    type: string
+                translated_feedback_fields:
+                  type: array
+                  items:
+                    type: string
                 updated_by:
                   type: string
                 deleted_at:
@@ -8981,203 +8838,6 @@ definitions:
         type: string
       has_monitoring_data:
         type: boolean
-  ProjectWithSchemaRead:
-    title: ProjectWithSchemaRead
-    type: object
-    properties:
-      uuid:
-        type: string
-      name:
-        type: string
-      status:
-        type: string
-      form:
-        title: FormRead
-        x-stoplight:
-          id: e0u0etkn01z17
-        type: object
-        properties:
-          id:
-            type: integer
-          uuid:
-            type: string
-          type:
-            type: string
-          version:
-            type: integer
-          title:
-            type: string
-          subtitle:
-            type: string
-          description:
-            type: string
-          framework_key:
-            type: string
-          duration:
-            type: string
-          deadline_at:
-            type: string
-          documentation:
-            type: string
-          documentation_label:
-            type: string
-          submission_message:
-            type: string
-          published:
-            type: boolean
-          stage_id:
-            type: string
-          funding_programme_uuid:
-            type: string
-          funding_programme_framework_key:
-            type: string
-          options_other:
-            type: boolean
-          form_sections:
-            type: array
-            items:
-              title: FormSectionRead
-              x-stoplight:
-                id: scpnof2zuz3q3
-              type: object
-              properties:
-                order:
-                  type: integer
-                form_id:
-                  type: integer
-                form_questions:
-                  type: array
-                  items:
-                    title: FormQuestionRead
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      uuid:
-                        type: string
-                      form_section_id:
-                        type: integer
-                      label:
-                        type: string
-                      validation:
-                        type: array
-                        items:
-                          type: string
-                      parent_id:
-                        type: string
-                      linked_field_key:
-                        type: string
-                      children:
-                        type: array
-                        items:
-                          type: object
-                      multichoice:
-                        type: boolean
-                      order:
-                        type: integer
-                      options:
-                        type: array
-                        items:
-                          title: FormQuestionOptionRead
-                          x-stoplight:
-                            id: ihpffrpq780e4
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                            uuid:
-                              type: string
-                            form_question_id:
-                              type: integer
-                            label:
-                              type: string
-                            order:
-                              type: integer
-                            created_at:
-                              type: string
-                            updated_at:
-                              type: string
-                            deleted_at:
-                              type: string
-                      table_headers:
-                        type: array
-                        items:
-                          title: FormTableHeaderRead
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                            uuid:
-                              type: string
-                            form_question_id:
-                              type: integer
-                            label:
-                              type: string
-                            order:
-                              type: integer
-                            created_at:
-                              type: string
-                            updated_at:
-                              type: string
-                            deleted_at:
-                              type: string
-                      additional_text:
-                        type: string
-                      additional_url:
-                        type: string
-                      show_on_parent_condition:
-                        type: boolean
-                      input_type:
-                        type: string
-                        enum:
-                          - date
-                          - text
-                          - long-text
-                          - select
-                          - checkboxes
-                          - radio
-                          - number
-                          - image
-                          - file
-                          - conditional
-                      created_at:
-                        type: string
-                      updated_at:
-                        type: string
-                      deleted_at:
-                        type: string
-                created_at:
-                  type: string
-                updated_at:
-                  type: string
-                deleted_at:
-                  type: string
-          tags:
-            type: array
-            description: 'this is a list of key value pairs eg. slug: name'
-            items:
-              type: string
-          updated_by:
-            type: integer
-          deleted_at:
-            type: string
-          created_at:
-            type: string
-          updated_at:
-            type: string
-      answers:
-        type: array
-        items:
-          type: object
-          properties:
-            question_id:
-              type: integer
-            value:
-              type: string
-            options:
-              type: array
-              items:
-                type: string
   SiteFullRead:
     title: SiteLiteRead
     type: object
@@ -10219,180 +9879,10 @@ definitions:
         type: string
       name:
         type: string
-      form:
-        title: FormRead
-        x-stoplight:
-          id: e0u0etkn01z17
-        type: object
-        properties:
-          id:
-            type: integer
-          uuid:
-            type: string
-          type:
-            type: string
-          version:
-            type: integer
-          title:
-            type: string
-          subtitle:
-            type: string
-          description:
-            type: string
-          framework_key:
-            type: string
-          duration:
-            type: string
-          deadline_at:
-            type: string
-          documentation:
-            type: string
-          documentation_label:
-            type: string
-          submission_message:
-            type: string
-          published:
-            type: boolean
-          stage_id:
-            type: string
-          funding_programme_uuid:
-            type: string
-          funding_programme_framework_key:
-            type: string
-          options_other:
-            type: boolean
-          form_sections:
-            type: array
-            items:
-              title: FormSectionRead
-              x-stoplight:
-                id: scpnof2zuz3q3
-              type: object
-              properties:
-                order:
-                  type: integer
-                form_id:
-                  type: integer
-                form_questions:
-                  type: array
-                  items:
-                    title: FormQuestionRead
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      uuid:
-                        type: string
-                      form_section_id:
-                        type: integer
-                      label:
-                        type: string
-                      validation:
-                        type: array
-                        items:
-                          type: string
-                      parent_id:
-                        type: string
-                      linked_field_key:
-                        type: string
-                      children:
-                        type: array
-                        items:
-                          type: object
-                      multichoice:
-                        type: boolean
-                      order:
-                        type: integer
-                      options:
-                        type: array
-                        items:
-                          title: FormQuestionOptionRead
-                          x-stoplight:
-                            id: ihpffrpq780e4
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                            uuid:
-                              type: string
-                            form_question_id:
-                              type: integer
-                            label:
-                              type: string
-                            order:
-                              type: integer
-                            created_at:
-                              type: string
-                            updated_at:
-                              type: string
-                            deleted_at:
-                              type: string
-                      table_headers:
-                        type: array
-                        items:
-                          title: FormTableHeaderRead
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                            uuid:
-                              type: string
-                            form_question_id:
-                              type: integer
-                            label:
-                              type: string
-                            order:
-                              type: integer
-                            created_at:
-                              type: string
-                            updated_at:
-                              type: string
-                            deleted_at:
-                              type: string
-                      additional_text:
-                        type: string
-                      additional_url:
-                        type: string
-                      show_on_parent_condition:
-                        type: boolean
-                      input_type:
-                        type: string
-                        enum:
-                          - date
-                          - text
-                          - long-text
-                          - select
-                          - checkboxes
-                          - radio
-                          - number
-                          - image
-                          - file
-                          - conditional
-                      created_at:
-                        type: string
-                      updated_at:
-                        type: string
-                      deleted_at:
-                        type: string
-                created_at:
-                  type: string
-                updated_at:
-                  type: string
-                deleted_at:
-                  type: string
-          tags:
-            type: array
-            description: 'this is a list of key value pairs eg. slug: name'
-            items:
-              type: string
-          updated_by:
-            type: integer
-          deleted_at:
-            type: string
-          created_at:
-            type: string
-          updated_at:
-            type: string
+      form_uuid:
+        type: string
+      framework_key:
+        type: string
       stage:
         title: StageLiteRead
         type: object
@@ -10406,7 +9896,7 @@ definitions:
           readable_status:
             type: string
       answers:
-        type: string
+        type: object
       status:
         type: string
       readable_status:
@@ -10440,6 +9930,31 @@ definitions:
           type: string
       project_pitch_uuid:
         type: string
+      application_uuid:
+        type: string
+      organisation_uuid:
+        type: string
+      organisation_attributes:
+        type: object
+        properties:
+          uuid:
+            type: string
+          type:
+            type: string
+          currency:
+            type: string
+          start_month:
+            type: string
+      feedback:
+        type: string;
+      feedback_fields:
+        type: array
+        items:
+          type: string
+      translated_feedback_fields:
+        type: array
+        items:
+          type: string
       updated_by:
         type: string
       deleted_at:
@@ -11198,18 +10713,7 @@ definitions:
       status:
         type: string
       answers:
-        type: array
-        items:
-          type: object
-          properties:
-            question_id:
-              type: integer
-            value:
-              type: string
-            options:
-              type: array
-              items:
-                type: string
+        type: object
   ApplicationLiteRead:
     title: ApplicationLiteRead
     type: object
@@ -11283,180 +10787,10 @@ definitions:
               type: string
             name:
               type: string
-            form:
-              title: FormRead
-              x-stoplight:
-                id: e0u0etkn01z17
-              type: object
-              properties:
-                id:
-                  type: integer
-                uuid:
-                  type: string
-                type:
-                  type: string
-                version:
-                  type: integer
-                title:
-                  type: string
-                subtitle:
-                  type: string
-                description:
-                  type: string
-                framework_key:
-                  type: string
-                duration:
-                  type: string
-                deadline_at:
-                  type: string
-                documentation:
-                  type: string
-                documentation_label:
-                  type: string
-                submission_message:
-                  type: string
-                published:
-                  type: boolean
-                stage_id:
-                  type: string
-                funding_programme_uuid:
-                  type: string
-                funding_programme_framework_key:
-                  type: string
-                options_other:
-                  type: boolean
-                form_sections:
-                  type: array
-                  items:
-                    title: FormSectionRead
-                    x-stoplight:
-                      id: scpnof2zuz3q3
-                    type: object
-                    properties:
-                      order:
-                        type: integer
-                      form_id:
-                        type: integer
-                      form_questions:
-                        type: array
-                        items:
-                          title: FormQuestionRead
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                            uuid:
-                              type: string
-                            form_section_id:
-                              type: integer
-                            label:
-                              type: string
-                            validation:
-                              type: array
-                              items:
-                                type: string
-                            parent_id:
-                              type: string
-                            linked_field_key:
-                              type: string
-                            children:
-                              type: array
-                              items:
-                                type: object
-                            multichoice:
-                              type: boolean
-                            order:
-                              type: integer
-                            options:
-                              type: array
-                              items:
-                                title: FormQuestionOptionRead
-                                x-stoplight:
-                                  id: ihpffrpq780e4
-                                type: object
-                                properties:
-                                  id:
-                                    type: integer
-                                  uuid:
-                                    type: string
-                                  form_question_id:
-                                    type: integer
-                                  label:
-                                    type: string
-                                  order:
-                                    type: integer
-                                  created_at:
-                                    type: string
-                                  updated_at:
-                                    type: string
-                                  deleted_at:
-                                    type: string
-                            table_headers:
-                              type: array
-                              items:
-                                title: FormTableHeaderRead
-                                type: object
-                                properties:
-                                  id:
-                                    type: integer
-                                  uuid:
-                                    type: string
-                                  form_question_id:
-                                    type: integer
-                                  label:
-                                    type: string
-                                  order:
-                                    type: integer
-                                  created_at:
-                                    type: string
-                                  updated_at:
-                                    type: string
-                                  deleted_at:
-                                    type: string
-                            additional_text:
-                              type: string
-                            additional_url:
-                              type: string
-                            show_on_parent_condition:
-                              type: boolean
-                            input_type:
-                              type: string
-                              enum:
-                                - date
-                                - text
-                                - long-text
-                                - select
-                                - checkboxes
-                                - radio
-                                - number
-                                - image
-                                - file
-                                - conditional
-                            created_at:
-                              type: string
-                            updated_at:
-                              type: string
-                            deleted_at:
-                              type: string
-                      created_at:
-                        type: string
-                      updated_at:
-                        type: string
-                      deleted_at:
-                        type: string
-                tags:
-                  type: array
-                  description: 'this is a list of key value pairs eg. slug: name'
-                  items:
-                    type: string
-                updated_by:
-                  type: integer
-                deleted_at:
-                  type: string
-                created_at:
-                  type: string
-                updated_at:
-                  type: string
+            form_uuid:
+              type: string
+            framework_key:
+              type: string
             stage:
               title: StageLiteRead
               type: object
@@ -11470,7 +10804,7 @@ definitions:
                 readable_status:
                   type: string
             answers:
-              type: string
+              type: object
             status:
               type: string
             readable_status:
@@ -11504,6 +10838,31 @@ definitions:
                 type: string
             project_pitch_uuid:
               type: string
+            application_uuid:
+              type: string
+            organisation_uuid:
+              type: string
+            organisation_attributes:
+              type: object
+              properties:
+                uuid:
+                  type: string
+                type:
+                  type: string
+                currency:
+                  type: string
+                start_month:
+                  type: string
+            feedback:
+              type: string;
+            feedback_fields:
+              type: array
+              items:
+                type: string
+            translated_feedback_fields:
+              type: array
+              items:
+                type: string
             updated_by:
               type: string
             deleted_at:
@@ -20775,7 +20134,7 @@ definitions:
       readable_status:
         type: string
       content:
-        type: string
+        type: object
       feedback:
         type: string
       feedback_fields:
@@ -20952,12 +20311,13 @@ definitions:
           items:
             type: string
           description: |
-            The UUIDs generated by the system for the uploaded geometry at this index. For a polygon geometry, this
-            always be an array with 1 member. For Point geometry, there will be the same number of UUIDS associated as
-            there were Points in the request payload at this index, and the order will be the same.
+            For each geometry feature in the request (in order), this array contains the UUID assigned to that feature.
+            If the feature was newly created, it will contain the new UUID; if it was detected as a duplicate, it will
+            contain the UUID of the existing polygon in the database.
+            For Point geometry, there will be one UUID per point and the order is preserved.
         errors:
           type: object
-          description: Mapping of polygon UUID to the errors associated with the polygon. The geometry was saved in the DB and must be updated instead of created once the issues are resolved.
+          description: 'Mapping of existing polygon UUID to the errors associated with the polygon. Currently, only duplicate detection errors are returned during create operations.'
           additionalProperties:
             type: array
             items:
@@ -20966,6 +20326,7 @@ definitions:
                 key:
                   type: string
                   enum:
+                    - DUPLICATE_GEOMETRY
                     - OVERLAPPING_POLYGON
                     - SELF_INTERSECTION
                     - COORDINATE_SYSTEM
@@ -26911,10 +26272,12 @@ paths:
                 type: string
               status:
                 type: string
-              form:
-                type: object
+              form_uuid:
+                type: string
               answers:
                 type: object
+              framework_key:
+                type: string
               form_title:
                 type: string
               feedback:
@@ -26936,7 +26299,7 @@ paths:
                   readable_status:
                     type: string
                   content:
-                    type: string
+                    type: object
                   feedback:
                     type: string
                   feedback_fields:
@@ -26996,10 +26359,12 @@ paths:
                 type: string
               status:
                 type: string
-              form:
-                type: object
+              form_uuid:
+                type: string
               answers:
                 type: object
+              framework_key:
+                type: string
               form_title:
                 type: string
               feedback:
@@ -27021,7 +26386,7 @@ paths:
                   readable_status:
                     type: string
                   content:
-                    type: string
+                    type: object
                   feedback:
                     type: string
                   feedback_fields:
@@ -27069,10 +26434,12 @@ paths:
                 type: string
               status:
                 type: string
-              form:
-                type: object
+              form_uuid:
+                type: string
               answers:
                 type: object
+              framework_key:
+                type: string
               form_title:
                 type: string
               feedback:
@@ -27094,7 +26461,7 @@ paths:
                   readable_status:
                     type: string
                   content:
-                    type: string
+                    type: object
                   feedback:
                     type: string
                   feedback_fields:
@@ -27115,9 +26482,6 @@ paths:
         - V2 Projects
         - V2 Sites
         - V2 Nurseries
-        - V2 Project Reports
-        - V2 Site Reports
-        - V2 Nursery Reports
         - Forms
       parameters:
         - type: string
@@ -27125,11 +26489,6 @@ paths:
           in: path
           required: true
           description: allowed values projects/sites/nurseries
-        - type: string
-          name: UUID
-          in: path
-          required: true
-          description: this is the uuid of the form
         - in: body
           name: body
           schema:
@@ -27156,10 +26515,12 @@ paths:
                 type: string
               status:
                 type: string
-              form:
-                type: object
+              form_uuid:
+                type: string
               answers:
                 type: object
+              framework_key:
+                type: string
               form_title:
                 type: string
               feedback:
@@ -27181,7 +26542,7 @@ paths:
                   readable_status:
                     type: string
                   content:
-                    type: string
+                    type: object
                   feedback:
                     type: string
                   feedback_fields:
@@ -27233,10 +26594,12 @@ paths:
                 type: string
               status:
                 type: string
-              form:
-                type: object
+              form_uuid:
+                type: string
               answers:
                 type: object
+              framework_key:
+                type: string
               form_title:
                 type: string
               feedback:
@@ -27258,7 +26621,7 @@ paths:
                   readable_status:
                     type: string
                   content:
-                    type: string
+                    type: object
                   feedback:
                     type: string
                   feedback_fields:
@@ -27486,7 +26849,7 @@ paths:
               readable_status:
                 type: string
               content:
-                type: string
+                type: object
               feedback:
                 type: string
               feedback_fields:
@@ -27555,7 +26918,7 @@ paths:
               readable_status:
                 type: string
               content:
-                type: string
+                type: object
               feedback:
                 type: string
               feedback_fields:
@@ -27613,7 +26976,7 @@ paths:
               readable_status:
                 type: string
               content:
-                type: string
+                type: object
               feedback:
                 type: string
               feedback_fields:
@@ -31327,6 +30690,571 @@ paths:
       responses:
         '200':
           description: OK
+          schema:
+            title: OrganisationRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              type:
+                type: string
+              private:
+                type: boolean
+              name:
+                type: string
+              phone:
+                type: string
+              currency:
+                type: string
+              states:
+                type: array
+                items:
+                  type: string
+              loan_status_types:
+                type: array
+                items:
+                  type: string
+              land_systems:
+                type: array
+                items:
+                  type: string
+              fund_utilisation:
+                type: array
+                items:
+                  type: string
+              detailed_intervention_types:
+                type: array
+                items:
+                  type: string
+              account_number_1:
+                type: string
+              account_number_2:
+                type: string
+              approach_of_marginalized_communities:
+                type: string
+              community_engagement_numbers_marginalized:
+                type: string
+              founding_date:
+                type: string
+              description:
+                type: string
+              leadership_team:
+                type: string
+              countries:
+                type: array
+                items:
+                  type: string
+              languages:
+                type: array
+                items:
+                  type: string
+              tree_species:
+                type: array
+                items:
+                  title: V2TreeSpeciesRead
+                  x-stoplight:
+                    id: 04vvsvyndvy8n
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    name:
+                      type: string
+                    amount:
+                      type: integer
+                    type:
+                      type: string
+                    collection:
+                      type: string
+              web_url:
+                type: string
+              facebook_url:
+                type: string
+              instagram_url:
+                type: string
+              linkedin_url:
+                type: string
+              twitter_url:
+                type: string
+              hq_street_1:
+                type: string
+              hq_street_2:
+                type: string
+              hq_city:
+                type: string
+              hq_state:
+                type: string
+              hq_zipcode:
+                type: string
+              hq_country:
+                type: string
+              fin_start_month:
+                type: integer
+              fin_budget_3year:
+                type: number
+                format: float
+              fin_budget_2year:
+                type: number
+                format: float
+              fin_budget_1year:
+                type: number
+                format: float
+              fin_budget_current_year:
+                type: number
+                format: float
+              ha_restored_total:
+                type: number
+                format: float
+              ha_restored_3year:
+                type: number
+                format: float
+              relevant_experience_years:
+                type: integer
+              trees_grown_total:
+                type: integer
+              trees_grown_3year:
+                type: integer
+              tree_care_approach:
+                type: string
+              ft_permanent_employees:
+                type: integer
+              pt_permanent_employees:
+                type: integer
+              temp_employees:
+                type: integer
+              female_employees:
+                type: integer
+              male_employees:
+                type: integer
+              young_employees:
+                type: integer
+              additional_funding_details:
+                type: string
+              community_experience:
+                type: string
+              total_engaged_community_members_3yr:
+                type: integer
+              percent_engaged_women_3yr:
+                type: integer
+              percent_engaged_men_3yr:
+                type: integer
+              percent_engaged_under_35_3yr:
+                type: integer
+              percent_engaged_over_35_3yr:
+                type: integer
+              percent_engaged_smallholder_3yr:
+                type: integer
+              total_trees_grown:
+                type: integer
+              avg_tree_survival_rate:
+                type: integer
+              tree_maintenance_aftercare_approach:
+                type: string
+              restored_areas_description:
+                type: string
+              monitoring_evaluation_experience:
+                type: string
+              funding_history:
+                type: string
+              engagement_farmers:
+                type: array
+                items:
+                  type: string
+              engagement_women:
+                type: array
+                items:
+                  type: string
+              engagement_youth:
+                type: array
+                items:
+                  type: string
+              engagement_non_youth:
+                type: array
+                items:
+                  type: string
+              tree_restoration_practices:
+                type: array
+                items:
+                  type: string
+              business_model:
+                type: string
+              subtype:
+                type: string
+              organisation_revenue_this_year:
+                type: number
+              shapefiles:
+                type: array
+                items:
+                  title: ShapefileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    shapefileable_type:
+                      type: string
+                    shapefileable_id:
+                      type: integer
+                    geojson:
+                      type: string
+                    created_at:
+                      type: string
+                    updated_at:
+                      type: string
+                    deleted_at:
+                      type: string
+              bank_statements:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              previous_annual_reports:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              logo:
+                title: V2FileRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  url:
+                    type: string
+                  thumb_url:
+                    type: string
+                  collection_name:
+                    type: string
+                  title:
+                    type: string
+                  file_name:
+                    type: string
+                  mime_type:
+                    type: string
+                  size:
+                    type: integer
+                  lat:
+                    type: integer
+                  lng:
+                    type: integer
+                  is_public:
+                    type: boolean
+                  is_cover:
+                    type: boolean
+                  created_at:
+                    type: string
+              cover:
+                title: V2FileRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  url:
+                    type: string
+                  thumb_url:
+                    type: string
+                  collection_name:
+                    type: string
+                  title:
+                    type: string
+                  file_name:
+                    type: string
+                  mime_type:
+                    type: string
+                  size:
+                    type: integer
+                  lat:
+                    type: integer
+                  lng:
+                    type: integer
+                  is_public:
+                    type: boolean
+                  is_cover:
+                    type: boolean
+                  created_at:
+                    type: string
+              reference:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              additional:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              op_budget_2year:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              op_budget_last_year:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              op_budget_this_year:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              op_budget_next_year:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              legal_registration:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              tags:
+                type: array
+                description: 'this is a list of key value pairs eg slug: name '
+                items:
+                  type: string
   '/v2/organisations/{UUID}':
     get:
       summary: Get a specific organisation
@@ -32144,6 +32072,571 @@ paths:
       responses:
         '200':
           description: OK
+          schema:
+            title: OrganisationRead
+            type: object
+            properties:
+              uuid:
+                type: string
+              type:
+                type: string
+              private:
+                type: boolean
+              name:
+                type: string
+              phone:
+                type: string
+              currency:
+                type: string
+              states:
+                type: array
+                items:
+                  type: string
+              loan_status_types:
+                type: array
+                items:
+                  type: string
+              land_systems:
+                type: array
+                items:
+                  type: string
+              fund_utilisation:
+                type: array
+                items:
+                  type: string
+              detailed_intervention_types:
+                type: array
+                items:
+                  type: string
+              account_number_1:
+                type: string
+              account_number_2:
+                type: string
+              approach_of_marginalized_communities:
+                type: string
+              community_engagement_numbers_marginalized:
+                type: string
+              founding_date:
+                type: string
+              description:
+                type: string
+              leadership_team:
+                type: string
+              countries:
+                type: array
+                items:
+                  type: string
+              languages:
+                type: array
+                items:
+                  type: string
+              tree_species:
+                type: array
+                items:
+                  title: V2TreeSpeciesRead
+                  x-stoplight:
+                    id: 04vvsvyndvy8n
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    name:
+                      type: string
+                    amount:
+                      type: integer
+                    type:
+                      type: string
+                    collection:
+                      type: string
+              web_url:
+                type: string
+              facebook_url:
+                type: string
+              instagram_url:
+                type: string
+              linkedin_url:
+                type: string
+              twitter_url:
+                type: string
+              hq_street_1:
+                type: string
+              hq_street_2:
+                type: string
+              hq_city:
+                type: string
+              hq_state:
+                type: string
+              hq_zipcode:
+                type: string
+              hq_country:
+                type: string
+              fin_start_month:
+                type: integer
+              fin_budget_3year:
+                type: number
+                format: float
+              fin_budget_2year:
+                type: number
+                format: float
+              fin_budget_1year:
+                type: number
+                format: float
+              fin_budget_current_year:
+                type: number
+                format: float
+              ha_restored_total:
+                type: number
+                format: float
+              ha_restored_3year:
+                type: number
+                format: float
+              relevant_experience_years:
+                type: integer
+              trees_grown_total:
+                type: integer
+              trees_grown_3year:
+                type: integer
+              tree_care_approach:
+                type: string
+              ft_permanent_employees:
+                type: integer
+              pt_permanent_employees:
+                type: integer
+              temp_employees:
+                type: integer
+              female_employees:
+                type: integer
+              male_employees:
+                type: integer
+              young_employees:
+                type: integer
+              additional_funding_details:
+                type: string
+              community_experience:
+                type: string
+              total_engaged_community_members_3yr:
+                type: integer
+              percent_engaged_women_3yr:
+                type: integer
+              percent_engaged_men_3yr:
+                type: integer
+              percent_engaged_under_35_3yr:
+                type: integer
+              percent_engaged_over_35_3yr:
+                type: integer
+              percent_engaged_smallholder_3yr:
+                type: integer
+              total_trees_grown:
+                type: integer
+              avg_tree_survival_rate:
+                type: integer
+              tree_maintenance_aftercare_approach:
+                type: string
+              restored_areas_description:
+                type: string
+              monitoring_evaluation_experience:
+                type: string
+              funding_history:
+                type: string
+              engagement_farmers:
+                type: array
+                items:
+                  type: string
+              engagement_women:
+                type: array
+                items:
+                  type: string
+              engagement_youth:
+                type: array
+                items:
+                  type: string
+              engagement_non_youth:
+                type: array
+                items:
+                  type: string
+              tree_restoration_practices:
+                type: array
+                items:
+                  type: string
+              business_model:
+                type: string
+              subtype:
+                type: string
+              organisation_revenue_this_year:
+                type: number
+              shapefiles:
+                type: array
+                items:
+                  title: ShapefileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    shapefileable_type:
+                      type: string
+                    shapefileable_id:
+                      type: integer
+                    geojson:
+                      type: string
+                    created_at:
+                      type: string
+                    updated_at:
+                      type: string
+                    deleted_at:
+                      type: string
+              bank_statements:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              previous_annual_reports:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              logo:
+                title: V2FileRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  url:
+                    type: string
+                  thumb_url:
+                    type: string
+                  collection_name:
+                    type: string
+                  title:
+                    type: string
+                  file_name:
+                    type: string
+                  mime_type:
+                    type: string
+                  size:
+                    type: integer
+                  lat:
+                    type: integer
+                  lng:
+                    type: integer
+                  is_public:
+                    type: boolean
+                  is_cover:
+                    type: boolean
+                  created_at:
+                    type: string
+              cover:
+                title: V2FileRead
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  url:
+                    type: string
+                  thumb_url:
+                    type: string
+                  collection_name:
+                    type: string
+                  title:
+                    type: string
+                  file_name:
+                    type: string
+                  mime_type:
+                    type: string
+                  size:
+                    type: integer
+                  lat:
+                    type: integer
+                  lng:
+                    type: integer
+                  is_public:
+                    type: boolean
+                  is_cover:
+                    type: boolean
+                  created_at:
+                    type: string
+              reference:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              additional:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              op_budget_2year:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              op_budget_last_year:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              op_budget_this_year:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              op_budget_next_year:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              legal_registration:
+                type: array
+                items:
+                  title: V2FileRead
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    url:
+                      type: string
+                    thumb_url:
+                      type: string
+                    collection_name:
+                      type: string
+                    title:
+                      type: string
+                    file_name:
+                      type: string
+                    mime_type:
+                      type: string
+                    size:
+                      type: integer
+                    lat:
+                      type: integer
+                    lng:
+                      type: integer
+                    is_public:
+                      type: boolean
+                    is_cover:
+                      type: boolean
+                    created_at:
+                      type: string
+              tags:
+                type: array
+                description: 'this is a list of key value pairs eg slug: name '
+                items:
+                  type: string
   /v2/organisations/listing:
     get:
       summary: Get a list of organisations names and uuid
@@ -41087,180 +41580,10 @@ paths:
                 type: string
               name:
                 type: string
-              form:
-                title: FormRead
-                x-stoplight:
-                  id: e0u0etkn01z17
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  uuid:
-                    type: string
-                  type:
-                    type: string
-                  version:
-                    type: integer
-                  title:
-                    type: string
-                  subtitle:
-                    type: string
-                  description:
-                    type: string
-                  framework_key:
-                    type: string
-                  duration:
-                    type: string
-                  deadline_at:
-                    type: string
-                  documentation:
-                    type: string
-                  documentation_label:
-                    type: string
-                  submission_message:
-                    type: string
-                  published:
-                    type: boolean
-                  stage_id:
-                    type: string
-                  funding_programme_uuid:
-                    type: string
-                  funding_programme_framework_key:
-                    type: string
-                  options_other:
-                    type: boolean
-                  form_sections:
-                    type: array
-                    items:
-                      title: FormSectionRead
-                      x-stoplight:
-                        id: scpnof2zuz3q3
-                      type: object
-                      properties:
-                        order:
-                          type: integer
-                        form_id:
-                          type: integer
-                        form_questions:
-                          type: array
-                          items:
-                            title: FormQuestionRead
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                              uuid:
-                                type: string
-                              form_section_id:
-                                type: integer
-                              label:
-                                type: string
-                              validation:
-                                type: array
-                                items:
-                                  type: string
-                              parent_id:
-                                type: string
-                              linked_field_key:
-                                type: string
-                              children:
-                                type: array
-                                items:
-                                  type: object
-                              multichoice:
-                                type: boolean
-                              order:
-                                type: integer
-                              options:
-                                type: array
-                                items:
-                                  title: FormQuestionOptionRead
-                                  x-stoplight:
-                                    id: ihpffrpq780e4
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              table_headers:
-                                type: array
-                                items:
-                                  title: FormTableHeaderRead
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              additional_text:
-                                type: string
-                              additional_url:
-                                type: string
-                              show_on_parent_condition:
-                                type: boolean
-                              input_type:
-                                type: string
-                                enum:
-                                  - date
-                                  - text
-                                  - long-text
-                                  - select
-                                  - checkboxes
-                                  - radio
-                                  - number
-                                  - image
-                                  - file
-                                  - conditional
-                              created_at:
-                                type: string
-                              updated_at:
-                                type: string
-                              deleted_at:
-                                type: string
-                        created_at:
-                          type: string
-                        updated_at:
-                          type: string
-                        deleted_at:
-                          type: string
-                  tags:
-                    type: array
-                    description: 'this is a list of key value pairs eg. slug: name'
-                    items:
-                      type: string
-                  updated_by:
-                    type: integer
-                  deleted_at:
-                    type: string
-                  created_at:
-                    type: string
-                  updated_at:
-                    type: string
+              form_uuid:
+                type: string
+              framework_key:
+                type: string
               stage:
                 title: StageLiteRead
                 type: object
@@ -41274,7 +41597,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -41308,6 +41631,31 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
+              organisation_uuid:
+                type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41351,180 +41699,10 @@ paths:
                 type: string
               name:
                 type: string
-              form:
-                title: FormRead
-                x-stoplight:
-                  id: e0u0etkn01z17
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  uuid:
-                    type: string
-                  type:
-                    type: string
-                  version:
-                    type: integer
-                  title:
-                    type: string
-                  subtitle:
-                    type: string
-                  description:
-                    type: string
-                  framework_key:
-                    type: string
-                  duration:
-                    type: string
-                  deadline_at:
-                    type: string
-                  documentation:
-                    type: string
-                  documentation_label:
-                    type: string
-                  submission_message:
-                    type: string
-                  published:
-                    type: boolean
-                  stage_id:
-                    type: string
-                  funding_programme_uuid:
-                    type: string
-                  funding_programme_framework_key:
-                    type: string
-                  options_other:
-                    type: boolean
-                  form_sections:
-                    type: array
-                    items:
-                      title: FormSectionRead
-                      x-stoplight:
-                        id: scpnof2zuz3q3
-                      type: object
-                      properties:
-                        order:
-                          type: integer
-                        form_id:
-                          type: integer
-                        form_questions:
-                          type: array
-                          items:
-                            title: FormQuestionRead
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                              uuid:
-                                type: string
-                              form_section_id:
-                                type: integer
-                              label:
-                                type: string
-                              validation:
-                                type: array
-                                items:
-                                  type: string
-                              parent_id:
-                                type: string
-                              linked_field_key:
-                                type: string
-                              children:
-                                type: array
-                                items:
-                                  type: object
-                              multichoice:
-                                type: boolean
-                              order:
-                                type: integer
-                              options:
-                                type: array
-                                items:
-                                  title: FormQuestionOptionRead
-                                  x-stoplight:
-                                    id: ihpffrpq780e4
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              table_headers:
-                                type: array
-                                items:
-                                  title: FormTableHeaderRead
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              additional_text:
-                                type: string
-                              additional_url:
-                                type: string
-                              show_on_parent_condition:
-                                type: boolean
-                              input_type:
-                                type: string
-                                enum:
-                                  - date
-                                  - text
-                                  - long-text
-                                  - select
-                                  - checkboxes
-                                  - radio
-                                  - number
-                                  - image
-                                  - file
-                                  - conditional
-                              created_at:
-                                type: string
-                              updated_at:
-                                type: string
-                              deleted_at:
-                                type: string
-                        created_at:
-                          type: string
-                        updated_at:
-                          type: string
-                        deleted_at:
-                          type: string
-                  tags:
-                    type: array
-                    description: 'this is a list of key value pairs eg. slug: name'
-                    items:
-                      type: string
-                  updated_by:
-                    type: integer
-                  deleted_at:
-                    type: string
-                  created_at:
-                    type: string
-                  updated_at:
-                    type: string
+              form_uuid:
+                type: string
+              framework_key:
+                type: string
               stage:
                 title: StageLiteRead
                 type: object
@@ -41538,7 +41716,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -41572,6 +41750,31 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
+              organisation_uuid:
+                type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41621,180 +41824,10 @@ paths:
                 type: string
               name:
                 type: string
-              form:
-                title: FormRead
-                x-stoplight:
-                  id: e0u0etkn01z17
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  uuid:
-                    type: string
-                  type:
-                    type: string
-                  version:
-                    type: integer
-                  title:
-                    type: string
-                  subtitle:
-                    type: string
-                  description:
-                    type: string
-                  framework_key:
-                    type: string
-                  duration:
-                    type: string
-                  deadline_at:
-                    type: string
-                  documentation:
-                    type: string
-                  documentation_label:
-                    type: string
-                  submission_message:
-                    type: string
-                  published:
-                    type: boolean
-                  stage_id:
-                    type: string
-                  funding_programme_uuid:
-                    type: string
-                  funding_programme_framework_key:
-                    type: string
-                  options_other:
-                    type: boolean
-                  form_sections:
-                    type: array
-                    items:
-                      title: FormSectionRead
-                      x-stoplight:
-                        id: scpnof2zuz3q3
-                      type: object
-                      properties:
-                        order:
-                          type: integer
-                        form_id:
-                          type: integer
-                        form_questions:
-                          type: array
-                          items:
-                            title: FormQuestionRead
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                              uuid:
-                                type: string
-                              form_section_id:
-                                type: integer
-                              label:
-                                type: string
-                              validation:
-                                type: array
-                                items:
-                                  type: string
-                              parent_id:
-                                type: string
-                              linked_field_key:
-                                type: string
-                              children:
-                                type: array
-                                items:
-                                  type: object
-                              multichoice:
-                                type: boolean
-                              order:
-                                type: integer
-                              options:
-                                type: array
-                                items:
-                                  title: FormQuestionOptionRead
-                                  x-stoplight:
-                                    id: ihpffrpq780e4
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              table_headers:
-                                type: array
-                                items:
-                                  title: FormTableHeaderRead
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              additional_text:
-                                type: string
-                              additional_url:
-                                type: string
-                              show_on_parent_condition:
-                                type: boolean
-                              input_type:
-                                type: string
-                                enum:
-                                  - date
-                                  - text
-                                  - long-text
-                                  - select
-                                  - checkboxes
-                                  - radio
-                                  - number
-                                  - image
-                                  - file
-                                  - conditional
-                              created_at:
-                                type: string
-                              updated_at:
-                                type: string
-                              deleted_at:
-                                type: string
-                        created_at:
-                          type: string
-                        updated_at:
-                          type: string
-                        deleted_at:
-                          type: string
-                  tags:
-                    type: array
-                    description: 'this is a list of key value pairs eg. slug: name'
-                    items:
-                      type: string
-                  updated_by:
-                    type: integer
-                  deleted_at:
-                    type: string
-                  created_at:
-                    type: string
-                  updated_at:
-                    type: string
+              form_uuid:
+                type: string
+              framework_key:
+                type: string
               stage:
                 title: StageLiteRead
                 type: object
@@ -41808,7 +41841,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -41842,6 +41875,31 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
+              organisation_uuid:
+                type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41871,180 +41929,10 @@ paths:
                 type: string
               name:
                 type: string
-              form:
-                title: FormRead
-                x-stoplight:
-                  id: e0u0etkn01z17
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  uuid:
-                    type: string
-                  type:
-                    type: string
-                  version:
-                    type: integer
-                  title:
-                    type: string
-                  subtitle:
-                    type: string
-                  description:
-                    type: string
-                  framework_key:
-                    type: string
-                  duration:
-                    type: string
-                  deadline_at:
-                    type: string
-                  documentation:
-                    type: string
-                  documentation_label:
-                    type: string
-                  submission_message:
-                    type: string
-                  published:
-                    type: boolean
-                  stage_id:
-                    type: string
-                  funding_programme_uuid:
-                    type: string
-                  funding_programme_framework_key:
-                    type: string
-                  options_other:
-                    type: boolean
-                  form_sections:
-                    type: array
-                    items:
-                      title: FormSectionRead
-                      x-stoplight:
-                        id: scpnof2zuz3q3
-                      type: object
-                      properties:
-                        order:
-                          type: integer
-                        form_id:
-                          type: integer
-                        form_questions:
-                          type: array
-                          items:
-                            title: FormQuestionRead
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                              uuid:
-                                type: string
-                              form_section_id:
-                                type: integer
-                              label:
-                                type: string
-                              validation:
-                                type: array
-                                items:
-                                  type: string
-                              parent_id:
-                                type: string
-                              linked_field_key:
-                                type: string
-                              children:
-                                type: array
-                                items:
-                                  type: object
-                              multichoice:
-                                type: boolean
-                              order:
-                                type: integer
-                              options:
-                                type: array
-                                items:
-                                  title: FormQuestionOptionRead
-                                  x-stoplight:
-                                    id: ihpffrpq780e4
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              table_headers:
-                                type: array
-                                items:
-                                  title: FormTableHeaderRead
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              additional_text:
-                                type: string
-                              additional_url:
-                                type: string
-                              show_on_parent_condition:
-                                type: boolean
-                              input_type:
-                                type: string
-                                enum:
-                                  - date
-                                  - text
-                                  - long-text
-                                  - select
-                                  - checkboxes
-                                  - radio
-                                  - number
-                                  - image
-                                  - file
-                                  - conditional
-                              created_at:
-                                type: string
-                              updated_at:
-                                type: string
-                              deleted_at:
-                                type: string
-                        created_at:
-                          type: string
-                        updated_at:
-                          type: string
-                        deleted_at:
-                          type: string
-                  tags:
-                    type: array
-                    description: 'this is a list of key value pairs eg. slug: name'
-                    items:
-                      type: string
-                  updated_by:
-                    type: integer
-                  deleted_at:
-                    type: string
-                  created_at:
-                    type: string
-                  updated_at:
-                    type: string
+              form_uuid:
+                type: string
+              framework_key:
+                type: string
               stage:
                 title: StageLiteRead
                 type: object
@@ -42058,7 +41946,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -42092,6 +41980,31 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
+              organisation_uuid:
+                type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -42114,18 +42027,7 @@ paths:
               status:
                 type: string
               answers:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    question_id:
-                      type: integer
-                    value:
-                      type: string
-                    options:
-                      type: array
-                      items:
-                        type: string
+                type: object
     delete:
       summary: Deletes a specific form submission
       operationId: delete-v2-form-submission-UUID
@@ -42165,180 +42067,10 @@ paths:
                 type: string
               name:
                 type: string
-              form:
-                title: FormRead
-                x-stoplight:
-                  id: e0u0etkn01z17
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  uuid:
-                    type: string
-                  type:
-                    type: string
-                  version:
-                    type: integer
-                  title:
-                    type: string
-                  subtitle:
-                    type: string
-                  description:
-                    type: string
-                  framework_key:
-                    type: string
-                  duration:
-                    type: string
-                  deadline_at:
-                    type: string
-                  documentation:
-                    type: string
-                  documentation_label:
-                    type: string
-                  submission_message:
-                    type: string
-                  published:
-                    type: boolean
-                  stage_id:
-                    type: string
-                  funding_programme_uuid:
-                    type: string
-                  funding_programme_framework_key:
-                    type: string
-                  options_other:
-                    type: boolean
-                  form_sections:
-                    type: array
-                    items:
-                      title: FormSectionRead
-                      x-stoplight:
-                        id: scpnof2zuz3q3
-                      type: object
-                      properties:
-                        order:
-                          type: integer
-                        form_id:
-                          type: integer
-                        form_questions:
-                          type: array
-                          items:
-                            title: FormQuestionRead
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                              uuid:
-                                type: string
-                              form_section_id:
-                                type: integer
-                              label:
-                                type: string
-                              validation:
-                                type: array
-                                items:
-                                  type: string
-                              parent_id:
-                                type: string
-                              linked_field_key:
-                                type: string
-                              children:
-                                type: array
-                                items:
-                                  type: object
-                              multichoice:
-                                type: boolean
-                              order:
-                                type: integer
-                              options:
-                                type: array
-                                items:
-                                  title: FormQuestionOptionRead
-                                  x-stoplight:
-                                    id: ihpffrpq780e4
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              table_headers:
-                                type: array
-                                items:
-                                  title: FormTableHeaderRead
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              additional_text:
-                                type: string
-                              additional_url:
-                                type: string
-                              show_on_parent_condition:
-                                type: boolean
-                              input_type:
-                                type: string
-                                enum:
-                                  - date
-                                  - text
-                                  - long-text
-                                  - select
-                                  - checkboxes
-                                  - radio
-                                  - number
-                                  - image
-                                  - file
-                                  - conditional
-                              created_at:
-                                type: string
-                              updated_at:
-                                type: string
-                              deleted_at:
-                                type: string
-                        created_at:
-                          type: string
-                        updated_at:
-                          type: string
-                        deleted_at:
-                          type: string
-                  tags:
-                    type: array
-                    description: 'this is a list of key value pairs eg. slug: name'
-                    items:
-                      type: string
-                  updated_by:
-                    type: integer
-                  deleted_at:
-                    type: string
-                  created_at:
-                    type: string
-                  updated_at:
-                    type: string
+              form_uuid:
+                type: string
+              framework_key:
+                type: string
               stage:
                 title: StageLiteRead
                 type: object
@@ -42352,7 +42084,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -42386,6 +42118,31 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
+              organisation_uuid:
+                type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -42419,180 +42176,10 @@ paths:
                 type: string
               name:
                 type: string
-              form:
-                title: FormRead
-                x-stoplight:
-                  id: e0u0etkn01z17
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  uuid:
-                    type: string
-                  type:
-                    type: string
-                  version:
-                    type: integer
-                  title:
-                    type: string
-                  subtitle:
-                    type: string
-                  description:
-                    type: string
-                  framework_key:
-                    type: string
-                  duration:
-                    type: string
-                  deadline_at:
-                    type: string
-                  documentation:
-                    type: string
-                  documentation_label:
-                    type: string
-                  submission_message:
-                    type: string
-                  published:
-                    type: boolean
-                  stage_id:
-                    type: string
-                  funding_programme_uuid:
-                    type: string
-                  funding_programme_framework_key:
-                    type: string
-                  options_other:
-                    type: boolean
-                  form_sections:
-                    type: array
-                    items:
-                      title: FormSectionRead
-                      x-stoplight:
-                        id: scpnof2zuz3q3
-                      type: object
-                      properties:
-                        order:
-                          type: integer
-                        form_id:
-                          type: integer
-                        form_questions:
-                          type: array
-                          items:
-                            title: FormQuestionRead
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                              uuid:
-                                type: string
-                              form_section_id:
-                                type: integer
-                              label:
-                                type: string
-                              validation:
-                                type: array
-                                items:
-                                  type: string
-                              parent_id:
-                                type: string
-                              linked_field_key:
-                                type: string
-                              children:
-                                type: array
-                                items:
-                                  type: object
-                              multichoice:
-                                type: boolean
-                              order:
-                                type: integer
-                              options:
-                                type: array
-                                items:
-                                  title: FormQuestionOptionRead
-                                  x-stoplight:
-                                    id: ihpffrpq780e4
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              table_headers:
-                                type: array
-                                items:
-                                  title: FormTableHeaderRead
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_question_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    order:
-                                      type: integer
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              additional_text:
-                                type: string
-                              additional_url:
-                                type: string
-                              show_on_parent_condition:
-                                type: boolean
-                              input_type:
-                                type: string
-                                enum:
-                                  - date
-                                  - text
-                                  - long-text
-                                  - select
-                                  - checkboxes
-                                  - radio
-                                  - number
-                                  - image
-                                  - file
-                                  - conditional
-                              created_at:
-                                type: string
-                              updated_at:
-                                type: string
-                              deleted_at:
-                                type: string
-                        created_at:
-                          type: string
-                        updated_at:
-                          type: string
-                        deleted_at:
-                          type: string
-                  tags:
-                    type: array
-                    description: 'this is a list of key value pairs eg. slug: name'
-                    items:
-                      type: string
-                  updated_by:
-                    type: integer
-                  deleted_at:
-                    type: string
-                  created_at:
-                    type: string
-                  updated_at:
-                    type: string
+              form_uuid:
+                type: string
+              framework_key:
+                type: string
               stage:
                 title: StageLiteRead
                 type: object
@@ -42606,7 +42193,7 @@ paths:
                   readable_status:
                     type: string
               answers:
-                type: string
+                type: object
               status:
                 type: string
               readable_status:
@@ -42640,6 +42227,31 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
+              organisation_uuid:
+                type: string
+              organisation_attributes:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  type:
+                    type: string
+                  currency:
+                    type: string
+                  start_month:
+                    type: string
+              feedback:
+                type: string;
+              feedback_fields:
+                type: array
+                items:
+                  type: string
+              translated_feedback_fields:
+                type: array
+                items:
+                  type: string
               updated_by:
                 type: string
               deleted_at:
@@ -43387,180 +42999,10 @@ paths:
                       type: string
                     name:
                       type: string
-                    form:
-                      title: FormRead
-                      x-stoplight:
-                        id: e0u0etkn01z17
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        uuid:
-                          type: string
-                        type:
-                          type: string
-                        version:
-                          type: integer
-                        title:
-                          type: string
-                        subtitle:
-                          type: string
-                        description:
-                          type: string
-                        framework_key:
-                          type: string
-                        duration:
-                          type: string
-                        deadline_at:
-                          type: string
-                        documentation:
-                          type: string
-                        documentation_label:
-                          type: string
-                        submission_message:
-                          type: string
-                        published:
-                          type: boolean
-                        stage_id:
-                          type: string
-                        funding_programme_uuid:
-                          type: string
-                        funding_programme_framework_key:
-                          type: string
-                        options_other:
-                          type: boolean
-                        form_sections:
-                          type: array
-                          items:
-                            title: FormSectionRead
-                            x-stoplight:
-                              id: scpnof2zuz3q3
-                            type: object
-                            properties:
-                              order:
-                                type: integer
-                              form_id:
-                                type: integer
-                              form_questions:
-                                type: array
-                                items:
-                                  title: FormQuestionRead
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_section_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    validation:
-                                      type: array
-                                      items:
-                                        type: string
-                                    parent_id:
-                                      type: string
-                                    linked_field_key:
-                                      type: string
-                                    children:
-                                      type: array
-                                      items:
-                                        type: object
-                                    multichoice:
-                                      type: boolean
-                                    order:
-                                      type: integer
-                                    options:
-                                      type: array
-                                      items:
-                                        title: FormQuestionOptionRead
-                                        x-stoplight:
-                                          id: ihpffrpq780e4
-                                        type: object
-                                        properties:
-                                          id:
-                                            type: integer
-                                          uuid:
-                                            type: string
-                                          form_question_id:
-                                            type: integer
-                                          label:
-                                            type: string
-                                          order:
-                                            type: integer
-                                          created_at:
-                                            type: string
-                                          updated_at:
-                                            type: string
-                                          deleted_at:
-                                            type: string
-                                    table_headers:
-                                      type: array
-                                      items:
-                                        title: FormTableHeaderRead
-                                        type: object
-                                        properties:
-                                          id:
-                                            type: integer
-                                          uuid:
-                                            type: string
-                                          form_question_id:
-                                            type: integer
-                                          label:
-                                            type: string
-                                          order:
-                                            type: integer
-                                          created_at:
-                                            type: string
-                                          updated_at:
-                                            type: string
-                                          deleted_at:
-                                            type: string
-                                    additional_text:
-                                      type: string
-                                    additional_url:
-                                      type: string
-                                    show_on_parent_condition:
-                                      type: boolean
-                                    input_type:
-                                      type: string
-                                      enum:
-                                        - date
-                                        - text
-                                        - long-text
-                                        - select
-                                        - checkboxes
-                                        - radio
-                                        - number
-                                        - image
-                                        - file
-                                        - conditional
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              created_at:
-                                type: string
-                              updated_at:
-                                type: string
-                              deleted_at:
-                                type: string
-                        tags:
-                          type: array
-                          description: 'this is a list of key value pairs eg. slug: name'
-                          items:
-                            type: string
-                        updated_by:
-                          type: integer
-                        deleted_at:
-                          type: string
-                        created_at:
-                          type: string
-                        updated_at:
-                          type: string
+                    form_uuid:
+                      type: string
+                    framework_key:
+                      type: string
                     stage:
                       title: StageLiteRead
                       type: object
@@ -43574,7 +43016,7 @@ paths:
                         readable_status:
                           type: string
                     answers:
-                      type: string
+                      type: object
                     status:
                       type: string
                     readable_status:
@@ -43608,6 +43050,31 @@ paths:
                         type: string
                     project_pitch_uuid:
                       type: string
+                    application_uuid:
+                      type: string
+                    organisation_uuid:
+                      type: string
+                    organisation_attributes:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        type:
+                          type: string
+                        currency:
+                          type: string
+                        start_month:
+                          type: string
+                    feedback:
+                      type: string;
+                    feedback_fields:
+                      type: array
+                      items:
+                        type: string
+                    translated_feedback_fields:
+                      type: array
+                      items:
+                        type: string
                     updated_by:
                       type: string
                     deleted_at:
@@ -44402,180 +43869,10 @@ paths:
                       type: string
                     name:
                       type: string
-                    form:
-                      title: FormRead
-                      x-stoplight:
-                        id: e0u0etkn01z17
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        uuid:
-                          type: string
-                        type:
-                          type: string
-                        version:
-                          type: integer
-                        title:
-                          type: string
-                        subtitle:
-                          type: string
-                        description:
-                          type: string
-                        framework_key:
-                          type: string
-                        duration:
-                          type: string
-                        deadline_at:
-                          type: string
-                        documentation:
-                          type: string
-                        documentation_label:
-                          type: string
-                        submission_message:
-                          type: string
-                        published:
-                          type: boolean
-                        stage_id:
-                          type: string
-                        funding_programme_uuid:
-                          type: string
-                        funding_programme_framework_key:
-                          type: string
-                        options_other:
-                          type: boolean
-                        form_sections:
-                          type: array
-                          items:
-                            title: FormSectionRead
-                            x-stoplight:
-                              id: scpnof2zuz3q3
-                            type: object
-                            properties:
-                              order:
-                                type: integer
-                              form_id:
-                                type: integer
-                              form_questions:
-                                type: array
-                                items:
-                                  title: FormQuestionRead
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: integer
-                                    uuid:
-                                      type: string
-                                    form_section_id:
-                                      type: integer
-                                    label:
-                                      type: string
-                                    validation:
-                                      type: array
-                                      items:
-                                        type: string
-                                    parent_id:
-                                      type: string
-                                    linked_field_key:
-                                      type: string
-                                    children:
-                                      type: array
-                                      items:
-                                        type: object
-                                    multichoice:
-                                      type: boolean
-                                    order:
-                                      type: integer
-                                    options:
-                                      type: array
-                                      items:
-                                        title: FormQuestionOptionRead
-                                        x-stoplight:
-                                          id: ihpffrpq780e4
-                                        type: object
-                                        properties:
-                                          id:
-                                            type: integer
-                                          uuid:
-                                            type: string
-                                          form_question_id:
-                                            type: integer
-                                          label:
-                                            type: string
-                                          order:
-                                            type: integer
-                                          created_at:
-                                            type: string
-                                          updated_at:
-                                            type: string
-                                          deleted_at:
-                                            type: string
-                                    table_headers:
-                                      type: array
-                                      items:
-                                        title: FormTableHeaderRead
-                                        type: object
-                                        properties:
-                                          id:
-                                            type: integer
-                                          uuid:
-                                            type: string
-                                          form_question_id:
-                                            type: integer
-                                          label:
-                                            type: string
-                                          order:
-                                            type: integer
-                                          created_at:
-                                            type: string
-                                          updated_at:
-                                            type: string
-                                          deleted_at:
-                                            type: string
-                                    additional_text:
-                                      type: string
-                                    additional_url:
-                                      type: string
-                                    show_on_parent_condition:
-                                      type: boolean
-                                    input_type:
-                                      type: string
-                                      enum:
-                                        - date
-                                        - text
-                                        - long-text
-                                        - select
-                                        - checkboxes
-                                        - radio
-                                        - number
-                                        - image
-                                        - file
-                                        - conditional
-                                    created_at:
-                                      type: string
-                                    updated_at:
-                                      type: string
-                                    deleted_at:
-                                      type: string
-                              created_at:
-                                type: string
-                              updated_at:
-                                type: string
-                              deleted_at:
-                                type: string
-                        tags:
-                          type: array
-                          description: 'this is a list of key value pairs eg. slug: name'
-                          items:
-                            type: string
-                        updated_by:
-                          type: integer
-                        deleted_at:
-                          type: string
-                        created_at:
-                          type: string
-                        updated_at:
-                          type: string
+                    form_uuid:
+                      type: string
+                    framework_key:
+                      type: string
                     stage:
                       title: StageLiteRead
                       type: object
@@ -44589,7 +43886,7 @@ paths:
                         readable_status:
                           type: string
                     answers:
-                      type: string
+                      type: object
                     status:
                       type: string
                     readable_status:
@@ -44623,6 +43920,31 @@ paths:
                         type: string
                     project_pitch_uuid:
                       type: string
+                    application_uuid:
+                      type: string
+                    organisation_uuid:
+                      type: string
+                    organisation_attributes:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        type:
+                          type: string
+                        currency:
+                          type: string
+                        start_month:
+                          type: string
+                    feedback:
+                      type: string;
+                    feedback_fields:
+                      type: array
+                      items:
+                        type: string
+                    translated_feedback_fields:
+                      type: array
+                      items:
+                        type: string
                     updated_by:
                       type: string
                     deleted_at:
@@ -47978,12 +47300,13 @@ paths:
                   items:
                     type: string
                   description: |
-                    The UUIDs generated by the system for the uploaded geometry at this index. For a polygon geometry, this
-                    always be an array with 1 member. For Point geometry, there will be the same number of UUIDS associated as
-                    there were Points in the request payload at this index, and the order will be the same.
+                    For each geometry feature in the request (in order), this array contains the UUID assigned to that feature.
+                    If the feature was newly created, it will contain the new UUID; if it was detected as a duplicate, it will
+                    contain the UUID of the existing polygon in the database.
+                    For Point geometry, there will be one UUID per point and the order is preserved.
                 errors:
                   type: object
-                  description: Mapping of polygon UUID to the errors associated with the polygon. The geometry was saved in the DB and must be updated instead of created once the issues are resolved.
+                  description: 'Mapping of existing polygon UUID to the errors associated with the polygon. Currently, only duplicate detection errors are returned during create operations.'
                   additionalProperties:
                     type: array
                     items:
@@ -47992,6 +47315,7 @@ paths:
                         key:
                           type: string
                           enum:
+                            - DUPLICATE_GEOMETRY
                             - OVERLAPPING_POLYGON
                             - SELF_INTERSECTION
                             - COORDINATE_SYSTEM
