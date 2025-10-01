@@ -166,7 +166,7 @@ class PolygonService
         return false;
     }
 
-    private function processVersioningPolygons(array $features, array $sitePolygonProperties, ?bool $submit_polygon_loaded): array
+    private function processVersioningPolygons(array $features, array $sitePolygonProperties, ?bool $submit_polygon_loaded, ?string $primary_uuid = null): array
     {
         $uuids = [];
 
@@ -181,7 +181,7 @@ class PolygonService
                         $data['uuid'],
                         $sitePolygonProperties,
                         $feature,
-                        null,
+                        $primary_uuid,
                         $submit_polygon_loaded
                     );
                     $uuids[] = $data['uuid'];
@@ -194,7 +194,7 @@ class PolygonService
                             $data['uuid'],
                             $sitePolygonProperties,
                             $feature,
-                            null,
+                            $primary_uuid,
                             $submit_polygon_loaded
                         );
                         $uuids[] = $data['uuid'];
@@ -375,7 +375,7 @@ class PolygonService
         }
 
         if (! empty($versioningPolygons)) {
-            $versionUuids = $this->processVersioningPolygons($versioningPolygons, $sitePolygonProperties, $submit_polygon_loaded);
+            $versionUuids = $this->processVersioningPolygons($versioningPolygons, $sitePolygonProperties, $submit_polygon_loaded, $primary_uuid);
             $allUuids = array_merge($allUuids, $versionUuids);
         }
 
