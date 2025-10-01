@@ -166,7 +166,7 @@ class PolygonService
         return false;
     }
 
-    private function processVersioningPolygons(array $features, array $sitePolygonProperties, ?bool $submit_polygon_loaded, ?string $primary_uuid = null): array
+    private function processVersioningPolygons(array $features, array $sitePolygonProperties, ?bool $submit_polygon_loaded): array
     {
         $uuids = [];
 
@@ -181,7 +181,7 @@ class PolygonService
                         $data['uuid'],
                         $sitePolygonProperties,
                         $feature,
-                        $primary_uuid,
+                        null,
                         $submit_polygon_loaded
                     );
                     $uuids[] = $data['uuid'];
@@ -194,7 +194,7 @@ class PolygonService
                             $data['uuid'],
                             $sitePolygonProperties,
                             $feature,
-                            $primary_uuid,
+                            null,
                             $submit_polygon_loaded
                         );
                         $uuids[] = $data['uuid'];
@@ -375,7 +375,7 @@ class PolygonService
         }
 
         if (! empty($versioningPolygons)) {
-            $versionUuids = $this->processVersioningPolygons($versioningPolygons, $sitePolygonProperties, $submit_polygon_loaded, $primary_uuid);
+            $versionUuids = $this->processVersioningPolygons($versioningPolygons, $sitePolygonProperties, $submit_polygon_loaded);
             $allUuids = array_merge($allUuids, $versionUuids);
         }
 
@@ -869,7 +869,7 @@ class PolygonService
     protected function insertSitePolygonVersion(string $polygonUuid, string $primary_uuid, ?bool $submit_polygon_loaded = false, ?array $properties)
     {
         try {
-            $sitePolygon = SitePolygon::isUuid($primary_uuid)->active()->first();
+            $sitePolygon = SitePolygon::isUuid($primary_uuid)->active()->orderBy('created_at', 'desc')->first();
             if (! $sitePolygon) {
                 Log::warning('No active polygon found for primary_uuid', ['primary_uuid' => $primary_uuid]);
 
