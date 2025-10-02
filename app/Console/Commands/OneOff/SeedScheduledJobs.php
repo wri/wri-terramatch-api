@@ -34,25 +34,25 @@ class SeedScheduledJobs extends Command
         TaskDueJob::createTaskDue(
             Carbon::createFromFormat('m', 9)->startOfMonth()->setDay(1),
             'ppc',
-            Carbon::createFromFormat('m', 10)->startOfMonth()->setDay(7),
+            Carbon::createFromFormat('m', 10)->startOfMonth()->setDay(7)->setHour(4),
         );
         // Dec 1 -> Jan 7
         TaskDueJob::createTaskDue(
             Carbon::createFromFormat('m', 12)->startOfMonth()->setDay(1),
             'ppc',
-            Carbon::createFromFormat('m', 1)->addYear()->startOfMonth()->setDay(7),
+            Carbon::createFromFormat('m', 1)->addYear()->startOfMonth()->setDay(7)->setHour(4),
         );
         // Mar 1 -> Apr 7
         TaskDueJob::createTaskDue(
             Carbon::createFromFormat('m', 3)->addYear()->startOfMonth()->setDay(1),
             'ppc',
-            Carbon::createFromFormat('m', 4)->addYear()->startOfMonth()->setDay(7),
+            Carbon::createFromFormat('m', 4)->addYear()->startOfMonth()->setDay(7)->setHour(4),
         );
         // Jun 1 -> Jul 7
         TaskDueJob::createTaskDue(
             Carbon::createFromFormat('m', 6)->addYear()->startOfMonth()->setDay(1),
             'ppc',
-            Carbon::createFromFormat('m', 7)->addYear()->startOfMonth()->setDay(7),
+            Carbon::createFromFormat('m', 7)->addYear()->startOfMonth()->setDay(7)->setHour(4),
         );
 
         // Terrafund reports
