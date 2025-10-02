@@ -166,7 +166,7 @@ class PolygonService
         return false;
     }
 
-    private function processVersioningPolygons(array $features, array $sitePolygonProperties, ?bool $submit_polygon_loaded): array
+    private function processVersioningPolygons(array $features, array $sitePolygonProperties, ?bool $submit_polygon_loaded, ?string $primary_uuid = null): array
     {
         $uuids = [];
 
@@ -181,7 +181,7 @@ class PolygonService
                         $data['uuid'],
                         $sitePolygonProperties,
                         $feature,
-                        null,
+                        $primary_uuid,
                         $submit_polygon_loaded
                     );
                     $uuids[] = $data['uuid'];
@@ -194,7 +194,7 @@ class PolygonService
                             $data['uuid'],
                             $sitePolygonProperties,
                             $feature,
-                            null,
+                            $primary_uuid,
                             $submit_polygon_loaded
                         );
                         $uuids[] = $data['uuid'];
@@ -375,7 +375,7 @@ class PolygonService
         }
 
         if (! empty($versioningPolygons)) {
-            $versionUuids = $this->processVersioningPolygons($versioningPolygons, $sitePolygonProperties, $submit_polygon_loaded);
+            $versionUuids = $this->processVersioningPolygons($versioningPolygons, $sitePolygonProperties, $submit_polygon_loaded, $primary_uuid);
             $allUuids = array_merge($allUuids, $versionUuids);
         }
 
@@ -578,24 +578,41 @@ class PolygonService
         return $processedData['uuids'];
     }
 
-    private function attemptPolygonInsert($uuid, $sitePolygonProperties, $feature, ?string $primary_uuid, ?bool $submit_polygon_loaded)
+    private function attemptPolygonInsert($uuid, $sitePolygonProperties, $feature, ?string $versioningIdentifier, ?bool $submit_polygon_loaded)
     {
         if ($submit_polygon_loaded && isset($feature['properties']['uuid'])) {
             $this->insertPolygon($uuid, $sitePolygonProperties, $feature['properties'], $feature['properties']['uuid'], $submit_polygon_loaded);
         } else {
-            $this->insertPolygon($uuid, $sitePolygonProperties, $feature['properties'], $primary_uuid);
+            $this->insertPolygon($uuid, $sitePolygonProperties, $feature['properties'], $versioningIdentifier);
         }
     }
 
-    private function insertPolygon($uuid, $sitePolygonProperties, $featureProperties, ?string $primary_uuid, ?bool $submit_polygon_loaded = false)
+    /**
+     * Determine if the given identifier is a specific polygon UUID or a group primary_uuid
+     */
+    private function isSpecificPolygonUuid(string $identifier): bool
+    {
+        // Check if there's an active polygon with this UUID
+        return SitePolygon::isUuid($identifier)->active()->exists();
+    }
+
+    private function insertPolygon($uuid, $sitePolygonProperties, $featureProperties, ?string $versioningIdentifier, ?bool $submit_polygon_loaded = false)
     {
         try {
 
             if (isset($sitePolygonProperties['site_id']) && $sitePolygonProperties['site_id'] !== null) {
                 $featureProperties['site_id'] = $sitePolygonProperties['site_id'];
             }
-            if ($primary_uuid) {
-                $result = $this->insertSitePolygonVersion($uuid, $primary_uuid, $submit_polygon_loaded, $featureProperties);
+            if ($versioningIdentifier) {
+                // Determine the appropriate versioning method based on the identifier type
+                if ($this->isSpecificPolygonUuid($versioningIdentifier)) {
+                    // This is a specific polygon UUID - use specific polygon versioning
+                    $result = $this->insertSitePolygonVersionFromSpecificPolygon($uuid, $versioningIdentifier, $submit_polygon_loaded, $featureProperties);
+                } else {
+                    // This is a group primary_uuid - use group versioning
+                    $result = $this->insertSitePolygonVersionFromGroup($uuid, $versioningIdentifier, $submit_polygon_loaded, $featureProperties);
+                }
+                
                 if ($result === false) {
                     $this->insertSitePolygon(
                         $uuid,
@@ -612,7 +629,7 @@ class PolygonService
         } catch (\Exception $e) {
             Log::error('Error inserting polygon', [
               'uuid' => $uuid,
-              'primary_uuid' => $primary_uuid,
+              'versioning_identifier' => $versioningIdentifier,
               'submit_polygon_loaded' => $submit_polygon_loaded,
               'error' => $e->getMessage(),
             ]);
@@ -866,12 +883,16 @@ class PolygonService
         ");
     }
 
-    protected function insertSitePolygonVersion(string $polygonUuid, string $primary_uuid, ?bool $submit_polygon_loaded = false, ?array $properties)
+    /**
+     * Create a version of a specific polygon by its UUID
+     * Used in bulk versioning scenarios where we have a specific polygon to version from
+     */
+    protected function insertSitePolygonVersionFromSpecificPolygon(string $newPolygonUuid, string $existingPolygonUuid, ?bool $submit_polygon_loaded = false, ?array $properties)
     {
         try {
-            $sitePolygon = SitePolygon::isUuid($primary_uuid)->active()->first();
+            $sitePolygon = SitePolygon::isUuid($existingPolygonUuid)->active()->first();
             if (! $sitePolygon) {
-                Log::warning('No active polygon found for primary_uuid', ['primary_uuid' => $primary_uuid]);
+                Log::warning('No active polygon found for existing polygon UUID', ['existing_polygon_uuid' => $existingPolygonUuid]);
 
                 return false;
             }
@@ -884,14 +905,14 @@ class PolygonService
                 $user = User::find(1);
             }
 
-            $validatedProperties = $this->validateSitePolygonProperties($polygonUuid, $properties);
+            $validatedProperties = $this->validateSitePolygonProperties($newPolygonUuid, $properties);
             $extraProperties = array_diff_key($properties, $validatedProperties);
             $columnsToRemove = ['area', 'uuid'];
             $extraDataToStore = array_diff_key($extraProperties, array_flip($columnsToRemove));
 
             $newSitePolygon = $sitePolygon->createCopy(
                 $user,
-                $polygonUuid,
+                $newPolygonUuid,
                 $submit_polygon_loaded,
                 $validatedProperties
             );
@@ -921,14 +942,84 @@ class PolygonService
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Error inserting site polygon version', [
-                'polygon_uuid' => $polygonUuid,
-                'primary_uuid' => $primary_uuid,
+            Log::error('Error inserting site polygon version from specific polygon', [
+                'new_polygon_uuid' => $newPolygonUuid,
+                'existing_polygon_uuid' => $existingPolygonUuid,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            throw new \RuntimeException('Error inserting site polygon version: ' . $e->getMessage(), 0, $e);
+            throw new \RuntimeException('Error inserting site polygon version from specific polygon: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    /**
+     * Create a version of a polygon group by its primary_uuid
+     * Used in single geojson scenarios where we have a primary_uuid group identifier
+     */
+    protected function insertSitePolygonVersionFromGroup(string $newPolygonUuid, string $groupPrimaryUuid, ?bool $submit_polygon_loaded = false, ?array $properties)
+    {
+        try {
+            $sitePolygon = SitePolygon::where('primary_uuid', $groupPrimaryUuid)->active()->first();
+            if (! $sitePolygon) {
+                Log::warning('No active polygon found for group primary_uuid', ['group_primary_uuid' => $groupPrimaryUuid]);
+
+                return false;
+            }
+
+            $user = Auth::check() ? Auth::user() : null;
+
+            if ($user) {
+                $user = User::isUuid($user->uuid)->first();
+            } else {
+                $user = User::find(1);
+            }
+
+            $validatedProperties = $this->validateSitePolygonProperties($newPolygonUuid, $properties);
+            $extraProperties = array_diff_key($properties, $validatedProperties);
+            $columnsToRemove = ['area', 'uuid'];
+            $extraDataToStore = array_diff_key($extraProperties, array_flip($columnsToRemove));
+
+            $newSitePolygon = $sitePolygon->createCopy(
+                $user,
+                $newPolygonUuid,
+                $submit_polygon_loaded,
+                $validatedProperties
+            );
+            if (! $newSitePolygon) {
+                return false;
+            }
+
+            if (! empty($extraDataToStore)) {
+                $sitePolygonData = SitePolygonData::create([
+                    'site_polygon_uuid' => $newSitePolygon->uuid,
+                    'data' => $extraDataToStore,
+                ]);
+                $sitePolygonData->save();
+            }
+
+            $site = $newSitePolygon->site()->first();
+            if (! $site) {
+                Log::error('Site not found', ['site polygon uuid' => $newSitePolygon->uuid, 'site id' => $newSitePolygon->site_id]);
+
+                return false;
+
+            }
+            $site->restorationInProgress();
+            $project = $newSitePolygon->project()->first();
+            $geometryHelper = new GeometryHelper();
+            $geometryHelper->updateProjectCentroid($project->uuid);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Error inserting site polygon version from group', [
+                'new_polygon_uuid' => $newPolygonUuid,
+                'group_primary_uuid' => $groupPrimaryUuid,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw new \RuntimeException('Error inserting site polygon version from group: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -1331,3 +1422,4 @@ class PolygonService
         return $baseExcludedCriteria;
     }
 }
+
