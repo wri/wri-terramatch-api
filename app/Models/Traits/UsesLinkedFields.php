@@ -330,7 +330,6 @@ trait UsesLinkedFields
                 'seedings',
                 'financialIndicators',
                 'fundingType',
-                'disturbanceReportEntries',
             ])
         ) {
             return;

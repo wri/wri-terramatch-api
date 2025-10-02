@@ -2138,14 +2138,3 @@
 /v2/organisations/{UUID}/invite:
   post:
     $ref: './Organisations/post-v2-organisations-uuid-invite.yml'
-/v2/disturbance-reports/export:
-  get:
-    summary: Export disturbance reports
-    tags:
-      - V2 disturbance reports
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-    operationId: get-v2-disturbance-reports-export

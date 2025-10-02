@@ -2,6 +2,7 @@
 
 namespace Tests\V2\Organisation;
 
+use App\Models\V2\Leaderships;
 use App\Models\V2\Organisation;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
@@ -121,5 +122,43 @@ final class OrganisationControllerTest extends TestCase
                 'hq_state' => $payload['hq_state'],
                 'hq_zipcode' => $payload['hq_zipcode'],
             ]);
+    }
+
+    public function testShowActionIncludesLeaderships(): void
+    {
+        $organisations = Organisation::factory()->count(8)->create();
+        $organisation = $organisations[4];
+        $user = User::factory()->create([
+            'organisation_id' => $organisation->id,
+        ]);
+        $user->organisations()->sync([$organisations[2]->id,$organisations[6]->id]);
+
+        $leaderships = Leaderships::factory()->count(3)->create([
+            'organisation_id' => $organisation->id,
+        ]);
+
+        $this->actingAs($user)
+            ->getJson('/api/v2/organisations/'. $organisation->uuid)
+            ->assertSuccessful()
+            ->assertJsonStructure([
+                'data' => [
+                    'leaderships' => [
+                        '*' => [
+                            'uuid',
+                            'organisation_id',
+                            'collection',
+                            'first_name',
+                            'last_name',
+                            'position',
+                            'gender',
+                            'age',
+                            'nationality',
+                            'created_at',
+                            'updated_at',
+                        ],
+                    ],
+                ],
+            ])
+            ->assertJsonCount(3, 'data.leaderships');
     }
 }
