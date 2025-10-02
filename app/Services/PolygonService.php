@@ -612,7 +612,7 @@ class PolygonService
                     // This is a group primary_uuid - use group versioning
                     $result = $this->insertSitePolygonVersionFromGroup($uuid, $versioningIdentifier, $submit_polygon_loaded, $featureProperties);
                 }
-                
+
                 if ($result === false) {
                     $this->insertSitePolygon(
                         $uuid,
@@ -1422,4 +1422,3 @@ class PolygonService
         return $baseExcludedCriteria;
     }
 }
-
