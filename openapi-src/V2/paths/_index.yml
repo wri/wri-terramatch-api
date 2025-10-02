@@ -103,38 +103,6 @@
           $ref: '../definitions/_index.yml#/FormRead'
     tags:
       - Forms
-'/v2/admin/forms/question/{UUID}':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  delete:
-    summary: Delete a form question
-    operationId: delete-v2-admin-form-question-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormQuestionRead'
-    tags:
-      - Forms
-'/v2/admin/forms/section/{UUID}':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  delete:
-    summary: Delete a form section
-    operationId: delete-v2-admin-form-section-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormSectionRead'
-    tags:
-      - Forms
 '/v2/admin/forms/{UUID}':
   parameters:
     - type: string

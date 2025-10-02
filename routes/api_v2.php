@@ -55,8 +55,6 @@ use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsControl
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\FinancialReports\FinancialReportsController;
 use App\Http\Controllers\V2\Forms\DeleteFormController;
-use App\Http\Controllers\V2\Forms\DeleteFormQuestionController;
-use App\Http\Controllers\V2\Forms\DeleteFormSectionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
@@ -324,8 +322,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('forms')->group(function () {
         Route::post('/', StoreFormController::class);
-        Route::delete('/section/{formSection}', DeleteFormSectionController::class);
-        Route::delete('/question/{formQuestion}', DeleteFormQuestionController::class);
         Route::prefix('submissions')->group(function () {
             Route::get('/{form}/export', ExportFormSubmissionController::class);
             Route::prefix('{formSubmission}')->group(function () {
