@@ -165,7 +165,9 @@ class IndicatorEntitySlugExportController extends Controller
                 ];
                 if (str_contains($slug, 'treeCoverLoss')) {
                     $valueYears = json_decode($indicator->value, true);
-                    foreach (range(2010, 2025) as $year) {
+                    $years = array_keys($valueYears);
+                    sort($years);
+                    foreach ($years as $year) {
                         $results["$year"] = array_key_exists($year, $valueYears) ? (float) $valueYears[$year] : 0;
                     }
                 }
@@ -185,6 +187,23 @@ class IndicatorEntitySlugExportController extends Controller
 
                 return $results;
             });
+
+        if (str_contains($slug, 'treeCoverLoss')) {
+            $allYears = [];
+            foreach ($sitePolygonsIndicator as $polygon) {
+                foreach ($polygon as $key => $value) {
+                    if (is_numeric($key) && $key >= 2010) {
+                        $allYears[] = (int) $key;
+                    }
+                }
+            }
+            $uniqueYears = array_unique($allYears);
+            sort($uniqueYears);
+
+            foreach ($uniqueYears as $year) {
+                $slugMappings[$slug]['columns'][$year] = (string) $year;
+            }
+        }
 
         $filteredIndicators = [];
         foreach ($sitePolygonsIndicator as $polygon) {

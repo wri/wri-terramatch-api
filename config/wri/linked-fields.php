@@ -98,15 +98,8 @@ return [
                 'org-com-eng-3yr-smallholder' => ['property' => 'community_members_engaged_3yr_smallholder', 'label' => 'Community Members Engaged - Smallholder (3 years)', 'input_type' => 'number'],
                 'org-com-eng-3yr-backward-class' => ['property' => 'community_members_engaged_3yr_backward_class', 'label' => 'Community Members Engaged - Backward Class (3 years)', 'input_type' => 'number'],
 
-                'org-total-board-members' => ['property' => 'total_board_members', 'label' => 'Total Number of Board Members', 'input_type' => 'number'],
-                'org-pct-board-women' => ['property' => 'pct_board_women', 'label' => '% of board members that are women', 'input_type' => 'number-percentage'],
-                'org-pct-board-men' => ['property' => 'pct_board_men', 'label' => '% of board members that are men', 'input_type' => 'number-percentage'],
-                'org-pct-board-youth' => ['property' => 'pct_board_youth', 'label' => '% of board members that are youth', 'input_type' => 'number-percentage'],
-                'org-pct-board-non-youth' => ['property' => 'pct_board_non_youth', 'label' => '% of board members that are non-youth', 'input_type' => 'number-percentage'],
-
                 'org-field-staff-skills' => ['property' => 'field_staff_skills', 'label' => 'Field staff skills', 'input_type' => 'long-text'],
                 'org-fpc-company' => ['property' => 'fpc_company', 'label' => 'FPC company', 'input_type' => 'radio', 'multichoice' => false, 'option_list_key' => 'yes-no'],
-                'org-num-of-farmers-on-board' => ['property' => 'num_of_farmers_on_board', 'label' => 'How many farmers on board: FPC company', 'input_type' => 'number'],
                 'org-num_of-marginalised-employees' => ['property' => 'num_of_marginalised_employees', 'label' => 'Number of employees from Marginalised statuses', 'input_type' => 'number'],
                 'org-benefactors-fpc-company' => ['property' => 'benefactors_fpc_company', 'label' => 'Supporters/benefactors: FPC company', 'input_type' => 'long-text'],
                 'org-board-remuneration-fpc-company' => ['property' => 'board_remuneration_fpc_company', 'label' => 'Board remuneration: FPC company', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'board-remuneration'],
@@ -161,13 +154,13 @@ return [
                 'org-avg-tree-surv-rate-proof' => ['property' => 'avg_tree_survival_rate_proof', 'label' => 'Average tree survival rate proof', 'input_type' => 'file', 'multichoice' => true],
                 'org-equ-ownership' => ['property' => 'equity_ownership', 'label' => 'Equity Ownership', 'input_type' => 'file', 'multichoice' => false],
                 'org-loan-status' => ['property' => 'loan_status', 'label' => 'Loan Status', 'input_type' => 'file', 'multichoice' => true],
-                'org-past-rest-photos' => ['property' =>  'restoration_photos', 'label' => 'Past Restoration Photos', 'input_type' => 'file', 'multichoice' => true],
-                'org-startup-recognition-cert' => ['property' =>  'startup_recognition_cert', 'label' => 'Certificate of Startup Recognition', 'input_type' => 'file', 'multichoice' => true],
-                'org-consortium-proof' => ['property' =>  'consortium_proof', 'label' => 'Proof of registration for other consortium applicants', 'input_type' => 'file', 'multichoice' => true],
-                'org-consortium-partnership-agreements' => ['property' =>  'consortium_partnership_agreements', 'label' => 'Signed partnership documents', 'input_type' => 'file', 'multichoice' => true],
-                'org-organogram' => ['property' =>  'organogram', 'label' => 'Organisation structure/diagram', 'input_type' => 'file', 'multichoice' => true],
-                'org-ownership-documents' => ['property' =>  'ownership_documents', 'label' => 'Ownership documentation upload', 'input_type' => 'file', 'multichoice' => true],
-                'org-carbon-credits-proofs' => ['property' =>  'carbon_credits_proof', 'label' => 'Proof of carbon credit issuing in past', 'input_type' => 'file', 'multichoice' => true],
+                'org-past-rest-photos' => ['property' => 'restoration_photos', 'label' => 'Past Restoration Photos', 'input_type' => 'file', 'multichoice' => true],
+                'org-startup-recognition-cert' => ['property' => 'startup_recognition_cert', 'label' => 'Certificate of Startup Recognition', 'input_type' => 'file', 'multichoice' => true],
+                'org-consortium-proof' => ['property' => 'consortium_proof', 'label' => 'Proof of registration for other consortium applicants', 'input_type' => 'file', 'multichoice' => true],
+                'org-consortium-partnership-agreements' => ['property' => 'consortium_partnership_agreements', 'label' => 'Signed partnership documents', 'input_type' => 'file', 'multichoice' => true],
+                'org-organogram' => ['property' => 'organogram', 'label' => 'Organisation structure/diagram', 'input_type' => 'file', 'multichoice' => true],
+                'org-ownership-documents' => ['property' => 'ownership_documents', 'label' => 'Ownership documentation upload', 'input_type' => 'file', 'multichoice' => true],
+                'org-carbon-credits-proofs' => ['property' => 'carbon_credits_proof', 'label' => 'Proof of carbon credit issuing in past', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'org-funding-types' => [
@@ -181,28 +174,14 @@ return [
                     'label' => 'Tree Species',
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
-                    'collection' => 'historical-tree-species'
-                ],
-                'org-leadership-team' => [
-                    'property' => 'leadershipTeam',
-                    'label' => 'Leadership Team',
-                    'resource' => 'App\Http\Resources\V2\LeadershipsResource',
-                    'input_type' => 'leaderships',
-                    'collection' => 'leadership-team'
-                ],
-                'org-core-team-leaders' => [
-                    'property' => 'coreTeamLeaders',
-                    'label' => 'Core Team Leaders',
-                    'resource' => 'App\Http\Resources\V2\LeadershipsResource',
-                    'input_type' => 'leaderships',
-                    'collection' => 'core-team-leaders'
+                    'collection' => 'historical-tree-species',
                 ],
                 'org-tree-species-restored' => [
                     'property' => 'treeSpeciesHistorical',
                     'label' => 'Tree species restored in landscape',
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
-                    'collection' => 'historical-tree-species'
+                    'collection' => 'historical-tree-species',
                 ],
                 'org-ownership-stake' => [
                     'property' => 'ownershipStake',
@@ -215,49 +194,49 @@ return [
                     'label' => 'Community Members',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'allBeneficiaries',
-                    'collection' => 'all'
+                    'collection' => 'all',
                 ],
                 'org-employees-full-time' => [
                     'property' => 'employeesFullTime',
                     'label' => 'Full Time Employees',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'employees',
-                    'collection' => 'full-time'
+                    'collection' => 'full-time',
                 ],
                 'org-employees-full-time-clt' => [
                     'property' => 'employeesFullTimeClt',
                     'label' => 'Full Time CLT Employees',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'employees',
-                    'collection' => 'full-time-clt'
+                    'collection' => 'full-time-clt',
                 ],
                 'org-employees-part-time' => [
                     'property' => 'employeesPartTime',
                     'label' => 'Part Time Employees',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'employees',
-                    'collection' => 'part-time'
+                    'collection' => 'part-time',
                 ],
                 'org-employees-part-time-clt' => [
                     'property' => 'employeesPartTimeClt',
                     'label' => 'Part Time CLT Employees',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'employees',
-                    'collection' => 'part-time-clt'
+                    'collection' => 'part-time-clt',
                 ],
                 'org-employees-temp' => [
                     'property' => 'employeesTemp',
                     'label' => 'Temp Employees',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'employees',
-                    'collection' => 'temp'
+                    'collection' => 'temp',
                 ],
                 'org-associates' => [
                     'property' => 'associates',
                     'label' => 'Associates',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'associates',
-                    'collection' => 'all'
+                    'collection' => 'all',
                 ],
                 'org-financial-indicators-financial-collection' => [
                     'property' => 'financialCollection',
@@ -409,11 +388,11 @@ return [
                 'pro-pit-jobs-created-beneficiaries-description' => ['property' => 'jobs_created_beneficiaries_description', 'label' => 'How did you arrive at the provided estimate of number of jobs created, direct and indirect beneficiaries?', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
-                'pro-pit-fcol-cover' => ['property' =>  'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],
-                'pro-pit-fcol-add' => ['property' =>  'additional', 'label' => 'Additional documents', 'input_type' => 'file', 'multichoice' => true],
-                'pro-pit-fcol-rest-photos' => ['property' =>  'restoration_photos', 'label' => 'Past Restoration Photos', 'input_type' => 'file', 'multichoice' => true],
-                'pro-pit-fcol-detail-proj-bdgt' => ['property' =>  'detailed_project_budget', 'label' => 'Detailed project budget', 'input_type' => 'file', 'multichoice' => false],
-                'pro-pit-proof-of-land-tenure-mou' => ['property' =>  'proof_of_land_tenure_mou', 'label' => 'Proof of land tenure MOU', 'input_type' => 'file', 'multichoice' => true],
+                'pro-pit-fcol-cover' => ['property' => 'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],
+                'pro-pit-fcol-add' => ['property' => 'additional', 'label' => 'Additional documents', 'input_type' => 'file', 'multichoice' => true],
+                'pro-pit-fcol-rest-photos' => ['property' => 'restoration_photos', 'label' => 'Past Restoration Photos', 'input_type' => 'file', 'multichoice' => true],
+                'pro-pit-fcol-detail-proj-bdgt' => ['property' => 'detailed_project_budget', 'label' => 'Detailed project budget', 'input_type' => 'file', 'multichoice' => false],
+                'pro-pit-proof-of-land-tenure-mou' => ['property' => 'proof_of_land_tenure_mou', 'label' => 'Proof of land tenure MOU', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'pro-pit-tree-species' => [
@@ -428,42 +407,42 @@ return [
                     'label' => 'All Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
-                    'collection' => 'all'
+                    'collection' => 'all',
                 ],
                 'pro-pit-full-time-jobs' => [
                     'property' => 'jobsFullTime',
                     'label' => 'Full-time Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
-                    'collection' => 'full-time'
+                    'collection' => 'full-time',
                 ],
                 'pro-pit-part-time-jobs' => [
                     'property' => 'jobsPartTime',
                     'label' => 'Part-time Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
-                    'collection' => 'part-time'
+                    'collection' => 'part-time',
                 ],
                 'pro-pit-volunteers' => [
                     'property' => 'volunteers',
                     'label' => 'Volunteers',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'volunteers',
-                    'collection' => 'volunteer'
+                    'collection' => 'volunteer',
                 ],
                 'pro-pit-all-beneficiaries' => [
                     'property' => 'allBeneficiaries',
                     'label' => 'All Beneficiaries',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'allBeneficiaries',
-                    'collection' => 'all'
+                    'collection' => 'all',
                 ],
                 'pro-pit-indirect-beneficiaries' => [
                     'property' => 'indirectBeneficiaries',
                     'label' => 'Indirect Beneficiaries',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'indirectBeneficiaries',
-                    'collection' => 'indirect'
+                    'collection' => 'indirect',
                 ],
             ],
         ],
@@ -541,16 +520,16 @@ return [
                 'pro-associates-count' => ['property' => 'all_associates_aggregate', 'label' => 'Aggregate associates', 'input_type' => 'number'],
             ],
             'file-collections' => [
-                'pro-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
-                'pro-col-socioeconomic-benefits' => ['property' =>  'socioeconomic_benefits', 'label' => 'Socioeconomic benefits', 'input_type' => 'file', 'multichoice' => true],
-                'pro-col-file' => ['property' =>  'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
-                'pro-col-other-additional-documents' => ['property' =>  'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
-                'pro-col-photos' => ['property' =>  'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
-                'pro-col-document-files' => ['property' =>  'document_files', 'label' => 'Document Files', 'input_type' => 'file', 'multichoice' => true],
-                'pro-col-programme-submission' => ['property' =>  'programme_submission', 'label' => 'programme_submission', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-socioeconomic-benefits' => ['property' => 'socioeconomic_benefits', 'label' => 'Socioeconomic benefits', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-file' => ['property' => 'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-other-additional-documents' => ['property' => 'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-photos' => ['property' => 'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-document-files' => ['property' => 'document_files', 'label' => 'Document Files', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-programme-submission' => ['property' => 'programme_submission', 'label' => 'programme_submission', 'input_type' => 'file', 'multichoice' => true],
                 // new collections
                 'pro-col-detailed-project-budget' => ['property' => 'detailed_project_budget', 'label' => 'Detailed project budget', 'input_type' => 'file', 'multichoice' => false],
-                'pro-col-proof-of-land-tenure-mou' => ['property' =>  'proof_of_land_tenure_mou', 'label' => 'Documentation on project area’s land tenure', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-proof-of-land-tenure-mou' => ['property' => 'proof_of_land_tenure_mou', 'label' => 'Documentation on project area’s land tenure', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'pro-pit-rel-tree-species' => [
@@ -565,42 +544,42 @@ return [
                     'label' => 'All Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
-                    'collection' => 'all'
+                    'collection' => 'all',
                 ],
                 'pro-full-time-jobs' => [
                     'property' => 'jobsFullTime',
                     'label' => 'Full-time Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
-                    'collection' => 'full-time'
+                    'collection' => 'full-time',
                 ],
                 'pro-part-time-jobs' => [
                     'property' => 'jobsPartTime',
                     'label' => 'Part-time Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
-                    'collection' => 'part-time'
+                    'collection' => 'part-time',
                 ],
                 'pro-volunteers' => [
                     'property' => 'volunteers',
                     'label' => 'Volunteers',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'volunteers',
-                    'collection' => 'volunteer'
+                    'collection' => 'volunteer',
                 ],
                 'pro-all-beneficiaries' => [
                     'property' => 'allBeneficiaries',
                     'label' => 'All Beneficiaries',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'allBeneficiaries',
-                    'collection' => 'all'
+                    'collection' => 'all',
                 ],
                 'pro-indirect-beneficiaries' => [
                     'property' => 'indirectBeneficiaries',
                     'label' => 'Indirect Beneficiaries',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'indirectBeneficiaries',
-                    'collection' => 'indirect'
+                    'collection' => 'indirect',
                 ],
             ],
         ],
@@ -695,7 +674,7 @@ return [
                 'pro-rep-indirect-beneficiaries-description' => ['property' => 'indirect_beneficiaries_description', 'label' => 'Indirect Beneficiaries Description', 'input_type' => 'long-text'],
                 'pro-rep-other-restoration-partners-description' => ['property' => 'other_restoration_partners_description', 'label' => 'Other Restoration Partners Description', 'input_type' => 'long-text'],
                 'pro-rep-total-unique-restoration-partners' => ['property' => 'total_unique_restoration_partners', 'label' => 'Total Unique Restoration Partners', 'input_type' => 'number'],
-                // New fields TM-1542 
+                // New fields TM-1542
                 'pro-rep-business-milestones' => ['property' => 'business_milestones', 'label' => 'Business Milestones', 'input_type' => 'long-text'],
                 'pro-rep-ft-other' => ['property' => 'ft_other', 'label' => 'Full Time Other Gender', 'input_type' => 'number'],
                 'pro-rep-pt-other' => ['property' => 'pt_other', 'label' => 'Part Time Other Gender', 'input_type' => 'number'],
@@ -782,223 +761,223 @@ return [
                     'label' => 'Direct Income Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'direct-income'
+                    'collection' => 'direct-income',
                 ],
                 'pro-rep-indirect-income-partners' => [
                     'property' => 'restorationPartnersIndirectIncome',
                     'label' => 'Indirect Income Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'indirect-income'
+                    'collection' => 'indirect-income',
                 ],
                 'pro-rep-direct-benefits-partners' => [
                     'property' => 'restorationPartnersDirectBenefits',
                     'label' => 'Direct In-kind Benefits Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'direct-benefits'
+                    'collection' => 'direct-benefits',
                 ],
                 'pro-rep-indirect-benefits-partners' => [
                     'property' => 'restorationPartnersIndirectBenefits',
                     'label' => 'Indirect In-kind Benefits Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'indirect-benefits'
+                    'collection' => 'indirect-benefits',
                 ],
                 'pro-rep-direct-conservation-payments-partners' => [
                     'property' => 'restorationPartnersDirectConservationPayments',
                     'label' => 'Direct Conservation Agreement Payment Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'direct-conservation-payments'
+                    'collection' => 'direct-conservation-payments',
                 ],
                 'pro-rep-indirect-conservation-payments-partners' => [
                     'property' => 'restorationPartnersIndirectConservationPayments',
                     'label' => 'Indirect Conservation Agreement Payment Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'indirect-conservation-payments'
+                    'collection' => 'indirect-conservation-payments',
                 ],
                 'pro-rep-direct-market-access-partners' => [
                     'property' => 'restorationPartnersDirectMarketAccess',
                     'label' => 'Direct Increased Market Access Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'direct-market-access'
+                    'collection' => 'direct-market-access',
                 ],
                 'pro-rep-indirect-market-access-partners' => [
                     'property' => 'restorationPartnersIndirectMarketAccess',
                     'label' => 'Indirect Increased Market Access Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'indirect-market-access'
+                    'collection' => 'indirect-market-access',
                 ],
                 'pro-rep-direct-capacity-partners' => [
                     'property' => 'restorationPartnersDirectCapacity',
                     'label' => 'Direct Increased Capacity Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'direct-capacity'
+                    'collection' => 'direct-capacity',
                 ],
                 'pro-rep-indirect-capacity-partners' => [
                     'property' => 'restorationPartnersIndirectCapacity',
                     'label' => 'Indirect Capacity Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'indirect-capacity'
+                    'collection' => 'indirect-capacity',
                 ],
                 'pro-rep-direct-training-partners' => [
                     'property' => 'restorationPartnersDirectTraining',
                     'label' => 'Direct Training Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'direct-training'
+                    'collection' => 'direct-training',
                 ],
                 'pro-rep-indirect-training-partners' => [
                     'property' => 'restorationPartnersIndirectTraining',
                     'label' => 'Indirect Training Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'indirect-training'
+                    'collection' => 'indirect-training',
                 ],
                 'pro-rep-direct-land-title-partners' => [
                     'property' => 'restorationPartnersDirectLandTitle',
                     'label' => 'Direct Newly Secured Land Title Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'direct-land-title'
+                    'collection' => 'direct-land-title',
                 ],
                 'pro-rep-indirect-land-title-partners' => [
                     'property' => 'restorationPartnersIndirectLandTitle',
                     'label' => 'Indirect Newly Secured Land Title Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'indirect-land-title'
+                    'collection' => 'indirect-land-title',
                 ],
                 'pro-rep-direct-livelihoods-partners' => [
                     'property' => 'restorationPartnersDirectLivelihoods',
                     'label' => 'Direct Traditional Livelihoods or Customer Rights Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'direct-livelihoods'
+                    'collection' => 'direct-livelihoods',
                 ],
                 'pro-rep-indirect-livelihoods-partners' => [
                     'property' => 'restorationPartnersIndirectLivelihoods',
                     'label' => 'Indirect Traditional Livelihoods or Customer Rights Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'indirect-livelihoods'
+                    'collection' => 'indirect-livelihoods',
                 ],
                 'pro-rep-direct-productivity-partners' => [
                     'property' => 'restorationPartnersDirectProductivity',
                     'label' => 'Direct Increased Productivity Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'direct-productivity'
+                    'collection' => 'direct-productivity',
                 ],
                 'pro-rep-indirect-productivity-partners' => [
                     'property' => 'restorationPartnersIndirectProductivity',
                     'label' => 'Indirect Increased Productivity Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'indirect-productivity'
+                    'collection' => 'indirect-productivity',
                 ],
                 'pro-rep-direct-other-partners' => [
                     'property' => 'restorationPartnersDirectOther',
                     'label' => 'Direct Other Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'direct-other'
+                    'collection' => 'direct-other',
                 ],
                 'pro-rep-indirect-other-partners' => [
                     'property' => 'restorationPartnersIndirectOther',
                     'label' => 'Indirect Other Restoration Partners',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'restorationPartners',
-                    'collection' => 'indirect-other'
+                    'collection' => 'indirect-other',
                 ],
                 'pro-rep-full-time-jobs' => [
                     'property' => 'jobsFullTime',
                     'label' => 'Full-time Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
-                    'collection' => 'full-time'
+                    'collection' => 'full-time',
                 ],
                 'pro-rep-full-time-clt-jobs' => [
                     'property' => 'jobsFullTimeClt',
                     'label' => 'Full-time CLT Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
-                    'collection' => 'full-time-clt'
+                    'collection' => 'full-time-clt',
                 ],
                 'pro-rep-part-time-jobs' => [
                     'property' => 'jobsPartTime',
                     'label' => 'Part-time Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
-                    'collection' => 'part-time'
+                    'collection' => 'part-time',
                 ],
                 'pro-rep-part-time-clt-jobs' => [
                     'property' => 'jobsPartTimeClt',
                     'label' => 'Part-time CLT Jobs',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'jobs',
-                    'collection' => 'part-time-clt'
+                    'collection' => 'part-time-clt',
                 ],
                 'pro-rep-volunteers' => [
                     'property' => 'volunteers',
                     'label' => 'Volunteers',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'volunteers',
-                    'collection' => 'volunteer'
+                    'collection' => 'volunteer',
                 ],
                 'pro-rep-beneficiaries-all' => [
                     'property' => 'allBeneficiaries',
                     'label' => 'All Beneficiaries',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'allBeneficiaries',
-                    'collection' => 'all'
+                    'collection' => 'all',
                 ],
                 'pro-rep-beneficiaries-training' => [
                     'property' => 'trainingBeneficiaries',
                     'label' => 'Training Beneficiaries',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'trainingBeneficiaries',
-                    'collection' => 'training'
+                    'collection' => 'training',
                 ],
                 'pro-rep-associates' => [
                     'property' => 'associates',
                     'label' => 'Associates',
                     'resource' => 'App\Http\Resources\V2\Demographics\DemographicResource',
                     'input_type' => 'associates',
-                    'collection' => 'all'
-                ]
+                    'collection' => 'all',
+                ],
             ],
             'file-collections' => [
-                'pro-rep-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-socioeconomic-benefits' => ['property' =>  'socioeconomic_benefits', 'label' => 'Socioeconomic benefits', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-file' => ['property' =>  'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-other-additional-documents' => ['property' =>  'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-photos' => ['property' =>  'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-baseline-report-upload' => ['property' =>  'baseline_report_upload', 'label' => 'Baseline Report Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-local-governance-order-letter-upload' => ['property' =>  'local_governance_order_letter_upload', 'label' => 'Local Governance Order or Letter Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-events-meetings-photos' => ['property' =>  'events_meetings_photos', 'label' => 'Events or Meetings Photos', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-local-governance-proof-of-partnership-upload' => ['property' =>  'local_governance_proof_of_partnership_upload', 'label' => 'Local Governance Proof of Partnership Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-top-three-successes-upload' => ['property' =>  'top_three_successes_upload', 'label' => 'Top Three Successes Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-direct-jobs-upload' => ['property' =>  'direct_jobs_upload', 'label' => 'Direct Jobs Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-convergence-jobs-upload' => ['property' =>  'convergence_jobs_upload', 'label' => 'Convergence Jobs Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-convergence-schemes-upload' => ['property' =>  'convergence_schemes_upload', 'label' => 'Convergence Schemes Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-livelihood-activities-upload' => ['property' =>  'livelihood_activities_upload', 'label' => 'Livelihood Report Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-direct-livelihood-impacts-upload' => ['property' =>  'direct_livelihood_impacts_upload', 'label' => 'Direct Livelihood Impacts Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-certified-database-upload' => ['property' =>  'certified_database_upload', 'label' => 'Certified Database Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-physical-assets-photos' => ['property' =>  'physical_assets_photos', 'label' => 'Physical Assets Photos', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-indirect-community-partners-upload' => ['property' =>  'indirect_community_partners_upload', 'label' => 'Indirect Community Partners Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-training-capacity-building-upload' => ['property' =>  'training_capacity_building_upload', 'label' => 'Training or Capacity Building Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-training-capacity-building-photos' => ['property' =>  'training_capacity_building_photos', 'label' => 'Training or Capacity Building Photos', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-financial-report-upload' => ['property' =>  'financial_report_upload', 'label' => 'Financial Report Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-tree-planting-upload' => ['property' =>  'tree_planting_upload', 'label' => 'Tree Planting Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-soil-water-conservation-upload' => ['property' =>  'soil_water_conservation_upload', 'label' => 'Soil or Water Conservation Upload', 'input_type' => 'file', 'multichoice' => true],
-                'pro-rep-col-soil-water-conservation-photos' => ['property' =>  'soil_water_conservation_photos', 'label' => 'Soil or Water Conservation Photos', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-socioeconomic-benefits' => ['property' => 'socioeconomic_benefits', 'label' => 'Socioeconomic benefits', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-file' => ['property' => 'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-other-additional-documents' => ['property' => 'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-photos' => ['property' => 'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-baseline-report-upload' => ['property' => 'baseline_report_upload', 'label' => 'Baseline Report Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-local-governance-order-letter-upload' => ['property' => 'local_governance_order_letter_upload', 'label' => 'Local Governance Order or Letter Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-events-meetings-photos' => ['property' => 'events_meetings_photos', 'label' => 'Events or Meetings Photos', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-local-governance-proof-of-partnership-upload' => ['property' => 'local_governance_proof_of_partnership_upload', 'label' => 'Local Governance Proof of Partnership Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-top-three-successes-upload' => ['property' => 'top_three_successes_upload', 'label' => 'Top Three Successes Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-direct-jobs-upload' => ['property' => 'direct_jobs_upload', 'label' => 'Direct Jobs Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-convergence-jobs-upload' => ['property' => 'convergence_jobs_upload', 'label' => 'Convergence Jobs Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-convergence-schemes-upload' => ['property' => 'convergence_schemes_upload', 'label' => 'Convergence Schemes Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-livelihood-activities-upload' => ['property' => 'livelihood_activities_upload', 'label' => 'Livelihood Report Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-direct-livelihood-impacts-upload' => ['property' => 'direct_livelihood_impacts_upload', 'label' => 'Direct Livelihood Impacts Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-certified-database-upload' => ['property' => 'certified_database_upload', 'label' => 'Certified Database Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-physical-assets-photos' => ['property' => 'physical_assets_photos', 'label' => 'Physical Assets Photos', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-indirect-community-partners-upload' => ['property' => 'indirect_community_partners_upload', 'label' => 'Indirect Community Partners Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-training-capacity-building-upload' => ['property' => 'training_capacity_building_upload', 'label' => 'Training or Capacity Building Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-training-capacity-building-photos' => ['property' => 'training_capacity_building_photos', 'label' => 'Training or Capacity Building Photos', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-financial-report-upload' => ['property' => 'financial_report_upload', 'label' => 'Financial Report Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-tree-planting-upload' => ['property' => 'tree_planting_upload', 'label' => 'Tree Planting Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-soil-water-conservation-upload' => ['property' => 'soil_water_conservation_upload', 'label' => 'Soil or Water Conservation Upload', 'input_type' => 'file', 'multichoice' => true],
+                'pro-rep-col-soil-water-conservation-photos' => ['property' => 'soil_water_conservation_photos', 'label' => 'Soil or Water Conservation Photos', 'input_type' => 'file', 'multichoice' => true],
             ],
         ],
         'site' => [
@@ -1030,13 +1009,13 @@ return [
                 'site-detailed-rst-inv-types' => ['property' => 'detailed_intervention_types', 'label' => 'Detailed intervention types', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'interventions'],
             ],
             'file-collections' => [
-                'site-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
-                'site-col-socioeconomic-benefits' => ['property' =>  'socioeconomic_benefits', 'label' => 'Socioeconomic benefits', 'input_type' => 'file', 'multichoice' => true],
-                'site-col-file' => ['property' =>  'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
-                'site-col-other-additional-documents' => ['property' =>  'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
-                'site-col-photos' => ['property' =>  'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
-                'site-col-document-files' => ['property' =>  'document_files', 'label' => 'Document files', 'input_type' => 'file', 'multichoice' => true],
-                'site-col-tree-species' => ['property' =>  'tree_species', 'label' => 'programme_submission', 'input_type' => 'file', 'multichoice' => true],
+                'site-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
+                'site-col-socioeconomic-benefits' => ['property' => 'socioeconomic_benefits', 'label' => 'Socioeconomic benefits', 'input_type' => 'file', 'multichoice' => true],
+                'site-col-file' => ['property' => 'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
+                'site-col-other-additional-documents' => ['property' => 'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
+                'site-col-photos' => ['property' => 'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
+                'site-col-document-files' => ['property' => 'document_files', 'label' => 'Document files', 'input_type' => 'file', 'multichoice' => true],
+                'site-col-tree-species' => ['property' => 'tree_species', 'label' => 'programme_submission', 'input_type' => 'file', 'multichoice' => true],
                 'site-col-strat-for-heterogeneity' => ['property' => 'stratification_for_heterogeneity', 'label' => 'Stratification for heterogeneity', 'input_type' => 'file', 'multichoice' => false],
             ],
             'relations' => [
@@ -1059,14 +1038,14 @@ return [
                     'label' => 'Disturbances',
                     'resource' => 'App\Http\Resources\V2\Disturbances\DisturbanceResource',
                     'input_type' => 'disturbances',
-                    'collection' => 'disturbance'
+                    'collection' => 'disturbance',
                 ],
                 'site-rel-invasive' => [
                     'property' => 'invasives',
                     'label' => 'Invasives',
                     'resource' => 'App\Http\Resources\V2\Invasives\InvasiveResource',
                     'input_type' => 'invasive',
-                    'collection' => 'invasive'
+                    'collection' => 'invasive',
                 ],
                 'site-rel-seedings' => [
                     'property' => 'seedings',
@@ -1106,25 +1085,25 @@ return [
                 'site-rep-other-workdays-description' => ['property' => 'other_workdays_description', 'label' => 'Other Activities Description', 'input_type' => 'long-text'],
                 'site-rep-num-trees-regenerating' => ['property' => 'num_trees_regenerating', 'label' => 'Estimate Number of Trees Restored via ANR', 'input_type' => 'number'],
                 'site-rep-regeneration-description' => ['property' => 'regeneration_description', 'label' => 'Description of ANR Activities', 'input_type' => 'long-text'],
-                // New fields TM-1542 
+                // New fields TM-1542
                 'site-rep-pct-survival-to-date' => ['property' => 'pct_survival_to_date', 'label' => 'Survival Rate', 'input_type' => 'number-percentage'],
                 'site-rep-survival-calculation' => ['property' => 'survival_calculation', 'label' => 'Description of Survival Rate Calculation', 'input_type' => 'long-text'],
                 'site-rep-survival-description' => ['property' => 'survival_description', 'label' => 'Explanation of Survival Rate', 'input_type' => 'long-text'],
                 'site-rep-maintenance-activities' => ['property' => 'maintenance_activities', 'label' => 'Maintenance Activities', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
-                'site-rep-col-media' => ['property' =>  'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-socioeconomic-benefits' => ['property' =>  'socioeconomic_benefits', 'label' => 'Socioeconomic benefits', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-file' => ['property' =>  'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-other-additional-documents' => ['property' =>  'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-photos' => ['property' =>  'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-document-files' => ['property' =>  'document_files', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-tree-species' => ['property' =>  'tree_species', 'label' => 'programme_submission', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-site-submission' => ['property' =>  'site_submission', 'label' => 'Site submission', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-tree-planting-upload' => ['property' =>  'tree_planting_upload', 'label' => 'Tree Planting Upload', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-anr-photos' => ['property' =>  'anr_photos', 'label' => 'ANR Photos', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-soil-water-conservation-upload' => ['property' =>  'soil_water_conservation_upload', 'label' => 'Soil or Water Conservation Upload', 'input_type' => 'file', 'multichoice' => true],
-                'site-rep-col-soil-water-conservation-photos' => ['property' =>  'soil_water_conservation_photos', 'label' => 'Soil or Water Conservation Photos', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-socioeconomic-benefits' => ['property' => 'socioeconomic_benefits', 'label' => 'Socioeconomic benefits', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-file' => ['property' => 'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-other-additional-documents' => ['property' => 'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-photos' => ['property' => 'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-document-files' => ['property' => 'document_files', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-tree-species' => ['property' => 'tree_species', 'label' => 'programme_submission', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-site-submission' => ['property' => 'site_submission', 'label' => 'Site submission', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-tree-planting-upload' => ['property' => 'tree_planting_upload', 'label' => 'Tree Planting Upload', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-anr-photos' => ['property' => 'anr_photos', 'label' => 'ANR Photos', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-soil-water-conservation-upload' => ['property' => 'soil_water_conservation_upload', 'label' => 'Soil or Water Conservation Upload', 'input_type' => 'file', 'multichoice' => true],
+                'site-rep-col-soil-water-conservation-photos' => ['property' => 'soil_water_conservation_photos', 'label' => 'Soil or Water Conservation Photos', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'site-rep-rel-replanting-tree-species' => [
@@ -1153,7 +1132,7 @@ return [
                     'label' => 'Disturbances',
                     'resource' => 'App\Http\Resources\V2\Disturbances\DisturbanceResource',
                     'input_type' => 'disturbances',
-                    'collection' => 'disturbance'
+                    'collection' => 'disturbance',
                 ],
                 'site-rep-rel-seedings' => [
                     'property' => 'seedings',
@@ -1269,9 +1248,9 @@ return [
                 'nur-planting_contribution' => ['property' => 'planting_contribution', 'label' => 'Planting contribution', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
-                'nur-col-file' => ['property' =>  'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
-                'nur-col-other-additional-documents' => ['property' =>  'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
-                'nur-col-photos' => ['property' =>  'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
+                'nur-col-file' => ['property' => 'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
+                'nur-col-other-additional-documents' => ['property' => 'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
+                'nur-col-photos' => ['property' => 'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'nur-rel-tree-species' => [
@@ -1294,10 +1273,10 @@ return [
                 'nur-rep-shared-drive-link' => ['property' => 'shared_drive_link', 'label' => 'Shared drive link', 'input_type' => 'url'],
             ],
             'file-collections' => [
-                'nur-rep-col-file' => ['property' =>  'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
-                'nur-rep-col-other-additional-documents' => ['property' =>  'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
-                'nur-rep-col-photos' => ['property' =>  'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
-                'nur-rep-col-tree-seedling-contributions' => ['property' =>  'tree_seedling_contributions', 'label' => 'Tree seedling contributions', 'input_type' => 'file', 'multichoice' => true],
+                'nur-rep-col-file' => ['property' => 'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
+                'nur-rep-col-other-additional-documents' => ['property' => 'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
+                'nur-rep-col-photos' => ['property' => 'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
+                'nur-rep-col-tree-seedling-contributions' => ['property' => 'tree_seedling_contributions', 'label' => 'Tree seedling contributions', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'nur-rep-rel-tree-species' => [

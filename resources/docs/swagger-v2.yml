@@ -5570,6 +5570,8 @@ definitions:
         type: string
       organisation_id:
         type: string
+      financial_report_id:
+        type: string
       amount:
         type: integer
       year:
@@ -8451,8 +8453,8 @@ definitions:
               updated_at:
                 type: string
           organisation:
-            title: AdminOrganisationRead
             type: object
+            title: AdminOrganisationRead
             properties:
               uuid:
                 type: string
@@ -11601,8 +11603,8 @@ definitions:
           updated_at:
             type: string
       organisation:
-        title: AdminOrganisationRead
         type: object
+        title: AdminOrganisationRead
         properties:
           uuid:
             type: string
@@ -23322,6 +23324,8 @@ definitions:
               type: string
             organisation_id:
               type: string
+            financial_report_id:
+              type: string
             amount:
               type: integer
             year:
@@ -28844,6 +28848,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -28854,8 +28859,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -28883,7 +28888,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       tags:
         - V2 Admin
         - V2 Organisations
@@ -34069,6 +34073,7 @@ paths:
                     date_added:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -34079,8 +34084,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -34108,7 +34113,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -35148,6 +35152,8 @@ paths:
                 type: string
               organisation_id:
                 type: string
+              financial_report_id:
+                type: string
               amount:
                 type: integer
               year:
@@ -35187,6 +35193,8 @@ paths:
               uuid:
                 type: string
               organisation_id:
+                type: string
+              financial_report_id:
                 type: string
               amount:
                 type: integer
@@ -35233,6 +35241,8 @@ paths:
               uuid:
                 type: string
               organisation_id:
+                type: string
+              financial_report_id:
                 type: string
               amount:
                 type: integer
@@ -38160,6 +38170,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -38170,8 +38181,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -38199,7 +38210,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       operationId: get-v2-funding-programme
   /v2/admin/funding-programme:
     get:
@@ -38499,6 +38509,7 @@ paths:
                     updated_at:
                       type: string
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -38509,8 +38520,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -38538,7 +38549,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
       operationId: get-v2-admin-funding-programme
     post:
       summary: Create a funding programme
@@ -43716,8 +43726,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                title: AdminOrganisationRead
                 type: object
+                title: AdminOrganisationRead
                 properties:
                   uuid:
                     type: string
@@ -44339,6 +44349,7 @@ paths:
                       type: string
                       format: date-time
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -44349,8 +44360,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -44378,7 +44389,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/applications/{UUID}':
     get:
       summary: Get a specific application
@@ -44731,8 +44741,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                title: AdminOrganisationRead
                 type: object
+                title: AdminOrganisationRead
                 properties:
                   uuid:
                     type: string
@@ -47649,42 +47659,6 @@ paths:
                       type: object
                       description: Extra information about the polygon validation
   /v2/terrafund/validation/criteria-data:
-    get:
-      summary: Get criteria data validation results for a polygon
-      parameters:
-        - in: query
-          name: uuid
-          required: true
-          description: The UUID of the polygon
-          type: string
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              polygon_id:
-                type: string
-                description: The ID of the polygon
-              criteria_list:
-                type: array
-                description: List of validation criteria
-                items:
-                  type: object
-                  properties:
-                    criteria_id:
-                      type: integer
-                      description: The ID of the criteria
-                    latest_created_at:
-                      type: string
-                      format: date-time
-                      description: The latest created at timestamp of the criteria
-                    valid:
-                      type: integer
-                      description: 'Indicates if the criteria is valid or not (1 for valid, 0 for invalid)'
-                    extra_info:
-                      type: object
-                      description: Extra information about the polygon validation
     post:
       summary: Get criteria data validation results for multiple polygons
       parameters:
@@ -47775,37 +47749,6 @@ paths:
               message:
                 type: string
                 description: A message indicating the completion of validation for all site polygons.
-  /v2/terrafund/validation/site:
-    get:
-      summary: Get criteria data validation results for all polygons in a site
-      parameters:
-        - in: query
-          name: uuid
-          required: true
-          description: The UUID of the polygon
-          type: string
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: array
-            items:
-              type: object
-              properties:
-                uuid:
-                  type: string
-                  description: The UUID of the polygon.
-                valid:
-                  type: boolean
-                  description: Indicates if the polygon is valid or not.
-                checked:
-                  type: boolean
-                  description: Indicates if the polygon has been checked before or not.
-                nonValidCriteria:
-                  type: array
-                  description: List of criteria that are not valid.
-                  items:
-                    type: object
   /v2/geometry/validate:
     post:
       summary: Test a set of geometries for validity
@@ -51273,6 +51216,7 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -51283,8 +51227,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -51312,7 +51256,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
     post:
       summary: Create a new Impact Story
       operationId: v2-create-impact-story
@@ -51572,6 +51515,7 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -51582,8 +51526,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -51611,7 +51555,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story

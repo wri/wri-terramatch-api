@@ -325,18 +325,6 @@ class Organisation extends Model implements MediaModel
         return $this->hasMany(OwnershipStake::class, 'organisation_id', 'uuid');
     }
 
-    public function leadershipTeam(): HasMany
-    {
-        return $this->hasMany(Leaderships::class, 'organisation_id', 'id')
-            ->where('collection', Leaderships::COLLECTION_LEADERSHIP_TEAM);
-    }
-
-    public function coreTeamLeaders(): HasMany
-    {
-        return $this->hasMany(Leaderships::class, 'organisation_id', 'id')
-            ->where('collection', Leaderships::COLLECTION_CORE_TEAM_LEADERS);
-    }
-
     public function financialCollection(): HasMany
     {
         return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
@@ -408,7 +396,8 @@ class Organisation extends Model implements MediaModel
 
     public function fundingTypes(): HasMany
     {
-        return $this->hasMany(FundingType::class, 'organisation_id', 'uuid');
+        return $this->hasMany(FundingType::class, 'organisation_id', 'uuid')
+            ->whereNull('financial_report_id');
     }
 
     public function projects()
@@ -459,5 +448,10 @@ class Organisation extends Model implements MediaModel
     public function invites(): HasMany
     {
         return $this->HasMany(OrganisationInvite::class);
+    }
+
+    public function leaderships(): HasMany
+    {
+        return $this->hasMany(Leaderships::class, 'organisation_id', 'id');
     }
 }

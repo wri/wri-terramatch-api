@@ -1560,65 +1560,6 @@ class TerrafundCreateGeometryController extends Controller
         }
     }
 
-    public function getCurrentSiteValidation(Request $request)
-    {
-        try {
-            $uuid = $request->input('uuid');
-            $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid);
-            $checkedPolygons = [];
-
-            foreach ($sitePolygonsUuids as $polygonUuid) {
-                $criteriaData = $this->fetchCriteriaData($polygonUuid);
-
-                if (isset($criteriaData['error'])) {
-                    Log::error('Error fetching criteria data', ['polygon_uuid' => $polygonUuid, 'error' => $criteriaData['error']]);
-                    $checkedPolygons[] = [
-                      'uuid' => $polygonUuid,
-                      'valid' => false,
-                      'checked' => false,
-                      'nonValidCriteria' => [],
-                    ];
-
-                    continue;
-                }
-
-                $isValid = true;
-                $nonValidCriteria = [];
-                if (empty($criteriaData['criteria_list'])) {
-                    $isValid = false;
-                } else {
-                    foreach ($criteriaData['criteria_list'] as $criteria) {
-                        if ($criteria['valid'] == 0) {
-                            $isValid = false;
-                            $nonValidCriteria[] = $criteria;
-                        }
-                    }
-                }
-
-                $checkedPolygons[] = [
-                  'uuid' => $polygonUuid,
-                  'valid' => $isValid,
-                  'checked' => ! empty($criteriaData['criteria_list']),
-                  'nonValidCriteria' => $nonValidCriteria,
-                ];
-            }
-
-            return $checkedPolygons;
-        } catch (\Exception $e) {
-            Log::error('Error during current site validation: ' . $e->getMessage());
-
-            return response()->json(['error' => 'An error occurred during current site validation'], 500);
-        }
-    }
-
-    private function fetchCriteriaData($polygonUuid)
-    {
-        $polygonRequest = new Request(['uuid' => $polygonUuid]);
-        $criteriaDataResponse = $this->getCriteriaData($polygonRequest);
-
-        return json_decode($criteriaDataResponse->getContent(), true);
-    }
-
     public function validatePlantStartDate(Request $request)
     {
         $polygonUuid = $request->input('uuid');

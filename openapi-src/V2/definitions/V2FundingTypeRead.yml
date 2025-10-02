@@ -7,6 +7,8 @@ properties:
     type: string
   organisation_id:
     type: string
+  financial_report_id:
+    type: string
   amount:
     type: integer
   year:

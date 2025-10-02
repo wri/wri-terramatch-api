@@ -15,6 +15,7 @@ class FundingTypeResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'organisation_id' => $this->organisation_id,
+            'financial_report_id' => $this->financial_report_id,
             'source' => $this->source,
             'amount' => $this->amount,
             'year' => $this->year,
