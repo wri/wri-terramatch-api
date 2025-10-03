@@ -105,6 +105,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'survival_calculation',
         'survival_description',
         'maintenance_activities',
+        'planting_status',
 
         // virtual (see HasDemographics trait)
         'other_workdays_description',
