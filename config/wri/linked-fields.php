@@ -169,6 +169,20 @@ return [
                     'resource' => 'App\Http\Resources\V2\FundingTypeResource',
                     'input_type' => 'fundingType',
                 ],
+                'org-leadership-team' => [
+                    'property' => 'leadershipTeam',
+                    'label' => 'Leadership Team',
+                    'resource' => 'App\Http\Resources\V2\LeadershipsResource',
+                    'input_type' => 'leaderships',
+                    'collection' => 'leadership-team'
+                ],
+                'org-core-team-leaders' => [
+                    'property' => 'coreTeamLeaders',
+                    'label' => 'Core Team Leaders',
+                    'resource' => 'App\Http\Resources\V2\LeadershipsResource',
+                    'input_type' => 'leaderships',
+                    'collection' => 'core-team-leaders'
+                ],
                 'org-tree-species' => [
                     'property' => 'treeSpeciesHistorical',
                     'label' => 'Tree Species',
