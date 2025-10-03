@@ -66,5 +66,6 @@ class PolygonFields
       'target_sys',
       'distr',
       'num_trees',
+      'plantstart',
   ];
 }

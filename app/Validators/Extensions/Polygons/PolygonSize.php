@@ -15,7 +15,7 @@ class PolygonSize extends Extension
         'message' => 'The geometry must not be larger than ' . self::SIZE_LIMIT . 'square kilometers',
     ];
 
-    public const SIZE_LIMIT = 10000000;
+    public const SIZE_LIMIT = 1000000;
 
     public static function passes($attribute, $value, $parameters, $validator): bool
     {

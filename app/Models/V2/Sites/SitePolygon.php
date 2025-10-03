@@ -7,6 +7,7 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\ReportsStatusChange;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\Disturbance;
 use App\Models\V2\MonitoredData\IndicatorHectares;
 use App\Models\V2\MonitoredData\IndicatorTreeCover;
 use App\Models\V2\MonitoredData\IndicatorTreeCoverLoss;
@@ -58,6 +59,7 @@ class SitePolygon extends Model implements AuditableModel
       'is_active',
       'version_name',
       'validation_status',
+      'disturbance_id',
       'lat',
       'long',
     ];
@@ -95,6 +97,11 @@ class SitePolygon extends Model implements AuditableModel
     public function createdBy(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'created_by');
+    }
+
+    public function disturbance(): BelongsTo
+    {
+        return $this->belongsTo(Disturbance::class, 'disturbance_id');
     }
 
     public function getRouteKeyName()
@@ -176,11 +183,11 @@ class SitePolygon extends Model implements AuditableModel
             ]);
         }
         $newSitePolygon->primary_uuid = $this->primary_uuid;
-        $newSitePolygon->plantstart = $properties['plantstart'] ?? $this->plantstart;
-        $newSitePolygon->practice = $properties['practice'] ?? $this->practice;
-        $newSitePolygon->target_sys = $properties['target_sys'] ?? $this->target_sys;
-        $newSitePolygon->distr = $properties['distr'] ?? $this->distr;
-        $newSitePolygon->num_trees = $properties['num_trees'] ?? $this->num_trees;
+        $newSitePolygon->plantstart = array_key_exists('plantstart', $properties) ? $properties['plantstart'] : $this->plantstart;
+        $newSitePolygon->practice = array_key_exists('practice', $properties) ? $properties['practice'] : $this->practice;
+        $newSitePolygon->target_sys = array_key_exists('target_sys', $properties) ? $properties['target_sys'] : $this->target_sys;
+        $newSitePolygon->distr = array_key_exists('distr', $properties) ? $properties['distr'] : $this->distr;
+        $newSitePolygon->num_trees = array_key_exists('num_trees', $properties) ? $properties['num_trees'] : $this->num_trees;
         $newSitePolygon->poly_id = $poly_id ?? $copyGeometry->uuid;
         $newSitePolygon->poly_name = $submit_polygon_loaded ? $this->poly_name.' (new)' : $properties['poly_name'] ?? $this->poly_name;
         $newSitePolygon->version_name = ($properties['poly_name'] ?? $this->poly_name).'_'.now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
@@ -188,6 +195,7 @@ class SitePolygon extends Model implements AuditableModel
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->created_by = $user->id;
         $newSitePolygon->validation_status = null;
+        $newSitePolygon->disturbance_id = $properties['disturbance_id'] ?? $this->disturbance_id;
         $newSitePolygon->save();
 
         return $newSitePolygon;

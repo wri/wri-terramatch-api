@@ -78,13 +78,18 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
         $firstRecord = $data[0];
         $startMonth = $firstRecord['start_month'] ?? null;
         $currency = $firstRecord['currency'] ?? null;
-        $organisationId = $firstRecord['organisation_id'] ?? null;
+        $organisationId = null;
         $financialReport = null;
         $financialReportId = $firstRecord['financial_report_id'] ?? null;
         if ($financialReportId) {
             $financialReport = FinancialReport::isUuid($financialReportId)->first();
         }
 
+        if ($entity instanceof Organisation) {
+            $organisationId = $entity->id;
+        } else {
+            $organisationId = $entity->organisation_id;
+        }
 
         $newUuids = collect($data)->pluck('uuid')->filter();
         $entity->$property()->whereNotIn('uuid', $newUuids)->delete();
@@ -101,7 +106,7 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                         'amount' => $entry['amount'],
                         'year' => $entry['year'],
                         'description' => $entry['description'],
-                        'exchange_rate' => $entry['exchange_rate'],
+                        'exchange_rate' => $entry['exchange_rate'] ?? null,
                     ]);
                 } else {
                     $entity->$property()->create([
@@ -109,8 +114,8 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                         'amount' => $entry['amount'],
                         'year' => $entry['year'],
                         'description' => $entry['description'],
-                        'exchange_rate' => $entry['exchange_rate'],
-                        'organisation_id' => $entry['organisation_id'],
+                        'exchange_rate' => $entry['exchange_rate'] ?? null,
+                        'organisation_id' => $organisationId,
                         'financial_report_id' => $financialReport?->id,
                     ]);
                 }
@@ -120,32 +125,32 @@ class FinancialIndicators extends Model implements MediaModel, HandlesLinkedFiel
                     'amount' => $entry['amount'],
                     'year' => $entry['year'],
                     'description' => $entry['description'],
-                    'exchange_rate' => $entry['exchange_rate'],
-                    'organisation_id' => $entry['organisation_id'],
+                    'exchange_rate' => $entry['exchange_rate'] ?? null,
+                    'organisation_id' => $organisationId,
                     'financial_report_id' => $financialReport?->id,
                 ]);
             }
         }
 
-        if (($startMonth !== null || $currency !== null) && $financialReport) {
-            $financialReport->update([
-                'fin_start_month' => $startMonth,
-                'currency' => $currency,
-            ]);
-        }
-
-        if (! empty($organisationId) && empty($financialReportId)) {
-            if ($startMonth !== null || $currency !== null) {
-                $organisation = Organisation::isUuid($organisationId)->first();
-                $organisation->update([
+        if ($startMonth !== null || $currency !== null) {
+            if (! empty($financialReport)) {
+                $financialReport->update([
                     'fin_start_month' => $startMonth,
                     'currency' => $currency,
                 ]);
+            } else {
+                $organisation = Organisation::find($organisationId);
+                if ($organisation) {
+                    $organisation->update([
+                        'fin_start_month' => $startMonth,
+                        'currency' => $currency,
+                    ]);
+                }
             }
         }
 
         if ($isApproval) {
-            $organisation = Organisation::isUuid($organisationId)->first();
+            $organisation = Organisation::find($organisationId);
             if ($organisation && $financialReport) {
                 if ($startMonth !== null || $currency !== null) {
                     $organisation->update([

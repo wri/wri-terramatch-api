@@ -175,12 +175,34 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
         }
 
+        $coordinateValidation = $this->validateCoordinateSystemAndBounds($geojsonPath);
+        if (! $coordinateValidation['valid']) {
+            if (file_exists($geojsonPath)) {
+                unlink($geojsonPath);
+            }
+            if (file_exists($kmlPath)) {
+                unlink($kmlPath);
+            }
+
+            return response()->json([
+                'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).',
+            ], 400);
+        }
+
         $uuid = App::make(PolygonService::class)->insertGeojsonToDB($geojsonFilename, $entity_uuid, $entity_type);
         if (isset($uuid['error'])) {
             return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
         }
 
         App::make(SiteService::class)->setSiteToRestorationInProgress($entity_uuid);
+
+        // Clean up temporary files
+        if (file_exists($geojsonPath)) {
+            unlink($geojsonPath);
+        }
+        if (file_exists($kmlPath)) {
+            unlink($kmlPath);
+        }
 
         return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
 
@@ -289,6 +311,69 @@ class TerrafundCreateGeometryController extends Controller
         return $shpFile;
     }
 
+    private function validateCoordinateSystemAndBounds($geojsonPath)
+    {
+        try {
+            $geojsonData = file_get_contents($geojsonPath);
+            $geojson = json_decode($geojsonData, true);
+
+            if (! $geojson || ! isset($geojson['features'])) {
+                return [
+                    'valid' => false,
+                    'message' => 'Invalid GeoJSON format',
+                ];
+            }
+
+            $invalidFeatures = [];
+            foreach ($geojson['features'] as $index => $feature) {
+                if (! FeatureBounds::geoJsonValid($feature)) {
+                    $invalidFeatures[] = [
+                        'feature_index' => $index,
+                        'feature_name' => $feature['properties']['name'] ?? "Feature {$index}",
+                        'reason' => 'Coordinates outside valid bounds (lat: -90 to 90, lng: -180 to 180) or invalid projection',
+                    ];
+                }
+            }
+
+            if (! empty($invalidFeatures)) {
+                return [
+                    'valid' => false,
+                    'message' => 'Invalid coordinate system or bounds detected',
+                    'details' => $invalidFeatures,
+                ];
+            }
+
+            return ['valid' => true];
+        } catch (Exception $e) {
+            Log::error('Error validating coordinate system: ' . $e->getMessage());
+
+            return [
+                'valid' => false,
+                'message' => 'Error validating coordinate system: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    private function cleanupDirectory($directory)
+    {
+        try {
+            if (is_dir($directory)) {
+                $files = scandir($directory);
+                foreach ($files as $file) {
+                    if ($file !== '.' && $file !== '..') {
+                        $filePath = $directory . DIRECTORY_SEPARATOR . $file;
+                        if (is_file($filePath)) {
+                            unlink($filePath);
+                        }
+                    }
+                }
+                rmdir($directory);
+            }
+        } catch (Exception $e) {
+            Log::warning('Error cleaning up directory: ' . $e->getMessage());
+        }
+    }
+
     public function parseValidationErrors($errors)
     {
         $parsedErrors = [];
@@ -345,10 +430,31 @@ class TerrafundCreateGeometryController extends Controller
 
                 return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
             }
+
+            // Validate coordinate system and bounds before inserting to DB
+            $coordinateValidation = $this->validateCoordinateSystemAndBounds($geojsonPath);
+            if (! $coordinateValidation['valid']) {
+                // Clean up temporary files
+                if (file_exists($geojsonPath)) {
+                    unlink($geojsonPath);
+                }
+                $this->cleanupDirectory($directory);
+
+                return response()->json([
+                    'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).',
+                ], 400);
+            }
+
             $uuid = App::make(PolygonService::class)->insertGeojsonToDB($geojsonFilename, $entity_uuid, $entity_type);
             if (isset($uuid['error'])) {
                 return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
             }
+
+            // Clean up temporary files
+            if (file_exists($geojsonPath)) {
+                unlink($geojsonPath);
+            }
+            $this->cleanupDirectory($directory);
 
             return response()->json(['message' => 'Shape file processed and inserted successfully', 'uuid' => $uuid], 200);
         } else {
@@ -619,7 +725,23 @@ class TerrafundCreateGeometryController extends Controller
         $rules = [
           'entity_uuid' => 'required|string',
           'entity_type' => 'required|string',
-          'file' => 'required|file|mimes:json,geojson',
+          'file' => [
+              'required',
+              'file',
+              'mimetypes:application/json,application/geo+json,text/plain',
+              function ($attribute, $value, $fail) {
+                  $allowedExtensions = ['json', 'geojson'];
+                  $extension = strtolower($value->getClientOriginalExtension());
+                  if (! in_array($extension, $allowedExtensions)) {
+                      return $fail('The file must have a .json or .geojson extension.');
+                  }
+                  $content = file_get_contents($value->getPathname());
+                  json_decode($content, true);
+                  if (json_last_error() !== JSON_ERROR_NONE) {
+                      return $fail('The file must contain valid JSON data.');
+                  }
+              },
+          ],
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -635,9 +757,29 @@ class TerrafundCreateGeometryController extends Controller
         $tempDir = sys_get_temp_dir();
         $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
         $file->move($tempDir, $filename);
+        $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+
+        // Validate coordinate system and bounds before inserting to DB
+        $coordinateValidation = $this->validateCoordinateSystemAndBounds($geojsonPath);
+        if (! $coordinateValidation['valid']) {
+            // Clean up temporary files
+            if (file_exists($geojsonPath)) {
+                unlink($geojsonPath);
+            }
+
+            return response()->json([
+                'error' => 'Invalid coordinate system or bounds. Please ensure geometry projection is WGS-84 and coordinates are within valid bounds (lat: -90 to 90, lng: -180 to 180).',
+            ], 400);
+        }
+
         $uuid = App::make(PolygonService::class)->insertGeojsonToDB($filename, $entity_uuid, $entity_type);
         if (is_array($uuid) && isset($uuid['error'])) {
             return response()->json(['error' => 'Failed to insert GeoJSON data into the database', 'message' => $uuid['error']], 500);
+        }
+
+        // Clean up temporary files
+        if (file_exists($geojsonPath)) {
+            unlink($geojsonPath);
         }
 
         return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
@@ -649,7 +791,26 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $rules = [
-          'file' => 'required|file|mimes:json,geojson',
+          'file' => [
+              'required',
+              'file',
+              'mimetypes:application/json,application/geo+json,text/plain',
+              function ($attribute, $value, $fail) {
+                  $allowedExtensions = ['json', 'geojson'];
+                  $extension = strtolower($value->getClientOriginalExtension());
+
+                  if (! in_array($extension, $allowedExtensions)) {
+                      return $fail('The file must have a .json or .geojson extension.');
+                  }
+
+                  $content = file_get_contents($value->getPathname());
+                  json_decode($content, true);
+
+                  if (json_last_error() !== JSON_ERROR_NONE) {
+                      return $fail('The file must contain valid JSON data.');
+                  }
+              },
+          ],
         ];
         $body = $request->all();
         $validator = Validator::make($request->all(), $rules);
@@ -825,7 +986,26 @@ class TerrafundCreateGeometryController extends Controller
         ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
         ini_set('memory_limit', '-1');
         $rules = [
-          'file' => 'required|file|mimes:json,geojson',
+          'file' => [
+              'required',
+              'file',
+              'mimetypes:application/json,application/geo+json,text/plain',
+              function ($attribute, $value, $fail) {
+                  $allowedExtensions = ['json', 'geojson'];
+                  $extension = strtolower($value->getClientOriginalExtension());
+
+                  if (! in_array($extension, $allowedExtensions)) {
+                      return $fail('The file must have a .json or .geojson extension.');
+                  }
+
+                  $content = file_get_contents($value->getPathname());
+                  json_decode($content, true);
+
+                  if (json_last_error() !== JSON_ERROR_NONE) {
+                      return $fail('The file must contain valid JSON data.');
+                  }
+              },
+          ],
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -1369,6 +1549,7 @@ class TerrafundCreateGeometryController extends Controller
                 'is_acknowledged' => false,
                 'name' => 'Polygon Validation',
             ]);
+            // Use optimized single job with small chunks
             $job = new RunSitePolygonsValidationJob($delayedJob->id, $uuids);
             dispatch($job);
 
@@ -1377,65 +1558,6 @@ class TerrafundCreateGeometryController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred during validation'], 500);
         }
-    }
-
-    public function getCurrentSiteValidation(Request $request)
-    {
-        try {
-            $uuid = $request->input('uuid');
-            $sitePolygonsUuids = GeometryHelper::getSitePolygonsUuids($uuid);
-            $checkedPolygons = [];
-
-            foreach ($sitePolygonsUuids as $polygonUuid) {
-                $criteriaData = $this->fetchCriteriaData($polygonUuid);
-
-                if (isset($criteriaData['error'])) {
-                    Log::error('Error fetching criteria data', ['polygon_uuid' => $polygonUuid, 'error' => $criteriaData['error']]);
-                    $checkedPolygons[] = [
-                      'uuid' => $polygonUuid,
-                      'valid' => false,
-                      'checked' => false,
-                      'nonValidCriteria' => [],
-                    ];
-
-                    continue;
-                }
-
-                $isValid = true;
-                $nonValidCriteria = [];
-                if (empty($criteriaData['criteria_list'])) {
-                    $isValid = false;
-                } else {
-                    foreach ($criteriaData['criteria_list'] as $criteria) {
-                        if ($criteria['valid'] == 0) {
-                            $isValid = false;
-                            $nonValidCriteria[] = $criteria;
-                        }
-                    }
-                }
-
-                $checkedPolygons[] = [
-                  'uuid' => $polygonUuid,
-                  'valid' => $isValid,
-                  'checked' => ! empty($criteriaData['criteria_list']),
-                  'nonValidCriteria' => $nonValidCriteria,
-                ];
-            }
-
-            return $checkedPolygons;
-        } catch (\Exception $e) {
-            Log::error('Error during current site validation: ' . $e->getMessage());
-
-            return response()->json(['error' => 'An error occurred during current site validation'], 500);
-        }
-    }
-
-    private function fetchCriteriaData($polygonUuid)
-    {
-        $polygonRequest = new Request(['uuid' => $polygonUuid]);
-        $criteriaDataResponse = $this->getCriteriaData($polygonRequest);
-
-        return json_decode($criteriaDataResponse->getContent(), true);
     }
 
     public function validatePlantStartDate(Request $request)
