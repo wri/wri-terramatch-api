@@ -337,7 +337,6 @@ class Organisation extends Model implements MediaModel
             ->where('collection', 'core-team-leaders');
     }
 
-
     public function financialCollection(): HasMany
     {
         return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
