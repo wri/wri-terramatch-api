@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\V2\DisturbanceReport;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Forms\FormSection;
@@ -52,6 +53,11 @@ class CustomFormHelper
                 $model = \App\Models\V2\FinancialReport::class;
 
                 break;
+
+                break;
+            case 'disturbance-report':
+                $model = DisturbanceReport::class;
+                // no break
             default:
                 throw new \InvalidArgumentException("Unknown form type: $type");
         }

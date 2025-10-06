@@ -280,6 +280,25 @@ return [
             ],
             'file-collections' => [],
         ],
+        'disturbance-report' => [
+            'label' => 'Disturbance Report',
+            'model' => App\Models\V2\DisturbanceReport::class,
+            'fields' => [
+                'dis-rep-description' => ['property' => 'description', 'label' => 'Description', 'input_type' => 'long-text'],
+                'dis-rep-action-description' => ['property' => 'action_description', 'label' => 'Action Description', 'input_type' => 'long-text'],
+            ],
+            'relations' => [
+                'dis-rep-entries' => [
+                    'property' => 'entries',
+                    'label' => 'Disturbance Entries',
+                    'resource' => 'App\Http\Resources\V2\DisturbanceReportEntryResource',
+                    'input_type' => 'disturbanceReportEntries',
+                ],
+            ],
+            'file-collections' => [
+                'dis-rep-media-assets' => ['property' => 'media', 'label' => 'Media Assets', 'input_type' => 'file', 'multichoice' => true],
+            ],
+        ],
         'project-pitch' => [
             'label' => 'Project Pitch',
             'model' => App\Models\V2\ProjectPitch::class,
