@@ -29,7 +29,11 @@ class UpdateFormSubmissionStatusController extends Controller
         switch ($updateFormSubmissionStatusRequest->status) {
             case FormSubmission::STATUS_REQUIRES_MORE_INFORMATION:
                 Mail::to($formSubmission->user->email_address)->queue(
-                    new FormSubmissionFeedbackReceived(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
+                    new FormSubmissionFeedbackReceived(
+                        data_get($updateFormSubmissionStatusRequest, 'feedback', null),
+                        $user,
+                        $formSubmission->application()->first()
+                    )
                 );
                 $notification = new Notification([
                     'user_id' => $formSubmission->user->id,
