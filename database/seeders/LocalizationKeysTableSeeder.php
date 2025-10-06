@@ -52,6 +52,7 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('form-submission-feedback-received.title', 'You have received feedback on your application');
         $this->createLocalizationKey('form-submission-feedback-received.body', 'Your application requires more information.');
         $this->createLocalizationKey('form-submission-feedback-received.body-feedback', 'Your application requires more information. Please see comments below:<br><br> {feedback}');
+        $this->createLocalizationKey('form-submission-feedback-received.cta', 'View Application');
 
         // form-submission-final-stage-approved
         $this->createLocalizationKey('form-submission-final-stage-approved.subject', 'Application Approved');
