@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\Forms\CreateEntityFormRequest;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
-use App\Models\V2\ScheduledJobs\TaskDueJob;
 use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
@@ -36,9 +35,8 @@ class CreateNurseryWithFormController extends Controller
             // If we're before the current task's due date, create a report for that task
             $createReport = $now <= $lastTask->due_at;
             if (! $createReport) {
-                // Also, if we're more than 4 weeks before the next task's due date, create a backdated report
-                $nextTask = TaskDueJob::framework($nursery->framework_key)->first();
-                $createReport = ! empty($nextTask) && $nextTask->due_at > $now->addWeeks(4);
+                // Also, if we're within 4 weeks after the last task's due date, create a backdated report
+                $createReport = $now <= $lastTask->due_at->addWeeks(4);
             }
             if ($createReport) {
                 $lastTask->nurseryReports()->create([
