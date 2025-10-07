@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
 class PolygonService
@@ -1236,7 +1237,20 @@ class PolygonService
 
     public function processClippedPolygons(array $polygonUuids, $delayed_job_id = null)
     {
-        $geojson = GeometryHelper::getPolygonsGeojson($polygonUuids);
+        $fixablePolygonUuids = $this->filterFixableOverlappingPolygons($polygonUuids);
+
+        if (empty($fixablePolygonUuids)) {
+            Log::info('No fixable overlapping polygons found', ['original_count' => count($polygonUuids)]);
+
+            return [];
+        }
+
+        Log::info('Filtered polygons for clipping', [
+            'original_count' => count($polygonUuids),
+            'fixable_count' => count($fixablePolygonUuids),
+        ]);
+
+        $geojson = GeometryHelper::getPolygonsGeojson($fixablePolygonUuids);
 
         $clippedPolygons = App::make(PythonService::class)->clipPolygons($geojson);
         $uuids = [];
@@ -1420,5 +1434,55 @@ class PolygonService
         }
 
         return $baseExcludedCriteria;
+    }
+
+    /**
+     * Filter polygons to only include those that have fixable overlaps
+     * Based on overlap percentage ≤3.5% AND intersection area ≤0.1 hectares
+     */
+    private function filterFixableOverlappingPolygons(array $polygonUuids): array
+    {
+        if (empty($polygonUuids)) {
+            return [];
+        }
+
+        $overlappingPolygons = CriteriaSite::forCriteria(self::OVERLAPPING_CRITERIA_ID)
+            ->whereIn('polygon_id', $polygonUuids)
+            ->whereNotNull('extra_info')
+            ->get();
+
+        $fixablePolygonUuids = [];
+        $allOverlappingUuids = [];
+
+        foreach ($overlappingPolygons as $criteriaSite) {
+            $extraInfo = json_decode($criteriaSite->extra_info, true);
+
+            if (! is_array($extraInfo)) {
+                continue;
+            }
+
+            $hasFixableOverlap = false;
+
+            foreach ($extraInfo as $overlapData) {
+                $percentage = $overlapData['percentage'] ?? 0;
+                $intersectionArea = $overlapData['intersectionArea'] ?? 0;
+                $overlappingPolyUuid = $overlapData['poly_uuid'] ?? null;
+
+                if ($percentage <= 3.5 && $intersectionArea <= 0.1 && $overlappingPolyUuid) {
+                    $hasFixableOverlap = true;
+                    if (in_array($overlappingPolyUuid, $polygonUuids)) {
+                        $allOverlappingUuids[] = $overlappingPolyUuid;
+                    }
+                }
+            }
+
+            if ($hasFixableOverlap) {
+                $fixablePolygonUuids[] = $criteriaSite->polygon_id;
+            }
+        }
+
+        $allPolygonsToProcess = array_unique(array_merge($fixablePolygonUuids, $allOverlappingUuids));
+
+        return array_values($allPolygonsToProcess);
     }
 }

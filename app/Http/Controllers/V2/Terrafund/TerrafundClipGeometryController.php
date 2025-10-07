@@ -27,6 +27,13 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
         ini_set('memory_limit', '-1');
         $user = Auth::user();
         $site = Site::isUuid($uuid)->first();
+
+        $polygonUuids = GeometryHelper::getSiteOverlappingPolygonsUuids($uuid);
+
+        if (empty($polygonUuids)) {
+            return response()->json(['message' => 'No overlapping polygons found for the site that can be fixed.'], 204);
+        }
+
         $delayedJob = DelayedJobProgress::create([
           'processed_content' => 0,
           'created_by' => $user->id,
@@ -38,7 +45,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
           'is_acknowledged' => false,
           'name' => 'Polygon Fix',
       ]);
-        $polygonUuids = GeometryHelper::getSitePolygonsUuids($uuid)->toArray();
+
         $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
         dispatch($job);
 
@@ -84,13 +91,28 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
             if ($polygonOverlappingExtraInfo) {
                 $decodedInfo = json_decode($polygonOverlappingExtraInfo, true);
-                $polygonUuidsOverlapping = array_map(function ($item) {
-                    return $item['poly_uuid'] ?? null;
-                }, $decodedInfo);
-                $polygonUuidsFiltered = array_filter($polygonUuidsOverlapping);
 
-                array_unshift($polygonUuidsFiltered, $uuid);
-                $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuidsFiltered);
+                if (is_array($decodedInfo)) {
+                    $hasFixableOverlap = false;
+                    $overlappingUuids = [];
+
+                    foreach ($decodedInfo as $overlapData) {
+                        $percentage = $overlapData['percentage'] ?? 0;
+                        $intersectionArea = $overlapData['intersectionArea'] ?? 0;
+                        $overlappingPolyUuid = $overlapData['poly_uuid'] ?? null;
+
+                        if ($percentage <= 3.5 && $intersectionArea <= 0.1 && $overlappingPolyUuid) {
+                            $hasFixableOverlap = true;
+                            $overlappingUuids[] = $overlappingPolyUuid;
+                        }
+                    }
+
+                    // Only include if there's at least one fixable overlap
+                    if ($hasFixableOverlap) {
+                        array_unshift($overlappingUuids, $uuid);
+                        $allPolygonUuids = array_merge($allPolygonUuids, $overlappingUuids);
+                    }
+                }
             }
         }
 
@@ -147,13 +169,29 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
 
                 continue;
             }
+
             $decodedInfo = json_decode($polygonOverlappingExtraInfo, true);
-            $polygonUuidsOverlapping = array_map(function ($item) {
-                return $item['poly_uuid'] ?? null;
-            }, $decodedInfo);
-            $polygonUuids = array_filter($polygonUuidsOverlapping);
-            array_unshift($polygonUuids, $uuid);
-            $allPolygonUuids = array_merge($allPolygonUuids, $polygonUuids);
+
+            if (is_array($decodedInfo)) {
+                $hasFixableOverlap = false;
+                $overlappingUuids = [];
+
+                foreach ($decodedInfo as $overlapData) {
+                    $percentage = $overlapData['percentage'] ?? 0;
+                    $intersectionArea = $overlapData['intersectionArea'] ?? 0;
+                    $overlappingPolyUuid = $overlapData['poly_uuid'] ?? null;
+
+                    if ($percentage <= 3.5 && $intersectionArea <= 0.1 && $overlappingPolyUuid) {
+                        $hasFixableOverlap = true;
+                        $overlappingUuids[] = $overlappingPolyUuid;
+                    }
+                }
+
+                if ($hasFixableOverlap) {
+                    array_unshift($overlappingUuids, $uuid);
+                    $allPolygonUuids = array_merge($allPolygonUuids, $overlappingUuids);
+                }
+            }
         }
         $uniquePolygonUuids = array_unique($allPolygonUuids);
         $delayedJob = null;
@@ -170,7 +208,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
                 'is_acknowledged' => false,
                 'name' => 'Polygon Fix',
             ]);
-            $job = new FixPolygonOverlapJob($delayedJob->id, $polygonUuids, $user->id);
+            $job = new FixPolygonOverlapJob($delayedJob->id, $uniquePolygonUuids, $user->id);
             dispatch($job);
         }
 
