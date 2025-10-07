@@ -101,7 +101,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
                         $intersectionArea = $overlapData['intersectionArea'] ?? 0;
                         $overlappingPolyUuid = $overlapData['poly_uuid'] ?? null;
 
-                        if ($percentage <= 3.5 && $intersectionArea <= 0.1 && $overlappingPolyUuid) {
+                        if ($percentage <= 3.5 && $intersectionArea <= 0.118 && $overlappingPolyUuid) {
                             $hasFixableOverlap = true;
                             $overlappingUuids[] = $overlappingPolyUuid;
                         }
@@ -181,7 +181,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
                     $intersectionArea = $overlapData['intersectionArea'] ?? 0;
                     $overlappingPolyUuid = $overlapData['poly_uuid'] ?? null;
 
-                    if ($percentage <= 3.5 && $intersectionArea <= 0.1 && $overlappingPolyUuid) {
+                    if ($percentage <= 3.5 && $intersectionArea <= 0.118 && $overlappingPolyUuid) {
                         $hasFixableOverlap = true;
                         $overlappingUuids[] = $overlappingPolyUuid;
                     }
