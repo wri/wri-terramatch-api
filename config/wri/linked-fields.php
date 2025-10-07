@@ -606,7 +606,7 @@ return [
             'label' => 'Project Report',
             'model' => 'App\Models\V2\Projects\ProjectReport',
             'fields' => [
-                'pro-rep-planting-status' => ['property' => 'planting_status','label' => 'What is the status of planting for this project?','input_type' => 'select','multichoice' => false,'option_list_key' => 'planting-status'],
+                'pro-rep-planting-status' => ['property' => 'planting_status','label' => 'Planting status','input_type' => 'select','multichoice' => false,'option_list_key' => 'planting-status'],
                 'pro-rep-title' => ['property' => 'title', 'label' => 'Title', 'input_type' => 'text'],
                 'pro-rep-ind-1' => ['property' => 'ethnic_indigenous_1', 'label' => 'Indigenous 1', 'input_type' => 'number'],
                 'pro-rep-ind-2' => ['property' => 'ethnic_indigenous_2', 'label' => 'Indigenous 2', 'input_type' => 'number'],
@@ -1087,7 +1087,7 @@ return [
             'fields' => [
                 'site-rep-planting-status' => [
                     'property' => 'planting_status',
-                    'label' => 'What is the status of planting at this site?',
+                    'label' => 'Planting status',
                     'input_type' => 'select',
                     'multichoice' => false,
                     'option_list_key' => 'planting-status',
