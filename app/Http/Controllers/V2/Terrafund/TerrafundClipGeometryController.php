@@ -82,14 +82,17 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
           'is_acknowledged' => false,
           'name' => 'Polygon Fix',
         ]);
+        $overlappingPolygons = CriteriaSite::forCriteria(PolygonService::OVERLAPPING_CRITERIA_ID)
+            ->whereIn('polygon_id', $polygonUuids)
+            ->whereNotNull('extra_info')
+            ->get()
+            ->keyBy('polygon_id');
+
         $allPolygonUuids = [];
         foreach ($polygonUuids as $uuid) {
-            $polygonOverlappingExtraInfo = CriteriaSite::forCriteria(PolygonService::OVERLAPPING_CRITERIA_ID)
-                ->where('polygon_id', $uuid)
-                ->first()
-                ->extra_info ?? null;
+            $polygonOverlappingExtraInfo = $overlappingPolygons->get($uuid)?->extra_info ?? null;
 
-            if ($polygonOverlappingExtraInfo) {
+            if ($polygonOverlappingExtraInfo != null) {
                 $decodedInfo = json_decode($polygonOverlappingExtraInfo, true);
 
                 if (is_array($decodedInfo)) {
@@ -101,7 +104,7 @@ class TerrafundClipGeometryController extends TerrafundCreateGeometryController
                         $intersectionArea = $overlapData['intersectionArea'] ?? 0;
                         $overlappingPolyUuid = $overlapData['poly_uuid'] ?? null;
 
-                        if ($percentage <= 3.5 && $intersectionArea <= 0.118 && $overlappingPolyUuid) {
+                        if ($percentage <= 3.5 && $intersectionArea <= 0.118 && $overlappingPolyUuid != null) {
                             $hasFixableOverlap = true;
                             $overlappingUuids[] = $overlappingPolyUuid;
                         }
