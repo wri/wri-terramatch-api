@@ -155,6 +155,7 @@ class CreateReportCommand extends Command
                 });
 
             return 0;
+
         } elseif ($type === 'disturbance') {
             // For disturbance reports, no task is required, but it's related to a project
             $dueAtOption = $this->option('due_at');

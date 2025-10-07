@@ -53,10 +53,11 @@ class CustomFormHelper
                 $model = \App\Models\V2\FinancialReport::class;
 
                 break;
-            case 'disturbance-report':
-                $model = DisturbanceReport::class;
 
                 break;
+            case 'disturbance-report':
+                $model = DisturbanceReport::class;
+                // no break
             default:
                 throw new \InvalidArgumentException("Unknown form type: $type");
         }

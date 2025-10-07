@@ -6,8 +6,10 @@ use App\Constants\PolygonFields;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
+use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Services\PolygonService;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -347,6 +349,59 @@ class GeometryHelper
     public static function getSitePolygonsUuids($uuid)
     {
         return SitePolygon::where('site_id', $uuid)->where('is_active', true)->get()->pluck('poly_id');
+    }
+
+    /**
+     * Get only site polygons that have overlapping criteria and can be fixed
+     * Filters by overlap percentage ≤3.5% AND intersection area ≤0.1 hectares
+     */
+    public static function getSiteOverlappingPolygonsUuids($siteUuid): array
+    {
+        $sitePolygonUuids = SitePolygon::where('site_id', $siteUuid)
+            ->where('is_active', true)
+            ->pluck('poly_id')
+            ->toArray();
+
+        if (empty($sitePolygonUuids)) {
+            return [];
+        }
+
+        $overlappingPolygons = CriteriaSite::forCriteria(PolygonService::OVERLAPPING_CRITERIA_ID)
+            ->whereIn('polygon_id', $sitePolygonUuids)
+            ->whereNotNull('extra_info')
+            ->get();
+
+        $fixablePolygonUuids = [];
+        $allOverlappingUuids = [];
+
+        foreach ($overlappingPolygons as $criteriaSite) {
+            $extraInfo = json_decode($criteriaSite->extra_info, true);
+
+            if (! is_array($extraInfo)) {
+                continue;
+            }
+
+            $hasFixableOverlap = false;
+
+            foreach ($extraInfo as $overlapData) {
+                $percentage = $overlapData['percentage'] ?? 0;
+                $intersectionArea = $overlapData['intersectionArea'] ?? 0;
+                $overlappingPolyUuid = $overlapData['poly_uuid'] ?? null;
+
+                if ($percentage <= 3.5 && $intersectionArea <= 0.118 && $overlappingPolyUuid) {
+                    $hasFixableOverlap = true;
+                    $allOverlappingUuids[] = $overlappingPolyUuid;
+                }
+            }
+
+            if ($hasFixableOverlap) {
+                $fixablePolygonUuids[] = $criteriaSite->polygon_id;
+            }
+        }
+
+        $allPolygonsToProcess = array_unique(array_merge($fixablePolygonUuids, $allOverlappingUuids));
+
+        return array_values($allPolygonsToProcess);
     }
 
     public static function getSitePolygonsOfPolygons(array $polygonUuids)

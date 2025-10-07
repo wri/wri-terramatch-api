@@ -325,6 +325,18 @@ class Organisation extends Model implements MediaModel
         return $this->hasMany(OwnershipStake::class, 'organisation_id', 'uuid');
     }
 
+    public function leadershipTeam(): HasMany
+    {
+        return $this->hasMany(Leaderships::class, 'organisation_id', 'id')
+            ->where('collection', 'leadership-team');
+    }
+
+    public function coreTeamLeaders(): HasMany
+    {
+        return $this->hasMany(Leaderships::class, 'organisation_id', 'id')
+            ->where('collection', 'core-team-leaders');
+    }
+
     public function financialCollection(): HasMany
     {
         return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
@@ -448,5 +460,10 @@ class Organisation extends Model implements MediaModel
     public function invites(): HasMany
     {
         return $this->HasMany(OrganisationInvite::class);
+    }
+
+    public function leaderships(): HasMany
+    {
+        return $this->hasMany(Leaderships::class, 'organisation_id', 'id');
     }
 }
