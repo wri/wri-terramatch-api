@@ -40,8 +40,6 @@ FormQuestionRead:
   $ref: './FormQuestionRead.yml'
 FormQuestionCreate:
   $ref: './FormQuestionCreate.yml'
-FormSectionUpdate:
-  $ref: './FormSectionUpdate.yml'
 FormUpdate:
   $ref: './FormUpdate.yml'
 GeojsonRead:
@@ -68,8 +66,6 @@ V2AdminOrganisationUpdate:
   $ref: './V2AdminOrganisationUpdate.yml'
 V2GenericList:
   $ref: './V2GenericList.yml'
-V2CommonOptions:
-  $ref: './V2CommonOptions.yml'
 V2OrganisationApproveRejectUser:
   $ref: './V2OrganisationApproveRejectUser.yml'
 V2OrganisationUpdate:
@@ -150,8 +146,6 @@ ProjectWithSchemaRead:
   $ref: './ProjectWithSchemaRead.yml'
 SiteFullRead:
   $ref: './SiteFullRead.yml'
-SiteWithSchemaRead:
-  $ref: './SiteWithSchemaRead.yml'
 ProjectPitchRead:
   $ref: './ProjectPitchRead.yml'
 AuditRead:
@@ -280,12 +274,6 @@ DashboardJobsCreatedData:
   $ref: './DashboardJobsCreatedData.yml'
 DashboardRestorationStrategyResponse:
   $ref: './DashboardRestorationStrategyResponse.yml'
-DashboardTreeRestorationGoalResponse:
-  $ref: './DashboardTreeRestorationGoalResponse.yml'
-DashboardTreesUnderRestorationActual:
-  $ref: './DashboardTreesUnderRestorationActual.yml'
-DashboardGetPolygonStatusResponse:
-  $ref: './DashboardGetPolygonStatusResponse.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
 DashboardActiveProjectsListViewResponse:
@@ -300,8 +288,6 @@ DashboardProjectProfileResponse:
   $ref: './DashboardProjectProfileResponse.yml'
 DashboardProjectProfileData:
   $ref: './DashboardProjectProfileData.yml'
-DashboardTopProjectsResponse:
-  $ref: './DashboardTopProjectsResponse.yml'
 DashboardTopPlantedTree:
   $ref: './DashboardTopPlantedTree.yml'
 DashboardTopTreeSpecies:
@@ -372,3 +358,11 @@ V2FinancialIndicatorsRead:
   $ref: './V2FinancialIndicatorsRead.yml'
 V2FinancialIndicatorsUpdate:
   $ref: './V2FinancialIndicatorsUpdate.yml'
+V2FinancialReportRead:
+  $ref: './V2FinancialReportRead.yml'
+V2FinancialLiteReportRead:
+  $ref: './V2FinancialLiteReportRead.yml'
+V2OrganisationInviteCreate:
+  $ref: './V2OrganisationInviteCreate.yml'
+V2OrganisationInviteRead:
+  $ref: './V2OrganisationInviteRead.yml'

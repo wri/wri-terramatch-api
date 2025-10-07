@@ -3,27 +3,31 @@
 namespace App\Http\Controllers\V2\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V2\User\ActionResource;
-use App\Models\V2\Action;
+use App\Http\Resources\DelayedJobResource;
+use App\Jobs\RunIndexMyActionsJob;
+use App\Models\DelayedJob;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
 class IndexMyActionsController extends Controller
 {
-    public function __invoke(Request $request): AnonymousResourceCollection
+    public function __invoke(Request $request)
     {
-        $user = Auth::user();
+        try {
+            $user = Auth::user();
 
-        $projectIds = $user->projects()->pluck('v2_projects.id')->toArray();
+            $delayedJob = DelayedJob::create();
+            $job = new RunIndexMyActionsJob(
+                $delayedJob->id,
+                $user
+            );
+            dispatch($job);
 
-        $qry = Action::query()
-            ->with('targetable')
-            ->pending()
-            ->projectIds($projectIds);
+            return (new DelayedJobResource($delayedJob))->additional(['message' => 'My actions are being processed']);
+        } catch (\Exception $e) {
+            Log::error('Error during my actions : ' . $e->getMessage());
 
-        $actions = $qry->get();
-
-        return ActionResource::collection($actions);
+            return response()->json(['error' => 'An error occurred during my actions'], 500);
+        }
     }
 }

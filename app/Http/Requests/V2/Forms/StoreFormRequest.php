@@ -45,6 +45,7 @@ class StoreFormRequest extends FormRequest
             'form_sections.*.form_questions.*.additional_props' => ['sometimes'],
             'form_sections.*.form_questions.*.order' => ['required', 'integer'],
             'form_sections.*.form_questions.*.options_list' => ['sometimes'],
+            'form_sections.*.form_questions.*.years' => ['sometimes', 'nullable', 'array'],
 
             'form_sections.*.form_questions.*.table_headers' => ['sometimes'],
             'form_sections.*.form_questions.*.table_headers.*.label' => ['sometimes', 'string'],

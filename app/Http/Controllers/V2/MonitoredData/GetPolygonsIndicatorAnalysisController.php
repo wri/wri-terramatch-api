@@ -15,6 +15,9 @@ class GetPolygonsIndicatorAnalysisController extends Controller
     public function __invoke(EntityModel $entity, string $slug)
     {
         $slugMappings = [
+            'treeCover' => [
+                'relation_name' => 'treeCoverIndicator',
+            ],
             'treeCoverLoss' => [
                 'relation_name' => 'treeCoverLossIndicator',
                 'extra_columns' => '',
@@ -38,8 +41,7 @@ class GetPolygonsIndicatorAnalysisController extends Controller
 
         try {
             return SitePolygon::whereHas($slugMappings[$slug]['relation_name'], function ($query) use ($slug) {
-                $query->where('indicator_slug', $slug)
-                    ->where('year_of_analysis', date('Y'));
+                $query->where('indicator_slug', $slug);
             })
                 ->whereHas('site', function ($query) use ($entity) {
                     if (get_class($entity) == Site::class) {
@@ -62,15 +64,29 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                 ->where('status', 'approved')
                 ->get()
                 ->map(function ($polygon) use ($slugMappings, $slug) {
-                    $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
-                        ->where('indicator_slug', $slug)
-                        ->select([
-                            'indicator_slug',
-                            'year_of_analysis',
-                            'value',
-                            'created_at',
-                        ])
-                        ->first();
+                    if ($slug == 'treeCover') {
+                        $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
+                            ->where('indicator_slug', $slug)
+                            ->select([
+                                'indicator_slug',
+                                'year_of_analysis',
+                                'percent_cover',
+                                'project_phase',
+                                'plus_minus_percent',
+                                'created_at',
+                            ])
+                            ->first();
+                    } else {
+                        $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
+                            ->where('indicator_slug', $slug)
+                            ->select([
+                                'indicator_slug',
+                                'year_of_analysis',
+                                'value',
+                                'created_at',
+                            ])
+                            ->first();
+                    }
                     $results = [
                         'id' => $polygon->id,
                         'poly_name' => $polygon->poly_name ?? '-',
@@ -88,16 +104,11 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                     ];
                     if (str_contains($slug, 'treeCoverLoss')) {
                         $valueYears = json_decode($indicator->value, true);
-                        $results['data']['2015'] = round((float) $valueYears['2015'], 1);
-                        $results['data']['2016'] = round((float) $valueYears['2016'], 1);
-                        $results['data']['2017'] = round((float) $valueYears['2017'], 1);
-                        $results['data']['2018'] = round((float) $valueYears['2018'], 1);
-                        $results['data']['2019'] = round((float) $valueYears['2019'], 1);
-                        $results['data']['2020'] = round((float) $valueYears['2020'], 1);
-                        $results['data']['2021'] = round((float) $valueYears['2021'], 1);
-                        $results['data']['2022'] = round((float) $valueYears['2022'], 1);
-                        $results['data']['2023'] = round((float) $valueYears['2023'], 1);
-                        $results['data']['2024'] = round((float) $valueYears['2024'], 1);
+                        $years = array_keys($valueYears);
+                        sort($years);
+                        foreach ($years as $year) {
+                            $results['data']["$year"] = round((float) ($valueYears["$year"] ?? 0), 1);
+                        }
                     }
 
                     if ($slug == 'restorationByEcoRegion') {
@@ -108,6 +119,12 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                     if ($slug == 'restorationByLandUse' || $slug == 'restorationByStrategy') {
                         $values = json_decode($indicator->value, true);
                         $results = array_merge($results, $this->processValuesHectares($values));
+                    }
+
+                    if ($slug == 'treeCover') {
+                        $results['project_phase'] = $indicator->project_phase ?? '';
+                        $results['plus_minus_percent'] = $indicator->plus_minus_percent ?? 0;
+                        $results['percent_cover'] = $indicator->percent_cover ?? 0;
                     }
 
                     return $results;

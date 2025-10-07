@@ -25,7 +25,7 @@ c9534124-afcb-4c06-bfdb-d2ade7b82b54,DRC_22_COCAT,Coop�rative des Cafeiculteur
 1e207d56-d0ed-4b4f-b1d9-94aa8aafb71f,DRC_22_PwP,Plant with Purpose - DRC,"Kakumba, DRC � Restoring Land and Lives - Plant with Purpose"
 3a2099dd-9a85-4091-b0c7-5edd11acbcd6,DRC_23_ARCOS,Albertine Rift Conservation Society (ARCOS Network),Albertine Rift Conservation Society (ARCOS Network)
 bbd1852f-1c58-4a05-8aa9-8d41b5fe4bbc,DRC_23_CCAO,CLIMATE CHANGE AFRICA OPPORTUNITIES (CCAO),CLIMATE CHANGE AFRICA OPPORTUNITIES (CCAO)
-a47c6c63-0558-49ca-9dfa-c26ce39981bf,DRC_23_CDC,"COOPERATIVE DES CAFEICULTEURS ""TUUNGANE""",R�forestation des collines et plaine de la Ruzizi � travers la caf�iculture
+a47c6c63-0558-49ca-9dfa-c26ce39981bf,DRC_23_COCAT,"COOPERATIVE DES CAFEICULTEURS ""TUUNGANE""",R�forestation des collines et plaine de la Ruzizi � travers la caf�iculture
 d3899fa2-d478-4b9a-ae86-8c58f5db8910,DRC_23_GAD,Green Action Developpement,"Renforcement de la r�silience des communaut�s locales de l'Est de la RDC, dans le territoire de Kalehe, face aux cons�quences de la d�forestation et la d�gradation des �cosyst�mes et des terres"
 6eb233d3-63bc-41dd-be2b-7d4f7c01a95a,DRC_23_IADL,Initiatives et Actions pour le d�veloppement Local _ IADL,"Promotion et Gestion durable des micro-boisements individuels dans le territoire de Kabare, province du Sud-Kivu en RDC."
 921e8a4e-db12-4231-b474-69030cd6513d,DRC_23_PFDK,PLATE FORME DIOBASS AU KIVU,"Agir pour un �cosyst�me durable autour de la Rivi�re Ruzizi � partir du  Sud-Kivu ,  ""APEDAR-Sud-Kivu"""
@@ -54,7 +54,7 @@ a727d737-370f-4ac0-889c-88b7b190e4ff,GHA_23_EAF,Environment and Agroforestry Fou
 213c1946-d7f8-4c03-95c3-5774dab48254,GHA_23_FANTEAKWA,Fanteakwa District CCP Cooperative Cocoa Farmers and Marketing Limited,Push 2 Restore
 0f4bdbba-adf9-4554-ba29-fb28d3b9c1fd,GHA_23_GGV,GOSHEN GLOBAL VISION,AGRICULTURE AND FOREST LANDSCAPES RESTORATION PROJECT
 b6b9762b-093c-474a-9fbc-3b36feb44a94,GHA_23_HERP,Herp-Ghana,Landscape level restoration of the degraded semi-deciduous forest of the Wenchi Municipality through community action.
-9db2495f-bee1-4323-97ac-c86a3a4e0283,GHA_23_HMPOANA,Hen Mpoano (Our Coast),UP SCALING RESTORATION EFFORT IN SOUTHWESTERN GHANA
+9db2495f-bee1-4323-97ac-c86a3a4e0283,GHA_23_HMPOANO,Hen Mpoano (Our Coast),UP SCALING RESTORATION EFFORT IN SOUTHWESTERN GHANA
 7414340a-986e-4d5f-a614-249f91c3b9d0,GHA_23_INEC,INSTITUTE OF NATURE AND ENVIRONMENTAL CONSERVATION (INEC GHANA),Restoration of Degraded Forest Landscapes in Offinso Forest District using Native species
 ac097899-437a-42c5-9b67-b70dd91c231e,GHA_23_KUKUOM,Kukuom Cooperative Cocoa Farmers and Marketing Union Limited,Cocoa Landscape Restoration through Dynamic Agroforestry
 30812e57-54e1-4bde-af22-8856baee51d9,GHA_23_MIF,MIHOSO INTERNATIONAL FOUNDATION LBG (MISSION OF HOPE for Society),Community livelihood improvement through sustainable agricultural practices and agroforestry in selected cocoa growing areas in Ghana.
@@ -76,7 +76,7 @@ d6481438-9603-4c68-b152-6586ed825b0a,KEN_22_DNRC,Drylands Natural Resources Cent
 71ffc45f-584a-472c-808d-7715c8d94929,KEN_22_EEPZL,Exotic EPZ,Agroforestry - nurseries and trees - Exotic EPZ
 44c352fb-0581-4b97-92d7-6cbe459e13d0,KEN_22_EFK,EcoFix - Kenya (EFK),EFK-ANA Agroforestry Project - EcoFix (K)
 2e2130be-7da7-4898-a9da-98ebb908cc96,KEN_22_FT,Fairtree.org,FairTree - Kenya - Samburu
-e4a9f60c-e555-43ff-b428-5b13f6501d66,KEN_22_GEL,Green Pot Enterprises,Riparian Land and Water Catchment Areas - Green Pot Enterprises
+e4a9f60c-e555-43ff-b428-5b13f6501d66,KEN_22_GREENPOT,Green Pot Enterprises,Riparian Land and Water Catchment Areas - Green Pot Enterprises
 5b7983b3-e887-44da-8d66-0ee747379214,KEN_22_ILEG,Institute for Law and Environmental Governance (ILEG),"Restoration of Got Abiero and Yala Swamp for Improved Biodiversity Conservation, Community Livelihoods and Local Climate Stabilization Through Tree Growing - ILEG"
 cf16b937-a02b-4691-b816-28669ec348f2,KEN_22_ITF,International Tree Foundation (ITF),"Ecosystem and livelihoods enhancement for People, Nature and Climate in Marsabit County - International Tree Foundation"
 e4fe2fa4-6869-4c1e-9347-ba9b135306f5,KEN_22_KENVO,Kijabe Environment Volunteers (KENVO),Restoration of Kiambu and Lari Landscapes through Planting and Growing Trees - KENVO
@@ -114,7 +114,7 @@ d2c7ba9c-ec6d-47eb-9071-9cd1bbcb8b80,KEN_23_PARAN,Paran women group,"Scaling up 
 a5e428be-71a2-44f8-8a47-08141b0b259c,KEN_23_SCOPEI,Saving and Conservation of Our Planet Earth Intervention (SCOPE INTERVENTION),"Torok River Rehabilitation Project, Phase II."
 8c4c6cf9-5b3e-4f36-9091-24b3b1a80403,KEN_23_SESANA,SEED SAVERS NETWORK ASSOCIATION,Increasing vegetation cover in degraded landscapes through tree growing
 568dc331-b945-41fd-ab57-80a98be57941,KEN_23_SFCAK,Slow Food Convivia Association of Kenya,Women and Youth-Led Climate Initiative for restoration of Mau Forest Ecosystem
-6ac2c02b-fa83-448c-813c-eaab14efecf1,KEN_23_SJF,Justdiggit,South Rift Treecovery
+6ac2c02b-fa83-448c-813c-eaab14efecf1,KEN_23_SJT,Justdiggit,South Rift Treecovery
 146b6912-62a1-4b58-b027-466dc3295731,KEN_23_SKWT,SAVE KENYA WATER TOWERS,REJUVENATING THE GREAT RIFT VALLEY LANSCAPES
 151735a0-0855-4bf0-9c76-55a91fd169f4,KEN_23_SOLIDARIDAD,"Solidaridad Eastern and Central Africa Expertise Centre ""Solidaridad""",SHADE 4 VEGETABLES : The SAVE Project
 82dd3a84-2562-4a6f-85d9-f83790daaaba,KEN_23_WEZESHA,Wezesha community Based organization,"Promoting Agroforestry for community resilience to climate change in Bahati (Nakuru North) Sub-county, Kenya"
@@ -140,7 +140,7 @@ b7f26543-0ddb-4d10-a215-abfc093b0ed0,NIG_22_IITA,International Institute of Trop
 1bbf9901-b62e-47b6-94fd-6dee329bf8c5,NIG_22_POEL,Powerstove Offgrid Electricity (POEL),POELNigeria - Powerstove
 2cfc8e4d-32cc-438b-ba3a-c224a90709d0,NIG_22_S3D,E3D - Niger,Neem- Manioc S3D-Niger
 bbd88e69-cd85-429e-bebf-6234bf82dbb3,RWA_22_ARCOS,Albertine Rift Conservation Society (ARCOS Network),Landscape restoration for improved environmental resilience and community livelihoods - ARCOS
-36504a4e-f7a3-4963-9ff2-9aa9982cf990,RWA_22_BIRDLF,Birdlife International - Kenya,"Enhancing Community Capacity for Climate Resilience and Restoration in the Lake Kivu/Rusizi River Basin, Rwanda � Birdlife"
+36504a4e-f7a3-4963-9ff2-9aa9982cf990,RWA_22_BIRDLIFE,Birdlife International - Kenya,"Enhancing Community Capacity for Climate Resilience and Restoration in the Lake Kivu/Rusizi River Basin, Rwanda � Birdlife"
 f81c1422-025c-45b1-a2e1-d354177523ca,RWA_22_ICRAF,International Centre for Research in Agroforestry (ICRAF),Trees for Landscape Restoration in Rwanda � World Forestry (ICRAF)
 f449aef3-4453-42c9-b542-57acc7c2e5eb,RWA_22_RECOR,Rwanda Environmental Conservation Organization (RECOR),"�Forest Landscape Restoration and Lake Rumira Buffer Zone Restoration   in Bugesera District, Eastern Province.� - RECOR"
 39871658-bff0-49c2-aa20-ccac0b03a2c2,RWA_22_SE,Shekina Enterprise,Strengthening Resilient agriculture practices and improving smallholders� livelihood opportunities through Planting and growing cassava leaves trees in Rulindo district - Shekina
@@ -187,12 +187,12 @@ c3d2858f-aa3d-458e-8e88-5a7f376e6ef4,TGO_22_PERJAT,Les Perma-Jardins du Togo (PE
 d8210ae4-2c85-4094-b0f3-0e0cda687aa9,UGA_22_KF,Kijani Forestry,Multipurpose Agroforestry Plots with Smallholder Farmers - Kijani Forestry
 5b6a5e11-03ae-4adc-b4ef-9bf4239aa705,UGA_22_NTISD,Nsamizi Training Institute of Social Development (NTISD),REFORESTATION - Nsamizi (NTISD)
 d5e0a4ff-8601-45d0-9020-8c104e5ea508,UGA_22_PANR,People and Nature Rwenzori Mountain (PANR),Planting Trees � Reforestation - PANR
-f4b92387-705a-40bf-a7bb-e84f942de1ec,UGA_22_SOLIDRD,Solidaridad - East and Central Africa,ENHANCING AGROFORESTRY IN TEA LANSCAPES OF UGANDA - Solidaridad
+f4b92387-705a-40bf-a7bb-e84f942de1ec,UGA_22_SOLIDARIDAD,Solidaridad - East and Central Africa,ENHANCING AGROFORESTRY IN TEA LANSCAPES OF UGANDA - Solidaridad
 bad12444-7180-4b29-a14c-d2b4305b7f52,UGA_22_SWAGEN,Support for Women in Agriculture and Environment (SWAGEN),Forest Resource Conservation - SWAGEN
 71706fe4-0e80-4552-8be2-d6f6a55e13d2,UGA_22_TAU,Tree Adoption Uganda (TAU),Tree planting - Tree Adoption Uganda
 23fb0b35-2519-48c6-bf97-ce0fae418d53,ZMB_22_MOOTO,Mooto Cashew Suppliers,"SAVE THE EARTH, FEED THE NATION - Mooto Cashew Suppliers, Ltd."
 f6075e7c-1d31-4bee-ba64-154cd664f7a1,ZMB_22_SCOPE,Schools and Colleges Permaculture - Zambia (SCOPE-Zambia),Transforming bare land in to Food forest - SCOPE Zambia
-0733b059-5538-4fd8-8c9a-7adb78aea248,ZMB_22_SOLIDRD,Solidaridad - East and Central Africa,"Farmer Managed Natural Regeneration and Tree Planting in Mazabuka, Zambia - Solidaridad"
+0733b059-5538-4fd8-8c9a-7adb78aea248,ZMB_22_SOLIDARIDAD,Solidaridad - East and Central Africa,"Farmer Managed Natural Regeneration and Tree Planting in Mazabuka, Zambia - Solidaridad"
 f6ad3f9f-122b-4927-8c0c-de5576054f15,ZMB_22_WEFZAMB,WeForest Zambia,Katanino Forest Landscape Restoration Project - WeForest
 33ee81da-5421-410e-a642-37fc3b0cb935,ZWE_22_MTT,My Trees Trust,Mashonaland West Woodlad Restoration (Chundu/Deve) - My Trees Trust
 6b2dc32e-4414-48e0-9472-ebb49a766c28,ZWE_22_SAFIRE,Southern Alliance for Indigenous Resources (SAFIRE),Zimbabwe Forest Restoration Project - SAFIRE

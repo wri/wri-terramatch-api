@@ -20,7 +20,9 @@ properties:
       program:
         type: string
       cohort:
-        type: string
+        type: array
+        items:
+          type: string
       publish_for:
         type: string
       url:

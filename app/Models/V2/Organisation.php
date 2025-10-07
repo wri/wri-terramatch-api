@@ -19,6 +19,7 @@ use App\Models\Traits\NamedEntityTrait;
 use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Forms\Application;
+use App\Models\V2\Organisations\OrganisationInvite;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Database\Factories\V2\OrganisationFactory;
@@ -230,7 +231,7 @@ class Organisation extends Model implements MediaModel
         'level_2_past_restoration' => 'array',
         'trees_naturally_regenerated_total' => 'integer',
         'trees_naturally_regenerated_3year' => 'integer',
-        'carbon_credits' => 'integer',
+        'carbon_credits' => 'boolean',
         'external_technical_assistance' => 'string',
         'barriers_to_funding' => 'string',
         'capacity_building_support_needed' => 'string',
@@ -258,15 +259,18 @@ class Organisation extends Model implements MediaModel
             ],
             'full-time' => [
                 DemographicCollections::FULL_TIME,
+                DemographicCollections::FULL_TIME_CLT,
             ],
             'part-time' => [
                 DemographicCollections::PART_TIME,
+                DemographicCollections::PART_TIME_CLT,
             ],
             'temp' => [
                 DemographicCollections::TEMP,
             ],
         ],
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -324,18 +328,36 @@ class Organisation extends Model implements MediaModel
     public function leadershipTeam(): HasMany
     {
         return $this->hasMany(Leaderships::class, 'organisation_id', 'id')
-            ->where('collection', Leaderships::COLLECTION_LEADERSHIP_TEAM);
+            ->where('collection', 'leadership-team');
     }
 
     public function coreTeamLeaders(): HasMany
     {
         return $this->hasMany(Leaderships::class, 'organisation_id', 'id')
-            ->where('collection', Leaderships::COLLECTION_CORE_TEAM_LEADERS);
+            ->where('collection', 'core-team-leaders');
     }
 
     public function financialCollection(): HasMany
     {
-        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id');
+        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
+                        ->whereNull('financial_report_id');
+    }
+
+    public function financialReports(): HasMany
+    {
+        return $this->hasMany(financialReport::class, 'organisation_id', 'id');
+    }
+
+    public function updateFinancialReportsToOrganisation(): void
+    {
+        $latestApprovedReport = $this->financialReports()
+            ->where('status', 'approved')
+            ->orderBy('updated_at', 'desc')
+            ->first();
+
+        if ($latestApprovedReport) {
+            $latestApprovedReport->updateFinancialCollectionToOrganisation();
+        }
     }
 
     public function partners(): BelongsToMany
@@ -386,7 +408,8 @@ class Organisation extends Model implements MediaModel
 
     public function fundingTypes(): HasMany
     {
-        return $this->hasMany(FundingType::class, 'organisation_id', 'uuid');
+        return $this->hasMany(FundingType::class, 'organisation_id', 'uuid')
+            ->whereNull('financial_report_id');
     }
 
     public function projects()
@@ -432,5 +455,15 @@ class Organisation extends Model implements MediaModel
     public function scopeIsType($query, $type): Builder
     {
         return $query->where('type', $type);
+    }
+
+    public function invites(): HasMany
+    {
+        return $this->HasMany(OrganisationInvite::class);
+    }
+
+    public function leaderships(): HasMany
+    {
+        return $this->hasMany(Leaderships::class, 'organisation_id', 'id');
     }
 }

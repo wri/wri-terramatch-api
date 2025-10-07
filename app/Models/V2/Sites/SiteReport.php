@@ -11,6 +11,7 @@ use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -58,6 +59,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     use HasEntityResources;
     use BelongsToThroughTrait;
     use HasDemographics;
+    use ReportsStatusChange;
 
     protected $auditInclude = [
         'status',
@@ -103,6 +105,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'survival_calculation',
         'survival_description',
         'maintenance_activities',
+        'planting_status',
 
         // virtual (see HasDemographics trait)
         'other_workdays_description',
@@ -444,5 +447,14 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function getProjectReportAttribute()
     {
         return $this->task?->projectReport?->only(['name', 'status', 'uuid']) ?? '';
+    }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('site', function ($query) {
+            $query->whereHas('project', function ($query) {
+                $query->where('is_test', false);
+            });
+        });
     }
 }

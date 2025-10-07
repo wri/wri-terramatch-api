@@ -2,6 +2,7 @@
 
 namespace App\Models\V2;
 
+use App\Helpers\GeometryHelper;
 use App\Models\Traits\HasGeometry;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\Projects\ProjectPolygon;
@@ -81,6 +82,18 @@ class PolygonGeometry extends Model
                 $this->projectPolygon->delete();
             }
             $this->delete();
+        });
+    }
+
+    protected static function booted()
+    {
+        static::updated(function ($instance) {
+            if ($instance->isDirty('geom')) {
+                $sitePolygon = $instance->sitePolygon;
+                if ($sitePolygon) {
+                    GeometryHelper::updateSitePolygonCentroid($sitePolygon);
+                }
+            }
         });
     }
 }

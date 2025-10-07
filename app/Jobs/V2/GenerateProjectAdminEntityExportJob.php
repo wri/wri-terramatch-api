@@ -63,13 +63,20 @@ class GenerateProjectAdminEntityExportJob implements ShouldQueue
 
             $user = User::isUuid($this->uuid)->first();
 
-            $ids = $user->projects()->pluck('v2_projects.id');
-
+            $ids = [];
+            if ($user->hasRole('project-manager')) {
+                $ids = $user->managedProjects()->excludeTestData()->pluck('v2_projects.id');
+            } else {
+                $ids = $user->projects()->excludeTestData()->pluck('v2_projects.id');
+            }
             Log::info('ids for: '. $ids);
 
             $query = $modelClass::where('framework_key', $this->framework);
             if ($this->entity === 'projects') {
                 $query->whereIn('id', $ids);
+            } elseif ($this->entity === 'site-reports') {
+                $siteids = Site::whereIn('project_id', $ids)->pluck('id');
+                $query->whereIn('site_id', $siteids);
             } else {
                 $query->whereIn('project_id', $ids);
             }

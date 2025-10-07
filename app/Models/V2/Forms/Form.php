@@ -37,6 +37,8 @@ class Form extends Model implements MediaModel
     public const TYPE_NURSERY_REPORT = 'nursery-report';
     public const TYPE_ORGANISATION = 'organisation';
     public const TYPE_PROJECT_PITCH = 'project-pitch';
+    public const TYPE_FINANCIAL_REPORT = 'financial-report';
+    public const TYPE_DISTURBANCE_REPORT = 'disturbance-report';
 
     public static $types = [
         self::TYPE_APPLICATION => 'Application',
@@ -48,6 +50,8 @@ class Form extends Model implements MediaModel
         self::TYPE_NURSERY_REPORT => 'Nursery Report',
         self::TYPE_ORGANISATION => 'Organisation',
         self::TYPE_PROJECT_PITCH => 'Project Pitch',
+        self::TYPE_FINANCIAL_REPORT => 'Financial Report',
+        self::TYPE_DISTURBANCE_REPORT => 'Disturbance Report',
     ];
 
     protected $casts = [

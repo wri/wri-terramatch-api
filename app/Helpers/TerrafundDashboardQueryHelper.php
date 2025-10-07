@@ -10,6 +10,19 @@ use Illuminate\Support\Facades\Log;
 
 class TerrafundDashboardQueryHelper
 {
+    private static $landscapeCodeToNameMap = [
+        'gcb' => 'Ghana Cocoa Belt',
+        'grv' => 'Greater Rift Valley of Kenya',
+        'ikr' => 'Lake Kivu & Rusizi River Basin',
+    ];
+
+    private static function mapLandscapeCodesToNames(array $codes): array
+    {
+        return array_map(function ($code) {
+            return self::$landscapeCodeToNameMap[$code] ?? $code;
+        }, $codes);
+    }
+
     public static function buildQueryFromRequest(Request $request)
     {
         $filters = $request->all();
@@ -42,13 +55,33 @@ class TerrafundDashboardQueryHelper
         });
 
         $query->when(data_get($filters, 'filter.cohort'), function ($query, $cohort) {
-            $query->where('v2_projects.cohort', $cohort);
+            $cohortValues = [];
+
+            if (is_array($cohort)) {
+                $cohortValues = $cohort;
+            } elseif (strpos($cohort, ',') !== false) {
+                $cohortValues = array_map('trim', explode(',', $cohort));
+            } else {
+                $cohortValues = [$cohort];
+            }
+
+            $query->where(function ($subQuery) use ($cohortValues) {
+                foreach ($cohortValues as $cohortValue) {
+                    if (! empty($cohortValue)) {
+                        $subQuery->orWhereJsonContains('v2_projects.cohort', $cohortValue);
+                    }
+                }
+            });
         }, function ($query) {
-            $query->whereIn('v2_projects.cohort', ['terrafund', 'terrafund-landscapes']);
+            $query->where(function ($subQuery) {
+                $subQuery->whereJsonContains('v2_projects.cohort', 'terrafund')
+                         ->orWhereJsonContains('v2_projects.cohort', 'terrafund-landscapes');
+            });
         });
 
         $query->when(data_get($filters, 'filter.landscapes'), function ($query, $landscapes) {
-            $query->whereIn('v2_projects.landscape', $landscapes);
+            $mappedLandscapes = self::mapLandscapeCodesToNames($landscapes);
+            $query->whereIn('v2_projects.landscape', $mappedLandscapes);
         });
 
         $query->when(data_get($filters, 'filter.organisationType'), function ($query, $organisationType) {

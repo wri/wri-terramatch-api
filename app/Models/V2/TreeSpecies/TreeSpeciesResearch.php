@@ -23,5 +23,6 @@ class TreeSpeciesResearch extends Model
         'family',
         'genus',
         'specific_epithet',
+        'infraspecific_epithet',
     ];
 }

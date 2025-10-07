@@ -10,6 +10,7 @@ use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -61,6 +62,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     use HasStatus;
     use HasStateMachines;
     use HasEntityResources;
+    use ReportsStatusChange;
 
     use HasEntityStatusScopesAndTransitions {
         approve as entityStatusApprove;
@@ -101,6 +103,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
         'end_date',
         'land_tenures',
         'status',
+        'planting_status',
         'update_request_status',
         'survival_rate_planted',
         'direct_seeding_survival_rate',
@@ -478,5 +481,12 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     public function approvedReportIds(): HasMany
     {
         return $this->approvedReports()->select('id');
+    }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('project', function ($query) {
+            $query->where('is_test', false);
+        });
     }
 }

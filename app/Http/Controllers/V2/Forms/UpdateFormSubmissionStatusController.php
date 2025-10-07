@@ -9,7 +9,6 @@ use App\Mail\FormSubmissionApproved;
 use App\Mail\FormSubmissionFeedbackReceived;
 use App\Mail\FormSubmissionFinalStageApproved;
 use App\Mail\FormSubmissionRejected;
-use App\Models\Framework;
 use App\Models\Notification;
 use App\Models\V2\Forms\FormSubmission;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +29,11 @@ class UpdateFormSubmissionStatusController extends Controller
         switch ($updateFormSubmissionStatusRequest->status) {
             case FormSubmission::STATUS_REQUIRES_MORE_INFORMATION:
                 Mail::to($formSubmission->user->email_address)->queue(
-                    new FormSubmissionFeedbackReceived(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
+                    new FormSubmissionFeedbackReceived(
+                        data_get($updateFormSubmissionStatusRequest, 'feedback', null),
+                        $user,
+                        $formSubmission->application()->first()
+                    )
                 );
                 $notification = new Notification([
                     'user_id' => $formSubmission->user->id,
@@ -60,14 +63,9 @@ class UpdateFormSubmissionStatusController extends Controller
                 break;
             case FormSubmission::STATUS_APPROVED:
                 if (empty($formSubmission->stage->nextStage)) {
-                    $framework = Framework::where('name', 'Terrafund')->first();
-                    if ($framework) {
-                        Mail::to($formSubmission->user->email_address)->queue(
-                            new FormSubmissionFinalStageApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
-                        );
-
-                        $formSubmission->user->frameworks()->syncWithoutDetaching([$framework->id]);
-                    }
+                    Mail::to($formSubmission->user->email_address)->queue(
+                        new FormSubmissionFinalStageApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
+                    );
                 } else {
                     Mail::to($formSubmission->user->email_address)->queue(
                         new FormSubmissionApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)

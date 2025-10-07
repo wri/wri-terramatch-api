@@ -28,12 +28,18 @@ class Kernel extends ConsoleKernel
         // $schedule->command('check-queue-length')->everyFiveMinutes()->onOneServer();
         $schedule->command('send-upcoming-progress-update-notifications')->daily()->onOneServer();
         $schedule->command('generate-control-site-due-submissions')->weeklyOn(5, '00:00')->onOneServer();
-        $schedule->command('process-scheduled-jobs')->everyFiveMinutes()->onOneServer();
         $schedule->command('generate-application-export')->twiceDaily(13, 20)->onOneServer();
         $schedule->command('generate-admin-all-entity-records-export')->twiceDaily(13, 20)->onOneServer();
         $schedule->command('send-daily-digest-notifications')->weeklyOn(1, '17:00')->timezone('Europe/Sofia')->onOneServer();
         $schedule->command('send-weekly-polygon-update-notifications')->weeklyOn(1, '00:00')->timezone('Europe/Sofia')->onOneServer();
         $schedule->command('dashboard:cache-data')->weeklyOn(6, '23:59')->onOneServer();
+
+        // Close Fundo Flora funding programmes on August 8th at midnight EST
+        $schedule->command('close-fundo-flora-funding-programmes')
+            ->yearlyOn(8, 9, '00:00')
+            ->timezone('America/New_York')
+            ->onOneServer()
+            ->withoutOverlapping();
     }
 
     protected function commands()

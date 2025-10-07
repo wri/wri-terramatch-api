@@ -89,19 +89,6 @@ class InsertGeojsonToDBJob implements ShouldQueue
 
             App::make(SiteService::class)->setSiteToRestorationInProgress($this->entity_uuid);
 
-            $indicatorUpdateResults = [];
-            foreach ($uuids as $uuid) {
-                $updateSuccessful = $this->updateIndicatorsForPolygon($uuid);
-                $indicatorUpdateResults[$uuid] = [
-                    'status' => $updateSuccessful ? 'success' : 'error',
-                    'message' => $updateSuccessful ? 'Indicators updated successfully' : 'Failed to update indicators',
-                ];
-
-                if (! $updateSuccessful) {
-                    Log::warning("Failed to update indicators for polygon {$uuid}");
-                }
-            }
-
             $delayedJob->update([
                 'status' => DelayedJob::STATUS_SUCCEEDED,
                 'payload' => json_encode($uuids),

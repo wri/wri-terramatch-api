@@ -21,7 +21,7 @@ class ConfirmCreateUserRequest extends FormRequest
             'password' => ['required', 'string', Password::min(10)->mixedCase()->numbers()],
             'first_name' => 'required|string|between:1,255',
             'last_name' => 'required|string|between:1,255',
-            'email_address' => 'required|string|email|between:1,255|unique:users,email_address',
+            'email_address' => 'required|string|email|between:1,255',
             'role' => 'sometimes|nullable|string',
             'job_role' => 'sometimes|nullable|string|between:1,255',
             'phone_number' => 'sometimes|nullable|string|between:1,255',

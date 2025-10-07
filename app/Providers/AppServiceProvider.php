@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Auth\ServiceAccountGuard;
 use App\Models\DelayedJob;
+use App\Models\V2\Organisation;
 use App\Models\V2\Sites\SitePolygon;
 use App\Observers\MediaObserver;
+use App\Observers\OrganisationObserver;
 use App\Observers\SitePolygonObserver;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Queue\Events\JobFailed;
@@ -41,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
 
         SitePolygon::observe(SitePolygonObserver::class);
         Media::observe(MediaObserver::class);
+        Organisation::observe(OrganisationObserver::class);
+
         Queue::failing(function (JobFailed $event) {
             $jobName = $event->job->resolveName();
             $jobId = $event->job->uuid();

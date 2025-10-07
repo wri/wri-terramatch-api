@@ -23,12 +23,12 @@ use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
-use App\Http\Controllers\V2\Dashboard\TopProjectsAndTopTreeSpeciesController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
-use App\Http\Controllers\V2\Dashboard\ViewTreeRestorationGoalController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
+use App\Http\Controllers\V2\DisturbanceReports\DisturbanceReportsController;
+use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
@@ -53,31 +53,24 @@ use App\Http\Controllers\V2\Files\Location\ProjectReportImageLocationsController
 use App\Http\Controllers\V2\Files\Location\SiteImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
-use App\Http\Controllers\V2\Forms\AdminDeleteFormSubmissionController;
-use App\Http\Controllers\V2\Forms\AdminIndexFormSubmissionController;
-use App\Http\Controllers\V2\Forms\CommonOptionsIndexController;
+use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
+use App\Http\Controllers\V2\FinancialReports\FinancialReportsController;
 use App\Http\Controllers\V2\Forms\DeleteFormController;
 use App\Http\Controllers\V2\Forms\DeleteFormQuestionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSectionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
-use App\Http\Controllers\V2\Forms\FormOptionsLabelController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
 use App\Http\Controllers\V2\Forms\IndexFormController;
-use App\Http\Controllers\V2\Forms\IndexFormSubmissionController;
-use App\Http\Controllers\V2\Forms\LinkedFieldListingsController;
 use App\Http\Controllers\V2\Forms\PublishFormController;
 use App\Http\Controllers\V2\Forms\StoreFormController;
-use App\Http\Controllers\V2\Forms\StoreFormSectionController;
 use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormController;
-use App\Http\Controllers\V2\Forms\UpdateFormSectionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
 use App\Http\Controllers\V2\Forms\ViewFormController;
 use App\Http\Controllers\V2\Forms\ViewFormSubmissionController;
-use App\Http\Controllers\V2\Forms\ViewMyFormSubmissionsController;
 use App\Http\Controllers\V2\FundingProgramme\AdminFundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\FundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusController;
@@ -104,6 +97,7 @@ use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
 use App\Http\Controllers\V2\Organisations\AdminOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminOrganisationMultiController;
 use App\Http\Controllers\V2\Organisations\AdminRejectOrganisationController;
+use App\Http\Controllers\V2\Organisations\CreateOrganisationInviteController;
 use App\Http\Controllers\V2\Organisations\JoinExistingOrganisationController;
 use App\Http\Controllers\V2\Organisations\OrganisationApprovedUsersController;
 use App\Http\Controllers\V2\Organisations\OrganisationApproveUserController;
@@ -154,8 +148,6 @@ use App\Http\Controllers\V2\Reports\NothingToReportReportController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
-use App\Http\Controllers\V2\Sites\AdminSitesPolygonController;
-use App\Http\Controllers\V2\Sites\AdminSitesPolygonCountController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
@@ -182,7 +174,6 @@ use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestControlle
 use App\Http\Controllers\V2\UpdateRequests\AdminStatusUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\AdminViewUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\EntityUpdateRequestsController;
-use App\Http\Controllers\V2\User\AdminExportUsersController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
 use App\Http\Controllers\V2\User\AdminUserController;
 use App\Http\Controllers\V2\User\AdminUserCreationController;
@@ -324,7 +315,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('users')->group(function () {
         Route::get('multi', AdminUserMultiController::class);
-        Route::get('export', AdminExportUsersController::class);
         Route::put('reset-password/{user}', AdminResetPasswordController::class);
         Route::patch('verify/{user}', AdminVerifyUserController::class);
         Route::get('users-organisation-list/{organisation}', AdminUsersOrganizationController::class);
@@ -334,29 +324,21 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::post('impact-stories/bulk-delete', [ImpactStoryController::class, 'bulkDestroy']);
     Route::resource('impact-stories', ImpactStoryController::class);
 
-
     Route::prefix('forms')->group(function () {
         Route::post('/', StoreFormController::class);
         Route::get('/', IndexFormController::class);
-        Route::post('/section', StoreFormSectionController::class);
-        Route::patch('/section/{formSection}', UpdateFormSectionController::class);
         Route::delete('/section/{formSection}', DeleteFormSectionController::class);
         Route::delete('/question/{formQuestion}', DeleteFormQuestionController::class);
-        Route::get('/common-options/{key}', CommonOptionsIndexController::class);
         Route::prefix('submissions')->group(function () {
-            Route::get('/', AdminIndexFormSubmissionController::class);
-            //            Route::get('/export', ExportFormSubmissionController::class);
             Route::get('/{form}/export', ExportFormSubmissionController::class);
             Route::prefix('{formSubmission}')->group(function () {
-                Route::get('/', ViewFormSubmissionController::class)->middleware('i18n');
-                Route::delete('/', AdminDeleteFormSubmissionController::class);
                 Route::patch('/status', UpdateFormSubmissionStatusController::class);
             });
         });
 
         Route::prefix('applications')->group(function () {
             Route::get('/', AdminIndexApplicationController::class);
-            Route::get('/{application}', AdminViewApplicationController::class);
+            Route::get('/{application}', AdminViewApplicationController::class)->middleware('i18n');
             Route::delete('/{application}', AdminDeleteApplicationController::class);
             Route::get('/{fundingProgramme}/export', AdminExportApplicationController::class);
         });
@@ -365,7 +347,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
             Route::patch('/', UpdateFormController::class);
             Route::delete('/', DeleteFormController::class);
             Route::patch('/publish', PublishFormController::class);
-            Route::get('/submissions', IndexFormSubmissionController::class);
         });
     });
 
@@ -384,6 +365,9 @@ Route::prefix('organisations')->group(function () {
     Route::get('user-requests/{organisation}', OrganisationListRequestedUsersController::class);
     Route::get('approved-users/{organisation}', OrganisationApprovedUsersController::class);
     Route::delete('retract-my-draft', OrganisationRetractMyDraftController::class);
+
+    Route::post('/{organisation}/invite', CreateOrganisationInviteController::class);
+    // Route::post('/invite/accept', ProjectInviteAcceptController::class);
 });
 Route::resource('organisations', OrganisationController::class);
 
@@ -399,7 +383,6 @@ Route::prefix('my')->group(function () {
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
 
 Route::prefix('forms')->group(function () {
-    Route::get('/my/submissions', ViewMyFormSubmissionsController::class)->middleware('i18n');
     Route::prefix('submissions')->group(function () {
         Route::post('/', StoreFormSubmissionController::class);
         Route::patch('/{formSubmission}', UpdateFormSubmissionController::class);
@@ -408,10 +391,7 @@ Route::prefix('forms')->group(function () {
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
-    Route::get('/linked-field-listing', LinkedFieldListingsController::class);
-    Route::get('/option-labels', FormOptionsLabelController::class)->middleware('i18n');
 
-    Route::get('/', IndexFormController::class);
     Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
@@ -442,7 +422,7 @@ Route::prefix('reporting-frameworks')->group(function () {
 
 Route::get('/my/applications', ViewMyApplicationController::class);
 Route::prefix('applications')->group(function () {
-    Route::get('/{application}', ViewApplicationController::class);
+    Route::get('/{application}', ViewApplicationController::class)->middleware('i18n');
     Route::get('/{application}/export', ExportApplicationController::class);
 });
 
@@ -477,6 +457,17 @@ Route::prefix('leaderships')->group(function () {
 Route::prefix('financial-indicators')->group(function () {
     Route::patch('/', UpsertFinancialIndicatorsController::class);
 });
+
+Route::prefix('financial-reports')->group(function () {
+    Route::get('/export', ExportFinancialReportController::class);
+});
+Route::resource('financial-reports', FinancialReportsController::class)->except('create');
+
+Route::prefix('disturbance-reports')->group(function () {
+    Route::get('/export', ExportDisturbanceReportController::class);
+});
+
+Route::resource('disturbance-reports', DisturbanceReportsController::class)->except('create');
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
@@ -519,10 +510,6 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
     Route::get('/check-approve', SiteCheckApproveController::class);
-});
-Route::prefix('entity')->group(function () {
-    Route::get('/polygons/count', AdminSitesPolygonCountController::class);
-    Route::get('/polygons', AdminSitesPolygonController::class);
 });
 
 Route::prefix('geometry')->group(function () {
@@ -596,7 +583,6 @@ Route::prefix('terrafund')->group(function () {
     Route::get('/validation/within-country', [TerrafundCreateGeometryController::class, 'checkWithinCountry']);
     Route::get('/validation/geometry-type', [TerrafundCreateGeometryController::class, 'getGeometryType']);
     Route::get('/country-names', [TerrafundCreateGeometryController::class, 'getAllCountryNames']);
-    Route::get('/validation/criteria-data', [TerrafundCreateGeometryController::class, 'getCriteriaData']);
     Route::post('/validation/criteria-data', [TerrafundCreateGeometryController::class, 'getCriteriaDataForMultiple']);
     Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
     Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
@@ -606,7 +592,6 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'sendRunValidationPolygon']);
     Route::post('/validation/polygons', [TerrafundCreateGeometryController::class, 'runPolygonsValidation']);
     Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'runSiteValidationPolygon']);
-    Route::get('/validation/site', [TerrafundCreateGeometryController::class, 'getCurrentSiteValidation']);
     Route::post('/clip-polygons/site/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygonsOfProjectBySite']);
     Route::post('/clip-polygons/polygon/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygon']);
     Route::post('/clip-polygons/polygons', [TerrafundClipGeometryController::class, 'clipOverlappingPolygons']);
@@ -652,16 +637,13 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
     Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
     Route::get('/jobs-created', GetJobsCreatedController::class);
     Route::get('/volunteers-survival-rate', VolunteersAndAverageSurvivalRateController::class);
-    Route::get('/tree-restoration-goal', ViewTreeRestorationGoalController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
-    Route::get('/get-polygons/statuses', [GetPolygonsController::class, 'getPolygonsDataByStatusOfProject']);
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
     Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
-    Route::get('/top-trees-planted', TopProjectsAndTopTreeSpeciesController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
     Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);

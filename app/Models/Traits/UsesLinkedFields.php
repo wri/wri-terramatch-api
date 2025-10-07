@@ -5,6 +5,8 @@ namespace App\Models\Traits;
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestion;
+use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Projects\ProjectPolygon;
 use App\StateMachines\EntityStatusStateMachine;
 
 trait UsesLinkedFields
@@ -32,7 +34,7 @@ trait UsesLinkedFields
         return config('wri.linked-fields.models.' . $this->shortName);
     }
 
-    public function updateAllAnswers(array $input): array
+    public function updateAllAnswers(array $input, ?bool $isApproval = false): array
     {
         $localAnswers = [];
         foreach ($this->getform()->sections as $section) {
@@ -46,7 +48,7 @@ trait UsesLinkedFields
                     if (! empty($linkedFieldInfo)) {
                         $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
                             data_get($input, $question->parent_id) === false;
-                        $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid), $hidden);
+                        $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid), $hidden, $isApproval);
                     }
                 }
                 $localAnswers[$question->uuid] = data_get($input, $question->uuid);
@@ -56,7 +58,7 @@ trait UsesLinkedFields
         return $localAnswers;
     }
 
-    public function updateFromForm(array $formData): void
+    public function updateFromForm(array $formData, ?bool $isApproval = false): void
     {
         $form = $this->getForm();
         $formConfig = $this->getFormConfig();
@@ -93,7 +95,7 @@ trait UsesLinkedFields
                             $inputType = data_get($relationsConfig, "$question->linked_field_key.input_type");
                             $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
                                 data_get($formData, $question->parent_id) === false;
-                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)), $hidden);
+                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)), $hidden, null, $isApproval);
                         }
                     }
 
@@ -231,6 +233,14 @@ trait UsesLinkedFields
     {
         switch ($linkedFieldInfo['link-type']) {
             case 'fields':
+                $inputType = strtolower((string) data_get($linkedFieldInfo, 'input_type'));
+                if ($inputType === 'mapinput' && $property === 'proj_boundary') {
+                    $geojson = $this->getProjectBoundaryGeometryFromPolygons($model);
+                    if ($geojson != null) {
+                        return $geojson;
+                    }
+                }
+
                 return data_get($model, $property);
             case 'file-collections':
                 $colCfg = data_get($model->fileConfiguration, $property);
@@ -252,7 +262,34 @@ trait UsesLinkedFields
         }
     }
 
-    private function updateLinkedFieldValue(array $linkedFieldInfo, $answer, bool $hidden): void
+    private function getProjectBoundaryGeometryFromPolygons($entity): ?array
+    {
+        $projectPolygon = ProjectPolygon::where('entity_type', get_class($entity))
+            ->where('entity_id', $entity->id)
+            ->orderByDesc('created_at')
+            ->first();
+
+        if ($projectPolygon == null) {
+            return null;
+        }
+
+        $row = PolygonGeometry::isUuid($projectPolygon->poly_uuid)
+            ->selectRaw('ST_AsGeoJSON(geom) as geojson_string')
+            ->first();
+
+        if ($row == null) {
+            return null;
+        }
+        if (empty($row->geojson_string)) {
+            return null;
+        }
+
+        $decoded = json_decode($row->geojson_string, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    private function updateLinkedFieldValue(array $linkedFieldInfo, $answer, bool $hidden, ?bool $isApproval = false): void
     {
         $class = app($linkedFieldInfo['model']);
         $model = $class::isUuid($linkedFieldInfo['uuid'])->first();
@@ -267,11 +304,11 @@ trait UsesLinkedFields
             $model->save();
         } elseif ($linkedFieldInfo['link-type'] == 'relations') {
             $inputType = data_get($linkedFieldInfo, 'input_type');
-            $this->syncRelation($property, $inputType, collect($answer), $hidden, $model);
+            $this->syncRelation($property, $inputType, collect($answer), $hidden, $model, $isApproval);
         }
     }
 
-    private function syncRelation(string $property, string $inputType, $data, bool $hidden, $entity = null): void
+    private function syncRelation(string $property, string $inputType, $data, bool $hidden, $entity = null, ?bool $isApproval = false): void
     {
         $entity ??= $this;
 
@@ -287,9 +324,13 @@ trait UsesLinkedFields
                 'allBeneficiaries',
                 'trainingBeneficiaries',
                 'indirectBeneficiaries',
+                'associates',
                 'stratas',
                 'invasive',
                 'seedings',
+                'financialIndicators',
+                'fundingType',
+                'disturbanceReportEntries',
             ])
         ) {
             return;
@@ -297,7 +338,7 @@ trait UsesLinkedFields
 
         $class = get_class($entity->$property()->make());
         if (is_a($class, HandlesLinkedFieldSync::class, true)) {
-            $class::syncRelation($entity, $property, $inputType, $data, $hidden);
+            $class::syncRelation($entity, $property, $inputType, $data, $hidden, $isApproval);
 
             return;
         }
@@ -335,7 +376,7 @@ trait UsesLinkedFields
         $entityProps = [];
 
         $childQuestions = [];
-        $conditionalsToBeCleaned = [];
+        $conditionalValues = [];
 
         foreach ($form->sections as $section) {
             foreach ($section->questions as $question) {
@@ -344,16 +385,16 @@ trait UsesLinkedFields
                         $childQuestions[] = $question;
                     }
                 } else {
-                    $conditionalValue = data_get($modelAnswers, $question->uuid, null);
-                    if ($conditionalValue == false) {
-                        $conditionalsToBeCleaned[] = $question->uuid;
+                    $value = data_get($modelAnswers, $question->uuid, null);
+                    if (! is_null($value)) {
+                        $conditionalValues[$question->uuid] = $value;
                     }
                 }
             }
         }
 
         foreach ($childQuestions as $child) {
-            if (in_array($child->parent_id, $conditionalsToBeCleaned)) {
+            if (array_key_exists($child->parent_id, $conditionalValues) && $child->show_on_parent_condition != $conditionalValues[$child->parent_id]) {
                 $fieldConfig = data_get($fieldsConfig, $child->linked_field_key);
                 $property = data_get($fieldConfig, 'property');
                 if ($this->isPlainField($child->input_type) && ! empty($property)) {

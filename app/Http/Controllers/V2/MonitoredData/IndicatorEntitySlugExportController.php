@@ -23,6 +23,11 @@ class IndicatorEntitySlugExportController extends Controller
         ];
         $treeCoverLossHeaders = [
             ...$defaulHeaders,
+            '2010' => '2010',
+            '2011' => '2011',
+            '2012' => '2012',
+            '2013' => '2013',
+            '2014' => '2014',
             '2015' => '2015',
             '2016' => '2016',
             '2017' => '2017',
@@ -33,6 +38,7 @@ class IndicatorEntitySlugExportController extends Controller
             '2022' => '2022',
             '2023' => '2023',
             '2024' => '2024',
+            '2025' => '2025',
         ];
         $restorationByEcoRegionHeaders = [
             ...$defaulHeaders,
@@ -104,7 +110,7 @@ class IndicatorEntitySlugExportController extends Controller
     {
         $sitePolygonsIndicator = SitePolygon::whereHas($slugMappings[$slug]['relation_name'], function ($query) use ($slug) {
             $query->where('indicator_slug', $slug)
-                ->where('year_of_analysis', date('Y'));
+                ->where('status', 'approved');
         })
             ->whereHas('site', function ($query) use ($entity) {
                 if (get_class($entity) == Site::class) {
@@ -159,16 +165,11 @@ class IndicatorEntitySlugExportController extends Controller
                 ];
                 if (str_contains($slug, 'treeCoverLoss')) {
                     $valueYears = json_decode($indicator->value, true);
-                    $results['2015'] = $valueYears['2015'];
-                    $results['2016'] = $valueYears['2016'];
-                    $results['2017'] = (float) $valueYears['2017'];
-                    $results['2018'] = $valueYears['2018'];
-                    $results['2019'] = $valueYears['2019'];
-                    $results['2020'] = $valueYears['2020'];
-                    $results['2021'] = $valueYears['2021'];
-                    $results['2022'] = $valueYears['2022'];
-                    $results['2023'] = $valueYears['2023'];
-                    $results['2024'] = $valueYears['2024'];
+                    $years = array_keys($valueYears);
+                    sort($years);
+                    foreach ($years as $year) {
+                        $results["$year"] = array_key_exists($year, $valueYears) ? (float) $valueYears[$year] : 0;
+                    }
                 }
                 if ($slug == 'restorationByEcoRegion') {
                     $values = json_decode($indicator->value, true);
@@ -186,6 +187,23 @@ class IndicatorEntitySlugExportController extends Controller
 
                 return $results;
             });
+
+        if (str_contains($slug, 'treeCoverLoss')) {
+            $allYears = [];
+            foreach ($sitePolygonsIndicator as $polygon) {
+                foreach ($polygon as $key => $value) {
+                    if (is_numeric($key) && $key >= 2010) {
+                        $allYears[] = (int) $key;
+                    }
+                }
+            }
+            $uniqueYears = array_unique($allYears);
+            sort($uniqueYears);
+
+            foreach ($uniqueYears as $year) {
+                $slugMappings[$slug]['columns'][$year] = (string) $year;
+            }
+        }
 
         $filteredIndicators = [];
         foreach ($sitePolygonsIndicator as $polygon) {

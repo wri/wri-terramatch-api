@@ -28,4 +28,42 @@ class MediaObserver
         Log::info('dispatching');
         NotifyGreenhouseJob::dispatch('notifyMediaDeleted', $media->uuid);
     }
+
+    public function saving(Media $media): void
+    {
+        $media->type = $this->mapType($media->mime_type);
+    }
+
+    private function mapType($mime)
+    {
+        if (strpos($mime, 'vnd.openxmlformats-officedocument.spreadsheetml.sheetapplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet') !== false) {
+            return 'xlsx';
+        }
+
+        $map = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/heic' => 'heic',
+            'image/heif' => 'heif',
+            'application/pdf' => 'pdf',
+            'video/mp4' => 'mp4',
+            'video/quicktime' => 'mov',
+            'application/msword' => 'doc',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+            'application/vnd.ms-excel' => 'xls',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+            'text/csv' => 'csv',
+            'text/plain' => 'txt',
+        ];
+
+        if (isset($map[$mime])) {
+            return $map[$mime];
+        }
+
+        if (strpos($mime, '/') !== false) {
+            return substr($mime, strpos($mime, '/') + 1);
+        }
+
+        return 'other';
+    }
 }

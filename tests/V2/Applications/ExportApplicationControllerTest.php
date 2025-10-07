@@ -9,7 +9,6 @@ use App\Models\V2\Forms\FormSection;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;
 use App\Models\V2\FundingType;
-use App\Models\V2\LeadershipTeam;
 use App\Models\V2\Organisation;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\SavedExport;
@@ -159,7 +158,6 @@ class ExportApplicationControllerTest extends TestCase
         $pitch = ProjectPitch::factory()->create(['organisation_id' => $organisation->uuid]);
 
         TreeSpecies::factory()->count($this->faker->numberBetween(0, 5))->create(['speciesable_type' => ProjectPitch::class, 'speciesable_id' => $pitch->id]);
-        LeadershipTeam::factory()->count($this->faker->numberBetween(0, 5))->create(['organisation_id' => $organisation->uuid]);
         FundingType::factory()->count($this->faker->numberBetween(0, 5))->create(['organisation_id' => $organisation->uuid]);
         $application = Application::factory()->create(['funding_programme_uuid' => $fundingProgramme->uuid,'organisation_uuid' => $organisation->uuid]);
 

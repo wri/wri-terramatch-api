@@ -15,6 +15,13 @@ class RunIndicatorAnalysisController extends Controller
     {
         try {
             $requestData = $request->all();
+
+            $force = $request->get('force', false);
+            $updateExisting = $request->get('update_existing', false);
+
+            $requestData['force'] = $force;
+            $requestData['update_existing'] = $updateExisting;
+
             $delayedJob = DelayedJob::create();
             $job = new RunIndicatorAnalysisJob(
                 $delayedJob->id,

@@ -52,6 +52,7 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('form-submission-feedback-received.title', 'You have received feedback on your application');
         $this->createLocalizationKey('form-submission-feedback-received.body', 'Your application requires more information.');
         $this->createLocalizationKey('form-submission-feedback-received.body-feedback', 'Your application requires more information. Please see comments below:<br><br> {feedback}');
+        $this->createLocalizationKey('form-submission-feedback-received.cta', 'View Application');
 
         // form-submission-final-stage-approved
         $this->createLocalizationKey('form-submission-final-stage-approved.subject', 'Application Approved');
@@ -407,6 +408,12 @@ class LocalizationKeysTableSeeder extends Seeder
             'terrafund-polygon-update.pd.body',
             PolygonNotificationMailHelper::getPolygonNotificationMail(false)
         );
+
+        $this->createLocalizationKey('v2-organisation-invite-received-create.subject', 'YOU HAVE BEEN INVITED TO JOIN TERRAMATCH');
+        $this->createLocalizationKey('v2-organisation-invite-received-create.title', 'YOU HAVE BEEN INVITED TO JOIN TERRAMATCH');
+        $this->createLocalizationKey('v2-organisation-invite-received-create.body', '{organisationName} has invited you to join TerraMatch as a team member.
+            Click the link below to create your account and set your password so you can see the ongoing applications for this organization.');
+        $this->createLocalizationKey('v2-organisation-invite-received-create.cta', 'CREATE ACCOUNT');
     }
 
     public function createLocalizationKey($key, $value): void

@@ -2,9 +2,11 @@
 
 namespace Tests\Unit\Models\V2\Demographics;
 
+use App\Exceptions\DemographicsException;
 use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Demographics\DemographicEntry;
+use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
 use Tests\TestCase;
@@ -27,7 +29,7 @@ class DemographicTest extends TestCase
                 ],
             ],
         ];
-        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false);
+        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false, false);
 
         /** @var Demographic $workday */
         $workday = $siteReport->workdaysVolunteerPlanting()->first();
@@ -43,7 +45,7 @@ class DemographicTest extends TestCase
             ['type' => 'gender', 'subtype' => 'female', 'amount' => 20],
             ['type' => 'ethnicity', 'subtype' => 'indigenous', 'name' => 'Ohlone', 'amount' => 40],
         ];
-        Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false);
+        Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false, false);
         $workday->refresh();
         $this->assertEquals(4, $workday->entries()->count());
         $this->assertEquals(40, $workday->entries()->isAge('youth')->first()->amount);
@@ -53,7 +55,7 @@ class DemographicTest extends TestCase
 
         // Test remove demographics
         $data[0]['demographics'] = [];
-        Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false);
+        Demographic::syncRelation($siteReport->fresh(), 'workdaysVolunteerPlanting', 'workdays', $data, false, false);
         $workday->refresh();
         $this->assertEquals(0, $workday->entries()->count());
 
@@ -73,8 +75,8 @@ class DemographicTest extends TestCase
             ],
         ];
         $siteReport = SiteReport::factory()->create();
-        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false);
-        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false);
+        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false, false);
+        Demographic::syncRelation($siteReport, 'workdaysVolunteerPlanting', 'workdays', $data, false, false);
 
         /** @var Demographic $workday */
         $workday = $siteReport->workdaysVolunteerPlanting()->first();
@@ -186,5 +188,40 @@ class DemographicTest extends TestCase
         $this->assertEquals('Restoration Partner Description', $report->other_restoration_partners_description);
         $this->assertEquals('Restoration Partner Description', $report->restorationPartnersDirectOther()->first()->description);
         $this->assertEquals('Restoration Partner Description', $report->restorationPartnersIndirectOther()->first()->description);
+    }
+
+    public function test_aggregate_attributes()
+    {
+        $project = Project::factory()->create();
+        $this->assertEquals(0, $project->volunteers_aggregate);
+
+        $demographic = Demographic::factory()->projectVolunteers()->create(['demographical_id' => $project->id]);
+        DemographicEntry::factory()->create([
+            'demographic_id' => $demographic->id,
+            'type' => 'gender',
+            'subtype' => 'female',
+        ]);
+
+        $this->expectException(DemographicsException::class);
+        $this->expectExceptionMessage('non-integer value.');
+        $project->volunteers_aggregate = 'foo';
+        $demographic->delete();
+
+        $project->volunteers_aggregate = 3;
+        $this->assertEquals(3, $project->volunteers_aggregate);
+        $this->assertEquals(1, $project->demographics()->count());
+        $this->assertEquals(2, $project->demographics()->first()->entries()->count());
+
+        $project->demographics()->first()->update(['hidden' => true]);
+        $project->volunteers_aggregate = 5;
+        $this->assertFalse($project->demographics()->first()->hidden);
+        $this->assertEquals(5, $project->volunteers_aggregate);
+        $this->assertEquals(5, $project->demographics()->first()->entries()->gender()->sum('amount'));
+        $this->assertEquals(5, $project->demographics()->first()->entries()->age()->sum('amount'));
+        $this->assertFalse($project->demographics()->first()->entries()->whereNot('subtype', 'unknown')->exists());
+
+        $this->expectException(DemographicsException::class);
+        $this->expectExceptionMessage('negative value');
+        $project->volunteers_aggregate = -1;
     }
 }

@@ -10,6 +10,7 @@ use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -54,6 +55,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use HasEntityResources;
     use BelongsToThroughTrait;
     use HasDemographics;
+    use ReportsStatusChange;
 
     protected $auditInclude = [
         'status',
@@ -170,6 +172,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         // virtual (see HasDemographics trait)
         'other_workdays_description',
         'other_restoration_partners_description',
+        'planting_status',
     ];
 
     public $casts = [
@@ -264,6 +267,18 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'tree_planting_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'soil_water_conservation_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'soil_water_conservation_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
     ];
 
     // Required by the HasDemographics trait.
@@ -327,14 +342,17 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         Demographic::JOBS_TYPE => [
             'full-time' => [
                 DemographicCollections::FULL_TIME,
+                DemographicCollections::FULL_TIME_CLT,
             ],
             'part-time' => [
                 DemographicCollections::PART_TIME,
+                DemographicCollections::PART_TIME_CLT,
             ],
         ],
         Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
         Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
         Demographic::TRAINING_BENEFICIARIES_TYPE => DemographicCollections::TRAINING,
+        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -610,8 +628,10 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         return $this->project?->name ?? '';
     }
 
-    public function getFinancialCollectionAttribute()
+    public function scopeExcludeTestData(Builder $query): Builder
     {
-        return $this->project?->organisation?->financialCollection;
+        return $query->whereHas('project', function ($query) {
+            $query->where('is_test', false);
+        });
     }
 }

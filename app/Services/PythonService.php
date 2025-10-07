@@ -112,16 +112,34 @@ class PythonService
         });
 
         if (! $process->isSuccessful()) {
-            Log::error('Error running indicator script: ' . $stderr);
+            Log::error('Error running indicator script', [
+                'indicator_name' => $indicator_name,
+                'exit_code' => $process->getExitCode(),
+                'stderr' => $stderr,
+                'stdout' => $stdout,
+            ]);
 
             return null;
         }
 
         if (! empty($stderr)) {
-            Log::warning('Python script warnings/errors: ' . $stderr);
+            Log::warning('Python script warnings/errors', [
+                'indicator_name' => $indicator_name,
+                'stderr' => $stderr,
+            ]);
         }
 
-        $result = json_decode(file_get_contents($outputGeojson), true);
+        if (! file_exists($outputGeojson)) {
+            Log::error('Python script did not create output file', [
+                'indicator_name' => $indicator_name,
+                'expected_output' => $outputGeojson,
+            ]);
+
+            return null;
+        }
+
+        $outputContent = file_get_contents($outputGeojson);
+        $result = json_decode($outputContent, true);
 
         unlink($inputGeojson);
         unlink($outputGeojson);
