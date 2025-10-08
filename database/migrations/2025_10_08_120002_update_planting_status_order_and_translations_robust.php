@@ -33,7 +33,6 @@ return new class () extends Migration {
         $this->revertPlantingStatusTranslations();
     }
 
-
     private function updatePlantingStatusTranslations(): void
     {
         $translations = [
