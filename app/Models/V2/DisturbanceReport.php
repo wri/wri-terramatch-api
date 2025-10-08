@@ -8,12 +8,14 @@ use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
+use App\Models\V2\AuditStatus\AuditStatus;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -21,7 +23,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
-class DisturbanceReport extends Model implements MediaModel, ReportModel, AuditableContract
+class DisturbanceReport extends Model implements MediaModel, ReportModel, AuditableContract, AuditableModel
 {
     use HasFactory;
     use HasUuid;
@@ -172,5 +174,10 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
     public function entries(): HasMany
     {
         return $this->hasMany(DisturbanceReportEntry::class, 'disturbance_report_id', 'id');
+    }
+
+    public function auditStatuses(): MorphMany
+    {
+        return $this->morphMany(AuditStatus::class, 'auditable');
     }
 }
