@@ -79,5 +79,3 @@ return new class () extends Migration {
         return data_get($target, $property . '_id');
     }
 };
-
-
