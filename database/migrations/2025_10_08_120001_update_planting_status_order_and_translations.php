@@ -15,7 +15,7 @@ return new class () extends Migration {
         // Update ENUM values on report tables with new order: replacement-planting before completed
         DB::statement("ALTER TABLE v2_site_reports MODIFY COLUMN planting_status ENUM('no-restoration-expected','not-started','in-progress','replacement-planting','completed') NULL");
         DB::statement("ALTER TABLE v2_project_reports MODIFY COLUMN planting_status ENUM('no-restoration-expected','not-started','in-progress','replacement-planting','completed') NULL");
-        
+
         // Update ENUM values on other tables with new order
         DB::statement("ALTER TABLE v2_projects MODIFY COLUMN planting_status ENUM('no-restoration-expected','not-started','in-progress','replacement-planting','completed') NULL");
         DB::statement("ALTER TABLE v2_sites MODIFY COLUMN planting_status ENUM('no-restoration-expected','not-started','in-progress','replacement-planting','completed') NULL");
@@ -55,20 +55,20 @@ return new class () extends Migration {
 
         $key = 'planting-status';
         $list = FormOptionList::where('key', $key)->first();
-        
+
         if ($list) {
             // Delete existing options to recreate them in the correct order
             $list->options()->delete();
-            
+
             // Create options in the new order
             $orderedOptions = [
                 'no-restoration-expected',
-                'not-started', 
+                'not-started',
                 'in-progress',
                 'replacement-planting',
                 'completed',
             ];
-            
+
             foreach ($orderedOptions as $optionLabel) {
                 $option = FormOptionListOption::create([
                     'form_option_list_id' => $list->id,
@@ -94,20 +94,20 @@ return new class () extends Migration {
     {
         $key = 'planting-status';
         $list = FormOptionList::where('key', $key)->first();
-        
+
         if ($list) {
             // Delete existing options to recreate them in the original order
             $list->options()->delete();
-            
+
             // Create options in the original order (completed before replacement-planting)
             $orderedOptions = [
                 'no-restoration-expected',
-                'not-started', 
+                'not-started',
                 'in-progress',
                 'completed',
                 'replacement-planting',
             ];
-            
+
             foreach ($orderedOptions as $optionLabel) {
                 $option = FormOptionListOption::create([
                     'form_option_list_id' => $list->id,
