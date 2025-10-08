@@ -719,6 +719,7 @@ return [
                 'pro-rep-beneficiaries-training-other' => ['property' => 'beneficiaries_training_other', 'label' => 'Other Gender Trained', 'input_type' => 'number'],
                 'pro-rep-beneficiaries-training-youth' => ['property' => 'beneficiaries_training_youth', 'label' => 'Youth Trained', 'input_type' => 'number'],
                 'pro-rep-beneficiaries-training-non-youth' => ['property' => 'beneficiaries_training_non_youth', 'label' => 'Non Youth Trained', 'input_type' => 'number'],
+                'pro-rep-planting-status' => ['property' => 'planting_status','label' => 'Planting status','input_type' => 'select','multichoice' => false,'option_list_key' => 'planting-status'], 
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [
@@ -1101,7 +1102,7 @@ return [
             'fields' => [
                 'site-rep-planting-status' => [
                     'property' => 'planting_status',
-                    'label' => 'What is the status of planting at this site?',
+                    'label' => 'Planting status',
                     'input_type' => 'select',
                     'multichoice' => false,
                     'option_list_key' => 'planting-status',
