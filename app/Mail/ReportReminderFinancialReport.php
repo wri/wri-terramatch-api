@@ -27,7 +27,7 @@ class ReportReminderFinancialReport extends I18nMail
                 '{entityModelName}' => $organisationName,
                 '{dueAt}' => $financialReport->due_at->format('d M Y'),
                 '{callbackUrl}' => $frontEndUrl . $myOrgLink,
-                '{reportUrl}' => $frontEndUrl . $callbackUrl
+                '{reportUrl}' => $frontEndUrl . $callbackUrl,
             ]);
     }
 }
