@@ -25,10 +25,9 @@ class ReportReminderFinancialReport extends I18nMail
             ->setBodyKey('financial-report-reminder.body')
             ->setParams([
                 '{entityModelName}' => $organisationName,
-                '{dueAt}' => $financialReport->due_at,
+                '{dueAt}' => $financialReport->due_at->format('d M Y'),
                 '{callbackUrl}' => $frontEndUrl . $myOrgLink,
-                '{reportUrl}' => $frontEndUrl . $callbackUrl,
-                '{feedback}' => $feedback,
+                '{reportUrl}' => $frontEndUrl . $callbackUrl
             ]);
     }
 }

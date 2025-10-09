@@ -344,9 +344,9 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('financial-report-reminder.subject', 'TerraFund Report Reminder');
         $this->createLocalizationKey('financial-report-reminder.title', 'Reminder: Your Financial Report Still Needs Your Input');
         $this->createLocalizationKey('financial-report-reminder.body', 'This is a reminder that your financial report for {entityModelName} is due on {dueAt}.<br><br> 
-            Here is a link to your “My Organization” page on TerraMatch, where you can find your report: <a href="{callbackUrl}" style="color: #6E6E6E;">Here.</a>
-            You can find detailed guidance for this report here: <a href="{reportUrl}" style="color: #6E6E6E;">Here.</a>
-            If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>{feedback}');
+            Here is a link to your “My Organization” page on TerraMatch, where you can find your report: <a href="{callbackUrl}" style="color: #6E6E6E;">Here.</a><br><br> 
+            You can find detailed guidance for this report here: <a href="{reportUrl}" style="color: #6E6E6E;">Here.</a><br><br>
+            If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>');
         $this->createLocalizationKey('financial-report-reminder.cta', 'View Report');
 
         // task-digest
