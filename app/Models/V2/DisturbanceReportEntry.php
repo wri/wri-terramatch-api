@@ -101,7 +101,7 @@ class DisturbanceReportEntry extends Model implements HandlesLinkedFieldSync
         $toDelete->each->delete();
 
         // Process approval logic if this is an approval
-        if ($isApproval === true) {
+        if ($isApproval) {
             self::processApprovalLogic($entity);
         }
     }
