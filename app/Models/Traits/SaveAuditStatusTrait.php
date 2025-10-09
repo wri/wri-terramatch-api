@@ -3,6 +3,7 @@
 namespace App\Models\Traits;
 
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\DisturbanceReport;
 use App\Models\V2\FinancialReport;
 use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Nurseries\Nursery;
@@ -147,6 +148,8 @@ trait SaveAuditStatusTrait
                 return 'nursery-report';
             case FinancialReport::class:
                 return 'financial-report';
+            case DisturbanceReport::class:
+                return 'disturbance-report';
             default:
                 return 'entity';
         }
