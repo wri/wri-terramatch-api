@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
@@ -14,7 +14,7 @@ class UpdatePlantingStatusTranslationsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'planting-status:update-translations';
+    protected $signature = 'one-off:update-planting-status-translations';
 
     /**
      * The console command description.
@@ -49,35 +49,23 @@ class UpdatePlantingStatusTranslationsCommand extends Command
         $list = FormOptionList::where('key', $key)->first();
 
         if ($list) {
-            // Delete existing options to recreate them in the correct order
-            $list->options()->delete();
-
-            // Create options in the new order
-            $orderedOptions = [
-                'no-restoration-expected',
-                'not-started',
-                'in-progress',
-                'replacement-planting',
-                'completed',
-            ];
-
-            foreach ($orderedOptions as $optionLabel) {
-                $option = FormOptionListOption::create([
-                    'form_option_list_id' => $list->id,
-                    'label' => $optionLabel,
-                    'slug' => \Illuminate\Support\Str::slug($optionLabel),
-                ]);
-
-                // Create I18n item with sentence case translation
-                $i18nItem = I18nItem::create([
-                    'type' => 'short',
-                    'status' => I18nItem::STATUS_DRAFT,
-                    'short_value' => $translations[$optionLabel],
-                ]);
-
-                $option->label_id = $i18nItem->id;
-                $option->save();
+            // Get all existing options
+            $options = $list->options;
+            
+            // Update labels to sentence case
+            foreach ($options as $option) {
+                if (isset($translations[$option->label])) {
+                    $option->update([
+                        'label' => $translations[$option->label]
+                    ]);
+                    $this->info("Updated option: {$option->label}");
+                }
             }
+
+            $this->info('Planting status labels updated to sentence case successfully!');
+            $this->info('Note: The order is already correct with replacement-planting before completed.');
+        } else {
+            $this->error('Planting status option list not found!');
         }
     }
 }
