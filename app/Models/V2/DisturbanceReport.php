@@ -21,6 +21,7 @@ use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class DisturbanceReport extends Model implements MediaModel, ReportModel, AuditableContract, AuditableModel

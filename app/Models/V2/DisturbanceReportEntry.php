@@ -5,11 +5,13 @@ namespace App\Models\V2;
 use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasUuid;
 use App\Models\V2\Sites\SitePolygon;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class DisturbanceReportEntry extends Model implements HandlesLinkedFieldSync
@@ -43,7 +45,7 @@ class DisturbanceReportEntry extends Model implements HandlesLinkedFieldSync
         $relation = $entity->$property();
 
         $rows = collect($data ?? []);
-        if ($rows->isNotEmpty() && $rows->first() instanceof \Illuminate\Support\Collection) {
+        if ($rows->isNotEmpty() && $rows->first() instanceof Collection) {
             $rows = $rows->first();
         }
 
@@ -110,16 +112,16 @@ class DisturbanceReportEntry extends Model implements HandlesLinkedFieldSync
      */
     private static function processApprovalLogic(Model $entity): void
     {
+        Log::info("Processing approval logic for disturbance report {$entity->id}");
+
         $entries = $entity->entries()->get();
         $affectedPolygonUuids = collect();
         $disturbanceData = [];
 
         foreach ($entries as $entry) {
             // Look for entries that contain affected polygon UUIDs
-            $polygonFieldNames = ['polygon-affected'];
-
-            if (in_array($entry->name, $polygonFieldNames) && $entry->value) {
-                \Log::debug("Processing polygon field: {$entry->name} with value: {$entry->value}");
+            if ($entry->name == 'polygon-affected' && $entry->value) {
+                Log::info("Processing polygon field: {$entry->name} with value: {$entry->value}");
 
                 try {
                     // Parse as JSON array of arrays containing polygon objects
@@ -130,23 +132,19 @@ class DisturbanceReportEntry extends Model implements HandlesLinkedFieldSync
                                 // Handle array of arrays format
                                 foreach ($polygonGroup as $polygonObj) {
                                     if (is_array($polygonObj) && isset($polygonObj['polyUuid'])) {
-                                        \Log::debug("Adding polygon UUID: {$polygonObj['polyUuid']} ({$polygonObj['polyName']}) from group {$groupIndex}");
+                                        Log::info("Adding polygon UUID: {$polygonObj['polyUuid']} ({$polygonObj['polyName']}) from group {$groupIndex}");
                                         $affectedPolygonUuids->push($polygonObj['polyUuid']);
                                     }
                                 }
                             } elseif (is_array($polygonGroup) && isset($polygonGroup['polyUuid'])) {
                                 // Handle direct object format (fallback)
-                                \Log::debug("Adding polygon UUID: {$polygonGroup['polyUuid']} ({$polygonGroup['polyName']})");
+                                Log::info("Adding polygon UUID: {$polygonGroup['polyUuid']} ({$polygonGroup['polyName']})");
                                 $affectedPolygonUuids->push($polygonGroup['polyUuid']);
-                            } elseif (is_string($polygonGroup) && trim($polygonGroup)) {
-                                // Fallback for simple string UUIDs
-                                \Log::debug('Adding polygon UUID (string): ' . trim($polygonGroup));
-                                $affectedPolygonUuids->push(trim($polygonGroup));
                             }
                         }
                     }
-                } catch (\Exception $error) {
-                    \Log::warning("Failed to parse polygon JSON: {$error->getMessage()}, trying comma-separated values");
+                } catch (Exception $error) {
+                    Log::info("Failed to parse polygon JSON: {$error->getMessage()}, trying comma-separated values");
                     // If JSON parsing fails, try comma-separated values
                     $uuids = array_filter(array_map('trim', explode(',', $entry->value)));
                     foreach ($uuids as $uuid) {
@@ -155,58 +153,45 @@ class DisturbanceReportEntry extends Model implements HandlesLinkedFieldSync
                 }
             }
 
-            // Process other disturbance data fields
-            switch ($entry->name) {
-                case 'intensity':
-                    if ($entry->value) {
+            if (data_get($entry, 'value')) {
+                switch ($entry->name) {
+                    case 'intensity':
                         $disturbanceData['intensity'] = $entry->value;
-                    }
 
-                    break;
-                case 'extent':
-                    if ($entry->value) {
+                        break;
+                    case 'extent':
                         $disturbanceData['extent'] = $entry->value;
-                    }
 
-                    break;
-                case 'disturbance-type':
-                    if ($entry->value) {
+                        break;
+                    case 'disturbance-type':
                         $disturbanceData['type'] = $entry->value;
-                    }
 
-                    break;
-                case 'disturbance-subtype':
-                    if ($entry->value) {
+                        break;
+                    case 'disturbance-subtype': {
                         $subtype = json_decode($entry->value, true);
-                        $disturbanceData['subtype'] = is_array($subtype) ? $subtype : [];
-                    }
+                        $disturbanceData['subtype'] = $subtype ?? null;
 
-                    break;
-                case 'people-affected':
-                    if ($entry->value) {
+                        break;
+                    }
+                    case 'people-affected':
                         $disturbanceData['people_affected'] = is_numeric($entry->value) ? (int) $entry->value : null;
-                    }
 
-                    break;
-                case 'monetary-damage':
-                    if ($entry->value) {
+                        break;
+                    case 'monetary-damage':
                         $disturbanceData['monetary_damage'] = is_numeric($entry->value) ? (float) $entry->value : null;
-                    }
 
-                    break;
-                case 'property-affected':
-                    if ($entry->value) {
+                        break;
+                    case 'property-affected': {
                         $property = json_decode($entry->value, true);
-                        $disturbanceData['property_affected'] = is_array($property) ? $property : [];
-                    }
+                        $disturbanceData['property_affected'] = $property ?? null;
 
-                    break;
-                case 'date-of-disturbance':
-                    if ($entry->value) {
+                        break;
+                    }
+                    case 'date-of-disturbance':
                         $disturbanceData['disturbance_date'] = $entry->value;
-                    }
 
-                    break;
+                        break;
+                }
             }
         }
 
@@ -216,7 +201,6 @@ class DisturbanceReportEntry extends Model implements HandlesLinkedFieldSync
             return;
         }
 
-        // Create the disturbance record
         $disturbanceCreateData = [
             'disturbanceable_type' => get_class($entity),
             'disturbanceable_id' => $entity->id,
@@ -233,9 +217,35 @@ class DisturbanceReportEntry extends Model implements HandlesLinkedFieldSync
             'hidden' => false,
         ];
 
-        $disturbance = Disturbance::create($disturbanceCreateData);
+        // Check if disturbance already exists
+        $existingDisturbance = Disturbance::where('disturbanceable_type', get_class($entity))
+            ->where('disturbanceable_id', $entity->id)
+            ->first();
 
-        // Find all affected site polygons and validate they're not already affected by another disturbance
+        if ($existingDisturbance) {
+            $existingDisturbance->update($disturbanceCreateData);
+            $disturbance = $existingDisturbance;
+            Log::info("Updated existing disturbance {$existingDisturbance->id} for report {$entity->id}");
+        } else {
+            $disturbance = Disturbance::create($disturbanceCreateData);
+            Log::info("Created new disturbance {$disturbance->id} for report {$entity->id}");
+        }
+
+        // First, remove disturbance_id from all polygons that were previously assigned to this disturbance report
+        $previouslyAffectedPolygons = SitePolygon::where('disturbance_id', $disturbance->id)
+            ->where('is_active', true)
+            ->get();
+
+        if ($previouslyAffectedPolygons->isNotEmpty()) {
+            $previouslyAffectedUuids = $previouslyAffectedPolygons->pluck('uuid')->toArray();
+            Log::info('Removing disturbance_id from previously affected polygons: ' . implode(', ', $previouslyAffectedUuids));
+
+            SitePolygon::whereIn('uuid', $previouslyAffectedUuids)
+                ->where('is_active', true)
+                ->update(['disturbance_id' => null]);
+        }
+
+        // Now, assign disturbance_id to the new set of affected polygons
         $affectedPolygons = SitePolygon::whereIn('uuid', $affectedPolygonUuids->unique()->toArray())
             ->where('is_active', true)
             ->get();
@@ -247,7 +257,7 @@ class DisturbanceReportEntry extends Model implements HandlesLinkedFieldSync
 
         if ($alreadyAffectedPolygons->isNotEmpty()) {
             $alreadyAffectedUuids = $alreadyAffectedPolygons->pluck('uuid')->join(', ');
-            Log::warning("The following polygons are already affected by another disturbance: {$alreadyAffectedUuids}");
+            Log::info("The following polygons are already affected by another disturbance: {$alreadyAffectedUuids}");
         }
 
         // Update all affected polygons with the disturbance_id, where they are not already affected by another disturbance
@@ -256,6 +266,6 @@ class DisturbanceReportEntry extends Model implements HandlesLinkedFieldSync
             ->whereNull('disturbance_id')
             ->update(['disturbance_id' => $disturbance->id]);
 
-        Log::info("Created disturbance {$disturbance->id} for report {$entity->id} affecting " . $affectedPolygonUuids->unique()->count() . ' polygons');
+        Log::info("Updated {$disturbance->id} for report {$entity->id} affecting " . $affectedPolygonUuids->unique()->count() . ' polygons');
     }
 }
