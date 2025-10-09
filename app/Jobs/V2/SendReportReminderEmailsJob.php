@@ -44,9 +44,10 @@ class SendReportReminderEmailsJob implements ShouldQueue
         }
 
         if ($this->entity instanceof FinancialReport) {
-            $organisation = $this->entity->organisation->users;
-            $organisation = $this->skipRecipients($organisation);
-            foreach ($organisation as $user) {
+            $users = $this->entity->organisation->users();
+            $usersToSend = $this->skipRecipients($users);
+
+            foreach ($usersToSend as $user) {
                 Mail::to($user->email_address)->send(new ReportReminderFinancialReportMail($this->entity, $this->feedback, $user));
             }
 
