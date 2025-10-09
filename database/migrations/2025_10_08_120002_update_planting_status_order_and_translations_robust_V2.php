@@ -71,7 +71,6 @@ return new class () extends Migration {
                     'type' => 'short',
                     'status' => I18nItem::STATUS_DRAFT,
                     'short_value' => $translations[$optionLabel],
-                    'long_value' => $translations[$optionLabel],
                 ]);
 
                 $option->label_id = $i18nItem->id;
@@ -110,7 +109,6 @@ return new class () extends Migration {
                     'type' => 'short',
                     'status' => I18nItem::STATUS_DRAFT,
                     'short_value' => $optionLabel,
-                    'long_value' => $optionLabel,
                 ]);
 
                 $option->label_id = $i18nItem->id;
