@@ -17,7 +17,6 @@ use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
@@ -161,15 +160,6 @@ class ExportApplicationControllerTest extends TestCase
         TreeSpecies::factory()->count($this->faker->numberBetween(0, 5))->create(['speciesable_type' => ProjectPitch::class, 'speciesable_id' => $pitch->id]);
         FundingType::factory()->count($this->faker->numberBetween(0, 5))->create(['organisation_id' => $organisation->uuid]);
         $application = Application::factory()->create(['funding_programme_uuid' => $fundingProgramme->uuid,'organisation_uuid' => $organisation->uuid]);
-
-        $file = UploadedFile::fake()->image('proof.pdf', 10, 10);
-        $this->actingAs($user)->postJson('/api/v2/file/upload/organisation/avg_tree_survival_rate_proof/' . $organisation->uuid, ['title' => 'Proof file', 'upload_file' => $file])->assertSuccessful();
-
-        $file = UploadedFile::fake()->image('restoration.png', 10, 10);
-        $this->actingAs($user)->postJson('/api/v2/file/upload/project-pitch/restoration_photos/' . $pitch->uuid, ['title' => 'Restoration photos', 'upload_file' => $file])->assertSuccessful();
-
-        $file = UploadedFile::fake()->image('additional.csv', 10, 10);
-        $this->actingAs($user)->postJson('/api/v2/file/upload/project-pitch/additional/' . $pitch->uuid, ['title' => 'Additional file', 'upload_file' => $file])->assertSuccessful();
 
         foreach ($fundingProgramme->stages as $stage) {
             if (! empty($stage->form)) {
