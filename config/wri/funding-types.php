@@ -1,12 +1,12 @@
 <?php
 return
     [
-        'private_grant' => 'Private grant from foundation',
-        'public_grant' => 'Public grant from government',
-        'loan_credit_private' => 'Loan/Credit Finance from Private Bank or Investor',
-        'private_equity' => 'Equity from Private Investor',
-        'product_offtake_contract' => 'Product Offtake Contract',
-        'carbon_credits_contract' => 'Carbon Credits Contract',
-        'ecosystem_services' => 'Public/Private Payments for Ecosystem Services',
+        'private-grant' => 'Private grant from foundation',
+        'public-grant' => 'Public grant from government',
+        'loan-credit-private' => 'Loan/Credit Finance from Private Bank or Investor',
+        'private-equity' => 'Equity from Private Investor',
+        'product-offtake-contract' => 'Product Offtake Contract',
+        'carbon-credits-contract' => 'Carbon Credits Contract',
+        'ecosystem-services' => 'Public/Private Payments for Ecosystem Services',
         'other' => 'Other'
     ];

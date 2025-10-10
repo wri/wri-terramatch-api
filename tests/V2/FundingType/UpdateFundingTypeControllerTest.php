@@ -22,7 +22,7 @@ class UpdateFundingTypeControllerTest extends TestCase
         $payload = [
             'amount' => 12345,
             'year' => 1998,
-            'type' => 'private_grant',
+            'type' => 'private-grant',
         ];
 
         $this->actingAs($user)
@@ -31,7 +31,7 @@ class UpdateFundingTypeControllerTest extends TestCase
             ->assertJsonFragment([
                 'amount' => 12345,
                 'year' => 1998,
-                'type' => 'private_grant',
+                'type' => 'private-grant',
             ]);
     }
 
@@ -46,7 +46,7 @@ class UpdateFundingTypeControllerTest extends TestCase
         $payload = [
             'amount' => 12345,
             'year' => 1998,
-            'type' => 'private_grant',
+            'type' => 'private-grant',
         ];
 
         $this->actingAs($user)

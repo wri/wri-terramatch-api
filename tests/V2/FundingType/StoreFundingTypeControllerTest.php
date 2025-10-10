@@ -19,7 +19,7 @@ class StoreFundingTypeControllerTest extends TestCase
             'organisation_id' => $user->organisation->uuid,
             'amount' => 12345,
             'year' => 1998,
-            'type' => 'private_grant',
+            'type' => 'private-grant',
         ];
 
         $this->actingAs($user)
@@ -29,7 +29,7 @@ class StoreFundingTypeControllerTest extends TestCase
                 'organisation_id' => $user->organisation->uuid,
                 'amount' => 12345,
                 'year' => 1998,
-                'type' => 'private_grant',
+                'type' => 'private-grant',
             ]);
     }
 
@@ -42,7 +42,7 @@ class StoreFundingTypeControllerTest extends TestCase
             'organisation_id' => $organisation->uuid,
             'amount' => 12345,
             'year' => 1998,
-            'type' => 'private_grant',
+            'type' => 'private-grant',
         ];
 
         $this->actingAs($user)
