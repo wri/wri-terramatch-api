@@ -6,7 +6,6 @@ use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
 use App\Models\V2\I18n\I18nItem;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class UpdatePlantingStatusOptionsOrderCommand extends Command
@@ -56,8 +55,9 @@ class UpdatePlantingStatusOptionsOrderCommand extends Command
         $key = 'planting-status';
         $list = FormOptionList::where('key', $key)->first();
 
-        if (!$list) {
+        if (! $list) {
             $this->error("FormOptionList with key '{$key}' not found!");
+
             return;
         }
 
@@ -82,7 +82,7 @@ class UpdatePlantingStatusOptionsOrderCommand extends Command
             try {
                 $option = FormOptionListOption::create([
                     'form_option_list_id' => $list->id,
-                    'label' => $translations[$optionLabel], 
+                    'label' => $translations[$optionLabel],
                     'slug' => Str::slug($optionLabel),
                 ]);
 
