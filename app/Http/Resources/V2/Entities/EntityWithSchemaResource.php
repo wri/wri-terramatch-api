@@ -18,7 +18,7 @@ class EntityWithSchemaResource extends JsonResource
             'framework_key' => $this->framework_key,
             'answers' => $this->getEntityAnswers($this->getForm()),
             'status' => $this->status,
-            'form_title' => $this->report_title ?? $this->title ?? $this->name,
+            'form_title' => $this->getForm()->translated_title,
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
             'update_request' => $updateRequest == null ? null : new UpdateRequestResource($updateRequest),

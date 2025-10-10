@@ -55,12 +55,9 @@ use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsControl
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\FinancialReports\FinancialReportsController;
 use App\Http\Controllers\V2\Forms\DeleteFormController;
-use App\Http\Controllers\V2\Forms\DeleteFormQuestionController;
-use App\Http\Controllers\V2\Forms\DeleteFormSectionController;
 use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
-use App\Http\Controllers\V2\Forms\IndexFormController;
 use App\Http\Controllers\V2\Forms\PublishFormController;
 use App\Http\Controllers\V2\Forms\StoreFormController;
 use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
@@ -68,7 +65,6 @@ use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
-use App\Http\Controllers\V2\Forms\ViewFormController;
 use App\Http\Controllers\V2\Forms\ViewFormSubmissionController;
 use App\Http\Controllers\V2\FundingProgramme\AdminFundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\FundingProgrammeController;
@@ -326,9 +322,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::prefix('forms')->group(function () {
         Route::post('/', StoreFormController::class);
-        Route::get('/', IndexFormController::class);
-        Route::delete('/section/{formSection}', DeleteFormSectionController::class);
-        Route::delete('/question/{formQuestion}', DeleteFormQuestionController::class);
         Route::prefix('submissions')->group(function () {
             Route::get('/{form}/export', ExportFormSubmissionController::class);
             Route::prefix('{formSubmission}')->group(function () {
@@ -391,8 +384,6 @@ Route::prefix('forms')->group(function () {
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
-
-    Route::get('/{form}', ViewFormController::class)->middleware('i18n');
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
