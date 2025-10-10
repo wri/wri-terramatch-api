@@ -104,7 +104,9 @@ class GetPolygonsIndicatorAnalysisController extends Controller
                     ];
                     if (str_contains($slug, 'treeCoverLoss')) {
                         $valueYears = json_decode($indicator->value, true);
-                        foreach (range(2010, 2025) as $year) {
+                        $years = array_keys($valueYears);
+                        sort($years);
+                        foreach ($years as $year) {
                             $results['data']["$year"] = round((float) ($valueYears["$year"] ?? 0), 1);
                         }
                     }

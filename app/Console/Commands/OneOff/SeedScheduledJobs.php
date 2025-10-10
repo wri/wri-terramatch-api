@@ -29,26 +29,30 @@ class SeedScheduledJobs extends Command
      */
     public function handle()
     {
-        // PPC reports
+        // PPC reports (Generate on 1st of previous month; Due on 7th of quarter month)
+        // Sep 1 -> Oct 7
         TaskDueJob::createTaskDue(
-            Carbon::createFromFormat('m', 9)->startOfMonth()->setDay(13),
+            Carbon::createFromFormat('m', 9)->startOfMonth()->setDay(1),
             'ppc',
-            Carbon::createFromFormat('m', 10)->startOfMonth()->setDay(4),
+            Carbon::createFromFormat('m', 10)->startOfMonth()->setDay(7)->setHour(4),
         );
+        // Dec 1 -> Jan 7
         TaskDueJob::createTaskDue(
-            Carbon::createFromFormat('m', 12)->startOfMonth()->setDay(13),
+            Carbon::createFromFormat('m', 12)->startOfMonth()->setDay(1),
             'ppc',
-            Carbon::createFromFormat('m', 1)->addYear()->startOfMonth()->setDay(3),
+            Carbon::createFromFormat('m', 1)->addYear()->startOfMonth()->setDay(7)->setHour(4),
         );
+        // Mar 1 -> Apr 7
         TaskDueJob::createTaskDue(
-            Carbon::createFromFormat('m', 3)->addYear()->startOfMonth()->setDay(14),
+            Carbon::createFromFormat('m', 3)->addYear()->startOfMonth()->setDay(1),
             'ppc',
-            Carbon::createFromFormat('m', 4)->addYear()->startOfMonth()->setDay(4),
+            Carbon::createFromFormat('m', 4)->addYear()->startOfMonth()->setDay(7)->setHour(4),
         );
+        // Jun 1 -> Jul 7
         TaskDueJob::createTaskDue(
-            Carbon::createFromFormat('m', 6)->addYear()->startOfMonth()->setDay(14),
+            Carbon::createFromFormat('m', 6)->addYear()->startOfMonth()->setDay(1),
             'ppc',
-            Carbon::createFromFormat('m', 7)->addYear()->startOfMonth()->setDay(5),
+            Carbon::createFromFormat('m', 7)->addYear()->startOfMonth()->setDay(7)->setHour(4),
         );
 
         // Terrafund reports

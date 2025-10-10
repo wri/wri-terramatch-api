@@ -165,6 +165,7 @@ class PolygonValidationService
 
         $validationErrors = [];
         $polygonService = App::make(PolygonService::class);
+
         foreach ($fieldsToValidate as $field) {
             $value = $sitePolygon->$field;
             if ($polygonService->isInvalidField($field, $value)) {

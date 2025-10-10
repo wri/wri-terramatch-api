@@ -26,7 +26,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
     {
         $answer = data_get($answers, $field['uuid']);
 
-        $readableOptionsFields = ['select', 'radio',  'checkbox', 'imageSelect', 'fundingType', 'leadershipTeam', 'coreTeamLeaders', 'ownershipStake'];
+        $readableOptionsFields = ['select', 'radio',  'checkbox', 'imageSelect', 'fundingType', 'ownershipStake'];
         if (in_array(data_get($field, 'input_type'), $readableOptionsFields)) {
             $question = FormQuestion::isUuid($field['uuid'])->first();
             $answer = $this->getReadableOptionsValue($question, $answer);
@@ -103,12 +103,6 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     }
 
                     return implode('|', $list);
-
-                case 'leadershipTeam':
-                    return $this->stringifyModel($answer, ['first_name', 'last_name', 'position', 'gender', 'age',]);
-
-                case 'coreTeamLeaders':
-                    return $this->stringifyModel($answer, ['first_name', 'last_name', 'position', 'gender', 'age', 'role']);
 
                 case 'fundingType':
                     return $this->stringifyModel($answer, ['type', 'source', 'amount', 'year']);

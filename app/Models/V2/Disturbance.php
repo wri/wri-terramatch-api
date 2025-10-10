@@ -5,9 +5,11 @@ namespace App\Models\V2;
 use App\Http\Resources\V2\Disturbances\DisturbanceCollection;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
+use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -63,5 +65,10 @@ class Disturbance extends Model implements EntityRelationModel
     public function scopeVisible($query): Builder
     {
         return $query->where('hidden', false);
+    }
+
+    public function sitePolygons(): HasMany
+    {
+        return $this->hasMany(SitePolygon::class, 'disturbance_id');
     }
 }
