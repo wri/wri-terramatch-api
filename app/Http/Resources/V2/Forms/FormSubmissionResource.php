@@ -23,13 +23,13 @@ class FormSubmissionResource extends JsonResource
 
         $translatedFeedbackFields = collect($this->feedback_fields)->map(function ($field) {
             $label = $field;
-            
+
             $i18nTranslation = I18nTranslation::where('long_value', $label)->first();
-            if (!$i18nTranslation) {
+            if (! $i18nTranslation) {
                 $i18nTranslation = I18nTranslation::where('short_value', $label)->first();
             }
-            
-            if (!$i18nTranslation) {
+
+            if (! $i18nTranslation) {
                 return $label;
             }
 
@@ -39,13 +39,13 @@ class FormSubmissionResource extends JsonResource
                 ->first();
 
             // Fallback to English if no translation in current language
-            if (!$currentLanguageTranslation && $currentLanguage !== 'en') {
+            if (! $currentLanguageTranslation && $currentLanguage !== 'en') {
                 $currentLanguageTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)
                     ->where('language', 'en')
                     ->first();
             }
 
-            if (!$currentLanguageTranslation) {
+            if (! $currentLanguageTranslation) {
                 return $label;
             }
 
