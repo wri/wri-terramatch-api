@@ -4,7 +4,7 @@ namespace App\Http\Resources\V2\Forms;
 
 use App\Http\Resources\V2\AuditResource;
 use App\Http\Resources\V2\Stages\StageLiteResource;
-use App\Models\V2\I18n\I18nItem;
+use App\Models\V2\I18n\I18nTranslation;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\App;
 
@@ -27,24 +27,24 @@ class FormSubmissionResource extends JsonResource
             if (strlen($label) > 255) {
                 $type = 'long';
             }
-            $i18nItemQuery = I18nItem::where('type', $type);
+            $i18nTranslationQuery = I18nTranslation::where('type', $type);
             if ($type === 'long') {
-                $i18nItemQuery->where('long_value', $label);
+                $i18nTranslationQuery->where('long_value', $label);
             } else {
-                $i18nItemQuery->where('short_value', $label);
+                $i18nTranslationQuery->where('short_value', $label);
             }
-            $i18nItem = $i18nItemQuery->first();
-            if (! $i18nItem) {
+            $i18nTranslation = $i18nTranslationQuery->first();
+
+            //App::getLocale() is en-US -> en 
+            $otherTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)->where('language', App::getLocale())->first();
+
+            if (! $otherTranslation) {
                 return $label;
             }
-            $translatedValue = $i18nItem->getTranslated(App::getLocale());
-            if (! $translatedValue) {
-                return $label;
-            }
             if ($type === 'long') {
-                return $translatedValue->long_value;
+                return $otherTranslation->long_value;
             } else {
-                return $translatedValue->short_value;
+                return $otherTranslation->short_value;
             }
         });
 
