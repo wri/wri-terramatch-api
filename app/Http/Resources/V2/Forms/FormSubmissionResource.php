@@ -23,29 +23,28 @@ class FormSubmissionResource extends JsonResource
 
         $translatedFeedbackFields = collect($this->feedback_fields)->map(function ($field) {
             $label = $field;
-            $type = 'short';
-            if (strlen($label) > 255) {
-                $type = 'long';
-            }
-            $i18nTranslationQuery = I18nTranslation::where('type', $type);
-            if ($type === 'long') {
-                $i18nTranslationQuery->where('long_value', $label);
-            } else {
-                $i18nTranslationQuery->where('short_value', $label);
-            }
-            $i18nTranslation = $i18nTranslationQuery->first();
-
-            //App::getLocale() is en-US -> en 
-            $otherTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)->where('language', App::getLocale())->first();
-
-            if (! $otherTranslation) {
+            $isLong = strlen($label) > 255;
+            $type = $isLong ? 'long_value' : 'short_value';
+            $i18nTranslation = I18nTranslation::where($type, $label)->first();
+            if (!$i18nTranslation) {
                 return $label;
             }
-            if ($type === 'long') {
-                return $otherTranslation->long_value;
-            } else {
-                return $otherTranslation->short_value;
+            
+            $currentLanguage = App::getLocale() === 'en-US' ? 'en' : App::getLocale();
+            $currentLanguageTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)
+                ->where('language', $currentLanguage)
+                ->first();
+
+            if (!$currentLanguageTranslation && $currentLanguage !== 'en') {
+                $currentLanguageTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)
+                    ->where('language', 'en')
+                    ->first();
             }
+            
+            if (!$currentLanguageTranslation) {
+                return $label;
+            }
+            return $isLong ? $currentLanguageTranslation->long_value : $currentLanguageTranslation->short_value;
         });
 
         return [
