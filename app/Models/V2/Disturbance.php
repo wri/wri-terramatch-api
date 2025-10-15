@@ -26,9 +26,15 @@ class Disturbance extends Model implements EntityRelationModel
         'kind',
         'collection',
         'type',
+        'subtype',
         'intensity',
         'extent',
         'description',
+        'action_description',
+        'people_affected',
+        'monetary_damage',
+        'property_affected',
+        'disturbance_date',
         'disturbanceable_type',
         'disturbanceable_id',
         'hidden',
@@ -39,6 +45,8 @@ class Disturbance extends Model implements EntityRelationModel
 
     protected $casts = [
         'hidden' => 'boolean',
+        'subtype' => 'array',
+        'property_affected' => 'array',
     ];
 
     public static function createResourceCollection(EntityModel $entity): JsonResource
