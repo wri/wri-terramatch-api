@@ -26,24 +26,25 @@ class FormSubmissionResource extends JsonResource
             $isLong = strlen($label) > 255;
             $type = $isLong ? 'long_value' : 'short_value';
             $i18nTranslation = I18nTranslation::where($type, $label)->first();
-            if (!$i18nTranslation) {
+            if (! $i18nTranslation) {
                 return $label;
             }
-            
+
             $currentLanguage = App::getLocale() === 'en-US' ? 'en' : App::getLocale();
             $currentLanguageTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)
                 ->where('language', $currentLanguage)
                 ->first();
 
-            if (!$currentLanguageTranslation && $currentLanguage !== 'en') {
+            if (! $currentLanguageTranslation && $currentLanguage !== 'en') {
                 $currentLanguageTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)
                     ->where('language', 'en')
                     ->first();
             }
-            
-            if (!$currentLanguageTranslation) {
+
+            if (! $currentLanguageTranslation) {
                 return $label;
             }
+
             return $isLong ? $currentLanguageTranslation->long_value : $currentLanguageTranslation->short_value;
         });
 
