@@ -9,6 +9,8 @@ properties:
     type: string
   status:
     type: string
+  planting_status:
+    type: string
   readable_status:
     type: string
   workdays_paid:

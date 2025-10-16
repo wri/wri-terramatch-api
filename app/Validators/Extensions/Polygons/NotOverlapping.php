@@ -65,12 +65,15 @@ class NotOverlapping extends Extension
                   : 100;
                 $siteInfo = SitePolygon::where('poly_id', $intersect->uuid)->first();
 
+                $intersectionAreaInHectares = self::convertSquareDegreesToHectares($intersect->intersection_area, 35.0);
+
                 return [
                     'poly_uuid' => $intersect->uuid,
                     'poly_name' => $intersect->poly_name,
                     'percentage' => $percentage,
                     'intersectSmaller' => ($intersect->area < $mainPolygonArea),
                     'site_name' => $siteInfo->site->name,
+                    'intersectionArea' => $intersectionAreaInHectares,
                 ];
             })
             ->values()
@@ -146,5 +149,14 @@ class NotOverlapping extends Extension
             'site_id' => $siteId,
             'project_id' => $sitePolygon->project->id,
         ];
+    }
+
+    private static function convertSquareDegreesToHectares(float $squareDegrees, float $latitude): float
+    {
+        $metersPerDegree = 111320;
+        $latitudeFactor = cos(($latitude * M_PI) / 180);
+        $squareMeters = $squareDegrees * $metersPerDegree * $metersPerDegree * $latitudeFactor;
+
+        return $squareMeters / 10000;
     }
 }

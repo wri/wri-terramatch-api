@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\DisturbanceReport;
 use App\Models\V2\FinancialIndicators;
 use App\Models\V2\FinancialReport;
 use App\Models\V2\Forms\Form;
@@ -61,6 +62,8 @@ class ModelInterfaceBindingMiddleware
         'financial-indicator' => FinancialIndicators::class,
         'financial-reports' => FinancialReport::class,
         'financial-report' => FinancialReport::class,
+        'disturbance-report' => DisturbanceReport::class,
+        'disturbance-reports' => DisturbanceReport::class,
 
     ];
 

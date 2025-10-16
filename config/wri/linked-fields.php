@@ -280,6 +280,25 @@ return [
             ],
             'file-collections' => [],
         ],
+        'disturbance-report' => [
+            'label' => 'Disturbance Report',
+            'model' => App\Models\V2\DisturbanceReport::class,
+            'fields' => [
+                'dis-rep-description' => ['property' => 'description', 'label' => 'Description', 'input_type' => 'long-text'],
+                'dis-rep-action-description' => ['property' => 'action_description', 'label' => 'Action Description', 'input_type' => 'long-text'],
+            ],
+            'relations' => [
+                'dis-rep-entries' => [
+                    'property' => 'entries',
+                    'label' => 'Disturbance Entries',
+                    'resource' => 'App\Http\Resources\V2\DisturbanceReportEntryResource',
+                    'input_type' => 'disturbanceReportEntries',
+                ],
+            ],
+            'file-collections' => [
+                'dis-rep-media-assets' => ['property' => 'media', 'label' => 'Media Assets', 'input_type' => 'file', 'multichoice' => true],
+            ],
+        ],
         'project-pitch' => [
             'label' => 'Project Pitch',
             'model' => App\Models\V2\ProjectPitch::class,
@@ -601,6 +620,7 @@ return [
             'label' => 'Project Report',
             'model' => 'App\Models\V2\Projects\ProjectReport',
             'fields' => [
+                'pro-rep-planting-status' => ['property' => 'planting_status','label' => 'What is the status of planting for this project?','input_type' => 'select','multichoice' => false,'option_list_key' => 'planting-status'],
                 'pro-rep-title' => ['property' => 'title', 'label' => 'Title', 'input_type' => 'text'],
                 'pro-rep-ind-1' => ['property' => 'ethnic_indigenous_1', 'label' => 'Indigenous 1', 'input_type' => 'number'],
                 'pro-rep-ind-2' => ['property' => 'ethnic_indigenous_2', 'label' => 'Indigenous 2', 'input_type' => 'number'],
@@ -699,6 +719,7 @@ return [
                 'pro-rep-beneficiaries-training-other' => ['property' => 'beneficiaries_training_other', 'label' => 'Other Gender Trained', 'input_type' => 'number'],
                 'pro-rep-beneficiaries-training-youth' => ['property' => 'beneficiaries_training_youth', 'label' => 'Youth Trained', 'input_type' => 'number'],
                 'pro-rep-beneficiaries-training-non-youth' => ['property' => 'beneficiaries_training_non_youth', 'label' => 'Non Youth Trained', 'input_type' => 'number'],
+                'pro-rep-planting-status' => ['property' => 'planting_status','label' => 'Planting status','input_type' => 'select','multichoice' => false,'option_list_key' => 'planting-status'], 
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [
@@ -1079,6 +1100,13 @@ return [
             'label' => 'Site Report',
             'model' => 'App\Models\V2\Sites\SiteReport',
             'fields' => [
+                'site-rep-planting-status' => [
+                    'property' => 'planting_status',
+                    'label' => 'Planting status',
+                    'input_type' => 'select',
+                    'multichoice' => false,
+                    'option_list_key' => 'planting-status',
+                ],
                 'site-rep-title' => ['property' => 'title', 'label' => 'Title', 'input_type' => 'text'],
                 'site-rep-shared-drive-link' => ['property' => 'shared_drive_link', 'label' => 'Shared drive link', 'input_type' => 'url'],
                 'site-rep-technical-narrative' => ['property' => 'technical_narrative', 'label' => 'Technical narrative', 'input_type' => 'long-text'],
