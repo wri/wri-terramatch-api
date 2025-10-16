@@ -24,23 +24,24 @@ class FormSubmissionResource extends JsonResource
         $translatedFeedbackFields = collect($this->feedback_fields)->map(function ($field) {
             $label = $field;
 
-            $i18nTranslation = I18nTranslation::where('long_value', $label)->first();
-            if (! $i18nTranslation) {
-                $i18nTranslation = I18nTranslation::where('short_value', $label)->first();
+            $i18nTranslations = I18nTranslation::where('long_value', $label)->get('i18n_item_id');
+            if ($i18nTranslations->count() == 0) {
+                $i18nTranslations = I18nTranslation::where('short_value', $label)->get('i18n_item_id');
             }
 
-            if (! $i18nTranslation) {
+            if ($i18nTranslations->count() == 0) {
                 return $label;
             }
 
             $currentLanguage = App::getLocale() === 'en-US' ? 'en' : App::getLocale();
-            $currentLanguageTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)
+            $i18nItemIds = $i18nTranslations->pluck('i18n_item_id')->unique();
+            $currentLanguageTranslation = I18nTranslation::whereIn('i18n_item_id', $i18nItemIds)
                 ->where('language', $currentLanguage)
                 ->first();
 
             // Fallback to English if no translation in current language
             if (! $currentLanguageTranslation && $currentLanguage !== 'en') {
-                $currentLanguageTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)
+                $currentLanguageTranslation = I18nTranslation::whereIn('i18n_item_id', $i18nItemIds)
                     ->where('language', 'en')
                     ->first();
             }
