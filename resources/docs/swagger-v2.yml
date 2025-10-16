@@ -8356,6 +8356,8 @@ definitions:
                     type: string
                 project_pitch_uuid:
                   type: string
+                application_uuid:
+                  type: string
                 updated_by:
                   type: string
                 deleted_at:
@@ -10442,6 +10444,8 @@ definitions:
           type: string
       project_pitch_uuid:
         type: string
+      application_uuid:
+        type: string
       updated_by:
         type: string
       deleted_at:
@@ -11505,6 +11509,8 @@ definitions:
               items:
                 type: string
             project_pitch_uuid:
+              type: string
+            application_uuid:
               type: string
             updated_by:
               type: string
@@ -17501,6 +17507,8 @@ definitions:
             type: boolean
       status:
         type: string
+      planting_status:
+        type: string
       readable_status:
         type: string
       approved_at:
@@ -19335,6 +19343,8 @@ definitions:
       framework_key:
         type: string
       status:
+        type: string
+      planting_status:
         type: string
       readable_status:
         type: string
@@ -41329,6 +41339,8 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -41592,6 +41604,8 @@ paths:
                 items:
                   type: string
               project_pitch_uuid:
+                type: string
+              application_uuid:
                 type: string
               updated_by:
                 type: string
@@ -41863,6 +41877,8 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -42112,6 +42128,8 @@ paths:
                 items:
                   type: string
               project_pitch_uuid:
+                type: string
+              application_uuid:
                 type: string
               updated_by:
                 type: string
@@ -42407,6 +42425,8 @@ paths:
                   type: string
               project_pitch_uuid:
                 type: string
+              application_uuid:
+                type: string
               updated_by:
                 type: string
               deleted_at:
@@ -42660,6 +42680,8 @@ paths:
                 items:
                   type: string
               project_pitch_uuid:
+                type: string
+              application_uuid:
                 type: string
               updated_by:
                 type: string
@@ -43628,6 +43650,8 @@ paths:
                       items:
                         type: string
                     project_pitch_uuid:
+                      type: string
+                    application_uuid:
                       type: string
                     updated_by:
                       type: string
@@ -44643,6 +44667,8 @@ paths:
                       items:
                         type: string
                     project_pitch_uuid:
+                      type: string
+                    application_uuid:
                       type: string
                     updated_by:
                       type: string
