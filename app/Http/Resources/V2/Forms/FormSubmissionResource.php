@@ -21,38 +21,47 @@ class FormSubmissionResource extends JsonResource
             'project_pitch_uuid' => $this->project_pitch_uuid,
         ];
 
-        $translatedFeedbackFields = collect($this->feedback_fields)->map(function ($field) {
+        $translatedFeedbackFields = collect();
+
+        collect($this->feedback_fields)->each(function ($field) use ($translatedFeedbackFields) {
             $label = $field;
 
             $i18nTranslations = I18nTranslation::where('long_value', $label)->get('i18n_item_id');
-            if ($i18nTranslations->count() == 0) {
+            if ($i18nTranslations->isEmpty()) {
                 $i18nTranslations = I18nTranslation::where('short_value', $label)->get('i18n_item_id');
             }
 
-            if ($i18nTranslations->count() == 0) {
-                return $label;
+            if ($i18nTranslations->isEmpty()) {
+                $translatedFeedbackFields->push($label);
+
+                return;
             }
 
             $currentLanguage = App::getLocale() === 'en-US' ? 'en' : App::getLocale();
             $i18nItemIds = $i18nTranslations->pluck('i18n_item_id')->unique();
+
             $currentLanguageTranslation = I18nTranslation::whereIn('i18n_item_id', $i18nItemIds)
                 ->where('language', $currentLanguage)
-                ->first();
+                ->get();
 
-            // Fallback to English if no translation in current language
-            if (! $currentLanguageTranslation && $currentLanguage !== 'en') {
+            if ($currentLanguageTranslation->isEmpty() && $currentLanguage !== 'en') {
                 $currentLanguageTranslation = I18nTranslation::whereIn('i18n_item_id', $i18nItemIds)
                     ->where('language', 'en')
-                    ->first();
+                    ->get();
             }
 
-            if (! $currentLanguageTranslation) {
-                return $label;
+            if ($currentLanguageTranslation->isEmpty()) {
+                $translatedFeedbackFields->push($label);
+
+                return;
             }
 
-            // Return long_value if available, otherwise short_value
-            return $currentLanguageTranslation->long_value ?? $currentLanguageTranslation->short_value;
+            $currentLanguageTranslation->each(function ($translation) use ($translatedFeedbackFields) {
+                $translatedFeedbackFields->push($translation->long_value ?? $translation->short_value);
+            });
         });
+
+        $translatedFeedbackFields = $translatedFeedbackFields->unique()->values()->all();
 
         return [
             'id' => $this->id,
