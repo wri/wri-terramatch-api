@@ -11,7 +11,7 @@ class SiteCheckApproveController extends Controller
 {
     public function __invoke(Request $request, Site $site): JsonResource
     {
-        $hasNonApproved = $site->sitePolygons()->where('status', '!=', 'approved')->exists();
+        $hasNonApproved = $site->sitePolygons()->active()->where('status', '!=', 'approved')->exists();
 
         return new JsonResource(['can_approve' => $hasNonApproved]);
     }

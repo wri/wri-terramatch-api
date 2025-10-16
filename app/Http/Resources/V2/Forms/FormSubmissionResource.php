@@ -4,7 +4,7 @@ namespace App\Http\Resources\V2\Forms;
 
 use App\Http\Resources\V2\AuditResource;
 use App\Http\Resources\V2\Stages\StageLiteResource;
-use App\Models\V2\I18n\I18nItem;
+use App\Models\V2\I18n\I18nTranslation;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\App;
 
@@ -23,29 +23,34 @@ class FormSubmissionResource extends JsonResource
 
         $translatedFeedbackFields = collect($this->feedback_fields)->map(function ($field) {
             $label = $field;
-            $type = 'short';
-            if (strlen($label) > 255) {
-                $type = 'long';
+
+            $i18nTranslation = I18nTranslation::where('long_value', $label)->first();
+            if (! $i18nTranslation) {
+                $i18nTranslation = I18nTranslation::where('short_value', $label)->first();
             }
-            $i18nItemQuery = I18nItem::where('type', $type);
-            if ($type === 'long') {
-                $i18nItemQuery->where('long_value', $label);
-            } else {
-                $i18nItemQuery->where('short_value', $label);
-            }
-            $i18nItem = $i18nItemQuery->first();
-            if (! $i18nItem) {
+
+            if (! $i18nTranslation) {
                 return $label;
             }
-            $translatedValue = $i18nItem->getTranslated(App::getLocale());
-            if (! $translatedValue) {
+
+            $currentLanguage = App::getLocale() === 'en-US' ? 'en' : App::getLocale();
+            $currentLanguageTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)
+                ->where('language', $currentLanguage)
+                ->first();
+
+            // Fallback to English if no translation in current language
+            if (! $currentLanguageTranslation && $currentLanguage !== 'en') {
+                $currentLanguageTranslation = I18nTranslation::where('i18n_item_id', $i18nTranslation->i18n_item_id)
+                    ->where('language', 'en')
+                    ->first();
+            }
+
+            if (! $currentLanguageTranslation) {
                 return $label;
             }
-            if ($type === 'long') {
-                return $translatedValue->long_value;
-            } else {
-                return $translatedValue->short_value;
-            }
+
+            // Return long_value if available, otherwise short_value
+            return $currentLanguageTranslation->long_value ?? $currentLanguageTranslation->short_value;
         });
 
         return [
