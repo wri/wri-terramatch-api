@@ -871,6 +871,11 @@
     responses:
       '200':
         description: OK
+        schema:
+          type: object
+          properties:
+            uuid:
+              type: string
 /v2/funding-type:
   post:
     summary: Create a funding type entry

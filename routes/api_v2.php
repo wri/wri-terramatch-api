@@ -187,6 +187,7 @@ use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
+use App\Models\V2\MediaModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -631,8 +632,6 @@ ModelInterfaceBindingMiddleware::with(
 Route::post('/export-image', ExportImageController::class);
 
 Route::resource('files', FilePropertiesController::class);
-//Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
-//Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
 
 ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::post('/{auditable}', StoreAuditStatusController::class);
