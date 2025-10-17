@@ -52,6 +52,7 @@ use App\Http\Controllers\V2\Files\Location\ProjectImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\ProjectReportImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\SiteImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
+use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\FinancialReports\FinancialReportsController;
@@ -616,6 +617,16 @@ Route::prefix('terrafund')->group(function () {
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
 Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
+
+ModelInterfaceBindingMiddleware::with(
+    MediaModel::class,
+    function () {
+        Route::post('/{collection}/{mediaModel}', UploadController::class);
+        Route::post('/{collection}/{mediaModel}/bulk_url', [UploadController::class, 'bulkUrlUpload']);
+    },
+    prefix: 'file/upload',
+    modelParameter: 'mediaModel'
+);
 
 Route::post('/export-image', ExportImageController::class);
 
