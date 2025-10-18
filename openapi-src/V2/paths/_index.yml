@@ -725,51 +725,6 @@
 /v2/{MODEL}/{UUID}/image/locations:
   get:
     $ref: './Files/get-v2-model-uuid-image-locations.yml'
-/v2/file/upload/{MODEL}/{COLLECTION}/{UUID}:
-  post:
-    summary: Upload a file to a specific entities collection
-    operationId: v2-post-upload-file-model-collection-uuid
-    tags:
-      - Files
-    consumes:
-      - multipart/form-data
-    produces:
-      - application/json
-    parameters:
-      - type: string
-        name: MODEL
-        in: path
-        required: true
-        description: 'Currently only organisation, funding-programme, project-pitch, project, site, nursery, project-report, site-report, nursery-report, project-monitoring and site-monitoring are set up'
-      - type: string
-        name: COLLECTION
-        in: path
-        required: true
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - type: string
-        name: title
-        in: formData
-      - type: file
-        name: upload_file
-        in: formData
-      - type: integer
-        name: lat
-        in: formData
-      - type: integer
-        name: lng
-        in: formData
-      - type: boolean
-        name: is_public
-        default: true
-        in: formData
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2FileRead'
 /v2/file/upload/site/photos/{UUID}/bulk_url:
   post:
     summary: Upload a batch of photos to a specific site
@@ -871,6 +826,11 @@
     responses:
       '200':
         description: OK
+        schema:
+          type: object
+          properties:
+            uuid:
+              type: string
 /v2/funding-type:
   post:
     summary: Create a funding type entry

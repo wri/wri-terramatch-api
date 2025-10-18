@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V2\Files;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\File\BulkUploadRequest;
-use App\Http\Requests\V2\File\UploadRequest;
 use App\Http\Resources\V2\Files\FileResource;
 use App\Models\V2\MediaModel;
 use Exception;
@@ -15,22 +14,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UploadController extends Controller
 {
-    public function __invoke(UploadRequest $request, string $collection, MediaModel $mediaModel)
-    {
-        $this->authorize('uploadFiles', $mediaModel);
-        $config = $this->getConfiguration($mediaModel, $collection);
-        $this->validateFile($request, $config);
-
-        $qry = $mediaModel->addMediaFromRequest('upload_file');
-        $this->prepHandler($qry, $request->all(), $mediaModel, $config, $collection);
-        $details = $this->executeHandler($qry, $collection);
-
-        $this->saveFileCoordinates($details, $request->all());
-        $this->saveAdditionalFileProperties($details, $request->all(), $config);
-
-        return new FileResource($details);
-    }
-
     public function bulkUrlUpload(BulkUploadRequest $request, string $collection, MediaModel $mediaModel)
     {
         $this->authorize('uploadFiles', $mediaModel);
