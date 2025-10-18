@@ -8,7 +8,9 @@ use App\Models\V2\ProjectPitch;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 final class StoreFormSubmissionControllerTest extends TestCase
