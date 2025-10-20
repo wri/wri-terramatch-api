@@ -176,7 +176,7 @@ trait HasDemographics
 
         if ($this->hasAggregateDemographic($keyNormalized)) {
             $value = filter_var($value, FILTER_VALIDATE_INT);
-            if (! $value) {
+            if ($value === false) {
                 throw new DemographicsException('Illegal attempt to update an aggregate demographic with non-integer value.');
             }
             if ($value < 0) {
