@@ -4,7 +4,7 @@ namespace App\Http\Resources\V2\Forms;
 
 use App\Http\Resources\V2\AuditResource;
 use App\Http\Resources\V2\Stages\StageLiteResource;
-use App\Models\V2\I18n\I18nItem;
+use App\Models\V2\I18n\I18nTranslation;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\App;
 
@@ -16,32 +16,47 @@ class FormSubmissionResource extends JsonResource
      */
     public function toArray($request)
     {
-        $translatedFeedbackFields = collect($this->feedback_fields)->map(function ($field) {
+        $translatedFeedbackFields = collect();
+
+        collect($this->feedback_fields)->each(function ($field) use ($translatedFeedbackFields) {
             $label = $field;
-            $type = 'short';
-            if (strlen($label) > 255) {
-                $type = 'long';
+
+            $i18nTranslations = I18nTranslation::where('long_value', $label)->get('i18n_item_id');
+            if ($i18nTranslations->isEmpty()) {
+                $i18nTranslations = I18nTranslation::where('short_value', $label)->get('i18n_item_id');
             }
-            $i18nItemQuery = I18nItem::where('type', $type);
-            if ($type === 'long') {
-                $i18nItemQuery->where('long_value', $label);
-            } else {
-                $i18nItemQuery->where('short_value', $label);
+
+            if ($i18nTranslations->isEmpty()) {
+                $translatedFeedbackFields->push($label);
+
+                return;
             }
-            $i18nItem = $i18nItemQuery->first();
-            if (! $i18nItem) {
-                return $label;
+
+            $currentLanguage = App::getLocale() === 'en-US' ? 'en' : App::getLocale();
+            $i18nItemIds = $i18nTranslations->pluck('i18n_item_id')->unique();
+
+            $currentLanguageTranslation = I18nTranslation::whereIn('i18n_item_id', $i18nItemIds)
+                ->where('language', $currentLanguage)
+                ->get();
+
+            if ($currentLanguageTranslation->isEmpty() && $currentLanguage !== 'en') {
+                $currentLanguageTranslation = I18nTranslation::whereIn('i18n_item_id', $i18nItemIds)
+                    ->where('language', 'en')
+                    ->get();
             }
-            $translatedValue = $i18nItem->getTranslated(App::getLocale());
-            if (! $translatedValue) {
-                return $label;
+
+            if ($currentLanguageTranslation->isEmpty()) {
+                $translatedFeedbackFields->push($label);
+
+                return;
             }
-            if ($type === 'long') {
-                return $translatedValue->long_value;
-            } else {
-                return $translatedValue->short_value;
-            }
+
+            $currentLanguageTranslation->each(function ($translation) use ($translatedFeedbackFields) {
+                $translatedFeedbackFields->push($translation->long_value ?? $translation->short_value);
+            });
         });
+
+        $translatedFeedbackFields = $translatedFeedbackFields->unique()->values()->all();
 
         return [
             'id' => $this->id,

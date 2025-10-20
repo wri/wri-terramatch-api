@@ -3,8 +3,11 @@
 namespace App\Jobs\V2;
 
 use App\Mail\ReportReminder as ReportReminderMail;
+use App\Mail\ReportReminderFinancialReport as ReportReminderFinancialReportMail;
 use App\Models\Traits\SkipRecipientsTrait;
+use App\Models\V2\DisturbanceReport;
 use App\Models\V2\EntityModel;
+use App\Models\V2\FinancialReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,6 +35,24 @@ class SendReportReminderEmailsJob implements ShouldQueue
 
     public function handle(): void
     {
+        if ($this->entity instanceof DisturbanceReport) {
+            $reportUser = $this->entity->createdBy;
+            //TODO: review reminder email for disturbance report
+            Mail::to($reportUser->email_address)->send(new ReportReminderMail($this->entity, $this->feedback, $reportUser));
+
+            return;
+        }
+
+        if ($this->entity instanceof FinancialReport) {
+            $users = $this->entity->organisation->users();
+            $usersToSend = $this->skipRecipients($users);
+
+            foreach ($usersToSend as $user) {
+                Mail::to($user->email_address)->send(new ReportReminderFinancialReportMail($this->entity, $this->feedback, $user));
+            }
+
+            return;
+        }
 
         $users = $this->entity->project->users;
         $users = $this->skipRecipients($users);

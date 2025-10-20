@@ -9,9 +9,7 @@ use App\Models\V2\ProjectPitch;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 final class StoreFormSubmissionControllerTest extends TestCase
@@ -68,13 +66,6 @@ final class StoreFormSubmissionControllerTest extends TestCase
         ]);
         $user = User::factory()->create(['organisation_id' => $organisation->id]);
 
-        Storage::fake('uploads');
-        $file = UploadedFile::fake()->image('cover photo.png', 10, 10);
-
-        $this->actingAs($user)
-            ->postJson('/api/v2/file/upload/organisation/cover/' . $organisation->uuid, ['title' => 'Cover Photo Test1', 'upload_file' => $file])
-            ->assertSuccessful();
-
         $response = $this->actingAs($user)
             ->postJson('/api/v2/forms/submissions/', ['project_pitch_uuid' => $projectPitch->uuid, 'form_uuid' => $form->uuid])
             ->assertSuccessful();
@@ -112,13 +103,6 @@ final class StoreFormSubmissionControllerTest extends TestCase
         $organisation = Organisation::factory()->create();
         $projectPitch = ProjectPitch::factory()->create(['organisation_id' => $organisation->uuid]);
         $user = User::factory()->create(['organisation_id' => $organisation->id]);
-
-        Storage::fake('uploads');
-        $file = UploadedFile::fake()->image('cover photo.png', 10, 10);
-
-        $this->actingAs($user)
-            ->postJson('/api/v2/file/upload/organisation/cover/' . $organisation->uuid, ['title' => 'Cover Photo Test1', 'upload_file' => $file])
-            ->assertSuccessful();
 
         $response = $this->actingAs($user)
             ->postJson('/api/v2/forms/submissions' . '?lang=fr-FR', ['project_pitch_uuid' => $projectPitch->uuid,'form_uuid' => $form->uuid])
