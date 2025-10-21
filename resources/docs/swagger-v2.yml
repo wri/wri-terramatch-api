@@ -26969,14 +26969,6 @@ paths:
         name: UUID
         in: path
         required: true
-    delete:
-      summary: Delete an unpublished form
-      operationId: v2-admin-delete-form-by-uuid
-      tags:
-        - Forms
-      responses:
-        '200':
-          description: Accepted
     patch:
       summary: Update a form
       operationId: patch-v2-admin-form-UUID
