@@ -105,6 +105,7 @@ class FundingType extends Model implements HandlesLinkedFieldSync
 
             if ($duplicate) {
                 $duplicate->update($payload);
+
                 continue;
             }
 
