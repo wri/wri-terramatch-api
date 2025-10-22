@@ -52,13 +52,6 @@ class FundingType extends Model implements HandlesLinkedFieldSync
 
         $relation = $entity->$property();
 
-        $newUuids = $rows->pluck('uuid')->filter();
-        if ($newUuids->isNotEmpty()) {
-            $relation->whereNotIn('uuid', $newUuids)->delete();
-        } else {
-            $relation->delete();
-        }
-
         foreach ($rows as $entry) {
             $uuid = data_get($entry, 'uuid');
 
@@ -101,6 +94,18 @@ class FundingType extends Model implements HandlesLinkedFieldSync
 
                     continue;
                 }
+            }
+
+            // Check for duplicates based on content, not just UUID
+            $duplicate = $relation->where('source', $payload['source'])
+                ->where('amount', (int) $payload['amount'])
+                ->where('year', (int) $payload['year'])
+                ->where('type', $payload['type'])
+                ->first();
+
+            if ($duplicate) {
+                $duplicate->update($payload);
+                continue;
             }
 
             $relation->create($payload);
