@@ -103,18 +103,6 @@ class FundingType extends Model implements HandlesLinkedFieldSync
                 }
             }
 
-            // Check for duplicates based on content, not just UUID
-            $duplicate = $relation->where('source', $payload['source'])
-                ->where('amount', (int) $payload['amount'])
-                ->where('year', (int) $payload['year'])
-                ->where('type', $payload['type'])
-                ->first();
-
-            if ($duplicate) {
-                $duplicate->update($payload);
-
-                continue;
-            }
 
             $relation->create($payload);
         }
