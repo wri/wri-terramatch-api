@@ -52,6 +52,13 @@ class FundingType extends Model implements HandlesLinkedFieldSync
 
         $relation = $entity->$property();
 
+        $newUuids = $rows->pluck('uuid')->filter();
+        if ($newUuids->isNotEmpty()) {
+            $relation->whereNotIn('uuid', $newUuids)->delete();
+        } else {
+            $relation->delete();
+        }
+
         foreach ($rows as $entry) {
             $uuid = data_get($entry, 'uuid');
 
