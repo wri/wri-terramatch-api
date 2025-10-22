@@ -50,12 +50,21 @@ class ViewApplicationControllerTest extends TestCase
             ->getJson($uri)
             ->assertStatus(403);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->getJson($uri)
-            ->assertSuccessful()
-            ->assertJsonFragment(['uuid' => $fundingProgramme->uuid])
-            ->assertJsonFragment(['uuid' => $application->uuid])
-            ->assertJsonFragment(['uuid' => $user->organisation->uuid]);
+            ->assertStatus(201)
+            ->assertJsonStructure([
+                'data' => [
+                    'message',
+                    'job_uuid',
+                ],
+            ]);
+
+        $responseData = $response->json('data');
+        $this->assertNotNull($responseData['job_uuid']);
+        $this->assertDatabaseHas('delayed_jobs', [
+            'uuid' => $responseData['job_uuid'],
+        ]);
 
         $this->actingAs($admin)
             ->getJson($uri)
