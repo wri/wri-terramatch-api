@@ -2,12 +2,12 @@
 
 namespace Tests\V2\Applications;
 
+use App\Models\User;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;
 use App\Models\V2\Stages\Stage;
-use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -50,21 +50,12 @@ class ViewApplicationControllerTest extends TestCase
             ->getJson($uri)
             ->assertStatus(403);
 
-        $response = $this->actingAs($user)
+        $this->actingAs($user)
             ->getJson($uri)
-            ->assertStatus(201)
-            ->assertJsonStructure([
-                'data' => [
-                    'message',
-                    'job_uuid',
-                ],
-            ]);
-
-        $responseData = $response->json('data');
-        $this->assertNotNull($responseData['job_uuid']);
-        $this->assertDatabaseHas('delayed_jobs', [
-            'uuid' => $responseData['job_uuid'],
-        ]);
+            ->assertSuccessful()
+            ->assertJsonFragment(['uuid' => $fundingProgramme->uuid])
+            ->assertJsonFragment(['uuid' => $application->uuid])
+            ->assertJsonFragment(['uuid' => $user->organisation->uuid]);
 
         $this->actingAs($admin)
             ->getJson($uri)
