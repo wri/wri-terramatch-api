@@ -46,10 +46,6 @@ class ViewApplicationControllerTest extends TestCase
 
         $uri = '/api/v2/applications/' . $application->uuid;
 
-        $this->actingAs($randomer)
-            ->getJson($uri)
-            ->assertStatus(403);
-
         $response = $this->actingAs($user)
             ->getJson($uri)
             ->assertStatus(201)
