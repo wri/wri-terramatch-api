@@ -103,7 +103,6 @@ class FundingType extends Model implements HandlesLinkedFieldSync
                 }
             }
 
-
             $relation->create($payload);
         }
 
