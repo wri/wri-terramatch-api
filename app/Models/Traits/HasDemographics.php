@@ -175,12 +175,8 @@ trait HasDemographics
         }
 
         if ($this->hasAggregateDemographic($keyNormalized)) {
-            if (preg_match('/^-?\d+$/', (string)$value)) {
-                $value = (int) $value;
-            } else {
-                $value = false;
-            }
-            if (! $value) {
+            $value = (int) $value;
+            if (! is_int($value)) {
                 throw new DemographicsException('Illegal attempt to update an aggregate demographic with non-integer value.');
             }
             if ($value < 0) {
