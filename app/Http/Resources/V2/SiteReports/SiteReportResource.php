@@ -37,6 +37,7 @@ class SiteReportResource extends JsonResource
             'shared_drive_link' => $this->shared_drive_link,
             'polygon_status' => $this->polygon_status,
             'paid_other_activity_description' => $this->paid_other_activity_description,
+            'planting_status' => $this->planting_status,
 
             'total_trees_planted_count' => $this->total_trees_planted_count,
             'total_seeds_planted_count' => $this->total_seeds_planted_count,

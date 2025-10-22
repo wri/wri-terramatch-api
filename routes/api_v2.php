@@ -27,6 +27,8 @@ use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
+use App\Http\Controllers\V2\DisturbanceReports\DisturbanceReportsController;
+use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
@@ -454,6 +456,12 @@ Route::prefix('financial-reports')->group(function () {
 });
 Route::resource('financial-reports', FinancialReportsController::class)->except('create');
 
+Route::prefix('disturbance-reports')->group(function () {
+    Route::get('/export', ExportDisturbanceReportController::class);
+});
+
+Route::resource('disturbance-reports', DisturbanceReportsController::class)->except('create');
+
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
     Route::get('/{project}/sites', ViewProjectSitesController::class);
@@ -605,7 +613,6 @@ Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController:
 ModelInterfaceBindingMiddleware::with(
     MediaModel::class,
     function () {
-        Route::post('/{collection}/{mediaModel}', UploadController::class);
         Route::post('/{collection}/{mediaModel}/bulk_url', [UploadController::class, 'bulkUrlUpload']);
     },
     prefix: 'file/upload',
@@ -615,8 +622,6 @@ ModelInterfaceBindingMiddleware::with(
 Route::post('/export-image', ExportImageController::class);
 
 Route::resource('files', FilePropertiesController::class);
-//Route::put('file/{uuid}', [FilePropertiesController::class, 'update']);
-//Route::delete('file/{uuid}', [FilePropertiesController::class, 'destroy']);
 
 ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::post('/{auditable}', StoreAuditStatusController::class);

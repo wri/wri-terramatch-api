@@ -16860,6 +16860,8 @@ definitions:
             type: boolean
       status:
         type: string
+      planting_status:
+        type: string
       readable_status:
         type: string
       approved_at:
@@ -18694,6 +18696,8 @@ definitions:
       framework_key:
         type: string
       status:
+        type: string
+      planting_status:
         type: string
       readable_status:
         type: string
@@ -34921,79 +34925,6 @@ paths:
                           type: number
                         lng:
                           type: number
-  '/v2/file/upload/{MODEL}/{COLLECTION}/{UUID}':
-    post:
-      summary: Upload a file to a specific entities collection
-      operationId: v2-post-upload-file-model-collection-uuid
-      tags:
-        - Files
-      consumes:
-        - multipart/form-data
-      produces:
-        - application/json
-      parameters:
-        - type: string
-          name: MODEL
-          in: path
-          required: true
-          description: 'Currently only organisation, funding-programme, project-pitch, project, site, nursery, project-report, site-report, nursery-report, project-monitoring and site-monitoring are set up'
-        - type: string
-          name: COLLECTION
-          in: path
-          required: true
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - type: string
-          name: title
-          in: formData
-        - type: file
-          name: upload_file
-          in: formData
-        - type: integer
-          name: lat
-          in: formData
-        - type: integer
-          name: lng
-          in: formData
-        - type: boolean
-          name: is_public
-          default: true
-          in: formData
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2FileRead
-            type: object
-            properties:
-              uuid:
-                type: string
-              url:
-                type: string
-              thumb_url:
-                type: string
-              collection_name:
-                type: string
-              title:
-                type: string
-              file_name:
-                type: string
-              mime_type:
-                type: string
-              size:
-                type: integer
-              lat:
-                type: integer
-              lng:
-                type: integer
-              is_public:
-                type: boolean
-              is_cover:
-                type: boolean
-              created_at:
-                type: string
   '/v2/file/upload/site/photos/{UUID}/bulk_url':
     post:
       summary: Upload a batch of photos to a specific site
@@ -35151,6 +35082,11 @@ paths:
       responses:
         '200':
           description: OK
+          schema:
+            type: object
+            properties:
+              uuid:
+                type: string
   /v2/funding-type:
     post:
       summary: Create a funding type entry
@@ -50348,3 +50284,14 @@ paths:
               created_at:
                 type: string
                 format: datetime
+  /v2/disturbance-reports/export:
+    get:
+      summary: Export disturbance reports
+      tags:
+        - V2 disturbance reports
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+      operationId: get-v2-disturbance-reports-export

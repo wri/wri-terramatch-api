@@ -52,6 +52,7 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('form-submission-feedback-received.title', 'You have received feedback on your application');
         $this->createLocalizationKey('form-submission-feedback-received.body', 'Your application requires more information.');
         $this->createLocalizationKey('form-submission-feedback-received.body-feedback', 'Your application requires more information. Please see comments below:<br><br> {feedback}');
+        $this->createLocalizationKey('form-submission-feedback-received.cta', 'View Application');
 
         // form-submission-final-stage-approved
         $this->createLocalizationKey('form-submission-final-stage-approved.subject', 'Application Approved');
@@ -338,6 +339,15 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('report-reminder.title', 'Reminder: Your {entityTypeName} Still Needs Your Input');
         $this->createLocalizationKey('report-reminder.body', 'This is a reminder that your {entityTypeName} for {entityModelName} still has the status: {entityStatus}. Below you will see a note from your project manager about the report.<br><br> 
             Here is a link to the reporting task on TerraMatch so you can easily access your report: <a href="{callbackUrl}" style="color: #6E6E6E;">Here.</a> If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>{feedback}');
+
+        // financial-report-reminder
+        $this->createLocalizationKey('financial-report-reminder.subject', 'TerraFund Report Reminder');
+        $this->createLocalizationKey('financial-report-reminder.title', 'Reminder: Your Financial Report Still Needs Your Input');
+        $this->createLocalizationKey('financial-report-reminder.body', 'This is a reminder that your financial report for {entityModelName} is due on {dueAt}.<br><br> 
+            <a href="{callbackUrl}" style="color: #6E6E6E;">Here is a link to your "My Organization" page on TerraMatch</a>, where you can find your report.<br><br> 
+            You can find detailed guidance for this report here: <a href="https://terramatchsupport.zendesk.com/hc/en-us/articles/40711356869019-Financial-Reporting-for-Restoration-Enterprises" style="color: #6E6E6E;">Financial Reporting for Restoration Enterprises</a>.<br><br>
+            If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>');
+        $this->createLocalizationKey('financial-report-reminder.cta', 'View Report');
 
         // task-digest
         $this->createLocalizationKey('task-digest.subject', '{projectName} - Report Summary for {date}');
