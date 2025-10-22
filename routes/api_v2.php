@@ -56,7 +56,6 @@ use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\FinancialReports\FinancialReportsController;
-use App\Http\Controllers\V2\Forms\DeleteFormController;
 use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
@@ -340,7 +339,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
         Route::prefix('{form}')->group(function () {
             Route::patch('/', UpdateFormController::class);
-            Route::delete('/', DeleteFormController::class);
             Route::patch('/publish', PublishFormController::class);
         });
     });
