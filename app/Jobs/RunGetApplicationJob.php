@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\DelayedJob;
+use App\Models\V2\Forms\Application;
 use App\Services\ApplicationService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -12,7 +13,6 @@ use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use App\Models\V2\Forms\Application;
 
 class RunGetApplicationJob implements ShouldQueue
 {

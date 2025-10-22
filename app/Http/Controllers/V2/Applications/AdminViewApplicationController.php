@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\V2\Applications;
 
 use App\Http\Controllers\Controller;
-use App\Models\V2\Forms\Application;
+use App\Http\Resources\DelayedJobResource;
 use App\Jobs\RunGetApplicationJob;
 use App\Models\DelayedJob;
-use App\Http\Resources\DelayedJobResource;
+use App\Models\V2\Forms\Application;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class AdminViewApplicationController extends Controller
