@@ -180,7 +180,7 @@ trait HasDemographics
             } else {
                 $value = false;
             }
-            if (! $value) {
+            if ($value === false) {
                 throw new DemographicsException('Illegal attempt to update an aggregate demographic with non-integer value.');
             }
             if ($value < 0) {
