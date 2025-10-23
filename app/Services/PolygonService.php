@@ -699,23 +699,6 @@ class PolygonService
                 DB::table('site_polygon_data')->insert($chunk);
             }
         }
-
-        $this->deferSiteRestorationUpdates($sitePolygonInserts);
-    }
-
-    protected function deferSiteRestorationUpdates(array $sitePolygonInserts): void
-    {
-        $siteIds = array_unique(array_filter(array_column($sitePolygonInserts, 'site_id')));
-
-        if (! empty($siteIds)) {
-            DB::table('v2_sites')
-              ->whereIn('uuid', $siteIds)
-              ->whereNotIn('status', [SiteStatusStateMachine::RESTORATION_IN_PROGRESS])
-              ->update([
-                  'status' => SiteStatusStateMachine::RESTORATION_IN_PROGRESS,
-                  'updated_at' => now(),
-              ]);
-        }
     }
 
     public function batchUpdateIndicators(array $polygonUuids): void
