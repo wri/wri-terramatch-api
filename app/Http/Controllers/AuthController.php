@@ -91,7 +91,9 @@ class AuthController extends Controller
 
     public function resendByEmail(ResendByEmailRequest $request): JsonResponse
     {
-        $user = UserModel::where('email_address', $request->get('email_address'))->first();
+        $user = UserModel::where('email_address', $request->get('email_address'))
+            ->orWhere('uuid', $request->get('uuid'))
+            ->first();
 
         if ($user) {
             UserVerificationJob::dispatch($user, $request->get('callback_url') ? $request->get('callback_url') : null);

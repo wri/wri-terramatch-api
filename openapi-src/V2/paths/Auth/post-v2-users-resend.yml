@@ -15,6 +15,9 @@ parameters:
           type: string
         email_address:
           type: string
+        uuid:
+          type: string
+          format: uuid
 responses:
   '200':
     description: OK

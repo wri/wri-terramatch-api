@@ -17,6 +17,11 @@ class ResendByEmailRequest extends FormRequest
                 'string',
                 'max:5000',
             ],
+            'uuid' => [
+                'sometimes',
+                'string',
+                'uuid',
+            ],
             'callback_url' => [
                 'sometimes',
                 'string',
