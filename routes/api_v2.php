@@ -60,7 +60,6 @@ use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
 use App\Http\Controllers\V2\Forms\PublishFormController;
-use App\Http\Controllers\V2\Forms\StoreFormController;
 use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormController;
@@ -322,7 +321,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::resource('impact-stories', ImpactStoryController::class);
 
     Route::prefix('forms')->group(function () {
-        Route::post('/', StoreFormController::class);
         Route::prefix('submissions')->group(function () {
             Route::get('/{form}/export', ExportFormSubmissionController::class);
             Route::prefix('{formSubmission}')->group(function () {

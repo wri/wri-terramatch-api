@@ -31,9 +31,6 @@
 /v2/{ENTITY}/{UUID}/reports:
   get:
     $ref: './Entity/get-v2-entity-uuid-reports.yml'
-/v2/admin/forms:
-  post:
-    $ref: './Forms/post-v2-admin-forms.yml'
 /v2/admin/reporting-frameworks:
   get:
     $ref: './ReportingFrameworks/get-v2-admin-reporting-frameworks.yml'
