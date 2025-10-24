@@ -11,6 +11,7 @@ class MyActionsService
 {
     public function getPendingActionsPayloadForUser(User $user): array
     {
+        ini_set('memory_limit', '-1');
         $projectIds = $user->projects()->pluck('v2_projects.id')->toArray();
 
         $qry = Action::query()
