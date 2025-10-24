@@ -54,7 +54,7 @@ class FundingType extends Model implements HandlesLinkedFieldSync
 
         // get rows without uuid
         $existingWithoutUuid = $rows->whereNull('uuid');
-        
+
         $newUuids = $rows->pluck('uuid')->filter();
 
         // search for matches and replace them
@@ -66,7 +66,7 @@ class FundingType extends Model implements HandlesLinkedFieldSync
                 ->where('organisation_id', $entity instanceof Organisation ? $entity->uuid : $entity->organisation?->uuid)
                 ->where('financial_report_id', $entity instanceof FinancialReport ? $entity->id : null)
                 ->first();
-                
+
             if ($matchingUuid && $matchingUuid['uuid']) {
                 $newUuids->push($matchingUuid['uuid']);
                 // replace the row without uuid with the one that has uuid
