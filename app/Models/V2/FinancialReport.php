@@ -146,37 +146,33 @@ class FinancialReport extends Model implements MediaModel, ReportModel, Auditabl
         return $this->hasMany(FundingType::class, 'financial_report_id', 'id');
     }
 
-    public function updateFinancialCollectionToOrganisation(): void
+    public function updateFinancialDocumentationToOrganisation(): void
     {
-        $financialCollection = $this->financialCollection;
-        $fundingTypes = $this->fundingTypes;
+        $financialCollection = $this->financialCollection->where('collection', FinancialIndicators::COLLECTION_NOT_COLLECTION_DOCUMENTS);
         $organisation = $this->organisation();
 
         if ($organisation) {
-            $organisation->update([
-                'fin_start_month' => $this->fin_start_month,
-                'currency' => $this->currency,
-            ]);
 
             foreach ($financialCollection as $entry) {
-                $orgIndicator = FinancialIndicators::updateOrCreate(
+                $orgIndicator = FinancialIndicators::where(
                     [
                         'organisation_id' => $this->organisation_id,
                         'year' => $entry->year,
-                        'collection' => $entry->collection,
+                        'collection' => FinancialIndicators::COLLECTION_NOT_COLLECTION_DOCUMENTS,
                         'financial_report_id' => null,
-                    ],
-                    [
-                        'amount' => $entry->amount,
-                        'description' => $entry->description,
-                        'exchange_rate' => $entry->exchange_rate ?? null,
                     ]
-                );
+                )->first();
 
-                if (! empty($entry->uuid)) {
+                if (! empty($entry->uuid) && $orgIndicator) {
                     $mediaItems = $entry->getMedia('documentation');
+
+                    // Get existing files to avoid duplicates
+                    $existingFiles = $orgIndicator->getMedia('documentation')
+                        ->whereIn('file_name', $mediaItems->pluck('file_name'))
+                        ->whereIn('size', $mediaItems->pluck('size'));
+
                     foreach ($mediaItems as $media) {
-                        $exists = $orgIndicator->getMedia('documentation')
+                        $exists = $existingFiles
                             ->where('file_name', $media->file_name)
                             ->where('size', $media->size)
                             ->count() > 0;
@@ -189,21 +185,6 @@ class FinancialReport extends Model implements MediaModel, ReportModel, Auditabl
                         }
                     }
                 }
-            }
-
-            FundingType::where('organisation_id', $organisation->value('uuid'))
-                ->whereNull('financial_report_id')
-                ->delete();
-
-            foreach ($fundingTypes as $fundingType) {
-                FundingType::create([
-                    'organisation_id' => $organisation->value('uuid'),
-                    'source' => $fundingType->source,
-                    'year' => $fundingType->year,
-                    'type' => $fundingType->type,
-                    'amount' => $fundingType->amount,
-                    'financial_report_id' => null,
-                ]);
             }
         }
     }

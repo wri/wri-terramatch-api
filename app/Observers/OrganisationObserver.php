@@ -8,13 +8,13 @@ class OrganisationObserver
 {
     public function retrieved(Organisation $organisation): void
     {
-        $this->updateFinancialIndicators($organisation);
+        $this->updateFinancialReportsDoc($organisation);
     }
 
-    private function updateFinancialIndicators(Organisation $organisation): void
+    private function updateFinancialReportsDoc(Organisation $organisation): void
     {
         if ($organisation->financialReports()->exists()) {
-            $organisation->updateFinancialReportsToOrganisation();
+            $organisation->updateFinancialReportsDocToOrganisation();
         }
     }
 }
