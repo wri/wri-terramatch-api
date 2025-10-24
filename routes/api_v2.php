@@ -59,7 +59,6 @@ use App\Http\Controllers\V2\FinancialReports\FinancialReportsController;
 use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
-use App\Http\Controllers\V2\Forms\PublishFormController;
 use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
@@ -332,10 +331,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
             Route::get('/{application}', AdminViewApplicationController::class)->middleware('i18n');
             Route::delete('/{application}', AdminDeleteApplicationController::class);
             Route::get('/{fundingProgramme}/export', AdminExportApplicationController::class);
-        });
-
-        Route::prefix('{form}')->group(function () {
-            Route::patch('/publish', PublishFormController::class);
         });
     });
 

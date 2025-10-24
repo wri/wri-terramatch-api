@@ -84,22 +84,6 @@
 /v2/update-requests/{ENTITY}/{UUID}:
   get:
     $ref: './UpdateRequests/get-v2-update-requests-entity-uuid.yml'
-'/v2/admin/forms/{UUID}/publish':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  patch:
-    summary: Publish a form
-    operationId: patch-v2-admin-forms-UUID-publish
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormRead'
-    tags:
-      - Forms
 /v2/admin/organisations:
   get:
     summary: Get a collection of organisations
