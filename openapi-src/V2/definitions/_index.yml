@@ -38,8 +38,6 @@ FormQuestionRead:
   $ref: './FormQuestionRead.yml'
 FormQuestionCreate:
   $ref: './FormQuestionCreate.yml'
-FormUpdate:
-  $ref: './FormUpdate.yml'
 GeojsonRead:
   $ref: './GeojsonRead.yml'
 ReportingFrameworkRead:
