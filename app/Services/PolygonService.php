@@ -833,7 +833,6 @@ class PolygonService
                 $sitePolygonData->save();
             }
 
-            $site->restorationInProgress();
             $project = $sitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
             $geometryHelper->updateProjectCentroid($project->uuid);
@@ -918,7 +917,7 @@ class PolygonService
                 return false;
 
             }
-            $site->restorationInProgress();
+
             $project = $newSitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
             $geometryHelper->updateProjectCentroid($project->uuid);
@@ -988,7 +987,7 @@ class PolygonService
                 return false;
 
             }
-            $site->restorationInProgress();
+
             $project = $newSitePolygon->project()->first();
             $geometryHelper = new GeometryHelper();
             $geometryHelper->updateProjectCentroid($project->uuid);
