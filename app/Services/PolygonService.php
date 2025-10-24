@@ -19,7 +19,6 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SitePolygonData;
 use App\Models\V2\User;
-use App\StateMachines\SiteStatusStateMachine;
 use App\Validators\SitePolygonValidator;
 use DateTime;
 use Exception;
