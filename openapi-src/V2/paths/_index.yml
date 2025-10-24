@@ -100,27 +100,6 @@
           $ref: '../definitions/_index.yml#/FormRead'
     tags:
       - Forms
-'/v2/admin/forms/{UUID}':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  patch:
-    summary: Update a form
-    operationId: patch-v2-admin-form-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormRead'
-    tags:
-      - Forms
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/FormUpdate'
 /v2/admin/organisations:
   get:
     summary: Get a collection of organisations

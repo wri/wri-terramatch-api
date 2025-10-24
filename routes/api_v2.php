@@ -62,7 +62,6 @@ use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
 use App\Http\Controllers\V2\Forms\PublishFormController;
 use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
-use App\Http\Controllers\V2\Forms\UpdateFormController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
 use App\Http\Controllers\V2\Forms\ViewFormSubmissionController;
@@ -336,7 +335,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         });
 
         Route::prefix('{form}')->group(function () {
-            Route::patch('/', UpdateFormController::class);
             Route::patch('/publish', PublishFormController::class);
         });
     });
