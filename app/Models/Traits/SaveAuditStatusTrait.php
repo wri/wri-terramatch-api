@@ -57,11 +57,6 @@ trait SaveAuditStatusTrait
         $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment, 'change-request', true);
     }
 
-    public function saveAuditStatusAdminRestorationInProgress($entity)
-    {
-        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Restoration In Progress', '-', true);
-    }
-
     public function saveAuditStatusAdminSendReminder($entity, $feedback)
     {
         $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Feedback: '.$feedback, 'reminder-sent', true);
