@@ -15,7 +15,6 @@ use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\User;
 use App\Services\AreaCalculationService;
 use App\Services\PolygonService;
-use App\Services\SiteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -388,7 +387,6 @@ class TerrafundEditGeometryController extends Controller
             $sitePolygon->is_active = true;
             $sitePolygon->save();
 
-            App::make(SiteService::class)->setSiteToRestorationInProgress($siteUuid);
             PolygonGeometryHelper::updateProjectCentroidFromPolygon($polygonGeometry);
 
             return response()->json(['message' => 'Site polygon created successfully', 'uuid' => $sitePolygon, 'area' => $areaHectares], 201);

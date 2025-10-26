@@ -17,7 +17,6 @@ use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SitePolygonData;
 use App\Models\V2\WorldCountryGeneralized;
 use App\Services\PolygonService;
-use App\Services\SiteService;
 use App\Validators\Extensions\Polygons\EstimatedArea;
 use App\Validators\Extensions\Polygons\FeatureBounds;
 use App\Validators\Extensions\Polygons\GeometryType;
@@ -193,8 +192,6 @@ class TerrafundCreateGeometryController extends Controller
         if (isset($uuid['error'])) {
             return response()->json(['error' => 'Geometry not inserted into DB', 'message' => $uuid['error']], 500);
         }
-
-        App::make(SiteService::class)->setSiteToRestorationInProgress($entity_uuid);
 
         // Clean up temporary files
         if (file_exists($geojsonPath)) {
