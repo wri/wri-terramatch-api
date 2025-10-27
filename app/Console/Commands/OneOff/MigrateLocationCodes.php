@@ -31,7 +31,7 @@ class MigrateLocationCodes extends Command
     protected $description = 'Moves historical state / country codes in the DB to the official GADM codes for those places.';
 
     protected const DATA_API = 'https://data-api.globalforestwatch.org/dataset/gadm_administrative_boundaries/v4.1.85/query';
-    protected const API_KEY = '349c85f6-a915-4d3d-b337-0a0dafc0e5db';
+    protected const API_KEY = '0fad80a9-93d7-43a6-acf7-6233af2cd2c4';
 
     protected const LEVEL_FIELDS = [
         Organisation::class => [
