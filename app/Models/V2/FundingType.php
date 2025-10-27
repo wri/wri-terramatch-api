@@ -60,7 +60,7 @@ class FundingType extends Model implements HandlesLinkedFieldSync
         // search for matches and replace them
         foreach ($existingWithoutUuid as $index => $existingRecord) {
             $query = $entity->$property();
-            
+
             $matchingUuid = $query->where('amount', (int) $existingRecord['amount'])
                 ->where('source', $existingRecord['source'])
                 ->where('type', $existingRecord['type'])
