@@ -16,11 +16,11 @@ class SiteFactory extends Factory
     public function definition()
     {
         $soilCondition = [
-            'severely_degraded',
+            'severely-degraded',
             'poor',
             'fair',
             'good',
-            'no_degradation',
+            'no-degradation',
         ];
         $frameworks = [
             'ppc',
