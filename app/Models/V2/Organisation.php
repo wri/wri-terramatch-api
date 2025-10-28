@@ -348,7 +348,7 @@ class Organisation extends Model implements MediaModel
         return $this->hasMany(financialReport::class, 'organisation_id', 'id');
     }
 
-    public function updateFinancialReportsToOrganisation(): void
+    public function updateFinancialReportsDocToOrganisation(): void
     {
         $latestApprovedReport = $this->financialReports()
             ->where('status', 'approved')
@@ -356,7 +356,7 @@ class Organisation extends Model implements MediaModel
             ->first();
 
         if ($latestApprovedReport) {
-            $latestApprovedReport->updateFinancialCollectionToOrganisation();
+            $latestApprovedReport->updateFinancialDocumentationToOrganisation();
         }
     }
 
