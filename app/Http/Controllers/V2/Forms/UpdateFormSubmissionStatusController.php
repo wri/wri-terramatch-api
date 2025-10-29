@@ -47,7 +47,7 @@ class UpdateFormSubmissionStatusController extends Controller
 
                 break;
             case FormSubmission::STATUS_REJECTED:
-                Mail::to($formSubmission->user->email_address)->queue(
+                Mail::to($formSubmission->user->email_address)->send(
                     new FormSubmissionRejected(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
                 );
                 $notification = new Notification([

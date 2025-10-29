@@ -71,14 +71,12 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
 
     public static array $approvedStatuses = [
         EntityStatusStateMachine::APPROVED,
-        SiteStatusStateMachine::RESTORATION_IN_PROGRESS,
     ];
 
     public static array $statuses = [
         EntityStatusStateMachine::STARTED => 'Started',
         EntityStatusStateMachine::AWAITING_APPROVAL => 'Awaiting approval',
         EntityStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
-        SiteStatusStateMachine::RESTORATION_IN_PROGRESS => 'Restoration in progress',
         EntityStatusStateMachine::APPROVED => 'Approved',
     ];
 
@@ -448,11 +446,6 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     public function getViewLinkPath(): string
     {
         return '/' . Str::lower(explode_pop('\\', get_class($this))) . '/' . $this->uuid;
-    }
-
-    public function restorationInProgress()
-    {
-        $this->status()->transitionTo(SiteStatusStateMachine::RESTORATION_IN_PROGRESS);
     }
 
     public function scopeFilterByPolygonStatus($query, $status)

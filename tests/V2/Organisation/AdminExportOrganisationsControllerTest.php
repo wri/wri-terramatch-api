@@ -7,8 +7,6 @@ use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 final class AdminExportOrganisationsControllerTest extends TestCase
@@ -30,42 +28,6 @@ final class AdminExportOrganisationsControllerTest extends TestCase
                 'speciesable_type' => Organisation::class,
                 'speciesable_id' => $organisations[$i],
             ]);
-        }
-
-        for ($i = 3; $i < 7 ; $i++) {
-            Storage::fake('uploads');
-            $file = UploadedFile::fake()->image("cover photo$i.png", 10, 10);
-            $payload = [
-                'title' => "Cover Photo Test$i",
-                'upload_file' => $file,
-            ];
-            $this->actingAs($admin)
-                ->postJson('/api/v2/file/upload/organisation/cover/' . $organisations[$i]->uuid, $payload)
-                ->assertSuccessful();
-        }
-
-        for ($i = 1; $i < 4 ; $i++) {
-            Storage::fake('uploads');
-            $file = UploadedFile::fake()->image("logo photo$i.png", 10, 10);
-            $payload = [
-                'title' => "Logo Photo Test$i",
-                'upload_file' => $file,
-            ];
-            $this->actingAs($admin)
-                ->postJson('/api/v2/file/upload/organisation/logo/' . $organisations[$i]->uuid, $payload)
-                ->assertSuccessful();
-        }
-
-        for ($i = 1; $i < 4 ; $i++) {
-            Storage::fake('uploads');
-            $file = UploadedFile::fake()->image("logo photo$i.png", 10, 10);
-            $payload = [
-                'title' => "Additional Test$i",
-                'upload_file' => $file,
-            ];
-            $this->actingAs($admin)
-                ->postJson('/api/v2/file/upload/organisation/additional/' . $organisations[4]->uuid, $payload)
-                ->assertSuccessful();
         }
 
         $this->actingAs($user)

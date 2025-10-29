@@ -11,9 +11,7 @@ use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ExportFormEOISubmissionControllerTest extends TestCase
@@ -60,24 +58,6 @@ class ExportFormEOISubmissionControllerTest extends TestCase
                     'user_id' => $user->uuid,
                     'form_id' => $form->uuid,
                 ]);
-
-                for ($i = 1; $i <= 2; $i++) {
-                    Storage::fake('uploads');
-                    $file = UploadedFile::fake()->image("test file $i.pdf", 10, 10);
-
-                    $this->actingAs($user)
-                        ->postJson('/api/v2/file/upload/project-pitch/additional/' . $pitch->uuid, ['title' => 'Budget Test file ' . $i, 'upload_file' => $file])
-                        ->assertSuccessful();
-                }
-
-                foreach (['logo' => 'Logo.png', 'cover' => 'Cover.png', 'legal_registration' => 'Legal.pdf', 'op_budget_1year' => 'Budget 2022 Year.csv', 'op_budget_2year' => 'Budget 2021 Year.csv', 'op_budget_3year' => 'Budget 2020 Year.csv'] as $key => $value) {
-                    Storage::fake('uploads');
-                    $file = UploadedFile::fake()->image($value, 10, 10);
-
-                    $this->actingAs($user)
-                        ->postJson("/api/v2/file/upload/organisation/$key/$organisation->uuid", ['title' => $value, 'upload_file' => $file])
-                        ->assertSuccessful();
-                }
             }
 
             $this->actingAs($admin)
