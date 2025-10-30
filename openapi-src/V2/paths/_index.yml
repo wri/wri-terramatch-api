@@ -2109,3 +2109,14 @@
         schema:
           type: object
     operationId: get-v2-disturbance-reports-export
+/v2/srp-reports/export:
+  get:
+    summary: Export annual socio economic restoration reports
+    tags:
+      - V2 annual socio economic restoration reports
+    responses:
+      '200':
+        description: OK
+        schema:
+          type: object
+    operationId: get-v2-annual-socio-economic-restoration-reports-export

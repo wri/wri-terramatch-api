@@ -12,6 +12,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\SrpReport;
 
 class CustomFormHelper
 {
@@ -53,10 +54,13 @@ class CustomFormHelper
                 $model = \App\Models\V2\FinancialReport::class;
 
                 break;
-
-                break;
             case 'disturbance-report':
                 $model = DisturbanceReport::class;
+
+                break;
+            case 'srp-report':
+                $model = SrpReport::class;
+
                 // no break
             default:
                 throw new \InvalidArgumentException("Unknown form type: $type");
