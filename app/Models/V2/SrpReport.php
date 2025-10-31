@@ -45,6 +45,7 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
         'other_restoration_partners_description',
         'total_unique_restoration_partners',
         'due_at',
+        'year',
         'project_id',
         'framework_key',
         'update_request_status',
@@ -57,7 +58,7 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
     protected $casts = [
         'due_at' => 'datetime',
         'submitted_at' => 'datetime',
-        'date_of_disturbance' => 'date',
+        'year' => 'integer',
         'nothing_to_report' => 'boolean',
         'answers' => 'array',
     ];

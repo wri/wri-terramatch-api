@@ -183,11 +183,13 @@ class CreateReportCommand extends Command
             // For annual socio economic restoration reports, no task is required, but it's related to a project
             $dueAtOption = $this->option('due_at');
             $dueAt = ! empty($dueAtOption) ? Carbon::parse($dueAtOption) : null;
+            $year = $dueAt?->year ?? Carbon::now()->year;
 
             $reportModel::create([
                 'framework_key' => $entity->framework_key,
                 'project_id' => $entity->id,
                 'status' => 'due',
+                'year' => $year,
                 'due_at' => $dueAt,
                 'update_request_status' => 'no-update',
             ]);

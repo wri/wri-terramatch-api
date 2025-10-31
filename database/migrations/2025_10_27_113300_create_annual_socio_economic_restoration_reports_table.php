@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->uuid('uuid')->unique();
             $table->string('status');
             $table->string('title');
+            $table->integer('year');
             $table->text('other_restoration_partners_description')->nullable();
             $table->unsignedInteger('total_unique_restoration_partners')->nullable();
             $table->string('update_request_status')->nullable();
