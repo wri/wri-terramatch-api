@@ -15,11 +15,11 @@ class ExportSrpReportController extends Controller
         $header = [
             'ID', 'UUID', 'Project UUID', 'Project Name', 'Status',
             'Other Restoration Partners Description', 'Total Unique Restoration Partners',
-            'Media Files', 'Created At', 'Updated At', 'Submitted At',
+            'Year', 'Created At', 'Updated At', 'Submitted At',
         ];
         $records = [];
 
-        $reports = SrpReport::with(['project', 'entries'])->get();
+        $reports = SrpReport::with(['project'])->get();
 
         foreach ($reports as $report) {
             $records[] = [
@@ -30,7 +30,7 @@ class ExportSrpReportController extends Controller
                 $report->status,
                 $report->other_restoration_partners_description,
                 $report->total_unique_restoration_partners,
-                $this->formatMediaFiles($report),
+                $report->year,
                 $report->created_at,
                 $report->updated_at,
                 $report->submitted_at,
@@ -46,10 +46,5 @@ class ExportSrpReportController extends Controller
         }, 'Annual Socio Economic Restoration Reports Export - ' . now() . '.csv', [
             'Content-Type' => 'text/csv',
         ]);
-    }
-
-    private function formatMediaFiles($report): string
-    {
-        return implode(', ', $report->getMedia('media')->pluck('name')->toArray());
     }
 }
