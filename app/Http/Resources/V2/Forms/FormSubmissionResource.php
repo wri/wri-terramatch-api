@@ -3,7 +3,7 @@
 namespace App\Http\Resources\V2\Forms;
 
 use App\Http\Resources\V2\AuditResource;
-use App\Http\Resources\V2\Stages\StageLiteResource;
+use App\Http\Resources\V2\Stages\StageResource;
 use App\Models\V2\I18n\I18nTranslation;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\App;
@@ -77,7 +77,7 @@ class FormSubmissionResource extends JsonResource
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
             'translated_feedback_fields' => $translatedFeedbackFields,
-            'stage' => new StageLiteResource($this->stage),
+            'stage' => new StageResource($this->stage),
             'next_stage_uuid' => $this->getNextStageUuid(),
             'previous_stage_uuid' => $this->getPreviousStageUuid(),
             'audits' => AuditResource::collection($this->audits),
