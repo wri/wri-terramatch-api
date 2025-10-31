@@ -13,6 +13,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\SrpReport;
 use App\Models\V2\Tasks\Task;
 use App\StateMachines\TaskStatusStateMachine;
 use Illuminate\Console\Command;
@@ -70,8 +71,14 @@ class CreateReportCommand extends Command
 
                 break;
 
+            case 'srp':
+                $entityModel = Project::class;
+                $reportModel = SrpReport::class;
+
+                break;
+
             default:
-                $this->error('Type must be one of "site", "nursery", "project", "financial", or "disturbance"');
+                $this->error('Type must be one of "site", "nursery", "project", "financial", "disturbance", or "annual-socio-economic-restoration"');
 
                 return 1;
         }
@@ -170,6 +177,24 @@ class CreateReportCommand extends Command
             ]);
 
             $this->info("Disturbance report created for project $uuid");
+
+            return 0;
+        } elseif ($type === 'srp') {
+            // For annual socio economic restoration reports, no task is required, but it's related to a project
+            $dueAtOption = $this->option('due_at');
+            $dueAt = ! empty($dueAtOption) ? Carbon::parse($dueAtOption) : null;
+            $year = $dueAt?->year ?? Carbon::now()->year;
+
+            $reportModel::create([
+                'framework_key' => $entity->framework_key,
+                'project_id' => $entity->id,
+                'status' => 'due',
+                'year' => $year,
+                'due_at' => $dueAt,
+                'update_request_status' => 'no-update',
+            ]);
+
+            $this->info("Annual socio economic restoration report created for project $uuid");
 
             return 0;
         } else {

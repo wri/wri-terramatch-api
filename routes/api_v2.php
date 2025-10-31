@@ -161,6 +161,8 @@ use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
 use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
+use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
+use App\Http\Controllers\V2\SrpReports\SrpReportsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
 use App\Http\Controllers\V2\Stages\IndexStageController;
 use App\Http\Controllers\V2\Stages\StoreStageController;
@@ -470,6 +472,12 @@ Route::prefix('disturbance-reports')->group(function () {
 });
 
 Route::resource('disturbance-reports', DisturbanceReportsController::class)->except('create');
+
+Route::prefix('srp-reports')->group(function () {
+    Route::get('/export', ExportSrpReportController::class);
+});
+
+Route::resource('srp-reports', SrpReportsController::class)->except('create');
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);

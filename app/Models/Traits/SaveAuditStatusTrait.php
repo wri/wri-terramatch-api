@@ -12,6 +12,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\SrpReport;
 use Illuminate\Support\Facades\Auth;
 
 trait SaveAuditStatusTrait
@@ -145,6 +146,8 @@ trait SaveAuditStatusTrait
                 return 'financial-report';
             case DisturbanceReport::class:
                 return 'disturbance-report';
+            case SrpReport::class:
+                return 'srp-report';
             default:
                 return 'entity';
         }

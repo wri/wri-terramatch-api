@@ -10,6 +10,7 @@ use App\Http\Resources\V2\ProjectReports\ProjectReportLiteResource;
 use App\Http\Resources\V2\Projects\ProjectLiteResource;
 use App\Http\Resources\V2\SiteReports\SiteReportLiteResource;
 use App\Http\Resources\V2\Sites\SiteLiteResource;
+use App\Http\Resources\V2\SrpReports\SrpReportLiteResource;
 use App\Http\Resources\V2\UpdateRequests\UpdateRequestLiteResource;
 use App\Models\V2\DisturbanceReport;
 use App\Models\V2\FinancialReport;
@@ -19,6 +20,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\SrpReport;
 use App\Models\V2\UpdateRequests\UpdateRequest;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -63,6 +65,8 @@ class ActionResource extends JsonResource
                 return FinancialReportLiteResource::make($this->targetable);
             case DisturbanceReport::class:
                 return DisturbanceReportLiteResource::make($this->targetable);
+            case SrpReport::class:
+                return SrpReportLiteResource::make($this->targetable);
             case NurseryReport::class:
                 return NurseryReportLiteResource::make($this->targetable)
                     ->withReportingTask();
@@ -92,6 +96,8 @@ class ActionResource extends JsonResource
                 return 'FinancialReport';
             case DisturbanceReport::class:
                 return 'DisturbanceReport';
+            case SrpReport::class:
+                return 'SrpReport';
             case UpdateRequest::class:
                 return 'UpdateRequest';
             default:
