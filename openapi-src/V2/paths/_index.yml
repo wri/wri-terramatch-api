@@ -31,11 +31,6 @@
 /v2/{ENTITY}/{UUID}/reports:
   get:
     $ref: './Entity/get-v2-entity-uuid-reports.yml'
-/v2/admin/forms:
-  post:
-    $ref: './Forms/post-v2-admin-forms.yml'
-  get:
-    $ref: './Forms/get-v2-admin-forms.yml'
 /v2/admin/reporting-frameworks:
   get:
     $ref: './ReportingFrameworks/get-v2-admin-reporting-frameworks.yml'
@@ -89,83 +84,6 @@
 /v2/update-requests/{ENTITY}/{UUID}:
   get:
     $ref: './UpdateRequests/get-v2-update-requests-entity-uuid.yml'
-'/v2/admin/forms/{UUID}/publish':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  patch:
-    summary: Publish a form
-    operationId: patch-v2-admin-forms-UUID-publish
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormRead'
-    tags:
-      - Forms
-'/v2/admin/forms/question/{UUID}':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  delete:
-    summary: Delete a form question
-    operationId: delete-v2-admin-form-question-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormQuestionRead'
-    tags:
-      - Forms
-'/v2/admin/forms/section/{UUID}':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  delete:
-    summary: Delete a form section
-    operationId: delete-v2-admin-form-section-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormSectionRead'
-    tags:
-      - Forms
-'/v2/admin/forms/{UUID}':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  delete:
-    summary: Delete an unpublished form
-    operationId: v2-admin-delete-form-by-uuid
-    tags:
-      - Forms
-    responses:
-      '200':
-        description: Accepted
-  patch:
-    summary: Update a form
-    operationId: patch-v2-admin-form-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormRead'
-    tags:
-      - Forms
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/FormUpdate'
 /v2/admin/organisations:
   get:
     summary: Get a collection of organisations
@@ -352,6 +270,8 @@
     responses:
       '200':
         description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2OrganisationRead'
 '/v2/organisations/{UUID}':
   get:
     summary: Get a specific organisation
@@ -387,6 +307,8 @@
     responses:
       '200':
         description: OK
+        schema:
+          $ref: '../definitions/_index.yml#/V2OrganisationRead'
 /v2/organisations/listing:
   get:
     summary: Get a list of organisations names and uuid
@@ -1138,22 +1060,6 @@
         schema:
           type: object
     operationId: get-v2-admin-forms-submissions-uuid-export
-'/v2/forms/{UUID}':
-  get:
-    summary: Get a form
-    tags:
-      - Forms
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormRead'
-    operationId: get-v2-forms
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
 /v2/admin/funding-programme/stage:
   post:
     summary: Create a stage

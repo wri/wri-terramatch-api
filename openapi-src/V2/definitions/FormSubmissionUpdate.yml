@@ -4,15 +4,4 @@ properties:
   status:
     type: string
   answers:
-    type: array
-    items:
-      type: object
-      properties:
-        question_id:
-          type: integer
-        value:
-          type: string
-        options:
-          type: array
-          items:
-            type: string
+    type: object
