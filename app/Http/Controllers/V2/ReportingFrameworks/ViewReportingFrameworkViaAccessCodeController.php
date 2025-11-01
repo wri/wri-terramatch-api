@@ -13,7 +13,9 @@ class ViewReportingFrameworkViaAccessCodeController extends Controller
     public function __invoke(Request $request, string $accessCode)
     {
         $framework = Framework::where('access_code', $accessCode)->first();
-        if ($framework == null) return new JsonResponse('No reporting framework found', 404);
+        if ($framework == null) {
+            return new JsonResponse('No reporting framework found', 404);
+        }
 
         return new ReportingFrameworkResource($framework);
     }
