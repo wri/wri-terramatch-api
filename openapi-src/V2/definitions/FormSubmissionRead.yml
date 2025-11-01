@@ -14,7 +14,7 @@ properties:
   framework_key:
     type: string
   stage:
-    $ref: './_index.yml#/StageLiteRead'
+    $ref: './_index.yml#/StageRead'
   answers:
     type: object
   status:

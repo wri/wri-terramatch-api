@@ -18,26 +18,14 @@ UserReadAll:
   $ref: './UserReadAll.yml'
 FundingProgramme:
   $ref: './FundingProgramme.yml'
-FundingProgrammeWithLiteStages:
-  $ref: './FundingProgrammeWithLiteStages.yml'
 LimitedFundingProgrammeRead:
   $ref: './LimitedFundingProgrammeRead.yml'
 FundingProgrammeStatus:
   $ref: './FundingProgrammeStatus.yml'
 FundingProgrammeCreate:
   $ref: './FundingProgrammeCreate.yml'
-Form:
-  $ref: './Form.yml'
-FormRead:
-  $ref: './FormRead.yml'
-FormSectionCreate:
-  $ref: './FormSectionCreate.yml'
-FormSectionRead:
-  $ref: './FormSectionRead.yml'
-FormQuestionRead:
-  $ref: './FormQuestionRead.yml'
-FormQuestionCreate:
-  $ref: './FormQuestionCreate.yml'
+FormLiteRead:
+  $ref: './FormLiteRead.yml'
 GeojsonRead:
   $ref: './GeojsonRead.yml'
 ReportingFrameworkRead:
@@ -152,20 +140,12 @@ FormSubmissionRead:
   $ref: './FormSubmissionRead.yml'
 FormSubmissionLiteRead:
   $ref: './FormSubmissionLiteRead.yml'
-FormPaginated:
-  $ref: './FormPaginated.yml'
 StagePaginated:
   $ref: './StagePaginated.yml'
-StageLiteRead:
-  $ref: './StageLiteRead.yml'
 StageRead:
   $ref: './StageRead.yml'
 StageCreate:
   $ref: './StageCreate.yml'
-FormQuestionOptionRead:
-  $ref: './FormQuestionOptionRead.yml'
-FormTableHeaderRead:
-  $ref: './FormTableHeaderRead.yml'
 FormSubmissionCreate:
   $ref: './FormSubmissionCreate.yml'
 FormSubmissionUpdate:

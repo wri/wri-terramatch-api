@@ -20,7 +20,7 @@ properties:
   order:
     type: integer
   form:
-    $ref: './_index.yml#/FormRead'
+    $ref: './_index.yml#/FormLiteRead'
   deleted_at:
     type: string
   created_at:
