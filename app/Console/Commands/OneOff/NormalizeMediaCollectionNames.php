@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneOff;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class NormalizeMediaCollectionNames extends Command
 {
     protected $signature = 'media:normalize-collections {--dry-run : Show changes without writing}';
-    protected $description = 'Normalize redundant media.collection_name values to canonical options';
+    protected $description = 'One-off command: Normalize redundant media.collection_name values to canonical options';
 
     public function handle(): int
     {
@@ -62,11 +62,6 @@ class NormalizeMediaCollectionNames extends Command
             return self::SUCCESS;
         }
 
-        if (!$this->confirm('Do you want to proceed with the normalization?', true)) {
-            $this->warn('Operation cancelled.');
-            return self::SUCCESS;
-        }
-
         DB::beginTransaction(); 
         try {
             $actualUpdated = 0;
@@ -93,3 +88,4 @@ class NormalizeMediaCollectionNames extends Command
         }
     }
 }
+
