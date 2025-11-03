@@ -12,7 +12,7 @@ class FormSubmissionFeedbackReceived extends I18nMail
         $this->setSubjectKey('form-submission-feedback-received.subject')
             ->setTitleKey('form-submission-feedback-received.title')
             ->setBodyKey(! is_null($feedback) ? 'form-submission-feedback-received.body-feedback' : 'form-submission-feedback-received.body')
-            ->setParams(['{feedback}' => e($feedback)])
+            ->setParams(['{feedback}' => nl2br(e($feedback))])
             ->setCta('form-submission-feedback-received.cta');
 
         $this->link = '/applications/' . $application->uuid;
