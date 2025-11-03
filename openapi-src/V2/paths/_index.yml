@@ -813,24 +813,6 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/V2FileRead'
-  delete:
-    summary: Delete a specific file
-    operationId: v2-delete-file-uuid
-    tags:
-      - Files
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-          properties:
-            uuid:
-              type: string
 /v2/funding-type:
   post:
     summary: Create a funding type entry

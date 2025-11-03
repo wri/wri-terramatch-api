@@ -32,21 +32,4 @@ class FilePropertiesController extends Controller
 
         return new FileResource($media);
     }
-
-    public function destroy(string $uuid, Request $request)
-    {
-        $media = Media::where('uuid', $uuid)->first();
-
-        if (empty($media)) {
-            throw new ModelNotFoundException();
-        }
-
-        $model = $media->model()->first();
-
-        $this->authorize('deleteFiles', $model);
-
-        $media->delete();
-
-        return JsonResponseHelper::success(['uuid' => $uuid ], 200);
-    }
 }
