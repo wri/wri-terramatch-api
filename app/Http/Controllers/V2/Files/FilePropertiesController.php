@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\V2\Files;
 
-use App\Helpers\JsonResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\File\UpdateFilePropertiesRequest;
 use App\Http\Resources\V2\Files\FileResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class FilePropertiesController extends Controller
