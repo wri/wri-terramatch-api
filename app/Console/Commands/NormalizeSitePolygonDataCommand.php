@@ -117,6 +117,56 @@ class NormalizeSitePolygonDataCommand extends Command
         'tree-planting, assisted-natural-regeneration, direct-seeding' => 'assisted-natural-regeneration,direct-seeding,tree-planting',
     ];
 
+    // Individual value mappings for practice (for normalizing single values within comma-separated strings)
+    protected $practiceValueMapping = [
+        'assisted natural regeneration' => 'assisted-natural-regeneration',
+        'assisted-natural regeneration' => 'assisted-natural-regeneration',
+        'assisted-natural-regeneration-(anr)' => 'assisted-natural-regeneration',
+        'assisted-naturalregeneration' => 'assisted-natural-regeneration',
+        'asisted-natural-regeneration' => 'assisted-natural-regeneration',
+        'anr' => 'assisted-natural-regeneration',
+        'agroforestry' => 'assisted-natural-regeneration',
+        'agroforestry-systems' => 'direct-seeding',
+        'plantations' => 'assisted-natural-regeneration',
+        'silvopasture' => 'assisted-natural-regeneration',
+        'direct-seedling' => 'direct-seeding',
+        'seed-dispersal' => 'direct-seeding',
+        'tree planting' => 'tree-planting',
+        'tree planting/rna' => 'tree-planting',
+        'reforestation' => 'tree-planting',
+        'control' => null,
+        'na (control)' => null,
+        'na-(control)' => null,
+        'n/a' => null,
+        'null' => null,
+        '' => null,
+    ];
+
+    // Individual value mappings for distr (for normalizing single values within comma-separated strings)
+    protected $distrValueMapping = [
+        'along-edges' => 'single-line',
+        'single line' => 'single-line',
+        'whole' => 'full',
+        'full-enrichment' => 'full',
+        'full coverage' => 'full',
+        'partial coverage_perimetral' => 'partial',
+        'partial,planting-in-patches' => 'partial',
+        '33-11-unknowndist' => null,
+        '33-13-unknowndist' => null,
+        '33-15-unknowndist' => null,
+        '33-16-unknowndist' => null,
+        '33-17-unknowndist' => null,
+        '33-10-unknowndist' => null,
+        '33-14-unknowndist' => null,
+        'null' => null,
+        'n/a' => null,
+        '' => null,
+    ];
+
+    // Valid values for each field
+    protected $validPractices = ['assisted-natural-regeneration', 'direct-seeding', 'tree-planting'];
+    protected $validDistr = ['full', 'partial', 'single-line'];
+
     /**
      * Create a new command instance.
      *
@@ -173,12 +223,94 @@ class NormalizeSitePolygonDataCommand extends Command
         }
     }
 
+    /**
+     * Normalize a comma-separated string by:
+     * 1. Splitting by comma
+     * 2. Trimming and normalizing each individual value
+     * 3. Filtering to only valid values
+     * 4. Sorting alphabetically
+     * 5. Joining with commas (no spaces)
+     *
+     * @param string|null $value
+     * @param array $valueMapping Mapping of individual values to normalized values
+     * @param array $validValues Array of valid final values
+     * @return string|null
+     */
+    protected function normalizeCommaSeparatedValue(?string $value, array $valueMapping, array $validValues): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        // Split by comma and trim each value
+        $values = explode(',', $value);
+        $values = array_map('trim', $values);
+        $values = array_filter($values, function($v) {
+            return $v !== '';
+        });
+
+        if (empty($values)) {
+            return null;
+        }
+
+        // Normalize each individual value
+        $normalizedValues = [];
+        foreach ($values as $val) {
+            $lowerVal = strtolower($val);
+            
+            // Check value mapping first (case-insensitive)
+            $mapped = null;
+            foreach ($valueMapping as $key => $mappedValue) {
+                if (strtolower($key) === $lowerVal) {
+                    $mapped = $mappedValue;
+                    break;
+                }
+            }
+
+            // If mapped to null, skip it
+            if ($mapped === null && !in_array($val, $validValues)) {
+                // Try to find a partial match or exact match with different case
+                if (in_array(strtolower($val), array_map('strtolower', $validValues))) {
+                    // Find the correct case
+                    foreach ($validValues as $validVal) {
+                        if (strtolower($validVal) === strtolower($val)) {
+                            $mapped = $validVal;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Use mapped value or original if already valid
+            $finalValue = $mapped !== null ? $mapped : (in_array($val, $validValues) ? $val : null);
+
+            // Only add if it's a valid value
+            if ($finalValue !== null && in_array($finalValue, $validValues)) {
+                $normalizedValues[] = $finalValue;
+            }
+        }
+
+        // Remove duplicates
+        $normalizedValues = array_unique($normalizedValues);
+
+        if (empty($normalizedValues)) {
+            return null;
+        }
+
+        // Sort alphabetically
+        sort($normalizedValues);
+
+        // Join with commas (no spaces)
+        return implode(',', $normalizedValues);
+    }
+
     protected function normalizeDistrColumn($isDryRun = false)
     {
         $this->info('Analyzing distr column...');
-        $totalChanges = 0;
-
-        $valuesToUpdate = [];
+        
+        // First, handle exact matches from the old mapping (for backwards compatibility)
+        $exactMatches = [];
+        
         foreach ($this->distrMapping as $oldValue => $newValue) {
             if ($oldValue === $newValue) {
                 continue;
@@ -186,22 +318,58 @@ class NormalizeSitePolygonDataCommand extends Command
 
             $count = SitePolygon::withTrashed()->where('distr', $oldValue)->count();
             if ($count > 0) {
-                $valuesToUpdate[$oldValue] = [
+                $exactMatches[$oldValue] = [
                     'new_value' => $newValue,
                     'count' => $count,
                 ];
-                $totalChanges += $count;
             }
         }
 
-        if (empty($valuesToUpdate)) {
-            $this->info('No incorrect distr values found that need updating.');
+        // Get all unique distr values from the database
+        $uniqueValues = SitePolygon::withTrashed()
+            ->whereNotNull('distr')
+            ->where('distr', '!=', '')
+            ->distinct()
+            ->pluck('distr')
+            ->toArray();
 
+        // Process each unique value
+        $valuesToUpdate = [];
+        foreach ($uniqueValues as $originalValue) {
+            // Skip if already handled by exact match
+            if (isset($exactMatches[$originalValue])) {
+                continue;
+            }
+
+            $normalizedValue = $this->normalizeCommaSeparatedValue(
+                $originalValue,
+                $this->distrValueMapping,
+                $this->validDistr
+            );
+
+            // Only update if the value changed
+            if ($normalizedValue !== $originalValue) {
+                $count = SitePolygon::withTrashed()->where('distr', $originalValue)->count();
+                if ($count > 0) {
+                    $valuesToUpdate[$originalValue] = [
+                        'new_value' => $normalizedValue,
+                        'count' => $count,
+                    ];
+                }
+            }
+        }
+
+        // Combine exact matches with dynamic updates
+        $allUpdates = array_merge($exactMatches, $valuesToUpdate);
+        $totalChanges = array_sum(array_column($allUpdates, 'count'));
+
+        if (empty($allUpdates)) {
+            $this->info('No incorrect distr values found that need updating.');
             return 0;
         }
 
-        $this->info('Found ' . count($valuesToUpdate) . ' different distr values that need correction:');
-        foreach ($valuesToUpdate as $oldValue => $info) {
+        $this->info('Found ' . count($allUpdates) . ' different distr values that need correction:');
+        foreach ($allUpdates as $oldValue => $info) {
             $this->info("- '{$oldValue}' to " .
                          ($info['new_value'] === null ? 'NULL' : "'{$info['new_value']}'") .
                          " ({$info['count']} records)");
@@ -212,7 +380,7 @@ class NormalizeSitePolygonDataCommand extends Command
         }
 
         $this->info('Updating distr values...');
-        foreach ($valuesToUpdate as $oldValue => $info) {
+        foreach ($allUpdates as $oldValue => $info) {
             SitePolygon::withTrashed()->where('distr', $oldValue)
                 ->update(['distr' => $info['new_value']]);
 
@@ -273,9 +441,10 @@ class NormalizeSitePolygonDataCommand extends Command
     protected function normalizePracticeColumn($isDryRun = false)
     {
         $this->info('Analyzing practice column...');
-        $totalChanges = 0;
-
-        $valuesToUpdate = [];
+        
+        // First, handle exact matches from the old mapping (for backwards compatibility)
+        $exactMatches = [];
+        
         foreach ($this->practiceMapping as $oldValue => $newValue) {
             if ($oldValue === $newValue) {
                 continue;
@@ -283,22 +452,58 @@ class NormalizeSitePolygonDataCommand extends Command
 
             $count = SitePolygon::withTrashed()->where('practice', $oldValue)->count();
             if ($count > 0) {
-                $valuesToUpdate[$oldValue] = [
+                $exactMatches[$oldValue] = [
                     'new_value' => $newValue,
                     'count' => $count,
                 ];
-                $totalChanges += $count;
             }
         }
 
-        if (empty($valuesToUpdate)) {
-            $this->info('No incorrect practice values found that need updating.');
+        // Get all unique practice values from the database
+        $uniqueValues = SitePolygon::withTrashed()
+            ->whereNotNull('practice')
+            ->where('practice', '!=', '')
+            ->distinct()
+            ->pluck('practice')
+            ->toArray();
 
+        // Process each unique value
+        $valuesToUpdate = [];
+        foreach ($uniqueValues as $originalValue) {
+            // Skip if already handled by exact match
+            if (isset($exactMatches[$originalValue])) {
+                continue;
+            }
+
+            $normalizedValue = $this->normalizeCommaSeparatedValue(
+                $originalValue,
+                $this->practiceValueMapping,
+                $this->validPractices
+            );
+
+            // Only update if the value changed
+            if ($normalizedValue !== $originalValue) {
+                $count = SitePolygon::withTrashed()->where('practice', $originalValue)->count();
+                if ($count > 0) {
+                    $valuesToUpdate[$originalValue] = [
+                        'new_value' => $normalizedValue,
+                        'count' => $count,
+                    ];
+                }
+            }
+        }
+
+        // Combine exact matches with dynamic updates
+        $allUpdates = array_merge($exactMatches, $valuesToUpdate);
+        $totalChanges = array_sum(array_column($allUpdates, 'count'));
+
+        if (empty($allUpdates)) {
+            $this->info('No incorrect practice values found that need updating.');
             return 0;
         }
 
-        $this->info('Found ' . count($valuesToUpdate) . ' different practice values that need correction:');
-        foreach ($valuesToUpdate as $oldValue => $info) {
+        $this->info('Found ' . count($allUpdates) . ' different practice values that need correction:');
+        foreach ($allUpdates as $oldValue => $info) {
             $this->info("- '{$oldValue}' to " .
                          ($info['new_value'] === null ? 'NULL' : "'{$info['new_value']}'") .
                          " ({$info['count']} records)");
@@ -309,7 +514,7 @@ class NormalizeSitePolygonDataCommand extends Command
         }
 
         $this->info('Updating practice values...');
-        foreach ($valuesToUpdate as $oldValue => $info) {
+        foreach ($allUpdates as $oldValue => $info) {
             SitePolygon::withTrashed()->where('practice', $oldValue)
                 ->update(['practice' => $info['new_value']]);
 
