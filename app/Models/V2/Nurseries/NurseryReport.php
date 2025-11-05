@@ -92,6 +92,10 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
     ];
 
     public $fileConfiguration = [
+        'media' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
         'file' => [
             'validation' => 'general-documents',
             'multiple' => true,
