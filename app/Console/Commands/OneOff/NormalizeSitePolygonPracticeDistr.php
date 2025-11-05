@@ -116,6 +116,7 @@ class NormalizeSitePolygonPracticeDistr extends Command
         });
 
         $this->info("Finished. total=$total, updated=$updated, skipped=$skipped, errors=$errors" . ($dryRun ? ' [DRY-RUN]' : ''));
+
         return self::SUCCESS;
     }
 
@@ -142,6 +143,7 @@ class NormalizeSitePolygonPracticeDistr extends Command
                 }
             }
             $result = json_encode(array_values(array_keys($canon)));
+
             return [$result, $result !== $rawString, false];
         }
 
@@ -158,6 +160,7 @@ class NormalizeSitePolygonPracticeDistr extends Command
             $mapped = $this->mapValue($value, $synonyms, $allowed);
             if ($mapped === null) {
                 $hadError = true;
+
                 continue;
             }
             $canonSet[$mapped] = true;
@@ -168,6 +171,7 @@ class NormalizeSitePolygonPracticeDistr extends Command
         }
 
         $json = json_encode(array_values(array_keys($canonSet)));
+
         return [$json, true, $hadError];
     }
 
@@ -196,5 +200,3 @@ class NormalizeSitePolygonPracticeDistr extends Command
         return null;
     }
 }
-
-
