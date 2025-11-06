@@ -15,7 +15,10 @@ trait HasV2MediaCollections
     {
         foreach ($this->fileConfiguration as $key => $config) {
             if ($config['multiple'] == true) {
-                $data[$key] = FileResource::collection($this->getMedia($key));
+                $filter = [
+                    "deleted_at" => null,
+                ];
+                $data[$key] = FileResource::collection($this->getMedia($key, $filter));
             } else {
                 $data[$key] = new FileResource($this->getMedia($key)->first());
             }
