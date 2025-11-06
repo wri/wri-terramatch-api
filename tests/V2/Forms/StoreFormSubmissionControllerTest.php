@@ -3,6 +3,7 @@
 namespace Tests\V2\Forms;
 
 use App\Models\V2\Forms\Form;
+use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\Organisation;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\TreeSpecies\TreeSpecies;
@@ -57,7 +58,6 @@ final class StoreFormSubmissionControllerTest extends TestCase
         }
 
         $organisation = Organisation::factory()->create();
-        $projectPitches = ProjectPitch::factory()->count(3)->create(['organisation_id' => $organisation->uuid]);
         $projectPitch = ProjectPitch::factory()->create(['organisation_id' => $organisation->uuid, 'restoration_intervention_types' => ['reforestation', 'test']]);
 
         TreeSpecies::factory()->count(3)->create([
@@ -71,9 +71,9 @@ final class StoreFormSubmissionControllerTest extends TestCase
             ->assertSuccessful();
 
         $submissionUuid = $response->json('data.uuid');
-        $questions = $response->json('data.form.form_sections.0.form_questions');
         $answers = $response->json('data.answers');
-        $q1Uuid = data_get($questions[0], 'uuid'); //organisation hq country
+        // organisation hq country
+        $q1Uuid = FormSubmission::isUuid($submissionUuid)->first()->getForm()->sections()->first()->questions()->first()->uuid;
 
         $this->assertEquals($organisation->hq_country, $answers[$q1Uuid]);
         $hqCountry = 'ZW';
@@ -109,9 +109,9 @@ final class StoreFormSubmissionControllerTest extends TestCase
             ->assertSuccessful();
 
         $submissionUuid = $response->json('data.uuid');
-        $questions = $response->json('data.form.form_sections.0.form_questions');
         $answers = $response->json('data.answers');
-        $q1Uuid = data_get($questions[0], 'uuid'); //organisation HQ Country
+        // organisation hq country
+        $q1Uuid = FormSubmission::isUuid($submissionUuid)->first()->getForm()->sections()->first()->questions()->first()->uuid;
 
         $this->assertEquals($organisation->hq_country, $answers[$q1Uuid]);
         $hqCountry = 'ZW';
