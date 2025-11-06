@@ -620,7 +620,6 @@ return [
             'label' => 'Project Report',
             'model' => 'App\Models\V2\Projects\ProjectReport',
             'fields' => [
-                'pro-rep-planting-status' => ['property' => 'planting_status','label' => 'What is the status of planting for this project?','input_type' => 'select','multichoice' => false,'option_list_key' => 'planting-status'],
                 'pro-rep-title' => ['property' => 'title', 'label' => 'Title', 'input_type' => 'text'],
                 'pro-rep-ind-1' => ['property' => 'ethnic_indigenous_1', 'label' => 'Indigenous 1', 'input_type' => 'number'],
                 'pro-rep-ind-2' => ['property' => 'ethnic_indigenous_2', 'label' => 'Indigenous 2', 'input_type' => 'number'],
@@ -1290,6 +1289,7 @@ return [
                 'nur-planting_contribution' => ['property' => 'planting_contribution', 'label' => 'Planting contribution', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
+                'nur-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
                 'nur-col-file' => ['property' => 'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
                 'nur-col-other-additional-documents' => ['property' => 'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
                 'nur-col-photos' => ['property' => 'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],
@@ -1315,6 +1315,7 @@ return [
                 'nur-rep-shared-drive-link' => ['property' => 'shared_drive_link', 'label' => 'Shared drive link', 'input_type' => 'url'],
             ],
             'file-collections' => [
+                'nur-rep-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
                 'nur-rep-col-file' => ['property' => 'file', 'label' => 'File', 'input_type' => 'file', 'multichoice' => true],
                 'nur-rep-col-other-additional-documents' => ['property' => 'other_additional_documents', 'label' => 'Other additional documents', 'input_type' => 'file', 'multichoice' => true],
                 'nur-rep-col-photos' => ['property' => 'photos', 'label' => 'Photos', 'input_type' => 'file', 'multichoice' => true],

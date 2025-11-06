@@ -7,8 +7,6 @@ properties:
     type: string
   user_id:
     type: integer
-  user_uuid:
-    type: string
   old_values:
     type: object
   new_values:

@@ -76,6 +76,10 @@ class Nursery extends Model implements MediaModel, AuditableContract, EntityMode
     ];
 
     public $fileConfiguration = [
+        'media' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
         'file' => [
             'validation' => 'general-documents',
             'multiple' => true,
