@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\V2\SrpReports;
 
-use App\Http\Resources\V2\Projects\ProjectResource;
+use App\Http\Resources\V2\Projects\ProjectLiteResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SrpReportResource extends JsonResource
@@ -22,7 +22,8 @@ class SrpReportResource extends JsonResource
             'total_unique_restoration_partners' => $this->total_unique_restoration_partners,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'project' => new ProjectResource($this->project),
+            'project' => new ProjectLiteResource($this->project),
+            'task_uuid' => $this->task->uuid,
         ];
 
         return $this->appendFilesToResource($data);

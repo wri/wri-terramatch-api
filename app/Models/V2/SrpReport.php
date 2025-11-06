@@ -14,6 +14,7 @@ use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Tasks\Task;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,12 +33,12 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
     use HasUuid;
     use SoftDeletes;
     use HasReportStatus;
-    use HasUpdateRequests;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
-    use HasEntityResources;
     use Auditable;
+    use HasUpdateRequests;
+    use HasEntityResources;
     use BelongsToThroughTrait;
     use HasDemographics;
 
@@ -215,6 +216,11 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
     }
 
     public function organisation(): BelongsToThrough
