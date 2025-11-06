@@ -2,6 +2,7 @@
 
 namespace App\Models\V2;
 
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
@@ -9,8 +10,11 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Tasks\Task;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,13 +33,14 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
     use HasUuid;
     use SoftDeletes;
     use HasReportStatus;
-    use HasUpdateRequests;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
-    use HasEntityResources;
     use Auditable;
+    use HasUpdateRequests;
+    use HasEntityResources;
     use BelongsToThroughTrait;
+    use HasDemographics;
 
     protected $table = 'srp_reports';
 
@@ -53,6 +58,10 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
         'feedback',
         'feedback_fields',
         'answers',
+        'task_id',
+        'completion',
+        // virtual (see HasDemographics trait)
+        'other_workdays_description',
     ];
 
     protected $casts = [
@@ -79,6 +88,80 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
     public const SRP_FORM_TYPE = 'srp-report';
 
     public $shortName = 'srp-report';
+
+    // Required by the HasDemographics trait.
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Demographic::WORKDAY_TYPE => [
+            'paid' => [
+                DemographicCollections::PAID_NURSERY_OPERATIONS,
+                DemographicCollections::PAID_PROJECT_MANAGEMENT,
+                DemographicCollections::PAID_OTHER,
+            ],
+            'volunteer' => [
+                DemographicCollections::VOLUNTEER_NURSERY_OPERATIONS,
+                DemographicCollections::VOLUNTEER_PROJECT_MANAGEMENT,
+                DemographicCollections::VOLUNTEER_OTHER,
+            ],
+            'other' => [
+                DemographicCollections::PAID_OTHER,
+                DemographicCollections::VOLUNTEER_OTHER,
+            ],
+            'finance' => [
+                DemographicCollections::DIRECT,
+                DemographicCollections::CONVERGENCE,
+            ],
+            'direct' => [
+                DemographicCollections::DIRECT,
+            ],
+            'convergence' => [
+                DemographicCollections::CONVERGENCE,
+            ],
+        ],
+        Demographic::RESTORATION_PARTNER_TYPE => [
+            'direct' => [
+                DemographicCollections::DIRECT_INCOME,
+                DemographicCollections::DIRECT_BENEFITS,
+                DemographicCollections::DIRECT_CONSERVATION_PAYMENTS,
+                DemographicCollections::DIRECT_MARKET_ACCESS,
+                DemographicCollections::DIRECT_CAPACITY,
+                DemographicCollections::DIRECT_TRAINING,
+                DemographicCollections::DIRECT_LAND_TITLE,
+                DemographicCollections::DIRECT_LIVELIHOODS,
+                DemographicCollections::DIRECT_PRODUCTIVITY,
+                DemographicCollections::DIRECT_OTHER,
+            ],
+            'indirect' => [
+                DemographicCollections::INDIRECT_INCOME,
+                DemographicCollections::INDIRECT_BENEFITS,
+                DemographicCollections::INDIRECT_CONSERVATION_PAYMENTS,
+                DemographicCollections::INDIRECT_MARKET_ACCESS,
+                DemographicCollections::INDIRECT_CAPACITY,
+                DemographicCollections::INDIRECT_TRAINING,
+                DemographicCollections::INDIRECT_LAND_TITLE,
+                DemographicCollections::INDIRECT_LIVELIHOODS,
+                DemographicCollections::INDIRECT_PRODUCTIVITY,
+                DemographicCollections::INDIRECT_OTHER,
+            ],
+            'other' => [
+                DemographicCollections::DIRECT_OTHER,
+                DemographicCollections::INDIRECT_OTHER,
+            ],
+        ],
+        Demographic::JOBS_TYPE => [
+            'full-time' => [
+                DemographicCollections::FULL_TIME,
+                DemographicCollections::FULL_TIME_CLT,
+            ],
+            'part-time' => [
+                DemographicCollections::PART_TIME,
+                DemographicCollections::PART_TIME_CLT,
+            ],
+        ],
+        Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
+        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Demographic::TRAINING_BENEFICIARIES_TYPE => DemographicCollections::TRAINING,
+        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
+    ];
 
     public function registerMediaConversions(Media $media = null): void
     {
@@ -133,6 +216,11 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
     }
 
     public function organisation(): BelongsToThrough
