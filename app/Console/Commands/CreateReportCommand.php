@@ -179,28 +179,9 @@ class CreateReportCommand extends Command
             $this->info("Disturbance report created for project $uuid");
 
             return 0;
-        } elseif ($type === 'srp') {
-            // For annual socio economic restoration reports, no task is required, but it's related to a project
-            $dueAtOption = $this->option('due_at');
-            $dueAt = ! empty($dueAtOption) ? Carbon::parse($dueAtOption) : null;
-            $year = $dueAt?->year ?? Carbon::now()->year;
-
-            $reportModel::create([
-                'framework_key' => $entity->framework_key,
-                'project_id' => $entity->id,
-                'status' => 'due',
-                'year' => $year,
-                'due_at' => $dueAt,
-                'update_request_status' => 'no-update',
-            ]);
-
-            $this->info("Annual socio economic restoration report created for project $uuid");
-
-            return 0;
         } else {
-            $task = Task::withTrashed()->where('project_id', $entity->project_id)->latest()->first();
+            $task = Task::withTrashed()->where('project_id', $type === 'srp' ? $entity->id : $entity->project_id)->latest()->first();
         }
-
         if ($task == null) {
             $this->error("Task not found for project [$entity->project_id]");
 
@@ -216,14 +197,25 @@ class CreateReportCommand extends Command
             $this->info("Task status updated to 'due' [task=$task->id, project=$task->project_id]");
         }
 
-        $reportModel::create([
-            'framework_key' => $task->project->framework_key,
-            'task_id' => $task->id,
-            "{$type}_id" => $entity->id,
-            'status' => 'due',
-            'due_at' => $task->due_at,
-        ]);
-
+        if ($type === 'srp') {
+            $reportModel::create([
+                'framework_key' => $entity->framework_key,
+                'task_id' => $task->id,
+                'project_id' => $entity->id,
+                'status' => 'due',
+                'year' => $task->due_at->year,
+                'due_at' => $task->due_at,
+                'update_request_status' => 'no-update',
+            ]);
+        } else {
+            $reportModel::create([
+                'framework_key' => $task->project->framework_key,
+                'task_id' => $task->id,
+                "{$type}_id" => $entity->id,
+                'status' => 'due',
+                'due_at' => $task->due_at,
+            ]);
+        }
         if ($type == 'project' && $this->option('all_reports')) {
             foreach ($entity->sites as $site) {
                 Artisan::call('create-report -Tsite ' . $site->uuid);
