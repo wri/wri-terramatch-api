@@ -1,11 +1,11 @@
-title: StageLiteRead
+title: FormLiteRead
 type: object
 properties:
   uuid:
     type: string
-  name:
+  title:
     type: string
-  status:
+  type:
     type: string
-  readable_status:
-    type: string
+  published:
+    type: boolean

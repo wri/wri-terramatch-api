@@ -3,7 +3,7 @@
 namespace App\Http\Resources\V2\Forms;
 
 use App\Http\Resources\V2\AuditResource;
-use App\Http\Resources\V2\Stages\StageLiteResource;
+use App\Http\Resources\V2\Stages\StageResource;
 use App\Models\V2\I18n\I18nTranslation;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\App;
@@ -16,11 +16,6 @@ class FormSubmissionResource extends JsonResource
      */
     public function toArray($request)
     {
-        $params = [
-            'organisation_uuid' => $this->organisation_uuid,
-            'project_pitch_uuid' => $this->project_pitch_uuid,
-        ];
-
         $translatedFeedbackFields = collect();
 
         collect($this->feedback_fields)->each(function ($field) use ($translatedFeedbackFields) {
@@ -67,8 +62,8 @@ class FormSubmissionResource extends JsonResource
             'id' => $this->id,
             'uuid' => $this->uuid,
             'name' => $this->name,
-            'form' => (new FormResource($this->form))
-                ->params($params),
+            'form_uuid' => $this->form_id,
+            'framework_key' => $this->form->framework_key,
             'answers' => $this->getAllAnswers(['organisation' => $this->organisation, 'project-pitch' => $this->projectPitch]),
             'status' => $this->status,
             'application_uuid' => data_get($this->application, 'uuid'),
@@ -82,7 +77,7 @@ class FormSubmissionResource extends JsonResource
             'feedback' => $this->feedback,
             'feedback_fields' => $this->feedback_fields,
             'translated_feedback_fields' => $translatedFeedbackFields,
-            'stage' => new StageLiteResource($this->stage),
+            'stage' => new StageResource($this->stage),
             'next_stage_uuid' => $this->getNextStageUuid(),
             'previous_stage_uuid' => $this->getPreviousStageUuid(),
             'audits' => AuditResource::collection($this->audits),
