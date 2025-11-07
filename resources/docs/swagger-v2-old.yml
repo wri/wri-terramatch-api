@@ -3552,19 +3552,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/V2FileRead'
-    delete:
-      summary: Delete a specific file
-      operationId: v2-delete-file-uuid
-      tags:
-        - Files
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   /v2/tree-species:
     post:
       summary: Create a tree species
