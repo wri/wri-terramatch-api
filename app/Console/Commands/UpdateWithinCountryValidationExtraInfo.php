@@ -34,8 +34,9 @@ class UpdateWithinCountryValidationExtraInfo extends Command
         $force = $this->option('force');
         $tableName = $this->option('table');
 
-        if (!in_array($tableName, ['criteria_site', 'criteria_site_historic'])) {
+        if (! in_array($tableName, ['criteria_site', 'criteria_site_historic'])) {
             $this->error("Invalid table name: {$tableName}. Must be 'criteria_site' or 'criteria_site_historic'.");
+
             return 1;
         }
 
@@ -53,6 +54,7 @@ class UpdateWithinCountryValidationExtraInfo extends Command
 
         if ($criteriaSites->isEmpty()) {
             $this->info("No {$tableName} records found with extra_info and criteria_id = 7.");
+
             return 0;
         }
 
@@ -61,20 +63,21 @@ class UpdateWithinCountryValidationExtraInfo extends Command
         $recordsToUpdate = [];
         foreach ($criteriaSites as $record) {
             $extraInfo = json_decode($record->extra_info, true);
-            
-            if (!is_array($extraInfo) || !isset($extraInfo['country_name'])) {
+
+            if (! is_array($extraInfo) || ! isset($extraInfo['country_name'])) {
                 continue;
             }
 
             $countryName = $extraInfo['country_name'];
-            
+
             if (preg_match('/^[A-Z]{3}$/', $countryName)) {
                 continue;
             }
 
             $countryNameLower = strtolower($countryName);
-            if (!isset($countryMapping[$countryNameLower])) {
+            if (! isset($countryMapping[$countryNameLower])) {
                 $this->warn("No ISO mapping found for country: {$countryName}");
+
                 continue;
             }
 
@@ -90,10 +93,11 @@ class UpdateWithinCountryValidationExtraInfo extends Command
 
         if (empty($recordsToUpdate)) {
             $this->info('No records need updating. All country_name values are already in ISO format.');
+
             return 0;
         }
 
-        $this->info("Found " . count($recordsToUpdate) . " records that need updating:");
+        $this->info('Found ' . count($recordsToUpdate) . ' records that need updating:');
 
         $countryGroups = collect($recordsToUpdate)->groupBy('old_name');
         foreach ($countryGroups as $countryName => $records) {
@@ -107,13 +111,15 @@ class UpdateWithinCountryValidationExtraInfo extends Command
                 $this->line("   {$tableName} ID {$record['id']}: '{$record['old_name']}' → '{$record['new_iso']}'");
             }
             if (count($recordsToUpdate) > 10) {
-                $this->line("   ... and " . (count($recordsToUpdate) - 10) . " more");
+                $this->line('   ... and ' . (count($recordsToUpdate) - 10) . ' more');
             }
+
             return 0;
         }
 
-        if (!$force && !$this->confirm('Do you want to proceed with the updates?')) {
+        if (! $force && ! $this->confirm('Do you want to proceed with the updates?')) {
             $this->info('Update cancelled.');
+
             return 1;
         }
 
