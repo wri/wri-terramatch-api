@@ -44,4 +44,3 @@ class DeleteFormQuestionsByLinkedFieldKey extends Command
         $this->info('Form questions soft deleted successfully!');
     }
 }
-
