@@ -31,7 +31,6 @@ class DeleteFormQuestionsByLinkedFieldKey extends Command
         $this->info('Looking for form questions to delete: ' . json_encode($linkedFieldKeys, JSON_PRETTY_PRINT));
 
         $questions = FormQuestion::whereIn('linked_field_key', $linkedFieldKeys)
-            ->whereNull('deleted_at')
             ->get();
 
         $this->info("Found {$questions->count()} form questions to delete");
