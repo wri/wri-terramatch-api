@@ -242,6 +242,11 @@ class TerrafundEditGeometryController extends Controller
               'target_sys' => 'nullable|string',
             ]);
 
+            // These are to avoid needing to modify the FE for this change to array fields on the DB table. In v3, this
+            // should require an array from the FE.
+            $validatedData['practice'] = $validatedData['practice'] == null ? null : explode(',', $validatedData['practice']);
+            $validatedData['distr'] = $validatedData['distr'] == null ? null : explode(',', $validatedData['distr']);
+
             $sitePolygon->update($validatedData);
             $sitePolygon->changeStatusOnEdit();
 
@@ -368,8 +373,8 @@ class TerrafundEditGeometryController extends Controller
             $sitePolygon = new SitePolygon([
                 'poly_name' => $validatedData['poly_name'],
                 'plantstart' => $validatedData['plantstart'],
-                'practice' => $validatedData['practice'],
-                'distr' => $validatedData['distr'],
+                'practice' => $validatedData['practice'] == null ? null : explode(',', $validatedData['practice']),
+                'distr' => $validatedData['distr'] == null ? null : explode(',', $validatedData['distr']),
                 'num_trees' => $validatedData['num_trees'],
                 'calc_area' => $areaHectares,
                 'target_sys' => $validatedData['target_sys'],

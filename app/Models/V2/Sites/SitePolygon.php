@@ -66,7 +66,7 @@ class SitePolygon extends Model implements AuditableModel
 
     protected $casts = [
         'practice' => 'array',
-        'distr' => 'array'
+        'distr' => 'array',
     ];
 
     public function polygonGeometry(): BelongsTo

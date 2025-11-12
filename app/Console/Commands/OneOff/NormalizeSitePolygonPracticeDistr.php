@@ -4,7 +4,6 @@ namespace App\Console\Commands\OneOff;
 
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class NormalizeSitePolygonPracticeDistr extends Command
@@ -83,6 +82,7 @@ class NormalizeSitePolygonPracticeDistr extends Command
                     if ($this->isArrayFormat($distr) && $this->isArrayFormat($practice)) {
                         // Make the script faster on re-runs by skipping rows that have already been updated.
                         $progressBar->advance();
+
                         continue;
                     }
 
@@ -93,6 +93,7 @@ class NormalizeSitePolygonPracticeDistr extends Command
                         $errors++;
                         $this->warn("Row id={$row->id} has unexpected value(s) [practice='{$row->practice}', distr='{$row->distr}']");
                         $progressBar->advance();
+
                         continue;
                     }
 
@@ -150,6 +151,7 @@ class NormalizeSitePolygonPracticeDistr extends Command
         }
 
         $json = array_values(array_keys($canonSet));
+
         return [$json, $hadError];
     }
 
@@ -178,7 +180,8 @@ class NormalizeSitePolygonPracticeDistr extends Command
         return null;
     }
 
-    private function isArrayFormat(?string $value) {
-        return $value == null || Str::startsWith($value, "[") && Str::endsWith($value, "]");
+    private function isArrayFormat(?string $value)
+    {
+        return $value == null || Str::startsWith($value, '[') && Str::endsWith($value, ']');
     }
 }
