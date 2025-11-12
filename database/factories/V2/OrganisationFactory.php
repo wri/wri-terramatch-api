@@ -42,6 +42,10 @@ class OrganisationFactory extends Factory
             'twitter_url' => $this->faker->url(),
 
             'fin_start_month' => $this->faker->numberBetween(1, 12),
+            'fin_budget_3year' => $this->faker->randomFloat(2, 0, 999999999999),
+            'fin_budget_2year' => $this->faker->randomFloat(2, 0, 999999999999),
+            'fin_budget_1year' => $this->faker->randomFloat(2, 0, 999999999999),
+            'fin_budget_current_year' => $this->faker->randomFloat(2, 0, 999999999999),
 
             'ha_restored_total' => $this->faker->randomFloat(2, 0, 10000),
             'ha_restored_3year' => $this->faker->randomFloat(2, 0, 10000),
@@ -62,6 +66,7 @@ class OrganisationFactory extends Factory
             'community_experience' => $this->faker->text(500),
             'business_model' => $this->faker->text(50),
             'subtype' => $this->faker->text(50),
+            'organisation_revenue_this_year' => $this->faker->numberBetween(0, 1000000),
             'total_engaged_community_members_3yr' => $this->faker->numberBetween(0, 1000000),
             'percent_engaged_women_3yr' => $this->faker->numberBetween(0, 100),
             'percent_engaged_men_3yr' => $this->faker->numberBetween(0, 100),
