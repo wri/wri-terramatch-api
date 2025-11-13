@@ -9,6 +9,7 @@ use App\Models\V2\Forms\Form;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\SrpReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -22,7 +23,7 @@ class ExportReportEntityAsProjectDeveloperController extends Controller
         $modelClass = $this->getModelClass($entity);
 
         Validator::make(['entity' => $entity, 'uuid' => $uuid], [
-            'entity' => 'required|in:site-reports,nursery-reports,project-reports,financial-reports',
+            'entity' => 'required|in:site-reports,nursery-reports,project-reports,financial-reports,srp-reports',
             'uuid' => 'required|exists:'.$modelClass.',uuid|max:255',
         ])->validate();
 
@@ -79,6 +80,11 @@ class ExportReportEntityAsProjectDeveloperController extends Controller
 
             case 'financial-reports':
                 $model = FinancialReport::class;
+
+                break;
+
+            case 'srp-reports':
+                $model = SrpReport::class;
 
                 break;
         }

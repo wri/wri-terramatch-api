@@ -21,6 +21,7 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteMonitoring;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\SrpReport;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteRegistrar;
@@ -70,6 +71,8 @@ class ModelInterfaceBindingMiddleware
         'financialReports' => FinancialReport::class,
         'disturbance-report' => DisturbanceReport::class,
         'disturbance-reports' => DisturbanceReport::class,
+        'srp-report' => SrpReport::class,
+        'srp-reports' => SrpReport::class,
     ];
 
     private static array $typeSlugsCache = [];
