@@ -48,8 +48,6 @@
   get:
     $ref: './ReportingFrameworks/get-v2-reporting-frameworks-framework-key.yml'
 /v2/forms/{ENTITY}/{UUID}:
-  get:
-    $ref: './Forms/get-v2-forms-entity-form-uuid.yml'
   put:
     $ref: './Forms/put-v2-forms-entity-form-uuid.yml'
 /v2/forms/{ENTITY}/{UUID}/submit:
@@ -64,26 +62,12 @@
 /v2/projects/{UUID}/site-polygons:
   get:
     $ref: './Projects/get-v2-projects-uuid-site-polygons.yml'
-/v2/admin/update-requests/:
-  get:
-    $ref: './UpdateRequests/get-v2-admin-update-requests.yml'
-/v2/admin/update-requests/{UUID}:
-  delete:
-    $ref: './UpdateRequests/delete-v2-admin-update-requests-uuid.yml'
 /v2/admin/update-requests/{UUID}/{STATUS}:
   put:
     $ref: './UpdateRequests/put-v2-admin-update-requests-uuid-status.yml'
 /v2/admin/{ENTITY}/{UUID}/reminder:
   post:
     $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'
-/v2/update-requests/{UUID}:
-  get:
-    $ref: './UpdateRequests/get-v2-update-requests-uuid.yml'
-  delete:
-    $ref: './UpdateRequests/delete-v2-update-requests-uuid.yml'
-/v2/update-requests/{ENTITY}/{UUID}:
-  get:
-    $ref: './UpdateRequests/get-v2-update-requests-entity-uuid.yml'
 /v2/admin/organisations:
   get:
     summary: Get a collection of organisations

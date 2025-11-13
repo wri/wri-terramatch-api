@@ -35,7 +35,6 @@ use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
-use App\Http\Controllers\V2\Entities\ViewEntityWithFormController;
 use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
@@ -164,11 +163,7 @@ use App\Http\Controllers\V2\Stages\ViewStageController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
-use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
-use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\AdminStatusUpdateRequestController;
-use App\Http\Controllers\V2\UpdateRequests\AdminViewUpdateRequestController;
-use App\Http\Controllers\V2\UpdateRequests\EntityUpdateRequestsController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
 use App\Http\Controllers\V2\User\AdminUserController;
 use App\Http\Controllers\V2\User\AdminUserCreationController;
@@ -261,8 +256,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::resource('organisations', AdminOrganisationController::class)->except('create');
 
     Route::prefix('update-requests')->group(function () {
-        Route::get('', AdminIndexUpdateRequestsController::class);
-        Route::delete('/{updateRequest}', AdminSoftDeleteUpdateRequestController::class);
         Route::put('/{updateRequest}/{status}', AdminStatusUpdateRequestController::class);
     });
 
@@ -379,7 +372,6 @@ Route::prefix('forms')->group(function () {
     });
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-        Route::get('/{entity}', ViewEntityWithFormController::class)->middleware('i18n');
         Route::put('/{entity}', UpdateEntityWithFormController::class);
         Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
     });
@@ -537,15 +529,6 @@ Route::prefix('funding-type')->group(function () {
     Route::post('/', StoreFundingTypeController::class);
     Route::patch('/{fundingType}', UpdateFundingTypeController::class);
     Route::delete('/{fundingType}', DeleteFundingTypeController::class);
-});
-
-Route::prefix('update-requests')->group(function () {
-    Route::get('/{updateRequest}', AdminViewUpdateRequestController::class);
-    Route::delete('/{updateRequest}', AdminSoftDeleteUpdateRequestController::class);
-
-    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-        Route::get('/{entity}', EntityUpdateRequestsController::class);
-    });
 });
 
 Route::prefix('terrafund')->group(function () {
