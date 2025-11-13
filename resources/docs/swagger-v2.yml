@@ -7045,8 +7045,8 @@ definitions:
               updated_at:
                 type: string
           organisation:
-            type: object
             title: AdminOrganisationRead
+            type: object
             properties:
               uuid:
                 type: string
@@ -9192,8 +9192,8 @@ definitions:
           updated_at:
             type: string
       organisation:
-        type: object
         title: AdminOrganisationRead
+        type: object
         properties:
           uuid:
             type: string
@@ -25307,7 +25307,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -25318,8 +25317,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -25347,6 +25346,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       tags:
         - V2 Admin
         - V2 Organisations
@@ -31662,7 +31662,6 @@ paths:
                     date_added:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -31673,8 +31672,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -31702,6 +31701,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -34837,7 +34837,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -34848,8 +34847,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -34877,6 +34876,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       operationId: get-v2-funding-programme
   /v2/admin/funding-programme:
     get:
@@ -35014,7 +35014,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -35025,8 +35024,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -35054,6 +35053,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       operationId: get-v2-admin-funding-programme
     post:
       summary: Create a funding programme
@@ -37957,8 +37957,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                type: object
                 title: AdminOrganisationRead
+                type: object
                 properties:
                   uuid:
                     type: string
@@ -38580,7 +38580,6 @@ paths:
                       type: string
                       format: date-time
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -38591,8 +38590,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -38620,6 +38619,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/applications/{UUID}':
     get:
       summary: Get a specific application
@@ -38881,8 +38881,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                type: object
                 title: AdminOrganisationRead
+                type: object
                 properties:
                   uuid:
                     type: string
@@ -42972,69 +42972,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/terrafund/upload-geojson-validate:
-    post:
-      summary: Export CSV document of polygon validation
-      description: 'Uploads a GeoJSON file, converts it to GeoJSON, and validate the polygons.'
-      consumes:
-        - multipart/form-data
-      parameters:
-        - name: file
-          in: formData
-          description: The GeoJSON file to test
-          required: true
-          type: file
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: file
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  /v2/terrafund/upload-shapefile-validate:
-    post:
-      summary: Export CSV document of polygon validation
-      description: 'Uploads a Shapefile file, converts it to GeoJSON, and validate the polygons.'
-      consumes:
-        - multipart/form-data
-      parameters:
-        - name: file
-          in: formData
-          description: The Shapefile file to test
-          required: true
-          type: file
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: file
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  /v2/terrafund/upload-kml-validate:
-    post:
-      summary: Export CSV document of polygon validation
-      description: 'Uploads a KML file, converts it to GeoJSON, and validate the polygons.'
-      consumes:
-        - multipart/form-data
-      parameters:
-        - name: file
-          in: formData
-          description: The KML file to test
-          required: true
-          type: file
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: file
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   /v2/terrafund/upload-geojson-project:
     post:
       summary: Upload GeoJSON File for project
@@ -45356,7 +45293,6 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -45367,8 +45303,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -45396,6 +45332,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
     post:
       summary: Create a new Impact Story
       operationId: v2-create-impact-story
@@ -45655,7 +45592,6 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -45666,8 +45602,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -45695,6 +45631,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story

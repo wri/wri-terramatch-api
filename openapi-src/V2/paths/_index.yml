@@ -1785,15 +1785,6 @@
 /v2/terrafund/upload-kml:
   post:
     $ref: './Terrafund/post-v2-terrafund-upload-kml.yml'
-/v2/terrafund/upload-geojson-validate:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-upload-geojson-validate.yml'
-/v2/terrafund/upload-shapefile-validate:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-upload-shapefile-validate.yml'
-/v2/terrafund/upload-kml-validate:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-upload-kml-validate.yml'
 /v2/terrafund/upload-geojson-project:
   post:
     $ref: './Terrafund/post-v2-terrafund-upload-geojson-project.yml'
