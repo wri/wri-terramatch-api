@@ -405,8 +405,20 @@ class TerrafundEditGeometryController extends Controller
         $diff = [];
         $keys = array_merge(['site_id'], PolygonFields::BASIC_FIELDS);
         foreach ($keys as $key) {
-            if ($newSitePolygon[$key] !== $sitePolygon[$key]) {
-                $diff[] = "$key => from $sitePolygon[$key] to {$newSitePolygon[$key]}";
+            $oldValue = $sitePolygon[$key];
+            $newValue = $newSitePolygon[$key];
+            
+            if (in_array($key, ['practice', 'distr'])) {
+                $oldValueStr = is_array($oldValue) ? implode(', ', $oldValue) : ($oldValue ?? '');
+                $newValueStr = is_array($newValue) ? implode(', ', $newValue) : ($newValue ?? '');
+                
+                if ($newValueStr !== $oldValueStr) {
+                    $diff[] = "$key => from $oldValueStr to $newValueStr";
+                }
+            } else {
+                if ($newValue !== $oldValue) {
+                    $diff[] = "$key => from $oldValue to $newValue";
+                }
             }
         }
 
