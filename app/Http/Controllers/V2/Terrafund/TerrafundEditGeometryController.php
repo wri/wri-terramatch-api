@@ -407,11 +407,11 @@ class TerrafundEditGeometryController extends Controller
         foreach ($keys as $key) {
             $oldValue = $sitePolygon[$key];
             $newValue = $newSitePolygon[$key];
-            
+
             if (in_array($key, ['practice', 'distr'])) {
                 $oldValueStr = is_array($oldValue) ? implode(', ', $oldValue) : ($oldValue ?? '');
                 $newValueStr = is_array($newValue) ? implode(', ', $newValue) : ($newValue ?? '');
-                
+
                 if ($newValueStr !== $oldValueStr) {
                     $diff[] = "$key => from $oldValueStr to $newValueStr";
                 }
