@@ -8,6 +8,7 @@ use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\StateMachines\EntityStatusStateMachine;
+use Illuminate\Support\Facades\Log;
 
 trait UsesLinkedFields
 {
@@ -372,6 +373,7 @@ trait UsesLinkedFields
     {
         $formConfig = $this->getFormConfig();
         $fieldsConfig = data_get($formConfig, 'fields', []);
+        $relationsConfig = data_get($formConfig, 'relations', []);
         $modelAnswers = $this->answers;
         $entityProps = [];
 
@@ -395,10 +397,21 @@ trait UsesLinkedFields
 
         foreach ($childQuestions as $child) {
             if (array_key_exists($child->parent_id, $conditionalValues) && $child->show_on_parent_condition != $conditionalValues[$child->parent_id]) {
+                // Handle plain fields (existing logic)
                 $fieldConfig = data_get($fieldsConfig, $child->linked_field_key);
                 $property = data_get($fieldConfig, 'property');
                 if ($this->isPlainField($child->input_type) && ! empty($property)) {
                     $entityProps[$property] = null;
+                }
+
+                // Handle relations (demographics, tree species, disturbances)
+                $relationConfig = data_get($relationsConfig, $child->linked_field_key);
+                if (! empty($relationConfig)) {
+                    $relationProperty = data_get($relationConfig, 'property');
+                    $inputType = data_get($relationConfig, 'input_type');
+                    if (! empty($relationProperty) && $this->isRelationToClean($inputType)) {
+                        $this->cleanRelationData($relationProperty, $inputType);
+                    }
                 }
             }
         }
@@ -411,5 +424,74 @@ trait UsesLinkedFields
         $plainFields = ['long-text', 'date', 'number', 'text', 'number-percentage', 'boolean'];
 
         return in_array($input_type, $plainFields);
+    }
+
+    /**
+     * Check if the input type represents a relation that should be cleaned when conditional is "no".
+     * Uses the same list of relation types as syncRelation to ensure consistency.
+     *
+     * @param  string|null  $inputType
+     * @return bool
+     */
+    private function isRelationToClean(?string $inputType): bool
+    {
+        if (empty($inputType)) {
+            return false;
+        }
+
+        // All relation types that can be synced (and therefore should be cleaned)
+        // This matches the list in syncRelation() to ensure consistency
+        $relationTypes = [
+            'treeSpecies',
+            'disturbances',
+            'workdays',
+            'restorationPartners',
+            'jobs',
+            'employees',
+            'volunteers',
+            'allBeneficiaries',
+            'trainingBeneficiaries',
+            'indirectBeneficiaries',
+            'associates',
+            'stratas',
+            'invasive',
+            'seedings',
+            'financialIndicators',
+            'fundingType',
+            'disturbanceReportEntries',
+        ];
+
+        return in_array($inputType, $relationTypes);
+    }
+
+    /**
+     * Clean relation data (demographics, tree species, disturbances, invasives, seedings, stratas, etc.)
+     * when conditional question is "no".
+     *
+     * @param  string  $property
+     * @param  string  $inputType
+     * @return void
+     */
+    private function cleanRelationData(string $property, string $inputType): void
+    {
+        if (! method_exists($this, $property) || ! is_callable([$this, $property])) {
+            return;
+        }
+
+        try {
+            $relation = $this->$property();
+
+            // Delete all related records - works for morphMany and similar relations
+            // This follows the pattern used in DeletionHelper and other parts of the codebase
+            $relation->delete();
+        } catch (\Exception $e) {
+            // Log error but don't fail the entire cleanup process
+            Log::warning("Failed to clean relation data for property: {$property}", [
+                'entity_type' => get_class($this),
+                'entity_id' => $this->id ?? null,
+                'input_type' => $inputType,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
