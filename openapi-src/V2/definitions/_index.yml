@@ -8,8 +8,6 @@ AssociatedUserRead:
   $ref: './AssociatedUserRead.yml'
 EntityFormCreate:
   $ref: './EntityFormCreate.yml'
-EntityFormUpdate:
-  $ref: './EntityFormUpdate.yml'
 EntityFormRead:
   $ref: './EntityFormRead.yml'
 UserRead:

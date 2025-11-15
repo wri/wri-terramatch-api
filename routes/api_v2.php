@@ -33,7 +33,6 @@ use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
 use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
-use App\Http\Controllers\V2\Entities\UpdateEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
 use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
@@ -372,7 +371,6 @@ Route::prefix('forms')->group(function () {
     });
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-        Route::put('/{entity}', UpdateEntityWithFormController::class);
         Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
     });
 

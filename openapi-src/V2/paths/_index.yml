@@ -47,9 +47,6 @@
 /v2/reporting-frameworks/{frameworkKey}:
   get:
     $ref: './ReportingFrameworks/get-v2-reporting-frameworks-framework-key.yml'
-/v2/forms/{ENTITY}/{UUID}:
-  put:
-    $ref: './Forms/put-v2-forms-entity-form-uuid.yml'
 /v2/forms/{ENTITY}/{UUID}/submit:
   put:
     $ref: './Forms/put-v2-forms-entity-form-uuid-submit.yml'
