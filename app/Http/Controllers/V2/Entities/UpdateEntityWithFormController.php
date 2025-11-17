@@ -32,7 +32,7 @@ class UpdateEntityWithFormController extends Controller
         $user = Auth::user();
         $isAdmin = $user->can("framework-$entity->framework_key");
         $isProjectManager = $user->roles->pluck('name')->contains('project-manager');
-        
+
         if ($entity->isEditable() || ($isAdmin && empty($updateRequest)) || ($isProjectManager && empty($updateRequest))) {
             $entity->updateFromForm($answers, false);
             if ($entity instanceof ReportModel) {
