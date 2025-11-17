@@ -29,11 +29,14 @@ class UpdateEntityWithFormController extends Controller
 
         /** @var UpdateRequest $updateRequest */
         $updateRequest = $entity->updateRequests()->isUnapproved()->first();
-        $isAdmin = Auth::user()->can("framework-$entity->framework_key");
-        if ($entity->isEditable() || ($isAdmin && empty($updateRequest))) {
+        $user = Auth::user();
+        $isAdmin = $user->can("framework-$entity->framework_key");
+        $isProjectManager = $user->roles->pluck('name')->contains('project-manager');
+        
+        if ($entity->isEditable() || ($isAdmin && empty($updateRequest)) || ($isProjectManager && empty($updateRequest))) {
             $entity->updateFromForm($answers, false);
             if ($entity instanceof ReportModel) {
-                $entity->updateInProgress($isAdmin);
+                $entity->updateInProgress($isAdmin || $isProjectManager);
             }
             if (data_get($formSubmissionRequest, 'continue_later_action')) {
                 $this->saveAuditStatusProjectDeveloperSubmitDraft($entity);
