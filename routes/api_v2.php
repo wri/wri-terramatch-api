@@ -32,7 +32,6 @@ use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
-use App\Http\Controllers\V2\Entities\SubmitEntityWithFormController;
 use App\Http\Controllers\V2\Entities\ViewEntityController;
 use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
@@ -368,10 +367,6 @@ Route::prefix('forms')->group(function () {
         Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class)->middleware('i18n');
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
-    });
-
-    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-        Route::put('/{entity}/submit', SubmitEntityWithFormController::class);
     });
 
     Route::prefix('projects')->group(function () {
