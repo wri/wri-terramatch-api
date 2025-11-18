@@ -442,13 +442,7 @@ trait UsesLinkedFields
             'associates',
         ];
 
-        $otherRelationTypes = [
-            'treeSpecies',
-            'disturbances',
-            'disturbanceReportEntries',
-        ];
-
-        return in_array($inputType, array_merge($demographicTypes, $otherRelationTypes));
+        return in_array($inputType, $demographicTypes);
     }
 
     private function cleanRelationData(string $property, string $inputType): void
