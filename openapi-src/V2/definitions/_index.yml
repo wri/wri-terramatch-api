@@ -6,10 +6,6 @@ TreeSpeciesReadAll:
   $ref: './TreeSpeciesReadAll.yml'
 AssociatedUserRead:
   $ref: './AssociatedUserRead.yml'
-EntityFormCreate:
-  $ref: './EntityFormCreate.yml'
-EntityFormRead:
-  $ref: './EntityFormRead.yml'
 UserRead:
   $ref: './UserRead.yml'
 UserReadAll:

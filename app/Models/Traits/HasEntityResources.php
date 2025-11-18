@@ -2,8 +2,6 @@
 
 namespace App\Models\Traits;
 
-use App\Http\Resources\V2\Entities\EntityWithSchemaResource;
-use App\Models\V2\EntityModel;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
 use ReflectionClass;
@@ -27,11 +25,5 @@ trait HasEntityResources
         $resourceClassName = join('\\', $resourceNamespaceParts) . '\\' . $class->getShortName() . 'Resource';
 
         return new $resourceClassName($this);
-    }
-
-    public function createSchemaResource(): JsonResource
-    {
-        /** @var EntityModel $this */
-        return new EntityWithSchemaResource($this);
     }
 }

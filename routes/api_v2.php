@@ -80,7 +80,6 @@ use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisVerifyCont
 use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
 use App\Http\Controllers\V2\MonitoredData\RunIndicatorAnalysisController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
-use App\Http\Controllers\V2\Nurseries\CreateNurseryWithFormController;
 use App\Http\Controllers\V2\NurseryReports\NurseryReportsViaNurseryController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
@@ -115,9 +114,7 @@ use App\Http\Controllers\V2\ProjectPitches\UpdateProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController;
 use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
-use App\Http\Controllers\V2\Projects\CreateBlankProjectWithFormController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
-use App\Http\Controllers\V2\Projects\CreateProjectWithFormController;
 use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminCreateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminSoftDeleteProjectMonitoringController;
@@ -138,7 +135,6 @@ use App\Http\Controllers\V2\Reports\NothingToReportReportController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
-use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
@@ -368,21 +364,7 @@ Route::prefix('forms')->group(function () {
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
-
-    Route::prefix('projects')->group(function () {
-        Route::post('', CreateProjectWithFormController::class);
-        Route::post('/{form}', CreateBlankProjectWithFormController::class);
-    });
-
-    Route::prefix('sites')->group(function () {
-        Route::post('', CreateSiteWithFormController::class);
-    });
-
-    Route::prefix('nurseries')->group(function () {
-        Route::post('', CreateNurseryWithFormController::class);
-    });
 });
-
 
 Route::prefix('reporting-frameworks')->group(function () {
     Route::get('/{frameworkKey}', ViewReportingFrameworkController::class);

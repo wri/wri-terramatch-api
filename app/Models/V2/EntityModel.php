@@ -23,8 +23,6 @@ interface EntityModel extends UpdateRequestableModel, ApprovalFlow
 
     public function createResource(): JsonResource;
 
-    public function createSchemaResource(): JsonResource;
-
     public function isEditable(): bool;
 
     public function getViewLinkPath(): string;

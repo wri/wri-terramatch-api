@@ -47,12 +47,6 @@
 /v2/reporting-frameworks/{frameworkKey}:
   get:
     $ref: './ReportingFrameworks/get-v2-reporting-frameworks-framework-key.yml'
-/v2/forms/{ENTITY}:
-  post:
-    $ref: './Forms/post-v2-forms-entity-form-uuid.yml'
-/v2/forms/projects/{UUID}:
-  post:
-    $ref: './Forms/post-v2-forms-projects-form-uuid.yml'
 /v2/projects/{UUID}/site-polygons:
   get:
     $ref: './Projects/get-v2-projects-uuid-site-polygons.yml'
