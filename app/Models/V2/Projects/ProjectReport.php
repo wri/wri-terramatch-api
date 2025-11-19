@@ -4,7 +4,6 @@ namespace App\Models\V2\Projects;
 
 use App\Models\Framework;
 use App\Models\Traits\HasDemographics;
-use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
@@ -52,7 +51,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
-    use HasEntityResources;
     use BelongsToThroughTrait;
     use HasDemographics;
     use ReportsStatusChange;

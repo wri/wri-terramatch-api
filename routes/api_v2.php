@@ -27,12 +27,10 @@ use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
 use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
-use App\Http\Controllers\V2\DisturbanceReports\DisturbanceReportsController;
 use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
-use App\Http\Controllers\V2\Entities\ViewEntityController;
 use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
@@ -52,7 +50,6 @@ use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
 use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
-use App\Http\Controllers\V2\FinancialReports\FinancialReportsController;
 use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
@@ -123,7 +120,6 @@ use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
-use App\Http\Controllers\V2\Projects\ViewProjectNurseriesController;
 use App\Http\Controllers\V2\Projects\ViewProjectSitesController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminCreateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminDeleteReportingFrameworkController;
@@ -133,7 +129,6 @@ use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Reports\NothingToReportReportController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
-use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
 use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
@@ -147,7 +142,6 @@ use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
 use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
-use App\Http\Controllers\V2\SrpReports\SrpReportsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
 use App\Http\Controllers\V2\Stages\IndexStageController;
 use App\Http\Controllers\V2\Stages\StoreStageController;
@@ -264,7 +258,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::prefix('sites')->group(function () {
-        Route::get('/', AdminIndexSitesController::class);
         Route::get('/multi', AdminSitesMultiController::class);
     });
 
@@ -285,7 +278,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
     });
-
 
     Route::prefix('funding-programme/stage')->group(function () {
         Route::post('/', StoreStageController::class);
@@ -412,26 +404,21 @@ Route::prefix('financial-indicators')->group(function () {
 Route::prefix('financial-reports')->group(function () {
     Route::get('/export', ExportFinancialReportController::class);
 });
-Route::resource('financial-reports', FinancialReportsController::class)->except('create');
 
 Route::prefix('disturbance-reports')->group(function () {
     Route::get('/export', ExportDisturbanceReportController::class);
 });
 
-Route::resource('disturbance-reports', DisturbanceReportsController::class)->except('create');
-
 Route::prefix('srp-reports')->group(function () {
     Route::get('/export', ExportSrpReportController::class);
 });
 
-Route::resource('srp-reports', SrpReportsController::class)->except('create');
-
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
+    // Might still be in use for Greenhouse
     Route::get('/{project}/sites', ViewProjectSitesController::class);
     Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
     Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
-    Route::get('/{project}/nurseries', ViewProjectNurseriesController::class);
     Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
     Route::get('/{project}/reports', ProjectReportsViaProjectController::class);
     Route::get('/{project}/image/locations', ProjectImageLocationsController::class);
@@ -449,11 +436,6 @@ Route::prefix('projects')->group(function () {
 
 ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], function () {
     Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
-});
-
-ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-    // Note: projects read is no longer used in v2.
-    Route::get('/{entity}', ViewEntityController::class);
 });
 
 Route::prefix('project-reports')->group(function () {

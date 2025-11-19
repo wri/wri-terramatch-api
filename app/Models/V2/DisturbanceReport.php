@@ -2,7 +2,6 @@
 
 namespace App\Models\V2;
 
-use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
@@ -34,7 +33,6 @@ class DisturbanceReport extends Model implements MediaModel, ReportModel, Audita
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
-    use HasEntityResources;
     use Auditable;
     use BelongsToThroughTrait;
 
