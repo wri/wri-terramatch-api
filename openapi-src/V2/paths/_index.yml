@@ -878,9 +878,6 @@
           $ref: '../definitions/_index.yml#/V2OwnershipStakeRead'
     tags:
       - V2 Ownership Stake
-/v2/projects/{UUID}/sites:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-sites.yml'
 /v2/admin/project-pitches/export:
   get:
     summary: Export project pitches as an admin
