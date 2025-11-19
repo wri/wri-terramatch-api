@@ -7,7 +7,6 @@ use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use App\Models\Traits\HasDemographics;
 
 /**
  * @property \Illuminate\Support\Carbon $submitted_at
@@ -186,7 +185,7 @@ trait HasReportStatus
         }
 
         $hiddenDemographics = $this->demographics()->where('hidden', true)->get();
-        
+
         foreach ($hiddenDemographics as $demographic) {
             $demographic->entries()->delete();
             $demographic->delete();
