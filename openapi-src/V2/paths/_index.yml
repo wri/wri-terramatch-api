@@ -28,9 +28,6 @@
 /v2/{ENTITY}/{UUID}/nothing-to-report:
   put:
     $ref: './Entity/put-v2-entity-nothing-to-report.yml'
-/v2/{ENTITY}/{UUID}/reports:
-  get:
-    $ref: './Entity/get-v2-entity-uuid-reports.yml'
 /v2/admin/reporting-frameworks:
   get:
     $ref: './ReportingFrameworks/get-v2-admin-reporting-frameworks.yml'
@@ -47,9 +44,6 @@
 /v2/reporting-frameworks/{frameworkKey}:
   get:
     $ref: './ReportingFrameworks/get-v2-reporting-frameworks-framework-key.yml'
-/v2/projects/{UUID}/site-polygons:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-site-polygons.yml'
 /v2/admin/update-requests/{UUID}/{STATUS}:
   put:
     $ref: './UpdateRequests/put-v2-admin-update-requests-uuid-status.yml'

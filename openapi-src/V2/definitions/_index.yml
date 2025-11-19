@@ -20,8 +20,6 @@ FundingProgrammeCreate:
   $ref: './FundingProgrammeCreate.yml'
 FormLiteRead:
   $ref: './FormLiteRead.yml'
-GeojsonRead:
-  $ref: './GeojsonRead.yml'
 ReportingFrameworkRead:
   $ref: './ReportingFrameworkRead.yml'
 ReportingFrameworkUpdate:

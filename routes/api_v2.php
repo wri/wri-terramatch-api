@@ -77,7 +77,6 @@ use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisVerifyCont
 use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
 use App\Http\Controllers\V2\MonitoredData\RunIndicatorAnalysisController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
-use App\Http\Controllers\V2\NurseryReports\NurseryReportsViaNurseryController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
 use App\Http\Controllers\V2\Organisations\AdminOrganisationController;
@@ -98,7 +97,6 @@ use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
 use App\Http\Controllers\V2\Polygons\ChangeStatusPolygonsController;
 use App\Http\Controllers\V2\Polygons\ViewAllSitesPolygonsForProjectController;
-use App\Http\Controllers\V2\Polygons\ViewSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
@@ -109,7 +107,6 @@ use App\Http\Controllers\V2\ProjectPitches\StoreProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\SubmitProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\UpdateProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController;
-use App\Http\Controllers\V2\ProjectReports\ProjectReportsViaProjectController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
@@ -127,7 +124,6 @@ use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkCon
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Reports\NothingToReportReportController;
-use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
 use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
@@ -414,10 +410,8 @@ Route::prefix('srp-reports')->group(function () {
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
-    Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
     Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
     Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
-    Route::get('/{project}/reports', ProjectReportsViaProjectController::class);
     Route::get('/{project}/image/locations', ProjectImageLocationsController::class);
 
     Route::post('/{project}/invite', CreateProjectInviteController::class);
@@ -440,7 +434,6 @@ Route::prefix('project-reports')->group(function () {
 });
 
 Route::prefix('sites/{site}')->group(function () {
-    Route::get('/reports', SiteReportsViaSiteController::class);
     Route::get('/monitorings', ViewASitesMonitoringsController::class);
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
@@ -468,7 +461,6 @@ Route::prefix('site-reports')->group(function () {
 });
 
 Route::prefix('nurseries')->group(function () {
-    Route::get('/{nursery}/reports', NurseryReportsViaNurseryController::class);
     Route::get('/{nursery}/image/locations', NurseryImageLocationsController::class);
     Route::get('/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
 });
