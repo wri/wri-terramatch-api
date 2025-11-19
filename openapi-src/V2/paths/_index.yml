@@ -25,9 +25,6 @@
 /v2/my/actions/{UUID}/complete:
   put:
     $ref: './Users/put-v2-my-action-uuid-complete.yml'
-/v2/{ENTITY}/{UUID}/nothing-to-report:
-  put:
-    $ref: './Entity/put-v2-entity-nothing-to-report.yml'
 /v2/admin/reporting-frameworks:
   get:
     $ref: './ReportingFrameworks/get-v2-admin-reporting-frameworks.yml'

@@ -22869,27 +22869,6 @@ paths:
               updated_at:
                 type: string
       operationId: put-v2-my-action-uuid-complete
-  '/v2/{ENTITY}/{UUID}/nothing-to-report':
-    put:
-      summary: Submit that you have nothing to report for a nursery
-      operationId: put-v2-entity-nothing-to-report
-      tags:
-        - V2 Project Reports
-        - V2 Site Reports
-        - V2 Nursery Reports
-      parameters:
-        - type: string
-          name: ENTITY
-          in: path
-          required: true
-          description: 'allowed values are project-reports, site-reports, nursery-reports'
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   /v2/admin/reporting-frameworks:
     get:
       summary: View all reporting frameworks

@@ -123,7 +123,6 @@ use App\Http\Controllers\V2\ReportingFrameworks\AdminIndexReportingFrameworkCont
 use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
-use App\Http\Controllers\V2\Reports\NothingToReportReportController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
 use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
@@ -423,10 +422,6 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
 
     Route::delete('/{project}/{email}/remove-partner', DeleteProjectMonitoringPartnersController::class);
-});
-
-ModelInterfaceBindingMiddleware::forSlugs(['site-reports', 'nursery-reports'], function () {
-    Route::put('/{report}/nothing-to-report', NothingToReportReportController::class);
 });
 
 Route::prefix('project-reports')->group(function () {
