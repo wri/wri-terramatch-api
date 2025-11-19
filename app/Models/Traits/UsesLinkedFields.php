@@ -8,7 +8,6 @@ use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\StateMachines\EntityStatusStateMachine;
-use Illuminate\Support\Facades\Log;
 
 trait UsesLinkedFields
 {
@@ -373,7 +372,6 @@ trait UsesLinkedFields
     {
         $formConfig = $this->getFormConfig();
         $fieldsConfig = data_get($formConfig, 'fields', []);
-        $relationsConfig = data_get($formConfig, 'relations', []);
         $modelAnswers = $this->answers;
         $entityProps = [];
 
@@ -402,15 +400,6 @@ trait UsesLinkedFields
                 if ($this->isPlainField($child->input_type) && ! empty($property)) {
                     $entityProps[$property] = null;
                 }
-
-                $relationConfig = data_get($relationsConfig, $child->linked_field_key);
-                if (! empty($relationConfig)) {
-                    $relationProperty = data_get($relationConfig, 'property');
-                    $inputType = data_get($relationConfig, 'input_type');
-                    if (! empty($relationProperty) && $this->isRelationToClean($inputType)) {
-                        $this->cleanRelationData($relationProperty, $inputType);
-                    }
-                }
             }
         }
 
@@ -422,45 +411,5 @@ trait UsesLinkedFields
         $plainFields = ['long-text', 'date', 'number', 'text', 'number-percentage', 'boolean'];
 
         return in_array($input_type, $plainFields);
-    }
-
-    private function isRelationToClean(?string $inputType): bool
-    {
-        if (empty($inputType)) {
-            return false;
-        }
-
-        $demographicTypes = [
-            'workdays',
-            'restorationPartners',
-            'jobs',
-            'employees',
-            'volunteers',
-            'allBeneficiaries',
-            'trainingBeneficiaries',
-            'indirectBeneficiaries',
-            'associates',
-        ];
-
-        return in_array($inputType, $demographicTypes);
-    }
-
-    private function cleanRelationData(string $property, string $inputType): void
-    {
-        if (! method_exists($this, $property) || ! is_callable([$this, $property])) {
-            return;
-        }
-
-        try {
-            $relation = $this->$property();
-            $relation->delete();
-        } catch (\Exception $e) {
-            Log::warning("Failed to clean relation data for property: {$property}", [
-                'entity_type' => get_class($this),
-                'entity_id' => $this->id ?? null,
-                'input_type' => $inputType,
-                'error' => $e->getMessage(),
-            ]);
-        }
     }
 }
