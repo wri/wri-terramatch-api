@@ -145,7 +145,6 @@ use App\Http\Controllers\V2\Stages\ViewStageController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
-use App\Http\Controllers\V2\UpdateRequests\AdminStatusUpdateRequestController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
 use App\Http\Controllers\V2\User\AdminUserController;
 use App\Http\Controllers\V2\User\AdminUserCreationController;
@@ -236,10 +235,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::get('export', AdminExportOrganisationsController::class);
     });
     Route::resource('organisations', AdminOrganisationController::class)->except('create');
-
-    Route::prefix('update-requests')->group(function () {
-        Route::put('/{updateRequest}/{status}', AdminStatusUpdateRequestController::class);
-    });
 
     Route::prefix('projects')->group(function () {
         Route::get('/multi', AdminProjectMultiController::class);

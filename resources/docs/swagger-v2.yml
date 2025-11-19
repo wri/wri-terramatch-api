@@ -17600,32 +17600,6 @@ definitions:
         type: string
       direct_frameworks:
         type: boolean
-  UpdateRequestRead:
-    title: UpdateRequestRead
-    type: object
-    properties:
-      uuid:
-        type: string
-      framework_key:
-        type: string
-      status:
-        type: string
-      readable_status:
-        type: string
-      content:
-        type: object
-      feedback:
-        type: string
-      feedback_fields:
-        type: array
-        items:
-          type: string
-      project:
-        type: object
-      organisation:
-        type: object
-      created_by:
-        type: object
   UpdateRequestLiteRead:
     title: UpdateRequestLiteRead
     type: object
@@ -23135,63 +23109,6 @@ paths:
                 type: string
               nursery_report_form_uuid:
                 type: string
-  '/v2/admin/update-requests/{UUID}/{STATUS}':
-    put:
-      summary: Update status of a UpdateRequests
-      operationId: put-v2-admin-update-requests-uuid-status
-      tags:
-        - V2 Update requests
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - type: string
-          name: STATUS
-          in: path
-          required: true
-          description: 'allowed values are approve, moreinfo'
-        - in: body
-          name: body
-          schema:
-            title: StatusUpdate
-            type: object
-            properties:
-              feedback:
-                type: string
-              feedback_fields:
-                type: array
-                items:
-                  type: string
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: UpdateRequestRead
-            type: object
-            properties:
-              uuid:
-                type: string
-              framework_key:
-                type: string
-              status:
-                type: string
-              readable_status:
-                type: string
-              content:
-                type: object
-              feedback:
-                type: string
-              feedback_fields:
-                type: array
-                items:
-                  type: string
-              project:
-                type: object
-              organisation:
-                type: object
-              created_by:
-                type: object
   '/v2/admin/{ENTITY}/{UUID}/reminder':
     post:
       summary: Send reminder to an entity report

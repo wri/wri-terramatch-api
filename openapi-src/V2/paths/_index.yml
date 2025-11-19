@@ -41,9 +41,6 @@
 /v2/reporting-frameworks/{frameworkKey}:
   get:
     $ref: './ReportingFrameworks/get-v2-reporting-frameworks-framework-key.yml'
-/v2/admin/update-requests/{UUID}/{STATUS}:
-  put:
-    $ref: './UpdateRequests/put-v2-admin-update-requests-uuid-status.yml'
 /v2/admin/{ENTITY}/{UUID}/reminder:
   post:
     $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'

@@ -172,8 +172,6 @@ UserCreate:
   $ref: './UserCreate.yml'
 AdminUserCreate:
   $ref: './AdminUserCreate.yml'
-UpdateRequestRead:
-  $ref: './UpdateRequestRead.yml'
 UpdateRequestLiteRead:
   $ref: './UpdateRequestLiteRead.yml'
 ActionRead:
