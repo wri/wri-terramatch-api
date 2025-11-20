@@ -18,7 +18,7 @@ class SrpReportResource extends JsonResource
             'feedback_fields' => $this->feedback_fields,
             'nothing_to_report' => $this->nothing_to_report,
             'submitted_at' => $this->submitted_at,
-            'other_restoration_partners_description' => $this->other_restoration_partners_description,
+            'restoration_partners_description' => $this->restoration_partners_description,
             'total_unique_restoration_partners' => $this->total_unique_restoration_partners,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

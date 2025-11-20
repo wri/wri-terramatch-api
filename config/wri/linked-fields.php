@@ -303,7 +303,7 @@ return [
             'label' => 'Annual Socio Economic Restoration Report',
             'model' => App\Models\V2\SrpReport::class,
             'fields' => [
-                'srp-rep-other-restoration-partners-description' => ['property' => 'other_restoration_partners_description', 'label' => 'Other Restoration Partners Description', 'input_type' => 'long-text'],
+                'srp-rep-restoration-partners-description' => ['property' => 'restoration_partners_description', 'label' => 'Other Restoration Partners Description', 'input_type' => 'long-text'],
                 'srp-rep-total-unique-restoration-partners' => ['property' => 'total_unique_restoration_partners', 'label' => 'Total Unique Restoration Partners', 'input_type' => 'number'],
             ],
             'relations' => [
