@@ -1174,6 +1174,7 @@ return [
                 'site-boundary-geojson' => ['property' => 'boundary_geojson', 'label' => 'Boundary geojson', 'input_type' => 'mapInput'],
                 'site-land-use-types' => ['property' => 'land_use_types', 'label' => 'Land use types', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-systems'],
                 'site-restoration-strategy' => ['property' => 'restoration_strategy', 'label' => 'Restoration strategy', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-practices'],
+                'site-anr-practices' => ['property' => 'anr_practices', 'label' => 'ANR practices', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'anr-practices-proposed-collection'],
                 'site-description' => ['property' => 'description', 'label' => 'Description', 'input_type' => 'long-text'],
                 'site-history' => ['property' => 'history', 'label' => 'History', 'input_type' => 'long-text'],
                 'site-land-tenures' => ['property' => 'land_tenures', 'label' => 'Land tenures', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'land-tenures'],
