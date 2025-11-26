@@ -75,7 +75,7 @@ class SiteFactory extends Factory
             ),
             'anr_practices' => $this->faker->randomElements(
                 $anrPractices,
-                $this->faker->numberBetween(0, 3),
+                $this->faker->numberBetween(0, 6),
                 false
             ),
             'description' => $this->faker->text(500),
