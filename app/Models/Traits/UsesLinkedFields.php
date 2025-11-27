@@ -372,6 +372,7 @@ trait UsesLinkedFields
     {
         $formConfig = $this->getFormConfig();
         $fieldsConfig = data_get($formConfig, 'fields', []);
+        $relationsConfig = data_get($formConfig, 'relations', []);
         $modelAnswers = $this->answers;
         $entityProps = [];
 
@@ -405,6 +406,7 @@ trait UsesLinkedFields
 
         $this->update($entityProps);
     }
+
 
     private function isPlainField($input_type)
     {
