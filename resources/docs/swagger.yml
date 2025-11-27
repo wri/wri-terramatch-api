@@ -17399,31 +17399,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/V2FileRead'
-  /v2/files/{UUID}:
-    put:
-      summary: Update properties of a specific file
-      operationId: v2-put-file-uuid
-      tags:
-        - Files
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              title:
-                type: string
-            required:
-              - title
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/V2FileRead'
   /v2/tree-species:
     post:
       summary: Create a tree species
