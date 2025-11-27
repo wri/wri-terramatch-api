@@ -51,18 +51,6 @@ properties:
     type: string
   fin_start_month:
     type: integer
-  fin_budget_3year:
-    type: number
-    format: float
-  fin_budget_2year:
-    type: number
-    format: float
-  fin_budget_1year:
-    type: number
-    format: float
-  fin_budget_current_year:
-    type: number
-    format: float
   ha_restored_total:
     type: number
     format: float
@@ -141,8 +129,6 @@ properties:
     type: string
   subtype:
     type: string
-  organisation_revenue_this_year:
-    type: number
   shapefiles:
     type: array
     items:

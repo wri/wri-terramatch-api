@@ -21,7 +21,6 @@ class AdminOrganisationController extends Controller
         $perPage = $request->query('per_page') ?? config('app.pagination_default', 15);
         $sortableColumns = [
             'created_at', '-created_at',
-            'fin_budget_1year', '-fin_budget_1year',
             'name', '-name',
             'status', '-status',
             'type', '-type',

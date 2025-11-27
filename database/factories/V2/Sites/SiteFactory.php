@@ -40,6 +40,14 @@ class SiteFactory extends Factory
             'direct-seeding',
             'tree-planting',
         ];
+        $anrPractices = [
+            'fire-protection-and-fighting',
+            'livestock-management',
+            'isolating-the-area',
+            'control-of-invasive-andor-exotic-species',
+            'maintenance-of-regenerating-individuals',
+            'ant-control',
+        ];
         $landTenures = [
             'national_protected_area',
             'indigenous',
@@ -63,6 +71,11 @@ class SiteFactory extends Factory
             'restoration_strategy' => $this->faker->randomElements(
                 $restorationStrat,
                 $this->faker->numberBetween(0, 3),
+                false
+            ),
+            'anr_practices' => $this->faker->randomElements(
+                $anrPractices,
+                $this->faker->numberBetween(0, 6),
                 false
             ),
             'description' => $this->faker->text(500),

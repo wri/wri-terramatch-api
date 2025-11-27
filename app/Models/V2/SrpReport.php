@@ -47,7 +47,7 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
     protected $fillable = [
         'status',
         'title',
-        'other_restoration_partners_description',
+        'restoration_partners_description',
         'total_unique_restoration_partners',
         'due_at',
         'year',

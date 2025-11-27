@@ -56,6 +56,7 @@ class V2SiteResource extends JsonResource
             'aim_natural_regeneration_hectares' => $this->aim_natural_regeneration_hectares,
             'aim_soil_condition' => $this->aim_soil_condition,
             'aim_number_of_mature_trees' => $this->aim_number_of_mature_trees,
+            'anr_practices' => $this->anr_practices,
             'hectares_to_restore' => $this->hectares_to_restore,
             'landscape_community_contribution' => $this->landscape_community_contribution,
             'disturbances' => $this->disturbances,

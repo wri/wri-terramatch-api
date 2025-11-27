@@ -653,7 +653,7 @@ class PolygonService
             }
 
             $allProperties = array_merge($sitePolygonProps, $feature['properties']);
-            $validatedProperties = $this->validateSitePolygonProperties($polygon['uuid'], $allProperties);
+            $validatedProperties = $this->validateSitePolygonProperties($polygon['uuid'], $allProperties, true);
             $extraProperties = array_diff_key($allProperties, $validatedProperties);
             $columnsToRemove = ['area', 'uuid'];
             $extraDataToStore = array_diff_key($extraProperties, array_flip($columnsToRemove));
@@ -1005,19 +1005,16 @@ class PolygonService
         }
     }
 
-    protected function orderCommaSeparatedPropertiesAlphabetically(string $commaSeparatedProperties, array $validValues)
+    protected function orderCommaSeparatedPropertiesAlphabetically(string | array $commaSeparatedProperties, array $validValues)
     {
-        $properties = explode(',', $commaSeparatedProperties);
+        $properties = is_array($commaSeparatedProperties) ? $commaSeparatedProperties : explode(',', $commaSeparatedProperties);
         $properties = array_map('trim', $properties);
         sort($properties);
         $properties = array_filter($properties, function ($value) use ($validValues) {
             return in_array($value, $validValues);
         });
-        if (empty($properties)) {
-            return null;
-        }
 
-        return implode(',', $properties);
+        return empty($properties) ? null : $properties;
     }
 
     protected function validateTargetSys(string $targetSys): ?string
@@ -1039,7 +1036,7 @@ class PolygonService
         return in_array($targetSys, $validValues, true) ? $targetSys : null;
     }
 
-    public function validateSitePolygonProperties(string $polygonUuid, array $properties)
+    public function validateSitePolygonProperties(string $polygonUuid, array $properties, bool $encodeArrays = false)
     {
         // Avoid trying to store an invalid date string or int in the DB, as that will throw an exception and prevent
         // the site polygon from storing. With an invalid date, this will end up reporting schema invalid and data
@@ -1063,9 +1060,9 @@ class PolygonService
             'poly_name' => $properties['poly_name'] ?? null,
             'site_id' => $properties['site_id'] ?? null,
             'plantstart' => $properties['plantstart'],
-            'practice' => $properties['practice'],
+            'practice' => $encodeArrays && $properties['practice'] != null ? json_encode($properties['practice']) : $properties['practice'],
             'target_sys' => $properties['target_sys'],
-            'distr' => $properties['distr'],
+            'distr' => $encodeArrays && $properties['distr'] != null ? json_encode($properties['distr']) : $properties['distr'],
             'num_trees' => $properties['num_trees'],
             'calc_area' => $properties['area'] ?? null,
             'status' => 'draft',
@@ -1118,9 +1115,8 @@ class PolygonService
         }
     }
 
-    private function areValidItems($value, $validItems)
+    private function areValidItems($items, $validItems)
     {
-        $items = explode(',', $value);
         foreach ($items as $item) {
             if (! in_array(trim($item), $validItems)) {
                 return false;

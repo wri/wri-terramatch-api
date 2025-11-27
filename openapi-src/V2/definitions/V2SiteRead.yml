@@ -61,6 +61,10 @@ properties:
     type: string
   aim_number_of_mature_trees:
     type: integer
+  anr_practices:
+    type: array
+    items:
+      type: string
   hectares_to_restore:
     type: number
   landscape_community_contribution:

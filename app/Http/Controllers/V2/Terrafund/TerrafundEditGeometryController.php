@@ -242,6 +242,11 @@ class TerrafundEditGeometryController extends Controller
               'target_sys' => 'nullable|string',
             ]);
 
+            // These are to avoid needing to modify the FE for this change to array fields on the DB table. In v3, this
+            // should require an array from the FE.
+            $validatedData['practice'] = $validatedData['practice'] == null ? null : explode(',', $validatedData['practice']);
+            $validatedData['distr'] = $validatedData['distr'] == null ? null : explode(',', $validatedData['distr']);
+
             $sitePolygon->update($validatedData);
             $sitePolygon->changeStatusOnEdit();
 
@@ -368,8 +373,8 @@ class TerrafundEditGeometryController extends Controller
             $sitePolygon = new SitePolygon([
                 'poly_name' => $validatedData['poly_name'],
                 'plantstart' => $validatedData['plantstart'],
-                'practice' => $validatedData['practice'],
-                'distr' => $validatedData['distr'],
+                'practice' => $validatedData['practice'] == null ? null : explode(',', $validatedData['practice']),
+                'distr' => $validatedData['distr'] == null ? null : explode(',', $validatedData['distr']),
                 'num_trees' => $validatedData['num_trees'],
                 'calc_area' => $areaHectares,
                 'target_sys' => $validatedData['target_sys'],
@@ -400,8 +405,20 @@ class TerrafundEditGeometryController extends Controller
         $diff = [];
         $keys = array_merge(['site_id'], PolygonFields::BASIC_FIELDS);
         foreach ($keys as $key) {
-            if ($newSitePolygon[$key] !== $sitePolygon[$key]) {
-                $diff[] = "$key => from $sitePolygon[$key] to {$newSitePolygon[$key]}";
+            $oldValue = $sitePolygon[$key];
+            $newValue = $newSitePolygon[$key];
+
+            if (in_array($key, ['practice', 'distr'])) {
+                $oldValueStr = is_array($oldValue) ? implode(', ', $oldValue) : ($oldValue ?? '');
+                $newValueStr = is_array($newValue) ? implode(', ', $newValue) : ($newValue ?? '');
+
+                if ($newValueStr !== $oldValueStr) {
+                    $diff[] = "$key => from $oldValueStr to $newValueStr";
+                }
+            } else {
+                if ($newValue !== $oldValue) {
+                    $diff[] = "$key => from $oldValue to $newValue";
+                }
             }
         }
 

@@ -175,5 +175,20 @@ trait HasReportStatus
     {
         $form = $this->getForm();
         $this->cleanConditionalAnswers($form);
+        $this->cleanHiddenDemographics();
+    }
+
+    private function cleanHiddenDemographics(): void
+    {
+        if (! in_array(HasDemographics::class, class_uses_recursive($this))) {
+            return;
+        }
+
+        $hiddenDemographics = $this->demographics()->where('hidden', true)->get();
+
+        foreach ($hiddenDemographics as $demographic) {
+            $demographic->entries()->delete();
+            $demographic->delete();
+        }
     }
 }
