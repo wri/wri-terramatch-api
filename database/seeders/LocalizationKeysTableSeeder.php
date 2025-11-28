@@ -26,8 +26,8 @@ class LocalizationKeysTableSeeder extends Seeder
         // form-submission-rejected
         $this->createLocalizationKey('form-submission-rejected.subject', 'Application Status Update');
         $this->createLocalizationKey('form-submission-rejected.title', 'THANK YOU FOR YOUR APPLICATION');
-        $this->createLocalizationKey('form-submission-rejected.body', 'After careful review, our team has decided your application will not move forward.');
-        $this->createLocalizationKey('form-submission-rejected.body-feedback', 'After careful review, our team has decided your application will not move forward. Please see the comments below for more details or any follow-up resources.<br><br> {feedback}');
+        $this->createLocalizationKey('form-submission-rejected.body', 'After careful review, your organization will not be selected for funding at this time. We appreciate your time and effort throughout the application process and the important work that you do with communities. We will notify you of any future funding or training opportunities that may be relevant to your organization.<br><br>If you would like more feedback on your application, please email <a href="mailto:info@terramatch.org" style="color: #6E6E6E;">info@terramatch.org</a> to set up a time to speak in more detail.');
+        $this->createLocalizationKey('form-submission-rejected.body-feedback', 'After careful review, your organization will not be selected for funding at this time. We appreciate your time and effort throughout the application process and the important work that you do with communities. We will notify you of any future funding or training opportunities that may be relevant to your organization.<br><br>Please see the comments below for more details or any follow-up resources.<br><br>{feedback}<br><br>If you would like more feedback on your application, please email <a href="mailto:info@terramatch.org" style="color: #6E6E6E;">info@terramatch.org</a> to set up a time to speak in more detail.');
 
         // entity-status-change
         $this->createLocalizationKey('entity-status-change.subject-approved', 'Your {entityTypeName} Has Been Approved');
