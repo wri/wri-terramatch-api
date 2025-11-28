@@ -407,7 +407,6 @@ trait UsesLinkedFields
         $this->update($entityProps);
     }
 
-
     private function isPlainField($input_type)
     {
         $plainFields = ['long-text', 'date', 'number', 'text', 'number-percentage', 'boolean'];
