@@ -175,20 +175,46 @@ trait HasReportStatus
     {
         $form = $this->getForm();
         $this->cleanConditionalAnswers($form);
-        $this->cleanHiddenDemographics();
+        $this->cleanHiddenData();
     }
 
-    private function cleanHiddenDemographics(): void
+    private function cleanHiddenData(): void
     {
-        if (! in_array(HasDemographics::class, class_uses_recursive($this))) {
-            return;
+        $relationsToClean = [];
+
+        if (in_array(HasDemographics::class, class_uses_recursive($this))) {
+            $relationsToClean[] = 'demographics';
+        }
+        if (method_exists($this, 'treeSpecies')) {
+            $relationsToClean[] = 'treeSpecies';
+        }
+        if (method_exists($this, 'nonTreeSpecies')) {
+            $relationsToClean[] = 'nonTreeSpecies';
+        }
+        if (method_exists($this, 'replantingTreeSpecies')) {
+            $relationsToClean[] = 'replantingTreeSpecies';
+        }
+        if (method_exists($this, 'disturbances')) {
+            $relationsToClean[] = 'disturbances';
+        }
+        if (method_exists($this, 'seedings')) {
+            $relationsToClean[] = 'seedings';
         }
 
-        $hiddenDemographics = $this->demographics()->where('hidden', true)->get();
+        foreach ($relationsToClean as $relationName) {
+            try {
+                $relation = $this->$relationName();
+                $hiddenRecords = $relation->where('hidden', true)->get();
 
-        foreach ($hiddenDemographics as $demographic) {
-            $demographic->entries()->delete();
-            $demographic->delete();
+                foreach ($hiddenRecords as $record) {
+                    if (method_exists($record, 'entries')) {
+                        $record->entries()->delete();
+                    }
+                    $record->delete();
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
         }
     }
 }
