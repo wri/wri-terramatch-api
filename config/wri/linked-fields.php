@@ -630,6 +630,13 @@ return [
             'model' => 'App\Models\V2\Projects\Project',
             'fields' => [
                 'pro-name' => ['property' => 'name', 'label' => 'Name', 'input_type' => 'text'],
+                'pro-income-generating-activities' => [
+                    'property' => 'income_generating_activities',
+                    'label' => 'Income generating activities',
+                    'input_type' => 'select',
+                    'multichoice' => true,
+                    'option_list_key' => 'income-generating-activities',
+                ],
                 'pro-land-use-types' => ['property' => 'land_use_types', 'label' => 'Land use types', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-systems'],
                 'pro-restoration_strategy' => ['property' => 'restoration_strategy', 'label' => 'Restoration strategy', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-practices'],
                 'pro-land-tenure-proj-area' => ['property' => 'land_tenure_project_area', 'label' => 'Land tenure', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'project-land-tenures'],
