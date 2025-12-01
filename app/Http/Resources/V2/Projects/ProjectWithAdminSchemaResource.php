@@ -27,6 +27,7 @@ class ProjectWithAdminSchemaResource extends JsonResource
             'objectives' => $this->objectives,
             'environmental_goals' => $this->environmental_goals,
             'socioeconomic_goals' => $this->socioeconomic_goals,
+            'income_generating_activities' => $this->income_generating_activities,
             'sdgs_impacted' => $this->sdgs_impacted,
             'long_term_growth' => $this->long_term_growth,
             'community_incentives' => $this->community_incentives,
