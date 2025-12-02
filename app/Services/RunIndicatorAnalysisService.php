@@ -559,9 +559,12 @@ class RunIndicatorAnalysisService
      */
     public function sendApiRequestIndicator($secret_key, $query_url, $query_sql, $geometry)
     {
+        $origin = getenv('APP_FRONT_END') ?: 'terramatch.org';
+
         $response = Http::withHeaders([
             'content-type' => 'application/json',
             'x-api-key' => $secret_key,
+            'origin' => $origin,
         ])->timeout(30)->post('https://data-api.globalforestwatch.org' . $query_url, [
             'sql' => $query_sql,
             'geometry' => $geometry,

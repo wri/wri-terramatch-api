@@ -85,7 +85,7 @@ class PythonService
         return $result;
     }
 
-    public function IndicatorPolygon($geojson, $indicator_name, $api_key)
+    public function IndicatorPolygon($geojson, $indicator_name, $api_key, $origin = null)
     {
         $inputGeojson = $this->getTemporaryFile('input.geojson');
         $outputGeojson = $this->getTemporaryFile('output.geojson');
@@ -98,7 +98,11 @@ class PythonService
             fclose($writeHandle);
         }
 
-        $process = new Process(['python3', base_path() . '/resources/python/polygon-indicator/app.py', $inputGeojson, $outputGeojson, $indicator_name, $api_key]);
+        if ($origin === null) {
+            $origin = getenv('APP_FRONT_END') ?: 'terramatch.org';
+        }
+
+        $process = new Process(['python3', base_path() . '/resources/python/polygon-indicator/app.py', $inputGeojson, $outputGeojson, $indicator_name, $api_key, $origin]);
 
         $stdout = '';
         $stderr = '';

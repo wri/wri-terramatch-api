@@ -69,6 +69,7 @@ def main():
     output_geojson = sys.argv[2]
     indicator_name = sys.argv[3]
     api_key = sys.argv[4]
+    origin = sys.argv[5] if len(sys.argv) > 5 else "terramatch.org"
     
     with open(input_geojson, "r") as f:
         geojson_data = json.load(f)
@@ -81,6 +82,7 @@ def main():
     with requests.Session() as session:
        session.headers = {
            "content-type": "application/json",
+           "origin": origin,
            "x-api-key": f"{api_key}",
        }
     
