@@ -8,6 +8,7 @@ use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\StateMachines\EntityStatusStateMachine;
+use Illuminate\Support\Facades\Log;
 
 trait UsesLinkedFields
 {
@@ -400,6 +401,19 @@ trait UsesLinkedFields
                 $property = data_get($fieldConfig, 'property');
                 if ($this->isPlainField($child->input_type) && ! empty($property)) {
                     $entityProps[$property] = null;
+                }
+
+                if ($child->input_type === 'workdays') {
+                    // for workdays and trees planted 
+                    // if ($child->input_type === 'workdays' || $child->input_type === 'treeSpecies') {
+                    $property = data_get($relationsConfig, "$child->linked_field_key.property");
+                    if (! empty($property)) {
+                        Log::info('Cleaning workdays demographics for property: ' . $property);
+                        $inputType = data_get($relationsConfig, "$child->linked_field_key.input_type");
+                        $hidden = ! empty($child->parent_id) && $child->show_on_parent_condition &&
+                            data_get($modelAnswers, $child->parent_id) === false;
+                        $this->syncRelation($property, $inputType, collect(null), $hidden, $this, true);
+                    }
                 }
             }
         }
