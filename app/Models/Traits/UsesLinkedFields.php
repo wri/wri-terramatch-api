@@ -403,12 +403,24 @@ trait UsesLinkedFields
                     $entityProps[$property] = null;
                 }
 
-                if ($child->input_type === 'workdays') {
-                    // for workdays and trees planted 
-                    // if ($child->input_type === 'workdays' || $child->input_type === 'treeSpecies') {
+                $relationInputTypes = [
+                    'workdays',
+                    'jobs',
+                    'employees',
+                    'volunteers',
+                    'allBeneficiaries',
+                    'trainingBeneficiaries',
+                    'indirectBeneficiaries',
+                    'treeSpecies',
+                    'disturbances',
+                    'seedings',
+                    'invasive',
+                ];
+
+                if (in_array($child->input_type, $relationInputTypes, true)) {
                     $property = data_get($relationsConfig, "$child->linked_field_key.property");
                     if (! empty($property)) {
-                        Log::info('Cleaning workdays demographics for property: ' . $property);
+                        Log::info('Cleaning conditional relation data for property: ' . $property);
                         $inputType = data_get($relationsConfig, "$child->linked_field_key.input_type");
                         $hidden = ! empty($child->parent_id) && $child->show_on_parent_condition &&
                             data_get($modelAnswers, $child->parent_id) === false;
