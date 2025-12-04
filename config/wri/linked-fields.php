@@ -33,10 +33,6 @@ return [
                 'org-tre-gro-tot' => ['property' => 'trees_grown_total', 'label' => 'Trees grown total', 'input_type' => 'number'],
                 'org-tre-gro-3yr' => ['property' => 'trees_grown_3year', 'label' => 'Trees grown -3 year', 'input_type' => 'number'],
                 'org-fin_start_month' => ['property' => 'fin_start_month', 'label' => 'Start of financial year (month)', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'months'],
-                'org-fin-bgt-cur-year' => ['property' => 'fin_budget_current_year', 'label' => 'Budget current year', 'input_type' => 'number'],
-                'org-fin-bgt-1year' => ['property' => 'fin_budget_1year', 'label' => 'Budget -1 year', 'input_type' => 'number'],
-                'org-fin-bgt-2year' => ['property' => 'fin_budget_2year', 'label' => 'Budget -2 year', 'input_type' => 'number'],
-                'org-fin-bgt-3year' => ['property' => 'fin_budget_3year', 'label' => 'Budget -3 year', 'input_type' => 'number'],
                 'org-eng-farmers' => ['property' => 'engagement_farmers', 'label' => 'Engagement farmers', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'engagement-farmers'],
                 'org-eng-women' => ['property' => 'engagement_women', 'label' => 'Engagement women', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'engagement-women'],
                 'org-eng-youth' => ['property' => 'engagement_youth', 'label' => 'Engagement youth', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'engagement-youth'],
@@ -72,7 +68,6 @@ return [
                 'org-pct-engaged-young-3yr' => ['property' => 'percent_engaged_under_35_3yr', 'label' => 'Percent youth engaged (3yr)', 'input_type' => 'number-percentage'],
                 'org-pct-engaged-old-3yr' => ['property' => 'percent_engaged_over_35_3yr', 'label' => 'Percent non-youth engaged (3yr)', 'input_type' => 'number-percentage'],
                 'org-pct-engaged-smallholder-3yr' => ['property' => 'percent_engaged_smallholder_3yr', 'label' => 'Percent smallholder engaged (3yr)', 'input_type' => 'number-percentage'],
-                'org-rev-this-year' => ['property' => 'organisation_revenue_this_year', 'label' => 'Organization revenue for this year', 'input_type' => 'number'],
 
                 'org-restoration-types-implemented' => ['property' => 'restoration_types_implemented', 'label' => 'Restoration Intervention Types Implemented', 'multichoice' => true, 'input_type' => 'select'],
                 'org-historic-monitoring-geojson' => ['property' => 'historic_monitoring_geojson', 'label' => 'Historic monitoring shapefile upload', 'input_type' => 'mapInput'],
@@ -303,7 +298,7 @@ return [
             'label' => 'Annual Socio Economic Restoration Report',
             'model' => App\Models\V2\SrpReport::class,
             'fields' => [
-                'srp-rep-other-restoration-partners-description' => ['property' => 'other_restoration_partners_description', 'label' => 'Other Restoration Partners Description', 'input_type' => 'long-text'],
+                'srp-rep-restoration-partners-description' => ['property' => 'restoration_partners_description', 'label' => 'Other Restoration Partners Description', 'input_type' => 'long-text'],
                 'srp-rep-total-unique-restoration-partners' => ['property' => 'total_unique_restoration_partners', 'label' => 'Total Unique Restoration Partners', 'input_type' => 'number'],
             ],
             'relations' => [
@@ -1174,6 +1169,7 @@ return [
                 'site-boundary-geojson' => ['property' => 'boundary_geojson', 'label' => 'Boundary geojson', 'input_type' => 'mapInput'],
                 'site-land-use-types' => ['property' => 'land_use_types', 'label' => 'Land use types', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-systems'],
                 'site-restoration-strategy' => ['property' => 'restoration_strategy', 'label' => 'Restoration strategy', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'restoration-practices'],
+                'site-anr-practices' => ['property' => 'anr_practices', 'label' => 'ANR practices', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'anr-practices-proposed-collection'],
                 'site-description' => ['property' => 'description', 'label' => 'Description', 'input_type' => 'long-text'],
                 'site-history' => ['property' => 'history', 'label' => 'History', 'input_type' => 'long-text'],
                 'site-land-tenures' => ['property' => 'land_tenures', 'label' => 'Land tenures', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'land-tenures'],
