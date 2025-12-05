@@ -41,7 +41,7 @@ class ProjectFactory extends Factory
             'training-smallholder-farmers',
             'savings-loans',
             'beekeeping',
-            'other',
+            'tree-seedling-distribution',
         ];
 
 
