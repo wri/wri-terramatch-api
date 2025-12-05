@@ -6,10 +6,6 @@ TreeSpeciesReadAll:
   $ref: './TreeSpeciesReadAll.yml'
 AssociatedUserRead:
   $ref: './AssociatedUserRead.yml'
-EntityFormCreate:
-  $ref: './EntityFormCreate.yml'
-EntityFormRead:
-  $ref: './EntityFormRead.yml'
 UserRead:
   $ref: './UserRead.yml'
 UserReadAll:
@@ -24,8 +20,6 @@ FundingProgrammeCreate:
   $ref: './FundingProgrammeCreate.yml'
 FormLiteRead:
   $ref: './FormLiteRead.yml'
-GeojsonRead:
-  $ref: './GeojsonRead.yml'
 ReportingFrameworkRead:
   $ref: './ReportingFrameworkRead.yml'
 ReportingFrameworkUpdate:
@@ -92,8 +86,6 @@ ProjectPitchUpdate:
   $ref: './ProjectPitchUpdate.yml'
 V2SiteRead:
   $ref: './V2SiteRead.yml'
-V2SiteLiteRead:
-  $ref: './V2SiteLiteRead.yml'
 V2SiteMonitoringCreate:
   $ref: './V2SiteMonitoringCreate.yml'
 V2SiteMonitoringUpdate:
@@ -106,8 +98,6 @@ V2ProjectMonitoringUpdate:
   $ref: './V2ProjectMonitoringUpdate.yml'
 V2ProjectMonitoringRead:
   $ref: './V2ProjectMonitoringRead.yml'
-V2NurseryLiteRead:
-  $ref: './V2NurseryLiteRead.yml'
 V2StrataRead:
   $ref: './V2StrataRead.yml'
 V2StrataPaginated:
@@ -182,8 +172,6 @@ UserCreate:
   $ref: './UserCreate.yml'
 AdminUserCreate:
   $ref: './AdminUserCreate.yml'
-UpdateRequestRead:
-  $ref: './UpdateRequestRead.yml'
 UpdateRequestLiteRead:
   $ref: './UpdateRequestLiteRead.yml'
 ActionRead:

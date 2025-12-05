@@ -3,7 +3,6 @@
 namespace App\Models\V2\Nurseries;
 
 use App\Models\Framework;
-use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasUpdateRequests;
@@ -43,7 +42,6 @@ class Nursery extends Model implements MediaModel, AuditableContract, EntityMode
     use Auditable;
     use HasUpdateRequests;
     use HasEntityStatus;
-    use HasEntityResources;
     use ReportsStatusChange;
 
     protected $auditInclude = [

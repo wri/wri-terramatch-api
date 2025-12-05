@@ -3,7 +3,6 @@
 namespace App\Models\V2\Sites;
 
 use App\Models\Framework;
-use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasEntityStatusScopesAndTransitions;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasStatus;
@@ -61,7 +60,6 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     use HasUpdateRequests;
     use HasStatus;
     use HasStateMachines;
-    use HasEntityResources;
     use ReportsStatusChange;
 
     use HasEntityStatusScopesAndTransitions {
