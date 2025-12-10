@@ -2,7 +2,6 @@
 
 namespace App\Models\V2;
 
-use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
@@ -31,7 +30,6 @@ class FinancialReport extends Model implements MediaModel, ReportModel, Auditabl
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use UsesLinkedFields;
-    use HasEntityResources;
     use BelongsToThroughTrait;
     use Auditable;
 

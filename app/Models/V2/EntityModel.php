@@ -5,7 +5,6 @@ namespace App\Models\V2;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\UpdateRequests\ApprovalFlow;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property int id
@@ -20,10 +19,6 @@ interface EntityModel extends UpdateRequestableModel, ApprovalFlow
     public function getFormConfig(): ?array;
 
     public function updateFromForm(array $formValues, ?bool $isApproval): void;
-
-    public function createResource(): JsonResource;
-
-    public function createSchemaResource(): JsonResource;
 
     public function isEditable(): bool;
 
