@@ -1184,22 +1184,6 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/StageRead'
-'/v2/funding-programme/stage/{UUID}':
-  get:
-    summary: Get a stage
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    tags:
-      - Stages
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/StageRead'
-    operationId: get-v2-funding-programme-stage-UUID
 '/v2/admin/forms/submissions/{UUID}/status':
   parameters:
     - type: string

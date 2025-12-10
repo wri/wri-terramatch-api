@@ -141,7 +141,6 @@ use App\Http\Controllers\V2\Stages\IndexStageController;
 use App\Http\Controllers\V2\Stages\StoreStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
-use App\Http\Controllers\V2\Stages\ViewStageController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
@@ -360,7 +359,6 @@ Route::prefix('applications')->group(function () {
 
 Route::prefix('funding-programme/stage')->group(function () {
     Route::get('/', IndexStageController::class);
-    Route::get('/{stage}', ViewStageController::class);
 });
 
 Route::prefix('project-pitches')->group(function () {
