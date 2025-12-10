@@ -1235,21 +1235,6 @@
         schema:
           $ref: '../definitions/_index.yml#/FormSubmissionCreate'
 '/v2/forms/submissions/{UUID}':
-  get:
-    summary: Get a form submission
-    tags:
-      - Form Submissions
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormSubmissionRead'
-    operationId: get-v2-forms-submissions-UUID
   patch:
     summary: Update a form submission
     operationId: patch-v2-forms-submissions-UUID

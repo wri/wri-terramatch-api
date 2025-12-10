@@ -57,7 +57,6 @@ use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
-use App\Http\Controllers\V2\Forms\ViewFormSubmissionController;
 use App\Http\Controllers\V2\FundingProgramme\AdminFundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\FundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusController;
@@ -106,7 +105,6 @@ use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\StoreProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\SubmitProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\UpdateProjectPitchController;
-use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
@@ -339,7 +337,6 @@ Route::prefix('forms')->group(function () {
     Route::prefix('submissions')->group(function () {
         Route::post('/', StoreFormSubmissionController::class);
         Route::patch('/{formSubmission}', UpdateFormSubmissionController::class);
-        Route::get('/{formSubmission}', ViewFormSubmissionController::class)->middleware('i18n');
         Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class)->middleware('i18n');
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
         Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
@@ -365,7 +362,6 @@ Route::prefix('project-pitches')->group(function () {
     Route::post('/', StoreProjectPitchController::class);
     Route::patch('/{projectPitch}', UpdateProjectPitchController::class);
     Route::delete('/{projectPitch}', DeleteProjectPitchController::class);
-    Route::get('/{projectPitch}/submissions', ViewProjectPitchSubmissionsController::class);
     Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
