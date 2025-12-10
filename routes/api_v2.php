@@ -4,8 +4,6 @@ use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\AdminDeleteApplicationController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
-use App\Http\Controllers\V2\Applications\AdminIndexApplicationController;
-use App\Http\Controllers\V2\Applications\AdminViewApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Applications\ViewApplicationController;
 use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
@@ -294,8 +292,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         });
 
         Route::prefix('applications')->group(function () {
-            Route::get('/', AdminIndexApplicationController::class);
-            Route::get('/{application}', AdminViewApplicationController::class)->middleware('i18n');
             Route::delete('/{application}', AdminDeleteApplicationController::class);
             Route::get('/{fundingProgramme}/export', AdminExportApplicationController::class);
         });
