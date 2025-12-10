@@ -1320,6 +1320,7 @@
                 type: object
     tags:
       - V2 Users
+'/v2/admin/forms/applications/{UUID}':
   delete:
     summary: "Deletes a specific and it's dependant form submissions"
     operationId: delete-v2-admin-applications-UUID
