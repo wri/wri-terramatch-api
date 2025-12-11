@@ -162,4 +162,3 @@ class ImportNativeDistributionCsv extends Command
         return [$distributionString];
     }
 }
-
