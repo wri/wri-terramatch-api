@@ -30,8 +30,9 @@ class ImportNativeDistributionCsv extends Command
         $filename = $this->argument('filename');
         $filePath = base_path('imports/') . $filename;
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             $this->error("File not found: {$filePath}");
+
             return 1;
         }
 
@@ -50,18 +51,20 @@ class ImportNativeDistributionCsv extends Command
                 // Get taxon_id from the record
                 $taxonId = $record['taxon_id'] ?? null;
 
-                if (!$taxonId) {
-                    $this->warn("Skipping row " . ($index + 2) . " - missing taxon_id");
+                if (! $taxonId) {
+                    $this->warn('Skipping row ' . ($index + 2) . ' - missing taxon_id');
                     $skipped++;
+
                     continue;
                 }
 
                 // Find the tree species research record
                 $treeSpecies = TreeSpeciesResearch::where('taxon_id', $taxonId)->first();
 
-                if (!$treeSpecies) {
-                    $this->warn("Skipping row " . ($index + 2) . " - taxon_id '{$taxonId}' not found in tree_species_research");
+                if (! $treeSpecies) {
+                    $this->warn('Skipping row ' . ($index + 2) . " - taxon_id '{$taxonId}' not found in tree_species_research");
                     $skipped++;
+
                     continue;
                 }
 
@@ -75,9 +78,10 @@ class ImportNativeDistributionCsv extends Command
                     $nativeDistribution = $record['distribution'];
                 }
 
-                if (!$nativeDistribution || trim($nativeDistribution) === '') {
-                    $this->warn("Skipping row " . ($index + 2) . " - taxon_id '{$taxonId}' has no native_distribution data");
+                if (! $nativeDistribution || trim($nativeDistribution) === '') {
+                    $this->warn('Skipping row ' . ($index + 2) . " - taxon_id '{$taxonId}' has no native_distribution data");
                     $skipped++;
+
                     continue;
                 }
 
@@ -86,8 +90,9 @@ class ImportNativeDistributionCsv extends Command
                 $distributionArray = $this->parseDistributionString($nativeDistribution);
 
                 if (empty($distributionArray)) {
-                    $this->warn("Skipping row " . ($index + 2) . " - taxon_id '{$taxonId}' could not parse native_distribution: '{$nativeDistribution}'");
+                    $this->warn('Skipping row ' . ($index + 2) . " - taxon_id '{$taxonId}' could not parse native_distribution: '{$nativeDistribution}'");
                     $skipped++;
+
                     continue;
                 }
 
@@ -100,12 +105,12 @@ class ImportNativeDistributionCsv extends Command
 
             } catch (\Exception $e) {
                 $errors++;
-                $this->error("Error processing row " . ($index + 2) . ": " . $e->getMessage());
+                $this->error('Error processing row ' . ($index + 2) . ': ' . $e->getMessage());
             }
         }
 
         $this->newLine();
-        $this->info("Import completed!");
+        $this->info('Import completed!');
         $this->info("Updated: {$updated}");
         $this->info("Skipped: {$skipped}");
         $this->info("Errors: {$errors}");
@@ -135,23 +140,25 @@ class ImportNativeDistributionCsv extends Command
         // Try comma-separated first (most common)
         if (strpos($distributionString, ',') !== false) {
             $items = explode(',', $distributionString);
-            return array_map('trim', array_filter($items, fn($item) => !empty(trim($item))));
+
+            return array_map('trim', array_filter($items, fn ($item) => ! empty(trim($item))));
         }
 
         // Try semicolon-separated
         if (strpos($distributionString, ';') !== false) {
             $items = explode(';', $distributionString);
-            return array_map('trim', array_filter($items, fn($item) => !empty(trim($item))));
+
+            return array_map('trim', array_filter($items, fn ($item) => ! empty(trim($item))));
         }
 
         // Try pipe-separated
         if (strpos($distributionString, '|') !== false) {
             $items = explode('|', $distributionString);
-            return array_map('trim', array_filter($items, fn($item) => !empty(trim($item))));
+
+            return array_map('trim', array_filter($items, fn ($item) => ! empty(trim($item))));
         }
 
         // If no delimiter found, treat the whole string as a single value
         return [$distributionString];
     }
 }
-
