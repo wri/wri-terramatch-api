@@ -31,12 +31,12 @@ class ImportNativeDistributionCsv extends Command
         $filePath = base_path('imports/') . $filename;
 
         if (! file_exists($filePath)) {
-            $this->error("File not found: {$filePath}");
+            $this->error('File not found: ' . $filePath);
 
             return 1;
         }
 
-        $this->info("Reading CSV file: {$filename}");
+        $this->info('Reading CSV file: ' . $filename);
 
         $csv = Reader::createFromPath($filePath, 'r');
         $csv->setHeaderOffset(0);
@@ -62,7 +62,7 @@ class ImportNativeDistributionCsv extends Command
                 $treeSpecies = TreeSpeciesResearch::where('taxon_id', $taxonId)->first();
 
                 if (! $treeSpecies) {
-                    $this->warn('Skipping row ' . ($index + 2) . " - taxon_id '{$taxonId}' not found in tree_species_research");
+                    $this->warn('Skipping row ' . ($index + 2) . ' - taxon_id \'' . $taxonId . '\' not found in tree_species_research');
                     $skipped++;
 
                     continue;
@@ -79,7 +79,7 @@ class ImportNativeDistributionCsv extends Command
                 }
 
                 if (! $nativeDistribution || trim($nativeDistribution) === '') {
-                    $this->warn('Skipping row ' . ($index + 2) . " - taxon_id '{$taxonId}' has no native_distribution data");
+                    $this->warn('Skipping row ' . ($index + 2) . ' - taxon_id \'' . $taxonId . '\' has no native_distribution data');
                     $skipped++;
 
                     continue;
@@ -90,7 +90,7 @@ class ImportNativeDistributionCsv extends Command
                 $distributionArray = $this->parseDistributionString($nativeDistribution);
 
                 if (empty($distributionArray)) {
-                    $this->warn('Skipping row ' . ($index + 2) . " - taxon_id '{$taxonId}' could not parse native_distribution: '{$nativeDistribution}'");
+                    $this->warn('Skipping row ' . ($index + 2) . ' - taxon_id \'' . $taxonId . '\' could not parse native_distribution: \'' . $nativeDistribution . '\'');
                     $skipped++;
 
                     continue;
@@ -101,7 +101,7 @@ class ImportNativeDistributionCsv extends Command
                 $treeSpecies->save();
 
                 $updated++;
-                $this->info("Updated taxon_id '{$taxonId}' with native_distribution: " . json_encode($distributionArray));
+                $this->info('Updated taxon_id \'' . $taxonId . '\' with native_distribution: ' . json_encode($distributionArray));
 
             } catch (\Exception $e) {
                 $errors++;
@@ -111,9 +111,9 @@ class ImportNativeDistributionCsv extends Command
 
         $this->newLine();
         $this->info('Import completed!');
-        $this->info("Updated: {$updated}");
-        $this->info("Skipped: {$skipped}");
-        $this->info("Errors: {$errors}");
+        $this->info('Updated: ' . $updated);
+        $this->info('Skipped: ' . $skipped);
+        $this->info('Errors: ' . $errors);
 
         return 0;
     }
@@ -162,3 +162,4 @@ class ImportNativeDistributionCsv extends Command
         return [$distributionString];
     }
 }
+
