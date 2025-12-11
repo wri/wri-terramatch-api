@@ -5,10 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\AdminDeleteApplicationController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
-use App\Http\Controllers\V2\Applications\ViewApplicationController;
-use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
 use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
-use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
 use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
@@ -48,7 +45,6 @@ use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
 use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
-use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
 use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
@@ -212,10 +208,6 @@ Route::resource('impact-stories', ImpactStoryController::class)
     ->except(['index', 'show']);
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
-    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-        Route::get('{entity}', AdminIndexAuditsController::class);
-    }, prefix: 'audits');
-
     Route::prefix('reporting-frameworks')->group(function () {
         Route::get('', AdminIndexReportingFrameworkController::class);
         Route::post('', AdminCreateReportingFrameworkController::class);
@@ -335,7 +327,6 @@ Route::prefix('forms')->group(function () {
         Route::patch('/{formSubmission}', UpdateFormSubmissionController::class);
         Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class)->middleware('i18n');
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
-        Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
 });
 
@@ -344,9 +335,7 @@ Route::prefix('reporting-frameworks')->group(function () {
     Route::get('/access-code/{accessCode}', ViewReportingFrameworkViaAccessCodeController::class);
 });
 
-Route::get('/my/applications', ViewMyApplicationController::class);
 Route::prefix('applications')->group(function () {
-    Route::get('/{application}', ViewApplicationController::class)->middleware('i18n');
     Route::get('/{application}/export', ExportApplicationController::class);
 });
 

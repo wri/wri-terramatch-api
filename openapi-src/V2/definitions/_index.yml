@@ -112,8 +112,6 @@ V2InvasivePaginated:
   $ref: './V2InvasivePaginated.yml'
 ProjectLiteRead:
   $ref: './ProjectLiteRead.yml'
-ProjectFullRead:
-  $ref: './ProjectFullRead.yml'
 SiteFullRead:
   $ref: './SiteFullRead.yml'
 ProjectPitchRead:
@@ -138,10 +136,6 @@ FormSubmissionCreate:
   $ref: './FormSubmissionCreate.yml'
 FormSubmissionUpdate:
   $ref: './FormSubmissionUpdate.yml'
-ApplicationLiteRead:
-  $ref: './ApplicationLiteRead.yml'
-ApplicationRead:
-  $ref: './ApplicationRead.yml'
 NurseryPaginated:
   $ref: './NurseryPaginated.yml'
 NurseryRead:
