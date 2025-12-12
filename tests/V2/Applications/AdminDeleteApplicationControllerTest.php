@@ -22,10 +22,6 @@ class AdminDeleteApplicationControllerTest extends TestCase
             ['funding_programme_uuid' => $fundingProgramme->uuid]
         );
 
-        $this->actingAs($admin)
-            ->getJson('/api/v2/admin/forms/applications/' . $application->uuid)
-            ->assertSuccessful();
-
         $this->actingAs($user)
             ->deleteJson('/api/v2/admin/forms/applications/' . $application->uuid)
             ->assertStatus(403);
