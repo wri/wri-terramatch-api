@@ -973,33 +973,6 @@
           $ref: '../definitions/_index.yml#/StageCreate'
     tags:
       - Stages
-/v2/funding-programme:
-  get:
-    summary: Get all funding programmes
-    tags:
-      - Funding Programmes
-    parameters:
-      - type: integer
-        in: query
-        name: page
-        description: 'page number you want results from'
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '../definitions/_index.yml#/FundingProgramme'
-            links:
-              type: object
-              $ref: '../definitions/_index.yml#/V2PaginationLinks'
-            meta:
-              type: object
-              $ref: '../definitions/_index.yml#/V2PaginationMeta'
-    operationId: get-v2-funding-programme
 /v2/admin/funding-programme:
   get:
     summary: Get all funding programmes
@@ -1047,27 +1020,6 @@
         schema:
           $ref: '../definitions/_index.yml#/FundingProgrammeCreate'
   parameters: []
-'/v2/funding-programme/{UUID}':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  get:
-    summary: Get a funding programme
-    tags:
-      - Funding Programmes
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FundingProgramme'
-    operationId: get-v2-funding-programme-ID
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/FundingProgramme'
 '/v2/admin/funding-programme/{UUID}':
   get:
     summary: Get a funding programme

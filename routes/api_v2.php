@@ -52,7 +52,6 @@ use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
 use App\Http\Controllers\V2\FundingProgramme\AdminFundingProgrammeController;
-use App\Http\Controllers\V2\FundingProgramme\FundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusController;
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
@@ -501,9 +500,6 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/project-polygon/{uuid}/{entity_uuid}/{entity_type}', [TerrafundEditGeometryController::class, 'createProjectPolygon']);
 
 });
-
-Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
-Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
 
 ModelInterfaceBindingMiddleware::with(
     MediaModel::class,
