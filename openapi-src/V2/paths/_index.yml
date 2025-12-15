@@ -1259,20 +1259,6 @@
                 type: object
     tags:
       - V2 Users
-'/v2/admin/forms/applications/{UUID}':
-  delete:
-    summary: "Deletes a specific and it's dependant form submissions"
-    operationId: delete-v2-admin-applications-UUID
-    tags:
-      - Application
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
 '/v2/admin/forms/applications/{UUID}/export':
   get:
     summary: Export CSV document of applications belonging to a funding programme

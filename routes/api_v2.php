@@ -2,7 +2,6 @@
 
 use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\V2\Applications\AdminDeleteApplicationController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
@@ -283,7 +282,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         });
 
         Route::prefix('applications')->group(function () {
-            Route::delete('/{application}', AdminDeleteApplicationController::class);
             Route::get('/{fundingProgramme}/export', AdminExportApplicationController::class);
         });
     });
