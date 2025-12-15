@@ -201,6 +201,12 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('polygon-validation.body', 'Your {operation} for Site {siteName} completed at {completedTime} GMT.');
         $this->createLocalizationKey('polygon-validation.cta', 'OPEN SITE');
 
+        // polygon-clipping-complete
+        $this->createLocalizationKey('polygon-clipping-complete.subject', 'Your TerraMatch Polygon Clipping is Complete');
+        $this->createLocalizationKey('polygon-clipping-complete.title', 'YOUR POLYGON CLIPPING IS COMPLETE');
+        $this->createLocalizationKey('polygon-clipping-complete.body', 'Your polygon clipping for Site {siteName} completed at {time}.');
+        $this->createLocalizationKey('polygon-clipping-complete.cta', 'OPEN SITE');
+
         // satellite-map-created
         $this->createLocalizationKey('satellite-map-created.subject', 'Remote Sensing Map Received');
         $this->createLocalizationKey('satellite-map-created.title', 'Remote Sensing Map Received');
