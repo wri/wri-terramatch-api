@@ -4,13 +4,8 @@ use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\AdminDeleteApplicationController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
-use App\Http\Controllers\V2\Applications\AdminIndexApplicationController;
-use App\Http\Controllers\V2\Applications\AdminViewApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
-use App\Http\Controllers\V2\Applications\ViewApplicationController;
-use App\Http\Controllers\V2\Applications\ViewMyApplicationController;
 use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
-use App\Http\Controllers\V2\Audits\AdminIndexAuditsController;
 use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
 use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
@@ -50,16 +45,13 @@ use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
 use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
-use App\Http\Controllers\V2\Forms\DeleteFormSubmissionController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
 use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
-use App\Http\Controllers\V2\Forms\ViewFormSubmissionController;
 use App\Http\Controllers\V2\FundingProgramme\AdminFundingProgrammeController;
-use App\Http\Controllers\V2\FundingProgramme\FundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusController;
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
@@ -106,7 +98,6 @@ use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\StoreProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\SubmitProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\UpdateProjectPitchController;
-use App\Http\Controllers\V2\ProjectPitches\ViewProjectPitchSubmissionsController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
@@ -141,7 +132,6 @@ use App\Http\Controllers\V2\Stages\IndexStageController;
 use App\Http\Controllers\V2\Stages\StoreStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
-use App\Http\Controllers\V2\Stages\ViewStageController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
@@ -217,10 +207,6 @@ Route::resource('impact-stories', ImpactStoryController::class)
     ->except(['index', 'show']);
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
-    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-        Route::get('{entity}', AdminIndexAuditsController::class);
-    }, prefix: 'audits');
-
     Route::prefix('reporting-frameworks')->group(function () {
         Route::get('', AdminIndexReportingFrameworkController::class);
         Route::post('', AdminCreateReportingFrameworkController::class);
@@ -297,8 +283,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         });
 
         Route::prefix('applications')->group(function () {
-            Route::get('/', AdminIndexApplicationController::class);
-            Route::get('/{application}', AdminViewApplicationController::class)->middleware('i18n');
             Route::delete('/{application}', AdminDeleteApplicationController::class);
             Route::get('/{fundingProgramme}/export', AdminExportApplicationController::class);
         });
@@ -340,10 +324,8 @@ Route::prefix('forms')->group(function () {
     Route::prefix('submissions')->group(function () {
         Route::post('/', StoreFormSubmissionController::class);
         Route::patch('/{formSubmission}', UpdateFormSubmissionController::class);
-        Route::get('/{formSubmission}', ViewFormSubmissionController::class)->middleware('i18n');
         Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class)->middleware('i18n');
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
-        Route::delete('/{formSubmission}', DeleteFormSubmissionController::class);
     });
 });
 
@@ -352,22 +334,18 @@ Route::prefix('reporting-frameworks')->group(function () {
     Route::get('/access-code/{accessCode}', ViewReportingFrameworkViaAccessCodeController::class);
 });
 
-Route::get('/my/applications', ViewMyApplicationController::class);
 Route::prefix('applications')->group(function () {
-    Route::get('/{application}', ViewApplicationController::class)->middleware('i18n');
     Route::get('/{application}/export', ExportApplicationController::class);
 });
 
 Route::prefix('funding-programme/stage')->group(function () {
     Route::get('/', IndexStageController::class);
-    Route::get('/{stage}', ViewStageController::class);
 });
 
 Route::prefix('project-pitches')->group(function () {
     Route::post('/', StoreProjectPitchController::class);
     Route::patch('/{projectPitch}', UpdateProjectPitchController::class);
     Route::delete('/{projectPitch}', DeleteProjectPitchController::class);
-    Route::get('/{projectPitch}/submissions', ViewProjectPitchSubmissionsController::class);
     Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
@@ -522,9 +500,6 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/project-polygon/{uuid}/{entity_uuid}/{entity_type}', [TerrafundEditGeometryController::class, 'createProjectPolygon']);
 
 });
-
-Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
-Route::get('/funding-programme/{fundingProgramme}', [FundingProgrammeController::class, 'show']);
 
 ModelInterfaceBindingMiddleware::with(
     MediaModel::class,

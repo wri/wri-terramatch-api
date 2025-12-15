@@ -126,10 +126,6 @@ final class StoreFormSubmissionControllerTest extends TestCase
             ->assertJsonFragment([$q1Uuid => $hqCountry]);
 
 
-        $this->actingAs($user)
-            ->getJson('/api/v2/forms/submissions/' . $submissionUuid . '?lang=fr-FR')
-            ->assertSuccessful(200);
-
         $organisation = Organisation::find($organisation->id);
 
         $this->assertEquals($organisation->hq_country, $hqCountry); //hq country
