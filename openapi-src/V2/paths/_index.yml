@@ -974,36 +974,6 @@
     tags:
       - Stages
 /v2/admin/funding-programme:
-  get:
-    summary: Get all funding programmes
-    tags:
-      - Funding Programmes
-    parameters:
-      - type: integer
-        in: query
-        name: page
-        description: 'page number you want results from'
-      - name: per_page
-        type: integer
-        in: query
-        description: 'number of results (per page) to return'
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '../definitions/_index.yml#/FundingProgramme'
-            links:
-              type: object
-              $ref: '../definitions/_index.yml#/V2PaginationLinks'
-            meta:
-              type: object
-              $ref: '../definitions/_index.yml#/V2PaginationMeta'
-    operationId: get-v2-admin-funding-programme
   post:
     summary: Create a funding programme
     operationId: post-v2-funding-programme
@@ -1021,25 +991,6 @@
           $ref: '../definitions/_index.yml#/FundingProgrammeCreate'
   parameters: []
 '/v2/admin/funding-programme/{UUID}':
-  get:
-    summary: Get a funding programme
-    tags:
-      - Funding Programmes
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FundingProgramme'
-    operationId: get-v2-admin-funding-programme-ID
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/FundingProgramme'
   put:
     summary: Update a funding programme
     operationId: put-v2-funding-programme-ID
@@ -1059,19 +1010,6 @@
         name: body
         schema:
           $ref: '../definitions/_index.yml#/FundingProgrammeCreate'
-  delete:
-    summary: Delete a funding programme
-    operationId: delete-v2-funding-programme-ID
-    tags:
-      - Funding Programmes
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '202':
-        description: Accepted
 '/v2/admin/funding-programme/{UUID}/status':
   parameters:
     - type: string
