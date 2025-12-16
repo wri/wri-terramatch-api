@@ -50,7 +50,6 @@ use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
-use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusController;
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
@@ -91,11 +90,7 @@ use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
-use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
-use App\Http\Controllers\V2\ProjectPitches\StoreProjectPitchController;
-use App\Http\Controllers\V2\ProjectPitches\SubmitProjectPitchController;
-use App\Http\Controllers\V2\ProjectPitches\UpdateProjectPitchController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
@@ -248,8 +243,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
     });
 
-    Route::patch('funding-programme/{fundingProgramme}/status', UpdateFundingProgrammeStatusController::class);
-
     Route::prefix('users')->group(function () {
         Route::get('multi', AdminUserMultiController::class);
         Route::put('reset-password/{user}', AdminResetPasswordController::class);
@@ -326,13 +319,6 @@ Route::prefix('applications')->group(function () {
 
 Route::prefix('funding-programme/stage')->group(function () {
     Route::get('/', IndexStageController::class);
-});
-
-Route::prefix('project-pitches')->group(function () {
-    Route::post('/', StoreProjectPitchController::class);
-    Route::patch('/{projectPitch}', UpdateProjectPitchController::class);
-    Route::delete('/{projectPitch}', DeleteProjectPitchController::class);
-    Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
 Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsController::class)

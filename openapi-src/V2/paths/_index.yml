@@ -877,39 +877,6 @@
         schema:
           type: object
     operationId: get-v2-project-pitches-export
-'/v2/project-pitches/{UUID}':
-  patch:
-    summary: Update a project pitch
-    operationId: patch-v2-project-pitches-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/ProjectPitchRead'
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/ProjectPitchUpdate'
-    tags:
-      - Project Pitches
-  delete:
-    summary: Delete a project pitch
-    operationId: delete-v2-project-pitches-UUID
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-    tags:
-      - Project Pitches
 '/v2/admin/forms/submissions/{UUID}/export':
   get:
     summary: Export form submissions
@@ -926,22 +893,6 @@
         schema:
           type: object
     operationId: get-v2-admin-forms-submissions-uuid-export
-'/v2/admin/funding-programme/{UUID}/status':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  patch:
-    summary: Update a funding programme status
-    operationId: patch-v2-funding-programme-ID-status
-    tags:
-      - Funding Programmes
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FundingProgrammeStatus'
 /v2/funding-programme/stage:
   get:
     summary: Get all stages
