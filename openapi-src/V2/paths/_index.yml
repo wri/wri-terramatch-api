@@ -926,73 +926,6 @@
         schema:
           type: object
     operationId: get-v2-admin-forms-submissions-uuid-export
-/v2/admin/funding-programme/stage:
-  post:
-    summary: Create a stage
-    operationId: post-v2-admin-funding-programme-stage
-    responses:
-      '201':
-        description: Created
-        schema:
-          $ref: '../definitions/_index.yml#/StageRead'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/StageCreate'
-    tags:
-      - Stages
-'/v2/admin/funding-programme/stage/{UUID}':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  delete:
-    summary: Delete a stage
-    operationId: delete-v2-admin-funding-programme-stage-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/StageRead'
-    tags:
-      - Stages
-  patch:
-    summary: Update a stage
-    operationId: patch-v2-admin-funding-programme-stage-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/StageRead'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/StageCreate'
-    tags:
-      - Stages
-'/v2/admin/funding-programme/{UUID}':
-  put:
-    summary: Update a funding programme
-    operationId: put-v2-funding-programme-ID
-    tags:
-      - Funding Programmes
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FundingProgramme'
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/FundingProgrammeCreate'
 '/v2/admin/funding-programme/{UUID}/status':
   parameters:
     - type: string
@@ -1041,22 +974,6 @@
         schema:
           $ref: '../definitions/_index.yml#/StagePaginated'
     operationId: get-v2-funding-programme-stage
-'/v2/admin/funding-programme/stage/{UUID}/status':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  patch:
-    summary: Update a funding programme stage status
-    operationId: patch-v2-funding-programme-stage-ID-status
-    tags:
-      - Stages
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/StageRead'
 '/v2/admin/forms/submissions/{UUID}/status':
   parameters:
     - type: string

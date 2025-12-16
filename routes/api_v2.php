@@ -50,7 +50,6 @@ use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
-use App\Http\Controllers\V2\FundingProgramme\AdminFundingProgrammeController;
 use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusController;
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
@@ -126,11 +125,7 @@ use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
 use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
-use App\Http\Controllers\V2\Stages\DeleteStageController;
 use App\Http\Controllers\V2\Stages\IndexStageController;
-use App\Http\Controllers\V2\Stages\StoreStageController;
-use App\Http\Controllers\V2\Stages\UpdateStageController;
-use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
@@ -253,13 +248,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
     });
 
-    Route::prefix('funding-programme/stage')->group(function () {
-        Route::post('/', StoreStageController::class);
-        Route::patch('/{stage}', UpdateStageController::class);
-        Route::delete('/{stage}', DeleteStageController::class);
-        Route::patch('/{stage}/status', UpdateStageStatusController::class);
-    });
-    Route::resource('funding-programme', AdminFundingProgrammeController::class)->except('create', 'store', 'edit', 'delete', 'show', 'index');
     Route::patch('funding-programme/{fundingProgramme}/status', UpdateFundingProgrammeStatusController::class);
 
     Route::prefix('users')->group(function () {

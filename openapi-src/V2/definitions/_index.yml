@@ -16,8 +16,6 @@ LimitedFundingProgrammeRead:
   $ref: './LimitedFundingProgrammeRead.yml'
 FundingProgrammeStatus:
   $ref: './FundingProgrammeStatus.yml'
-FundingProgrammeCreate:
-  $ref: './FundingProgrammeCreate.yml'
 FormLiteRead:
   $ref: './FormLiteRead.yml'
 ReportingFrameworkRead:
@@ -130,8 +128,6 @@ StagePaginated:
   $ref: './StagePaginated.yml'
 StageRead:
   $ref: './StageRead.yml'
-StageCreate:
-  $ref: './StageCreate.yml'
 FormSubmissionCreate:
   $ref: './FormSubmissionCreate.yml'
 FormSubmissionUpdate:
