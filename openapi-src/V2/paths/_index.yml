@@ -973,23 +973,6 @@
           $ref: '../definitions/_index.yml#/StageCreate'
     tags:
       - Stages
-/v2/admin/funding-programme:
-  post:
-    summary: Create a funding programme
-    operationId: post-v2-funding-programme
-    tags:
-      - Funding Programmes
-    responses:
-      '201':
-        description: Created
-        schema:
-          $ref: '../definitions/_index.yml#/FundingProgramme'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/FundingProgrammeCreate'
-  parameters: []
 '/v2/admin/funding-programme/{UUID}':
   put:
     summary: Update a funding programme

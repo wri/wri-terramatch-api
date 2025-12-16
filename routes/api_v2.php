@@ -259,7 +259,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::delete('/{stage}', DeleteStageController::class);
         Route::patch('/{stage}/status', UpdateStageStatusController::class);
     });
-    Route::resource('funding-programme', AdminFundingProgrammeController::class)->except('create', 'edit', 'delete', 'show', 'index');
+    Route::resource('funding-programme', AdminFundingProgrammeController::class)->except('create', 'store', 'edit', 'delete', 'show', 'index');
     Route::patch('funding-programme/{fundingProgramme}/status', UpdateFundingProgrammeStatusController::class);
 
     Route::prefix('users')->group(function () {
