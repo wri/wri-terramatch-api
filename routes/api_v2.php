@@ -46,7 +46,6 @@ use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsControl
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
-use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
@@ -300,7 +299,6 @@ Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutM
 
 Route::prefix('forms')->group(function () {
     Route::prefix('submissions')->group(function () {
-        Route::post('/', StoreFormSubmissionController::class);
         Route::patch('/{formSubmission}', UpdateFormSubmissionController::class);
         Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class)->middleware('i18n');
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);

@@ -925,24 +925,6 @@
                 - approved
                 - requires-more-information
                 - rejected
-
-/v2/forms/submissions:
-  post:
-    summary: Create a form submission
-    operationId: post-v2-forms-submissions
-    responses:
-      '201':
-        description: Created
-        schema:
-          $ref: '../definitions/_index.yml#/FormSubmissionRead'
-    tags:
-      - Forms
-    description: ''
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/FormSubmissionCreate'
 '/v2/forms/submissions/{UUID}':
   patch:
     summary: Update a form submission

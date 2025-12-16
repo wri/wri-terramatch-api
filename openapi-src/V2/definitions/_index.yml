@@ -114,8 +114,6 @@ FormSubmissionLiteRead:
   $ref: './FormSubmissionLiteRead.yml'
 StageRead:
   $ref: './StageRead.yml'
-FormSubmissionCreate:
-  $ref: './FormSubmissionCreate.yml'
 FormSubmissionUpdate:
   $ref: './FormSubmissionUpdate.yml'
 NurseryPaginated:
