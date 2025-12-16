@@ -893,38 +893,6 @@
         schema:
           type: object
     operationId: get-v2-admin-forms-submissions-uuid-export
-/v2/funding-programme/stage:
-  get:
-    summary: Get all stages
-    tags:
-      - Stages
-    parameters:
-      - name: search
-        type: string
-        in: query
-        description: 'search term to use on the collection'
-      - name: filter
-        type: string
-        in: query
-        description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      - name: sort
-        type: string
-        in: query
-        description: 'sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name'
-      - name: per_page
-        type: integer
-        in: query
-        description: 'number of results (per page) to return'
-      - name: page
-        type: integer
-        in: query
-        description: 'page number you want results from'
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/StagePaginated'
-    operationId: get-v2-funding-programme-stage
 '/v2/admin/forms/submissions/{UUID}/status':
   parameters:
     - type: string

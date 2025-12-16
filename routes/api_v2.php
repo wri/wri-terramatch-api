@@ -120,7 +120,6 @@ use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
 use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
-use App\Http\Controllers\V2\Stages\IndexStageController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
@@ -315,10 +314,6 @@ Route::prefix('reporting-frameworks')->group(function () {
 
 Route::prefix('applications')->group(function () {
     Route::get('/{application}/export', ExportApplicationController::class);
-});
-
-Route::prefix('funding-programme/stage')->group(function () {
-    Route::get('/', IndexStageController::class);
 });
 
 Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsController::class)
