@@ -3914,6 +3914,8 @@ definitions:
         type: string
       socioeconomic_goals:
         type: string
+      income_generating_activities:
+        type: string
       sdgs_impacted:
         type: string
       community_incentives:
@@ -4882,6 +4884,8 @@ definitions:
       environmental_goals:
         type: string
       socioeconomic_goals:
+        type: string
+      income_generating_activities:
         type: string
       sdgs_impacted:
         type: string

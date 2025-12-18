@@ -26,6 +26,23 @@ class ProjectFactory extends Factory
             'sustainable-cities-and-communities', 'responsible-consumption-and-production', 'climate-action', 'life-below-water', 'life-on-land',
             'peace-justice-and-strong-institutions', 'partnerships-for-the-goals',
         ];
+        $incomeGeneratingActivities = [
+            'oil-processing',
+            'small-animals',
+            'soil-water-conservation',
+            'home-gardens',
+            'farmer-field-schools',
+            'market-linkages',
+            'cookstoves',
+            'high-value-crops',
+            'fruits-vegetables',
+            'climate-smart-agriculture',
+            'cover-crops',
+            'training-smallholder-farmers',
+            'savings-loans',
+            'beekeeping',
+            'tree-seedling-distribution',
+        ];
 
 
         return [
@@ -45,6 +62,11 @@ class ProjectFactory extends Factory
             'objectives' => $this->faker->text(500),
             'environmental_goals' => $this->faker->text(500),
             'socioeconomic_goals' => $this->faker->text(500),
+            'income_generating_activities' => $this->faker->randomElements(
+                $incomeGeneratingActivities,
+                $this->faker->numberBetween(0, count($incomeGeneratingActivities)),
+                false
+            ),
             'long_term_growth' => $this->faker->text(500),
             'community_incentives' => $this->faker->text(500),
             'jobs_created_goal' => $this->faker->numberBetween(0, 9999999),
