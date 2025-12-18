@@ -7,7 +7,6 @@ use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\ProjectPolygon;
-use App\StateMachines\EntityStatusStateMachine;
 
 trait UsesLinkedFields
 {
@@ -56,64 +55,6 @@ trait UsesLinkedFields
         }
 
         return $localAnswers;
-    }
-
-    public function updateFromForm(array $formData, ?bool $isApproval = false): void
-    {
-        $form = $this->getForm();
-        $formConfig = $this->getFormConfig();
-        $fieldsConfig = data_get($formConfig, 'fields', []);
-        $relationsConfig = data_get($formConfig, 'relations', []);
-        $localAnswers = [];
-        $entityProps = [];
-
-        foreach ($form->sections as $section) {
-            foreach ($section->questions as $question) {
-                if ($question->input_type !== 'conditional') {
-                    $fieldConfig = data_get($fieldsConfig, $question->linked_field_key);
-                    if ($fieldConfig != null) {
-                        $property = data_get($fieldConfig, 'property', null);
-                        $value = data_get($formData, $question->uuid, null);
-
-                        $validation = data_get($question, 'validation', null);
-                        $isDate = $question->input_type === 'date' && empty($validation['required']);
-                        if (! is_null($value) || $isDate) {
-                            if (empty($property)) {
-                                $localAnswers[$question->uuid] = data_get($formData, $question->uuid);
-                            }
-
-                            if ($question->linked_field_key == 'pro-rep-landscape-com-con' && ! empty($question->parent_id) &&
-                                data_get($formData, $question->parent_id) === true) {
-                                $entityProps[$property] = '';
-                            } else {
-                                $entityProps[$property] = $value;
-                            }
-                        }
-                    } else {
-                        $property = data_get($relationsConfig, "$question->linked_field_key.property");
-                        if (! empty($property)) {
-                            $inputType = data_get($relationsConfig, "$question->linked_field_key.input_type");
-                            $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
-                                data_get($formData, $question->parent_id) === false;
-                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)), $hidden, null, $isApproval);
-                        }
-                    }
-
-                } else {
-                    $localAnswers[$question->uuid] = data_get($formData, $question->uuid, null);
-                    $entityProps['answers'] = $localAnswers;
-                }
-            }
-        }
-
-        $this->update($entityProps);
-
-        if ($this->status == EntityStatusStateMachine::APPROVED) {
-            // This state only occurs when an admin is editing an already approved entity. Under these circumstances,
-            // we'd rather see the entity saved with the clean data view than preserve any temporarily set data the
-            // admin might have put in place.
-            $this->cleanConditionalAnswers($form);
-        }
     }
 
     public function calculateCompletion(Form $form): int

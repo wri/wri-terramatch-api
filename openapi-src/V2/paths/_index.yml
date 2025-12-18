@@ -925,26 +925,6 @@
                 - approved
                 - requires-more-information
                 - rejected
-'/v2/forms/submissions/{UUID}':
-  patch:
-    summary: Update a form submission
-    operationId: patch-v2-forms-submissions-UUID
-    tags:
-      - Forms
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormSubmissionRead'
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/FormSubmissionUpdate'
 '/v2/forms/submissions/{UUID}/next-stage':
   post:
     operationId: post-v2-forms-submissions-UUID-next-stage
