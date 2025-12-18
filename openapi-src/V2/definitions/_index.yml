@@ -10,14 +10,6 @@ UserRead:
   $ref: './UserRead.yml'
 UserReadAll:
   $ref: './UserReadAll.yml'
-FundingProgramme:
-  $ref: './FundingProgramme.yml'
-LimitedFundingProgrammeRead:
-  $ref: './LimitedFundingProgrammeRead.yml'
-FundingProgrammeStatus:
-  $ref: './FundingProgrammeStatus.yml'
-FundingProgrammeCreate:
-  $ref: './FundingProgrammeCreate.yml'
 FormLiteRead:
   $ref: './FormLiteRead.yml'
 ReportingFrameworkRead:
@@ -80,10 +72,6 @@ V2FundingTypeRead:
   $ref: './V2FundingTypeRead.yml'
 V2FundingTypeUpdate:
   $ref: './V2FundingTypeUpdate.yml'
-ProjectPitchCreate:
-  $ref: './ProjectPitchCreate.yml'
-ProjectPitchUpdate:
-  $ref: './ProjectPitchUpdate.yml'
 V2SiteRead:
   $ref: './V2SiteRead.yml'
 V2SiteMonitoringCreate:
@@ -114,8 +102,6 @@ ProjectLiteRead:
   $ref: './ProjectLiteRead.yml'
 SiteFullRead:
   $ref: './SiteFullRead.yml'
-ProjectPitchRead:
-  $ref: './ProjectPitchRead.yml'
 AuditRead:
   $ref: './AuditRead.yml'
 AuditReadAll:
@@ -126,14 +112,8 @@ FormSubmissionRead:
   $ref: './FormSubmissionRead.yml'
 FormSubmissionLiteRead:
   $ref: './FormSubmissionLiteRead.yml'
-StagePaginated:
-  $ref: './StagePaginated.yml'
 StageRead:
   $ref: './StageRead.yml'
-StageCreate:
-  $ref: './StageCreate.yml'
-FormSubmissionCreate:
-  $ref: './FormSubmissionCreate.yml'
 FormSubmissionUpdate:
   $ref: './FormSubmissionUpdate.yml'
 NurseryPaginated:

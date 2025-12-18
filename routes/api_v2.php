@@ -2,7 +2,6 @@
 
 use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\V2\Applications\AdminDeleteApplicationController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
@@ -47,12 +46,9 @@ use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsControl
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
-use App\Http\Controllers\V2\Forms\StoreFormSubmissionController;
 use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
 use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
-use App\Http\Controllers\V2\FundingProgramme\AdminFundingProgrammeController;
-use App\Http\Controllers\V2\FundingProgramme\UpdateFundingProgrammeStatusController;
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
@@ -93,11 +89,7 @@ use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
-use App\Http\Controllers\V2\ProjectPitches\DeleteProjectPitchController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
-use App\Http\Controllers\V2\ProjectPitches\StoreProjectPitchController;
-use App\Http\Controllers\V2\ProjectPitches\SubmitProjectPitchController;
-use App\Http\Controllers\V2\ProjectPitches\UpdateProjectPitchController;
 use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
@@ -127,11 +119,6 @@ use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
 use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
-use App\Http\Controllers\V2\Stages\DeleteStageController;
-use App\Http\Controllers\V2\Stages\IndexStageController;
-use App\Http\Controllers\V2\Stages\StoreStageController;
-use App\Http\Controllers\V2\Stages\UpdateStageController;
-use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
 use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
@@ -254,15 +241,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
     });
 
-    Route::prefix('funding-programme/stage')->group(function () {
-        Route::post('/', StoreStageController::class);
-        Route::patch('/{stage}', UpdateStageController::class);
-        Route::delete('/{stage}', DeleteStageController::class);
-        Route::patch('/{stage}/status', UpdateStageStatusController::class);
-    });
-    Route::resource('funding-programme', AdminFundingProgrammeController::class)->except('create', 'edit');
-    Route::patch('funding-programme/{fundingProgramme}/status', UpdateFundingProgrammeStatusController::class);
-
     Route::prefix('users')->group(function () {
         Route::get('multi', AdminUserMultiController::class);
         Route::put('reset-password/{user}', AdminResetPasswordController::class);
@@ -283,7 +261,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         });
 
         Route::prefix('applications')->group(function () {
-            Route::delete('/{application}', AdminDeleteApplicationController::class);
             Route::get('/{fundingProgramme}/export', AdminExportApplicationController::class);
         });
     });
@@ -322,7 +299,6 @@ Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutM
 
 Route::prefix('forms')->group(function () {
     Route::prefix('submissions')->group(function () {
-        Route::post('/', StoreFormSubmissionController::class);
         Route::patch('/{formSubmission}', UpdateFormSubmissionController::class);
         Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class)->middleware('i18n');
         Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
@@ -336,17 +312,6 @@ Route::prefix('reporting-frameworks')->group(function () {
 
 Route::prefix('applications')->group(function () {
     Route::get('/{application}/export', ExportApplicationController::class);
-});
-
-Route::prefix('funding-programme/stage')->group(function () {
-    Route::get('/', IndexStageController::class);
-});
-
-Route::prefix('project-pitches')->group(function () {
-    Route::post('/', StoreProjectPitchController::class);
-    Route::patch('/{projectPitch}', UpdateProjectPitchController::class);
-    Route::delete('/{projectPitch}', DeleteProjectPitchController::class);
-    Route::put('/submit/{projectPitch}', SubmitProjectPitchController::class);
 });
 
 Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsController::class)
