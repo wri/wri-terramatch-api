@@ -941,22 +941,6 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/FormSubmissionRead'
-'/v2/forms/submissions/submit/{UUID}':
-  put:
-    summary: Submit a form submission for approval
-    tags:
-      - Form Submissions
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormSubmissionRead'
-    operationId: get-v2-submit-forms-submissions-UUID
 /v2/my/banners:
   patch:
     summary: Update the authenticated user's banners
