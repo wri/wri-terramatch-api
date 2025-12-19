@@ -6905,8 +6905,8 @@ definitions:
               updated_at:
                 type: string
           organisation:
-            type: object
             title: AdminOrganisationRead
+            type: object
             properties:
               uuid:
                 type: string
@@ -9026,8 +9026,8 @@ definitions:
           updated_at:
             type: string
       organisation:
-        type: object
         title: AdminOrganisationRead
+        type: object
         properties:
           uuid:
             type: string
@@ -24863,7 +24863,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -24874,8 +24873,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -24903,6 +24902,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       tags:
         - V2 Admin
         - V2 Organisations
@@ -31032,7 +31032,6 @@ paths:
                     date_added:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -31043,8 +31042,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -31072,6 +31071,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/admin/users/users-organisation-list/{UUID}':
     get:
       summary: Get a collection of users that have been approved for a specific organisation
@@ -34130,7 +34130,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -34141,8 +34140,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -34170,6 +34169,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       operationId: get-v2-funding-programme
   /v2/admin/funding-programme:
     get:
@@ -34307,7 +34307,6 @@ paths:
                     updated_at:
                       type: string
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -34318,8 +34317,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -34347,6 +34346,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
       operationId: get-v2-admin-funding-programme
     post:
       summary: Create a funding programme
@@ -37238,8 +37238,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                type: object
                 title: AdminOrganisationRead
+                type: object
                 properties:
                   uuid:
                     type: string
@@ -37849,7 +37849,6 @@ paths:
                       type: string
                       format: date-time
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -37860,8 +37859,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -37889,6 +37888,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/applications/{UUID}':
     get:
       summary: Get a specific application
@@ -38150,8 +38150,8 @@ paths:
                   updated_at:
                     type: string
               organisation:
-                type: object
                 title: AdminOrganisationRead
+                type: object
                 properties:
                   uuid:
                     type: string
@@ -41925,17 +41925,6 @@ paths:
               error:
                 type: string
                 example: Internal Server Error
-    delete:
-      summary: Delete polygon records
-      parameters:
-        - in: path
-          name: uuid
-          required: true
-          type: string
-          description: The UUID of the polygon geometry to delete
-      responses:
-        '204':
-          description: No Content
   /v2/terrafund/geojson/site:
     get:
       summary: Get collection Feature as GeoJSON for a site
@@ -42435,54 +42424,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/terrafund/project-polygons:
-    delete:
-      summary: Delete multiple polygon geometries and associated site polygons
-      parameters:
-        - in: body
-          name: body
-          description: UUIDs of the polygon geometries to be deleted
-          required: true
-          schema:
-            type: object
-            properties:
-              uuids:
-                type: array
-                items:
-                  type: string
-                  description: UUIDs of the polygon geometries to be deleted
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                description: Success message
-              deleted:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                      description: UUID of the deleted polygon geometry
-              failed:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                      description: UUID of the polygon geometry that failed to delete
-                    error:
-                      type: string
-                      description: Error message for the failed deletion
-        '400':
-          description: Bad Request
-        '500':
-          description: Internal Server Error
   /v2/dashboard/jobs-created:
     get:
       summary: view Jobs created for dashboard
@@ -44276,7 +44217,6 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -44287,8 +44227,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -44316,6 +44256,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
     post:
       summary: Create a new Impact Story
       operationId: v2-create-impact-story
@@ -44575,7 +44516,6 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -44586,8 +44526,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -44615,6 +44555,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story
