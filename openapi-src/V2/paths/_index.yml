@@ -893,38 +893,6 @@
         schema:
           type: object
     operationId: get-v2-admin-forms-submissions-uuid-export
-'/v2/admin/forms/submissions/{UUID}/status':
-  parameters:
-    - type: string
-      name: UUID
-      in: path
-      required: true
-  patch:
-    summary: Update the status of a form submission
-    operationId: patch-v2-admin-forms-submissions-UUID-status
-    tags:
-      - Forms
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormSubmissionRead'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          type: object
-          properties:
-            feedback:
-              type: string
-            status:
-              type: string
-              enum:
-                - started
-                - awaiting-approval
-                - approved
-                - requires-more-information
-                - rejected
 '/v2/forms/submissions/{UUID}/next-stage':
   post:
     operationId: post-v2-forms-submissions-UUID-next-stage
