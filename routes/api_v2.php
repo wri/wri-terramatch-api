@@ -45,7 +45,6 @@ use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
-use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
@@ -285,12 +284,6 @@ Route::prefix('my')->group(function () {
 });
 
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
-
-Route::prefix('forms')->group(function () {
-    Route::prefix('submissions')->group(function () {
-        Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
-    });
-});
 
 Route::prefix('reporting-frameworks')->group(function () {
     Route::get('/{frameworkKey}', ViewReportingFrameworkController::class);

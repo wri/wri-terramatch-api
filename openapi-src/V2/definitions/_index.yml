@@ -10,8 +10,6 @@ UserRead:
   $ref: './UserRead.yml'
 UserReadAll:
   $ref: './UserReadAll.yml'
-FormLiteRead:
-  $ref: './FormLiteRead.yml'
 ReportingFrameworkRead:
   $ref: './ReportingFrameworkRead.yml'
 ReportingFrameworkUpdate:
@@ -108,12 +106,6 @@ AuditReadAll:
   $ref: './AuditReadAll.yml'
 AuditsPaginated:
   $ref: './AuditsPaginated.yml'
-FormSubmissionRead:
-  $ref: './FormSubmissionRead.yml'
-FormSubmissionLiteRead:
-  $ref: './FormSubmissionLiteRead.yml'
-StageRead:
-  $ref: './StageRead.yml'
 NurseryPaginated:
   $ref: './NurseryPaginated.yml'
 NurseryRead:

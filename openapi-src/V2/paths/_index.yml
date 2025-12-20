@@ -893,22 +893,6 @@
         schema:
           type: object
     operationId: get-v2-admin-forms-submissions-uuid-export
-'/v2/forms/submissions/{UUID}/next-stage':
-  post:
-    operationId: post-v2-forms-submissions-UUID-next-stage
-    summary: Create the next stage form submission
-    tags:
-      - Form Submissions
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/FormSubmissionRead'
 /v2/my/banners:
   patch:
     summary: Update the authenticated user's banners
