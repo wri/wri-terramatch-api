@@ -62,13 +62,14 @@ class UpdateFormSubmissionStatusController extends Controller
 
                 break;
             case FormSubmission::STATUS_APPROVED:
+                $applicationUuid = $formSubmission->application()->first()->uuid;
                 if (empty($formSubmission->stage->nextStage)) {
                     Mail::to($formSubmission->user->email_address)->queue(
-                        new FormSubmissionFinalStageApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
+                        new FormSubmissionFinalStageApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user, $applicationUuid)
                     );
                 } else {
                     Mail::to($formSubmission->user->email_address)->queue(
-                        new FormSubmissionApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user)
+                        new FormSubmissionApproved(data_get($updateFormSubmissionStatusRequest, 'feedback', null), $user, $applicationUuid)
                     );
                 }
 
