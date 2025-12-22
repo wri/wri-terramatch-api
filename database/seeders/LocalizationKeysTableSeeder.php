@@ -22,6 +22,8 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('form-submission-approved.title', 'Your application has been approved');
         $this->createLocalizationKey('form-submission-approved.body', 'Your application has been approved.');
         $this->createLocalizationKey('form-submission-approved.body-feedback', 'Your application has been approved. Please see comments below:<br><br>');
+        $this->createLocalizationKey('form-submission-approved.cta', 'View Application');
+
 
         // form-submission-rejected
         $this->createLocalizationKey('form-submission-rejected.subject', 'Application Status Update');
@@ -61,6 +63,7 @@ class LocalizationKeysTableSeeder extends Seeder
             If you have any immediate queries, please do not hesitate to reach out to our support team.');
         $this->createLocalizationKey('form-submission-final-stage-approved.body-feedback', 'Your application has successfully passed all stages of our evaluation process and has been officially approved. Please see the comments below:<br><br> {feedback}' .
             '<br><br>If you have any immediate queries, please do not hesitate to reach out to our dedicated support team.');
+        $this->createLocalizationKey('form-submission-final-stage-approved.cta', 'View Application');
 
         // form-submission-submitted
         $this->createLocalizationKey('form-submission-submitted.subject', 'You have submitted an application');
