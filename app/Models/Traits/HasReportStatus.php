@@ -175,5 +175,46 @@ trait HasReportStatus
     {
         $form = $this->getForm();
         $this->cleanConditionalAnswers($form);
+        $this->cleanHiddenData();
+    }
+
+    private function cleanHiddenData(): void
+    {
+        $relationsToClean = [];
+
+        if (in_array(HasDemographics::class, class_uses_recursive($this))) {
+            $relationsToClean[] = 'demographics';
+        }
+        if (method_exists($this, 'treeSpecies')) {
+            $relationsToClean[] = 'treeSpecies';
+        }
+        if (method_exists($this, 'nonTreeSpecies')) {
+            $relationsToClean[] = 'nonTreeSpecies';
+        }
+        if (method_exists($this, 'replantingTreeSpecies')) {
+            $relationsToClean[] = 'replantingTreeSpecies';
+        }
+        if (method_exists($this, 'disturbances')) {
+            $relationsToClean[] = 'disturbances';
+        }
+        if (method_exists($this, 'seedings')) {
+            $relationsToClean[] = 'seedings';
+        }
+
+        foreach ($relationsToClean as $relationName) {
+            try {
+                $relation = $this->$relationName();
+                $hiddenRecords = $relation->where('hidden', true)->get();
+
+                foreach ($hiddenRecords as $record) {
+                    if (method_exists($record, 'entries')) {
+                        $record->entries()->delete();
+                    }
+                    $record->delete();
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
     }
 }

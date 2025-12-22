@@ -115,7 +115,6 @@ use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
 use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
-use App\Http\Controllers\V2\Terrafund\TerrafundClipGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
@@ -177,8 +176,6 @@ Route::prefix('media')->group(function () {
     Route::delete('', [MediaController::class, 'bulkDelete']);
     Route::delete('/{uuid}', [MediaController::class, 'delete']);
     Route::delete('/{uuid}/{collection}', [MediaController::class, 'delete']);
-    Route::patch('/{uuid}', [MediaController::class, 'updateMedia']);
-    Route::patch('project/{project}/{mediaUuid}', [MediaController::class, 'updateIsCover']);
 });
 Route::get('impact-stories', [ImpactStoryController::class, 'index'])
     ->withoutMiddleware(['auth:service-api-key,api']);
@@ -395,9 +392,6 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/upload-geojson', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFile']);
     Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
     Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
-    Route::post('/upload-geojson-validate', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFileWithValidation']);
-    Route::post('/upload-shapefile-validate', [TerrafundCreateGeometryController::class, 'uploadShapefileWithValidation']);
-    Route::post('/upload-kml-validate', [TerrafundCreateGeometryController::class, 'uploadKMLFileWithValidation']);
     Route::post('/upload-geojson-project', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFileProject']);
     Route::post('/upload-shapefile-project', [TerrafundCreateGeometryController::class, 'uploadShapefileProject']);
     Route::post('/upload-kml-project', [TerrafundCreateGeometryController::class, 'uploadKMLFileProject']);
@@ -424,18 +418,13 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'sendRunValidationPolygon']);
     Route::post('/validation/polygons', [TerrafundCreateGeometryController::class, 'runPolygonsValidation']);
     Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'runSiteValidationPolygon']);
-    Route::post('/clip-polygons/site/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygonsOfProjectBySite']);
-    Route::post('/clip-polygons/polygon/{uuid}', [TerrafundClipGeometryController::class, 'clipOverlappingPolygon']);
-    Route::post('/clip-polygons/polygons', [TerrafundClipGeometryController::class, 'clipOverlappingPolygons']);
 
     Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
     Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
     Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
-    Route::delete('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndSitePolygon']);
 
     Route::get('/project-polygon', [TerrafundEditGeometryController::class, 'getProjectPolygonData']);
     Route::delete('/project-polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndProjectPolygon']);
-    Route::delete('/project-polygons', [TerrafundEditGeometryController::class, 'deleteMultiplePolygonsAndSitePolygons']);
 
     Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
     Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);

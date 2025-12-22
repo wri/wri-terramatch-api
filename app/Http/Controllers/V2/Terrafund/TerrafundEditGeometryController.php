@@ -75,89 +75,6 @@ class TerrafundEditGeometryController extends Controller
         }
     }
 
-    public function deletePolygonAndSitePolygon(string $uuid)
-    {
-        try {
-            $polygonGeometry = PolygonGeometry::where('uuid', $uuid)->first();
-            if (! $polygonGeometry) {
-                return response()->json(['message' => 'No polygon geometry found for the given UUID.'], 404);
-            }
-
-            $sitePolygon = $polygonGeometry->sitePolygon()->first();
-            if (! $sitePolygon) {
-                return response()->json(['message' => 'No site polygon found for the given UUID.'], 404);
-            }
-            if ($sitePolygon->is_active) {
-                $sitePolygon->is_active = false;
-                $sitePolygon->save();
-            }
-            $primaryUuid = $sitePolygon->primary_uuid;
-
-            $allSitePolygons = SitePolygon::where('primary_uuid', $primaryUuid)->get();
-
-            foreach ($allSitePolygons as $sitePolygon) {
-                $relatedPolygonGeometry = $sitePolygon->polygonGeometry()->first();
-
-                if ($relatedPolygonGeometry) {
-                    $relatedPolygonGeometry->deleteWithRelated();
-                }
-            }
-
-            $project = $sitePolygon->project;
-            if ($project) {
-                $geometryHelper = new GeometryHelper();
-                $geometryHelper->updateProjectCentroid($project->uuid);
-            }
-
-            Log::info("All related polygons and site polygons deleted successfully for primary UUID: $primaryUuid");
-
-            return response()->json(['message' => 'All related polygons and site polygons deleted successfully.', 'uuid' => $primaryUuid]);
-        } catch (\Exception $e) {
-            Log::error('An error occurred at delete function: ' . $e->getMessage());
-
-            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function deleteMultiplePolygonsAndSitePolygons(Request $request)
-    {
-        try {
-            $uuids = $request->input('uuids');
-
-            if (empty($uuids)) {
-                return response()->json(['message' => 'No UUIDs provided.'], 400);
-            }
-
-            $batchSize = 10;
-            $batches = array_chunk($uuids, $batchSize);
-
-            $deletedUuids = [];
-            $failedUuids = [];
-            $affectedProjects = [];
-
-            foreach ($batches as $batch) {
-                GeometryHelper::processDeletionBatch($batch, $deletedUuids, $failedUuids, $affectedProjects);
-            }
-
-            $geometryHelper = new GeometryHelper();
-            foreach (array_unique($affectedProjects) as $projectUuid) {
-                $geometryHelper->updateProjectCentroid($projectUuid);
-            }
-
-            $response = [
-                'message' => 'Polygon geometries and associated site polygons deleted successfully.',
-                'deleted' => $deletedUuids,
-                'failed' => $failedUuids,
-            ];
-
-            return response()->json($response);
-        } catch (\Exception $e) {
-            Log::error('An error occurred at delete multiple polygons and sites: ' . $e->getMessage());
-
-            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
-        }
-    }
-
     public function deletePolygonAndProjectPolygon(string $uuid)
     {
         try {
@@ -241,6 +158,11 @@ class TerrafundEditGeometryController extends Controller
               'calc_area' => 'nullable|numeric',
               'target_sys' => 'nullable|string',
             ]);
+
+            // These are to avoid needing to modify the FE for this change to array fields on the DB table. In v3, this
+            // should require an array from the FE.
+            $validatedData['practice'] = $validatedData['practice'] == null ? null : explode(',', $validatedData['practice']);
+            $validatedData['distr'] = $validatedData['distr'] == null ? null : explode(',', $validatedData['distr']);
 
             $sitePolygon->update($validatedData);
             $sitePolygon->changeStatusOnEdit();
@@ -368,8 +290,8 @@ class TerrafundEditGeometryController extends Controller
             $sitePolygon = new SitePolygon([
                 'poly_name' => $validatedData['poly_name'],
                 'plantstart' => $validatedData['plantstart'],
-                'practice' => $validatedData['practice'],
-                'distr' => $validatedData['distr'],
+                'practice' => $validatedData['practice'] == null ? null : explode(',', $validatedData['practice']),
+                'distr' => $validatedData['distr'] == null ? null : explode(',', $validatedData['distr']),
                 'num_trees' => $validatedData['num_trees'],
                 'calc_area' => $areaHectares,
                 'target_sys' => $validatedData['target_sys'],
@@ -400,8 +322,20 @@ class TerrafundEditGeometryController extends Controller
         $diff = [];
         $keys = array_merge(['site_id'], PolygonFields::BASIC_FIELDS);
         foreach ($keys as $key) {
-            if ($newSitePolygon[$key] !== $sitePolygon[$key]) {
-                $diff[] = "$key => from $sitePolygon[$key] to {$newSitePolygon[$key]}";
+            $oldValue = $sitePolygon[$key];
+            $newValue = $newSitePolygon[$key];
+
+            if (in_array($key, ['practice', 'distr'])) {
+                $oldValueStr = is_array($oldValue) ? implode(', ', $oldValue) : ($oldValue ?? '');
+                $newValueStr = is_array($newValue) ? implode(', ', $newValue) : ($newValue ?? '');
+
+                if ($newValueStr !== $oldValueStr) {
+                    $diff[] = "$key => from $oldValueStr to $newValueStr";
+                }
+            } else {
+                if ($newValue !== $oldValue) {
+                    $diff[] = "$key => from $oldValue to $newValue";
+                }
             }
         }
 

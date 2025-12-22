@@ -49,10 +49,6 @@ class MonitoringOrganisationResource extends JsonResource
             'twitter_url' => $this->twitter_url,
 
             'fin_start_month' => $this->fin_start_month,
-            'fin_budget_3year' => $this->fin_budget_3year,
-            'fin_budget_2year' => $this->fin_budget_2year,
-            'fin_budget_1year' => $this->fin_budget_1year,
-            'fin_budget_current_year' => $this->fin_budget_current_year,
 
             'ha_restored_total' => $this->ha_restored_total,
             'ha_restored_3year' => $this->ha_restored_3year,

@@ -13,12 +13,14 @@ class SitePolygonLightResource extends JsonResource
      */
     public function toArray($request)
     {
+        // The implode lines are to avoid needing to modify the FE for this change to array fields on the DB table. In
+        // v3, this should send an array to the FE
         return [
             'id' => $this->id,
             'poly_name' => $this->poly_name,
-            'practice' => $this->practice,
+            'practice' => $this->practice == null ? null : implode(',', $this->practice),
             'target_sys' => $this->target_sys,
-            'distr' => $this->distr,
+            'distr' => $this->distr == null ? null : implode(',', $this->distr),
             'plantstart' => $this->plantstart,
             'source' => $this->source,
             'status' => $this->status,
