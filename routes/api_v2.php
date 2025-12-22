@@ -45,10 +45,6 @@ use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
-use App\Http\Controllers\V2\Forms\FormSubmissionNextStageController;
-use App\Http\Controllers\V2\Forms\SubmitFormSubmissionController;
-use App\Http\Controllers\V2\Forms\UpdateFormSubmissionController;
-use App\Http\Controllers\V2\Forms\UpdateFormSubmissionStatusController;
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
@@ -253,16 +249,8 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::resource('impact-stories', ImpactStoryController::class);
 
     Route::prefix('forms')->group(function () {
-        Route::prefix('submissions')->group(function () {
-            Route::get('/{form}/export', ExportFormSubmissionController::class);
-            Route::prefix('{formSubmission}')->group(function () {
-                Route::patch('/status', UpdateFormSubmissionStatusController::class);
-            });
-        });
-
-        Route::prefix('applications')->group(function () {
-            Route::get('/{fundingProgramme}/export', AdminExportApplicationController::class);
-        });
+        Route::get('submissions/{form}/export', ExportFormSubmissionController::class);
+        Route::get('applications/{fundingProgramme}/export', AdminExportApplicationController::class);
     });
 
     Route::prefix('project-pitches')->group(function () {
@@ -296,14 +284,6 @@ Route::prefix('my')->group(function () {
 });
 
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
-
-Route::prefix('forms')->group(function () {
-    Route::prefix('submissions')->group(function () {
-        Route::patch('/{formSubmission}', UpdateFormSubmissionController::class);
-        Route::put('/submit/{formSubmission}', SubmitFormSubmissionController::class)->middleware('i18n');
-        Route::post('/{formSubmission}/next-stage', FormSubmissionNextStageController::class);
-    });
-});
 
 Route::prefix('reporting-frameworks')->group(function () {
     Route::get('/{frameworkKey}', ViewReportingFrameworkController::class);

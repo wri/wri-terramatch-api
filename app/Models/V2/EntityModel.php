@@ -18,8 +18,6 @@ interface EntityModel extends UpdateRequestableModel, ApprovalFlow
 
     public function getFormConfig(): ?array;
 
-    public function updateFromForm(array $formValues, ?bool $isApproval): void;
-
     public function isEditable(): bool;
 
     public function getViewLinkPath(): string;
