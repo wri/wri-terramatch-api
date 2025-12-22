@@ -4,6 +4,7 @@ namespace Tests\V2\Forms;
 
 use App\Mail\FormSubmissionApproved;
 use App\Mail\FormSubmissionRejected;
+use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\Organisation;
@@ -97,12 +98,17 @@ final class UpdateFormSubmissionStatusControllerTest extends TestCase
 
         TreeSpecies::factory()->count($this->faker->numberBetween(0, 5))->create(['speciesable_type' => ProjectPitch::class, 'speciesable_id' => $pitch->id]);
 
+        $application = Application::factory()->create([
+            'organisation_uuid' => $organisation->uuid,
+        ]);
+
         $formSubmission = FormSubmission::factory()->create([
             'status' => FormSubmission::STATUS_AWAITING_APPROVAL,
             'organisation_uuid' => $organisation->uuid,
             'user_id' => $applicant->uuid,
             'form_id' => $form->uuid,
             'stage_uuid' => $form->stage_id,
+            'application_id' => $application->id,
         ]);
 
         $payload = [
