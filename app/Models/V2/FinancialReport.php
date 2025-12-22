@@ -128,8 +128,17 @@ class FinancialReport extends Model implements MediaModel, ReportModel, Auditabl
 
     public function getForm(): Form
     {
-        $form = Form::where('type', self::FINANCIAL_FORM_TYPE)
-            ->first();
+
+        if ($this->organisation->type === 'non-profit-organization') {
+            // Search for any variation of "non profit" in the title (case-insensitive, with/without hyphens)
+            // Matches: "Non Profit", "Non-Profit", "non profit", "non-profit", "Non-Profit", etc.
+            $form = Form::where('type', self::FINANCIAL_FORM_TYPE)
+                ->whereRaw('LOWER(title) LIKE ?', ['%non%profit%'])
+                ->first();
+        } else {
+            $form = Form::where('type', self::FINANCIAL_FORM_TYPE)
+                ->first();
+        }
 
         if (! $form) {
             throw new \RuntimeException('No form found for FinancialReport without a form type');
