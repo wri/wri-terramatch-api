@@ -26,6 +26,7 @@ class OrganisationPolicy extends Policy
             }
 
             $projectOrgs = $user->projects->pluck('organisation_id')->toArray();
+
             return in_array($model->id, $projectOrgs);
         }
 
