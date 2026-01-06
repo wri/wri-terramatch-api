@@ -13,7 +13,7 @@ class AdminViewApplicationController extends Controller
     {
         $this->authorize('readAll', Application::class);
 
-        $application->load('project');
+        $application->load('project:uuid,application_id');
 
         return new ApplicationResource($application);
     }
