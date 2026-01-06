@@ -2,13 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\V2\Forms\FormOptionList;
 use App\Models\V2\Forms\FormOptionListOption;
-use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Organisation;
-use App\Models\V2\Projects\Project;
-use App\Models\V2\ProjectPitch;
-use App\Models\V2\Sites\Site;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -82,27 +76,22 @@ class AlignFormOptionListOptionsCommand extends Command
         ];
 
         DB::transaction(function () use ($dryRun, &$stats) {
-            // Step 1: Identify which form_option_list keys contain the options we're updating
             $this->info('Step 1: Identifying form_option_list keys...');
             $this->identifyOptionListKeys();
 
-            // Step 2: Update form_option_list_options slugs
             $this->newLine();
             $this->info('Step 2: Updating form_option_list_options slugs...');
             $this->updateOptionSlugs($dryRun, $stats);
 
-            // Step 3: Update form_question_options slugs
             $this->newLine();
             $this->info('Step 3: Updating form_question_options slugs...');
             $this->updateFormQuestionOptions($dryRun, $stats);
 
-            // Step 4: Update entity values
             $this->newLine();
             $this->info('Step 4: Updating entity values...');
             $this->updateEntityValues($dryRun, $stats);
         }, 3);
 
-        // Summary
         $this->newLine();
         $this->info('=== Alignment Summary ===');
         $this->table(
@@ -134,7 +123,7 @@ class AlignFormOptionListOptionsCommand extends Command
         // Get all unique form_option_list keys for the options we're updating
         // Query directly from database without using relationship
         $optionIds = array_keys($this->slugMappings);
-        
+
         $options = DB::table('form_option_list_options')
             ->whereIn('id', $optionIds)
             ->select('id', 'form_option_list_id')
@@ -154,7 +143,6 @@ class AlignFormOptionListOptionsCommand extends Command
         $this->line('  Found option_list keys: ' . implode(', ', $this->optionListKeys));
         $this->newLine();
 
-        // Map option_list_key to entity columns from linked-fields.php
         $linkedFieldsConfig = config('wri.linked-fields.models', []);
 
         foreach ($linkedFieldsConfig as $modelKey => $modelConfig) {
@@ -216,6 +204,7 @@ class AlignFormOptionListOptionsCommand extends Command
                     $this->warn("  ⚠ Option ID {$optionId} not found, skipping...");
                     $stats['errors']++;
                     $progressBar->advance();
+
                     continue;
                 }
 
@@ -260,6 +249,7 @@ class AlignFormOptionListOptionsCommand extends Command
     {
         if (empty($this->optionListKeys)) {
             $this->line('  ⊙ No option_list keys identified, skipping form_question_options update');
+
             return;
         }
 
@@ -272,10 +262,11 @@ class AlignFormOptionListOptionsCommand extends Command
 
         if (empty($formQuestionIds)) {
             $this->line('  ⊙ No form_questions found with matching options_list keys');
+
             return;
         }
 
-        $this->line("  Found " . count($formQuestionIds) . " form_questions with matching options_list");
+        $this->line('  Found ' . count($formQuestionIds) . ' form_questions with matching options_list');
 
         // Step 2: Find all form_question_options for these questions
         $formQuestionOptions = DB::table('form_question_options')
@@ -284,6 +275,7 @@ class AlignFormOptionListOptionsCommand extends Command
 
         if ($formQuestionOptions->isEmpty()) {
             $this->line('  ⊙ No form_question_options found for these questions');
+
             return;
         }
 
@@ -302,6 +294,7 @@ class AlignFormOptionListOptionsCommand extends Command
                     if ($currentSlug === $mapping['old_slug']) {
                         $mappingToApply = $mapping;
                         $updated = true;
+
                         break;
                     }
                 }
@@ -309,7 +302,7 @@ class AlignFormOptionListOptionsCommand extends Command
                 if ($updated && $mappingToApply) {
                     if (! $dryRun) {
                         $updateData = ['slug' => $mappingToApply['new_slug']];
-                        
+
                         // Also update label if provided
                         if (! empty($mappingToApply['new_label'])) {
                             $updateData['label'] = $mappingToApply['new_label'];
@@ -359,7 +352,6 @@ class AlignFormOptionListOptionsCommand extends Command
         $model = new $modelClass();
         $table = $model->getTable();
 
-        // Get all records with non-null values in this column
         $records = DB::table($table)
             ->whereNotNull($column)
             ->where($column, '!=', '')
@@ -367,6 +359,7 @@ class AlignFormOptionListOptionsCommand extends Command
 
         if ($records->isEmpty()) {
             $this->line("  ⊙ No records found in {$table}.{$column}");
+
             return;
         }
 
@@ -379,18 +372,13 @@ class AlignFormOptionListOptionsCommand extends Command
                 $updated = false;
                 $newValue = null;
 
-                // Handle JSON array columns
                 if (is_string($currentValue)) {
                     $decoded = json_decode($currentValue, true);
                     if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                        // It's a JSON array
                         $newValue = $decoded;
 
-                        // Check each value in the array
-                        // Handle both simple arrays and nested structures (for strategy-area input types)
                         foreach ($newValue as $key => $value) {
                             if (is_array($value)) {
-                                // Handle nested structure (e.g., strategy-area format)
                                 foreach ($value as $nestedKey => $nestedValue) {
                                     if (is_string($nestedValue)) {
                                         foreach ($this->slugMappings as $mapping) {
@@ -403,7 +391,6 @@ class AlignFormOptionListOptionsCommand extends Command
                                     }
                                 }
                             } elseif (is_string($value)) {
-                                // Handle simple array values
                                 foreach ($this->slugMappings as $mapping) {
                                     if ($value === $mapping['old_slug']) {
                                         $newValue[$key] = $mapping['new_slug'];
@@ -418,14 +405,14 @@ class AlignFormOptionListOptionsCommand extends Command
                             $newValue = json_encode($newValue);
                         }
                     } elseif (is_string($currentValue)) {
-                        // It's a plain string (e.g., Nursery.type)
                         $newValue = $currentValue;
                         foreach ($this->slugMappings as $mapping) {
                             if ($currentValue === $mapping['old_slug']) {
                                 $newValue = $mapping['new_slug'];
                                 $updated = true;
                                 $valuesUpdated++;
-                                break; // Only one match expected for string fields
+
+                                break;
                             }
                         }
                     }
@@ -457,4 +444,3 @@ class AlignFormOptionListOptionsCommand extends Command
         }
     }
 }
-
