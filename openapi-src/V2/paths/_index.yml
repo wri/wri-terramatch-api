@@ -1843,9 +1843,6 @@
 /v2/projects/{UUID}/site-polygons/all:
   get:
     $ref: './Projects/get-v2-projects-uuid-site-polygons-all.yml'
-/v2/sites/{site}/check-approve:
-  get:
-    $ref: './Sites/get-v2-sites-uuid-check-approve.yml'
 /v2/site-polygon/status/bulk:
   put:
     $ref: './Polygons/get-v2-polygons-uuid-change-status.yml'
