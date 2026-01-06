@@ -17,6 +17,7 @@ class ApplicationResource extends JsonResource
             'current_submission_uuid' => $this->currentSubmission?->uuid,
             'funding_programme' => new FundingProgrammeResource($this->fundingProgramme),
             'organisation' => new OrganisationLiteResource($this->organisation),
+            'project_uuid' => $this->project?->uuid,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

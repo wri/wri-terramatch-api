@@ -53,6 +53,11 @@ class Application extends Model
         return $this->hasOne(FormSubmission::class, 'application_id', 'id')->latestOfMany();
     }
 
+    public function project(): HasOne
+    {
+        return $this->hasOne(\App\Models\V2\Projects\Project::class, 'application_id', 'id');
+    }
+
     public function lastUpdatedBy(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'updated_by');

@@ -13,6 +13,8 @@ class ViewApplicationController extends Controller
     {
         $this->authorize('read', $application);
 
+        $application->load('project');
+
         return new ApplicationResource($application);
     }
 }
