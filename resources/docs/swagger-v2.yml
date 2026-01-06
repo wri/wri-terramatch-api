@@ -19221,12 +19221,6 @@ definitions:
         format: date-time
       created_by:
         type: string
-  SiteCheckApproveResponse:
-    title: SiteCheckApproveResponse
-    type: object
-    properties:
-      can_approve:
-        type: boolean
   DashboardProjectViewResponse:
     type: object
     properties:
@@ -43458,29 +43452,6 @@ paths:
                   format: date-time
                 created_by:
                   type: string
-  '/v2/sites/{site}/check-approve':
-    get:
-      summary: Check if a site can be approved
-      operationId: get-v2-sites-uuid-check-approve
-      tags:
-        - V2 Sites
-      parameters:
-        - type: string
-          name: site
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                title: SiteCheckApproveResponse
-                type: object
-                properties:
-                  can_approve:
-                    type: boolean
   /v2/site-polygon/status/bulk:
     put:
       summary: update the status of the polygons
