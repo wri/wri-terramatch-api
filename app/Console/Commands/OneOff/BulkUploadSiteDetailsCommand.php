@@ -30,8 +30,11 @@ class BulkUploadSiteDetailsCommand extends Command
     protected $description = 'One-off command: Bulk upload site details (description, history, planting_pattern, stratas) from CSV file for CI Colombia';
 
     protected array $headerOrder = [];
+
     private int $processedCount = 0;
+
     private int $successCount = 0;
+
     private array $errors = [];
 
     /**
@@ -41,7 +44,7 @@ class BulkUploadSiteDetailsCommand extends Command
     {
         $this->executeAbortableScript(function () {
             $fileInput = $this->argument('file');
-            
+
             // If it's just a filename, assume it's in the imports folder
             // Otherwise, use the full path provided
             if (strpos($fileInput, '/') === false && strpos($fileInput, '\\') === false) {
@@ -49,16 +52,16 @@ class BulkUploadSiteDetailsCommand extends Command
             } else {
                 $filePath = $fileInput;
             }
-            
+
             $this->assert(file_exists($filePath), "File not found: $filePath");
             $this->assert(is_readable($filePath), "File is not readable: $filePath");
 
             $fileExtension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-            
+
             if ($fileExtension === 'csv') {
                 $this->processCsvFile($filePath);
             } else {
-                $this->abort("Unsupported file type. Use .csv file");
+                $this->abort('Unsupported file type. Use .csv file');
             }
 
             $this->displayResults();
@@ -73,12 +76,12 @@ class BulkUploadSiteDetailsCommand extends Command
         $this->info("Processing CSV file: $filePath");
 
         $fileHandle = fopen($filePath, 'r');
-        if (!$fileHandle) {
+        if (! $fileHandle) {
             $this->abort("Could not open CSV file: $filePath");
         }
 
         $headerRow = fgetcsv($fileHandle);
-        if (!$headerRow) {
+        if (! $headerRow) {
             fclose($fileHandle);
             $this->abort('CSV file is empty or has no header row');
         }
@@ -107,10 +110,14 @@ class BulkUploadSiteDetailsCommand extends Command
         }
 
         // Validate required columns exist
-        $this->assert(in_array('site_uuid', $this->headerOrder) || in_array('site_name', $this->headerOrder), 
-            'No site identifier column found. Expected: site_uuid or site_name');
-        $this->assert(in_array('project_uuid', $this->headerOrder), 
-            'No project_uuid column found');
+        $this->assert(
+            in_array('site_uuid', $this->headerOrder) || in_array('site_name', $this->headerOrder),
+            'No site identifier column found. Expected: site_uuid or site_name'
+        );
+        $this->assert(
+            in_array('project_uuid', $this->headerOrder),
+            'No project_uuid column found'
+        );
     }
 
     /**
@@ -121,8 +128,10 @@ class BulkUploadSiteDetailsCommand extends Command
         $index = array_search($columnName, $this->headerOrder);
         if ($index !== false && isset($row[$index])) {
             $value = trim($row[$index]);
-            return !empty($value) ? $value : null;
+
+            return ! empty($value) ? $value : null;
         }
+
         return null;
     }
 
@@ -153,20 +162,20 @@ class BulkUploadSiteDetailsCommand extends Command
                 }
             }
 
-            if (!empty($this->errors) && !$this->option('dry-run')) {
+            if (! empty($this->errors) && ! $this->option('dry-run')) {
                 DB::rollBack();
                 $this->error("\nImport aborted due to errors. No changes were made.");
                 exit(1);
             }
 
-            if (!$this->option('dry-run')) {
+            if (! $this->option('dry-run')) {
                 DB::commit();
             } else {
                 DB::rollBack();
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->abort("Error processing rows: " . $e->getMessage());
+            $this->abort('Error processing rows: ' . $e->getMessage());
         }
     }
 
@@ -183,7 +192,7 @@ class BulkUploadSiteDetailsCommand extends Command
 
         // Get project UUID for validation
         $projectUuid = $this->getColumnValue($row, 'project_uuid');
-        $this->assert(!empty($projectUuid), "project_uuid is required on row $rowNumber");
+        $this->assert(! empty($projectUuid), "project_uuid is required on row $rowNumber");
 
         // Find project
         $project = Project::where('uuid', $projectUuid)->first();
@@ -201,7 +210,7 @@ class BulkUploadSiteDetailsCommand extends Command
                 ->first();
         }
 
-        if (!$site) {
+        if (! $site) {
             $identifier = $siteUuid ?: $siteName;
             $this->abort("Site not found. Identifier: $identifier, Project: $projectUuid (row $rowNumber)");
         }
@@ -214,33 +223,42 @@ class BulkUploadSiteDetailsCommand extends Command
 
         if ($this->option('dry-run')) {
             $this->info("Row $rowNumber: Would update site {$site->uuid} ({$site->name})");
-            if ($description) $this->line("  - Description: " . substr($description, 0, 80) . "...");
-            if ($history) $this->line("  - History: " . substr($history, 0, 80) . "...");
-            if ($plantingPattern) $this->line("  - Planting Pattern: $plantingPattern");
-            if ($stratas) $this->line("  - Stratas: $stratas");
+            if ($description) {
+                $this->line('  - Description: ' . substr($description, 0, 80) . '...');
+            }
+            if ($history) {
+                $this->line('  - History: ' . substr($history, 0, 80) . '...');
+            }
+            if ($plantingPattern) {
+                $this->line("  - Planting Pattern: $plantingPattern");
+            }
+            if ($stratas) {
+                $this->line("  - Stratas: $stratas");
+            }
+
             return;
         }
 
         // Update site fields
         $updateData = [];
-        if (!empty($description)) {
+        if (! empty($description)) {
             $updateData['description'] = $description;
         }
-        if (!empty($history)) {
+        if (! empty($history)) {
             $updateData['history'] = $history;
         }
-        if (!empty($plantingPattern)) {
+        if (! empty($plantingPattern)) {
             $updateData['planting_pattern'] = $plantingPattern;
         }
 
-        if (!empty($updateData)) {
+        if (! empty($updateData)) {
             $site->update($updateData);
             $this->successCount++;
             $this->info("Row $rowNumber: Updated site {$site->uuid} ({$site->name})");
         }
 
         // Handle stratas
-        if (!empty($stratas)) {
+        if (! empty($stratas)) {
             $this->updateStratas($site, $stratas);
         }
     }
@@ -262,13 +280,13 @@ class BulkUploadSiteDetailsCommand extends Command
         if (json_last_error() !== JSON_ERROR_NONE) {
             $stratasArray = array_filter(
                 array_map('trim', explode(',', $stratasData)),
-                fn($item) => !empty($item)
+                fn ($item) => ! empty($item)
             );
         }
 
         // If still not an array, treat as single description
-        if (!is_array($stratasArray) || empty($stratasArray)) {
-            if (!empty($stratasData)) {
+        if (! is_array($stratasArray) || empty($stratasArray)) {
+            if (! empty($stratasData)) {
                 $stratasArray = [$stratasData];
             } else {
                 return;
@@ -282,10 +300,10 @@ class BulkUploadSiteDetailsCommand extends Command
         foreach ($stratasArray as $strataData) {
             if (is_array($strataData)) {
                 // If it's an array, expect structure like ['description' => '...', 'extent' => '...']
-                $extent = isset($strataData['extent']) 
+                $extent = isset($strataData['extent'])
                     ? (is_numeric($strataData['extent']) ? (int) $strataData['extent'] : null)
                     : null;
-                
+
                 // Validate extent is between 0-100 if provided
                 if ($extent !== null && ($extent < 0 || $extent > 100)) {
                     $extent = null;
@@ -301,7 +319,7 @@ class BulkUploadSiteDetailsCommand extends Command
             } else {
                 // If it's a string, use it as description
                 $strataString = trim((string) $strataData);
-                if (!empty($strataString)) {
+                if (! empty($strataString)) {
                     Strata::create([
                         'stratasable_type' => get_class($site),
                         'stratasable_id' => $site->id,
@@ -322,15 +340,14 @@ class BulkUploadSiteDetailsCommand extends Command
         $this->info("\n=== Import Summary ===");
         $this->info("Processed rows: {$this->processedCount}");
         $this->info("Successfully updated: {$this->successCount}");
-        
-        if (!empty($this->errors)) {
-            $this->warn("Errors: " . count($this->errors));
+
+        if (! empty($this->errors)) {
+            $this->warn('Errors: ' . count($this->errors));
             foreach ($this->errors as $error) {
                 $this->error("  - $error");
             }
         } else {
-            $this->info("No errors encountered.");
+            $this->info('No errors encountered.');
         }
     }
 }
-
