@@ -150,6 +150,26 @@ class AlignFormQuestionOptionsCommand extends Command
         // quilombola-lands -> quilombola-land
         21144 => ['old_slug' => 'quilombola-lands', 'new_slug' => 'quilombola-land', 'new_label' => 'Quilombola Land'],
         21060 => ['old_slug' => 'quilombola-lands', 'new_slug' => 'quilombola-land', 'new_label' => 'Quilombola Land'],
+
+        21192 => ['old_slug' => 'communal', 'new_slug' => 'communal-land', 'new_label' => 'Communal Land'],
+        227 => ['old_slug' => 'communal-land', 'new_slug' => 'communal-land', 'new_label' => 'Communal Land'],
+        139 => ['old_slug' => 'communal-land', 'new_slug' => 'communal-land', 'new_label' => 'Communal Land'],
+        226 => ['old_slug' => 'indigenous-land', 'new_slug' => 'indigenous-land', 'new_label' => 'Indigenous Land'],
+        138 => ['old_slug' => 'indigenous-land', 'new_slug' => 'indigenous-land', 'new_label' => 'Indigenous Land'],
+        21100 => ['old_slug' => 'indigenous-lands', 'new_slug' => 'indigenous-land', 'new_label' => 'Indigenous Land'],
+        21016 => ['old_slug' => 'indigenous-lands', 'new_slug' => 'indigenous-land', 'new_label' => 'Indigenous Land'],
+        224 => ['old_slug' => 'private-land', 'new_slug' => 'private-land', 'new_label' => 'Private Land'],
+        136 => ['old_slug' => 'private-land', 'new_slug' => 'private-land', 'new_label' => 'Private Land'],
+        1085 => ['old_slug' => 'private-land', 'new_slug' => 'private-land', 'new_label' => 'Private Land'],
+        21108 => ['old_slug' => 'private-lands', 'new_slug' => 'private-land', 'new_label' => 'Private Land'],
+        21024 => ['old_slug' => 'private-lands', 'new_slug' => 'private-land', 'new_label' => 'Private Land'],
+        225 => ['old_slug' => 'public-land', 'new_slug' => 'public-land', 'new_label' => 'Public Land'],
+        137 => ['old_slug' => 'public-land', 'new_slug' => 'public-land', 'new_label' => 'Public Land'],
+        21107 => ['old_slug' => 'undesignated-public-lands', 'new_slug' => 'public-land', 'new_label' => 'Public Land'],
+        21023 => ['old_slug' => 'undesignated-public-lands', 'new_slug' => 'public-land', 'new_label' => 'Public Land'],
+        21189 => ['old_slug' => 'public', 'new_slug' => 'public-land', 'new_label' => 'Public Land'],
+        21106 => ['old_slug' => 'quilombola-lands', 'new_slug' => 'quilombola-land', 'new_label' => 'Quilombola Land'],
+        21022 => ['old_slug' => 'quilombola-lands', 'new_slug' => 'quilombola-land', 'new_label' => 'Quilombola Land'],
     ];
 
     /**
