@@ -170,6 +170,8 @@ class AlignFormQuestionOptionsCommand extends Command
         21189 => ['old_slug' => 'public', 'new_slug' => 'public-land', 'new_label' => 'Public Land'],
         21106 => ['old_slug' => 'quilombola-lands', 'new_slug' => 'quilombola-land', 'new_label' => 'Quilombola Land'],
         21022 => ['old_slug' => 'quilombola-lands', 'new_slug' => 'quilombola-land', 'new_label' => 'Quilombola Land'],
+
+        21190 => ['old_slug' => 'private', 'new_slug' => 'private-land', 'new_label' => 'Private Land'],
     ];
 
     /**
