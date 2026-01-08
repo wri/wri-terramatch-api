@@ -11,10 +11,6 @@ class CompleteActionController extends Controller
 {
     public function __invoke(Action $action): ActionResource
     {
-        $user = Auth::user();
-        if ($user->organisation->id != $action->organisation_id) {
-            return new ActionResource($action);
-        }
         $this->authorize('read', $action);
 
         $action->update([
