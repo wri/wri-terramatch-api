@@ -142,6 +142,7 @@ class AlignSlugOptionsCommand extends Command
         ];
 
         DB::beginTransaction();
+
         try {
             // Update database fields
             $this->updateDatabaseFields($isDryRun, $stats);
@@ -346,7 +347,7 @@ class AlignSlugOptionsCommand extends Command
                 $this->line("    ✓ Removed {$duplicatesRemoved} duplicate entries from {$recordsWithDuplicates} records");
             }
         } else {
-            $this->line("    ⊙ No duplicates found");
+            $this->line('    ⊙ No duplicates found');
         }
     }
 
@@ -381,6 +382,7 @@ class AlignSlugOptionsCommand extends Command
 
             if (! $optionList) {
                 $this->line("    ⊙ Option list '{$optionListKey}' not found (may not exist in this environment), skipping...");
+
                 continue;
             }
 
@@ -405,6 +407,7 @@ class AlignSlugOptionsCommand extends Command
                         if ($conflictingOption) {
                             $this->warn("    ⚠ Cannot update '{$oldSlug}' → '{$newSlug}': slug '{$newSlug}' already exists (ID: {$conflictingOption->id})");
                             $stats['errors']++;
+
                             continue;
                         }
 
@@ -461,7 +464,8 @@ class AlignSlugOptionsCommand extends Command
             ->get();
 
         if ($typesWithUnderscores->isEmpty()) {
-            $this->line("    ⊙ No records found with snake_case type values.");
+            $this->line('    ⊙ No records found with snake_case type values.');
+
             return;
         }
 
@@ -472,7 +476,7 @@ class AlignSlugOptionsCommand extends Command
             $conversionMap[$originalType] = $kebabCaseType;
         }
 
-        $this->info("    Found " . count($conversionMap) . " distinct type values to convert:");
+        $this->info('    Found ' . count($conversionMap) . ' distinct type values to convert:');
 
         foreach ($conversionMap as $originalType => $kebabCaseType) {
             $this->line("      '{$originalType}' → '{$kebabCaseType}'");
@@ -487,6 +491,7 @@ class AlignSlugOptionsCommand extends Command
                 $totalCount += $count;
             }
             $this->line("    ⊙ Would convert {$totalCount} records");
+
             return;
         }
 
@@ -509,4 +514,3 @@ class AlignSlugOptionsCommand extends Command
         $this->line("    ✓ Total funding type records updated: {$totalUpdated}");
     }
 }
-
