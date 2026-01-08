@@ -148,7 +148,6 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringContro
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\ShowSitePolygonController;
-use App\Http\Controllers\V2\Sites\SiteCheckApproveController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
 use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
@@ -496,7 +495,6 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
-    Route::get('/check-approve', SiteCheckApproveController::class);
 });
 
 Route::prefix('geometry')->group(function () {
@@ -547,9 +545,6 @@ Route::prefix('update-requests')->group(function () {
 
 Route::prefix('terrafund')->group(function () {
     Route::post('/polygon', [TerrafundCreateGeometryController::class, 'storeGeometry']);
-    Route::post('/upload-geojson', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFile']);
-    Route::post('/upload-shapefile', [TerrafundCreateGeometryController::class, 'uploadShapefile']);
-    Route::post('/upload-kml', [TerrafundCreateGeometryController::class, 'uploadKMLFile']);
     Route::post('/upload-geojson-project', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFileProject']);
     Route::post('/upload-shapefile-project', [TerrafundCreateGeometryController::class, 'uploadShapefileProject']);
     Route::post('/upload-kml-project', [TerrafundCreateGeometryController::class, 'uploadKMLFileProject']);
