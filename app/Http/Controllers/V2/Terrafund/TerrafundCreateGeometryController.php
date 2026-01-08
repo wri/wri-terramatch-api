@@ -6,9 +6,7 @@ use App\Constants\PolygonFields;
 use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DelayedJobResource;
-use App\Jobs\InsertGeojsonToDBJob;
 use App\Jobs\RunSitePolygonsValidationJob;
-use App\Models\DelayedJob;
 use App\Models\DelayedJobProgress;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
@@ -30,12 +28,10 @@ use App\Validators\SitePolygonValidator;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
@@ -201,92 +197,6 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         return response()->json(['message' => 'KML file processed and inserted successfully', 'uuid' => $uuid], 200);
-
-    }
-
-    public function uploadKMLFile(Request $request)
-    {
-        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
-        ini_set('memory_limit', '-1');
-
-        $rules = [
-          'file' => [
-              'required',
-              'file',
-              function ($attribute, $value, $fail) {
-                  if (! $value->getClientOriginalName() || ! preg_match('/\.kml$/i', $value->getClientOriginalName())) {
-                      $fail('The file must have a .kml extension.');
-                  }
-              },
-          ],
-        ];
-
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            $errors = $this->parseValidationErrors($validator->errors());
-
-            return response()->json(['errors' => $errors], 422);
-        }
-
-        $body = $request->all();
-        $site_id = $request->input('uuid');
-        $kmlfile = $request->file('file');
-        $tempDir = sys_get_temp_dir();
-        $filename = uniqid('kml_file_') . '.' . $kmlfile->getClientOriginalExtension();
-        $kmlPath = $tempDir . DIRECTORY_SEPARATOR . $filename;
-        $kmlfile->move($tempDir, $filename);
-        $geojsonFilename = Str::replaceLast('.kml', '.geojson', $filename);
-        $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
-        $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $kmlPath]);
-        $process->run();
-        if (! $process->isSuccessful()) {
-            Log::error('Error converting KML to GeoJSON: ' . $process->getErrorOutput());
-
-            return response()->json(['error' => 'Failed to convert KML to GeoJSON', 'message' => $process->getErrorOutput()], 500);
-        }
-        $geojsonContent = file_get_contents($geojsonPath);
-        $polygonLoadedList = isset($body['polygon_loaded']) &&
-            filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-        $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) &&
-            filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-
-        if ($polygonLoadedList) {
-            $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
-
-            return response()->json($polygonLoaded->original, 200);
-        }
-
-        $user = Auth::user();
-        $entity = Site::where('uuid', $site_id)->firstOrFail();
-
-        $redis_key = 'kml_file_' . uniqid();
-        Redis::set($redis_key, $geojsonContent, 'EX', 7200);
-        $delayedJob = DelayedJob::create([
-          'created_by' => $user->id,
-          'metadata' => [
-            'entity_id' => $entity->id,
-            'entity_type' => get_class($entity),
-            'entity_name' => $entity->name,
-          ],
-          'is_acknowledged' => false,
-          'name' => 'Polygon Upload',
-        ]);
-
-        $job = new InsertGeojsonToDBJob(
-            $redis_key,
-            $delayedJob->id,
-            $site_id,
-            'site',
-            $body['primary_uuid'] ?? null,
-            $submitPolygonsLoaded
-        );
-
-        dispatch($job);
-
-        return (new DelayedJobResource($delayedJob))
-            ->additional(['message' => 'KML queued to insert']);
-
 
     }
 
@@ -456,100 +366,6 @@ class TerrafundCreateGeometryController extends Controller
         } else {
             return response()->json(['error' => 'Failed to open the ZIP file'], 400);
         }
-    }
-
-    public function uploadShapefile(Request $request)
-    {
-        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
-        ini_set('memory_limit', '-1');
-        $rules = [
-          'file' => 'required|file|mimes:zip',
-        ];
-
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            $errors = $this->parseValidationErrors($validator->errors());
-
-            return response()->json(['errors' => $errors], 422);
-        }
-
-        try {
-            $body = $request->all();
-            $site_id = $request->input('uuid');
-            $file = $request->file('file');
-            if ($file->getClientOriginalExtension() !== 'zip') {
-                return response()->json(['error' => 'Only ZIP files are allowed'], 400);
-            }
-            $tempDir = sys_get_temp_dir();
-            $directory = $tempDir . DIRECTORY_SEPARATOR . uniqid('shapefile_');
-            mkdir($directory, 0755, true);
-            $zip = new \ZipArchive();
-            if ($zip->open($file->getPathname()) === true) {
-                $zip->extractTo($directory);
-                $zip->close();
-                $shpFile = $this->findShpFile($directory);
-                if (! $shpFile) {
-                    return response()->json(['error' => 'Shapefile (.shp) not found in the ZIP file'], 400);
-                }
-                $geojsonFilename = Str::replaceLast('.shp', '.geojson', basename($shpFile));
-                $geojsonPath = $tempDir . DIRECTORY_SEPARATOR . $geojsonFilename;
-                $process = new Process(['ogr2ogr', '-f', 'GeoJSON', $geojsonPath, $shpFile]);
-                $process->run();
-                if (! $process->isSuccessful()) {
-                    Log::error('Error converting Shapefile to GeoJSON: ' . $process->getErrorOutput());
-
-                    return response()->json(['error' => 'Failed to convert Shapefile to GeoJSON', 'message' => $process->getErrorOutput()], 500);
-                }
-                $geojsonContent = file_get_contents($geojsonPath);
-                $polygonLoadedList = isset($body['polygon_loaded']) &&
-                  filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-                $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) &&
-                  filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-
-                if ($polygonLoadedList) {
-                    $polygonLoaded = $this->GetAllPolygonsLoaded($geojsonContent, $site_id);
-
-                    return response()->json($polygonLoaded->original, 200);
-                }
-                $user = Auth::user();
-                $entity = Site::where('uuid', $site_id)->firstOrFail();
-
-                $redis_key = 'shapefile_file_' . uniqid();
-                Redis::set($redis_key, $geojsonContent, 'EX', 7200);
-                $delayedJob = DelayedJob::create([
-                  'created_by' => $user->id,
-                  'metadata' => [
-                    'entity_id' => $entity->id,
-                    'entity_type' => get_class($entity),
-                    'entity_name' => $entity->name,
-                  ],
-                  'is_acknowledged' => false,
-                  'name' => 'Polygon Upload',
-                ]);
-
-                $job = new InsertGeojsonToDBJob(
-                    $redis_key,
-                    $delayedJob->id,
-                    $site_id,
-                    'site',
-                    $body['primary_uuid'] ?? null,
-                    $submitPolygonsLoaded
-                );
-
-                dispatch($job);
-
-                return (new DelayedJobResource($delayedJob))
-                    ->additional(['message' => 'Shapefile queued to insert']);
-
-
-            } else {
-                return response()->json(['error' => 'Failed to open the ZIP file'], 400);
-            }
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
     }
 
     public function checkSelfIntersection(Request $request)
@@ -779,91 +595,6 @@ class TerrafundCreateGeometryController extends Controller
         }
 
         return response()->json(['message' => 'Geojson file processed and inserted successfully', 'uuid' => $uuid], 200);
-
-    }
-
-    public function uploadGeoJSONFile(Request $request)
-    {
-        ini_set('max_execution_time', self::MAX_EXECUTION_TIME);
-        ini_set('memory_limit', '-1');
-        $rules = [
-          'file' => [
-              'required',
-              'file',
-              'mimetypes:application/json,application/geo+json,text/plain',
-              function ($attribute, $value, $fail) {
-                  $allowedExtensions = ['json', 'geojson'];
-                  $extension = strtolower($value->getClientOriginalExtension());
-
-                  if (! in_array($extension, $allowedExtensions)) {
-                      return $fail('The file must have a .json or .geojson extension.');
-                  }
-
-                  $content = file_get_contents($value->getPathname());
-                  json_decode($content, true);
-
-                  if (json_last_error() !== JSON_ERROR_NONE) {
-                      return $fail('The file must contain valid JSON data.');
-                  }
-              },
-          ],
-        ];
-        $body = $request->all();
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            $errors = $this->parseValidationErrors($validator->errors());
-
-            return response()->json(['errors' => $errors], 422);
-        }
-        $site_id = $request->input('uuid');
-        $file = $request->file('file');
-        $tempDir = sys_get_temp_dir();
-        $filename = uniqid('geojson_file_') . '.' . $file->getClientOriginalExtension();
-        $file->move($tempDir, $filename);
-        $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
-        $geojson_content = file_get_contents($filePath);
-        $polygonLoadedList = isset($body['polygon_loaded']) &&
-            filter_var($body['polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-        $submitPolygonsLoaded = isset($body['submit_polygon_loaded']) &&
-            filter_var($body['submit_polygon_loaded'], FILTER_VALIDATE_BOOLEAN);
-
-        if ($polygonLoadedList) {
-            $polygonLoaded = $this->GetAllPolygonsLoaded($geojson_content, $site_id);
-
-            return response()->json($polygonLoaded->original, 200);
-        }
-
-        $user = Auth::user();
-        $entity = Site::where('uuid', $site_id)->firstOrFail();
-
-        $redis_key = 'geojson_file_' . uniqid();
-        Redis::set($redis_key, $geojson_content, 'EX', 7200);
-        $delayedJob = DelayedJob::create([
-          'created_by' => $user->id,
-          'metadata' => [
-            'entity_id' => $entity->id,
-            'entity_type' => get_class($entity),
-            'entity_name' => $entity->name,
-          ],
-          'is_acknowledged' => false,
-          'name' => 'Polygon Upload',
-        ]);
-
-        $job = new InsertGeojsonToDBJob(
-            $redis_key,
-            $delayedJob->id,
-            $site_id,
-            'site',
-            $body['primary_uuid'] ?? null,
-            $submitPolygonsLoaded
-        );
-
-        dispatch($job);
-
-        return (new DelayedJobResource($delayedJob))
-            ->additional(['message' => 'Geojson queued to insert']);
-
 
     }
 

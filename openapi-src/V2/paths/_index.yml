@@ -1735,23 +1735,12 @@
     $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'
   put:
     $ref: './Terrafund/put-v2-terrafund-polygon-uuid.yml'
-  delete:
-    $ref: './Terrafund/delete-v2-terrafund-polygon-uuid.yml'
 /v2/terrafund/geojson/site:
   get:
     $ref: './Terrafund/get-v2-geojson-site.yml'
 /v2/terrafund/polygon:
   post:
     $ref: './Terrafund/post-v2-terrafund-polygon.yml'
-/v2/terrafund/upload-geojson:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-upload-geojson.yml'
-/v2/terrafund/upload-shapefile:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-upload-shapefile.yml'
-/v2/terrafund/upload-kml:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-upload-kml.yml'
 /v2/terrafund/upload-geojson-project:
   post:
     $ref: './Terrafund/post-v2-terrafund-upload-geojson-project.yml'
@@ -1776,9 +1765,6 @@
 /v2/terrafund/project-polygon/{uuid}/{entity_uuid}/{entity_type}:
   post:
     $ref: './Terrafund/post-v2-terrafund-project-polygon.yml'
-/v2/terrafund/project-polygons:
-  delete:
-    $ref: './Terrafund/delete-v2-terrafund-project-polygons.yml'
 /v2/dashboard/jobs-created:
   get:
     $ref: './Dashboard/get-v2-dashboard-jobs-created.yml'
@@ -1848,9 +1834,6 @@
 /v2/projects/{UUID}/site-polygons/all:
   get:
     $ref: './Projects/get-v2-projects-uuid-site-polygons-all.yml'
-/v2/sites/{site}/check-approve:
-  get:
-    $ref: './Sites/get-v2-sites-uuid-check-approve.yml'
 /v2/site-polygon/status/bulk:
   put:
     $ref: './Polygons/get-v2-polygons-uuid-change-status.yml'
