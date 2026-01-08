@@ -3,6 +3,7 @@
 namespace App\Policies\V2;
 
 use App\Models\V2\Action;
+use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
 use App\Policies\Policy;
 
@@ -19,6 +20,14 @@ class ActionPolicy extends Policy
 
     protected function isTheirs(?User $user, ?Action $action = null): bool
     {
-        return $user->organisation->id == $action->organisation_id;
+        if ($user->all_my_organisations->pluck('id')->contains($action->organisation_id)) {
+            return true;
+        }
+
+        if ($action->targetable_type == Project::class && $user->projects->pluck('id')->contains($action->targetable_id)) {
+            return true;
+        }
+
+        return false;
     }
 }
