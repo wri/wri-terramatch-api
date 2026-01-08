@@ -3,7 +3,6 @@
 namespace App\Policies\V2;
 
 use App\Models\V2\Action;
-use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
 use App\Policies\Policy;
 
@@ -24,7 +23,7 @@ class ActionPolicy extends Policy
             return true;
         }
 
-        if ($action->targetable_type == Project::class && $user->projects->pluck('id')->contains($action->targetable_id)) {
+        if (! empty($action->project_id) && $user->projects->pluck('id')->contains($action->project_id)) {
             return true;
         }
 
