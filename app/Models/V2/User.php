@@ -103,9 +103,7 @@ class User extends Authenticatable implements JWTSubject
             return self::$adminRoles;
         }
 
-        self::$adminRoles = collect(array_keys(config('wri.permissions.roles')))
-            ->filter(fn ($roleName) => Str::startsWith($roleName, 'admin'))
-            ->toArray();
+        self::$adminRoles = Role::where('name', 'LIKE', 'admin-%')->select('name')->pluck('name')->toArray();
 
         return self::$adminRoles;
     }
