@@ -6,28 +6,10 @@ TreeSpeciesReadAll:
   $ref: './TreeSpeciesReadAll.yml'
 AssociatedUserRead:
   $ref: './AssociatedUserRead.yml'
-EntityFormCreate:
-  $ref: './EntityFormCreate.yml'
-EntityFormUpdate:
-  $ref: './EntityFormUpdate.yml'
-EntityFormRead:
-  $ref: './EntityFormRead.yml'
 UserRead:
   $ref: './UserRead.yml'
 UserReadAll:
   $ref: './UserReadAll.yml'
-FundingProgramme:
-  $ref: './FundingProgramme.yml'
-LimitedFundingProgrammeRead:
-  $ref: './LimitedFundingProgrammeRead.yml'
-FundingProgrammeStatus:
-  $ref: './FundingProgrammeStatus.yml'
-FundingProgrammeCreate:
-  $ref: './FundingProgrammeCreate.yml'
-FormLiteRead:
-  $ref: './FormLiteRead.yml'
-GeojsonRead:
-  $ref: './GeojsonRead.yml'
 ReportingFrameworkRead:
   $ref: './ReportingFrameworkRead.yml'
 ReportingFrameworkUpdate:
@@ -88,14 +70,8 @@ V2FundingTypeRead:
   $ref: './V2FundingTypeRead.yml'
 V2FundingTypeUpdate:
   $ref: './V2FundingTypeUpdate.yml'
-ProjectPitchCreate:
-  $ref: './ProjectPitchCreate.yml'
-ProjectPitchUpdate:
-  $ref: './ProjectPitchUpdate.yml'
 V2SiteRead:
   $ref: './V2SiteRead.yml'
-V2SiteLiteRead:
-  $ref: './V2SiteLiteRead.yml'
 V2SiteMonitoringCreate:
   $ref: './V2SiteMonitoringCreate.yml'
 V2SiteMonitoringUpdate:
@@ -108,8 +84,6 @@ V2ProjectMonitoringUpdate:
   $ref: './V2ProjectMonitoringUpdate.yml'
 V2ProjectMonitoringRead:
   $ref: './V2ProjectMonitoringRead.yml'
-V2NurseryLiteRead:
-  $ref: './V2NurseryLiteRead.yml'
 V2StrataRead:
   $ref: './V2StrataRead.yml'
 V2StrataPaginated:
@@ -124,36 +98,14 @@ V2InvasivePaginated:
   $ref: './V2InvasivePaginated.yml'
 ProjectLiteRead:
   $ref: './ProjectLiteRead.yml'
-ProjectFullRead:
-  $ref: './ProjectFullRead.yml'
 SiteFullRead:
   $ref: './SiteFullRead.yml'
-ProjectPitchRead:
-  $ref: './ProjectPitchRead.yml'
 AuditRead:
   $ref: './AuditRead.yml'
 AuditReadAll:
   $ref: './AuditReadAll.yml'
 AuditsPaginated:
   $ref: './AuditsPaginated.yml'
-FormSubmissionRead:
-  $ref: './FormSubmissionRead.yml'
-FormSubmissionLiteRead:
-  $ref: './FormSubmissionLiteRead.yml'
-StagePaginated:
-  $ref: './StagePaginated.yml'
-StageRead:
-  $ref: './StageRead.yml'
-StageCreate:
-  $ref: './StageCreate.yml'
-FormSubmissionCreate:
-  $ref: './FormSubmissionCreate.yml'
-FormSubmissionUpdate:
-  $ref: './FormSubmissionUpdate.yml'
-ApplicationLiteRead:
-  $ref: './ApplicationLiteRead.yml'
-ApplicationRead:
-  $ref: './ApplicationRead.yml'
 NurseryPaginated:
   $ref: './NurseryPaginated.yml'
 NurseryRead:
@@ -184,10 +136,6 @@ UserCreate:
   $ref: './UserCreate.yml'
 AdminUserCreate:
   $ref: './AdminUserCreate.yml'
-UpdateRequestsPaginated:
-  $ref: './UpdateRequestsPaginated.yml'
-UpdateRequestRead:
-  $ref: './UpdateRequestRead.yml'
 UpdateRequestLiteRead:
   $ref: './UpdateRequestLiteRead.yml'
 ActionRead:

@@ -2,18 +2,14 @@
 
 namespace App\Models\V2\Stratas;
 
-use App\Http\Resources\V2\Stratas\StratasCollection;
 use App\Models\Traits\HasTypes;
 use App\Models\Traits\HasUuid;
-use App\Models\V2\EntityModel;
-use App\Models\V2\EntityRelationModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-class Strata extends Model implements EntityRelationModel
+class Strata extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -34,16 +30,6 @@ class Strata extends Model implements EntityRelationModel
         'extent',
         'hidden',
     ];
-
-    public static function createResourceCollection(EntityModel $entity): JsonResource
-    {
-        $query = Strata::query()
-            ->where('stratasable_type', get_class($entity))
-            ->where('stratasable_id', $entity->id)
-            ->visible();
-
-        return new StratasCollection($query->paginate());
-    }
 
     public function getRouteKeyName()
     {

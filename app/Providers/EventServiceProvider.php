@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Events\V2\Application\ApplicationSubmittedEvent;
-use App\Events\V2\Form\FormSubmissionApprovedEvent;
 use App\Events\V2\General\EntityDeleteEvent;
 use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Events\V2\Organisation\OrganisationApprovedEvent;
@@ -12,11 +10,8 @@ use App\Events\V2\Organisation\OrganisationSubmittedEvent;
 use App\Events\V2\Organisation\OrganisationUserJoinRequestEvent;
 use App\Events\V2\Organisation\OrganisationUserRequestApprovedEvent;
 use App\Events\V2\Organisation\OrganisationUserRequestRejectedEvent;
-use App\Listeners\v2\Application\ApplicationSubmittedConfirmationSendEmail;
 use App\Listeners\v2\Files\CatchMediaConversionCompletionListener;
 use App\Listeners\v2\Files\CatchMediaConversionStartListener;
-use App\Listeners\v2\Form\FormSubmissionNextStage;
-use App\Listeners\v2\Form\SetProjectPitchActive;
 use App\Listeners\v2\General\DeleteAction;
 use App\Listeners\v2\General\StatusChangeAction;
 use App\Listeners\v2\Organisation\OrganisationApprovedSendEmail;
@@ -54,15 +49,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        ApplicationSubmittedEvent::class => [
-            ApplicationSubmittedConfirmationSendEmail::class,
-            SetProjectPitchActive::class,
-        ],
-
         EntityStatusChangeEvent::class => [StatusChangeAction::class],
         EntityDeleteEvent::class => [DeleteAction::class],
-
-        FormSubmissionApprovedEvent::class => [FormSubmissionNextStage::class],
 
         OrganisationSubmittedEvent::class => [OrganisationSubmittedConfirmationSendEmail::class],
         OrganisationApprovedEvent::class => [OrganisationApprovedSendEmail::class],
