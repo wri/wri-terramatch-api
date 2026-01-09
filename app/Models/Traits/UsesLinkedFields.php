@@ -8,7 +8,6 @@ use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\ProjectPolygon;
 use App\StateMachines\EntityStatusStateMachine;
-use Illuminate\Support\Facades\Log;
 
 trait UsesLinkedFields
 {
@@ -420,7 +419,6 @@ trait UsesLinkedFields
                 if (in_array($child->input_type, $relationInputTypes, true)) {
                     $property = data_get($relationsConfig, "$child->linked_field_key.property");
                     if (! empty($property)) {
-                        Log::info('Cleaning conditional relation data for property: ' . $property);
                         $inputType = data_get($relationsConfig, "$child->linked_field_key.input_type");
                         $hidden = ! empty($child->parent_id) && $child->show_on_parent_condition &&
                             data_get($modelAnswers, $child->parent_id) === false;

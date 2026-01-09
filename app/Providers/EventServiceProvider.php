@@ -33,7 +33,9 @@ use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SiteReport;
 use App\Observers\Terrafund\TerrafundNurserySubmissionObserver;
 use App\Observers\Terrafund\TerrafundProgrammeSubmissionObserver;
 use App\Observers\Terrafund\TerrafundSiteSubmissionObserver;
@@ -42,6 +44,7 @@ use App\Observers\V2\FormSubmissionObserver;
 use App\Observers\V2\NurseryObserver;
 use App\Observers\V2\ProjectObserver;
 use App\Observers\V2\SiteObserver;
+use App\Observers\V2\UsesLinkedFieldsObserver;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Spatie\MediaLibrary\Conversions\Events\ConversionHasBeenCompleted;
 use Spatie\MediaLibrary\Conversions\Events\ConversionWillStart;
@@ -95,6 +98,11 @@ class EventServiceProvider extends ServiceProvider
         Nursery::observe(NurseryObserver::class);
         Site::observe(SiteObserver::class);
         Project::observe(ProjectObserver::class);
+
+        // Register UsesLinkedFieldsObserver for all entities that use UsesLinkedFields trait
+        $usesLinkedFieldsObserver = new UsesLinkedFieldsObserver();
+        ProjectReport::observe($usesLinkedFieldsObserver);
+        SiteReport::observe($usesLinkedFieldsObserver);
     }
 
     /**
