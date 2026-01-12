@@ -18784,23 +18784,6 @@ definitions:
             key:
               type: string
               description: Key of the data field
-  DashboardActiveCountriesResponse:
-    properties:
-      data:
-        type: array
-        items:
-          type: object
-          properties:
-            country_slug:
-              type: string
-            country:
-              type: string
-            number_of_projects:
-              type: integer
-            total_trees_planted:
-              type: integer
-            total_jobs_created:
-              type: integer
   DashboardProjectProfileResponse:
     type: object
     properties:
@@ -42267,44 +42250,6 @@ paths:
                       description: Key of the data field
         '404':
           description: Polygon not found
-  /v2/dashboard/active-countries:
-    get:
-      summary: Retrieve all active countries.
-      description: |
-        This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    country_slug:
-                      type: string
-                    country:
-                      type: string
-                    number_of_projects:
-                      type: integer
-                    total_trees_planted:
-                      type: integer
-                    total_jobs_created:
-                      type: integer
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   /v2/dashboard/frameworks:
     get:
       summary: Get Project Frameworks

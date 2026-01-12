@@ -250,8 +250,6 @@ DashboardRestorationStrategyResponse:
   $ref: './DashboardRestorationStrategyResponse.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
-DashboardActiveCountriesResponse:
-  $ref: './DashboardActiveCountriesResponse.yml'
 DashboardProjectProfileResponse:
   $ref: './DashboardProjectProfileResponse.yml'
 DashboardProjectProfileData:
