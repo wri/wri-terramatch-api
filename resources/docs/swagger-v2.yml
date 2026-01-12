@@ -42325,61 +42325,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/dashboard/jobs-created:
-    get:
-      summary: view Jobs created for dashboard
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: object
-                properties:
-                  totalJobsCreated:
-                    type: integer
-                  total_ft:
-                    type: integer
-                  total_pt:
-                    type: integer
-                  total_men:
-                    type: integer
-                  total_pt_men:
-                    type: integer
-                  total_ft_men:
-                    type: integer
-                  total_women:
-                    type: integer
-                  total_pt_women:
-                    type: integer
-                  total_ft_women:
-                    type: integer
-                  total_youth:
-                    type: integer
-                  total_pt_youth:
-                    type: integer
-                  total_ft_youth:
-                    type: integer
-                  total_non_youth:
-                    type: integer
-                  total_pt_non_youth:
-                    type: integer
-                  total_ft_non_youth:
-                    type: integer
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   /v2/dashboard/project-list-export:
     get:
       summary: Export CSV document of active projects

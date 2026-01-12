@@ -20,7 +20,6 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
 use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
-use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
 use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
 use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
@@ -614,7 +613,6 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
 });
 
 Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group(function () {
-    Route::get('/jobs-created', GetJobsCreatedController::class);
     Route::get('/volunteers-survival-rate', VolunteersAndAverageSurvivalRateController::class);
     Route::get('/project-list-export', ProjectListExportController::class);
     Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
