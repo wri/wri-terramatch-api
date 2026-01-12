@@ -18784,42 +18784,6 @@ definitions:
             key:
               type: string
               description: Key of the data field
-  DashboardActiveProjectsListViewResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          type: object
-          properties:
-            uuid:
-              type: string
-            name:
-              type: string
-            organisation:
-              type: string
-            trees_under_restoration:
-              type: integer
-            jobs_created:
-              type: integer
-            volunteers:
-              type: integer
-            project_country:
-              type: string
-            country_slug:
-              type: string
-            hectares_under_restoration:
-              type: integer
-            programme:
-              type: string
-      current_page:
-        type: integer
-      per_page:
-        type: integer
-      total:
-        type: integer
-      last_page:
-        type: integer
   DashboardTotalSectionHeaderResponse:
     type: object
     properties:
@@ -42351,71 +42315,6 @@ paths:
                       description: Key of the data field
         '404':
           description: Polygon not found
-  /v2/dashboard/active-projects:
-    get:
-      summary: Retrieve all active projects list view.
-      description: |
-        This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-        - in: query
-          name: per_page
-          type: string
-          description: Optional. per_page to projects.
-        - in: query
-          name: page
-          type: string
-          description: Optional. page to projects.
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    name:
-                      type: string
-                    organisation:
-                      type: string
-                    trees_under_restoration:
-                      type: integer
-                    jobs_created:
-                      type: integer
-                    volunteers:
-                      type: integer
-                    project_country:
-                      type: string
-                    country_slug:
-                      type: string
-                    hectares_under_restoration:
-                      type: integer
-                    programme:
-                      type: string
-              current_page:
-                type: integer
-              per_page:
-                type: integer
-              total:
-                type: integer
-              last_page:
-                type: integer
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   /v2/dashboard/total-section-header:
     get:
       summary: Retrieve totals and metrics for total section header

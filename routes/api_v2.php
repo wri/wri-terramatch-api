@@ -18,7 +18,6 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportControlle
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
-use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
@@ -611,7 +610,6 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
 
 Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group(function () {
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
-    Route::get('/active-projects', ActiveProjectsTableController::class);
     Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
     Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
