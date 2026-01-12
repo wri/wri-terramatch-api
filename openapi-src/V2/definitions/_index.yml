@@ -206,10 +206,6 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
   $ref: './GeometryPost.yml'
-DashboardVolunteersSurvivalRateResponse:
-  $ref: './DashboardVolunteersSurvivalRateResponse.yml'
-DashboardVolundteersSurvivalRateData:
-  $ref: './DashboardVolundteersSurvivalRateData.yml'
 AuditStatusCreateRequest:
   $ref: './AuditStatusCreateRequest.yml'
 AuditStatusResponse:
@@ -240,12 +236,6 @@ PolygonBboxResponse:
   $ref: './SitePolygonsBboxResponse.yml'
 DashboardPolygonResponse:
   $ref: './DashboardPolygonResponse.yml'
-DashboardJobsCreatedResponse:
-  $ref: './DashboardJobsCreatedResponse.yml'
-DashboardJobsCreatedData:
-  $ref: './DashboardJobsCreatedData.yml'
-DashboardRestorationStrategyResponse:
-  $ref: './DashboardRestorationStrategyResponse.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
 DashboardProjectProfileResponse:
