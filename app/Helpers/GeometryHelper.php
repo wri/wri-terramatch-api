@@ -507,19 +507,6 @@ class GeometryHelper
         ];
     }
 
-    public static function centroidOfPolygon($polyUUID)
-    {
-        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS `long`, ST_Y(ST_Centroid(geom)) AS lat')
-        ->where('uuid', $polyUUID)
-        ->first();
-
-        if (! $centroid) {
-            return [];
-        }
-
-        return [$centroid->long, $centroid->lat];
-    }
-
     public static function getCentroidsOfPolygons(array $polygonUuids)
     {
         return PolygonGeometry::whereIn('uuid', $polygonUuids)
