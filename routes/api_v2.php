@@ -19,7 +19,6 @@ use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectControll
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
 use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
-use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\DisturbanceReports\DisturbanceReportsController;
 use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
@@ -610,8 +609,6 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
 
 Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group(function () {
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
-    Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
-    Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
     Route::get('/active-countries', ActiveCountriesTableController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
     Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
