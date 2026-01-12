@@ -296,10 +296,6 @@ UpdateMediaRequest:
   $ref: './UpdateMediaRequest.yml'
 FileResource:
   $ref: './FileResource.yml'
-DashboardIndicatorHectaresRestorationResponse:
-  $ref: './DashboardIndicatorHectaresRestorationResponse.yml'
-DashboardIndicatorHectaresRestorationData:
-  $ref: './DashboardIndicatorHectaresRestorationData.yml'
 UserCreateComplete:
   $ref: './UserCreateComplete.yml'
 IndicatorPost:
