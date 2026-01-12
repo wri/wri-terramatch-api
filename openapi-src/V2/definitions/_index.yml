@@ -154,10 +154,6 @@ GeoJSON:
   $ref: './GeoJSON.yml'
 GeometryPost:
   $ref: './GeometryPost.yml'
-DashboardVolunteersSurvivalRateResponse:
-  $ref: './DashboardVolunteersSurvivalRateResponse.yml'
-DashboardVolundteersSurvivalRateData:
-  $ref: './DashboardVolundteersSurvivalRateData.yml'
 AuditStatusCreateRequest:
   $ref: './AuditStatusCreateRequest.yml'
 AuditStatusResponse:
@@ -168,8 +164,6 @@ V2TerrafundCriteriaDataMultiple:
   $ref: './V2TerrafundCriteriaDataMultiple.yml'
 V2TerrafundCriteriaSite:
   $ref: './V2TerrafundCriteriaSite.yml'
-DashboardProjectAvailableResponse:
-  $ref: './DashboardProjectAvailableResponse.yml'
 SitePolygon:
   $ref: './SitePolygon.yml'
 GeometryString:
@@ -190,22 +184,8 @@ PolygonBboxResponse:
   $ref: './SitePolygonsBboxResponse.yml'
 DashboardPolygonResponse:
   $ref: './DashboardPolygonResponse.yml'
-DashboardJobsCreatedResponse:
-  $ref: './DashboardJobsCreatedResponse.yml'
-DashboardJobsCreatedData:
-  $ref: './DashboardJobsCreatedData.yml'
-DashboardRestorationStrategyResponse:
-  $ref: './DashboardRestorationStrategyResponse.yml'
 DashboardPolygonData:
   $ref: './DashboardPolygonData.yml'
-DashboardActiveProjectsListViewResponse:
-  $ref: './DashboardActiveProjectsListViewResponse.yml'
-DashboardTotalSectionHeaderResponse:
-  $ref: './DashboardTotalSectionHeaderResponse.yml'
-DashboardTotalSectionHeaderCountryResponse:
-  $ref: './DashboardTotalSectionHeaderCountryResponse.yml'
-DashboardActiveCountriesResponse:
-  $ref: './DashboardActiveCountriesResponse.yml'
 DashboardProjectProfileResponse:
   $ref: './DashboardProjectProfileResponse.yml'
 DashboardProjectProfileData:
@@ -254,10 +234,6 @@ UpdateMediaRequest:
   $ref: './UpdateMediaRequest.yml'
 FileResource:
   $ref: './FileResource.yml'
-DashboardIndicatorHectaresRestorationResponse:
-  $ref: './DashboardIndicatorHectaresRestorationResponse.yml'
-DashboardIndicatorHectaresRestorationData:
-  $ref: './DashboardIndicatorHectaresRestorationData.yml'
 UserCreateComplete:
   $ref: './UserCreateComplete.yml'
 IndicatorPost:
@@ -272,8 +248,6 @@ V2ImpactStoryUpdate:
   $ref: './V2ImpactStoryUpdate.yml'
 V2ImpactStoryCreate:
   $ref: './V2ImpactStoryCreate.yml'
-DashboardGetPolygonCentroidResponse:
-  $ref: './DashboardGetPolygonCentroidResponse.yml'
 V2FinancialIndicatorsRead:
   $ref: './V2FinancialIndicatorsRead.yml'
 V2FinancialIndicatorsUpdate:

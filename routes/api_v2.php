@@ -11,16 +11,8 @@ use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
-use App\Http\Controllers\V2\Dashboard\ActiveCountriesTableController;
-use App\Http\Controllers\V2\Dashboard\ActiveProjectsTableController;
 use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
-use App\Http\Controllers\V2\Dashboard\GetJobsCreatedController;
-use App\Http\Controllers\V2\Dashboard\GetPolygonsController;
-use App\Http\Controllers\V2\Dashboard\ProjectListExportController;
-use App\Http\Controllers\V2\Dashboard\TotalTerrafundHeaderDashboardController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
-use App\Http\Controllers\V2\Dashboard\ViewRestorationStrategyController;
-use App\Http\Controllers\V2\Dashboard\VolunteersAndAverageSurvivalRateController;
 use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Entities\EntityTypeController;
@@ -50,7 +42,6 @@ use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
 use App\Http\Controllers\V2\Geometry\GeometryController;
 use App\Http\Controllers\V2\ImpactStory\ImpactStoryController;
-use App\Http\Controllers\V2\Indicators\GetHectaresRestoredController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
@@ -454,20 +445,9 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
 });
 
 Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group(function () {
-    Route::get('/restoration-strategy', ViewRestorationStrategyController::class);
-    Route::get('/jobs-created', GetJobsCreatedController::class);
-    Route::get('/volunteers-survival-rate', VolunteersAndAverageSurvivalRateController::class);
-    Route::get('/project-list-export', ProjectListExportController::class);
-    Route::get('/polygons/{poly_uuid}/centroid', [GetPolygonsController::class, 'getCentroidOfPolygon']);
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
-    Route::get('/active-projects', ActiveProjectsTableController::class);
-    Route::get('/total-section-header', TotalTerrafundHeaderDashboardController::class);
-    Route::get('/total-section-header/country', [TotalTerrafundHeaderDashboardController::class, 'getTotalDataForCountry']);
-    Route::get('/active-countries', ActiveCountriesTableController::class);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
-    Route::get('/view-project-list', [ViewProjectController::class, 'getAllProjectsAllowedToUser']);
     Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);
-    Route::get('/indicator/hectares-restoration', GetHectaresRestoredController::class);
 });
 
 Route::prefix('indicators')->group(function () {
