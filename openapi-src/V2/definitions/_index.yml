@@ -220,8 +220,6 @@ V2TerrafundCriteriaDataMultiple:
   $ref: './V2TerrafundCriteriaDataMultiple.yml'
 V2TerrafundCriteriaSite:
   $ref: './V2TerrafundCriteriaSite.yml'
-DashboardProjectAvailableResponse:
-  $ref: './DashboardProjectAvailableResponse.yml'
 SitePolygon:
   $ref: './SitePolygon.yml'
 GeometryString:
