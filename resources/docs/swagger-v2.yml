@@ -19916,13 +19916,6 @@ definitions:
           - published
           - archived
         example: draft
-  DashboardGetPolygonCentroidResponse:
-    type: object
-    properties:
-      centroid:
-        type: array
-        items:
-          type: number
   V2FinancialIndicatorsRead:
     title: V2FinancialIndicatorsRead
     type: array
@@ -42325,27 +42318,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  '/v2/dashboard/polygons/{poly_uuid}/centroid':
-    get:
-      summary: Retrieve the centroid of a polygon
-      description: |
-        This endpoint returns the centroid of a polygon.
-      parameters:
-        - name: poly_uuid
-          type: string
-          in: path
-          description: The uuid of the polygon
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              centroid:
-                type: array
-                items:
-                  type: number
   '/v2/dashboard/polygon-data/{uuid}':
     get:
       summary: Get Get allowed to project
