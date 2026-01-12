@@ -42456,55 +42456,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-  /v2/dashboard/volunteers-survival-rate:
-    get:
-      summary: Retrieve counts and metrics for volunteers survival rate
-      description: |
-        This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-        - in: query
-          name: uuid
-          type: string
-          description: Optional. Filter counts and metrics by UUID.
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: object
-                properties:
-                  total_volunteers:
-                    type: integer
-                    description: Total number of volunteers.
-                  men_volunteers:
-                    type: integer
-                    description: Total number of male volunteers.
-                  women_volunteers:
-                    type: integer
-                    description: Total number of female volunteers.
-                  youth_volunteers:
-                    type: integer
-                    description: Total number of youth volunteers.
-                  non_youth_volunteers:
-                    type: integer
-                    description: Total number of non-youth volunteers.
-                  number_of_sites:
-                    type: number
-                    description: number of sites.
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   /v2/dashboard/total-section-header:
     get:
       summary: Retrieve totals and metrics for total section header
