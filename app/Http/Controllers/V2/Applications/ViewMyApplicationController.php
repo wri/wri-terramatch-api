@@ -48,7 +48,9 @@ class ViewMyApplicationController extends Controller
                 AllowedFilter::exact('funding_programme_uuid'),
             ]);
 
-        $collection = $query->paginate($perPage)
+        $collection = $query
+            ->orderBy('applications.updated_at', 'desc')
+            ->paginate($perPage)
             ->appends(request()->query());
 
         return new ApplicationsCollection($collection);
