@@ -152,7 +152,6 @@ use App\Http\Controllers\V2\Stages\UpdateStageController;
 use App\Http\Controllers\V2\Stages\UpdateStageStatusController;
 use App\Http\Controllers\V2\Stages\ViewStageController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
-use App\Http\Controllers\V2\Terrafund\TerrafundEditGeometryController;
 use App\Http\Controllers\V2\UpdateRequests\AdminIndexUpdateRequestsController;
 use App\Http\Controllers\V2\UpdateRequests\AdminSoftDeleteUpdateRequestController;
 use App\Http\Controllers\V2\UpdateRequests\AdminStatusUpdateRequestController;
@@ -535,48 +534,8 @@ Route::prefix('update-requests')->group(function () {
 });
 
 Route::prefix('terrafund')->group(function () {
-    Route::post('/polygon', [TerrafundCreateGeometryController::class, 'storeGeometry']);
-    Route::post('/upload-geojson-project', [TerrafundCreateGeometryController::class, 'uploadGeoJSONFileProject']);
-    Route::post('/upload-shapefile-project', [TerrafundCreateGeometryController::class, 'uploadShapefileProject']);
-    Route::post('/upload-kml-project', [TerrafundCreateGeometryController::class, 'uploadKMLFileProject']);
-
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
-    Route::get('/geojson/complete', [TerrafundCreateGeometryController::class, 'getPolygonAsGeoJSONDownload']);
-    Route::get('/geojson/site', [TerrafundCreateGeometryController::class, 'getAllPolygonsAsGeoJSONDownload']);
-    Route::get('/geojson/all-active', [TerrafundCreateGeometryController::class, 'downloadGeojsonAllActivePolygons']);
-    Route::get('/geojson/all-by-framework', [TerrafundCreateGeometryController::class, 'downloadAllActivePolygonsByFramework']);
-    Route::get('/geojson/all-by-landscape', [TerrafundCreateGeometryController::class, 'downloadAllPolygonsByLandscape']);
-
-    Route::get('/validation/self-intersection', [TerrafundCreateGeometryController::class, 'checkSelfIntersection']);
-    Route::get('/validation/size-limit', [TerrafundCreateGeometryController::class, 'validatePolygonSize']);
-    Route::get('/validation/spike', [TerrafundCreateGeometryController::class, 'checkBoundarySegments']);
-    Route::get('/validation/within-country', [TerrafundCreateGeometryController::class, 'checkWithinCountry']);
-    Route::get('/validation/geometry-type', [TerrafundCreateGeometryController::class, 'getGeometryType']);
-    Route::get('/country-names', [TerrafundCreateGeometryController::class, 'getAllCountryNames']);
-    Route::post('/validation/criteria-data', [TerrafundCreateGeometryController::class, 'getCriteriaDataForMultiple']);
-    Route::get('/validation/overlapping', [TerrafundCreateGeometryController::class, 'validateOverlapping']);
-    Route::get('/validation/estimated-area', [TerrafundCreateGeometryController::class, 'validateEstimatedArea']);
-    Route::get('/validation/estimated-area-project', [TerrafundCreateGeometryController::class, 'validateEstimatedAreaProject']);
-    Route::get('/validation/estimated-area-site', [TerrafundCreateGeometryController::class, 'validateEstimatedAreaSite']);
-    Route::get('/validation/table-data', [TerrafundCreateGeometryController::class, 'validateDataInDB']);
     Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'sendRunValidationPolygon']);
-    Route::post('/validation/polygons', [TerrafundCreateGeometryController::class, 'runPolygonsValidation']);
-    Route::post('/validation/sitePolygons', [TerrafundCreateGeometryController::class, 'runSiteValidationPolygon']);
-
-    Route::get('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'getSitePolygonData']);
-    Route::get('/polygon/geojson/{uuid}', [TerrafundEditGeometryController::class, 'getPolygonGeojson']);
-    Route::put('/polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateGeometry']);
-
-    Route::get('/project-polygon', [TerrafundEditGeometryController::class, 'getProjectPolygonData']);
-    Route::delete('/project-polygon/{uuid}', [TerrafundEditGeometryController::class, 'deletePolygonAndProjectPolygon']);
-
-    Route::put('/site-polygon/{uuid}', [TerrafundEditGeometryController::class, 'updateSitePolygon']);
-    Route::post('/site-polygon/{uuid}/{siteUuid}', [TerrafundEditGeometryController::class, 'createSitePolygon']);
-
-    Route::post('/new-site-polygon/{uuid}/new-version', [TerrafundEditGeometryController::class, 'createSitePolygonNewVersion']);
-
-    Route::post('/project-polygon/{uuid}/{entity_uuid}/{entity_type}', [TerrafundEditGeometryController::class, 'createProjectPolygon']);
-
 });
 
 Route::get('/funding-programme', [FundingProgrammeController::class, 'index'])->middleware('i18n');
