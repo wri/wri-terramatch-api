@@ -33,21 +33,18 @@ class IndexMyActionsControllerTest extends TestCase
             'project_id' => $project->id,
         ]);
 
-        $response = $this->actingAs($user)
+        $this->actingAs($user)
             ->getJson('/api/v2/my/actions')
-            ->assertStatus(201)
-            ->assertJsonStructure([
-                'data' => [
-                    'message',
-                    'job_uuid',
-                ],
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'uuid' => $projectAction->uuid,
+            ])
+            ->assertJsonFragment([
+                'uuid' => $siteReportAction->uuid,
+            ])
+            ->assertJsonMissing([
+                'uuid' => $completedAction->uuid,
             ]);
-
-        $responseData = $response->json('data');
-        $this->assertNotNull($responseData['job_uuid']);
-        $this->assertDatabaseHas('delayed_jobs', [
-            'uuid' => $responseData['job_uuid'],
-        ]);
     }
 
     public function test_users_should_not_view_actions_outside_projects_scope()
@@ -72,21 +69,18 @@ class IndexMyActionsControllerTest extends TestCase
             'project_id' => $externalProject->id,
         ]);
 
-        $response = $this->actingAs($user)
+        $this->actingAs($user)
             ->getJson('/api/v2/my/actions')
-            ->assertStatus(201)
-            ->assertJsonStructure([
-                'data' => [
-                    'message',
-                    'job_uuid',
-                ],
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'uuid' => $nurseryAction->uuid,
+            ])
+            ->assertJsonMissing([
+                'uuid' => $projectAction->uuid,
+            ])
+            ->assertJsonMissing([
+                'uuid' => $siteReportAction->uuid,
             ]);
-
-        $responseData = $response->json('data');
-        $this->assertNotNull($responseData['job_uuid']);
-        $this->assertDatabaseHas('delayed_jobs', [
-            'uuid' => $responseData['job_uuid'],
-        ]);
     }
 
     public function test_users_can_view_their_financial_report_actions()
@@ -101,21 +95,11 @@ class IndexMyActionsControllerTest extends TestCase
             'targetable_type' => FinancialReport::class,
             'targetable_id' => $financialReport->id,
         ]);
-
-        $response = $this->actingAs($user)
+        $this->actingAs($user)
             ->getJson('/api/v2/my/actions')
-            ->assertStatus(201)
-            ->assertJsonStructure([
-                'data' => [
-                    'message',
-                    'job_uuid',
-                ],
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'uuid' => $financialAction->uuid,
             ]);
-
-        $responseData = $response->json('data');
-        $this->assertNotNull($responseData['job_uuid']);
-        $this->assertDatabaseHas('delayed_jobs', [
-            'uuid' => $responseData['job_uuid'],
-        ]);
     }
 }
