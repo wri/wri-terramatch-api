@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Log;
 
 class TerrafundCreateGeometryController extends Controller
 {
-
     public function processGeometry(string $uuid)
     {
         $geometry = PolygonGeometry::isUuid($uuid)->first();
@@ -25,10 +24,6 @@ class TerrafundCreateGeometryController extends Controller
             return response()->json(['error' => 'Geometry not found'], 404);
         }
     }
-
-
-
-
 
     public function getCriteriaData(Request $request)
     {
@@ -47,9 +42,6 @@ class TerrafundCreateGeometryController extends Controller
 
         return response()->json(['polygon_id' => $uuid, 'criteria_list' => $criteriaList]);
     }
-
-
-
 
     private function handlePolygonValidation($polygonUuid, $response, $criteriaId): JsonResponse
     {
@@ -91,7 +83,6 @@ class TerrafundCreateGeometryController extends Controller
 
         return $criteriaData;
     }
-
 
     public function validatePlantStartDate(Request $request)
     {
