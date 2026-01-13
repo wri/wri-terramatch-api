@@ -3,31 +3,60 @@
 namespace App\Http\Controllers\V2\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\DelayedJobResource;
-use App\Jobs\RunIndexMyActionsJob;
-use App\Models\DelayedJob;
+use App\Http\Resources\V2\User\ActionResource;
+use App\Models\V2\Action;
+use App\Models\V2\Nurseries\Nursery;
+use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Projects\Project;
+use App\Models\V2\Projects\ProjectReport;
+use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SiteReport;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
 class IndexMyActionsController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): AnonymousResourceCollection
     {
-        try {
-            $user = Auth::user();
+        $user = Auth::user();
 
-            $delayedJob = DelayedJob::create();
-            $job = new RunIndexMyActionsJob(
-                $delayedJob->id,
-                $user
-            );
-            dispatch($job);
+        $projectIds = $user->projects()->pluck('v2_projects.id')->toArray();
 
-            return (new DelayedJobResource($delayedJob))->additional(['message' => 'My actions are being processed']);
-        } catch (\Exception $e) {
-            Log::error('Error during my actions : ' . $e->getMessage());
+        $statuses = ['needs-more-information', 'due'];
 
-            return response()->json(['error' => 'An error occurred during my actions'], 500);
-        }
+        $reportActions = Action::query()
+            ->with('targetable')
+            ->pending()
+            ->whereHasMorph('targetable', [
+                ProjectReport::class,
+                SiteReport::class,
+                NurseryReport::class,
+            ], function ($query) use ($statuses) {
+                $query->whereIn('status', $statuses);
+            })
+            ->orderBy('updated_at', 'desc')
+            ->take(5)
+            ->projectIds($projectIds)
+            ->get();
+
+        $entityActions = Action::query()
+            ->with('targetable')
+            ->pending()
+            ->whereHasMorph('targetable', [
+                Project::class,
+                Site::class,
+                Nursery::class,
+            ], function ($query) use ($statuses) {
+                $query->whereIn('status', $statuses);
+            })
+            ->orderBy('updated_at', 'desc')
+            ->take(5)
+            ->projectIds($projectIds)
+            ->get();
+
+        $actions = $reportActions->merge($entityActions);
+
+        return ActionResource::collection($actions);
     }
 }
