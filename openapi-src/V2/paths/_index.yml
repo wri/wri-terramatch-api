@@ -1727,30 +1727,53 @@
 /v2/dashboard/polygons/{poly_uuid}/centroid:
   get:
     $ref: './Dashboard/get-v2-dashboard-polygons-poly_uuid-centroid.yml'
+/v2/terrafund/site-polygon/{uuid}/{siteUuid}:
+  post:
+    $ref: './Terrafund/post-v2-site-polygon-data.yml'
+/v2/terrafund/geojson/complete:
+  get:
+    $ref: './Terrafund/get-v2-geojson-complete-download.yml'
+/v2/terrafund/polygon/{uuid}:
+  get:
+    $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'
+  put:
+    $ref: './Terrafund/put-v2-terrafund-polygon-uuid.yml'
+/v2/terrafund/geojson/site:
+  get:
+    $ref: './Terrafund/get-v2-geojson-site.yml'
+/v2/terrafund/polygon:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-polygon.yml'
+/v2/terrafund/upload-geojson-project:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-geojson-project.yml'
+/v2/terrafund/upload-shapefile-project:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-shapefile-project.yml'
+/v2/terrafund/upload-kml-project:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-upload-kml-project.yml'
+/v2/terrafund/site-polygon/{uuid}:
+  put:
+    $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
+/v2/terrafund/new-site-polygon/{uuid}/new-version:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-site-polygon-uuid-version.yml'
+/v2/terrafund/project-polygon:
+  get:
+    $ref: './Terrafund/get-v2-terrafund-project-polygon.yml'
+/v2/terrafund/project-polygon/{uuid}:
+  delete:
+    $ref: './Terrafund/delete-v2-terrafund-project-polygon-uuid.yml'
+/v2/terrafund/project-polygon/{uuid}/{entity_uuid}/{entity_type}:
+  post:
+    $ref: './Terrafund/post-v2-terrafund-project-polygon.yml'
 /v2/dashboard/polygon-data/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-polygon-data-uuid.yml'
-/v2/dashboard/active-projects:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-active-projects.yml'
-/v2/dashboard/volunteers-survival-rate:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-volunteers-survival-rate.yml'
-/v2/dashboard/total-section-header:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-total-section-header.yml'
-/v2/dashboard/total-section-header/country:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-total-section-header-country.yml'
-/v2/dashboard/active-countries:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-active-countries.yml'
 /v2/dashboard/frameworks:
   get:
     $ref: './Dashboard/get-v2-dashboard-frameworks.yml'
-/v2/dashboard/indicator/hectares-restoration:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-indicator-hectares-restoration.yml'
 /v2/project-pipeline:
   get:
     $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
@@ -1769,6 +1792,9 @@
 /v2/dashboard/view-project-list:
   get:
     $ref: './Dashboard/get-v2-dashboard-view-project-list.yml'
+/v2/terrafund/polygon/geojson/{uuid}:
+  get:
+    $ref: './Terrafund/get-v2-terrafund-polygon-geojson-uuid.yml'
 /v2/type-entity:
   get:
     $ref: './Entity/get-v2-type-entity.yml'
