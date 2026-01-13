@@ -41148,22 +41148,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-<<<<<<< HEAD
-  /v2/dashboard/jobs-created:
-    get:
-      summary: view Jobs created for dashboard
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-      responses:
-        '200':
-=======
   '/v2/terrafund/site-polygon/{uuid}/{siteUuid}':
     post:
       summary: Create site polygon
@@ -41208,46 +41192,10 @@ paths:
                 type: string
       responses:
         '201':
->>>>>>> staging
           description: Successful response
           schema:
             type: object
             properties:
-<<<<<<< HEAD
-              data:
-                type: object
-                properties:
-                  totalJobsCreated:
-                    type: integer
-                  total_ft:
-                    type: integer
-                  total_pt:
-                    type: integer
-                  total_men:
-                    type: integer
-                  total_pt_men:
-                    type: integer
-                  total_ft_men:
-                    type: integer
-                  total_women:
-                    type: integer
-                  total_pt_women:
-                    type: integer
-                  total_ft_women:
-                    type: integer
-                  total_youth:
-                    type: integer
-                  total_pt_youth:
-                    type: integer
-                  total_ft_youth:
-                    type: integer
-                  total_non_youth:
-                    type: integer
-                  total_pt_non_youth:
-                    type: integer
-                  total_ft_non_youth:
-                    type: integer
-=======
               message:
                 type: string
                 example: Site polygon created successfully
@@ -41258,25 +41206,10 @@ paths:
                 type: number
                 format: double
                 description: Calculated area in hectares
->>>>>>> staging
         '400':
           description: Bad request
         '500':
           description: Internal server error
-<<<<<<< HEAD
-  /v2/dashboard/restoration-strategy:
-    get:
-      summary: View Restoration Strategy for dashboard
-      parameters:
-        - name: search
-          type: string
-          in: query
-          description: search term to use on the collection
-        - name: filter
-          type: string
-          in: query
-          description: 'multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3'
-=======
   /v2/terrafund/geojson/complete:
     get:
       summary: Get Polygon as GeoJSON
@@ -41338,60 +41271,12 @@ paths:
           type: string
           required: true
           description: The UUID of the site polygon.
->>>>>>> staging
       responses:
         '200':
           description: Successful response
           schema:
             type: object
             properties:
-<<<<<<< HEAD
-              restorationStrategies:
-                type: object
-                properties:
-                  direct-seeding:
-                    type: integer
-                  tree-planting:
-                    type: integer
-                  assisted-natural-regeneration:
-                    type: integer
-              landUseTypes:
-                type: object
-                properties:
-                  agroforest:
-                    type: integer
-                  open-natural-ecosystem:
-                    type: integer
-                  mangrove:
-                    type: integer
-                  natural-forest:
-                    type: integer
-                  peatland:
-                    type: integer
-                  riparian-area-or-wetland:
-                    type: integer
-                  silvopasture:
-                    type: integer
-                  urban-forest:
-                    type: integer
-                  woodlot-or-plantation:
-                    type: integer
-              landTenures:
-                type: object
-                properties:
-                  communal:
-                    type: integer
-                  indigenous:
-                    type: integer
-                  national_protected_area:
-                    type: integer
-                  other:
-                    type: integer
-                  private:
-                    type: integer
-                  public:
-                    type: integer
-=======
               site_polygon:
                 type: object
                 properties:
@@ -41528,36 +41413,10 @@ paths:
             properties:
               type:
                 type: string
->>>>>>> staging
         '400':
           description: Bad request
         '500':
           description: Internal server error
-<<<<<<< HEAD
-  /v2/dashboard/project-list-export:
-    get:
-      summary: Export CSV document of active projects
-      tags:
-        - Export
-      produces:
-        - text/plain
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: file
-  '/v2/dashboard/polygons/{poly_uuid}/centroid':
-    get:
-      summary: Retrieve the centroid of a polygon
-      description: |
-        This endpoint returns the centroid of a polygon.
-      parameters:
-        - name: poly_uuid
-          type: string
-          in: path
-          description: The uuid of the polygon
-          required: true
-=======
   /v2/terrafund/polygon:
     post:
       summary: Create a new polygon
@@ -41844,19 +41703,12 @@ paths:
           type: string
           required: true
           description: The entity type of the project polygon.
->>>>>>> staging
       responses:
         '200':
           description: Successful response
           schema:
             type: object
             properties:
-<<<<<<< HEAD
-              centroid:
-                type: array
-                items:
-                  type: number
-=======
               project_polygon:
                 type: object
                 properties:
@@ -41950,7 +41802,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
->>>>>>> staging
   '/v2/dashboard/polygon-data/{uuid}':
     get:
       summary: Get Get allowed to project
@@ -42266,20 +42117,6 @@ paths:
                     type: boolean
         '404':
           description: Polygon not found
-<<<<<<< HEAD
-  /v2/dashboard/view-project-list:
-    get:
-      summary: Get allowed to project
-      tags:
-        - Get allowed to project
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: array
-        '404':
-          description: Polygon not found
-=======
   '/v2/terrafund/polygon/geojson/{uuid}':
     get:
       summary: Retrieve polygon GeoJSON by UUID
@@ -42308,7 +42145,6 @@ paths:
               message:
                 type: string
                 description: Error message indicating that no polygon geometry was found for the provided UUID.
->>>>>>> staging
   /v2/type-entity:
     get:
       summary: Get Entity Type
