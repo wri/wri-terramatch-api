@@ -4,13 +4,13 @@ namespace Tests\V2\User;
 
 use App\Models\V2\Action;
 use App\Models\V2\FinancialReport;
+use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\V2\Nurseries\Nursery;
 
 class IndexMyActionsControllerTest extends TestCase
 {
@@ -32,13 +32,13 @@ class IndexMyActionsControllerTest extends TestCase
             'targetable_type' => Project::class,
             'targetable_id' => $projectForAction->id,
         ]);
-        
+
         $siteReportAction = Action::factory()->siteReport()->create([
             'organisation_id' => $user->organisation->id,
             'project_id' => $project->id,
         ]);
         // SiteReport tiene status 'due' por defecto, que está en el filtro
-        
+
         $completedActionProject = Project::factory()->create([
             'status' => EntityStatusStateMachine::NEEDS_MORE_INFORMATION,
         ]);
