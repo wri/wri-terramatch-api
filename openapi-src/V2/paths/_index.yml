@@ -1010,15 +1010,6 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
-'/v2/terrafund/validation/polygon':
-  post:
-    $ref: './Terrafund/get-v2-terrafund-validation-polygon.yml'
-'/v2/terrafund/validation/criteria-data':
-  post:
-    $ref: './Terrafund/post-v2-terrafund-validation-criteria-data.yml'
-'/v2/terrafund/validation/sitePolygons':
-  post:
-    $ref: './Terrafund/get-v2-terrafund-validation-sitepolygons.yml'
 /v2/geometry/validate:
   post:
     $ref: './Geometry/post-v2-geometry-validate.yml'
@@ -1133,9 +1124,6 @@
 /v2/site-polygon/{uuid}/make-active:
   put:
     $ref: './Polygons/put-v2-site-polygon-uuid-make-active.yml'
-/v2/terrafund/validation/polygons:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-validation-polygons.yml'
 /v2/indicators/{entity}/{uuid}/{slug}:
   get:
     $ref: './MonitoredData/get-v2-indicators-polygon-indicator-analysis.yml'
