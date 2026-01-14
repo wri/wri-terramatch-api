@@ -591,7 +591,6 @@ Route::prefix('project-pipeline')->group(function () {
 Route::prefix('site-polygon')->group(function () {
     Route::put('/status/bulk', ChangeStatusPolygonsController::class);
     Route::get('/{uuid}', ShowSitePolygonController::class);
-    Route::get('/{uuid}/versions', IndexSitePolygonVersionsController::class);
     Route::post('/{uuid}/new-version', StoreSitePolygonNewVersionController::class);
     Route::put('/{uuid}/make-active', UpdateSitePolygonActiveController::class);
 });
