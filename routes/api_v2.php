@@ -120,8 +120,6 @@ use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
-use App\Http\Controllers\V2\Projects\ViewProjectNurseriesController;
-use App\Http\Controllers\V2\Projects\ViewProjectSitesController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminCreateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminDeleteReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminIndexReportingFrameworkController;
@@ -442,13 +440,11 @@ Route::prefix('srp-reports')->group(function () {
 
 Route::resource('srp-reports', SrpReportsController::class)->except('create');
 
-Route::prefix('projects')->group(function () {
-    Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
-    Route::get('/{project}/sites', ViewProjectSitesController::class);
-    Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
-    Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
-    Route::get('/{project}/nurseries', ViewProjectNurseriesController::class);
-    Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
+    Route::prefix('projects')->group(function () {
+        Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
+        Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
+        Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
+        Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
     Route::get('/{project}/reports', ProjectReportsViaProjectController::class);
     Route::get('/{project}/image/locations', ProjectImageLocationsController::class);
 

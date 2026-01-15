@@ -861,12 +861,6 @@
           $ref: '../definitions/_index.yml#/V2OwnershipStakeRead'
     tags:
       - V2 Ownership Stake
-/v2/projects/{UUID}/sites:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-sites.yml'
-/v2/projects/{UUID}/nurseries:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-nurseries.yml'
 /v2/{ENTITY}/{UUID}:
   get:
     summary: View a specific entity as raw data
