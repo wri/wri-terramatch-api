@@ -1575,24 +1575,6 @@
 /v2/users/resend:
   post:
     $ref: './Auth/post-v2-users-resend.yml'
-/v2/sites/{UUID}:
-  get:
-    $ref: './Sites/get-v2-sites-uuid.yml'
-/v2/sites/{UUID}/polygons:
-  get:
-    $ref: './Sites/get-v2-admin-sites-uuid-polygons.yml'
-/v2/sites/{UUID}/polygons/count:
-  get:
-    $ref: './Sites/get-v2-admin-sites-uuid-polygons-count.yml'
-/v2/site-monitorings/{UUID}:
-  get:
-    $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
-/v2/sites/{UUID}/monitorings:
-  get:
-    $ref: './Sites/get-v2-sites-uuid-monitorings.yml'
-/v2/projects/{UUID}/monitorings:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-monitorings.yml'
 /v2/projects/{UUID}/invite:
   post:
     $ref: './Projects/post-v2-projects-uuid-invite.yml'

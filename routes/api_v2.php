@@ -118,7 +118,6 @@ use App\Http\Controllers\V2\Projects\Monitoring\AdminSoftDeleteProjectMonitoring
 use App\Http\Controllers\V2\Projects\Monitoring\AdminUpdateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
-use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminCreateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\AdminDeleteReportingFrameworkController;
@@ -133,12 +132,10 @@ use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
-use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\ShowSitePolygonController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
 use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
-use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
 use App\Http\Controllers\V2\SrpReports\SrpReportsController;
 use App\Http\Controllers\V2\Stages\DeleteStageController;
@@ -444,7 +441,6 @@ Route::resource('srp-reports', SrpReportsController::class)->except('create');
         Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
         Route::get('/{project}/site-polygons', ViewSitesPolygonsForProjectController::class);
         Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
-        Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
     Route::get('/{project}/reports', ProjectReportsViaProjectController::class);
     Route::get('/{project}/image/locations', ProjectImageLocationsController::class);
 
@@ -474,7 +470,6 @@ Route::prefix('project-reports')->group(function () {
 
 Route::prefix('sites/{site}')->group(function () {
     Route::get('/reports', SiteReportsViaSiteController::class);
-    Route::get('/monitorings', ViewASitesMonitoringsController::class);
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
     Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
@@ -489,10 +484,6 @@ Route::prefix('geometry')->group(function () {
         return CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($polygon, $request);
     });
 
-});
-
-Route::prefix('site-monitorings')->group(function () {
-    Route::get('/{siteMonitoring}', ViewSiteMonitoringController::class);
 });
 
 Route::prefix('site-reports')->group(function () {
