@@ -94,7 +94,6 @@ use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkCon
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
-use App\Http\Controllers\V2\Sites\IndexSitePolygonVersionsController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
@@ -430,7 +429,6 @@ Route::prefix('project-pipeline')->group(function () {
 Route::prefix('site-polygon')->group(function () {
     Route::put('/status/bulk', ChangeStatusPolygonsController::class);
     Route::get('/{uuid}', ShowSitePolygonController::class);
-    Route::get('/{uuid}/versions', IndexSitePolygonVersionsController::class);
     Route::post('/{uuid}/new-version', StoreSitePolygonNewVersionController::class);
     Route::put('/{uuid}/make-active', UpdateSitePolygonActiveController::class);
 });
