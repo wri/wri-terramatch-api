@@ -130,7 +130,6 @@ use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Reports\NothingToReportReportController;
 use App\Http\Controllers\V2\SiteReports\SiteReportsViaSiteController;
-use App\Http\Controllers\V2\Sites\AdminIndexSitesController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
 use App\Http\Controllers\V2\Sites\CreateSiteWithFormController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
@@ -262,7 +261,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::prefix('sites')->group(function () {
-        Route::get('/', AdminIndexSitesController::class);
         Route::get('/multi', AdminSitesMultiController::class);
     });
 
