@@ -1638,14 +1638,6 @@
 /v2/terrafund/geojson/complete:
   get:
     $ref: './Terrafund/get-v2-geojson-complete-download.yml'
-/v2/terrafund/polygon/{uuid}:
-  get:
-    $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'
-  put:
-    $ref: './Terrafund/put-v2-terrafund-polygon-uuid.yml'
-/v2/terrafund/geojson/site:
-  get:
-    $ref: './Terrafund/get-v2-geojson-site.yml'
 /v2/terrafund/polygon:
   post:
     $ref: './Terrafund/post-v2-terrafund-polygon.yml'
