@@ -1,7 +1,0 @@
-title: FormSubmissionUpdate
-type: object
-properties:
-  status:
-    type: string
-  answers:
-    type: object
