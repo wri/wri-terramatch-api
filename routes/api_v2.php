@@ -98,10 +98,7 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
-use App\Http\Controllers\V2\Sites\ShowSitePolygonController;
 use App\Http\Controllers\V2\Sites\SitePolygonDataController;
-use App\Http\Controllers\V2\Sites\StoreSitePolygonNewVersionController;
-use App\Http\Controllers\V2\Sites\UpdateSitePolygonActiveController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
@@ -428,9 +425,6 @@ Route::prefix('project-pipeline')->group(function () {
 
 Route::prefix('site-polygon')->group(function () {
     Route::put('/status/bulk', ChangeStatusPolygonsController::class);
-    Route::get('/{uuid}', ShowSitePolygonController::class);
-    Route::post('/{uuid}/new-version', StoreSitePolygonNewVersionController::class);
-    Route::put('/{uuid}/make-active', UpdateSitePolygonActiveController::class);
 });
 
 Route::get('/type-entity', EntityTypeController::class);
