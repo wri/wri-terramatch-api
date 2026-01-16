@@ -422,8 +422,4 @@ Route::prefix('project-pipeline')->group(function () {
     Route::delete('/{id}', DeleteProjectPipelineController::class);
 });
 
-Route::prefix('site-polygon')->group(function () {
-
-});
-
 Route::get('/type-entity', EntityTypeController::class);
