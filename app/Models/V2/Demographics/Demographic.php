@@ -2,14 +2,12 @@
 
 namespace App\Models\V2\Demographics;
 
-use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 /**
  * @property string uuid
@@ -20,7 +18,7 @@ use Illuminate\Support\Str;
  * @property string description
  * @property bool hidden
  */
-class Demographic extends Model implements HandlesLinkedFieldSync
+class Demographic extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -66,92 +64,6 @@ class Demographic extends Model implements HandlesLinkedFieldSync
         'description',
         'hidden',
     ];
-
-    /**
-     * @throws \Exception
-     */
-    public static function syncRelation(Model $entity, string $property, string $inputType, $data, bool $hidden, ?bool $isApproval): void
-    {
-        $morph = $entity->$property();
-        if (count($data) == 0) {
-            $morph->delete();
-
-            return;
-        }
-
-        // Demographic collections only have one instance per collection
-        $demographicData = $data[0];
-        $demographic = $morph->first();
-        if ($demographic != null && $demographic->collection != $demographicData['collection']) {
-            throw new \Exception(
-                'Collection does not match entity property [' .
-                'property collection: ' . $demographic->collection . ', ' .
-                'submitted collection: ' . $demographicData['collection'] . ']'
-            );
-        }
-
-        if ($demographic == null) {
-            $demographic = $morph->create([
-                'type' => Str::kebab($inputType),
-                'collection' => $demographicData['collection'],
-                'hidden' => $hidden,
-            ]);
-        } else {
-            $demographic->update(['hidden' => $hidden]);
-        }
-
-        // Make sure the incoming data is clean, and meets our expectations of one row per type/subtype/name combo.
-        // The FE is not supposed to send us data with duplicates, but there has been a bug in the past that caused
-        // this problem, so this extra check is just covering our bases.
-        $syncData = isset($demographicData['demographics']) ? collect($demographicData['demographics'])->reduce(function ($syncData, $row) {
-            $type = data_get($row, 'type');
-            $subtype = data_get($row, 'subtype');
-            $name = data_get($row, 'name');
-            $amount = data_get($row, 'amount');
-
-            // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that both in-flight
-            // work at the time of release, and updates from update requests afterward honor that change.
-            if (in_array($type, self::SUBTYPE_SWAP_TYPES) && $name != null && $subtype == null) {
-                $subtype = $name;
-                $name = null;
-            }
-
-            foreach ($syncData as &$syncRow) {
-                if (data_get($syncRow, 'type') === $type &&
-                    data_get($syncRow, 'subtype') === $subtype &&
-                    data_get($syncRow, 'name') === $name) {
-
-                    // Keep the last value for this type/subtype/name in the incoming data set.
-                    $syncRow['amount'] = $amount;
-
-                    return $syncData;
-                }
-            }
-
-            $syncData[] = $row;
-
-            return $syncData;
-        }, []) : [];
-
-        $represented = collect();
-        foreach ($syncData as $row) {
-            $entry = $demographic->entries()->where([
-                'type' => data_get($row, 'type'),
-                'subtype' => data_get($row, 'subtype'),
-                'name' => data_get($row, 'name'),
-            ])->first();
-
-            if ($entry == null) {
-                $represented->push($demographic->entries()->create($row)->id);
-            } else {
-                $represented->push($entry->id);
-                $entry->update(['amount' => data_get($row, 'amount')]);
-            }
-        }
-
-        // Remove any existing entry that wasn't in the submitted set.
-        $demographic->entries()->whereNotIn('id', $represented)->delete();
-    }
 
     public function demographical()
     {

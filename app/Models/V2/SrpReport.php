@@ -3,7 +3,6 @@
 namespace App\Models\V2;
 
 use App\Models\Traits\HasDemographics;
-use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
@@ -38,7 +37,6 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
     use HasV2MediaCollections;
     use Auditable;
     use HasUpdateRequests;
-    use HasEntityResources;
     use BelongsToThroughTrait;
     use HasDemographics;
 
