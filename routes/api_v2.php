@@ -70,7 +70,6 @@ use App\Http\Controllers\V2\Organisations\OrganisationSubmitController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
-use App\Http\Controllers\V2\Polygons\ChangeStatusPolygonsController;
 use App\Http\Controllers\V2\Polygons\ViewAllSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
@@ -421,10 +420,6 @@ Route::prefix('project-pipeline')->group(function () {
     Route::post('/', StoreProjectPipelineController::class);
     Route::put('/{id}', UpdateProjectPipelineController::class);
     Route::delete('/{id}', DeleteProjectPipelineController::class);
-});
-
-Route::prefix('site-polygon')->group(function () {
-    Route::put('/status/bulk', ChangeStatusPolygonsController::class);
 });
 
 Route::get('/type-entity', EntityTypeController::class);

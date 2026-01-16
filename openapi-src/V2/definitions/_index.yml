@@ -210,10 +210,6 @@ SitePolygonResource:
   $ref: './SitePolygonResource.yml'
 DashboardProjectViewResponse:
   $ref: './DashboardProjectViewResponse.yml'
-PolygonChangeStatus:
-  $ref: './PolygonChangeStatus.yml'
-PolygonChangeStatusUpdate:
-  $ref: './PolygonChangeStatusUpdate.yml'
 ProjectPolygonResponse:
   $ref: './ProjectPolygonResponse.yml'
 SitePolygonsLoadedDataResponse:
