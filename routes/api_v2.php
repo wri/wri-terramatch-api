@@ -412,4 +412,3 @@ Route::prefix('project-pipeline')->group(function () {
     Route::put('/{id}', UpdateProjectPipelineController::class);
     Route::delete('/{id}', DeleteProjectPipelineController::class);
 });
-
