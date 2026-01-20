@@ -255,7 +255,6 @@ Route::prefix('my')->group(function () {
     Route::patch('/banners', UpdateMyBannersController::class);
 
     Route::prefix('actions')->group(function () {
-        Route::get('/', IndexMyActionsController::class);
         Route::put('/{action}/complete', CompleteActionController::class);
     });
 });
