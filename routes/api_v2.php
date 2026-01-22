@@ -15,7 +15,6 @@ use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
-use App\Http\Controllers\V2\Entities\EntityTypeController;
 use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
 use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
@@ -46,11 +45,7 @@ use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
 use App\Http\Controllers\V2\MediaController;
-use App\Http\Controllers\V2\MonitoredData\GetIndicatorPolygonStatusController;
-use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisController;
-use App\Http\Controllers\V2\MonitoredData\GetPolygonsIndicatorAnalysisVerifyController;
 use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
-use App\Http\Controllers\V2\MonitoredData\RunIndicatorAnalysisController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
@@ -405,12 +400,8 @@ Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group
 });
 
 Route::prefix('indicators')->group(function () {
-    Route::post('/{slug}', RunIndicatorAnalysisController::class);
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-        Route::get('/{entity}/{slug}', GetPolygonsIndicatorAnalysisController::class);
-        Route::get('/{entity}/{slug}/verify', GetPolygonsIndicatorAnalysisVerifyController::class);
         Route::get('/{entity}/{slug}/export', IndicatorEntitySlugExportController::class);
-        Route::get('/{entity}', GetIndicatorPolygonStatusController::class);
     });
 });
 
@@ -421,5 +412,3 @@ Route::prefix('project-pipeline')->group(function () {
     Route::put('/{id}', UpdateProjectPipelineController::class);
     Route::delete('/{id}', DeleteProjectPipelineController::class);
 });
-
-Route::get('/type-entity', EntityTypeController::class);
