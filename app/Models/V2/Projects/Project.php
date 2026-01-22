@@ -5,7 +5,6 @@ namespace App\Models\V2\Projects;
 use App\Models\Framework;
 use App\Models\Organisation;
 use App\Models\Traits\HasDemographics;
-use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasUpdateRequests;
@@ -61,7 +60,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     use Auditable;
     use HasUpdateRequests;
     use HasEntityStatus;
-    use HasEntityResources;
     use HasDemographics;
     use ReportsStatusChange;
 

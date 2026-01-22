@@ -8,6 +8,7 @@ use App\Jobs\RunIndexMyActionsJob;
 use App\Models\DelayedJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class IndexMyActionsController extends Controller
 {

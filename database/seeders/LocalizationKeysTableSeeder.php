@@ -59,11 +59,13 @@ class LocalizationKeysTableSeeder extends Seeder
         // form-submission-final-stage-approved
         $this->createLocalizationKey('form-submission-final-stage-approved.subject', 'Application Approved');
         $this->createLocalizationKey('form-submission-final-stage-approved.title', 'Your application has been approved');
-        $this->createLocalizationKey('form-submission-final-stage-approved.body', 'Your application has successfully passed all stages of our evaluation process and has been officially approved.
-            If you have any immediate queries, please do not hesitate to reach out to our support team.');
-        $this->createLocalizationKey('form-submission-final-stage-approved.body-feedback', 'Your application has successfully passed all stages of our evaluation process and has been officially approved. Please see the comments below:<br><br> {feedback}' .
-            '<br><br>If you have any immediate queries, please do not hesitate to reach out to our dedicated support team.');
-        $this->createLocalizationKey('form-submission-final-stage-approved.cta', 'View Application');
+        $this->createLocalizationKey('form-submission-final-stage-approved.body', 'Your Application has successfully passed all stages of our evaluation process and has been officially approved!' .
+            '<br><br>We will now transition your Application into a Project on TerraMatch. Next time you log in to TerraMatch, you will be able to access your Project from the Homepage or from the “My Projects” page.' .
+            '<br><br>Your program team will provide detailed guidance on when and how to edit and finalize your Project profile. If you have any immediate queries, please reach out to TerraMatch Support at info@terramatch.org.');
+        $this->createLocalizationKey('form-submission-final-stage-approved.body-feedback', 'Your Application has successfully passed all stages of our evaluation process and has been officially approved! Please see the comments below:<br><br> {feedback}' .
+            '<br><br>We will now transition your Application into a Project on TerraMatch. Next time you log in to TerraMatch, you will be able to access your Project from the Homepage or from the “My Projects” page.' .
+            '<br><br>Your program team will provide detailed guidance on when and how to edit and finalize your Project profile. If you have any immediate queries, please reach out to TerraMatch Support at info@terramatch.org.');
+        $this->createLocalizationKey('form-submission-final-stage-approved.cta', 'View Project');
 
         // form-submission-submitted
         $this->createLocalizationKey('form-submission-submitted.subject', 'You have submitted an application');

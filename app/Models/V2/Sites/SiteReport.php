@@ -2,10 +2,8 @@
 
 namespace App\Models\V2\Sites;
 
-use App\Http\Resources\V2\SiteReports\SiteReportResource;
 use App\Models\Framework;
 use App\Models\Traits\HasDemographics;
-use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
 use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
@@ -36,7 +34,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Resources\Json\JsonResource;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -56,7 +53,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
-    use HasEntityResources;
     use BelongsToThroughTrait;
     use HasDemographics;
     use ReportsStatusChange;
@@ -396,11 +392,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function scopeParentId(Builder $query, string $id): Builder
     {
         return $query->where('site_id', $id);
-    }
-
-    public function createResource(): JsonResource
-    {
-        return new SiteReportResource($this);
     }
 
     public function supportsNothingToReport(): bool
