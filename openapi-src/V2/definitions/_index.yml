@@ -168,8 +168,6 @@ SitePolygon:
   $ref: './SitePolygon.yml'
 GeometryString:
   $ref: './GeometryString.yml'
-SitePolygonsDataResponse:
-  $ref: './SitePolygonsDataResponse.yml'
 SitePolygonsBboxResponse:
   $ref: './SitePolygonsBboxResponse.yml'
 SitePolygonResponse:
@@ -206,8 +204,6 @@ EntityPolygonResponse:
   $ref: './EntityPolygonResponse.yml'
 AuditStatusUpdateRequest:
   $ref: './AuditStatusUpdateRequest.yml'
-SitePolygonResource:
-  $ref: './SitePolygonResource.yml'
 DashboardProjectViewResponse:
   $ref: './DashboardProjectViewResponse.yml'
 ProjectPolygonResponse:

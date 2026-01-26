@@ -14395,72 +14395,6 @@ definitions:
     properties:
       geometry:
         type: string
-  SitePolygonsDataResponse:
-    title: SitePolygonsDataResponse
-    type: array
-    items:
-      title: SitePolygon
-      type: object
-      properties:
-        id:
-          type: integer
-        uuid:
-          type: string
-        primary_uuid:
-          type: string
-        project_id:
-          type: string
-        proj_name:
-          type: string
-        org_name:
-          type: string
-        poly_id:
-          type: string
-        poly_name:
-          type: string
-        site_id:
-          type: string
-        site_name:
-          type: string
-        plantstart:
-          type: string
-          format: date
-        practice:
-          type: string
-        target_sys:
-          type: string
-        distr:
-          type: string
-        num_trees:
-          type: integer
-        calc_area:
-          type: number
-          format: float
-        created_by:
-          type: string
-        last_modified_by:
-          type: string
-        deleted_at:
-          type: string
-          format: date-time
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-        status:
-          type: string
-        source:
-          type: string
-        country:
-          type: string
-        is_active:
-          type: boolean
-        version_name:
-          type: string
-        validation_status:
-          type: boolean
   SitePolygonsBboxResponse:
     title: SitePolygonsBboxResponse
     type: object
@@ -14895,23 +14829,6 @@ definitions:
         type: boolean
       request_removed:
         type: boolean
-  SitePolygonResource:
-    title: SitePolygonResource
-    type: object
-    properties:
-      id:
-        type: integer
-      uuid:
-        type: string
-      poly_name:
-        type: string
-      status:
-        type: string
-      date_created:
-        type: string
-        format: date-time
-      created_by:
-        type: string
   DashboardProjectViewResponse:
     type: object
     properties:
@@ -30297,88 +30214,6 @@ paths:
                       type: boolean
                     created_at:
                       type: string
-  '/v2/sites/{site}/polygon':
-    get:
-      summary: Get polygons for a specific site
-      parameters:
-        - in: path
-          name: site
-          required: true
-          type: string
-          description: The ID of the site
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            title: SitePolygonsDataResponse
-            type: array
-            items:
-              title: SitePolygon
-              type: object
-              properties:
-                id:
-                  type: integer
-                uuid:
-                  type: string
-                primary_uuid:
-                  type: string
-                project_id:
-                  type: string
-                proj_name:
-                  type: string
-                org_name:
-                  type: string
-                poly_id:
-                  type: string
-                poly_name:
-                  type: string
-                site_id:
-                  type: string
-                site_name:
-                  type: string
-                plantstart:
-                  type: string
-                  format: date
-                practice:
-                  type: string
-                target_sys:
-                  type: string
-                distr:
-                  type: string
-                num_trees:
-                  type: integer
-                calc_area:
-                  type: number
-                  format: float
-                created_by:
-                  type: string
-                last_modified_by:
-                  type: string
-                deleted_at:
-                  type: string
-                  format: date-time
-                created_at:
-                  type: string
-                  format: date-time
-                updated_at:
-                  type: string
-                  format: date-time
-                status:
-                  type: string
-                source:
-                  type: string
-                country:
-                  type: string
-                is_active:
-                  type: boolean
-                version_name:
-                  type: string
-                validation_status:
-                  type: boolean
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
   '/v2/terrafund/site-polygon/{uuid}/{siteUuid}':
     post:
       summary: Create site polygon
@@ -31423,43 +31258,6 @@ paths:
       responses:
         '200':
           description: OK
-  '/v2/projects/{UUID}/site-polygons/all':
-    get:
-      summary: Get all the SitePolygons from all sites belonging to a specific project
-      operationId: get-v2-projects-uuid-site-polygons-all
-      tags:
-        - V2 Projects
-        - V2 Sites
-        - V2 SitePolygons
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              title: SitePolygonResource
-              type: object
-              properties:
-                id:
-                  type: integer
-                uuid:
-                  type: string
-                poly_name:
-                  type: string
-                status:
-                  type: string
-                date_created:
-                  type: string
-                  format: date-time
-                created_by:
-                  type: string
   '/v2/indicators/{entity}/{uuid}/{slug}/export':
     get:
       operationId: get-v2-indicators-entity-slug-export
@@ -31557,7 +31355,6 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -31568,8 +31365,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -31597,6 +31394,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
     post:
       summary: Create a new Impact Story
       operationId: v2-create-impact-story
@@ -31856,7 +31654,6 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
-                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -31867,8 +31664,8 @@ paths:
                     type: string
                   next:
                     type: string
-              meta:
                 type: object
+              meta:
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -31896,6 +31693,7 @@ paths:
                           type: string
                         active:
                           type: boolean
+                type: object
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story
