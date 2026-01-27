@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
-use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\SrpReport;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
+use App\Models\V2\Trackings\TrackingEntry;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -166,9 +166,9 @@ class Migrate2024SrpDataCommand extends Command
         $entriesMigrated = 0;
 
         // Find all restoration partner demographics in the project report
-        $demographics = Demographic::where('demographical_type', ProjectReport::class)
+        $demographics = Tracking::where('demographical_type', ProjectReport::class)
             ->where('demographical_id', $projectReport->id)
-            ->where('type', Demographic::RESTORATION_PARTNER_TYPE)
+            ->where('type', Tracking::RESTORATION_PARTNER_TYPE)
             ->whereIn('collection', $this->restorationPartnerCollections)
             ->get();
 
@@ -178,7 +178,7 @@ class Migrate2024SrpDataCommand extends Command
 
         foreach ($demographics as $demographic) {
             // Check if demographic already exists in SRP report
-            $existingDemographic = Demographic::where('demographical_type', SrpReport::class)
+            $existingDemographic = Tracking::where('demographical_type', SrpReport::class)
                 ->where('demographical_id', $srpReport->id)
                 ->where('type', $demographic->type)
                 ->where('collection', $demographic->collection)
@@ -191,7 +191,7 @@ class Migrate2024SrpDataCommand extends Command
 
             if (! $dryRun) {
                 // Create new demographic for SRP report
-                $newDemographic = Demographic::create([
+                $newDemographic = Tracking::create([
                     'demographical_type' => SrpReport::class,
                     'demographical_id' => $srpReport->id,
                     'type' => $demographic->type,
@@ -201,11 +201,11 @@ class Migrate2024SrpDataCommand extends Command
                 ]);
 
                 // Migrate all entries
-                $entries = DemographicEntry::where('demographic_id', $demographic->id)->get();
+                $entries = TrackingEntry::where('demographic_id', $demographic->id)->get();
                 $entriesCount = $entries->count();
 
                 foreach ($entries as $entry) {
-                    DemographicEntry::create([
+                    TrackingEntry::create([
                         'demographic_id' => $newDemographic->id,
                         'type' => $entry->type,
                         'subtype' => $entry->subtype,
@@ -216,7 +216,7 @@ class Migrate2024SrpDataCommand extends Command
 
                 $entriesMigrated += $entriesCount;
             } else {
-                $entriesCount = DemographicEntry::where('demographic_id', $demographic->id)->count();
+                $entriesCount = TrackingEntry::where('demographic_id', $demographic->id)->count();
                 $entriesMigrated += $entriesCount;
             }
 
@@ -243,9 +243,9 @@ class Migrate2024SrpDataCommand extends Command
 
         // Migrate other_restoration_partners_description to restoration_partners_description
         // The description is stored in the Demographic table for direct-other or indirect-other collections
-        $otherDemographic = Demographic::where('demographical_type', ProjectReport::class)
+        $otherDemographic = Tracking::where('demographical_type', ProjectReport::class)
             ->where('demographical_id', $projectReport->id)
-            ->where('type', Demographic::RESTORATION_PARTNER_TYPE)
+            ->where('type', Tracking::RESTORATION_PARTNER_TYPE)
             ->whereIn('collection', [
                 DemographicCollections::DIRECT_OTHER,
                 DemographicCollections::INDIRECT_OTHER,

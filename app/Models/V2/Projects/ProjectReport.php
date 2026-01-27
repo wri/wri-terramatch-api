@@ -13,9 +13,6 @@ use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
-use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
@@ -23,6 +20,9 @@ use App\Models\V2\ReportModel;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
+use App\Models\V2\Trackings\TrackingEntry;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\StateMachines\ReportStatusStateMachine;
@@ -281,7 +281,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
 
     // Required by the HasDemographics trait.
     public const DEMOGRAPHIC_COLLECTIONS = [
-        Demographic::WORKDAY_TYPE => [
+        Tracking::WORKDAY_TYPE => [
             'paid' => [
                 DemographicCollections::PAID_NURSERY_OPERATIONS,
                 DemographicCollections::PAID_PROJECT_MANAGEMENT,
@@ -307,7 +307,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
                 DemographicCollections::CONVERGENCE,
             ],
         ],
-        Demographic::RESTORATION_PARTNER_TYPE => [
+        Tracking::RESTORATION_PARTNER_TYPE => [
             'direct' => [
                 DemographicCollections::DIRECT_INCOME,
                 DemographicCollections::DIRECT_BENEFITS,
@@ -337,7 +337,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
                 DemographicCollections::INDIRECT_OTHER,
             ],
         ],
-        Demographic::JOBS_TYPE => [
+        Tracking::JOBS_TYPE => [
             'full-time' => [
                 DemographicCollections::FULL_TIME,
                 DemographicCollections::FULL_TIME_CLT,
@@ -347,10 +347,10 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
                 DemographicCollections::PART_TIME_CLT,
             ],
         ],
-        Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
-        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
-        Demographic::TRAINING_BENEFICIARIES_TYPE => DemographicCollections::TRAINING,
-        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
+        Tracking::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
+        Tracking::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Tracking::TRAINING_BENEFICIARIES_TYPE => DemographicCollections::TRAINING,
+        Tracking::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -530,12 +530,12 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         }
 
         // Assume that the types are balanced and just return the value from 'gender'
-        $sumTotals = fn ($collectionType) => DemographicEntry::whereIn(
-            'demographic_id',
-            Demographic::where('demographical_type', SiteReport::class)
-                    ->whereIn('demographical_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
-                    ->type(Demographic::WORKDAY_TYPE)
-                    ->collections(SiteReport::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE][$collectionType])
+        $sumTotals = fn ($collectionType) => TrackingEntry::whereIn(
+            'tracking_id',
+            Tracking::where(['domain' => 'demographics', 'trackable_type' => SiteReport::class])
+                    ->whereIn('trackable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
+                    ->type(Tracking::WORKDAY_TYPE)
+                    ->collections(SiteReport::DEMOGRAPHIC_COLLECTIONS[Tracking::WORKDAY_TYPE][$collectionType])
                     ->visible()
                     ->select('id')
         )->gender()->sum('amount');

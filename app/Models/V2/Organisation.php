@@ -16,11 +16,11 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\HasVersions;
 use App\Models\Traits\NamedEntityTrait;
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Organisations\OrganisationInvite;
 use App\Models\V2\Projects\Project;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Database\Factories\V2\OrganisationFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -248,7 +248,7 @@ class Organisation extends Model implements MediaModel
 
     // Required by the HasDemographics trait
     public const DEMOGRAPHIC_COLLECTIONS = [
-        Demographic::EMPLOYEES_TYPE => [
+        Tracking::EMPLOYEES_TYPE => [
             'all' => [
                 // All is used for migrated old organization data, which didn't disaggregate FT / PT.
                 DemographicCollections::ALL,
@@ -265,8 +265,8 @@ class Organisation extends Model implements MediaModel
                 DemographicCollections::TEMP,
             ],
         ],
-        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
-        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
+        Tracking::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Tracking::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -120,6 +121,8 @@ class SyncRolesCommand extends Command
 
     public function handle()
     {
+        Artisan::call('cache:clear');
+
         $permissionKeys = array_keys($this->PERMISSIONS_CONFIG['permissions']);
         foreach ($permissionKeys as $key) {
             if (! Permission::where('name', $key)->exists()) {
