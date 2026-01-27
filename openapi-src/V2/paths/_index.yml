@@ -1029,9 +1029,6 @@
     $ref: './AuditStatus/get-v2-audit-status.yml'
   post:
     $ref: './AuditStatus/post-v2-audit-status.yml'
-/v2/sites/{site}/polygon:
-  get:
-    $ref: './Sites/get-v2-sites-polygons-data.yml'
 /v2/terrafund/site-polygon/{uuid}/{siteUuid}:
   post:
     $ref: './Terrafund/post-v2-site-polygon-data.yml'
