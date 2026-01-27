@@ -1,4 +1,0 @@
-title: SitePolygonsDataResponse
-type: array
-items:
-  $ref: './_index.yml#/SitePolygon'
