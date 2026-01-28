@@ -101,7 +101,6 @@ use App\Http\Controllers\V2\User\AdminUserMultiController;
 use App\Http\Controllers\V2\User\AdminUsersOrganizationController;
 use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
-use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
@@ -252,7 +251,6 @@ Route::prefix('my')->group(function () {
     Route::patch('/banners', UpdateMyBannersController::class);
 
     Route::prefix('actions')->group(function () {
-        Route::get('/', IndexMyActionsController::class);
         Route::put('/{action}/complete', CompleteActionController::class);
     });
 });

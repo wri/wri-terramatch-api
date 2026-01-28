@@ -19,9 +19,6 @@
 /v2/projects/{UUID}/{EMAIL}/remove-partner:
   delete:
     $ref: './Projects/delete-v2-projects-uuid-partners.yml'
-/v2/my/actions:
-  get:
-    $ref: './Users/get-v2-my-actions.yml'
 /v2/my/actions/{UUID}/complete:
   put:
     $ref: './Users/put-v2-my-action-uuid-complete.yml'
