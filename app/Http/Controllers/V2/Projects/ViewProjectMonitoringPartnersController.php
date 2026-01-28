@@ -23,36 +23,47 @@ class ViewProjectMonitoringPartnersController extends Controller
             ->orderByDesc('accepted_at')
             ->get();
 
-        $projectUsersEmails = $project->users()->wherePivot('is_monitoring', true)->pluck('email_address');
+        $projectUsers = $project->users()->wherePivot('is_managing', false)->get();
 
-        foreach ($projectUsersEmails as $email_address) {
-            $invite = $invites->where('email_address', '==', $email_address)->first();
+        // TODO (NJC): When moving to v3, inspect this side effect and see if it's really necessary. I'm not convinced
+        //   creating an invite for pending users is really needed.
+        foreach ($projectUsers as $projectUser) {
+            if ($projectUser->pivot->status == "active") continue;
+
+            $invite = $invites->firstWhere('email_address', $projectUser->email_address);
             if (!$invite) {
                 $token = $this->generateUniqueToken();
                 $data['project_id'] = $project->id;
                 $data['token'] = $token;
-                $data['email_address'] = $email_address;
+                $data['email_address'] = $projectUser->email_address;
                 $newInvite = $project->invites()->create($data);
                 $invites->push($newInvite);
             }
         }
 
-        $uniques = $invites->unique('email_address');
+        $projectUsersEmails = $projectUsers->pluck('email_address');
+        $uniques = $projectUsersEmails->push($invites->pluck('email_address'))->flatten()->unique();
 
         $results = $uniques
-            ->filter(function ($invite) use ($projectUsersEmails){
-                $user = User::where('email_address', $invite->email_address)->first();
-                return $user?->primaryRole?->name != 'project-manager';
-            })
-            ->map(function ($invite) use ($invites){
+            ->map(function ($emailAddress) use ($projectUsers, $invites) {
+                /** @var User $user */
+                $user = $projectUsers->firstWhere("email_address", $emailAddress);
+                if ($user?->primaryRole?->name == "project-manager") return null;
+
+                $invite = $invites->firstWhere('email_address', $emailAddress);
+                if (is_null($invite)) {
+                    return $user;
+                }
+
                 if(!is_null($invite->accepted_at)){
                     return $invite;
-            }
+                }
 
-            $accepted = $invites->where('email_address', $invite->email_address)->whereNotNull('accepted_at')->first();
+                $accepted = $invites->where('email_address', $invite->email_address)->whereNotNull('accepted_at')->first();
 
-            return is_null($accepted) ? $invite : $accepted;
-        });
+                return is_null($accepted) ? $invite : $accepted;
+            })
+            ->filter();
 
         return AssociatedUserResource::collection($results);
     }

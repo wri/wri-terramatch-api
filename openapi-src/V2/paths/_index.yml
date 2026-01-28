@@ -1026,9 +1026,6 @@
     $ref: './AuditStatus/get-v2-audit-status.yml'
   post:
     $ref: './AuditStatus/post-v2-audit-status.yml'
-/v2/sites/{site}/polygon:
-  get:
-    $ref: './Sites/get-v2-sites-polygons-data.yml'
 /v2/terrafund/site-polygon/{uuid}/{siteUuid}:
   post:
     $ref: './Terrafund/post-v2-site-polygon-data.yml'
@@ -1094,18 +1091,12 @@
 /v2/terrafund/polygon/geojson/{uuid}:
   get:
     $ref: './Terrafund/get-v2-terrafund-polygon-geojson-uuid.yml'
-/v2/type-entity:
-  get:
-    $ref: './Entity/get-v2-type-entity.yml'
 /v2/{ENTITY}/{UUID}/status:
   put:
     $ref: './Entity/put-v2-entity-uuid-status.yml'
 /v2/{ENTITY}/{UUID}/{ID}/delete:
   delete:
     $ref: './AuditStatus/delete-v2-audit-status.yml'
-/v2/projects/{UUID}/site-polygons/all:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-site-polygons-all.yml'
 /v2/indicators/{entity}/{uuid}/{slug}/export:
   get:
     $ref: './MonitoredData/get-v2-indicators-entity-slug-export.yml'
