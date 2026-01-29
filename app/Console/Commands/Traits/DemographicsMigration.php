@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Traits;
 
-use App\Models\V2\Demographics\Demographic;
+use App\Models\V2\Trackings\Tracking;
 
 trait DemographicsMigration
 {
@@ -10,7 +10,7 @@ trait DemographicsMigration
     {
         foreach ($migrationMapping as $demographicType => $mapping) {
             foreach ($mapping as $collection => $fields) {
-                /** @var Demographic $demographic */
+                /** @var Tracking $demographic */
                 $demographic = null;
 
                 $addDisaggregates = function ($disaggregateFields, $percentageTotal = null) use (&$demographic, $model, $demographicType, $collection) {
@@ -26,6 +26,7 @@ trait DemographicsMigration
                                 'type' => $demographicType,
                                 'collection' => $collection,
                                 'hidden' => false,
+                                'domain' => 'demographics',
                             ]);
                         }
 
@@ -111,6 +112,7 @@ trait DemographicsMigration
                             'type' => $demographicType,
                             'collection' => $collection,
                             'hidden' => false,
+                            'domain' => 'demographics',
                         ]);
                     }
 

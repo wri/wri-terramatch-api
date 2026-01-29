@@ -9,11 +9,11 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditStatus\AuditStatus;
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Tasks\Task;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -89,7 +89,7 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
 
     // Required by the HasDemographics trait.
     public const DEMOGRAPHIC_COLLECTIONS = [
-        Demographic::WORKDAY_TYPE => [
+        Tracking::WORKDAY_TYPE => [
             'paid' => [
                 DemographicCollections::PAID_NURSERY_OPERATIONS,
                 DemographicCollections::PAID_PROJECT_MANAGEMENT,
@@ -115,7 +115,7 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
                 DemographicCollections::CONVERGENCE,
             ],
         ],
-        Demographic::RESTORATION_PARTNER_TYPE => [
+        Tracking::RESTORATION_PARTNER_TYPE => [
             'direct' => [
                 DemographicCollections::DIRECT_INCOME,
                 DemographicCollections::DIRECT_BENEFITS,
@@ -145,7 +145,7 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
                 DemographicCollections::INDIRECT_OTHER,
             ],
         ],
-        Demographic::JOBS_TYPE => [
+        Tracking::JOBS_TYPE => [
             'full-time' => [
                 DemographicCollections::FULL_TIME,
                 DemographicCollections::FULL_TIME_CLT,
@@ -155,10 +155,10 @@ class SrpReport extends Model implements MediaModel, ReportModel, AuditableContr
                 DemographicCollections::PART_TIME_CLT,
             ],
         ],
-        Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
-        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
-        Demographic::TRAINING_BENEFICIARIES_TYPE => DemographicCollections::TRAINING,
-        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
+        Tracking::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
+        Tracking::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Tracking::TRAINING_BENEFICIARIES_TYPE => DemographicCollections::TRAINING,
+        Tracking::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void

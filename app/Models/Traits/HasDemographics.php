@@ -3,43 +3,43 @@
 namespace App\Models\Traits;
 
 use App\Exceptions\DemographicsException;
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
-use App\Models\V2\Demographics\DemographicEntry;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
+use App\Models\V2\Trackings\TrackingEntry;
 use Illuminate\Support\Str;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 
 trait HasDemographics
 {
     public const DEMOGRAPHIC_TOTAL_ATTRIBUTES = [
-        'workdaysPaid' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'paid'],
-        'workdaysVolunteer' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'volunteer'],
-        'workdaysDirectTotal' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'direct'],
-        'workdaysConvergenceTotal' => ['type' => Demographic::WORKDAY_TYPE, 'collections' => 'convergence'],
-        'directRestorationPartners' => ['type' => Demographic::RESTORATION_PARTNER_TYPE, 'collections' => 'direct'],
-        'indirectRestorationPartners' => ['type' => Demographic::RESTORATION_PARTNER_TYPE, 'collections' => 'indirect'],
-        'jobsAllTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'all'],
-        'jobsFullTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'full-time'],
-        'jobsPartTimeTotal' => ['type' => Demographic::JOBS_TYPE, 'collections' => 'part-time'],
-        'employeesAllTotal' => ['type' => Demographic::EMPLOYEES_TYPE, 'collections' => 'all'],
-        'employeesFullTimeTotal' => ['type' => Demographic::EMPLOYEES_TYPE, 'collections' => 'full-time'],
-        'employeesPartTimeTotal' => ['type' => Demographic::EMPLOYEES_TYPE, 'collections' => 'part-time'],
-        'employeesTempTotal' => ['type' => Demographic::EMPLOYEES_TYPE, 'collections' => 'temp'],
-        'volunteersTotal' => ['type' => Demographic::VOLUNTEERS_TYPE],
-        'allBeneficiariesTotal' => ['type' => Demographic::ALL_BENEFICIARIES_TYPE],
-        'trainingBeneficiariesTotal' => ['type' => Demographic::TRAINING_BENEFICIARIES_TYPE],
-        'indirectBeneficiariesTotal' => ['type' => Demographic::INDIRECT_BENEFICIARIES_TYPE],
+        'workdaysPaid' => ['type' => Tracking::WORKDAY_TYPE, 'collections' => 'paid'],
+        'workdaysVolunteer' => ['type' => Tracking::WORKDAY_TYPE, 'collections' => 'volunteer'],
+        'workdaysDirectTotal' => ['type' => Tracking::WORKDAY_TYPE, 'collections' => 'direct'],
+        'workdaysConvergenceTotal' => ['type' => Tracking::WORKDAY_TYPE, 'collections' => 'convergence'],
+        'directRestorationPartners' => ['type' => Tracking::RESTORATION_PARTNER_TYPE, 'collections' => 'direct'],
+        'indirectRestorationPartners' => ['type' => Tracking::RESTORATION_PARTNER_TYPE, 'collections' => 'indirect'],
+        'jobsAllTotal' => ['type' => Tracking::JOBS_TYPE, 'collections' => 'all'],
+        'jobsFullTimeTotal' => ['type' => Tracking::JOBS_TYPE, 'collections' => 'full-time'],
+        'jobsPartTimeTotal' => ['type' => Tracking::JOBS_TYPE, 'collections' => 'part-time'],
+        'employeesAllTotal' => ['type' => Tracking::EMPLOYEES_TYPE, 'collections' => 'all'],
+        'employeesFullTimeTotal' => ['type' => Tracking::EMPLOYEES_TYPE, 'collections' => 'full-time'],
+        'employeesPartTimeTotal' => ['type' => Tracking::EMPLOYEES_TYPE, 'collections' => 'part-time'],
+        'employeesTempTotal' => ['type' => Tracking::EMPLOYEES_TYPE, 'collections' => 'temp'],
+        'volunteersTotal' => ['type' => Tracking::VOLUNTEERS_TYPE],
+        'allBeneficiariesTotal' => ['type' => Tracking::ALL_BENEFICIARIES_TYPE],
+        'trainingBeneficiariesTotal' => ['type' => Tracking::TRAINING_BENEFICIARIES_TYPE],
+        'indirectBeneficiariesTotal' => ['type' => Tracking::INDIRECT_BENEFICIARIES_TYPE],
     ];
 
     public const DEMOGRAPHIC_AGGREGATE_ATTRIBUTES = [
-        'fullTimeJobsAggregate' => ['type' => Demographic::JOBS_TYPE, 'collection' => DemographicCollections::FULL_TIME],
-        'fullTimeCltJobsAggregate' => ['type' => Demographic::JOBS_TYPE, 'collection' => DemographicCollections::FULL_TIME_CLT],
-        'partTimeJobsAggregate' => ['type' => Demographic::JOBS_TYPE, 'collection' => DemographicCollections::PART_TIME],
-        'partTimeCltJobsAggregate' => ['type' => Demographic::JOBS_TYPE, 'collection' => DemographicCollections::PART_TIME_CLT],
-        'volunteersAggregate' => ['type' => Demographic::VOLUNTEERS_TYPE, 'collection' => DemographicCollections::VOLUNTEER],
-        'allBeneficiariesAggregate' => ['type' => Demographic::ALL_BENEFICIARIES_TYPE, 'collection' => DemographicCollections::ALL],
-        'indirectBeneficiariesAggregate' => ['type' => Demographic::INDIRECT_BENEFICIARIES_TYPE, 'collection' => DemographicCollections::INDIRECT],
-        'allAssociatesAggregate' => ['type' => Demographic::ASSOCIATES_TYPE, 'collection' => DemographicCollections::ALL],
+        'fullTimeJobsAggregate' => ['type' => Tracking::JOBS_TYPE, 'collection' => DemographicCollections::FULL_TIME],
+        'fullTimeCltJobsAggregate' => ['type' => Tracking::JOBS_TYPE, 'collection' => DemographicCollections::FULL_TIME_CLT],
+        'partTimeJobsAggregate' => ['type' => Tracking::JOBS_TYPE, 'collection' => DemographicCollections::PART_TIME],
+        'partTimeCltJobsAggregate' => ['type' => Tracking::JOBS_TYPE, 'collection' => DemographicCollections::PART_TIME_CLT],
+        'volunteersAggregate' => ['type' => Tracking::VOLUNTEERS_TYPE, 'collection' => DemographicCollections::VOLUNTEER],
+        'allBeneficiariesAggregate' => ['type' => Tracking::ALL_BENEFICIARIES_TYPE, 'collection' => DemographicCollections::ALL],
+        'indirectBeneficiariesAggregate' => ['type' => Tracking::INDIRECT_BENEFICIARIES_TYPE, 'collection' => DemographicCollections::INDIRECT],
+        'allAssociatesAggregate' => ['type' => Tracking::ASSOCIATES_TYPE, 'collection' => DemographicCollections::ALL],
     ];
 
     public static function bootHasDemographics()
@@ -55,32 +55,32 @@ trait HasDemographics
             });
 
             $collections = match ($demographicType) {
-                Demographic::WORKDAY_TYPE => collect([
+                Tracking::WORKDAY_TYPE => collect([
                     data_get($collectionSets, 'paid', []),
                     data_get($collectionSets, 'volunteer', []),
                     data_get($collectionSets, 'finance', []),
                 ])->flatten(),
-                Demographic::RESTORATION_PARTNER_TYPE => collect([
+                Tracking::RESTORATION_PARTNER_TYPE => collect([
                     data_get($collectionSets, 'direct', []),
                     data_get($collectionSets, 'indirect', []),
                 ])->flatten(),
-                Demographic::JOBS_TYPE => collect([
+                Tracking::JOBS_TYPE => collect([
                     data_get($collectionSets, 'all', []),
                     data_get($collectionSets, 'full-time', []),
                     data_get($collectionSets, 'part-time', []),
                 ])->flatten(),
-                Demographic::EMPLOYEES_TYPE => collect([
+                Tracking::EMPLOYEES_TYPE => collect([
                     data_get($collectionSets, 'all', []),
                     data_get($collectionSets, 'full-time', []),
                     data_get($collectionSets, 'part-time', []),
                     data_get($collectionSets, 'temp', []),
                 ])->flatten(),
                 // These define a single collection each, and simply rely on the type level relation above
-                Demographic::VOLUNTEERS_TYPE,
-                Demographic::ALL_BENEFICIARIES_TYPE,
-                Demographic::TRAINING_BENEFICIARIES_TYPE,
-                Demographic::INDIRECT_BENEFICIARIES_TYPE,
-                Demographic::ASSOCIATES_TYPE => null,
+                Tracking::VOLUNTEERS_TYPE,
+                Tracking::ALL_BENEFICIARIES_TYPE,
+                Tracking::TRAINING_BENEFICIARIES_TYPE,
+                Tracking::INDIRECT_BENEFICIARIES_TYPE,
+                Tracking::ASSOCIATES_TYPE => null,
                 default => throw new InternalErrorException("Unrecognized demographic type: $demographicType"),
             };
             if (! empty($collections)) {
@@ -98,7 +98,7 @@ trait HasDemographics
 
     public function demographics()
     {
-        return $this->morphMany(Demographic::class, 'demographical');
+        return $this->morphMany(Tracking::class, 'trackable')->where('domain', 'demographics');
     }
 
     public function getAttribute($key)
@@ -158,9 +158,10 @@ trait HasDemographics
                 // exists for this demographic type.
                 foreach ($collections as $collection) {
                     if (! $this->$attributeName()->collection($collection)->exists()) {
-                        Demographic::create([
-                            'demographical_type' => get_class($this),
-                            'demographical_id' => $this->id,
+                        Tracking::create([
+                            'trackable_type' => get_class($this),
+                            'trackable_id' => $this->id,
+                            'domain' => 'demographics',
                             'type' => $otherDemographicType,
                             'collection' => $collection,
                         ]);
@@ -203,7 +204,7 @@ trait HasDemographics
                     $demographic->update(['hidden' => false]);
                 }
             } else {
-                $demographic = $this->demographics()->create(['type' => $type, 'collection' => $collection, 'hidden' => false]);
+                $demographic = $this->demographics()->create(['type' => $type, 'collection' => $collection, 'hidden' => false, 'domain' => 'demographics']);
             }
 
             $demographic->entries()->updateOrCreate(['type' => 'gender', 'subtype' => 'unknown'], ['amount' => $value]);
@@ -223,7 +224,7 @@ trait HasDemographics
 
         $demographicType = Str::kebab(Str::before(Str::after($keyNormalized, 'other'), 'Description'));
 
-        return in_array($demographicType, Demographic::VALID_TYPES) ? $demographicType : null;
+        return in_array($demographicType, Tracking::VALID_TYPES) ? $demographicType : null;
     }
 
     protected function hasAggregateDemographic(string $keyNormalized): bool
@@ -249,8 +250,8 @@ trait HasDemographics
     protected function sumTotalDemographicAmounts(string $demographicType, array $collections): int
     {
         // Gender is considered the canonical total value for all current types of demographics, so just pull and sum gender.
-        return DemographicEntry::whereIn(
-            'demographic_id',
+        return TrackingEntry::whereIn(
+            'tracking_id',
             $this->$demographicType()->visible()->collections($collections)->select('id')
         )->gender()->sum('amount') ?? 0;
     }

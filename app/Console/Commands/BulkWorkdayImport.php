@@ -7,10 +7,10 @@ use App\Console\Commands\Traits\AbortException;
 use App\Console\Commands\Traits\ExceptionLevel;
 use App\Models\SiteSubmission;
 use App\Models\Submission;
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -279,8 +279,8 @@ class BulkWorkdayImport extends Command
 
         // Check that all the demographics are balanced
         $collections = array_merge(
-            $this->modelConfig['model']::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['paid'],
-            $this->modelConfig['model']::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['volunteer'],
+            $this->modelConfig['model']::DEMOGRAPHIC_COLLECTIONS[Tracking::WORKDAY_TYPE]['paid'],
+            $this->modelConfig['model']::DEMOGRAPHIC_COLLECTIONS[Tracking::WORKDAY_TYPE]['volunteer'],
         );
         foreach ($collections as $collection) {
             if (empty($row[$collection])) {
@@ -349,8 +349,8 @@ class BulkWorkdayImport extends Command
     protected function persistWorkdays($report, $data): void
     {
         $collections = array_merge(
-            get_class($report)::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['paid'],
-            get_class($report)::DEMOGRAPHIC_COLLECTIONS[Demographic::WORKDAY_TYPE]['volunteer'],
+            get_class($report)::DEMOGRAPHIC_COLLECTIONS[Tracking::WORKDAY_TYPE]['paid'],
+            get_class($report)::DEMOGRAPHIC_COLLECTIONS[Tracking::WORKDAY_TYPE]['volunteer'],
         );
 
         $modelDescription = Str::replace('-', ' ', Str::title($report->shortName)) .
@@ -372,10 +372,11 @@ class BulkWorkdayImport extends Command
             }
 
             $this->info("Populating collection $collection\n");
-            $workday = Demographic::create([
-                'demographical_type' => get_class($report),
-                'demographical_id' => $report->id,
-                'type' => Demographic::WORKDAY_TYPE,
+            $workday = Tracking::create([
+                'trackable_type' => get_class($report),
+                'trackable_id' => $report->id,
+                'domain' => 'demographics',
+                'type' => Tracking::WORKDAY_TYPE,
                 'collection' => $collection,
             ]);
 
