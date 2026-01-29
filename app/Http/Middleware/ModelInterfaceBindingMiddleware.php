@@ -9,7 +9,6 @@ use App\Models\V2\FinancialReport;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestionOption;
 use App\Models\V2\FundingProgramme;
-use App\Models\V2\ImpactStory;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Organisation;
@@ -50,7 +49,6 @@ class ModelInterfaceBindingMiddleware
         'nursery-reports' => NurseryReport::class,
         'nursery-report' => NurseryReport::class,
         'nurseryReports' => NurseryReport::class,
-        'impact-story' => ImpactStory::class,
 
         // MediaModel concrete classes
         'organisation' => Organisation::class,
