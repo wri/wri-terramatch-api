@@ -2,11 +2,14 @@
 
 namespace App\Helpers;
 
+use App\Constants\PolygonFields;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectPolygon;
+use App\Models\V2\Sites\CriteriaSite;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
+use App\Services\PolygonService;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -60,7 +63,6 @@ class GeometryHelper
     {
         try {
             $centroid = $this->centroidOfProject($projectUuid);
-
             if ($centroid === null) {
                 Log::warning("Invalid centroid for projectUuid: $projectUuid");
             }
@@ -81,8 +83,9 @@ class GeometryHelper
               'message' => 'Centroid updated',
               'centroid' => $centroid,
             ], 200);
-        } catch (\Exception $e) {
-            Log::error("Error updating centroid for projectUuid: $projectUuid");
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            Log::error("Error updating centroid for projectUuid: $projectUuid with error  $message");
 
             return response()->json([
               'message' => 'Error updating centroid',
@@ -92,34 +95,17 @@ class GeometryHelper
 
     }
 
-    public static function getPolygonsBbox($polygonsIds)
+    public function getPolygonCentroid(string $polyUuid)
     {
-        if (count($polygonsIds) === 0) {
+        $sitePolygon = SitePolygon::where('poly_id', $polyUuid)->first();
+
+        if (! $sitePolygon) {
             return null;
         }
-        $envelopes = PolygonGeometry::whereIn('uuid', $polygonsIds)
-          ->selectRaw('ST_ASGEOJSON(ST_Envelope(geom)) as envelope')
-          ->get();
-        $maxX = $maxY = PHP_INT_MIN;
-        $minX = $minY = PHP_INT_MAX;
-        if ($envelopes->isEmpty()) {
-            return null;
-        }
-        foreach ($envelopes as $envelope) {
-            $geojson = json_decode($envelope->envelope);
-            $coordinates = $geojson->coordinates[0];
 
-            foreach ($coordinates as $point) {
-                $x = $point[0];
-                $y = $point[1];
-                $maxX = max($maxX, $x);
-                $minX = min($minX, $x);
-                $maxY = max($maxY, $y);
-                $minY = min($minY, $y);
-            }
-        }
+        $centroid = DB::select('SELECT ST_AsGeoJSON(ST_Centroid(geometry)) as centroid FROM site_polygons WHERE poly_id = ?', [$polyUuid])[0]->centroid;
 
-        return [$minX, $minY, $maxX, $maxY];
+        return json_decode($centroid);
     }
 
     public static function getCriteriaDataForPolygonGeometry($polygonGeometry)
@@ -365,6 +351,59 @@ class GeometryHelper
         return SitePolygon::where('site_id', $uuid)->where('is_active', true)->get()->pluck('poly_id');
     }
 
+    /**
+     * Get only site polygons that have overlapping criteria and can be fixed
+     * Filters by overlap percentage ≤3.5% AND intersection area ≤0.1 hectares
+     */
+    public static function getSiteOverlappingPolygonsUuids($siteUuid): array
+    {
+        $sitePolygonUuids = SitePolygon::where('site_id', $siteUuid)
+            ->where('is_active', true)
+            ->pluck('poly_id')
+            ->toArray();
+
+        if (empty($sitePolygonUuids)) {
+            return [];
+        }
+
+        $overlappingPolygons = CriteriaSite::forCriteria(PolygonService::OVERLAPPING_CRITERIA_ID)
+            ->whereIn('polygon_id', $sitePolygonUuids)
+            ->whereNotNull('extra_info')
+            ->get();
+
+        $fixablePolygonUuids = [];
+        $allOverlappingUuids = [];
+
+        foreach ($overlappingPolygons as $criteriaSite) {
+            $extraInfo = json_decode($criteriaSite->extra_info, true);
+
+            if (! is_array($extraInfo)) {
+                continue;
+            }
+
+            $hasFixableOverlap = false;
+
+            foreach ($extraInfo as $overlapData) {
+                $percentage = $overlapData['percentage'] ?? 0;
+                $intersectionArea = $overlapData['intersectionArea'] ?? 0;
+                $overlappingPolyUuid = $overlapData['poly_uuid'] ?? null;
+
+                if ($percentage <= 3.5 && $intersectionArea <= 0.118 && $overlappingPolyUuid) {
+                    $hasFixableOverlap = true;
+                    $allOverlappingUuids[] = $overlappingPolyUuid;
+                }
+            }
+
+            if ($hasFixableOverlap) {
+                $fixablePolygonUuids[] = $criteriaSite->polygon_id;
+            }
+        }
+
+        $allPolygonsToProcess = array_unique(array_merge($fixablePolygonUuids, $allOverlappingUuids));
+
+        return array_values($allPolygonsToProcess);
+    }
+
     public static function getSitePolygonsOfPolygons(array $polygonUuids)
     {
         return SitePolygon::whereIn('poly_id', $polygonUuids)->where('is_active', true)->get()->pluck('uuid');
@@ -396,14 +435,121 @@ class GeometryHelper
                 'poly_id' => $polygonData->poly_id,
                 'poly_name' => $polygonData->poly_name ?? '',
                 'plantstart' => $polygonData->plantstart ?? '',
-                'plantend' => $polygonData->plantend ?? '',
-                'practice' => $polygonData->practice ?? '',
+                'practice' => $polygonData->practice == null ? '' : implode(',', $polygonData->practice),
                 'target_sys' => $polygonData->target_sys ?? '',
-                'distr' => $polygonData->distr ?? '',
+                'distr' => $polygonData->distr == null ? '' : implode(',', $polygonData->distr),
                 'num_trees' => $polygonData->num_trees ?? '',
                 'site_id' => $polygonData->site_id ?? '',
+                'calc_area' => $polygonData->calc_area ?? '',
             ],
             'geometry' => $geometry,
         ];
+    }
+
+    public static function generateGeoJSON($project = null, $siteUuid = null)
+    {
+        $query = SitePolygon::query();
+
+        if ($project) {
+            $query->whereHas('site', function ($query) use ($project) {
+                $query->where('project_id', $project->id);
+            });
+        }
+
+        if ($siteUuid) {
+            $query->where('site_id', $siteUuid);
+        }
+
+        $sitePolygons = $query->active()->get();
+
+        $features = [];
+        foreach ($sitePolygons as $sitePolygon) {
+            $polygonGeometry = PolygonGeometry::where('uuid', $sitePolygon->poly_id)
+                ->select(DB::raw('ST_AsGeoJSON(geom) AS geojsonGeom'))
+                ->first();
+
+            if (! $polygonGeometry) {
+                throw new \Exception('No polygon geometry found for the given UUID.');
+            }
+
+            $fieldsToValidate = PolygonFields::EXTENDED_FIELDS;
+            $sitePolygonExtraAttributes = $sitePolygon->sitePolygonData;
+            $properties = [];
+            foreach ($fieldsToValidate as $field) {
+                $properties[$field] = $sitePolygon->$field;
+            }
+
+            if ($sitePolygonExtraAttributes !== null) {
+                $extraData = $sitePolygonExtraAttributes->data;
+
+                if (is_string($extraData)) {
+                    $decoded = json_decode($extraData, true);
+                    if (is_array($decoded)) {
+                        $properties = array_merge($properties, $decoded);
+                    }
+                } elseif (is_array($extraData)) {
+                    $properties = array_merge($properties, $extraData);
+                }
+            } else {
+                Log::info("No related sitePolygonData found for sitePolygon with UUID: {$sitePolygon->uuid}");
+            }
+
+            $features[] = [
+                'type' => 'Feature',
+                'geometry' => json_decode($polygonGeometry->geojsonGeom),
+                'properties' => $properties,
+            ];
+        }
+
+        return [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
+    }
+
+    public static function getCentroidsOfPolygons(array $polygonUuids)
+    {
+        return PolygonGeometry::whereIn('uuid', $polygonUuids)
+            ->select([
+                'uuid',
+                DB::raw('ST_X(ST_Centroid(geom)) AS centroid_x'),
+                DB::raw('ST_Y(ST_Centroid(geom)) AS centroid_y'),
+            ])
+            ->get()
+            ->map(function ($polygon) {
+                return [
+                    'uuid' => $polygon->uuid,
+                    'long' => $polygon->centroid_x,
+                    'lat' => $polygon->centroid_y,
+                ];
+            });
+    }
+
+    public static function updateSitePolygonCentroid(SitePolygon $sitePolygon): bool
+    {
+        if (! $sitePolygon->poly_id) {
+            return false;
+        }
+
+        $centroid = PolygonGeometry::selectRaw('ST_X(ST_Centroid(geom)) AS `long`, ST_Y(ST_Centroid(geom)) AS lat')
+            ->where('uuid', $sitePolygon->poly_id)
+            ->first();
+
+        if (! $centroid) {
+            return false;
+        }
+
+        DB::table('site_polygon')
+            ->where('id', $sitePolygon->id)
+            ->update([
+                'lat' => $centroid->lat,
+                'long' => $centroid->long,
+            ]);
+
+        // Update the model instance in memory so it has the latest values
+        $sitePolygon->lat = $centroid->lat;
+        $sitePolygon->long = $centroid->long;
+
+        return true;
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Models\Traits;
 
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\DisturbanceReport;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
@@ -10,6 +12,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\SrpReport;
 use Illuminate\Support\Facades\Auth;
 
 trait SaveAuditStatusTrait
@@ -53,11 +56,6 @@ trait SaveAuditStatusTrait
     {
         $comment = $this->getMoreInfoComment($data, $entity);
         $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, $comment, 'change-request', true);
-    }
-
-    public function saveAuditStatusAdminRestorationInProgress($entity)
-    {
-        $this->saveAuditStatus(get_class($entity), $entity->id, $entity->status, 'Restoration In Progress', '-', true);
     }
 
     public function saveAuditStatusAdminSendReminder($entity, $feedback)
@@ -144,6 +142,12 @@ trait SaveAuditStatusTrait
                 return 'project-report';
             case NurseryReport::class:
                 return 'nursery-report';
+            case FinancialReport::class:
+                return 'financial-report';
+            case DisturbanceReport::class:
+                return 'disturbance-report';
+            case SrpReport::class:
+                return 'srp-report';
             default:
                 return 'entity';
         }

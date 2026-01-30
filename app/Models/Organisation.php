@@ -6,8 +6,11 @@ use App\Models\Terrafund\TerrafundProgramme;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasVersions;
 use App\Models\Traits\NamedEntityTrait;
+use App\Models\V2\FinancialIndicators;
+use App\Models\V2\FinancialReport;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Organisation extends Model
 {
@@ -58,5 +61,22 @@ class Organisation extends Model
     public function terrafundProgrammes()
     {
         return $this->hasMany(TerrafundProgramme::class);
+    }
+
+    public function financialCollection(): HasMany
+    {
+        return $this->hasMany(FinancialIndicators::class, 'organisation_id', 'id')
+                    ->whereNull('financial_report_id');
+    }
+
+    public function financialReports(): HasMany
+    {
+        return $this->hasMany(FinancialReport::class, 'organisation_id', 'id');
+    }
+
+    public function fundingTypes(): HasMany
+    {
+        return $this->hasMany(FundingType::class, 'organisation_id', 'uuid')
+            ->whereNull('financial_report_id');
     }
 }

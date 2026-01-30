@@ -1,5 +1,6 @@
 import json
 import sys
+import os
 
 import requests
 import yaml
@@ -8,7 +9,7 @@ import tree_cover_indicator as ttc
 from fiona.model import Geometry, Feature, Properties
 
 
-def generate_indicator(feature, indicator_name, params, session=None):
+def generate_indicator(feature, indicator_name, params, session):
     if params["indicators"][indicator_name]["data_source"] == "gfw":
         supported_layers = gfw.get_supported_gfw_layer()
         if indicator_name not in supported_layers.keys():
@@ -24,10 +25,26 @@ def generate_indicator(feature, indicator_name, params, session=None):
             }
         else:
             key_label = params["indicators"][indicator_name]["key_label"]
-            polygon_data = {
-                row[key_label]: ttc.calculate_area(feature)
-                for row in polygon_gfw_data["data"]
-            }
+            if indicator_name == "wwf_terrestrial_ecoregions" and "realm_label" in params["indicators"][indicator_name]:
+                realm_label = params["indicators"][indicator_name]["realm_label"]
+                polygon_data = {}
+                realm = None
+                
+                for row in polygon_gfw_data["data"]:
+                    eco_name = row[key_label]
+                    area = ttc.calculate_area(feature)
+                    polygon_data[eco_name] = area
+                    
+                    if realm_label in row and realm is None:
+                        realm = row[realm_label]
+                
+                if realm:
+                    polygon_data["realm"] = realm
+            else:
+                polygon_data = {
+                    row[key_label]: ttc.calculate_area(feature)
+                    for row in polygon_gfw_data["data"]
+                }
     elif params["indicators"][indicator_name]["data_source"] == "polygon":
         polygon_data = {
             feature.properties[
@@ -52,17 +69,20 @@ def main():
     output_geojson = sys.argv[2]
     indicator_name = sys.argv[3]
     api_key = sys.argv[4]
+    origin = sys.argv[5] if len(sys.argv) > 5 else "terramatch.org"
     
     with open(input_geojson, "r") as f:
         geojson_data = json.load(f)
 
-    config_path = "resources/python/polygon-indicator/config.yaml"
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yaml")
+
     with open(config_path) as conf_file:
         config = yaml.safe_load(conf_file)
 
     with requests.Session() as session:
        session.headers = {
            "content-type": "application/json",
+           "origin": origin,
            "x-api-key": f"{api_key}",
        }
     
@@ -73,11 +93,8 @@ def main():
         ),
         properties=Properties(**geojson_data["properties"])
     )
-    if (indicator_name == "wwf_terrestrial_ecoregions"):
-        result = generate_indicator(fiona_feature, indicator_name, config, session)
-    else:
-        result = generate_indicator(fiona_feature, indicator_name, config)
-    
+    result = generate_indicator(fiona_feature, indicator_name, config, session)
+
     with open(output_geojson, 'w') as f:
         json.dump({'area': result}, f)
 

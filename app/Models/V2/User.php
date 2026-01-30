@@ -103,9 +103,7 @@ class User extends Authenticatable implements JWTSubject
             return self::$adminRoles;
         }
 
-        self::$adminRoles = collect(array_keys(config('wri.permissions.roles')))
-            ->filter(fn ($roleName) => Str::startsWith($roleName, 'admin'))
-            ->toArray();
+        self::$adminRoles = Role::where('name', 'LIKE', 'admin-%')->select('name')->pluck('name')->toArray();
 
         return self::$adminRoles;
     }
@@ -351,6 +349,13 @@ class User extends Authenticatable implements JWTSubject
         return $this->projects()->wherePivot('is_managing', true);
     }
 
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('projects', function ($query) {
+            $query->where('is_test', false);
+        });
+    }
+
     public function terrafundProgrammes()
     {
         return $this->belongsToMany(TerrafundProgramme::class);
@@ -359,6 +364,11 @@ class User extends Authenticatable implements JWTSubject
     public function frameworks()
     {
         return $this->belongsToMany(Framework::class)->withTimestamps();
+    }
+
+    public function projectsFrameworkKey()
+    {
+        return $this->projects()->select('framework_key')->distinct('framework_key')->pluck('framework_key');
     }
 
     public function wipeData()

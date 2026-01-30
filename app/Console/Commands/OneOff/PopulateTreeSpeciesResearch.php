@@ -4,8 +4,11 @@ namespace App\Console\Commands\OneOff;
 
 use App\Console\Commands\Traits\Abortable;
 use App\Console\Commands\Traits\AbortException;
+use App\Console\Commands\Traits\ExceptionLevel;
 use App\Models\V2\TreeSpecies\TreeSpeciesResearch;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
+use Symfony\Component\Process\Process;
 
 class PopulateTreeSpeciesResearch extends Command
 {
@@ -33,6 +36,7 @@ class PopulateTreeSpeciesResearch extends Command
         'family' => 'family',
         'genus' => 'genus',
         'specificEpithet' => 'specific_epithet',
+        'infraspecificEpithet' => 'infraspecific_epithet',
     ];
 
     // Populated by parseHeaders(), a mapping of DB colum name to the index in each row where that data is expected to
@@ -45,21 +49,61 @@ class PopulateTreeSpeciesResearch extends Command
     public function handle()
     {
         $this->executeAbortableScript(function () {
-            $fileHandle = fopen($this->argument('file'), 'r');
-            $this->parseHeaders(fgetcsv($fileHandle, separator: "\t"));
+            $process = new Process(['wc', '-l', $this->argument('file')]);
+            $process->run();
+            $this->assert($process->isSuccessful(), "WC failed {$process->getErrorOutput()}");
 
-            // The input file at the time of this writing has 1618549 rows of data
-            $this->withProgressBar(1618549, function ($progressBar) use ($fileHandle) {
-                while ($csvRow = fgetcsv($fileHandle, separator: "\t")) {
+            $lines = ((int)explode(' ', $process->getOutput())[0]) - 1;
+
+            $fileHandle = fopen($this->argument('file'), 'r');
+            $this->parseHeaders(fgetcsv($fileHandle));
+
+            $this->withProgressBar($lines, function ($progressBar) use ($fileHandle) {
+                $abortExceptions = [];
+                $bulkInsert = [];
+                while ($csvRow = fgetcsv($fileHandle)) {
                     $data = [];
                     foreach ($this->columns as $column => $index) {
-                        $data[$column] = $csvRow[$index];
+                        $data[$column] = $csvRow[$index] == 'NA' ? null : $csvRow[$index];
                     }
-                    TreeSpeciesResearch::create($data);
+
+                    // These don't get set automatically with bulk insert
+                    $now = Carbon::now();
+                    $data['created_at'] = $now;
+                    $data['updated_at'] = $now;
+
+                    try {
+                        $existing = TreeSpeciesResearch::where('scientific_name', $data['scientific_name'])->first();
+                        $this->assert(
+                            $existing == null,
+                            'Scientific name already exists, skipping: ' . json_encode([
+                                'existing_id' => $existing?->taxon_id,
+                                'new_id' => $data['taxon_id'],
+                                'scientific_name' => $data['scientific_name'],
+                                'infraspecific_epithet' => $data['infraspecific_epithet'],
+                            ], JSON_PRETTY_PRINT),
+                            ExceptionLevel::Warning
+                        );
+
+                        $bulkInsert[] = $data;
+                        if (count($bulkInsert) >= 1000) {
+                            TreeSpeciesResearch::insert($bulkInsert);
+                            $bulkInsert = [];
+                        }
+                    } catch (AbortException $e) {
+                        $abortExceptions[] = $e;
+                    }
                     $progressBar->advance();
                 }
 
                 $progressBar->finish();
+
+                if (! empty($abortExceptions)) {
+                    $this->warn("Errors and warnings encountered during parsing CSV Rows:\n");
+                    foreach ($abortExceptions as $error) {
+                        $this->logException($error);
+                    }
+                }
             });
 
             fclose($fileHandle);
@@ -72,7 +116,8 @@ class PopulateTreeSpeciesResearch extends Command
     protected function parseHeaders(array $headerRow): void
     {
         foreach ($headerRow as $index => $header) {
-            $header = trim($header);
+            // Excel puts some garbage at the beginning of the file that we need to filter out.
+            $header = trim($header, "\xEF\xBB\xBF\"");
 
             if (array_key_exists($header, self::COLUMN_MAPPING)) {
                 $this->columns[self::COLUMN_MAPPING[$header]] = $index;

@@ -13,6 +13,9 @@ class AssociatedUserResource extends JsonResource
         // The resource can either be a User or a ProjectInvite
         $isUser = $this->resource instanceof User;
         $user = $isUser ? $this->resource : $this->user;
+        $status = $isUser ?
+            (! is_null($user->pivot) && ! $user->pivot->is_monitoring && ! $user->pivot->is_managing ? 'Owner' : 'Accepted') :
+            (is_null($this->accepted_at) ? 'Pending' : 'Accepted');
 
         return [
             'uuid' => $user->uuid ?? null,
@@ -22,7 +25,7 @@ class AssociatedUserResource extends JsonResource
             'last_name' => $user->last_name ?? null,
             'email_address' => $this->email_address,
             'organisation' => is_null($user) ? null : new OrganisationLiteResource($user->organisation),
-            'status' => $isUser ? 'Accepted' : (is_null($this->accepted_at) ? 'Pending' : 'Accepted'),
+            'status' => $status,
         ];
     }
 }

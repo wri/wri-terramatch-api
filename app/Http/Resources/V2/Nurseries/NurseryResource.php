@@ -32,7 +32,6 @@ class NurseryResource extends JsonResource
             'seedlings_grown_count' => $this->seedlings_grown_count,
             'nursery_reports_total' => $this->nursery_reports_total,
             'overdue_nursery_reports_total' => $this->overdue_nursery_reports_total,
-            'migrated' => ! empty($this->old_model),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

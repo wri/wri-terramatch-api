@@ -32,11 +32,13 @@ class UserResource extends JsonResource
             'monitoring_organisations' => MonitoringOrganisationResource::collection($this->organisations),
 
             'managed_projects' => $this->managedProjects == null ? null : ProjectLiteResource::collection($this->managedProjects),
+            'monitoring_projects' => $this->projects == null ? null : ProjectLiteResource::collection($this->projects),
 
             'last_logged_in_at' => $this->last_logged_in_at,
             'email_address_verified_at' => $this->email_address_verified_at,
             'verified' => ! empty($this->email_address_verified_at),
             'date_added' => $this->created_at,
+            'locale' => $this->locale,
 
             'banners' => $this->banners,
 

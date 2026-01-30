@@ -14,6 +14,8 @@ class UploadHelper
         'image/jpeg' => 10000,
         'image/png' => 10000,
         'image/gif' => 10000,
+        'image/heif' => 10000,
+        'image/heic' => 10000,
         'application/pdf' => 10000,
         'application/msword' => 10000,
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 10000,
@@ -36,15 +38,15 @@ class UploadHelper
      * want to be considered.
      */
     public const MAPS = ['tiff'];
-    public const IMAGES = ['png', 'jpg', 'gif'];
+    public const IMAGES = ['png', 'jpg', 'gif', 'heif', 'heic'];
     public const VIDEOS = ['mp4', 'mov', '3gp'];
     public const FILES = ['pdf', 'xlsx', 'xls', 'csv', 'text', 'doc'];
     public const FILES_CSV = ['csv'];
     public const FILES_PDF = ['pdf'];
     public const FILES_DOC_PDF = ['pdf', 'doc', 'docx'];
-    public const IMAGES_FILES = ['png', 'jpg', 'gif', 'pdf'];
-    public const IMAGES_VIDEOS = ['png', 'jpg', 'gif', 'mp4', 'mov', '3gp'];
-    public const FILES_IMAGES = ['pdf', 'xlsx', 'xls', 'png', 'jpg', 'docx', 'doc'];
+    public const IMAGES_FILES = ['png', 'jpg', 'gif', 'pdf', 'heif', 'heic'];
+    public const IMAGES_VIDEOS = ['png', 'jpg', 'gif', 'mp4', 'mov', '3gp', 'heif', 'heic'];
+    public const FILES_IMAGES = ['pdf', 'xlsx', 'xls', 'png', 'jpg', 'docx', 'doc', 'heif', 'heic'];
 
     /**
      * This method is a shorthand for translating a (potentially invalid) user

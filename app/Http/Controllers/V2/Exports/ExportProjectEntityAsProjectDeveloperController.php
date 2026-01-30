@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\V2\Exports;
 
 use App\Exports\V2\EntityExport;
+use App\Helpers\GeometryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Nurseries\Nursery;
+use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
+use App\Models\V2\Sites\SiteReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -20,7 +23,7 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
     {
         ini_set('memory_limit', '-1');
         Validator::make(['entity' => $entity], [
-            'entity' => 'required|in:sites,nurseries,project-reports,shapefiles',
+            'entity' => 'required|in:sites,nurseries,project-reports,shapefiles,site-reports,nursery-reports',
         ])->validate();
 
         if ($entity === 'shapefiles') {
@@ -34,7 +37,15 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
 
         $filename = Str::of($project->name)->replace(['/', '\\'], '-') . ' - '.$entity.' establishment data - ' . now() . '.csv';
 
-        $query = $modelClass::where('project_id', $project->id);
+        if ($entity === 'nursery-reports') {
+            $nursery = Nursery::where('project_id', $project->id)->pluck('id');
+            $query = $modelClass::whereIn('nursery_id', $nursery);
+        } elseif ($entity === 'site-reports') {
+            $site = Site::where('project_id', $project->id)->pluck('id');
+            $query = $modelClass::whereIn('site_id', $site);
+        } else {
+            $query = $modelClass::where('project_id', $project->id);
+        }
 
         return (new EntityExport($query, $form))->download($filename, Excel::CSV);//->deleteFileAfterSend(true);
     }
@@ -63,6 +74,15 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
                 $model = ProjectReport::class;
 
                 break;
+
+            case 'site-reports':
+                $model = SiteReport::class;
+
+                break;
+            case 'nursery-reports':
+                $model = NurseryReport::class;
+
+                break;
         }
 
         return $model;
@@ -70,17 +90,13 @@ class ExportProjectEntityAsProjectDeveloperController extends Controller
 
     private function exportShapefiles(Project $project)
     {
-        $filename = storage_path('./'.Str::of($project->name)->replace(['/', '\\'], '-') . ' Sites Shapefiles - ' . now() . '.zip');
-        $zip = new \ZipArchive();
-        $zip->open($filename, \ZipArchive::CREATE);
+        $geoJson = GeometryHelper::generateGeoJSON($project);
+        $filename = Str::of($project->name)->replace(['/', '\\'], '-') . ' Sites GeoJSON - ' . now() . '.geojson';
+        $path = storage_path('./' . $filename);
 
-        rescue(function () use ($project, $zip) {
-            $this->addSiteShapefiles($project, $zip);
-        });
+        file_put_contents($path, json_encode($geoJson));
 
-        $zip->close();
-
-        return response()->download($filename)->deleteFileAfterSend();
+        return response()->download($path)->deleteFileAfterSend();
     }
 
     private function addSiteShapefiles(Project $project, \ZipArchive $mainZip): void

@@ -107,4 +107,18 @@ return [
 
     'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache_'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Cache Timeout Values
+    |--------------------------------------------------------------------------
+    |
+    | Here you may define the cache timeout values for different sections
+    | of the application. These values can be used in any controllers
+    | to set the time-to-live (TTL) for cached items.
+    |
+    */
+
+    'ttl' => [
+        'dashboard' => 86400, // 24 hours
+    ]
 ];

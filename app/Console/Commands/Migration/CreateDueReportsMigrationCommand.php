@@ -54,7 +54,7 @@ class CreateDueReportsMigrationCommand extends Command
     {
         TerrafundDueSubmission::where('is_submitted', 0)->chunk(500, function ($chunk) use (&$count, &$created) {
             foreach ($chunk as $stub) {
-                switch($stub->terrafund_due_submissionable_type) {
+                switch ($stub->terrafund_due_submissionable_type) {
                     case TerrafundProgramme::class:
                         $project = Project::where('old_model',  TerrafundProgramme::class)
                             ->where('old_id', $stub->terrafund_due_submissionable_id)
@@ -118,7 +118,7 @@ class CreateDueReportsMigrationCommand extends Command
     {
         DueSubmission::where('is_submitted', 0)->chunk(500, function ($chunk) use (&$count, &$created) {
             foreach ($chunk as $stub) {
-                switch($stub->due_submissionable_type) {
+                switch ($stub->due_submissionable_type) {
                     case Programme::class:
                         $project = Project::where('old_model',  Programme::class)
                             ->where('old_id', $stub->due_submissionable_id)

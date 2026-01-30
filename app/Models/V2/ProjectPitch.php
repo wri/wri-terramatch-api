@@ -2,10 +2,13 @@
 
 namespace App\Models\V2;
 
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
 use App\Models\V2\Forms\FormSubmission;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +29,7 @@ class ProjectPitch extends Model implements MediaModel
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use HasTags;
+    use HasDemographics;
 
     /*  Statuses    */
     public const STATUS_DRAFT = 'draft';
@@ -52,6 +56,13 @@ class ProjectPitch extends Model implements MediaModel
         'detailed_intervention_types' => 'array',
         'land_use_types' => 'array',
         'restoration_strategy' => 'array',
+        'level_0_proposed' => 'array',
+        'level_1_proposed' => 'array',
+        'level_2_proposed' => 'array',
+        'lat_proposed' => 'float',
+        'long_proposed' => 'float',
+        'anr_practices_proposed' => 'array',
+        'information_authorization' => 'boolean',
     ];
 
     public $fileConfiguration = [
@@ -75,6 +86,27 @@ class ProjectPitch extends Model implements MediaModel
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+    ];
+
+    // Required by the HasDemographics trait
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Tracking::JOBS_TYPE => [
+            'all' => [
+                DemographicCollections::ALL,
+            ],
+            'full-time' => [
+                DemographicCollections::FULL_TIME,
+                DemographicCollections::FULL_TIME_CLT,
+            ],
+            'part-time' => [
+                DemographicCollections::PART_TIME,
+                DemographicCollections::PART_TIME_CLT,
+            ],
+        ],
+        Tracking::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
+        Tracking::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Tracking::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
+        Tracking::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void

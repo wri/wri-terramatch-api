@@ -2,10 +2,14 @@
 
 namespace App\Models\V2\Sites;
 
+use App\Helpers\GeometryHelper;
 use App\Models\Traits\HasUuid;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\Disturbance;
 use App\Models\V2\MonitoredData\IndicatorHectares;
+use App\Models\V2\MonitoredData\IndicatorTreeCover;
 use App\Models\V2\MonitoredData\IndicatorTreeCoverLoss;
 use App\Models\V2\PointGeometry;
 use App\Models\V2\PolygonGeometry;
@@ -32,6 +36,7 @@ class SitePolygon extends Model implements AuditableModel
     use SoftDeletes;
     use BelongsToThroughTrait;
     use HasFactory;
+    use ReportsStatusChange;
 
     protected $table = 'site_polygon';
 
@@ -42,17 +47,26 @@ class SitePolygon extends Model implements AuditableModel
       'site_id',
       'point_id',
       'plantstart',
-      'plantend',
       'practice',
       'target_sys',
       'distr',
       'num_trees',
       'calc_area',
       'status',
+      'planting_status',
       'created_by',
       'source',
       'is_active',
       'version_name',
+      'validation_status',
+      'disturbance_id',
+      'lat',
+      'long',
+    ];
+
+    protected $casts = [
+        'practice' => 'array',
+        'distr' => 'array',
     ];
 
     public function polygonGeometry(): BelongsTo
@@ -90,6 +104,11 @@ class SitePolygon extends Model implements AuditableModel
         return $this->hasOne(User::class, 'id', 'created_by');
     }
 
+    public function disturbance(): BelongsTo
+    {
+        return $this->belongsTo(Disturbance::class, 'disturbance_id');
+    }
+
     public function getRouteKeyName()
     {
         return 'uuid';
@@ -105,9 +124,19 @@ class SitePolygon extends Model implements AuditableModel
         return $this->hasMany(IndicatorHectares::class, 'site_polygon_id');
     }
 
+    public function treeCoverIndicator()
+    {
+        return $this->hasMany(IndicatorTreeCover::class, 'site_polygon_id');
+    }
+
     public function treeCoverLossIndicator()
     {
         return $this->hasMany(IndicatorTreeCoverLoss::class, 'site_polygon_id');
+    }
+
+    public function sitePolygonData()
+    {
+        return $this->hasOne(SitePolygonData::class, 'site_polygon_uuid', 'uuid');
     }
 
     public function getAuditableNameAttribute(): string
@@ -159,18 +188,19 @@ class SitePolygon extends Model implements AuditableModel
             ]);
         }
         $newSitePolygon->primary_uuid = $this->primary_uuid;
-        $newSitePolygon->plantstart = $properties['plantstart'] ?? $this->plantstart;
-        $newSitePolygon->plantend = $properties['plantend'] ?? $this->plantend;
-        $newSitePolygon->practice = $properties['practice'] ?? $this->practice;
-        $newSitePolygon->target_sys = $properties['target_sys'] ?? $this->target_sys;
-        $newSitePolygon->distr = $properties['distr'] ?? $this->distr;
-        $newSitePolygon->num_trees = $properties['num_trees'] ?? $this->num_trees;
+        $newSitePolygon->plantstart = array_key_exists('plantstart', $properties) ? $properties['plantstart'] : $this->plantstart;
+        $newSitePolygon->practice = array_key_exists('practice', $properties) ? $properties['practice'] : $this->practice;
+        $newSitePolygon->target_sys = array_key_exists('target_sys', $properties) ? $properties['target_sys'] : $this->target_sys;
+        $newSitePolygon->distr = array_key_exists('distr', $properties) ? $properties['distr'] : $this->distr;
+        $newSitePolygon->num_trees = array_key_exists('num_trees', $properties) ? $properties['num_trees'] : $this->num_trees;
         $newSitePolygon->poly_id = $poly_id ?? $copyGeometry->uuid;
         $newSitePolygon->poly_name = $submit_polygon_loaded ? $this->poly_name.' (new)' : $properties['poly_name'] ?? $this->poly_name;
         $newSitePolygon->version_name = ($properties['poly_name'] ?? $this->poly_name).'_'.now()->format('j_F_Y_H_i_s').'_'.$user->full_name;
         $newSitePolygon->is_active = true;
         $newSitePolygon->uuid = (string) Str::uuid();
         $newSitePolygon->created_by = $user->id;
+        $newSitePolygon->validation_status = null;
+        $newSitePolygon->disturbance_id = $properties['disturbance_id'] ?? $this->disturbance_id;
         $newSitePolygon->save();
 
         return $newSitePolygon;
@@ -184,6 +214,12 @@ class SitePolygon extends Model implements AuditableModel
             }
             $instance->primary_uuid = $instance->uuid;
             $instance->save();
+        });
+
+        static::saved(function ($instance) {
+            if ($instance->poly_id) {
+                GeometryHelper::updateSitePolygonCentroid($instance);
+            }
         });
     }
 }

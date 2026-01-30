@@ -22,7 +22,7 @@ class UploadRequest extends FormRequest
             ],
             'upload_file' => [
                 'sometimes',
-                'mimes:csv,txt,xls,xlsx,jpg,gif,png,pdf,tiff,svg,mp4,doc,docx,bin',
+                'mimes:csv,txt,xls,xlsx,jpg,gif,png,heic,heif,pdf,tiff,svg,mp4,doc,docx,bin',
             ],
             'collection' => [
                 'sometimes',

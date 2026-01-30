@@ -2,16 +2,14 @@
 
 namespace App\Models\V2\Sites;
 
-use App\Http\Resources\V2\SiteReports\SiteReportResource;
 use App\Models\Framework;
-use App\Models\Traits\HasEntityResources;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasFrameworkKey;
-use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
-use App\Models\Traits\HasWorkdays;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -24,9 +22,10 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Seeding;
 use App\Models\V2\Tasks\Task;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
-use App\Models\V2\Workdays\Workday;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,7 +34,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Resources\Json\JsonResource;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -49,16 +47,15 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     use HasUuid;
     use SoftDeletes;
     use HasReportStatus;
-    use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
-    use HasEntityResources;
     use BelongsToThroughTrait;
-    use HasWorkdays;
+    use HasDemographics;
+    use ReportsStatusChange;
 
     protected $auditInclude = [
         'status',
@@ -104,7 +101,9 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'survival_calculation',
         'survival_description',
         'maintenance_activities',
-        // virtual (see HasWorkdays trait)
+        'planting_status',
+
+        // virtual (see HasDemographics trait)
         'other_workdays_description',
     ];
 
@@ -141,6 +140,22 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'tree_planting_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'anr_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
+        'soil_water_conservation_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'soil_water_conservation_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
     ];
 
     public $table = 'v2_site_reports';
@@ -154,29 +169,31 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         'answers' => 'array',
     ];
 
-    // Required by the HasWorkdays trait
-    public const WORKDAY_COLLECTIONS = [
-        'paid' => [
-            Workday::COLLECTION_SITE_PAID_SITE_ESTABLISHMENT,
-            WORKDAY::COLLECTION_SITE_PAID_PLANTING,
-            Workday::COLLECTION_SITE_PAID_SITE_MAINTENANCE,
-            Workday::COLLECTION_SITE_PAID_SITE_MONITORING,
-            Workday::COLLECTION_SITE_PAID_OTHER,
-        ],
-        'volunteer' => [
-            Workday::COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT,
-            WORKDAY::COLLECTION_SITE_VOLUNTEER_PLANTING,
-            Workday::COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE,
-            Workday::COLLECTION_SITE_VOLUNTEER_SITE_MONITORING,
-            Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
-        ],
-        'other' => [
-            Workday::COLLECTION_SITE_PAID_OTHER,
-            Workday::COLLECTION_SITE_VOLUNTEER_OTHER,
-        ],
-        'finance' => [
-            Workday::COLLECTION_PROJECT_DIRECT,
-            Workday::COLLECTION_PROJECT_CONVERGENCE,
+    // Required by the HasDemographics trait
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Tracking::WORKDAY_TYPE => [
+            'paid' => [
+                DemographicCollections::PAID_SITE_ESTABLISHMENT,
+                DemographicCollections::PAID_PLANTING,
+                DemographicCollections::PAID_SITE_MAINTENANCE,
+                DemographicCollections::PAID_SITE_MONITORING,
+                DemographicCollections::PAID_OTHER,
+            ],
+            'volunteer' => [
+                DemographicCollections::VOLUNTEER_SITE_ESTABLISHMENT,
+                DemographicCollections::VOLUNTEER_PLANTING,
+                DemographicCollections::VOLUNTEER_SITE_MAINTENANCE,
+                DemographicCollections::VOLUNTEER_SITE_MONITORING,
+                DemographicCollections::VOLUNTEER_OTHER,
+            ],
+            'other' => [
+                DemographicCollections::PAID_OTHER,
+                DemographicCollections::VOLUNTEER_OTHER,
+            ],
+            'finance' => [
+                DemographicCollections::DIRECT,
+                DemographicCollections::CONVERGENCE,
+            ],
         ],
     ];
 
@@ -307,6 +324,11 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         return $this->nonTreeSpecies()->visible()->sum('amount');
     }
 
+    public function getTotalTreeReplantingCountAttribute(): int
+    {
+        return $this->replantingTreeSpecies()->visible()->sum('amount');
+    }
+
     public function getTotalSeedsPlantedCountAttribute(): int
     {
         return $this->seedings()->visible()->sum('amount');
@@ -372,11 +394,6 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         return $query->where('site_id', $id);
     }
 
-    public function createResource(): JsonResource
-    {
-        return new SiteReportResource($this);
-    }
-
     public function supportsNothingToReport(): bool
     {
         return true;
@@ -397,6 +414,11 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
         return $this->title ?? '';
     }
 
+    public function getParentNameAttribute(): string
+    {
+        return $this->site?->name ?? '';
+    }
+
     public static function search($query)
     {
         return self::select('v2_site_reports.*')
@@ -411,5 +433,19 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
     public function scopeApproved($query)
     {
         return $query->where('status', ReportStatusStateMachine::APPROVED);
+    }
+
+    public function getProjectReportAttribute()
+    {
+        return $this->task?->projectReport?->only(['name', 'status', 'uuid']) ?? '';
+    }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('site', function ($query) {
+            $query->whereHas('project', function ($query) {
+                $query->where('is_test', false);
+            });
+        });
     }
 }

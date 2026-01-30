@@ -2,8 +2,9 @@
 
 namespace App\Models\Traits;
 
-use App\Models\Interfaces\HandlesLinkedFieldSync;
 use App\Models\V2\Forms\Form;
+use App\Models\V2\PolygonGeometry;
+use App\Models\V2\Projects\ProjectPolygon;
 
 trait UsesLinkedFields
 {
@@ -28,73 +29,6 @@ trait UsesLinkedFields
     public function getFormConfig(): ?array
     {
         return config('wri.linked-fields.models.' . $this->shortName);
-    }
-
-    public function updateAllAnswers(array $input): array
-    {
-        $localAnswers = [];
-        foreach ($this->getform()->sections as $section) {
-            foreach ($section->questions as $question) {
-                if ($question->input_type !== 'conditional' && ! empty($question->linked_field_key)) {
-                    $linkedFieldInfo = $question->getLinkedFieldInfo([
-                        'organisation' => $this->organisation,
-                        'project-pitch' => $this->projectPitch,
-                    ]);
-                    if (! empty($linkedFieldInfo)) {
-                        $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
-                            data_get($input, $question->parent_id) === false;
-                        $this->updateLinkedFieldValue($linkedFieldInfo, data_get($input, $question->uuid), $hidden);
-                    }
-                }
-                $localAnswers[$question->uuid] = data_get($input, $question->uuid);
-            }
-        }
-
-        return $localAnswers;
-    }
-
-    public function updateFromForm(array $formData): void
-    {
-        $form = $this->getForm();
-        $formConfig = $this->getFormConfig();
-        $fieldsConfig = data_get($formConfig, 'fields', []);
-        $relationsConfig = data_get($formConfig, 'relations', []);
-        $localAnswers = [];
-        $entityProps = [];
-
-        foreach ($form->sections as $section) {
-            foreach ($section->questions as $question) {
-                if ($question->input_type !== 'conditional') {
-                    $fieldConfig = data_get($fieldsConfig, $question->linked_field_key);
-                    if ($fieldConfig != null) {
-                        $property = data_get($fieldConfig, 'property', null);
-                        $value = data_get($formData, $question->uuid, null);
-
-                        if (! is_null($value)) {
-                            if (empty($property)) {
-                                $localAnswers[$question->uuid] = data_get($formData, $question->uuid);
-                            }
-
-                            $entityProps[$property] = $value;
-                        }
-                    } else {
-                        $property = data_get($relationsConfig, "$question->linked_field_key.property");
-                        if (! empty($property)) {
-                            $inputType = data_get($relationsConfig, "$question->linked_field_key.input_type");
-                            $hidden = ! empty($question->parent_id) && $question->show_on_parent_condition &&
-                                $formData[$question->parent_id] === false;
-                            $this->syncRelation($property, $inputType, collect(data_get($formData, $question->uuid)), $hidden);
-                        }
-                    }
-
-                } else {
-                    $localAnswers[$question->uuid] = data_get($formData, $question->uuid, null);
-                    $entityProps['answers'] = $localAnswers;
-                }
-            }
-        }
-
-        $this->update($entityProps);
     }
 
     public function calculateCompletion(Form $form): int
@@ -214,12 +148,20 @@ trait UsesLinkedFields
     {
         switch ($linkedFieldInfo['link-type']) {
             case 'fields':
+                $inputType = strtolower((string) data_get($linkedFieldInfo, 'input_type'));
+                if ($inputType === 'mapinput' && $property === 'proj_boundary') {
+                    $geojson = $this->getProjectBoundaryGeometryFromPolygons($model);
+                    if ($geojson != null) {
+                        return $geojson;
+                    }
+                }
+
                 return data_get($model, $property);
-            case 'file-collections' :
+            case 'file-collections':
                 $colCfg = data_get($model->fileConfiguration, $property);
 
                 return $model->getFileResource($property, $colCfg);
-            case 'relations' :
+            case 'relations':
                 $relation = data_get($linkedFieldInfo, 'property');
                 $resource = data_get($linkedFieldInfo, 'resource');
                 if (empty($resource)) {
@@ -235,68 +177,75 @@ trait UsesLinkedFields
         }
     }
 
-    private function updateLinkedFieldValue(array $linkedFieldInfo, $answer, bool $hidden): void
+    private function getProjectBoundaryGeometryFromPolygons($entity): ?array
     {
-        $class = app($linkedFieldInfo['model']);
-        $model = $class::isUuid($linkedFieldInfo['uuid'])->first();
-        $property = $linkedFieldInfo['property'];
+        $projectPolygon = ProjectPolygon::where('entity_type', get_class($entity))
+            ->where('entity_id', $entity->id)
+            ->orderByDesc('created_at')
+            ->first();
 
-        if (empty($model) || empty($property)) {
-            return ;
+        if ($projectPolygon == null) {
+            return null;
         }
 
-        if ($linkedFieldInfo['link-type'] == 'fields') {
-            $model->$property = $answer;
-            $model->save();
-        } elseif ($linkedFieldInfo['link-type'] == 'relations') {
-            $inputType = data_get($linkedFieldInfo, 'input_type');
-            $this->syncRelation($property, $inputType, collect($answer), $hidden, $model);
+        $row = PolygonGeometry::isUuid($projectPolygon->poly_uuid)
+            ->selectRaw('ST_AsGeoJSON(geom) as geojson_string')
+            ->first();
+
+        if ($row == null) {
+            return null;
         }
+        if (empty($row->geojson_string)) {
+            return null;
+        }
+
+        $decoded = json_decode($row->geojson_string, true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 
-    private function syncRelation(string $property, string $inputType, $data, bool $hidden, $entity = null): void
+    public function cleanConditionalAnswers(Form $form): void
     {
-        $entity ??= $this;
+        $formConfig = $this->getFormConfig();
+        $fieldsConfig = data_get($formConfig, 'fields', []);
+        $modelAnswers = $this->answers;
+        $entityProps = [];
 
-        if (! in_array($inputType, [
-            'treeSpecies',
-            'disturbances',
-            'workdays',
-            'restorationPartners',
-            'stratas',
-            'invasive',
-            'seedings',
-        ])) {
-            return;
-        }
+        $childQuestions = [];
+        $conditionalValues = [];
 
-        $class = get_class($entity->$property()->make());
-        if (is_a($class, HandlesLinkedFieldSync::class, true)) {
-            $class::syncRelation($entity, $property, $data, $hidden);
-
-            return;
-        }
-
-        $entity->$property()->whereNotIn('uuid', $data->pluck('uuid')->filter())->delete();
-
-        // This would be better as a bulk operation, but too much processing is required to make that feasible
-        // in Eloquent (upsert isn't supported on MorphMany, for instance), and these sets will always be small
-        // so doing them one at a time is OK.
-        $entries = $entity->$property()->get();
-        foreach ($data as $entry) {
-            $entry['hidden'] = $hidden;
-
-            $model = null;
-            if (! empty($entry['uuid'])) {
-                $model = $entries->firstWhere('uuid', $entry['uuid']);
-            }
-            if ($model != null) {
-                $model->update($entry);
-            } else {
-                // protection against updating a deleted entry
-                unset($entry['uuid']);
-                $entity->$property()->create($entry);
+        foreach ($form->sections as $section) {
+            foreach ($section->questions as $question) {
+                if ($question->input_type !== 'conditional') {
+                    if (! is_null($question->parent_id)) {
+                        $childQuestions[] = $question;
+                    }
+                } else {
+                    $value = data_get($modelAnswers, $question->uuid, null);
+                    if (! is_null($value)) {
+                        $conditionalValues[$question->uuid] = $value;
+                    }
+                }
             }
         }
+
+        foreach ($childQuestions as $child) {
+            if (array_key_exists($child->parent_id, $conditionalValues) && $child->show_on_parent_condition != $conditionalValues[$child->parent_id]) {
+                $fieldConfig = data_get($fieldsConfig, $child->linked_field_key);
+                $property = data_get($fieldConfig, 'property');
+                if ($this->isPlainField($child->input_type) && ! empty($property)) {
+                    $entityProps[$property] = null;
+                }
+            }
+        }
+
+        $this->update($entityProps);
+    }
+
+    private function isPlainField($input_type)
+    {
+        $plainFields = ['long-text', 'date', 'number', 'text', 'number-percentage', 'boolean'];
+
+        return in_array($input_type, $plainFields);
     }
 }

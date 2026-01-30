@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\OneOff;
 
+use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Organisation;
 use App\Models\V2\ProjectPitch;
 use App\Models\V2\Projects\Project;
@@ -60,6 +61,22 @@ class UpdateTreeCollections extends Command
                 }
 
                 $updateRequest->update(['content' => $content]);
+            }
+        });
+
+        $this->info('Updating form fields');
+        FormQuestion::withoutTimestamps(function () {
+            $relationSets = data_get(config('wri.linked-fields.models'), '*.relations');
+            foreach ($relationSets as $relations) {
+                foreach ($relations as $linkedFieldKey => $properties) {
+                    if ($properties['input_type'] != 'treeSpecies') {
+                        continue;
+                    }
+
+                    FormQuestion::withTrashed()
+                        ->where('linked_field_key', $linkedFieldKey)
+                        ->update(['collection' => $properties['collection']]);
+                }
             }
         });
     }

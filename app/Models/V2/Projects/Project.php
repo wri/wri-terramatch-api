@@ -4,17 +4,16 @@ namespace App\Models\V2\Projects;
 
 use App\Models\Framework;
 use App\Models\Organisation;
-use App\Models\Traits\HasEntityResources;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasEntityStatus;
 use App\Models\Traits\HasFrameworkKey;
-use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
-use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\MediaModel;
@@ -26,9 +25,12 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
+use App\Models\V2\Trackings\TrackingEntry;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
-use App\Models\V2\Workdays\Workday;
+use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -51,7 +53,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     use HasUuid;
     use SoftDeletes;
     use HasFrameworkKey;
-    use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
@@ -59,7 +60,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     use Auditable;
     use HasUpdateRequests;
     use HasEntityStatus;
-    use HasEntityResources;
+    use HasDemographics;
+    use ReportsStatusChange;
 
     protected $auditInclude = [
         'status',
@@ -74,6 +76,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     protected $fillable = [
         'name',
         'status',
+        'planting_status',
         'is_test',
         'update_request_status',
         'project_status',
@@ -91,6 +94,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'objectives',
         'environmental_goals',
         'socioeconomic_goals',
+        'income_generating_activities',
         'sdgs_impacted',
         'long_term_growth',
         'community_incentives',
@@ -145,6 +149,19 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'goal_trees_restored_direct_seeding',
         'landscape',
         'direct_seeding_survival_rate',
+        'cohort',
+        'short_name',
+        'level_1_project',
+        'level_2_project',
+        'land_tenure_approach',
+        'seedlings_procurement',
+        'jobs_goal_description',
+        'volunteers_goal_description',
+        'community_engagement_plan',
+        'direct_beneficiaries_goal_description',
+        'elp_project',
+        'consortium',
+        'landowner_agreement',
     ];
 
     public $fileConfiguration = [
@@ -193,9 +210,14 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'land_use_types' => 'array',
         'restoration_strategy' => 'array',
         'sdgs_impacted' => 'array',
+        'income_generating_activities' => 'array',
         'answers' => 'array',
         'detailed_intervention_types' => 'array',
         'states' => 'array',
+        'cohort' => 'array',
+        'level_1_project' => 'array',
+        'level_2_project' => 'array',
+        'elp_project' => 'boolean',
     ];
 
     public const PROJECT_STATUS_NEW = 'new_project';
@@ -204,6 +226,28 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public static $projectStatuses = [
         self::PROJECT_STATUS_NEW => 'New project',
         self::PROJECT_STATUS_EXISTING => 'Existing expansion',
+    ];
+
+    // Required by the HasDemographics trait. What's specified here should be a super set of what's on ProjectPitch,
+    // as those demographics are all copied to the project on establishment.
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Tracking::JOBS_TYPE => [
+            'all' => [
+                DemographicCollections::ALL,
+            ],
+            'full-time' => [
+                DemographicCollections::FULL_TIME,
+                DemographicCollections::FULL_TIME_CLT,
+            ],
+            'part-time' => [
+                DemographicCollections::PART_TIME,
+                DemographicCollections::PART_TIME_CLT,
+            ],
+        ],
+        Tracking::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
+        Tracking::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Tracking::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
+        Tracking::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -240,6 +284,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $this->hasMany(Site::class);
     }
 
+    public function nonDraftSites(): HasMany
+    {
+        return $this->hasMany(Site::class)->where('status', '!=', EntityStatusStateMachine::STARTED);
+    }
+
     public function controlSites(): HasMany
     {
         return $this->hasMany(Site::class)->where('control_site', true);
@@ -248,6 +297,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     public function nurseries(): HasMany
     {
         return $this->hasMany(Nursery::class);
+    }
+
+    public function nonDraftNurseries(): HasMany
+    {
+        return $this->hasMany(Nursery::class)->where('status', '!=', EntityStatusStateMachine::STARTED);
     }
 
     public function reports(): HasMany
@@ -303,6 +357,22 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             'id',
             'uuid'
         )->active();
+    }
+
+    public function approvedSitePolygons(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            SitePolygon::class,
+            Site::class,
+            'project_id',
+            'site_id',
+            'id',
+            'uuid'
+        )
+        ->whereHas('site', function ($query) {
+            $query->whereIn('status', Site::$approvedStatuses);
+        })
+        ->active();
     }
 
     public function treeSpecies()
@@ -380,29 +450,35 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $this->submittedSiteReports()->sum('num_trees_regenerating');
     }
 
+    public function getApprovedRegeneratedTreesCountAttribute(): int
+    {
+        return $this->approvedSiteReports()->sum('num_trees_regenerating');
+    }
+
     public function getWorkdayCountAttribute($useDemographicsCutoff = false): int
     {
         $projectQuery = $this->reports()->Approved();
         $siteQuery = $this->approvedSiteReports();
         if ($useDemographicsCutoff) {
-            $projectQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
-            $siteQuery->where('due_at', '>=', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+            $projectQuery->where('due_at', '>=', Tracking::DEMOGRAPHICS_COUNT_CUTOFF);
+            $siteQuery->where('due_at', '>=', Tracking::DEMOGRAPHICS_COUNT_CUTOFF);
         }
 
-        return Demographic::where('demographical_type', Workday::class)->
-            whereIn(
-                'demographical_id',
-                Workday::where('workdayable_type', SiteReport::class)
-                    ->whereIn('workdayable_id', $siteQuery->select('v2_site_reports.id'))
+        return TrackingEntry::whereIn(
+            'tracking_id',
+            Tracking::where(['domain' => 'demographics', 'trackable_type' => SiteReport::class])
+                    ->whereIn('trackable_id', $siteQuery->select('v2_site_reports.id'))
+                    ->type(Tracking::WORKDAY_TYPE)
                     ->visible()
                     ->select('id')
-            )->orWhereIn(
-                'demographical_id',
-                Workday::where('workdayable_type', ProjectReport::class)
-                    ->whereIn('workdayable_id', $projectQuery->select('id'))
-                    ->visible()
-                    ->select('id')
-            )->gender()->sum('amount') ?? 0;
+        )->orWhereIn(
+            'tracking_id',
+            Tracking::where(['domain' => 'demographics', 'trackable_type' => ProjectReport::class])
+                ->whereIn('trackable_id', $projectQuery->select('id'))
+                ->type(Tracking::WORKDAY_TYPE)
+                ->visible()
+                ->select('id')
+        )->gender()->sum('amount') ?? 0;
     }
 
     public function getSelfReportedWorkdayCountAttribute($useDemographicsCutoff = false): int
@@ -417,8 +493,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         $siteQuery = $this->approvedSiteReports()->groupBy('v2_sites.project_id');
 
         if ($useDemographicsCutoff) {
-            $projectQuery->where('due_at', '<', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
-            $siteQuery->where('due_at', '<', Workday::DEMOGRAPHICS_COUNT_CUTOFF);
+            $projectQuery->where('due_at', '<', Tracking::DEMOGRAPHICS_COUNT_CUTOFF);
+            $siteQuery->where('due_at', '<', Tracking::DEMOGRAPHICS_COUNT_CUTOFF);
         }
 
         $projectTotals = $projectQuery->get($sumQueries)->first();
@@ -436,19 +512,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             $this->getSelfReportedWorkdayCountAttribute(true);
     }
 
-    public function getTotalJobsCreatedAttribute(): int
-    {
-        $ftTotal = ProjectReport::where('project_id', $this->id)
-            ->approved()
-            ->sum('ft_total');
-
-        $ptTotal = ProjectReport::where('project_id', $this->id)
-            ->approved()
-            ->sum('pt_total');
-
-        return $ftTotal + $ptTotal;
-    }
-
     /**
      * Get the total number of approved jobs created (both full-time and part-time)
      *
@@ -456,10 +519,20 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
      */
     public function getTotalApprovedJobsCreatedAttribute(): int
     {
-        return $this->reports()
-            ->approved()
-            ->select(DB::raw('SUM(COALESCE(ft_total, 0) + COALESCE(pt_total, 0)) as total_jobs'))
-            ->value('total_jobs') ?? 0;
+        return TrackingEntry::whereIn(
+            'tracking_id',
+            Tracking::where([
+                'domain' => 'demographics',
+                'trackable_type' => ProjectReport::class,
+                'hidden' => false,
+                'type' => Tracking::JOBS_TYPE,
+            ])
+            ->whereIn('trackable_id', $this->reports()->approved()->select('id'))
+            ->select('id')
+        )
+        ->where('type', 'gender')
+        ->whereNull('deleted_at')
+        ->sum('amount') ?? 0;
     }
 
     /**
@@ -536,6 +609,11 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             : $query->doesntHave('monitoring');
     }
 
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->where('is_test', false);
+    }
+
     // All Entities are expected to have a project attribute.
     public function getProjectAttribute(): Project
     {
@@ -584,7 +662,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
      * @return HasManyThrough The query of site report IDs for all reports associated with sites that have been
      * approved, and have a report status not in due or started (reports that have been submitted).
      */
-    private function submittedSiteReportIds(): HasManyThrough
+    public function submittedSiteReportIds(): HasManyThrough
     {
         return $this->submittedSiteReports()->select('v2_site_reports.id');
     }
@@ -603,7 +681,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
      * @return HasManyThrough The query of site report IDs for all reports associated with sites that have been
      * approved, and have a report status approved.
      */
-    private function approvedSiteReportIds(): HasManyThrough
+    public function approvedSiteReportIds(): HasManyThrough
     {
         return $this->approvedSiteReports()->select('v2_site_reports.id');
     }
@@ -615,6 +693,59 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
 
     public function getTotalHectaresRestoredSumAttribute(): float
     {
-        return round($this->sitePolygons->where('status', 'approved')->sum('calc_area'));
+        return $this->approvedSitePolygons->where('status', 'approved')->sum('calc_area');
+    }
+
+    /**
+     * Helper method to check if project has a specific cohort
+     */
+    public function hasCohort(string $cohortName): bool
+    {
+        if (empty($this->cohort)) {
+            return false;
+        }
+
+        if (is_array($this->cohort)) {
+            return in_array($cohortName, $this->cohort);
+        }
+
+        return $this->cohort === $cohortName;
+    }
+
+    public function getCohortsArray(): array
+    {
+        if (empty($this->cohort)) {
+            return [];
+        }
+
+        if (is_array($this->cohort)) {
+            return $this->cohort;
+        }
+
+        return [$this->cohort];
+    }
+
+    public function addCohort(string $cohortName): void
+    {
+        $cohorts = $this->getCohortsArray();
+
+        if (! in_array($cohortName, $cohorts)) {
+            $cohorts[] = $cohortName;
+            $this->cohort = $cohorts;
+        }
+    }
+
+    /**
+     * Helper method to remove a cohort from the project
+     */
+    public function removeCohort(string $cohortName): void
+    {
+        $cohorts = $this->getCohortsArray();
+
+        $cohorts = array_filter($cohorts, function ($cohort) use ($cohortName) {
+            return $cohort !== $cohortName;
+        });
+
+        $this->cohort = array_values($cohorts);
     }
 }

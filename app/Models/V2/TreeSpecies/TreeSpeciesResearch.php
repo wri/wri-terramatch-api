@@ -23,5 +23,13 @@ class TreeSpeciesResearch extends Model
         'family',
         'genus',
         'specific_epithet',
+        'infraspecific_epithet',
+        'native_distribution',
+        'suitability',
+    ];
+
+    protected $casts = [
+        'native_distribution' => 'array',
+        'suitability' => 'array',
     ];
 }

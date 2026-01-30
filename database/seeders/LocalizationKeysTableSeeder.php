@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Helpers\I18nHelper;
+use App\Helpers\PolygonNotificationMailHelper;
 use App\Models\V2\LocalizationKey;
 use Illuminate\Database\Seeder;
 
@@ -21,12 +22,14 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('form-submission-approved.title', 'Your application has been approved');
         $this->createLocalizationKey('form-submission-approved.body', 'Your application has been approved.');
         $this->createLocalizationKey('form-submission-approved.body-feedback', 'Your application has been approved. Please see comments below:<br><br>');
+        $this->createLocalizationKey('form-submission-approved.cta', 'View Application');
+
 
         // form-submission-rejected
         $this->createLocalizationKey('form-submission-rejected.subject', 'Application Status Update');
         $this->createLocalizationKey('form-submission-rejected.title', 'THANK YOU FOR YOUR APPLICATION');
-        $this->createLocalizationKey('form-submission-rejected.body', 'After careful review, our team has decided your application will not move forward.');
-        $this->createLocalizationKey('form-submission-rejected.body-feedback', 'After careful review, our team has decided your application will not move forward. Please see the comments below for more details or any follow-up resources.<br><br> {feedback}');
+        $this->createLocalizationKey('form-submission-rejected.body', 'After careful review, your organization will not be selected for funding at this time. We appreciate your time and effort throughout the application process and the important work that you do with communities. We will notify you of any future funding or training opportunities that may be relevant to your organization.<br><br>If you would like more feedback on your application, please email <a href="mailto:info@terramatch.org" style="color: #6E6E6E;">info@terramatch.org</a> to set up a time to speak in more detail.');
+        $this->createLocalizationKey('form-submission-rejected.body-feedback', 'After careful review, your organization will not be selected for funding at this time. We appreciate your time and effort throughout the application process and the important work that you do with communities. We will notify you of any future funding or training opportunities that may be relevant to your organization.<br><br>Please see the comments below for more details or any follow-up resources.<br><br>{feedback}<br><br>If you would like more feedback on your application, please email <a href="mailto:info@terramatch.org" style="color: #6E6E6E;">info@terramatch.org</a> to set up a time to speak in more detail.');
 
         // entity-status-change
         $this->createLocalizationKey('entity-status-change.subject-approved', 'Your {entityTypeName} Has Been Approved');
@@ -51,14 +54,18 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('form-submission-feedback-received.title', 'You have received feedback on your application');
         $this->createLocalizationKey('form-submission-feedback-received.body', 'Your application requires more information.');
         $this->createLocalizationKey('form-submission-feedback-received.body-feedback', 'Your application requires more information. Please see comments below:<br><br> {feedback}');
+        $this->createLocalizationKey('form-submission-feedback-received.cta', 'View Application');
 
         // form-submission-final-stage-approved
         $this->createLocalizationKey('form-submission-final-stage-approved.subject', 'Application Approved');
         $this->createLocalizationKey('form-submission-final-stage-approved.title', 'Your application has been approved');
-        $this->createLocalizationKey('form-submission-final-stage-approved.body', 'Your application has successfully passed all stages of our evaluation process and has been officially approved.
-            If you have any immediate queries, please do not hesitate to reach out to our support team.');
-        $this->createLocalizationKey('form-submission-final-stage-approved.body-feedback', 'Your application has successfully passed all stages of our evaluation process and has been officially approved. Please see the comments below:<br><br> {feedback}' .
-            '<br><br>If you have any immediate queries, please do not hesitate to reach out to our dedicated support team.');
+        $this->createLocalizationKey('form-submission-final-stage-approved.body', 'Your Application has successfully passed all stages of our evaluation process and has been officially approved!' .
+            '<br><br>We will now transition your Application into a Project on TerraMatch. Next time you log in to TerraMatch, you will be able to access your Project from the Homepage or from the “My Projects” page.' .
+            '<br><br>Your program team will provide detailed guidance on when and how to edit and finalize your Project profile. If you have any immediate queries, please reach out to TerraMatch Support at info@terramatch.org.');
+        $this->createLocalizationKey('form-submission-final-stage-approved.body-feedback', 'Your Application has successfully passed all stages of our evaluation process and has been officially approved! Please see the comments below:<br><br> {feedback}' .
+            '<br><br>We will now transition your Application into a Project on TerraMatch. Next time you log in to TerraMatch, you will be able to access your Project from the Homepage or from the “My Projects” page.' .
+            '<br><br>Your program team will provide detailed guidance on when and how to edit and finalize your Project profile. If you have any immediate queries, please reach out to TerraMatch Support at info@terramatch.org.');
+        $this->createLocalizationKey('form-submission-final-stage-approved.cta', 'View Project');
 
         // form-submission-submitted
         $this->createLocalizationKey('form-submission-submitted.subject', 'You have submitted an application');
@@ -179,11 +186,31 @@ class LocalizationKeysTableSeeder extends Seeder
             'TerraMatch Support');
         $this->createLocalizationKey('send-login-details.cta', 'Set Password');
 
+        // bulk-user-creation
+        $this->createLocalizationKey('bulk-user-creation.subject', 'Welcome to TerraMatch!');
+        $this->createLocalizationKey('bulk-user-creation.title', 'Welcome to TerraMatch 🌱 !');
+        $this->createLocalizationKey('bulk-user-creation.body', 'Hi {userName},<br><br>' .
+            'We\'re thrilled to let you know that your access to TerraMatch is now active and it is time to begin your application to {fundingProgrammeName}!<br><br>' .
+            'Your user email used for your account is {mail}<br><br>' .
+            'Please click on the button below to set your new password. This link is valid for 7 days from the day you received this email.<br><br>' .
+            'If you have any questions or require assistance, our support team is ready to help at info@terramatch.org or +44 7456 289369 (WhatsApp only).<br><br>'.
+            'We look forward to working with you!<br><br>' .
+            '<br><br>' .
+            'Best regards,<br><br>' .
+            'TerraMatch Support');
+        $this->createLocalizationKey('bulk-user-creation.cta', 'Set Password');
+
         // polygon-operations-complete
         $this->createLocalizationKey('polygon-validation.subject', 'Your TerraMatch Polygon {operation} is Complete');
         $this->createLocalizationKey('polygon-validation.title', 'YOUR POLYGON {operationUpper} IS COMPLETE');
         $this->createLocalizationKey('polygon-validation.body', 'Your {operation} for Site {siteName} completed at {completedTime} GMT.');
         $this->createLocalizationKey('polygon-validation.cta', 'OPEN SITE');
+
+        // polygon-clipping-complete
+        $this->createLocalizationKey('polygon-clipping-complete.subject', 'Your TerraMatch Polygon Clipping is Complete');
+        $this->createLocalizationKey('polygon-clipping-complete.title', 'YOUR POLYGON CLIPPING IS COMPLETE');
+        $this->createLocalizationKey('polygon-clipping-complete.body', 'Your polygon clipping for Site {siteName} completed at {time}.');
+        $this->createLocalizationKey('polygon-clipping-complete.cta', 'OPEN SITE');
 
         // satellite-map-created
         $this->createLocalizationKey('satellite-map-created.subject', 'Remote Sensing Map Received');
@@ -223,13 +250,14 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('terrafund-programme-submission-received.cta', 'View Report');
 
         // terrafund-report-reminder
-        $this->createLocalizationKey('terrafund-report-reminder.subject', 'Terrafund Report Reminder');
+        $this->createLocalizationKey('terrafund-report-reminder.subject', 'It\'s Time to Report on TerraMatch!');
         $this->createLocalizationKey('terrafund-report-reminder.title', 'YOU HAVE A REPORT DUE!');
-        $this->createLocalizationKey('terrafund-report-reminder.body', 'Your next report is due on July 31. It should reflect any progress made between January 1, 2023 and June 30, 2022.<br><br>' .
-            'If you have any questions, feel free to message us at info@terramatch.org.' .
-            '<br><br>---<br><br>' .
-            'Votre prochain rapport doit être remis le 31 juillet. Il doit refléter tous les progrès réalisés entre le 1er janvier 2023 et le 30 juin 2023. ');
-        $this->createLocalizationKey('terrafund-report-reminder.cta', 'View Project');
+        $this->createLocalizationKey(
+            'terrafund-report-reminder.body',
+            'Your next report for {projectName} is due on {dueDate} and is ready for you on TerraMatch.<br><br>' .
+            'As always, your answers should reflect any progress made in the last six months. If you have any questions, feel free to message us at info@terramatch.org.'
+        );
+        $this->createLocalizationKey('terrafund-report-reminder.cta', 'View Reporting Task');
 
         // terrafund-site-and-nursery-reminder
         $this->createLocalizationKey('terrafund-site-and-nursery-reminder.subject', 'Terrafund Site & Nursery Reminder');
@@ -320,8 +348,17 @@ class LocalizationKeysTableSeeder extends Seeder
         // report-reminder
         $this->createLocalizationKey('report-reminder.subject', 'Reminder: Your {entityTypeName} Still Needs Your Input');
         $this->createLocalizationKey('report-reminder.title', 'Reminder: Your {entityTypeName} Still Needs Your Input');
-        $this->createLocalizationKey('report-reminder.body', 'This is a reminder that your {entityTypeName} still has the status {entityStatus}. Below you will see a note from your project manager about the report.<br><br> 
-            If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>{feedback}');
+        $this->createLocalizationKey('report-reminder.body', 'This is a reminder that your {entityTypeName} for {entityModelName} still has the status: {entityStatus}. Below you will see a note from your project manager about the report.<br><br> 
+            Here is a link to the reporting task on TerraMatch so you can easily access your report: <a href="{callbackUrl}" style="color: #6E6E6E;">Here.</a> If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>{feedback}');
+
+        // financial-report-reminder
+        $this->createLocalizationKey('financial-report-reminder.subject', 'TerraFund Report Reminder');
+        $this->createLocalizationKey('financial-report-reminder.title', 'Reminder: Your Financial Report Still Needs Your Input');
+        $this->createLocalizationKey('financial-report-reminder.body', 'This is a reminder that your financial report for {entityModelName} is due on {dueAt}.<br><br> 
+            <a href="{callbackUrl}" style="color: #6E6E6E;">Here is a link to your "My Organization" page on TerraMatch</a>, where you can find your report.<br><br> 
+            You can find detailed guidance for this report here: <a href="https://terramatchsupport.zendesk.com/hc/en-us/articles/40711356869019-Financial-Reporting-for-Restoration-Enterprises" style="color: #6E6E6E;">Financial Reporting for Restoration Enterprises</a>.<br><br>
+            If you have any questions, please reach out to your project manager or to info@terramatch.org.<br><br>');
+        $this->createLocalizationKey('financial-report-reminder.cta', 'View Report');
 
         // task-digest
         $this->createLocalizationKey('task-digest.subject', '{projectName} - Report Summary for {date}');
@@ -378,20 +415,44 @@ class LocalizationKeysTableSeeder extends Seeder
         $this->createLocalizationKey('v2-project-invite-received-create.body', '{organisationName} has invited you to join TerraMatch as a monitoring partner on {projectName}
             Click the link below to create your account and set your password so you can see the project’s progress and access its reports.');
         $this->createLocalizationKey('v2-project-invite-received-create.cta', 'CREATE ACCOUNT');
+
+        // terrafund-polygon-update
+        $this->createLocalizationKey('terrafund-polygon-update.subject', 'Weekly Update on Polygon Changes');
+        $this->createLocalizationKey('terrafund-polygon-update.title', 'Polygon Updates Week of {date}');
+        $this->createLocalizationKey('terrafund-polygon-update.cta', 'View Updates');
+        $this->createLocalizationKey(
+            'terrafund-polygon-update.manager.body',
+            PolygonNotificationMailHelper::getPolygonNotificationMail(true)
+        );
+        $this->createLocalizationKey(
+            'terrafund-polygon-update.pd.body',
+            PolygonNotificationMailHelper::getPolygonNotificationMail(false)
+        );
+
+        $this->createLocalizationKey('v2-organisation-invite-received-create.subject', 'YOU HAVE BEEN INVITED TO JOIN TERRAMATCH');
+        $this->createLocalizationKey('v2-organisation-invite-received-create.title', 'YOU HAVE BEEN INVITED TO JOIN TERRAMATCH');
+        $this->createLocalizationKey('v2-organisation-invite-received-create.body', '{organisationName} has invited you to join TerraMatch as a team member.
+            Click the link below to create your account and set your password so you can see the ongoing applications for this organization.');
+        $this->createLocalizationKey('v2-organisation-invite-received-create.cta', 'CREATE ACCOUNT');
     }
 
     public function createLocalizationKey($key, $value): void
     {
-        if (LocalizationKey::where('key', operator: $key)->exists()) {
+        $localizationKey = LocalizationKey::where('key', $key)->first();
+        if (! is_null($localizationKey) && $localizationKey->value == $value) {
             return;
         }
 
-        $localizationKey = LocalizationKey::create([
-            'key' => $key,
-            'value' => $value,
-        ]);
-
+        if (is_null($localizationKey)) {
+            $localizationKey = LocalizationKey::create([
+                'key' => $key,
+                'value' => $value,
+                'created_at' => now(),
+            ]);
+        }
+        $localizationKey->value = $value;
         $localizationKey->value_id = I18nHelper::generateI18nItem($localizationKey, 'value');
+        $localizationKey->updated_at = now();
         $localizationKey->save();
     }
 }

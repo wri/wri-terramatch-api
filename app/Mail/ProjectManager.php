@@ -4,11 +4,9 @@ namespace App\Mail;
 
 use App\Models\V2\EntityModel;
 use App\Models\V2\Nurseries\Nursery;
-use App\Models\V2\Nurseries\NurseryReport;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
-use App\Models\V2\Sites\SiteReport;
 use Illuminate\Support\Str;
 
 class ProjectManager extends I18nMail
@@ -35,7 +33,7 @@ class ProjectManager extends I18nMail
             );
         }
 
-        if (get_class($entity) === Site::class || get_class($entity) === SiteReport::class) {
+        if (get_class($entity) === Site::class) {
             $this->setSubjectKey('project-manager-site.subject')
                 ->setTitleKey('project-manager-site.title')
                 ->setBodyKey('project-manager-site.body')
@@ -51,7 +49,7 @@ class ProjectManager extends I18nMail
             );
         }
 
-        if (get_class($entity) === Nursery::class || get_class($entity) === NurseryReport::class) {
+        if (get_class($entity) === Nursery::class) {
             $this->setSubjectKey('project-manager-nursery.subject')
                 ->setTitleKey('project-manager-nursery.title')
                 ->setBodyKey('project-manager-nursery.body')

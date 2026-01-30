@@ -52,9 +52,13 @@ class SitePolygonValidator extends Validator
         '*' => 'string|uuid|has_polygon_site|estimated_area',
     ];
 
+    public const PLANT_START_DATE = [
+        '*' => 'string|uuid|has_polygon_site|plant_start_date',
+    ];
+
     public const GEOMETRY_TYPE = [
-        'features' => 'required|array',
-        'features.*' => 'geometry_type',
+      'type' => 'required|in:FeatureCollection',
+      'features' => 'required|array|geometry_type',
     ];
 
     public const GEOMETRY_TYPE_UUID = [
@@ -65,7 +69,6 @@ class SitePolygonValidator extends Validator
         'features' => 'required|array',
         'features.*.properties.poly_name' => 'required',
         'features.*.properties.plantstart' => 'required',
-        'features.*.properties.plantend' => 'required',
         'features.*.properties.practice' => 'required',
         'features.*.properties.target_sys' => 'required',
         'features.*.properties.distr' => 'required',
@@ -76,10 +79,14 @@ class SitePolygonValidator extends Validator
         'features' => 'required|array',
         'features.*.properties.poly_name' => 'string|not_in:null,NULL|filled',
         'features.*.properties.plantstart' => 'date',
-        'features.*.properties.plantend' => 'date',
         'features.*.properties.practice' => 'string|not_in:null,NULL|filled',
         'features.*.properties.target_sys' => 'string|not_in:null,NULL|filled',
         'features.*.properties.distr' => 'string|not_in:null,NULL|filled',
         'features.*.properties.num_trees' => 'integer',
+    ];
+
+    public const DUPLICATE_GEOMETRY = [
+        'features' => 'required|array',
+        'features.*' => 'duplicate_geometry',
     ];
 }

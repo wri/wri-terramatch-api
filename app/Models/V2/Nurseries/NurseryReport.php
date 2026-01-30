@@ -3,13 +3,12 @@
 namespace App\Models\V2\Nurseries;
 
 use App\Models\Framework;
-use App\Models\Traits\HasEntityResources;
 use App\Models\Traits\HasFrameworkKey;
-use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
@@ -21,7 +20,6 @@ use App\Models\V2\ReportModel;
 use App\Models\V2\Tasks\Task;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
-use App\Models\V2\Workdays\Workday;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,14 +40,13 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
     use HasUuid;
     use SoftDeletes;
     use HasReportStatus;
-    use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use Auditable;
     use HasUpdateRequests;
-    use HasEntityResources;
     use BelongsToThroughTrait;
+    use ReportsStatusChange;
 
     protected $auditInclude = [
         'status',
@@ -93,6 +90,10 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
     ];
 
     public $fileConfiguration = [
+        'media' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
         'file' => [
             'validation' => 'general-documents',
             'multiple' => true,
@@ -171,11 +172,6 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function workdays()
-    {
-        return $this->morphMany(Workday::class, 'workdayable');
     }
 
     public function approvedBy(): BelongsTo
@@ -286,5 +282,24 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
     public function getAuditableNameAttribute(): string
     {
         return $this->title ?? '';
+    }
+
+    public function getParentNameAttribute(): string
+    {
+        return $this->nursery?->name ?? '';
+    }
+
+    public function getProjectReportAttribute()
+    {
+        return $this->task?->projectReport?->only(['name', 'status', 'uuid']) ?? '';
+    }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('nursery', function ($query) {
+            $query->whereHas('project', function ($query) {
+                $query->where('is_test', false);
+            });
+        });
     }
 }

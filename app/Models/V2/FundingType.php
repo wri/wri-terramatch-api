@@ -22,6 +22,7 @@ class FundingType extends Model
         'amount',
         'year',
         'type',
+        'financial_report_id',
     ];
 
     public function organisation(): BelongsTo

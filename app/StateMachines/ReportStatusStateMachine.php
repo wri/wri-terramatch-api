@@ -55,9 +55,4 @@ class ReportStatusStateMachine extends EntityStatusStateMachine
 
         return $hooks;
     }
-
-    private function addHook($hooks, $status, $hook)
-    {
-        $hooks[$status] = [$hook];
-    }
 }

@@ -70,6 +70,9 @@ class WithinCountry extends Extension
             'geometry_id' => $geometry->id,
             'inside_percentage' => $insidePercentage,
             'country_name' => $intersectionData->country,
+            'extra_info' => [
+              'country_name' => $intersectionData->country,
+            ],
         ];
     }
 

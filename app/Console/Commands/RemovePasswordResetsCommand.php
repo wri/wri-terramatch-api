@@ -11,11 +11,11 @@ class RemovePasswordResetsCommand extends Command
 {
     protected $signature = 'remove-password-resets';
 
-    protected $description = 'Removes password resets older than 2 hours';
+    protected $description = 'Removes password resets older than 7 days';
 
     public function handle(): int
     {
-        $past = new DateTime('now - 2 hours', new DateTimeZone('UTC'));
+        $past = new DateTime('now - 7 days', new DateTimeZone('UTC'));
         PasswordResetModel::where('created_at', '<=', $past)->delete();
 
         return 0;

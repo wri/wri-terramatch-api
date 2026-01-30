@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Helpers\PolygonGeometryHelper as PolyHelper;
+use App\Models\Traits\IndicatorUpdateTrait;
 use App\Models\V2\PolygonGeometry;
 use App\Models\V2\Sites\SitePolygon;
 use Illuminate\Http\Request;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 
 class CreateVersionPolygonGeometryHelper
 {
+    use IndicatorUpdateTrait;
+
     /**
      * This method creates a polygon geometry from a collection of coordinates.
      */
@@ -41,6 +44,9 @@ class CreateVersionPolygonGeometryHelper
             PolyHelper::updateEstAreainSitePolygon($newGeometryVersion, $geometry);
             PolyHelper::updateProjectCentroidFromPolygon($newGeometryVersion);
             $newPolygonVersion->changeStatusOnEdit();
+
+            $helper = new self();
+            $helper->updateIndicatorsForPolygon($newGeometryVersion->uuid);
 
             return response()->json(['message' => 'Site polygon version created successfully.', 'geometry' => $geometry, 'uuid' => $newPolygonVersion->poly_id], 201);
         }

@@ -75,6 +75,8 @@ class Validator
         \App\Validators\Extensions\Polygons\SelfIntersection::class,
         \App\Validators\Extensions\Polygons\Spikes::class,
         \App\Validators\Extensions\Polygons\WithinCountry::class,
+        \App\Validators\Extensions\Polygons\PlantStartDate::class,
+        \App\Validators\Extensions\Polygons\DuplicateGeometryValidator::class,
     ];
 
     private function __construct()

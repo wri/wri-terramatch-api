@@ -27,7 +27,7 @@ class WorldCountryGeneralizedFactory extends Factory
             'countryaff' => 'Australia',
             'country' => 'Australia',
             'iso' => 'AU',
-            'aff_iso' => 'AU',
+            'alpha_2_iso' => 'AU',
             'OGR_FID' => 264,
             'geometry' => DB::raw("ST_GeomFromGeoJSON('$geometryAustralia')"),
         ];

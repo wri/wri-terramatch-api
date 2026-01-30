@@ -26,7 +26,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
     {
         $answer = data_get($answers, $field['uuid']);
 
-        $readableOptionsFields = ['select', 'radio',  'checkbox', 'imageSelect', 'fundingType', 'leadershipTeam', 'coreTeamLeaders', 'ownershipStake'];
+        $readableOptionsFields = ['select', 'radio',  'checkbox', 'imageSelect', 'fundingType', 'ownershipStake'];
         if (in_array(data_get($field, 'input_type'), $readableOptionsFields)) {
             $question = FormQuestion::isUuid($field['uuid'])->first();
             $answer = $this->getReadableOptionsValue($question, $answer);
@@ -47,7 +47,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
         if (is_array($answer)) {
             $list = [];
             foreach ($answer as $item) {
-                $list[] = data_get($field, 'input_type') . '??' . $item;
+                $list[] = $item;
             }
 
             return implode('|', $list);
@@ -70,35 +70,39 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
 
                 case 'workdays':
                 case 'restorationPartners':
+                case 'jobs':
+                case 'employees':
+                case 'volunteers':
+                case 'allBeneficiaries':
+                case 'trainingBeneficiaries':
+                case 'indirectBeneficiaries':
                     $list = [];
-                    $demographical = $answer->first();
-                    if ($demographical == null) {
+                    $demographic = $answer->first();
+                    if ($demographic == null) {
                         return '';
                     }
 
-                    $types = ['gender' => [], 'age' => [], 'ethnicity' => [], 'caste' => []];
-                    foreach ($demographical->demographics as $demographic) {
-                        $value = match ($demographic->type) {
-                            'ethnicity' => [$demographic->amount, $demographic->subtype, $demographic->name],
-                            default => [$demographic->amount, $demographic->name],
+                    $types = ['gender' => [], 'age' => [], 'ethnicity' => [], 'farmer' => [], 'caste' => []];
+                    foreach ($demographic->entries as $entry) {
+                        $value = match ($entry->type) {
+                            'ethnicity' => [$entry->amount, $entry->subtype, $entry->name],
+                            default => [$entry->amount, $entry->subtype],
                         };
-                        $types[$demographic['type']][] = implode(':', $value);
+                        $types[$entry['type']][] = implode(':', $value);
                     }
                     $list[] = 'gender:(' . implode(')(', $types['gender']) . ')';
                     $list[] = 'age:(' . implode(')(', $types['age']) . ')';
-                    if ($frameworkKey == 'hbf') {
+                    if ($field['input_type'] == 'allBeneficiaries') {
+                        $list[] = 'farmer:(' . implode(')(', $types['farmer']) . ')';
+                    }
+                    if ($frameworkKey == 'hbf' && $field['input_type'] != 'trainingBeneficiaries') {
                         $list[] = 'caste:(' . implode(')(', $types['caste']) . ')';
-                    } else {
+                    }
+                    if ($frameworkKey != 'hbf' && ($field['input_type'] == 'workdays' || $field['input_type'] == 'restorationPartners')) {
                         $list[] = 'ethnicity:(' . implode(')(', $types['ethnicity']) . ')';
                     }
 
                     return implode('|', $list);
-
-                case 'leadershipTeam':
-                    return $this->stringifyModel($answer, ['first_name', 'last_name', 'position', 'gender', 'age',]);
-
-                case 'coreTeamLeaders':
-                    return $this->stringifyModel($answer, ['first_name', 'last_name', 'position', 'gender', 'age', 'role']);
 
                 case 'fundingType':
                     return $this->stringifyModel($answer, ['type', 'source', 'amount', 'year']);

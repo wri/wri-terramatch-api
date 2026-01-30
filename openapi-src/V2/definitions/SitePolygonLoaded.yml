@@ -24,9 +24,6 @@ properties:
   plantstart:
     type: string
     format: date
-  plantend:
-    type: string
-    format: date
   practice:
     type: string
   target_sys:
@@ -63,3 +60,4 @@ properties:
     type: boolean
   version_name:
     type: string
+

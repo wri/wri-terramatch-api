@@ -2,7 +2,6 @@
 
 namespace App\Models\Traits;
 
-use App\Events\V2\General\EntityStatusChangeEvent;
 use App\StateMachines\EntityStatusStateMachine;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Support\Str;
@@ -33,11 +32,6 @@ trait HasEntityStatus
         EntityStatusStateMachine::NEEDS_MORE_INFORMATION => 'Needs more information',
         EntityStatusStateMachine::APPROVED => 'Approved',
     ];
-
-    public function dispatchStatusChangeEvent($user): void
-    {
-        EntityStatusChangeEvent::dispatch($user, $this, $this->name ?? '', '', $this->readable_status);
-    }
 
     public function getViewLinkPath(): string
     {

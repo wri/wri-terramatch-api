@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\V2\Forms;
 
-use App\Http\Resources\V2\AuditResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class FormSubmissionLiteResource extends JsonResource
@@ -21,9 +20,8 @@ class FormSubmissionLiteResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'updated_by_uuid' => $this->user_id,
-            'application_uuid' => data_get($this->application, 'uuid'),
-            'project_pitch_uuid' => data_get($this->projectPitch, 'uuid'),
-            'audits' => AuditResource::collection($this->audits),
+            'updated_by_name' => $this->user?->full_name,
+            'project_pitch_uuid' => $this->project_pitch_uuid,
             'form_uuid' => $this->form_id,
             'stage' => [
                 'uuid' => data_get($this->stage, 'uuid'),

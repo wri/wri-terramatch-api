@@ -3,7 +3,7 @@
 namespace Database\Factories\V2\Sites;
 
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Sites\Site;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SiteFactory extends Factory
@@ -16,11 +16,11 @@ class SiteFactory extends Factory
     public function definition()
     {
         $soilCondition = [
-            'severely_degraded',
+            'severely-degraded',
             'poor',
             'fair',
             'good',
-            'no_degradation',
+            'no-degradation',
         ];
         $frameworks = [
             'ppc',
@@ -40,6 +40,14 @@ class SiteFactory extends Factory
             'direct-seeding',
             'tree-planting',
         ];
+        $anrPractices = [
+            'fire-protection-and-fighting',
+            'livestock-management',
+            'isolating-the-area',
+            'control-of-invasive-andor-exotic-species',
+            'maintenance-of-regenerating-individuals',
+            'ant-control',
+        ];
         $landTenures = [
             'national_protected_area',
             'indigenous',
@@ -52,7 +60,7 @@ class SiteFactory extends Factory
             'framework_key' => $this->faker->randomElement($frameworks),
             'project_id' => Project::factory()->create()->id,
             'name' => $this->faker->words(3, true),
-            'status' => array_keys(Site::$statuses)[0],
+            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
             'control_site' => $this->faker->boolean(15),
             'boundary_geojson' => '{"type":"Polygon","coordinates":[[[-1.864006519317627,50.7219083651253],[-1.8627190589904783,50.7219083651253],[-1.8627190589904783,50.72276418262861],[-1.864006519317627,50.72276418262861],[-1.864006519317627,50.7219083651253]]]}',
             'land_use_types' => $this->faker->randomElements(
@@ -63,6 +71,11 @@ class SiteFactory extends Factory
             'restoration_strategy' => $this->faker->randomElements(
                 $restorationStrat,
                 $this->faker->numberBetween(0, 3),
+                false
+            ),
+            'anr_practices' => $this->faker->randomElements(
+                $anrPractices,
+                $this->faker->numberBetween(0, 6),
                 false
             ),
             'description' => $this->faker->text(500),

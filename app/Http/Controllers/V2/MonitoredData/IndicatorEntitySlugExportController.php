@@ -14,11 +14,6 @@ class IndicatorEntitySlugExportController extends Controller
 {
     public function __invoke(EntityModel $entity, string $slug)
     {
-        return $this->exportCsv($entity, $slug);
-    }
-
-    public function exportCsv($entity, $slug)
-    {
         $defaulHeaders = [
             'poly_name' => 'Polygon Name',
             'size' => 'Size (ha)',
@@ -28,6 +23,11 @@ class IndicatorEntitySlugExportController extends Controller
         ];
         $treeCoverLossHeaders = [
             ...$defaulHeaders,
+            '2010' => '2010',
+            '2011' => '2011',
+            '2012' => '2012',
+            '2013' => '2013',
+            '2014' => '2014',
             '2015' => '2015',
             '2016' => '2016',
             '2017' => '2017',
@@ -38,6 +38,7 @@ class IndicatorEntitySlugExportController extends Controller
             '2022' => '2022',
             '2023' => '2023',
             '2024' => '2024',
+            '2025' => '2025',
         ];
         $restorationByEcoRegionHeaders = [
             ...$defaulHeaders,
@@ -59,6 +60,12 @@ class IndicatorEntitySlugExportController extends Controller
             'agroforest' => 'Agroforest',
             'natural_forest' => 'Natural Forest',
             'mangrove' => 'Mangrove',
+        ];
+        $treeCoverHeaders = [
+            ...$defaulHeaders,
+            'percent_cover' => 'Percent Cover',
+            'project_phase' => 'Project Phase',
+            'plus_minus_percent' => 'Plus Minus Percent',
         ];
         $slugMappings = [
             'treeCoverLoss' => [
@@ -86,11 +93,24 @@ class IndicatorEntitySlugExportController extends Controller
                 'columns' => $restorationByEcoRegionHeaders,
                 'indicator_title' => 'Hectares Under Restoration By WWF EcoRegion',
             ],
+            'treeCover' => [
+                'relation_name' => 'treeCoverIndicator',
+                'columns' => $treeCoverHeaders,
+                'indicator_title' => 'Tree Cover',
+            ],
         ];
+        if (! isset($slugMappings[$slug])) {
+            return response()->json(['message' => 'Indicator not found'], 404);
+        }
 
+        return $this->exportCsv($entity, $slug, $slugMappings);
+    }
+
+    public function exportCsv($entity, $slug, $slugMappings)
+    {
         $sitePolygonsIndicator = SitePolygon::whereHas($slugMappings[$slug]['relation_name'], function ($query) use ($slug) {
             $query->where('indicator_slug', $slug)
-                ->where('year_of_analysis', date('Y'));
+                ->where('status', 'approved');
         })
             ->whereHas('site', function ($query) use ($entity) {
                 if (get_class($entity) == Site::class) {
@@ -112,15 +132,29 @@ class IndicatorEntitySlugExportController extends Controller
             ->where('is_active', 1)
             ->get()
             ->map(function ($polygon) use ($slugMappings, $slug) {
-                $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
-                    ->where('indicator_slug', $slug)
-                    ->select([
-                        'indicator_slug',
-                        'year_of_analysis',
-                        'value',
-                        'created_at',
-                    ])
-                    ->first();
+                if ($slug == 'treeCover') {
+                    $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
+                        ->where('indicator_slug', $slug)
+                        ->select([
+                            'indicator_slug',
+                            'year_of_analysis',
+                            'percent_cover',
+                            'project_phase',
+                            'plus_minus_percent',
+                            'created_at',
+                        ])
+                        ->first();
+                } else {
+                    $indicator = $polygon->{$slugMappings[$slug]['relation_name']}()
+                        ->where('indicator_slug', $slug)
+                        ->select([
+                            'indicator_slug',
+                            'year_of_analysis',
+                            'value',
+                            'created_at',
+                        ])
+                        ->first();
+                }
                 $results = [
                     'poly_name' => $polygon->poly_name,
                     'status' => $polygon->status,
@@ -131,16 +165,11 @@ class IndicatorEntitySlugExportController extends Controller
                 ];
                 if (str_contains($slug, 'treeCoverLoss')) {
                     $valueYears = json_decode($indicator->value, true);
-                    $results['2015'] = $valueYears['2015'];
-                    $results['2016'] = $valueYears['2016'];
-                    $results['2017'] = (float) $valueYears['2017'];
-                    $results['2018'] = $valueYears['2018'];
-                    $results['2019'] = $valueYears['2019'];
-                    $results['2020'] = $valueYears['2020'];
-                    $results['2021'] = $valueYears['2021'];
-                    $results['2022'] = $valueYears['2022'];
-                    $results['2023'] = $valueYears['2023'];
-                    $results['2024'] = $valueYears['2024'];
+                    $years = array_keys($valueYears);
+                    sort($years);
+                    foreach ($years as $year) {
+                        $results["$year"] = array_key_exists($year, $valueYears) ? (float) $valueYears[$year] : 0;
+                    }
                 }
                 if ($slug == 'restorationByEcoRegion') {
                     $values = json_decode($indicator->value, true);
@@ -150,9 +179,31 @@ class IndicatorEntitySlugExportController extends Controller
                     $values = json_decode($indicator->value, true);
                     $results = array_merge($results, $this->processValuesHectares($values));
                 }
+                if ($slug == 'treeCover') {
+                    $results['percent_cover'] = $indicator->percent_cover;
+                    $results['project_phase'] = $indicator->project_phase;
+                    $results['plus_minus_percent'] = $indicator->plus_minus_percent;
+                }
 
                 return $results;
             });
+
+        if (str_contains($slug, 'treeCoverLoss')) {
+            $allYears = [];
+            foreach ($sitePolygonsIndicator as $polygon) {
+                foreach ($polygon as $key => $value) {
+                    if (is_numeric($key) && $key >= 2010) {
+                        $allYears[] = (int) $key;
+                    }
+                }
+            }
+            $uniqueYears = array_unique($allYears);
+            sort($uniqueYears);
+
+            foreach ($uniqueYears as $year) {
+                $slugMappings[$slug]['columns'][$year] = (string) $year;
+            }
+        }
 
         $filteredIndicators = [];
         foreach ($sitePolygonsIndicator as $polygon) {

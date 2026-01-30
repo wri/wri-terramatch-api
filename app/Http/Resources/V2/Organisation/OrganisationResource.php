@@ -2,10 +2,11 @@
 
 namespace App\Http\Resources\V2\Organisation;
 
-use App\Http\Resources\V2\CoreTeamLeaderResource;
+use App\Http\Resources\V2\FinancialIndicatorsResource;
+use App\Http\Resources\V2\FinancialReports\FinancialReportLiteResource;
 use App\Http\Resources\V2\FundingTypeResource;
 use App\Http\Resources\V2\General\ShapefileResource;
-use App\Http\Resources\V2\LeadershipTeamResource;
+use App\Http\Resources\V2\LeadershipsResource;
 use App\Http\Resources\V2\OwnershipStakeResource;
 use App\Http\Resources\V2\ProjectPitches\ProjectPitchResource;
 use App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource;
@@ -41,10 +42,9 @@ class OrganisationResource extends JsonResource
 
             'tree_species_historical' => TreeSpeciesResource::collection($this->treeSpeciesHistorical),
             'project_pitches' => ProjectPitchResource::collection($this->projectPitches),
-            'leadership_team' => LeadershipTeamResource::collection($this->leadershipTeam),
-            'core_team_leaders' => CoreTeamLeaderResource::collection($this->coreTeamLeaders),
             'funding_types' => FundingTypeResource::collection($this->fundingTypes),
             'ownership_stake' => OwnershipStakeResource::collection($this->ownershipStake),
+            'leaderships' => LeadershipsResource::collection($this->leaderships),
 
             'leadership_team_txt' => $this->leadership_team_txt,
             'web_url' => $this->web_url,
@@ -54,10 +54,6 @@ class OrganisationResource extends JsonResource
             'twitter_url' => $this->twitter_url,
 
             'fin_start_month' => $this->fin_start_month,
-            'fin_budget_3year' => $this->fin_budget_3year,
-            'fin_budget_2year' => $this->fin_budget_2year,
-            'fin_budget_1year' => $this->fin_budget_1year,
-            'fin_budget_current_year' => $this->fin_budget_current_year,
 
             'ha_restored_total' => $this->ha_restored_total,
             'ha_restored_3year' => $this->ha_restored_3year,
@@ -80,7 +76,6 @@ class OrganisationResource extends JsonResource
             'tree_restoration_practices' => $this->tree_restoration_practices,
             'business_model' => $this->business_model,
             'subtype' => $this->subtype,
-            'organisation_revenue_this_year' => $this->organisation_revenue_this_year,
             'total_engaged_community_members_3yr' => $this->total_engaged_community_members_3yr,
             'percent_engaged_women_3yr' => $this->percent_engaged_women_3yr,
             'percent_engaged_men_3yr' => $this->percent_engaged_men_3yr,
@@ -142,6 +137,31 @@ class OrganisationResource extends JsonResource
             'environmental_impact' => $this->environmental_impact,
             'socioeconomic_impact' => $this->socioeconomic_impact,
             'growith_stage' => $this->growith_stage,
+            'consortium' => $this->consortium,
+            'female_youth_leadership_example' => $this->female_youth_leadership_example,
+            'level_0_past_restoration' => $this->level_0_past_restoration,
+            'level_1_past_restoration' => $this->level_1_past_restoration,
+            'level_2_past_restoration' => $this->level_2_past_restoration,
+            'trees_naturally_regenerated_total' => $this->trees_naturally_regenerated_total,
+            'trees_naturally_regenerated_3year' => $this->trees_naturally_regenerated_3year,
+            'external_technical_assistance' => $this->external_technical_assistance,
+            'barriers_to_funding' => $this->barriers_to_funding,
+            'capacity_building_support_needed' => $this->capacity_building_support_needed,
+            'financialCollection' => FinancialIndicatorsResource::collection($this->financialCollection),
+            'financialReports' => FinancialReportLiteResource::collection($this->financialReports),
+            'associations_cooperatives' => $this->associations_cooperatives,
+            'territories_of_operation' => $this->territories_of_operation,
+            'decisionmaking_structure_description' => $this->decisionmaking_structure_description,
+            'decisionmaking_structure_individuals_involved' => $this->decisionmaking_structure_individuals_involved,
+            'average_worker_income' => $this->average_worker_income,
+            'anr_practices_past' => $this->anr_practices_past,
+            'anr_monitoring_approaches' => $this->anr_monitoring_approaches,
+            'anr_monitoring_approaches_description' => $this->anr_monitoring_approaches_description,
+            'anr_communication_funders' => $this->anr_communication_funders,
+            'bioeconomy_products' => $this->bioeconomy_products,
+            'bioeconomy_traditional_knowledge' => $this->bioeconomy_traditional_knowledge,
+            'bioeconomy_product_processing' => $this->bioeconomy_product_processing,
+            'bioeconomy_buyers' => $this->bioeconomy_buyers,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at,
             'tags' => $this->buildTagList(),

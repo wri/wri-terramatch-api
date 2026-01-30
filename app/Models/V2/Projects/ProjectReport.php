@@ -3,30 +3,28 @@
 namespace App\Models\V2\Projects;
 
 use App\Models\Framework;
-use App\Models\Traits\HasEntityResources;
+use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasFrameworkKey;
-use App\Models\Traits\HasLinkedFields;
 use App\Models\Traits\HasReportStatus;
-use App\Models\Traits\HasRestorationPartners;
 use App\Models\Traits\HasUpdateRequests;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
-use App\Models\Traits\HasWorkdays;
+use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
-use App\Models\V2\Demographics\Demographic;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Organisation;
 use App\Models\V2\Polygon;
 use App\Models\V2\ReportModel;
-use App\Models\V2\RestorationPartners\RestorationPartner;
 use App\Models\V2\Seeding;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
+use App\Models\V2\Trackings\TrackingEntry;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
-use App\Models\V2\Workdays\Workday;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,17 +45,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     use HasUuid;
     use SoftDeletes;
     use HasReportStatus;
-    use HasLinkedFields;
     use UsesLinkedFields;
     use InteractsWithMedia;
     use HasV2MediaCollections;
     use HasFrameworkKey;
     use Auditable;
     use HasUpdateRequests;
-    use HasEntityResources;
     use BelongsToThroughTrait;
-    use HasWorkdays;
-    use HasRestorationPartners;
+    use HasDemographics;
+    use ReportsStatusChange;
 
     protected $auditInclude = [
         'status',
@@ -170,10 +166,11 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'beneficiaries_training_other',
         'beneficiaries_training_youth',
         'beneficiaries_training_non_youth',
-        // virtual (see HasWorkdays trait)
+
+        // virtual (see HasDemographics trait)
         'other_workdays_description',
-        // virtual (see HasRestorationPartners trait)
         'other_restoration_partners_description',
+        'planting_status',
     ];
 
     public $casts = [
@@ -204,65 +201,156 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             'validation' => 'photos',
             'multiple' => true,
         ],
+        'baseline_report_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'local_governance_order_letter_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'events_meetings_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
+        'local_governance_proof_of_partnership_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'top_three_successes_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'direct_jobs_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'convergence_jobs_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'convergence_schemes_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'livelihood_activities_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'direct_livelihood_impacts_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'certified_database_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'physical_assets_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
+        'indirect_community_partners_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'training_capacity_building_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'training_capacity_building_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
+        'financial_report_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'tree_planting_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'soil_water_conservation_upload' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'soil_water_conservation_photos' => [
+            'validation' => 'photos',
+            'multiple' => true,
+        ],
     ];
 
-    // Required by the HasWorkdays trait
-    public const WORKDAY_COLLECTIONS = [
-        'paid' => [
-            Workday::COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
-            Workday::COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT,
-            Workday::COLLECTION_PROJECT_PAID_OTHER,
+    // Required by the HasDemographics trait.
+    public const DEMOGRAPHIC_COLLECTIONS = [
+        Tracking::WORKDAY_TYPE => [
+            'paid' => [
+                DemographicCollections::PAID_NURSERY_OPERATIONS,
+                DemographicCollections::PAID_PROJECT_MANAGEMENT,
+                DemographicCollections::PAID_OTHER,
+            ],
+            'volunteer' => [
+                DemographicCollections::VOLUNTEER_NURSERY_OPERATIONS,
+                DemographicCollections::VOLUNTEER_PROJECT_MANAGEMENT,
+                DemographicCollections::VOLUNTEER_OTHER,
+            ],
+            'other' => [
+                DemographicCollections::PAID_OTHER,
+                DemographicCollections::VOLUNTEER_OTHER,
+            ],
+            'finance' => [
+                DemographicCollections::DIRECT,
+                DemographicCollections::CONVERGENCE,
+            ],
+            'direct' => [
+                DemographicCollections::DIRECT,
+            ],
+            'convergence' => [
+                DemographicCollections::CONVERGENCE,
+            ],
         ],
-        'volunteer' => [
-            Workday::COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
-            Workday::COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT,
-            Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
+        Tracking::RESTORATION_PARTNER_TYPE => [
+            'direct' => [
+                DemographicCollections::DIRECT_INCOME,
+                DemographicCollections::DIRECT_BENEFITS,
+                DemographicCollections::DIRECT_CONSERVATION_PAYMENTS,
+                DemographicCollections::DIRECT_MARKET_ACCESS,
+                DemographicCollections::DIRECT_CAPACITY,
+                DemographicCollections::DIRECT_TRAINING,
+                DemographicCollections::DIRECT_LAND_TITLE,
+                DemographicCollections::DIRECT_LIVELIHOODS,
+                DemographicCollections::DIRECT_PRODUCTIVITY,
+                DemographicCollections::DIRECT_OTHER,
+            ],
+            'indirect' => [
+                DemographicCollections::INDIRECT_INCOME,
+                DemographicCollections::INDIRECT_BENEFITS,
+                DemographicCollections::INDIRECT_CONSERVATION_PAYMENTS,
+                DemographicCollections::INDIRECT_MARKET_ACCESS,
+                DemographicCollections::INDIRECT_CAPACITY,
+                DemographicCollections::INDIRECT_TRAINING,
+                DemographicCollections::INDIRECT_LAND_TITLE,
+                DemographicCollections::INDIRECT_LIVELIHOODS,
+                DemographicCollections::INDIRECT_PRODUCTIVITY,
+                DemographicCollections::INDIRECT_OTHER,
+            ],
+            'other' => [
+                DemographicCollections::DIRECT_OTHER,
+                DemographicCollections::INDIRECT_OTHER,
+            ],
         ],
-        'other' => [
-            Workday::COLLECTION_PROJECT_PAID_OTHER,
-            Workday::COLLECTION_PROJECT_VOLUNTEER_OTHER,
+        Tracking::JOBS_TYPE => [
+            'full-time' => [
+                DemographicCollections::FULL_TIME,
+                DemographicCollections::FULL_TIME_CLT,
+            ],
+            'part-time' => [
+                DemographicCollections::PART_TIME,
+                DemographicCollections::PART_TIME_CLT,
+            ],
         ],
-        'finance' => [
-            Workday::COLLECTION_PROJECT_DIRECT,
-            Workday::COLLECTION_PROJECT_CONVERGENCE,
-        ],
-        'direct' => [
-            Workday::COLLECTION_PROJECT_DIRECT,
-        ],
-        'convergence' => [
-            Workday::COLLECTION_PROJECT_CONVERGENCE,
-        ],
-    ];
-
-    public const RESTORATION_PARTNER_COLLECTIONS = [
-        'direct' => [
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_INCOME,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_BENEFITS,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_CONSERVATION_PAYMENTS,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_MARKET_ACCESS,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_CAPACITY,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_TRAINING,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_LAND_TITLE,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_LIVELIHOODS,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_PRODUCTIVITY,
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_OTHER,
-        ],
-        'indirect' => [
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_INCOME,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_BENEFITS,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_CONSERVATION_PAYMENTS,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_MARKET_ACCESS,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_CAPACITY,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_TRAINING,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_LAND_TITLE,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_LIVELIHOODS,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_PRODUCTIVITY,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_OTHER,
-        ],
-        'other' => [
-            RestorationPartner::COLLECTION_PROJECT_DIRECT_OTHER,
-            RestorationPartner::COLLECTION_PROJECT_INDIRECT_OTHER,
-        ],
+        Tracking::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
+        Tracking::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Tracking::TRAINING_BENEFICIARIES_TYPE => DemographicCollections::TRAINING,
+        Tracking::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -412,6 +500,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             ->sum('amount');
     }
 
+    public function getRegeneratedTreesCountAttribute(): int
+    {
+        if (empty($this->task_id)) {
+            return 0;
+        }
+
+        return $this->task->siteReports()->hasBeenApproved()->sum('num_trees_regenerating');
+    }
+
     public function getSeedsPlantedCountAttribute(): int
     {
         if (empty($this->task_id)) {
@@ -424,14 +521,6 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
             ->sum('amount');
     }
 
-    public function getTotalJobsCreatedAttribute(): int
-    {
-        $ptTotal = $this->pt_total ?? 0;
-        $ftTotal = $this->ft_total ?? 0;
-
-        return $ftTotal + $ptTotal;
-    }
-
     public function getWorkdaysTotalAttribute(): int
     {
         $projectReportTotal = $this->workdays_paid + $this->workdays_volunteer;
@@ -441,15 +530,15 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         }
 
         // Assume that the types are balanced and just return the value from 'gender'
-        $sumTotals = fn ($collectionType) => Demographic::where('demographical_type', Workday::class)
-            ->whereIn(
-                'demographical_id',
-                Workday::where('workdayable_type', SiteReport::class)
-                    ->whereIn('workdayable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
-                    ->collections(SiteReport::WORKDAY_COLLECTIONS[$collectionType])
+        $sumTotals = fn ($collectionType) => TrackingEntry::whereIn(
+            'tracking_id',
+            Tracking::where(['domain' => 'demographics', 'trackable_type' => SiteReport::class])
+                    ->whereIn('trackable_id', $this->task->siteReports()->hasBeenSubmitted()->select('id'))
+                    ->type(Tracking::WORKDAY_TYPE)
+                    ->collections(SiteReport::DEMOGRAPHIC_COLLECTIONS[Tracking::WORKDAY_TYPE][$collectionType])
                     ->visible()
                     ->select('id')
-            )->gender()->sum('amount');
+        )->gender()->sum('amount');
 
         return $projectReportTotal + $sumTotals('paid') + $sumTotals('volunteer');
     }
@@ -530,5 +619,17 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
     public function scopeApproved($query)
     {
         return $query->where('status', ReportStatusStateMachine::APPROVED);
+    }
+
+    public function getParentNameAttribute(): string
+    {
+        return $this->project?->name ?? '';
+    }
+
+    public function scopeExcludeTestData(Builder $query): Builder
+    {
+        return $query->whereHas('project', function ($query) {
+            $query->where('is_test', false);
+        });
     }
 }

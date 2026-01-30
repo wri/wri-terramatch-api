@@ -1,9 +1,9 @@
-version: "3"
 services:
     mariadb:
         build:
             context: "."
             dockerfile: "docker/mariadb.Dockerfile"
+            network: host
         ports:
             - "3360:3306"
         networks:
@@ -23,6 +23,7 @@ services:
         build:
             context: "."
             dockerfile: "docker/php.Dockerfile"
+            network: host
         ports:
             - "8080:80"
         networks:
@@ -39,30 +40,25 @@ services:
         command: "composer about"
         networks:
             - "default"
-    npm:
-        image: "node:8"
-        volumes:
-            - ".:/usr/src/app"
-        command: "npm --version"
-        working_dir: "/usr/src/app"
-        networks:
-            - "default"
     mailcatcher:
-        image: "jeanberu/mailcatcher"
+        image: "chatwork/mailcatcher"
         networks:
             - "default"
         ports:
             - "1025:1025"
             - "1080:1080"
     minio:
-        image: "3sidedcube/minio"
-        networks:
-            - "default"
+        image: "minio/minio"
+        command: server /data
         ports:
             - "9000:9000"
         environment:
-            MINIO_ACCESS_KEY: "AKIABUVWH1HUD7YQZQAR"
-            MINIO_SECRET_KEY: "PVMlDMep3/jLSz9GxPV3mTvH4JZynkf2BFeTu+i8"
+            MINIO_ROOT_USER: "AKIABUVWH1HUD7YQZQAR"
+            MINIO_ROOT_PASSWORD: "PVMlDMep3/jLSz9GxPV3mTvH4JZynkf2BFeTu+i8"
+        volumes:
+            - ./data:/data
+        networks:
+            - "default"
     motocker:
         image: "picadoh/motocker"
         networks:
@@ -80,7 +76,7 @@ services:
         ports:
             - "2323:2323"
     redis:
-        image: "redis:5.0.9"
+        image: "redis:7.2-bookworm"
         networks:
           - "default"
         ports:

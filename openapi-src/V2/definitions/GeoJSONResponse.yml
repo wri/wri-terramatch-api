@@ -16,14 +16,12 @@ properties:
               type: string
             coordinates:
               type: array
-        "properties":
+        'properties':
           type: object
           properties:
             poly_name:
               type: string
             plantstart:
-              type: string
-            plantend:
               type: string
             practice:
               type: string

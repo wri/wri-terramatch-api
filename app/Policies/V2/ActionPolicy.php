@@ -19,6 +19,14 @@ class ActionPolicy extends Policy
 
     protected function isTheirs(?User $user, ?Action $action = null): bool
     {
-        return $user->organisation->id == $action->organisation_id;
+        if ($user->all_my_organisations->pluck('id')->contains($action->organisation_id)) {
+            return true;
+        }
+
+        if (! empty($action->project_id) && $user->projects->pluck('id')->contains($action->project_id)) {
+            return true;
+        }
+
+        return false;
     }
 }

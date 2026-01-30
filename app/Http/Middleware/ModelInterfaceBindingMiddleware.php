@@ -3,6 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\DisturbanceReport;
+use App\Models\V2\FinancialIndicators;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestionOption;
 use App\Models\V2\FundingProgramme;
@@ -17,6 +20,7 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteMonitoring;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\SrpReport;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteRegistrar;
@@ -34,18 +38,23 @@ class ModelInterfaceBindingMiddleware
         'project' => Project::class,
         'project-reports' => ProjectReport::class,
         'project-report' => ProjectReport::class,
+        'projectReports' => ProjectReport::class,
         'sites' => Site::class,
         'site' => Site::class,
         'site-reports' => SiteReport::class,
         'site-report' => SiteReport::class,
+        'siteReports' => SiteReport::class,
         'nurseries' => Nursery::class,
         'nursery' => Nursery::class,
         'nursery-reports' => NurseryReport::class,
         'nursery-report' => NurseryReport::class,
+        'nurseryReports' => NurseryReport::class,
 
         // MediaModel concrete classes
         'organisation' => Organisation::class,
+        'organisations' => Organisation::class,
         'project-pitch' => ProjectPitch::class,
+        'projectPitches' => ProjectPitch::class,
         'funding-programme' => FundingProgramme::class,
         'form' => Form::class,
         'form-question-option' => FormQuestionOption::class,
@@ -53,6 +62,15 @@ class ModelInterfaceBindingMiddleware
         'site-monitoring' => SiteMonitoring::class,
         'site-polygon' => SitePolygon::class,
         'audit-status' => AuditStatus::class,
+        'financial-indicators' => FinancialIndicators::class,
+        'financial-indicator' => FinancialIndicators::class,
+        'financial-reports' => FinancialReport::class,
+        'financial-report' => FinancialReport::class,
+        'financialReports' => FinancialReport::class,
+        'disturbance-report' => DisturbanceReport::class,
+        'disturbance-reports' => DisturbanceReport::class,
+        'srp-report' => SrpReport::class,
+        'srp-reports' => SrpReport::class,
     ];
 
     private static array $typeSlugsCache = [];

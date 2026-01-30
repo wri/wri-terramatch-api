@@ -76,7 +76,7 @@ class AssociateReportsTasksCommand extends Command
             }
 
             $class::withoutTimestamps(function () use ($class, $batchValues) {
-                BatchFacade::update(new $class, $batchValues, 'id');
+                BatchFacade::update(new $class(), $batchValues, 'id');
             });
             $updated += count($batchValues);
         });

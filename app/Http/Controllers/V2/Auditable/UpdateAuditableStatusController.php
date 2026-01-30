@@ -8,6 +8,7 @@ use App\Http\Requests\V2\AuditStatus\AuditStatusUpdateRequest;
 use App\Models\Traits\SaveAuditStatusTrait;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
+use App\Models\V2\PolygonUpdates;
 use App\Models\V2\Sites\SitePolygon;
 use App\Services\PolygonService;
 
@@ -24,16 +25,31 @@ class UpdateAuditableStatusController extends Controller
         }
 
         $body = $request->all();
-        $status = $body['status'];
-
-        $auditable->status = $status;
-        $auditable->save();
-
         if (isset($body['status'])) {
+            $status = $body['status'];
+            $oldStatus = $auditable->status;
+            $newStatus = $status;
+            $auditable->status = $status;
+            $auditable->save();
             $this->saveAuditStatus(get_class($auditable), $auditable->id, $status, $body['comment'], $body['type']);
+            if ($auditable instanceof SitePolygon) {
+                $user = auth()->user();
+                if ($oldStatus !== $newStatus) {
+                    PolygonUpdates::create([
+                        'site_polygon_uuid' => $auditable->primary_uuid,
+                        'version_name' => $auditable->version_name,
+                        'change' => 'New Status: ' . $status,
+                        'old_status' => $oldStatus,
+                        'new_status' => $newStatus,
+                        'updated_by_id' => $user->id,
+                        'comment' => 'Polygon Status Updated',
+                        'type' => 'status',
+                    ]);
+                }
+            }
         } elseif (isset($body['is_active'])) {
             AuditStatus::where('auditable_id', $auditable->id)
-                ->where('type', $body['type'])
+                ->where('type', operator: $body['type'])
                 ->where('is_active', true)
                 ->update(['is_active' => false]);
             $this->saveAuditStatus(get_class($auditable), $auditable->id, $status, $body['comment'], $body['type'], $body['is_active'], $body['request_removed']);
@@ -44,7 +60,7 @@ class UpdateAuditableStatusController extends Controller
 
     private function canChangeStatus($auditable, $status): bool
     {
-        switch(get_class($auditable)) {
+        switch (get_class($auditable)) {
             case 'App\Models\V2\Sites\Site':
                 return $this->canChangeSiteStatusTo($auditable, $status);
             case 'App\Models\V2\Sites\SitePolygon':
@@ -81,8 +97,9 @@ class UpdateAuditableStatusController extends Controller
             $criteriaArray = $criteriaList->toArray();
 
             $criteriaArray = array_filter($criteriaArray, function ($criteria) {
-                return $criteria['criteria_id'] !== PolygonService::ESTIMATED_AREA_CRITERIA_ID &&
-                    $criteria['criteria_id'] !== PolygonService::DATA_CRITERIA_ID;
+                return $criteria['criteria_id'] !== PolygonService::ESTIMATED_AREA_CRITERIA_ID
+                    && $criteria['criteria_id'] !== PolygonService::WITHIN_COUNTRY_CRITERIA_ID
+                    && $criteria['criteria_id'] !== PolygonService::PLANT_START_DATE_CRITERIA_ID;
             });
 
             $canApprove = true;

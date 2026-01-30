@@ -2,7 +2,6 @@
 
 namespace App\Models\Traits;
 
-use App\Events\V2\General\EntityStatusChangeEvent;
 use App\StateMachines\ReportStatusStateMachine;
 use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Builder;
@@ -66,6 +65,11 @@ trait HasReportStatus
     public function scopeIsComplete(Builder $query): Builder
     {
         return $query->whereIn('status', self::COMPLETE_STATUSES);
+    }
+
+    public function scopeHasBeenApproved(Builder $query): Builder
+    {
+        return $query->where('status', ReportStatusStateMachine::APPROVED);
     }
 
     public function scopeHasBeenSubmitted(Builder $query): Builder
@@ -135,6 +139,7 @@ trait HasReportStatus
     public function approve($feedback): void
     {
         $this->setCompletion();
+        $this->cleanUpConditionalData();
         $this->entityStatusApprove($feedback);
     }
 
@@ -161,13 +166,55 @@ trait HasReportStatus
         };
     }
 
-    public function dispatchStatusChangeEvent($user): void
-    {
-        EntityStatusChangeEvent::dispatch($user, $this);
-    }
-
     public function getViewLinkPath(): string
     {
         return '/reports/' . Str::kebab(explode_pop('\\', get_class($this))) . '/' . $this->uuid;
+    }
+
+    public function cleanUpConditionalData()
+    {
+        $form = $this->getForm();
+        $this->cleanConditionalAnswers($form);
+        $this->cleanHiddenData();
+    }
+
+    private function cleanHiddenData(): void
+    {
+        $relationsToClean = [];
+
+        if (in_array(HasDemographics::class, class_uses_recursive($this))) {
+            $relationsToClean[] = 'demographics';
+        }
+        if (method_exists($this, 'treeSpecies')) {
+            $relationsToClean[] = 'treeSpecies';
+        }
+        if (method_exists($this, 'nonTreeSpecies')) {
+            $relationsToClean[] = 'nonTreeSpecies';
+        }
+        if (method_exists($this, 'replantingTreeSpecies')) {
+            $relationsToClean[] = 'replantingTreeSpecies';
+        }
+        if (method_exists($this, 'disturbances')) {
+            $relationsToClean[] = 'disturbances';
+        }
+        if (method_exists($this, 'seedings')) {
+            $relationsToClean[] = 'seedings';
+        }
+
+        foreach ($relationsToClean as $relationName) {
+            try {
+                $relation = $this->$relationName();
+                $hiddenRecords = $relation->where('hidden', true)->get();
+
+                foreach ($hiddenRecords as $record) {
+                    if (method_exists($record, 'entries')) {
+                        $record->entries()->delete();
+                    }
+                    $record->delete();
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
     }
 }

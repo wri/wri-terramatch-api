@@ -31,11 +31,15 @@ class V2GenerateTranslationFileCommand extends Command
             ])
             ->groupBy('hash', 'short_value', 'long_value')
             ->get();
-
+        $length = $i18nItems->count();
+        $this->info('Generating list of translations');
+        $progress = $this->output->createProgressBar($length);
         $list = [];
         foreach ($i18nItems as $i18nItem) {
             $list[$i18nItem->hash] = ['string' => $i18nItem->value];
+            $progress->advance();
         }
+        $progress->finish();
 
         Storage::disk('translations')->put('RequiredTranslations.json', json_encode($list));
         $path = Storage::disk('translations')->path('RequiredTranslations.json');
@@ -57,8 +61,12 @@ class V2GenerateTranslationFileCommand extends Command
             exec($command);
         }
 
+        $this->info('Updating status of translations');
+        $progress = $this->output->createProgressBar($length);
         foreach ($i18nItems as $i18nItem) {
             $i18nItem->update(['status' => I18nItem::STATUS_PENDING]);
+            $progress->advance();
         }
+        $progress->finish();
     }
 }

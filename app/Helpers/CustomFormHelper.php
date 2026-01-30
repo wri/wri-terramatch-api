@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\V2\DisturbanceReport;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormQuestion;
 use App\Models\V2\Forms\FormSection;
@@ -11,6 +12,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\SrpReport;
 
 class CustomFormHelper
 {
@@ -48,6 +50,20 @@ class CustomFormHelper
                 $model = NurseryReport::class;
 
                 break;
+            case 'financial-report':
+                $model = \App\Models\V2\FinancialReport::class;
+
+                break;
+            case 'disturbance-report':
+                $model = DisturbanceReport::class;
+
+                break;
+            case 'srp-report':
+                $model = SrpReport::class;
+
+                // no break
+            default:
+                throw new \InvalidArgumentException("Unknown form type: $type");
         }
 
         $form = Form::where(['framework_key' => $framework, 'model' => $model])->first();

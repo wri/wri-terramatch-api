@@ -9,6 +9,19 @@ use Illuminate\Support\Facades\Log;
 
 class TerrafundDashboardQueryHelper
 {
+    private static $landscapeCodeToNameMap = [
+        'gcb' => 'Ghana Cocoa Belt',
+        'grv' => 'Greater Rift Valley of Kenya',
+        'ikr' => 'Lake Kivu & Rusizi River Basin',
+    ];
+
+    private static function mapLandscapeCodesToNames(array $codes): array
+    {
+        return array_map(function ($code) {
+            return self::$landscapeCodeToNameMap[$code] ?? $code;
+        }, $codes);
+    }
+
     public static function buildQueryFromRequest(Request $request)
     {
         $filters = $request->all();
@@ -23,6 +36,8 @@ class TerrafundDashboardQueryHelper
                 'v2_projects.status',
                 'v2_projects.name',
                 'v2_projects.country',
+                'v2_projects.lat',
+                'v2_projects.long',
             ])
             ->with('organisation:id,type,name')
             ->join('organisations', 'v2_projects.organisation_id', '=', 'organisations.id')
@@ -35,11 +50,37 @@ class TerrafundDashboardQueryHelper
         $query->when(data_get($filters, 'filter.programmes'), function ($query, $programmes) {
             $query->whereIn('v2_projects.framework_key', $programmes);
         }, function ($query) {
-            $query->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes']);
+            $query->whereIn('v2_projects.framework_key', ['terrafund', 'terrafund-landscapes', 'enterprises']);
+        });
+
+        $query->when(data_get($filters, 'filter.cohort'), function ($query, $cohort) {
+            $cohortValues = [];
+
+            if (is_array($cohort)) {
+                $cohortValues = $cohort;
+            } elseif (strpos($cohort, ',') !== false) {
+                $cohortValues = array_map('trim', explode(',', $cohort));
+            } else {
+                $cohortValues = [$cohort];
+            }
+
+            $query->where(function ($subQuery) use ($cohortValues) {
+                foreach ($cohortValues as $cohortValue) {
+                    if (! empty($cohortValue)) {
+                        $subQuery->orWhereJsonContains('v2_projects.cohort', $cohortValue);
+                    }
+                }
+            });
+        }, function ($query) {
+            $query->where(function ($subQuery) {
+                $subQuery->whereJsonContains('v2_projects.cohort', 'terrafund')
+                         ->orWhereJsonContains('v2_projects.cohort', 'terrafund-landscapes');
+            });
         });
 
         $query->when(data_get($filters, 'filter.landscapes'), function ($query, $landscapes) {
-            $query->whereIn('v2_projects.landscape', $landscapes);
+            $mappedLandscapes = self::mapLandscapeCodesToNames($landscapes);
+            $query->whereIn('v2_projects.landscape', $mappedLandscapes);
         });
 
         $query->when(data_get($filters, 'filter.organisationType'), function ($query, $organisationType) {
@@ -58,6 +99,17 @@ class TerrafundDashboardQueryHelper
 
         $query->when($searchTerm, function ($query, $searchTerm) {
             $query->where('v2_projects.name', 'like', "%$searchTerm%");
+        });
+
+        $query->when(data_get($filters, 'filter.has_polygons'), function ($query, $hasPolygons) {
+            if ($hasPolygons) {
+                $query->whereHas('sitePolygons', function ($querySP) {
+                    $querySP->where('site_polygon.is_active', 1)
+                           ->whereNull('site_polygon.deleted_at')
+                           ->where('site_polygon.status', 'approved');
+                });
+
+            }
         });
 
         return $query;

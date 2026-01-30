@@ -20,7 +20,14 @@ class OrganisationPolicy extends Policy
         }
 
         if (! empty($model)) {
-            return in_array($model->id, $user->all_my_organisations->pluck('id')->toArray());
+            $directOrgs = $user->all_my_organisations->pluck('id')->toArray();
+            if (in_array($model->id, $directOrgs)) {
+                return true;
+            }
+
+            $projectOrgs = $user->projects->pluck('organisation_id')->toArray();
+
+            return in_array($model->id, $projectOrgs);
         }
 
         return $this->isFullUser($user);
@@ -106,5 +113,10 @@ class OrganisationPolicy extends Policy
     public function export(?User $user, ?Organisation $model = null): bool
     {
         return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user);
+    }
+
+    public function inviteUser(?User $user, ?Organisation $model = null): bool
+    {
+        return $this->isAdminOwnerOrMonitoringPartner($user, $model);
     }
 }

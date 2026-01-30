@@ -16,7 +16,6 @@ class AuditResource extends JsonResource
             'id' => $this->id,
             'event' => $this->event,
             'user_id' => $this->user_id,
-            'user_uuid' => $this->user->uuid ?? null,
             'old_values' => $this->old_values,
             'new_values' => $this->new_values,
             'created_at' => $this->created_at,

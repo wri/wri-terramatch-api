@@ -2,17 +2,24 @@
 
 namespace App\Console\Commands;
 
+use App\Models\V2\DisturbanceReport;
+use App\Models\V2\FinancialIndicators;
+use App\Models\V2\FinancialReport;
+use App\Models\V2\FundingType;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
+use App\Models\V2\Organisation;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\SrpReport;
 use App\Models\V2\Tasks\Task;
 use App\StateMachines\TaskStatusStateMachine;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 
 class CreateReportCommand extends Command
 {
@@ -52,8 +59,26 @@ class CreateReportCommand extends Command
 
                 break;
 
+            case 'financial':
+                $entityModel = Organisation::class;
+                $reportModel = FinancialReport::class;
+
+                break;
+
+            case 'disturbance':
+                $entityModel = Project::class;
+                $reportModel = DisturbanceReport::class;
+
+                break;
+
+            case 'srp':
+                $entityModel = Project::class;
+                $reportModel = SrpReport::class;
+
+                break;
+
             default:
-                $this->error('Type must be one of "site" or "nursery"');
+                $this->error('Type must be one of "site", "nursery", "project", "financial", "disturbance", or "annual-socio-economic-restoration"');
 
                 return 1;
         }
@@ -82,10 +107,81 @@ class CreateReportCommand extends Command
                 'period_key' => $dueAt->year . '-' . $dueAt->month,
                 'due_at' => $dueAt,
             ]);
-        } else {
-            $task = Task::withTrashed()->where('project_id', $entity->project_id)->latest()->first();
-        }
+        } elseif ($type === 'financial') {
+            // For financial reports, no task is required by default, but you can link if needed
+            $dueAtOption = $this->option('due_at');
+            $dueAt = ! empty($dueAtOption) ? Carbon::parse($dueAtOption) : null;
+            $yearOfReport = $dueAt?->year ?? Carbon::now()->year;
+            $report = $reportModel::create([
+                'organisation_id' => $entity->id,
+                'status' => 'due',
+                'year_of_report' => $yearOfReport,
+                'currency' => $entity?->currency,
+                'fin_start_month' => $entity?->fin_start_month,
+                'update_request_status' => 'no-update',
+                'due_at' => $dueAt,
+            ]);
+            $this->info("Financial report created for organisation $uuid");
 
+            FinancialIndicators::where('organisation_id', $entity->id)
+                ->whereNull('financial_report_id')
+                ->get()
+                ->each(function ($indicator) use ($entity, $report) {
+                    $newIndicator = FinancialIndicators::create([
+                        'organisation_id' => $entity->id,
+                        'year' => $indicator->year,
+                        'collection' => $indicator->collection,
+                        'amount' => $indicator->amount,
+                        'description' => $indicator->description,
+                        'financial_report_id' => $report->id,
+                    ]);
+
+                    if ($indicator->collection === FinancialIndicators::COLLECTION_NOT_COLLECTION_DOCUMENTS) {
+                        $mediaItems = $indicator->getMedia('documentation');
+                        foreach ($mediaItems as $media) {
+                            $newMedia = $media->replicate();
+                            $newMedia->model_id = $newIndicator->id;
+                            $newMedia->uuid = (string) Str::uuid();
+                            $newMedia->save();
+                        }
+                    }
+                });
+
+            FundingType::where('organisation_id', $entity->uuid)
+                ->whereNull('financial_report_id')
+                ->get()
+                ->each(function ($fundingType) use ($entity, $report) {
+                    FundingType::create([
+                        'organisation_id' => $entity->uuid,
+                        'financial_report_id' => $report->id,
+                        'source' => $fundingType->source,
+                        'amount' => $fundingType->amount,
+                        'year' => $fundingType->year,
+                        'type' => $fundingType->type,
+                    ]);
+                });
+
+            return 0;
+
+        } elseif ($type === 'disturbance') {
+            // For disturbance reports, no task is required, but it's related to a project
+            $dueAtOption = $this->option('due_at');
+            $dueAt = ! empty($dueAtOption) ? Carbon::parse($dueAtOption) : null;
+
+            $reportModel::create([
+                'framework_key' => $entity->framework_key,
+                'project_id' => $entity->id,
+                'status' => 'due',
+                'due_at' => $dueAt,
+                'update_request_status' => 'no-update',
+            ]);
+
+            $this->info("Disturbance report created for project $uuid");
+
+            return 0;
+        } else {
+            $task = Task::withTrashed()->where('project_id', $type === 'srp' ? $entity->id : $entity->project_id)->latest()->first();
+        }
         if ($task == null) {
             $this->error("Task not found for project [$entity->project_id]");
 
@@ -101,14 +197,25 @@ class CreateReportCommand extends Command
             $this->info("Task status updated to 'due' [task=$task->id, project=$task->project_id]");
         }
 
-        $reportModel::create([
-            'framework_key' => $task->project->framework_key,
-            'task_id' => $task->id,
-            "{$type}_id" => $entity->id,
-            'status' => 'due',
-            'due_at' => $task->due_at,
-        ]);
-
+        if ($type === 'srp') {
+            $reportModel::create([
+                'framework_key' => $entity->framework_key,
+                'task_id' => $task->id,
+                'project_id' => $entity->id,
+                'status' => 'due',
+                'year' => $task->due_at->year,
+                'due_at' => $task->due_at,
+                'update_request_status' => 'no-update',
+            ]);
+        } else {
+            $reportModel::create([
+                'framework_key' => $task->project->framework_key,
+                'task_id' => $task->id,
+                "{$type}_id" => $entity->id,
+                'status' => 'due',
+                'due_at' => $task->due_at,
+            ]);
+        }
         if ($type == 'project' && $this->option('all_reports')) {
             foreach ($entity->sites as $site) {
                 Artisan::call('create-report -Tsite ' . $site->uuid);

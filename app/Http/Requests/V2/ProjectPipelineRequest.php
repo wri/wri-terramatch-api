@@ -17,7 +17,8 @@ class ProjectPipelineRequest extends FormRequest
             'name' => ['sometimes', 'string', 'nullable', 'max:256'],
             'description' => ['sometimes', 'string', 'nullable', 'max:500'],
             'program' => ['sometimes', 'string', 'nullable', 'max:256'],
-            'cohort' => ['sometimes', 'string', 'nullable', 'max:256'],
+            'cohort' => ['sometimes', 'nullable', 'array'],
+            'cohort.*' => ['string', 'max:256'],
             'publish_for' => ['sometimes', 'string', 'nullable', 'max:256'],
             'url' => ['sometimes', 'string', 'nullable', 'max:256'],
         ];

@@ -2,8 +2,8 @@
 
 namespace Database\Factories\V2\Nurseries;
 
-use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
+use App\StateMachines\EntityStatusStateMachine;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class NurseryFactory extends Factory
@@ -22,7 +22,7 @@ class NurseryFactory extends Factory
         return [
             'framework_key' => $frameworkKey,
             'project_id' => Project::factory()->create(['framework_key' => $frameworkKey])->id,
-            'status' => array_keys(Nursery::$statuses)[0],
+            'status' => EntityStatusStateMachine::AWAITING_APPROVAL,
             'type' => $this->faker->randomElement($types),
             'name' => $this->faker->word(),
             'start_date' => $this->faker->date(),

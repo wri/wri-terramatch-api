@@ -29,7 +29,12 @@ class PolygonOperationsComplete extends I18nMail
             ])
             ->setCta('polygon-validation.cta');
 
-        $this->link = '/sites/' . $site->uuid;
+        if ($user->hasRole('project-developer')) {
+            $this->link = '/site/' . $site->uuid;
+        } else {
+            $this->link = '/admin#/site/' . $site->uuid . '/show';
+        }
+
         $this->transactional = true;
     }
 }
