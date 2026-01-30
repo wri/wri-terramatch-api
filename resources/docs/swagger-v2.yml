@@ -18487,56 +18487,6 @@ paths:
       responses:
         '200':
           description: OK
-  /v2/my/actions:
-    get:
-      summary: Get the current user's actions
-      operationId: get-v2-my-actions
-      tags:
-        - Users
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  title: ActionRead
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                    subtype:
-                      type: string
-                    title:
-                      type: string
-                    sub_title:
-                      type: string
-                    text:
-                      type: string
-                    key:
-                      type: string
-                    targetable_type:
-                      type: string
-                      description: one of Project|ProjectReport|Site|SiteReport|Nursery|NurseryReport|UpdateRequest
-                    targetable_id:
-                      type: integer
-                    target:
-                      type: object
-                      description: contains the “Lite” objects for the model involved with the Action
-                    organisation_id:
-                      type: integer
-                    deleted_at:
-                      type: string
-                    created_at:
-                      type: string
-                    updated_at:
-                      type: string
   '/v2/my/actions/{UUID}/complete':
     put:
       summary: Complete an action
@@ -30033,89 +29983,6 @@ paths:
         '404':
           description: Geometry was not found.
   '/v2/audit-status/{ENTITY}/{UUID}':
-    get:
-      operationId: get-v2-audits-status
-      summary: Get all audits status by entity and entity uuid
-      tags:
-        - V2 Audits Status
-      parameters:
-        - type: string
-          name: ENTITY
-          in: path
-          required: true
-          description: allowed values project/site/site-polygon
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              title: AuditStatusResponse
-              type: object
-              properties:
-                id:
-                  type: string
-                uuid:
-                  type: string
-                entity_name:
-                  type: string
-                status:
-                  type: string
-                comment:
-                  type: string
-                first_name:
-                  type: string
-                last_name:
-                  type: string
-                type:
-                  type: string
-                is_submitted:
-                  type: boolean
-                is_active:
-                  type: boolean
-                request_removed:
-                  type: boolean
-                date_created:
-                  type: string
-                  format: date
-                created_by:
-                  type: string
-                attachments:
-                  type: array
-                  items:
-                    title: V2FileRead
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                      url:
-                        type: string
-                      thumb_url:
-                        type: string
-                      collection_name:
-                        type: string
-                      title:
-                        type: string
-                      file_name:
-                        type: string
-                      mime_type:
-                        type: string
-                      size:
-                        type: integer
-                      lat:
-                        type: integer
-                      lng:
-                        type: integer
-                      is_public:
-                        type: boolean
-                      is_cover:
-                        type: boolean
-                      created_at:
-                        type: string
     post:
       operationId: post-v2-audit-status
       summary: Create a new audit status
@@ -31355,6 +31222,7 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -31365,8 +31233,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -31394,7 +31262,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
     post:
       summary: Create a new Impact Story
       operationId: v2-create-impact-story
@@ -31654,6 +31521,7 @@ paths:
                       format: date-time
                       example: '2024-09-02T15:04:05Z'
               links:
+                type: object
                 title: V2PaginationLinks
                 properties:
                   first:
@@ -31664,8 +31532,8 @@ paths:
                     type: string
                   next:
                     type: string
-                type: object
               meta:
+                type: object
                 title: V2PaginationMeta
                 properties:
                   from:
@@ -31693,7 +31561,6 @@ paths:
                           type: string
                         active:
                           type: boolean
-                type: object
   '/v2/impact-stories/{id}':
     get:
       summary: Get a specific impact story

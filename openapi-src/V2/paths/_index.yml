@@ -1022,8 +1022,6 @@
   post:
     $ref: './Geometry/post-v2-geometry-uuid-version.yml'
 /v2/audit-status/{ENTITY}/{UUID}:
-  get:
-    $ref: './AuditStatus/get-v2-audit-status.yml'
   post:
     $ref: './AuditStatus/post-v2-audit-status.yml'
 /v2/terrafund/site-polygon/{uuid}/{siteUuid}:
