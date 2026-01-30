@@ -379,6 +379,7 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
 Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group(function () {
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
+    // DEPRECATED: Use GET /api/v2/admin/reporting-frameworks (admin) or derive from projects in V3. See resources/docs/migration-dashboard-frameworks-to-v3.md
     Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);
 });
 

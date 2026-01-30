@@ -68,6 +68,10 @@ class ViewProjectController extends Controller
         return response()->json($response);
     }
 
+    /**
+     * Returns distinct frameworks used in approved projects matching dashboard filters.
+     * @deprecated Use GET /api/v2/admin/reporting-frameworks (admin) or derive from projects in V3. See resources/docs/migration-dashboard-frameworks-to-v3.md
+     */
     public function getFrameworks($request = null)
     {
         if ($request === null) {
@@ -90,6 +94,9 @@ class ViewProjectController extends Controller
             ];
         }
 
-        return $frameworksResponse;
+        return response()->json($frameworksResponse)->withHeaders([
+            'Deprecation' => 'true',
+            'Link' => '</api/v2/admin/reporting-frameworks>; rel="successor"; type="text/html"',
+        ]);
     }
 };

@@ -1,5 +1,9 @@
 summary: Get Project Frameworks
-description: Retrieves distinct frameworks used in projects
+deprecated: true
+description: |
+  Retrieves distinct frameworks used in projects (for dashboard dropdowns).
+  **Deprecated.** Use GET /api/v2/admin/reporting-frameworks (admin) or derive from projects in V3.
+  See resources/docs/migration-dashboard-frameworks-to-v3.md
 tags:
   - Dashboard
 parameters:
