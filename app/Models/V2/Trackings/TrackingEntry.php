@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Models\V2\Demographics;
+namespace App\Models\V2\Trackings;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class DemographicEntry extends Model
+class TrackingEntry extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
-        'demographic_id',
+        'tracking_id',
         'type',
         'subtype',
         'name',
@@ -30,14 +30,14 @@ class DemographicEntry extends Model
     public const CASTE = 'caste';
     public const CASTES = ['marginalized'];
 
-    public function demographic()
+    public function tracking()
     {
-        return $this->belongsTo(Demographic::class);
+        return $this->belongsTo(Tracking::class);
     }
 
     public function scopeGender(Builder $query): Builder
     {
-        return $query->where('type', self::GENDER);
+        return $query->where(['type' => self::GENDER]);
     }
 
     public function scopeIsGender(Builder $query, string $gender): Builder
@@ -47,7 +47,7 @@ class DemographicEntry extends Model
 
     public function scopeAge(Builder $query): Builder
     {
-        return $query->where('type', self::AGE);
+        return $query->where(['type' => self::AGE]);
     }
 
     public function scopeIsAge(Builder $query, string $age): Builder
@@ -57,7 +57,7 @@ class DemographicEntry extends Model
 
     public function scopeEthnicity(Builder $query): Builder
     {
-        return $query->where('type', self::ETHNICITY);
+        return $query->where(['type' => self::ETHNICITY]);
     }
 
     public function scopeIsEthnicity(Builder $query, string $ethnicity, string $name = null): Builder
@@ -67,6 +67,6 @@ class DemographicEntry extends Model
 
     public function scopeCaste(Builder $query): Builder
     {
-        return $query->where('type', self::CASTE);
+        return $query->where(['type' => self::CASTE]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\V2\Demographics;
+namespace App\Models\V2\Trackings;
 
 class DemographicCollections
 {

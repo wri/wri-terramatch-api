@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\V2\Demographics;
+namespace App\Models\V2\Trackings;
 
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,14 +11,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string uuid
- * @property string demographical_type
- * @property int demographical_id
+ * @property string trackable_type
+ * @property int trackable_id
+ * @property string domain
  * @property string type
  * @property string collection
  * @property string description
  * @property bool hidden
  */
-class Demographic extends Model
+class Tracking extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -49,7 +50,7 @@ class Demographic extends Model
 
     // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that both in-flight
     // work at the time of release, and updates from update requests afterward honor that change.
-    protected const SUBTYPE_SWAP_TYPES = [DemographicEntry::GENDER, DemographicEntry::AGE, DemographicEntry::CASTE];
+    protected const SUBTYPE_SWAP_TYPES = [TrackingEntry::GENDER, TrackingEntry::AGE, TrackingEntry::CASTE];
 
     protected $casts = [
         'hidden' => 'boolean',
@@ -57,15 +58,16 @@ class Demographic extends Model
 
     protected $fillable = [
         'uuid',
-        'demographical_type',
-        'demographical_id',
+        'trackable_type',
+        'trackable_id',
         'type',
         'collection',
         'description',
         'hidden',
+        'domain',
     ];
 
-    public function demographical()
+    public function trackable()
     {
         return $this->morphTo();
     }
@@ -77,7 +79,7 @@ class Demographic extends Model
 
     public function entries(): HasMany
     {
-        return $this->hasMany(DemographicEntry::class);
+        return $this->hasMany(TrackingEntry::class);
     }
 
     public function scopeType(Builder $query, string $type): Builder

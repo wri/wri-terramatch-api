@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
 use Illuminate\Console\Command;
 
 class ReportWorkdayDiscrepancies extends Command
@@ -70,10 +70,11 @@ class ReportWorkdayDiscrepancies extends Command
                         $aggregate_volunteer = (int)$report->workdays_volunteer;
 
                         $modelType = get_class($report);
-                        $query = Demographic::where([
-                            'demographical_type' => $modelType,
-                            'demographical_id' => $report->id,
-                            'type' => Demographic::WORKDAY_TYPE,
+                        $query = Tracking::where([
+                            'trackable_type' => $modelType,
+                            'trackable_id' => $report->id,
+                            'domain' => 'demographics',
+                            'type' => Tracking::WORKDAY_TYPE,
                         ]);
                         if ($query->count() == 0) {
                             // Skip reports that have no associated workday rows.

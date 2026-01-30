@@ -13,8 +13,6 @@ use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\Disturbance;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Invasive;
@@ -23,6 +21,8 @@ use App\Models\V2\Polygon;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Seeding;
 use App\Models\V2\Stratas\Strata;
+use App\Models\V2\Trackings\Tracking;
+use App\Models\V2\Trackings\TrackingEntry;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\StateMachines\EntityStatusStateMachine;
 use App\StateMachines\ReportStatusStateMachine;
@@ -355,14 +355,14 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     {
         $reportQuery = $this->reports()->hasBeenSubmitted();
         if ($useDemographicsCutoff) {
-            $reportQuery->where('due_at', '>=', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
+            $reportQuery->where('due_at', '>=', Tracking::DEMOGRAPHICS_COUNT_CUTOFF);
         }
 
-        return DemographicEntry::whereIn(
-            'demographic_id',
-            Demographic::where('demographical_type', SiteReport::class)
-                    ->whereIn('demographical_id', $reportQuery->select('id'))
-                    ->type(Demographic::WORKDAY_TYPE)
+        return TrackingEntry::whereIn(
+            'tracking_id',
+            Tracking::where(['domain' => 'demographics', 'trackable_type' => SiteReport::class])
+                    ->whereIn('trackable_id', $reportQuery->select('id'))
+                    ->type(Tracking::WORKDAY_TYPE)
                     ->visible()
                     ->select('id')
         )->gender()->sum('amount') ?? 0;
@@ -372,7 +372,7 @@ class Site extends Model implements MediaModel, AuditableContract, EntityModel, 
     {
         $reportQuery = $this->reports()->hasBeenSubmitted();
         if ($useDemographicsCutoff) {
-            $reportQuery->where('due_at', '<', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
+            $reportQuery->where('due_at', '<', Tracking::DEMOGRAPHICS_COUNT_CUTOFF);
         }
         $totals = $reportQuery->get([
             DB::raw('sum(`workdays_volunteer`) as volunteer'),
