@@ -40,7 +40,6 @@ use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
 use App\Http\Controllers\V2\Geometry\GeometryController;
-use App\Http\Controllers\V2\ImpactStory\ImpactStoryController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
@@ -153,14 +152,6 @@ Route::prefix('media')->group(function () {
     Route::delete('/{uuid}', [MediaController::class, 'delete']);
     Route::delete('/{uuid}/{collection}', [MediaController::class, 'delete']);
 });
-Route::get('impact-stories', [ImpactStoryController::class, 'index'])
-    ->withoutMiddleware(['auth:service-api-key,api']);
-
-Route::get('impact-stories/{impact_story}', [ImpactStoryController::class, 'show'])
-    ->withoutMiddleware(['auth:service-api-key,api']);
-
-Route::resource('impact-stories', ImpactStoryController::class)
-    ->except(['index', 'show']);
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('reporting-frameworks')->group(function () {
@@ -218,8 +209,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::post('/create', [AdminUserCreationController::class, 'store']);
     });
     Route::resource('users', AdminUserController::class);
-    Route::post('impact-stories/bulk-delete', [ImpactStoryController::class, 'bulkDestroy']);
-    Route::resource('impact-stories', ImpactStoryController::class);
 
     Route::prefix('forms')->group(function () {
         Route::get('submissions/{form}/export', ExportFormSubmissionController::class);
