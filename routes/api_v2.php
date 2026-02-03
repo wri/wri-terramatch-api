@@ -6,7 +6,6 @@ use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
-use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
@@ -364,10 +363,6 @@ ModelInterfaceBindingMiddleware::with(
 Route::post('/export-image', ExportImageController::class);
 
 Route::resource('files', FilePropertiesController::class);
-
-ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
-    Route::post('/{auditable}', StoreAuditStatusController::class);
-}, prefix: 'audit-status');
 
 ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
