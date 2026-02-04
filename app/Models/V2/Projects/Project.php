@@ -14,9 +14,6 @@ use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
-use App\Models\V2\Demographics\DemographicEntry;
 use App\Models\V2\EntityModel;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\MediaModel;
@@ -28,6 +25,9 @@ use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SitePolygon;
 use App\Models\V2\Sites\SiteReport;
 use App\Models\V2\Tasks\Task;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
+use App\Models\V2\Trackings\TrackingEntry;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\StateMachines\EntityStatusStateMachine;
@@ -151,6 +151,17 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'direct_seeding_survival_rate',
         'cohort',
         'short_name',
+        'level_1_project',
+        'level_2_project',
+        'land_tenure_approach',
+        'seedlings_procurement',
+        'jobs_goal_description',
+        'volunteers_goal_description',
+        'community_engagement_plan',
+        'direct_beneficiaries_goal_description',
+        'elp_project',
+        'consortium',
+        'landowner_agreement',
     ];
 
     public $fileConfiguration = [
@@ -204,6 +215,9 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'detailed_intervention_types' => 'array',
         'states' => 'array',
         'cohort' => 'array',
+        'level_1_project' => 'array',
+        'level_2_project' => 'array',
+        'elp_project' => 'boolean',
     ];
 
     public const PROJECT_STATUS_NEW = 'new_project';
@@ -217,7 +231,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
     // Required by the HasDemographics trait. What's specified here should be a super set of what's on ProjectPitch,
     // as those demographics are all copied to the project on establishment.
     public const DEMOGRAPHIC_COLLECTIONS = [
-        Demographic::JOBS_TYPE => [
+        Tracking::JOBS_TYPE => [
             'all' => [
                 DemographicCollections::ALL,
             ],
@@ -230,10 +244,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
                 DemographicCollections::PART_TIME_CLT,
             ],
         ],
-        Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
-        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
-        Demographic::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
-        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
+        Tracking::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
+        Tracking::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Tracking::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
+        Tracking::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -446,22 +460,22 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         $projectQuery = $this->reports()->Approved();
         $siteQuery = $this->approvedSiteReports();
         if ($useDemographicsCutoff) {
-            $projectQuery->where('due_at', '>=', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
-            $siteQuery->where('due_at', '>=', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
+            $projectQuery->where('due_at', '>=', Tracking::DEMOGRAPHICS_COUNT_CUTOFF);
+            $siteQuery->where('due_at', '>=', Tracking::DEMOGRAPHICS_COUNT_CUTOFF);
         }
 
-        return DemographicEntry::whereIn(
-            'demographic_id',
-            Demographic::where('demographical_type', SiteReport::class)
-                    ->whereIn('demographical_id', $siteQuery->select('v2_site_reports.id'))
-                    ->type(Demographic::WORKDAY_TYPE)
+        return TrackingEntry::whereIn(
+            'tracking_id',
+            Tracking::where(['domain' => 'demographics', 'trackable_type' => SiteReport::class])
+                    ->whereIn('trackable_id', $siteQuery->select('v2_site_reports.id'))
+                    ->type(Tracking::WORKDAY_TYPE)
                     ->visible()
                     ->select('id')
         )->orWhereIn(
-            'demographic_id',
-            Demographic::where('demographical_type', ProjectReport::class)
-                ->whereIn('demographical_id', $projectQuery->select('id'))
-                ->type(Demographic::WORKDAY_TYPE)
+            'tracking_id',
+            Tracking::where(['domain' => 'demographics', 'trackable_type' => ProjectReport::class])
+                ->whereIn('trackable_id', $projectQuery->select('id'))
+                ->type(Tracking::WORKDAY_TYPE)
                 ->visible()
                 ->select('id')
         )->gender()->sum('amount') ?? 0;
@@ -479,8 +493,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         $siteQuery = $this->approvedSiteReports()->groupBy('v2_sites.project_id');
 
         if ($useDemographicsCutoff) {
-            $projectQuery->where('due_at', '<', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
-            $siteQuery->where('due_at', '<', Demographic::DEMOGRAPHICS_COUNT_CUTOFF);
+            $projectQuery->where('due_at', '<', Tracking::DEMOGRAPHICS_COUNT_CUTOFF);
+            $siteQuery->where('due_at', '<', Tracking::DEMOGRAPHICS_COUNT_CUTOFF);
         }
 
         $projectTotals = $projectQuery->get($sumQueries)->first();
@@ -505,14 +519,15 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
      */
     public function getTotalApprovedJobsCreatedAttribute(): int
     {
-        return DemographicEntry::whereIn(
-            'demographic_id',
-            Demographic::where([
-                'demographical_type' => ProjectReport::class,
+        return TrackingEntry::whereIn(
+            'tracking_id',
+            Tracking::where([
+                'domain' => 'demographics',
+                'trackable_type' => ProjectReport::class,
                 'hidden' => false,
-                'type' => Demographic::JOBS_TYPE,
+                'type' => Tracking::JOBS_TYPE,
             ])
-            ->whereIn('demographical_id', $this->reports()->approved()->select('id'))
+            ->whereIn('trackable_id', $this->reports()->approved()->select('id'))
             ->select('id')
         )
         ->where('type', 'gender')

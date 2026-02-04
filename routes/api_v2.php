@@ -6,8 +6,6 @@ use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
-use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
-use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
@@ -40,7 +38,6 @@ use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
 use App\Http\Controllers\V2\Geometry\GeometryController;
-use App\Http\Controllers\V2\ImpactStory\ImpactStoryController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
@@ -65,7 +62,6 @@ use App\Http\Controllers\V2\Organisations\OrganisationSubmitController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
-use App\Http\Controllers\V2\Polygons\ViewAllSitesPolygonsForProjectController;
 use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
@@ -92,7 +88,6 @@ use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
-use App\Http\Controllers\V2\Sites\SitePolygonDataController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
@@ -103,7 +98,6 @@ use App\Http\Controllers\V2\User\AdminUserMultiController;
 use App\Http\Controllers\V2\User\AdminUsersOrganizationController;
 use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
-use App\Http\Controllers\V2\User\IndexMyActionsController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
@@ -156,14 +150,6 @@ Route::prefix('media')->group(function () {
     Route::delete('/{uuid}', [MediaController::class, 'delete']);
     Route::delete('/{uuid}/{collection}', [MediaController::class, 'delete']);
 });
-Route::get('impact-stories', [ImpactStoryController::class, 'index'])
-    ->withoutMiddleware(['auth:service-api-key,api']);
-
-Route::get('impact-stories/{impact_story}', [ImpactStoryController::class, 'show'])
-    ->withoutMiddleware(['auth:service-api-key,api']);
-
-Route::resource('impact-stories', ImpactStoryController::class)
-    ->except(['index', 'show']);
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('reporting-frameworks')->group(function () {
@@ -221,8 +207,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::post('/create', [AdminUserCreationController::class, 'store']);
     });
     Route::resource('users', AdminUserController::class);
-    Route::post('impact-stories/bulk-delete', [ImpactStoryController::class, 'bulkDestroy']);
-    Route::resource('impact-stories', ImpactStoryController::class);
 
     Route::prefix('forms')->group(function () {
         Route::get('submissions/{form}/export', ExportFormSubmissionController::class);
@@ -254,7 +238,6 @@ Route::prefix('my')->group(function () {
     Route::patch('/banners', UpdateMyBannersController::class);
 
     Route::prefix('actions')->group(function () {
-        Route::get('/', IndexMyActionsController::class);
         Route::put('/{action}/complete', CompleteActionController::class);
     });
 });
@@ -303,7 +286,6 @@ Route::prefix('srp-reports')->group(function () {
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
-    Route::get('/{project}/site-polygons/all', ViewAllSitesPolygonsForProjectController::class);
     Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
     Route::get('/{project}/image/locations', ProjectImageLocationsController::class);
 
@@ -326,7 +308,6 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/monitorings', ViewASitesMonitoringsController::class);
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
-    Route::get('/polygon', [SitePolygonDataController::class, 'getSitePolygonData']);
 });
 
 Route::prefix('geometry')->group(function () {
@@ -384,11 +365,6 @@ Route::post('/export-image', ExportImageController::class);
 Route::resource('files', FilePropertiesController::class);
 
 ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
-    Route::post('/{auditable}', StoreAuditStatusController::class);
-    Route::get('/{auditable}', GetAuditStatusController::class);
-}, prefix: 'audit-status');
-
-ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
     Route::delete('/{auditable}/{uuid}/delete', DeleteAuditStatusController::class);
 });
@@ -396,7 +372,6 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
 Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group(function () {
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
-    Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);
 });
 
 Route::prefix('indicators')->group(function () {

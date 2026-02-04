@@ -13,8 +13,6 @@ use App\Models\Traits\ReportsStatusChange;
 use App\Models\Traits\UsesLinkedFields;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\AuditStatus\AuditStatus;
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Disturbance;
 use App\Models\V2\Invasive;
 use App\Models\V2\MediaModel;
@@ -24,6 +22,8 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Seeding;
 use App\Models\V2\Tasks\Task;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use App\StateMachines\ReportStatusStateMachine;
@@ -171,7 +171,7 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
 
     // Required by the HasDemographics trait
     public const DEMOGRAPHIC_COLLECTIONS = [
-        Demographic::WORKDAY_TYPE => [
+        Tracking::WORKDAY_TYPE => [
             'paid' => [
                 DemographicCollections::PAID_SITE_ESTABLISHMENT,
                 DemographicCollections::PAID_PLANTING,

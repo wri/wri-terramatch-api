@@ -1,12 +1,12 @@
 <?php
 
-namespace Database\Factories\V2\Demographics;
+namespace Database\Factories\V2\Trackings;
 
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicEntry;
+use App\Models\V2\Trackings\Tracking;
+use App\Models\V2\Trackings\TrackingEntry;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class DemographicEntryFactory extends Factory
+class TrackingEntryFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -16,9 +16,9 @@ class DemographicEntryFactory extends Factory
     public function definition()
     {
         return [
-            'demographic_id' => Demographic::factory()->create()->id,
+            'tracking_id' => Tracking::factory()->create()->id,
             'type' => 'gender',
-            'subtype' => $this->faker->randomElement(DemographicEntry::GENDERS),
+            'subtype' => $this->faker->randomElement(TrackingEntry::GENDERS),
             'name' => null,
             'amount' => $this->faker->randomNumber([0, 5000]),
         ];
@@ -28,8 +28,8 @@ class DemographicEntryFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => DemographicEntry::GENDER,
-                'subtype' => $this->faker->randomElement(DemographicEntry::GENDERS),
+                'type' => TrackingEntry::GENDER,
+                'subtype' => $this->faker->randomElement(TrackingEntry::GENDERS),
             ];
         });
     }
@@ -38,8 +38,8 @@ class DemographicEntryFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => DemographicEntry::AGE,
-                'subtype' => $this->faker->randomElement(DemographicEntry::AGES),
+                'type' => TrackingEntry::AGE,
+                'subtype' => $this->faker->randomElement(TrackingEntry::AGES),
             ];
         });
     }
@@ -48,8 +48,8 @@ class DemographicEntryFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => DemographicEntry::ETHNICITY,
-                'subtype' => $this->faker->randomElement(DemographicEntry::ETHNICITIES),
+                'type' => TrackingEntry::ETHNICITY,
+                'subtype' => $this->faker->randomElement(TrackingEntry::ETHNICITIES),
             ];
         });
     }

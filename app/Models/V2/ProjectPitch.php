@@ -6,9 +6,9 @@ use App\Models\Traits\HasDemographics;
 use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasV2MediaCollections;
-use App\Models\V2\Demographics\Demographic;
-use App\Models\V2\Demographics\DemographicCollections;
 use App\Models\V2\Forms\FormSubmission;
+use App\Models\V2\Trackings\DemographicCollections;
+use App\Models\V2\Trackings\Tracking;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -90,7 +90,7 @@ class ProjectPitch extends Model implements MediaModel
 
     // Required by the HasDemographics trait
     public const DEMOGRAPHIC_COLLECTIONS = [
-        Demographic::JOBS_TYPE => [
+        Tracking::JOBS_TYPE => [
             'all' => [
                 DemographicCollections::ALL,
             ],
@@ -103,10 +103,10 @@ class ProjectPitch extends Model implements MediaModel
                 DemographicCollections::PART_TIME_CLT,
             ],
         ],
-        Demographic::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
-        Demographic::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
-        Demographic::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
-        Demographic::ASSOCIATES_TYPE => DemographicCollections::ALL,
+        Tracking::VOLUNTEERS_TYPE => DemographicCollections::VOLUNTEER,
+        Tracking::ALL_BENEFICIARIES_TYPE => DemographicCollections::ALL,
+        Tracking::INDIRECT_BENEFICIARIES_TYPE => DemographicCollections::INDIRECT,
+        Tracking::ASSOCIATES_TYPE => DemographicCollections::ALL,
     ];
 
     public function registerMediaConversions(Media $media = null): void

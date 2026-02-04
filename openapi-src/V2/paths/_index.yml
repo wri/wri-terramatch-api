@@ -19,9 +19,6 @@
 /v2/projects/{UUID}/{EMAIL}/remove-partner:
   delete:
     $ref: './Projects/delete-v2-projects-uuid-partners.yml'
-/v2/my/actions:
-  get:
-    $ref: './Users/get-v2-my-actions.yml'
 /v2/my/actions/{UUID}/complete:
   put:
     $ref: './Users/put-v2-my-action-uuid-complete.yml'
@@ -1024,14 +1021,6 @@
 /v2/geometry/{UUID}/new-version:
   post:
     $ref: './Geometry/post-v2-geometry-uuid-version.yml'
-/v2/audit-status/{ENTITY}/{UUID}:
-  get:
-    $ref: './AuditStatus/get-v2-audit-status.yml'
-  post:
-    $ref: './AuditStatus/post-v2-audit-status.yml'
-/v2/sites/{site}/polygon:
-  get:
-    $ref: './Sites/get-v2-sites-polygons-data.yml'
 /v2/terrafund/site-polygon/{uuid}/{siteUuid}:
   post:
     $ref: './Terrafund/post-v2-site-polygon-data.yml'
@@ -1076,9 +1065,6 @@
 /v2/dashboard/polygon-data/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-polygon-data-uuid.yml'
-/v2/dashboard/frameworks:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-frameworks.yml'
 /v2/project-pipeline:
   get:
     $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
@@ -1103,33 +1089,9 @@
 /v2/{ENTITY}/{UUID}/{ID}/delete:
   delete:
     $ref: './AuditStatus/delete-v2-audit-status.yml'
-/v2/projects/{UUID}/site-polygons/all:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-site-polygons-all.yml'
 /v2/indicators/{entity}/{uuid}/{slug}/export:
   get:
     $ref: './MonitoredData/get-v2-indicators-entity-slug-export.yml'
-/v2/admin/impact-stories:
-  get:
-    $ref: './ImpactStories/get-v2-impact-stories.yml'
-  post:
-    $ref: './ImpactStories/post-v2-impact-stories.yml'
-/v2/admin/impact-stories/{id}:
-  get:
-    $ref: './ImpactStories/get-v2-impact-stories-id.yml'
-  put:
-    $ref: './ImpactStories/put-v2-impact-stories-id.yml'
-  delete:
-    $ref: './ImpactStories/delete-v2-impact-stories-id.yml'
-/v2/admin/impact-stories/bulk-delete:
-  post:
-    $ref: './ImpactStories/delete-v2-impact-stories-bulk.yml'
-/v2/impact-stories:
-  get:
-    $ref: './ImpactStories/get-v2-impact-stories.yml'
-/v2/impact-stories/{id}:
-  get:
-    $ref: './ImpactStories/get-v2-impact-stories-id.yml'
 /v2/financial-indicators:
   patch:
     summary: Update a financial indicators
