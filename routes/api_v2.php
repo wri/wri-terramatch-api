@@ -6,8 +6,6 @@ use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
-use App\Http\Controllers\V2\AuditStatus\GetAuditStatusController;
-use App\Http\Controllers\V2\AuditStatus\StoreAuditStatusController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
 use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
@@ -367,11 +365,6 @@ Route::post('/export-image', ExportImageController::class);
 Route::resource('files', FilePropertiesController::class);
 
 ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
-    Route::post('/{auditable}', StoreAuditStatusController::class);
-    Route::get('/{auditable}', GetAuditStatusController::class);
-}, prefix: 'audit-status');
-
-ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
     Route::delete('/{auditable}/{uuid}/delete', DeleteAuditStatusController::class);
 });
@@ -379,7 +372,6 @@ ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
 Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group(function () {
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
     Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
-    Route::get('/frameworks', [ViewProjectController::class, 'getFrameworks']);
 });
 
 Route::prefix('indicators')->group(function () {
