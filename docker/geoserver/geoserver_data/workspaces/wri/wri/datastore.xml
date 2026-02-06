@@ -14,12 +14,12 @@
     <entry key="Connection timeout">20</entry>
     <entry key="Batch insert size">1</entry>
     <entry key="database">wri_restoration_marketplace_api</entry>
-    <entry key="port">3360</entry>
-    <entry key="passwd">crypt1:Lq8wJKdaP/wQFVrYEjHBpg==</entry>
+    <entry key="port">3306</entry>
+    <entry key="passwd">crypt1:arR7WL2TMILyNpC9g1TYTQ==</entry>
     <entry key="storage engine">MyISAM</entry>
     <entry key="min connections">1</entry>
     <entry key="dbtype">mysql</entry>
-    <entry key="host">host.docker.internal</entry>
+    <entry key="host">mariadb</entry>
     <entry key="namespace">wri</entry>
     <entry key="max connections">10</entry>
     <entry key="Evictor tests per run">3</entry>
@@ -29,5 +29,6 @@
   </connectionParameters>
   <__default>false</__default>
   <dateCreated>2026-02-06 15:05:35.430 UTC</dateCreated>
+  <dateModified>2026-02-06 16:48:23.438 UTC</dateModified>
   <disableOnConnFailure>false</disableOnConnFailure>
 </dataStore>
