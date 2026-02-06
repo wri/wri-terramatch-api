@@ -94,5 +94,10 @@ services:
         environment:
             INSTALL_EXTENSIONS: true
             STABLE_EXTENSIONS: "mysql,vectortiles"
+            SKIP_DEMO_DATA: "true"
+        volumes:
+            - ./docker/geoserver/geoserver_data:/opt/geoserver_data
+        depends_on:
+            - "mariadb"
 networks:
     default:

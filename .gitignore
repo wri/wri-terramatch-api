@@ -21,3 +21,6 @@ swagger.json
 .phpunit.result.cache
 .DS_Store
 /data
+docker/geoserver/geoserver_data/gwc/wri_polygon_geometry/
+docker/geoserver/geoserver_data/gwc/tmp/
+docker/geoserver/geoserver_data/logs/geoserver.log
