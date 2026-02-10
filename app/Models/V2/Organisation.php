@@ -462,4 +462,31 @@ class Organisation extends Model implements MediaModel
     {
         return $this->hasMany(Leaderships::class, 'organisation_id', 'id');
     }
+
+    public function hectaresRestored()
+    {
+        return $this->morphMany(Tracking::class, 'trackable')->where([
+            'domain' => 'restoration',
+            'type' => 'hectares',
+            'collection' => 'restored',
+        ]);
+    }
+
+    public function treesPlanted()
+    {
+        return $this->morphMany(Tracking::class, 'trackable')->where([
+            'domain' => 'restoration',
+            'type' => 'trees',
+            'collection' => 'planted',
+        ]);
+    }
+
+    public function treesRegenerated()
+    {
+        return $this->morphMany(Tracking::class, 'trackable')->where([
+            'domain' => 'restoration',
+            'type' => 'trees',
+            'collection' => 'regenerated',
+        ]);
+    }
 }
