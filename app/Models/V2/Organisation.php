@@ -467,17 +467,8 @@ class Organisation extends Model implements MediaModel
     {
         return $this->morphMany(Tracking::class, 'trackable')->where([
             'domain' => 'restoration',
-            'type' => 'hectares',
-            'collection' => 'restored',
-        ]);
-    }
-
-    public function treesPlanted()
-    {
-        return $this->morphMany(Tracking::class, 'trackable')->where([
-            'domain' => 'restoration',
-            'type' => 'trees',
-            'collection' => 'planted',
+            'type' => 'hectares-historical',
+            'collection' => 'all',
         ]);
     }
 
@@ -485,8 +476,17 @@ class Organisation extends Model implements MediaModel
     {
         return $this->morphMany(Tracking::class, 'trackable')->where([
             'domain' => 'restoration',
-            'type' => 'trees',
+            'type' => 'trees-historical',
             'collection' => 'regenerated',
+        ]);
+    }
+
+    public function treesGrown()
+    {
+        return $this->morphMany(Tracking::class, 'trackable')->where([
+            'domain' => 'restoration',
+            'type' => 'trees-historical',
+            'collection' => 'grown',
         ]);
     }
 }

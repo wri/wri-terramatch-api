@@ -448,13 +448,4 @@ class SiteReport extends Model implements MediaModel, AuditableContract, ReportM
             });
         });
     }
-
-    public function treesRegenerated()
-    {
-        return $this->morphMany(Tracking::class, 'trackable')->where([
-            'domain' => 'restoration',
-            'type' => 'trees',
-            'collection' => 'regenerated',
-        ]);
-    }
 }

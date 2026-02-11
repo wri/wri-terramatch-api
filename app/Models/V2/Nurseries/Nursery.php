@@ -16,7 +16,6 @@ use App\Models\V2\EntityModel;
 use App\Models\V2\MediaModel;
 use App\Models\V2\Polygon;
 use App\Models\V2\Projects\Project;
-use App\Models\V2\Trackings\Tracking;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\StateMachines\ReportStatusStateMachine;
 use Illuminate\Database\Eloquent\Builder;
@@ -236,14 +235,5 @@ class Nursery extends Model implements MediaModel, AuditableContract, EntityMode
         return $query->whereHas('project', function ($query) {
             $query->where('is_test', false);
         });
-    }
-
-    public function treesPlanted()
-    {
-        return $this->morphMany(Tracking::class, 'trackable')->where([
-            'domain' => 'restoration',
-            'type' => 'trees',
-            'collection' => 'planted',
-        ]);
     }
 }

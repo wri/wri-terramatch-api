@@ -18,7 +18,6 @@ use App\Models\V2\Polygon;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\ReportModel;
 use App\Models\V2\Tasks\Task;
-use App\Models\V2\Trackings\Tracking;
 use App\Models\V2\TreeSpecies\TreeSpecies;
 use App\Models\V2\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -302,14 +301,5 @@ class NurseryReport extends Model implements MediaModel, AuditableContract, Repo
                 $query->where('is_test', false);
             });
         });
-    }
-
-    public function treesPlanted()
-    {
-        return $this->morphMany(Tracking::class, 'trackable')->where([
-            'domain' => 'restoration',
-            'type' => 'trees',
-            'collection' => 'planted',
-        ]);
     }
 }

@@ -251,22 +251,22 @@ return [
                     'property' => 'hectaresRestored',
                     'label' => 'Hectares Restored',
                     'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
-                    'input_type' => 'hectares',
-                    'collection' => 'restored'
-                ],
-                'org-trees-planted' => [
-                    'property' => 'treesPlanted',
-                    'label' => 'Trees Planted',
-                    'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
-                    'input_type' => 'trees',
-                    'collection' => 'planted'
+                    'input_type' => 'hectaresHistorical',
+                    'collection' => 'all'
                 ],
                 'org-trees-regenerated' => [
                     'property' => 'treesRegenerated',
                     'label' => 'Trees Regenerated',
                     'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
-                    'input_type' => 'trees',
+                    'input_type' => 'treesHistorical',
                     'collection' => 'regenerated'
+                ],
+                'org-trees-grown' => [
+                    'property' => 'treesGrown',
+                    'label' => 'Trees Grown',
+                    'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
+                    'input_type' => 'treesHistorical',
+                    'collection' => 'grown'
                 ],
                 'org-financial-indicators-financial-collection' => [
                     'property' => 'financialCollection',
@@ -644,26 +644,19 @@ return [
                     'input_type' => 'indirectBeneficiaries',
                     'collection' => 'indirect',
                 ],
-                'pro-pit-hectares-restored' => [
-                    'property' => 'hectaresRestored',
-                    'label' => 'Hectares Restored',
+                'pro-pit-hectares-goal' => [
+                    'property' => 'hectaresGoal',
+                    'label' => 'Hectares Goal',
                     'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
-                    'input_type' => 'hectares',
-                    'collection' => 'restored'
+                    'input_type' => 'hectaresGoal',
+                    'collection' => 'all'
                 ],
-                'pro-pit-trees-planted' => [
-                    'property' => 'treesPlanted',
-                    'label' => 'Trees Planted',
+                'pro-pit-trees-goal' => [
+                    'property' => 'treesGoal',
+                    'label' => 'Trees Goal',
                     'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
-                    'input_type' => 'trees',
-                    'collection' => 'planted'
-                ],
-                'pro-pit-trees-regenerated' => [
-                    'property' => 'treesRegenerated',
-                    'label' => 'Trees Regenerated',
-                    'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
-                    'input_type' => 'trees',
-                    'collection' => 'regenerated'
+                    'input_type' => 'treesGoal',
+                    'collection' => 'all'
                 ]
             ],
         ],
@@ -820,26 +813,19 @@ return [
                     'input_type' => 'indirectBeneficiaries',
                     'collection' => 'indirect',
                 ],
-                'pro-hectares-restored' => [
-                    'property' => 'hectaresRestored',
-                    'label' => 'Hectares Restored',
+                'pro-hectares-goal' => [
+                    'property' => 'hectaresGoal',
+                    'label' => 'Hectares Goal',
                     'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
-                    'input_type' => 'hectares',
-                    'collection' => 'restored'
+                    'input_type' => 'hectaresGoal',
+                    'collection' => 'all'
                 ],
-                'pro-trees-planted' => [
-                    'property' => 'treesPlanted',
-                    'label' => 'Trees Planted',
+                'pro-trees-goal' => [
+                    'property' => 'treesGoal',
+                    'label' => 'Trees Goal',
                     'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
-                    'input_type' => 'trees',
-                    'collection' => 'planted'
-                ],
-                'pro-trees-regenerated' => [
-                    'property' => 'treesRegenerated',
-                    'label' => 'Trees Regenerated',
-                    'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
-                    'input_type' => 'trees',
-                    'collection' => 'regenerated'
+                    'input_type' => 'treesGoal',
+                    'collection' => 'all'
                 ]
             ],
         ],
@@ -1320,27 +1306,6 @@ return [
                     'label' => 'Stratas',
                     'resource' => 'App\Http\Resources\V2\Stratas\StrataResource',
                     'input_type' => 'stratas',
-                ],
-                'site-hectares-restored' => [
-                    'property' => 'hectaresRestored',
-                    'label' => 'Hectares Restored',
-                    'resource' => 'App\Http\Resources\V2\Stratas\StrataResource',
-                    'input_type' => 'hectares',
-                    'collection' => 'restored'
-                ],
-                'site-trees-planted' => [
-                    'property' => 'treesPlanted',
-                    'label' => 'Trees Planted',
-                    'resource' => 'App\Http\Resources\V2\Stratas\StrataResource',
-                    'input_type' => 'trees',
-                    'collection' => 'planted'
-                ],
-                'site-trees-regenerated' => [
-                    'property' => 'treesRegenerated',
-                    'label' => 'Trees Regenerated',
-                    'resource' => 'App\Http\Resources\V2\Stratas\StrataResource',
-                    'input_type' => 'trees',
-                    'collection' => 'regenerated'
                 ]
             ],
         ],
@@ -1523,13 +1488,6 @@ return [
                     'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
                     'input_type' => 'workdays',
                     'collection' => 'convergence',
-                ],
-                'site-rep-trees-regenerated' => [
-                    'property' => 'treesRegenerated',
-                    'label' => 'Trees Regenerated',
-                    'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
-                    'input_type' => 'trees',
-                    'collection' => 'regenerated'
                 ]
             ],
         ],
@@ -1557,13 +1515,6 @@ return [
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
                     'collection' => 'nursery-seedling',
-                ],
-                'nur-rel-trees-planted' => [
-                    'property' => 'treesPlanted',
-                    'label' => 'Trees Planted',
-                    'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
-                    'input_type' => 'trees',
-                    'collection' => 'planted'
                 ]
             ],
         ],
@@ -1592,14 +1543,7 @@ return [
                     'input_type' => 'treeSpecies',
                     'collection' => 'nursery-seedling',
                 ],
-                'nur-rep-rel-trees-planted' => [
-                    'property' => 'treesPlanted',
-                    'label' => 'Trees Planted',
-                    'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
-                    'input_type' => 'trees',
-                    'collection' => 'planted'
-                ]
-            ],
+            ]
         ],
     ],
 ];
