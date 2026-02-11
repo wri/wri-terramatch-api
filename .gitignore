@@ -23,4 +23,4 @@ swagger.json
 /data
 docker/geoserver/geoserver_data/gwc/wri_polygon_geometry/
 docker/geoserver/geoserver_data/gwc/tmp/
-docker/geoserver/geoserver_data/logs/geoserver.log
+docker/geoserver/geoserver_data/logs/*.log

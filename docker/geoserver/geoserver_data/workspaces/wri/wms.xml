@@ -5,6 +5,8 @@
   </workspace>
   <enabled>true</enabled>
   <name>WMS</name>
+  <internationalTitle/>
+  <internationalAbstract/>
   <versions>
     <org.geotools.util.Version>
       <version>1.1.1</version>
@@ -16,6 +18,23 @@
   <citeCompliant>false</citeCompliant>
   <schemaBaseURL>http://schemas.opengis.net</schemaBaseURL>
   <verbose>false</verbose>
+  <metadata>
+    <entry key="disableDatelineWrappingHeuristic">false</entry>
+    <entry key="kmlSuperoverlayMode">auto</entry>
+    <entry key="kmlReflectorMode">refresh</entry>
+    <entry key="rootLayerInCapabilities">true</entry>
+    <entry key="kmlPlacemark">false</entry>
+    <entry key="svgAntiAlias">false</entry>
+    <entry key="kmlKmscore">40</entry>
+    <entry key="mapWrapping">true</entry>
+    <entry key="pngCompression">25</entry>
+    <entry key="jpegCompression">25</entry>
+    <entry key="advancedProjectionDensification">false</entry>
+    <entry key="advancedProjectionHandling">true</entry>
+    <entry key="kmlAttr">true</entry>
+    <entry key="MarkFactoryList"></entry>
+    <entry key="scalehintMapunitsPixel">false</entry>
+  </metadata>
   <bboxForEachCRS>false</bboxForEachCRS>
   <watermark>
     <enabled>false</enabled>
@@ -31,6 +50,8 @@
   <maxRequestMemory>0</maxRequestMemory>
   <maxRenderingTime>0</maxRenderingTime>
   <maxRenderingErrors>0</maxRenderingErrors>
+  <internationalRootLayerTitle/>
+  <internationalRootLayerAbstract/>
   <maxRequestedDimensionValues>100</maxRequestedDimensionValues>
   <cacheConfiguration>
     <enabled>false</enabled>
