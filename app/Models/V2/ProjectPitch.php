@@ -188,4 +188,22 @@ class ProjectPitch extends Model implements MediaModel
             });
         }
     }
+
+    public function hectaresGoal()
+    {
+        return $this->morphMany(Tracking::class, 'trackable')->where([
+            'domain' => 'restoration',
+            'type' => 'hectares-goal',
+            'collection' => 'all',
+        ]);
+    }
+
+    public function treesGoal()
+    {
+        return $this->morphMany(Tracking::class, 'trackable')->where([
+            'domain' => 'restoration',
+            'type' => 'trees-goal',
+            'collection' => 'all',
+        ]);
+    }
 }

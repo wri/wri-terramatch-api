@@ -77,13 +77,13 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                 case 'trainingBeneficiaries':
                 case 'indirectBeneficiaries':
                     $list = [];
-                    $demographic = $answer->first();
-                    if ($demographic == null) {
+                    $tracking = $answer->first();
+                    if ($tracking == null) {
                         return '';
                     }
 
                     $types = ['gender' => [], 'age' => [], 'ethnicity' => [], 'farmer' => [], 'caste' => []];
-                    foreach ($demographic->entries as $entry) {
+                    foreach ($tracking->entries as $entry) {
                         $value = match ($entry->type) {
                             'ethnicity' => [$entry->amount, $entry->subtype, $entry->name],
                             default => [$entry->amount, $entry->subtype],
@@ -100,6 +100,28 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     }
                     if ($frameworkKey != 'hbf' && ($field['input_type'] == 'workdays' || $field['input_type'] == 'restorationPartners')) {
                         $list[] = 'ethnicity:(' . implode(')(', $types['ethnicity']) . ')';
+                    }
+
+                    return implode('|', $list);
+
+                case 'hectares':
+                case 'trees':
+                    $list = [];
+                    $tracking = $answer->first();
+                    if ($tracking == null) {
+                        return '';
+                    }
+
+                    $types = ['years' => [], 'strategy' => [], 'land-use' => []];
+                    foreach ($tracking->entries as $entry) {
+                        $types[$entry['type']][] = implode(':', [$entry->amount, $entry->subtype]);
+                    }
+                    $list[] = 'years:(' . implode(')(', $types['years']) . ')';
+                    if (! empty($types['strategy'])) {
+                        $list[] = 'strategy:(' . implode(')(', $types['strategy']) . ')';
+                    }
+                    if (! empty($types['land-use'])) {
+                        $list[] = 'land-use:(' . implode(')(', $types['land-use']) . ')';
                     }
 
                     return implode('|', $list);

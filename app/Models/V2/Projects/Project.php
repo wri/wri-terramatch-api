@@ -696,6 +696,24 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         return $this->approvedSitePolygons->where('status', 'approved')->sum('calc_area');
     }
 
+    public function hectaresGoal()
+    {
+        return $this->morphMany(Tracking::class, 'trackable')->where([
+            'domain' => 'restoration',
+            'type' => 'hectares-goal',
+            'collection' => 'all',
+        ]);
+    }
+
+    public function treesGoal()
+    {
+        return $this->morphMany(Tracking::class, 'trackable')->where([
+            'domain' => 'restoration',
+            'type' => 'trees-goal',
+            'collection' => 'all',
+        ]);
+    }
+
     /**
      * Helper method to check if project has a specific cohort
      */
