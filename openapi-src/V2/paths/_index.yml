@@ -374,31 +374,6 @@
     responses:
       '200':
         description: OK
-/v2/organisations/submit/{UUID}:
-  put:
-    summary: Submit an organisation for approval
-    operationId: v2-put-organisations-submit
-    tags:
-      - V2 Project Developer
-      - V2 Organisations
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-/v2/organisations/retract-my-draft:
-  delete:
-    summary: Retracts (delets) a users draft organisation
-    operationId: v2-delete-organisations-retract-my-draft
-    tags:
-      - V2 Project Developer
-      - V2 Organisations
-    responses:
-      '200':
-        description: OK
 /v2/admin/users:
   get:
     summary: Get a collection of users

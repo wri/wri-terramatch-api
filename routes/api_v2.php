@@ -57,8 +57,6 @@ use App\Http\Controllers\V2\Organisations\OrganisationController;
 use App\Http\Controllers\V2\Organisations\OrganisationListingController;
 use App\Http\Controllers\V2\Organisations\OrganisationListRequestedUsersController;
 use App\Http\Controllers\V2\Organisations\OrganisationRejectUserController;
-use App\Http\Controllers\V2\Organisations\OrganisationRetractMyDraftController;
-use App\Http\Controllers\V2\Organisations\OrganisationSubmitController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
@@ -224,10 +222,8 @@ Route::prefix('organisations')->group(function () {
     Route::post('join-existing', JoinExistingOrganisationController::class);
     Route::put('approve-user', OrganisationApproveUserController::class);
     Route::put('reject-user', OrganisationRejectUserController::class);
-    Route::put('submit/{organisation}', OrganisationSubmitController::class);
     Route::get('user-requests/{organisation}', OrganisationListRequestedUsersController::class);
     Route::get('approved-users/{organisation}', OrganisationApprovedUsersController::class);
-    Route::delete('retract-my-draft', OrganisationRetractMyDraftController::class);
 
     Route::post('/{organisation}/invite', CreateOrganisationInviteController::class);
     // Route::post('/invite/accept', ProjectInviteAcceptController::class);
