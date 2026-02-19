@@ -586,6 +586,7 @@ return [
                 'pro-pit-associates-count' => ['property' => 'all_associates_aggregate', 'label' => 'Aggregate associates', 'input_type' => 'number'],
                 'pro-pit-goal-trees-restored-description' => ['property' => 'goal_trees_restored_description', 'label' => 'How did you calculate the estimated number of trees planted-restored?', 'input_type' => 'long-text'],
                 'pro-pit-jobs-created-beneficiaries-description' => ['property' => 'jobs_created_beneficiaries_description', 'label' => 'How did you arrive at the provided estimate of number of jobs created, direct and indirect beneficiaries?', 'input_type' => 'long-text'],
+                'pro-pit-consortium' => ['property' => 'consortium', 'label' => 'Consortium description', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'pro-pit-fcol-cover' => ['property' => 'cover', 'label' => 'Cover Image', 'input_type' => 'file', 'multichoice' => false],
@@ -739,6 +740,7 @@ return [
                 'pro-beneficiaries-count' => ['property' => 'all_beneficiaries_aggregate', 'label' => 'Aggregate beneficiaries', 'input_type' => 'number'],
                 'pro-indirect-beneficiaries-count' => ['property' => 'indirect_beneficiaries_aggregate', 'label' => 'Aggregate indirect beneficiaries', 'input_type' => 'number'],
                 'pro-associates-count' => ['property' => 'all_associates_aggregate', 'label' => 'Aggregate associates', 'input_type' => 'number'],
+                'pro-level-0-project' => ['property' => 'level_0_project', 'label' => 'GADM level 0 administrative areas where project is restoring land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-0'],
                 'pro-level-1-project' => ['property' => 'level_1_project', 'label' => 'GADM level 1 administrative areas where project is restoring land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-1'],
                 'pro-level-2-project' => ['property' => 'level_2_project', 'label' => 'GADM level 2 administrative areas where project is restoring land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-2'],
                 'pro-land-tenure-approach' => ['property' => 'land_tenure_approach', 'label' => 'Land tenure approach', 'input_type' => 'long-text'],
