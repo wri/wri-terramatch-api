@@ -54,7 +54,6 @@ use App\Http\Controllers\V2\Organisations\JoinExistingOrganisationController;
 use App\Http\Controllers\V2\Organisations\OrganisationApprovedUsersController;
 use App\Http\Controllers\V2\Organisations\OrganisationApproveUserController;
 use App\Http\Controllers\V2\Organisations\OrganisationController;
-use App\Http\Controllers\V2\Organisations\OrganisationListingController;
 use App\Http\Controllers\V2\Organisations\OrganisationListRequestedUsersController;
 use App\Http\Controllers\V2\Organisations\OrganisationRejectUserController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
@@ -218,7 +217,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
 /** NON ADMIN ROUTES */
 Route::prefix('organisations')->group(function () {
-    Route::get('listing', OrganisationListingController::class);
     Route::post('join-existing', JoinExistingOrganisationController::class);
     Route::put('approve-user', OrganisationApproveUserController::class);
     Route::put('reject-user', OrganisationRejectUserController::class);

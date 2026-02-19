@@ -266,28 +266,6 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/V2OrganisationRead'
-/v2/organisations/listing:
-  get:
-    summary: Get a list of organisations names and uuid
-    operationId: v2-get-organisations-listing
-    tags:
-      - V2 Project Developer
-      - V2 Organisations
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '../definitions/_index.yml#/V2GenericList'
-    parameters:
-      - type: string
-        in: query
-        name: search
-        description: search term to use on the collection
 /v2/organisations/join-existing:
   post:
     summary: Post a request to join an existing organisation

@@ -23603,44 +23603,6 @@ paths:
                 description: 'this is a list of key value pairs eg slug: name '
                 items:
                   type: string
-  /v2/organisations/listing:
-    get:
-      summary: Get a list of organisations names and uuid
-      operationId: v2-get-organisations-listing
-      tags:
-        - V2 Project Developer
-        - V2 Organisations
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  title: V2GenericList
-                  type: object
-                  properties:
-                    uuid:
-                      type: string
-                    name:
-                      type: string
-                    input_type:
-                      type: string
-                    model_key:
-                      type: string
-                    option_list_key:
-                      type: string
-                    options:
-                      type: array
-                      items:
-                        type: string
-      parameters:
-        - type: string
-          in: query
-          name: search
-          description: search term to use on the collection
   /v2/organisations/join-existing:
     post:
       summary: Post a request to join an existing organisation
