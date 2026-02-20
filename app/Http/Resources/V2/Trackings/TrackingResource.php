@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Resources\V2\Demographics;
+namespace App\Http\Resources\V2\Trackings;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class DemographicResource extends JsonResource
+class TrackingResource extends JsonResource
 {
     public function toArray($request)
     {
         return [
             'uuid' => $this->uuid,
             'collection' => $this->collection,
-            'demographics' => empty($this->entries) ? [] : DemographicEntryResource::collection($this->entries),
+            'entries' => empty($this->entries) ? [] : TrackingEntryResource::collection($this->entries),
         ];
     }
 }

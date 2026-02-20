@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\V2\Demographics;
+namespace App\Http\Resources\V2\Trackings;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class DemographicEntryResource extends JsonResource
+class TrackingEntryResource extends JsonResource
 {
     public function toArray($request)
     {
