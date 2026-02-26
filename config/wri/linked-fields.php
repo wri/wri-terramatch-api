@@ -752,6 +752,7 @@ return [
                 'pro-elp-project' => ['property' => 'elp_project', 'label' => 'Early Learning Program project', 'input_type' => 'boolean'],
                 'pro-consortium' => ['property' => 'consortium', 'label' => 'Consortium information', 'input_type' => 'long-text'],
                 'pro-landowner-agreement' => ['property' => 'landowner_agreement', 'label' => 'Prior agreement with landowner', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'landowner-collection'],
+                'pro-nursery-seedlings-goal' => ['property' => 'nursery_seedlings_goal', 'label' => 'Nursery seedlings goal', 'input_type' => 'number'],
             ],
             'file-collections' => [
                 'pro-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
@@ -1347,6 +1348,7 @@ return [
                 'site-rep-survival-calculation' => ['property' => 'survival_calculation', 'label' => 'Description of Survival Rate Calculation', 'input_type' => 'long-text'],
                 'site-rep-survival-description' => ['property' => 'survival_description', 'label' => 'Explanation of Survival Rate', 'input_type' => 'long-text'],
                 'site-rep-maintenance-activities' => ['property' => 'maintenance_activities', 'label' => 'Maintenance Activities', 'input_type' => 'long-text'],
+                'site-rep-anr-practices' => ['property' => 'anr_practices', 'label' => 'ANR Practices', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'anr-practices'],
             ],
             'file-collections' => [
                 'site-rep-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],

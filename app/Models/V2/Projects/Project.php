@@ -163,6 +163,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'elp_project',
         'consortium',
         'landowner_agreement',
+        'nursery_seedlings_goal',
     ];
 
     public $fileConfiguration = [
