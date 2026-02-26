@@ -266,50 +266,6 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/V2OrganisationRead'
-/v2/organisations/listing:
-  get:
-    summary: Get a list of organisations names and uuid
-    operationId: v2-get-organisations-listing
-    tags:
-      - V2 Project Developer
-      - V2 Organisations
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '../definitions/_index.yml#/V2GenericList'
-    parameters:
-      - type: string
-        in: query
-        name: search
-        description: search term to use on the collection
-/v2/organisations/join-existing:
-  post:
-    summary: Post a request to join an existing organisation
-    operationId: v2-post-organisations-join-existing
-    tags:
-      - V2 Project Developer
-      - V2 Organisations
-    parameters:
-      - in: body
-        name: body
-        schema:
-          type: object
-          properties:
-            organisation_uuid:
-              type: string
-          required:
-            - organisation_uuid
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2OrganisationRead'
 /v2/organisations/user-requests/{UUID}:
   get:
     summary: Get a collection of users that have requested to join a specific organisation
@@ -344,36 +300,6 @@
         description: OK
         schema:
           $ref: '../definitions/_index.yml#/UserReadAll'
-/v2/organisations/approve-user:
-  put:
-    summary: Approve a users request to join an existing organisation
-    operationId: v2-post-organisations-approve-user
-    tags:
-      - V2 Project Developer
-      - V2 Organisations
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2OrganisationApproveRejectUser'
-    responses:
-      '200':
-        description: OK
-/v2/organisations/reject-user:
-  put:
-    summary: Reject a users request to join an existing organisation
-    operationId: v2-post-organisations-reject-user
-    tags:
-      - V2 Project Developer
-      - V2 Organisations
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2OrganisationApproveRejectUser'
-    responses:
-      '200':
-        description: OK
 /v2/admin/users:
   get:
     summary: Get a collection of users
