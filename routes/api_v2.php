@@ -1,6 +1,5 @@
 <?php
 
-use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
@@ -36,7 +35,6 @@ use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
-use App\Http\Controllers\V2\Geometry\GeometryController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
@@ -98,7 +96,6 @@ use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -296,17 +293,6 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/monitorings', ViewASitesMonitoringsController::class);
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
-});
-
-Route::prefix('geometry')->group(function () {
-    Route::post('', [GeometryController::class, 'storeGeometry']);
-    Route::post('/validate', [GeometryController::class, 'validateGeometries']);
-    Route::delete('', [GeometryController::class, 'deleteGeometries']);
-    Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
-    Route::post('{polygon}/new-version', function ($polygon, Request $request) {
-        return CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($polygon, $request);
-    });
-
 });
 
 Route::prefix('site-monitorings')->group(function () {
