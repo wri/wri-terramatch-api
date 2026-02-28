@@ -6,7 +6,6 @@ use App\Events\V2\General\EntityDeleteEvent;
 use App\Events\V2\General\EntityStatusChangeEvent;
 use App\Events\V2\Organisation\OrganisationApprovedEvent;
 use App\Events\V2\Organisation\OrganisationRejectedEvent;
-use App\Events\V2\Organisation\OrganisationSubmittedEvent;
 use App\Events\V2\Organisation\OrganisationUserJoinRequestEvent;
 use App\Events\V2\Organisation\OrganisationUserRequestApprovedEvent;
 use App\Events\V2\Organisation\OrganisationUserRequestRejectedEvent;
@@ -16,7 +15,6 @@ use App\Listeners\v2\General\DeleteAction;
 use App\Listeners\v2\General\StatusChangeAction;
 use App\Listeners\v2\Organisation\OrganisationApprovedSendEmail;
 use App\Listeners\v2\Organisation\OrganisationRejectedSendEmail;
-use App\Listeners\v2\Organisation\OrganisationSubmittedConfirmationSendEmail;
 use App\Listeners\v2\Organisation\OrganisationUserApprovedSendEmail;
 use App\Listeners\v2\Organisation\OrganisationUserJoinRequestNotification;
 use App\Listeners\v2\Organisation\OrganisationUserJoinRequestSendEmail;
@@ -52,7 +50,6 @@ class EventServiceProvider extends ServiceProvider
         EntityStatusChangeEvent::class => [StatusChangeAction::class],
         EntityDeleteEvent::class => [DeleteAction::class],
 
-        OrganisationSubmittedEvent::class => [OrganisationSubmittedConfirmationSendEmail::class],
         OrganisationApprovedEvent::class => [OrganisationApprovedSendEmail::class],
         OrganisationRejectedEvent::class => [OrganisationRejectedSendEmail::class],
 

@@ -1,6 +1,5 @@
 <?php
 
-use App\Helpers\CreateVersionPolygonGeometryHelper;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
@@ -30,18 +29,15 @@ use App\Http\Controllers\V2\Files\Location\ProjectImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\ProjectReportImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\SiteImageLocationsController;
 use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
-use App\Http\Controllers\V2\Files\UploadController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
-use App\Http\Controllers\V2\Geometry\GeometryController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
-use App\Http\Controllers\V2\MediaController;
 use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
@@ -57,8 +53,6 @@ use App\Http\Controllers\V2\Organisations\OrganisationController;
 use App\Http\Controllers\V2\Organisations\OrganisationListingController;
 use App\Http\Controllers\V2\Organisations\OrganisationListRequestedUsersController;
 use App\Http\Controllers\V2\Organisations\OrganisationRejectUserController;
-use App\Http\Controllers\V2\Organisations\OrganisationRetractMyDraftController;
-use App\Http\Controllers\V2\Organisations\OrganisationSubmitController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
@@ -102,8 +96,6 @@ use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
-use App\Models\V2\MediaModel;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -145,11 +137,6 @@ Route::prefix('imports')->group(function () {
     Route::post('baseline-monitoring', BaselineMonitoringImportController::class);
 });
 
-Route::prefix('media')->group(function () {
-    Route::delete('', [MediaController::class, 'bulkDelete']);
-    Route::delete('/{uuid}', [MediaController::class, 'delete']);
-    Route::delete('/{uuid}/{collection}', [MediaController::class, 'delete']);
-});
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('reporting-frameworks')->group(function () {
@@ -224,10 +211,8 @@ Route::prefix('organisations')->group(function () {
     Route::post('join-existing', JoinExistingOrganisationController::class);
     Route::put('approve-user', OrganisationApproveUserController::class);
     Route::put('reject-user', OrganisationRejectUserController::class);
-    Route::put('submit/{organisation}', OrganisationSubmitController::class);
     Route::get('user-requests/{organisation}', OrganisationListRequestedUsersController::class);
     Route::get('approved-users/{organisation}', OrganisationApprovedUsersController::class);
-    Route::delete('retract-my-draft', OrganisationRetractMyDraftController::class);
 
     Route::post('/{organisation}/invite', CreateOrganisationInviteController::class);
     // Route::post('/invite/accept', ProjectInviteAcceptController::class);
@@ -310,17 +295,6 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
 });
 
-Route::prefix('geometry')->group(function () {
-    Route::post('', [GeometryController::class, 'storeGeometry']);
-    Route::post('/validate', [GeometryController::class, 'validateGeometries']);
-    Route::delete('', [GeometryController::class, 'deleteGeometries']);
-    Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
-    Route::post('{polygon}/new-version', function ($polygon, Request $request) {
-        return CreateVersionPolygonGeometryHelper::createVersionPolygonGeometry($polygon, $request);
-    });
-
-});
-
 Route::prefix('site-monitorings')->group(function () {
     Route::get('/{siteMonitoring}', ViewSiteMonitoringController::class);
 });
@@ -350,15 +324,6 @@ Route::prefix('terrafund')->group(function () {
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
     Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'sendRunValidationPolygon']);
 });
-
-ModelInterfaceBindingMiddleware::with(
-    MediaModel::class,
-    function () {
-        Route::post('/{collection}/{mediaModel}/bulk_url', [UploadController::class, 'bulkUrlUpload']);
-    },
-    prefix: 'file/upload',
-    modelParameter: 'mediaModel'
-);
 
 Route::post('/export-image', ExportImageController::class);
 

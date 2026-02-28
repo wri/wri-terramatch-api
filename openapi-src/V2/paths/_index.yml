@@ -374,31 +374,6 @@
     responses:
       '200':
         description: OK
-/v2/organisations/submit/{UUID}:
-  put:
-    summary: Submit an organisation for approval
-    operationId: v2-put-organisations-submit
-    tags:
-      - V2 Project Developer
-      - V2 Organisations
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-/v2/organisations/retract-my-draft:
-  delete:
-    summary: Retracts (delets) a users draft organisation
-    operationId: v2-delete-organisations-retract-my-draft
-    tags:
-      - V2 Project Developer
-      - V2 Organisations
-    responses:
-      '200':
-        description: OK
 /v2/admin/users:
   get:
     summary: Get a collection of users
@@ -604,67 +579,6 @@
 /v2/{MODEL}/{UUID}/image/locations:
   get:
     $ref: './Files/get-v2-model-uuid-image-locations.yml'
-/v2/file/upload/site/photos/{UUID}/bulk_url:
-  post:
-    summary: Upload a batch of photos to a specific site
-    operationId: v2-post-upload-file-site-photos-uuid-bulk
-    tags:
-      - Files
-    consumes:
-      - application/json
-    produces:
-      - application/json
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - description: Batch of photos to upload
-        in: body
-        name: body
-        required: true
-        schema:
-          type: array
-          items:
-            type: object
-            properties:
-              download_url:
-                type: string
-              title:
-                type: string
-                default: Name of image
-              lat:
-                type: integer
-                default: null
-              lng:
-                type: integer
-                default: null
-              is_public:
-                type: boolean
-                default: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: array
-          items:
-            $ref: '../definitions/_index.yml#/V2FileRead'
-/v2/media:
-  delete:
-    summary: Bulk delete a set of media by UUID
-    operationId: v2-bulk-delete-media
-    tags:
-      - Media
-    parameters:
-      - type: array
-        name: uuids[]
-        in: query
-        required: true
-        items:
-          type: string
-    responses:
-      '200':
-        description: OK
 /v2/funding-type:
   post:
     summary: Create a funding type entry
@@ -1007,20 +921,6 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
-/v2/geometry/validate:
-  post:
-    $ref: './Geometry/post-v2-geometry-validate.yml'
-/v2/geometry:
-  post:
-    $ref: './Geometry/post-v2-geometry.yml'
-  delete:
-    $ref: './Geometry/delete-v2-geometry.yml'
-/v2/geometry/{UUID}:
-  put:
-    $ref: './Geometry/put-v2-geometry-uuid.yml'
-/v2/geometry/{UUID}/new-version:
-  post:
-    $ref: './Geometry/post-v2-geometry-uuid-version.yml'
 /v2/terrafund/site-polygon/{uuid}/{siteUuid}:
   post:
     $ref: './Terrafund/post-v2-site-polygon-data.yml'
