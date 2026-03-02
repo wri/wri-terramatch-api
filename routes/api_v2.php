@@ -40,14 +40,8 @@ use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
 use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
-use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
-use App\Http\Controllers\V2\Organisations\AdminOrganisationController;
-use App\Http\Controllers\V2\Organisations\AdminOrganisationMultiController;
-use App\Http\Controllers\V2\Organisations\AdminRejectOrganisationController;
-use App\Http\Controllers\V2\Organisations\CreateOrganisationInviteController;
 use App\Http\Controllers\V2\Organisations\OrganisationApprovedUsersController;
-use App\Http\Controllers\V2\Organisations\OrganisationController;
 use App\Http\Controllers\V2\Organisations\OrganisationListRequestedUsersController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
@@ -143,12 +137,8 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::prefix('organisations')->group(function () {
-        Route::get('multi', AdminOrganisationMultiController::class);
-        Route::put('approve', AdminApproveOrganisationController::class);
-        Route::put('reject', AdminRejectOrganisationController::class);
         Route::get('export', AdminExportOrganisationsController::class);
     });
-    Route::resource('organisations', AdminOrganisationController::class)->except('create');
 
     Route::prefix('projects')->group(function () {
         Route::get('/multi', AdminProjectMultiController::class);
@@ -205,11 +195,8 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 Route::prefix('organisations')->group(function () {
     Route::get('user-requests/{organisation}', OrganisationListRequestedUsersController::class);
     Route::get('approved-users/{organisation}', OrganisationApprovedUsersController::class);
-
-    Route::post('/{organisation}/invite', CreateOrganisationInviteController::class);
     // Route::post('/invite/accept', ProjectInviteAcceptController::class);
 });
-Route::resource('organisations', OrganisationController::class);
 
 Route::prefix('my')->group(function () {
     Route::patch('/banners', UpdateMyBannersController::class);
