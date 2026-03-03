@@ -5,9 +5,6 @@ use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
 use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
-use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringImportController;
-use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringProjectController;
-use App\Http\Controllers\V2\BaselineMonitoring\BaselineMonitoringSiteController;
 use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
@@ -108,30 +105,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the 'api' middleware group. Enjoy building your API!
 |
 */
-
-Route::prefix('project-metrics')->group(function () {
-    Route::post('', [BaselineMonitoringProjectController::class, 'create']);
-    Route::get('', [BaselineMonitoringProjectController::class, 'index']);
-    Route::get('/{uuid}', [BaselineMonitoringProjectController::class, 'view']);
-
-    Route::get('/{uuid}/overview', [BaselineMonitoringProjectController::class, 'overview']);
-    Route::get('/{uuid}/download', [BaselineMonitoringProjectController::class, 'download']);
-    Route::post('/upload', [BaselineMonitoringProjectController::class, 'upload']);
-    Route::put('/{uuid}', [BaselineMonitoringProjectController::class, 'update']);
-    Route::delete('/{uuid}', [BaselineMonitoringProjectController::class, 'delete']);
-});
-
-Route::prefix('site-metrics')->group(function () {
-    Route::post('', [BaselineMonitoringSiteController::class, 'create']);
-    Route::get('', [BaselineMonitoringSiteController::class, 'index']);
-    Route::get('/{uuid}', [BaselineMonitoringSiteController::class, 'view']);
-    Route::put('/{uuid}', [BaselineMonitoringSiteController::class, 'update']);
-    Route::delete('/{uuid}', [BaselineMonitoringSiteController::class, 'delete']);
-});
-
-Route::prefix('imports')->group(function () {
-    Route::post('baseline-monitoring', BaselineMonitoringImportController::class);
-});
 
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
