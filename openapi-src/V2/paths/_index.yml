@@ -791,12 +791,6 @@
 /v2/dashboard/view-project/{uuid}:
   get:
     $ref: './Dashboard/get-v2-dashboard-view-project-uuid.yml'
-/v2/{ENTITY}/{UUID}/status:
-  put:
-    $ref: './Entity/put-v2-entity-uuid-status.yml'
-/v2/{ENTITY}/{UUID}/{ID}/delete:
-  delete:
-    $ref: './AuditStatus/delete-v2-audit-status.yml'
 /v2/indicators/{entity}/{uuid}/{slug}/export:
   get:
     $ref: './MonitoredData/get-v2-indicators-entity-slug-export.yml'

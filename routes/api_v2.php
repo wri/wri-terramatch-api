@@ -3,8 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
-use App\Http\Controllers\V2\Auditable\UpdateAuditableStatusController;
-use App\Http\Controllers\V2\AuditStatus\DeleteAuditStatusController;
 use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
@@ -55,7 +53,6 @@ use App\Http\Controllers\V2\User\AdminUserMultiController;
 use App\Http\Controllers\V2\User\AdminUsersOrganizationController;
 use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
-use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
 use Illuminate\Support\Facades\Route;
 
@@ -177,11 +174,6 @@ Route::prefix('nurseries')->group(function () {
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
 
 Route::post('/export-image', ExportImageController::class);
-
-ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
-    Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
-    Route::delete('/{auditable}/{uuid}/delete', DeleteAuditStatusController::class);
-});
 
 Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group(function () {
     Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
