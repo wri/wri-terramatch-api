@@ -70,8 +70,6 @@ use App\Http\Controllers\V2\User\AdminUserCreationController;
 use App\Http\Controllers\V2\User\AdminUserMultiController;
 use App\Http\Controllers\V2\User\AdminUsersOrganizationController;
 use App\Http\Controllers\V2\User\AdminVerifyUserController;
-use App\Http\Controllers\V2\User\CompleteActionController;
-use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\AuditableModel;
 use App\Models\V2\EntityModel;
@@ -139,18 +137,9 @@ Route::prefix('organisations')->group(function () {
 
     // removed in YY TODO remove comment before PR
     Route::post('/{organisation}/invite', CreateOrganisationInviteController::class);
-    // Route::post('/invite/accept', ProjectInviteAcceptController::class);
 });
 // removed in YY TODO remove comment before PR
 Route::resource('organisations', OrganisationController::class);
-
-Route::prefix('my')->group(function () {
-    Route::patch('/banners', UpdateMyBannersController::class);
-
-    Route::prefix('actions')->group(function () {
-        Route::put('/{action}/complete', CompleteActionController::class);
-    });
-});
 
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
 

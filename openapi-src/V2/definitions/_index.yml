@@ -110,8 +110,6 @@ AdminUserCreate:
   $ref: './AdminUserCreate.yml'
 UpdateRequestLiteRead:
   $ref: './UpdateRequestLiteRead.yml'
-ActionRead:
-  $ref: './ActionRead.yml'
 StatusUpdate:
   $ref: './StatusUpdate.yml'
 EntityReportReminder:
