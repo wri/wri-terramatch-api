@@ -49,7 +49,6 @@ use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
-use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
 use App\Http\Controllers\V2\User\AdminUserController;
 use App\Http\Controllers\V2\User\AdminUserCreationController;
@@ -177,11 +176,6 @@ Route::prefix('nurseries')->group(function () {
 });
 
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
-
-Route::prefix('terrafund')->group(function () {
-    Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);
-    Route::post('/validation/polygon', [TerrafundCreateGeometryController::class, 'sendRunValidationPolygon']);
-});
 
 Route::post('/export-image', ExportImageController::class);
 
