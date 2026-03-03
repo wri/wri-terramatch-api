@@ -1,15 +1,6 @@
 /v2/{entity}/{UUID}/aggregate-reports:
   get:
     $ref: './TreeSpecies/get-v2-entity-uuid-aggregate-reports.yml'
-/v2/admin/projects/multi:
-  get:
-    $ref: './Projects/get-v2-admin-projects-multi.yml'
-/v2/admin/nurseries/multi:
-  get:
-    $ref: './Nurseries/get-v2-admin-nurseries-multi.yml'
-/v2/admin/sites/multi:
-  get:
-    $ref: './Sites/get-v2-admin-sites-multi.yml'
 /users:
   post:
     $ref: './Users/post-users.yml'

@@ -90,8 +90,6 @@ V2InvasiveRead:
   $ref: './V2InvasiveRead.yml'
 V2InvasivePaginated:
   $ref: './V2InvasivePaginated.yml'
-ProjectLiteRead:
-  $ref: './ProjectLiteRead.yml'
 SiteFullRead:
   $ref: './SiteFullRead.yml'
 AuditRead:
@@ -116,14 +114,6 @@ AuthReset:
   $ref: './AuthReset.yml'
 AuthVerify:
   $ref: './AuthVerify.yml'
-NurseryLiteRead:
-  $ref: './NurseryLiteRead.yml'
-SiteLiteRead:
-  $ref: './SiteLiteRead.yml'
-NurseryReportRead:
-  $ref: './NurseryReportRead.yml'
-SiteReportRead:
-  $ref: './SiteReportRead.yml'
 ProjectReportRead:
   $ref: './ProjectReportRead.yml'
 UserCreate:

@@ -36,7 +36,6 @@ use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
 use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
-use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
 use App\Http\Controllers\V2\Organisations\AdminOrganisationController;
@@ -58,7 +57,6 @@ use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
-use App\Http\Controllers\V2\Projects\AdminProjectMultiController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminCreateProjectMonitoringController;
@@ -68,7 +66,6 @@ use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
-use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
@@ -112,28 +109,16 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     // removed in YY TODO remove comment before PR
     Route::resource('organisations', AdminOrganisationController::class)->except('create');
 
-    Route::prefix('projects')->group(function () {
-        Route::get('/multi', AdminProjectMultiController::class);
-    });
-
     Route::prefix('project-monitorings')->group(function () {
         Route::post('/', AdminCreateProjectMonitoringController::class);
         Route::put('/{projectMonitoring}', AdminUpdateProjectMonitoringController::class);
         Route::delete('/{projectMonitoring}', AdminSoftDeleteProjectMonitoringController::class);
     });
 
-    Route::prefix('sites')->group(function () {
-        Route::get('/multi', AdminSitesMultiController::class);
-    });
-
     Route::prefix('site-monitorings')->group(function () {
         Route::post('/', AdminCreateSiteMonitoringController::class);
         Route::put('/{siteMonitoring}', AdminUpdateSiteMonitoringController::class);
         Route::delete('/{siteMonitoring}', AdminSoftDeleteSiteMonitoringController::class);
-    });
-
-    Route::prefix('nurseries')->group(function () {
-        Route::get('/multi', AdminNurseriesMultiController::class);
     });
 
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
