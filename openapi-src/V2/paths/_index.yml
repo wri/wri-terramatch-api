@@ -773,18 +773,6 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
-/v2/project-pipeline:
-  get:
-    $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
-  post:
-    $ref: './ProjectPipeline/post-v2-project-pipeline.yml'
-/v2/project-pipeline/{id}:
-  get:
-    $ref: './ProjectPipeline/get-v2-project-pipeline-id.yml'
-  put:
-    $ref: './ProjectPipeline/put-v2-project-pipeline-id.yml'
-  delete:
-    $ref: './ProjectPipeline/delete-v2-project-pipeline-id.yml'
 /v2/financial-indicators:
   patch:
     summary: Update a financial indicators
@@ -803,7 +791,7 @@
           $ref: '../definitions/_index.yml#/V2FinancialIndicatorsUpdate'
 /v2/financial-reports/export:
   get:
-    summary: Export financia reports
+    summary: Export financial reports
     tags:
       - V2 financial reports
     responses:

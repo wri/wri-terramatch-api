@@ -122,10 +122,6 @@ SitePolygonsBboxResponse:
   $ref: './SitePolygonsBboxResponse.yml'
 PolygonBboxResponse:
   $ref: './SitePolygonsBboxResponse.yml'
-ProjectPipeline:
-  $ref: './ProjectPipeline.yml'
-ProjectPipelinePost:
-  $ref: './ProjectPipelinePost.yml'
 EntityTypeResponse:
   $ref: './EntityTypeResponse.yml'
 EntityPolygonResponse:

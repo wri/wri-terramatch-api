@@ -36,10 +36,6 @@ use App\Http\Controllers\V2\Organisations\OrganisationRejectUserController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
-use App\Http\Controllers\V2\ProjectPipeline\DeleteProjectPipelineController;
-use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
-use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
-use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
@@ -171,11 +167,3 @@ Route::prefix('nurseries')->group(function () {
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
 
 Route::post('/export-image', ExportImageController::class);
-
-Route::prefix('project-pipeline')->group(function () {
-    Route::get('/', GetProjectPipelineController::class);
-    Route::get('/{id}', GetProjectPipelineController::class);
-    Route::post('/', StoreProjectPipelineController::class);
-    Route::put('/{id}', UpdateProjectPipelineController::class);
-    Route::delete('/{id}', DeleteProjectPipelineController::class);
-});
