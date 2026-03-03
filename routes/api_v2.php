@@ -22,9 +22,6 @@ use App\Http\Controllers\V2\Files\FilePropertiesController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
-use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
-use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
-use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
@@ -180,12 +177,6 @@ Route::prefix('nurseries')->group(function () {
 });
 
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
-
-Route::prefix('funding-type')->group(function () {
-    Route::post('/', StoreFundingTypeController::class);
-    Route::patch('/{fundingType}', UpdateFundingTypeController::class);
-    Route::delete('/{fundingType}', DeleteFundingTypeController::class);
-});
 
 Route::prefix('terrafund')->group(function () {
     Route::post('/polygon/{uuid}', [TerrafundCreateGeometryController::class, 'processGeometry']);

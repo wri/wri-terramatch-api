@@ -52,12 +52,8 @@ V2OwnershipStakeRead:
   $ref: './V2OwnershipStakeRead.yml'
 V2OwnershipStakeUpdate:
   $ref: './V2OwnershipStakeUpdate.yml'
-V2FundingTypeCreate:
-  $ref: './V2FundingTypeCreate.yml'
 V2FundingTypeRead:
   $ref: './V2FundingTypeRead.yml'
-V2FundingTypeUpdate:
-  $ref: './V2FundingTypeUpdate.yml'
 V2SiteRead:
   $ref: './V2SiteRead.yml'
 V2StrataRead:

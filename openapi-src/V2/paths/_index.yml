@@ -539,57 +539,6 @@
     responses:
       '200':
         description: OK
-/v2/funding-type:
-  post:
-    summary: Create a funding type entry
-    operationId: post-v2-funding-type
-    responses:
-      '201':
-        description: Created
-        schema:
-          $ref: '../definitions/_index.yml#/V2FundingTypeRead'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2FundingTypeCreate'
-    tags:
-      - V2 Funding Type
-'/v2/funding-type/{UUID}':
-  patch:
-    summary: Update a funding type
-    operationId: patch-v2-funding-type-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2FundingTypeRead'
-    tags:
-      - V2 Funding Type
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2FundingTypeUpdate'
-  delete:
-    summary: Delete a funding type entry
-    operationId: delete-v2-funding-type-UUID
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2FundingTypeRead'
-    tags:
-      - V2 Funding Type
 /v2/leaderships:
   post:
     summary: Create a leaderships

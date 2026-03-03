@@ -3708,18 +3708,6 @@ definitions:
         type: integer
       percent_ownership:
         type: integer
-  V2FundingTypeCreate:
-    title: V2FundingTypeCreate
-    type: object
-    properties:
-      organisation_id:
-        type: string
-      amount:
-        type: integer
-      year:
-        type: integer
-      type:
-        type: string
   V2FundingTypeRead:
     title: V2FundingTypeRead
     x-stoplight:
@@ -3732,16 +3720,6 @@ definitions:
         type: string
       financial_report_id:
         type: string
-      amount:
-        type: integer
-      year:
-        type: integer
-      type:
-        type: string
-  V2FundingTypeUpdate:
-    title: V2FundingTypeUpdate
-    type: object
-    properties:
       amount:
         type: integer
       year:
@@ -17213,123 +17191,6 @@ paths:
       responses:
         '200':
           description: OK
-  /v2/funding-type:
-    post:
-      summary: Create a funding type entry
-      operationId: post-v2-funding-type
-      responses:
-        '201':
-          description: Created
-          schema:
-            title: V2FundingTypeRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
-            type: object
-            properties:
-              uuid:
-                type: string
-              organisation_id:
-                type: string
-              financial_report_id:
-                type: string
-              amount:
-                type: integer
-              year:
-                type: integer
-              type:
-                type: string
-      parameters:
-        - in: body
-          name: body
-          schema:
-            title: V2FundingTypeCreate
-            type: object
-            properties:
-              organisation_id:
-                type: string
-              amount:
-                type: integer
-              year:
-                type: integer
-              type:
-                type: string
-      tags:
-        - V2 Funding Type
-  '/v2/funding-type/{UUID}':
-    patch:
-      summary: Update a funding type
-      operationId: patch-v2-funding-type-UUID
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2FundingTypeRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
-            type: object
-            properties:
-              uuid:
-                type: string
-              organisation_id:
-                type: string
-              financial_report_id:
-                type: string
-              amount:
-                type: integer
-              year:
-                type: integer
-              type:
-                type: string
-      tags:
-        - V2 Funding Type
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - in: body
-          name: body
-          schema:
-            title: V2FundingTypeUpdate
-            type: object
-            properties:
-              amount:
-                type: integer
-              year:
-                type: integer
-              type:
-                type: string
-    delete:
-      summary: Delete a funding type entry
-      operationId: delete-v2-funding-type-UUID
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2FundingTypeRead
-            x-stoplight:
-              id: 04vvsvyndvy8n
-            type: object
-            properties:
-              uuid:
-                type: string
-              organisation_id:
-                type: string
-              financial_report_id:
-                type: string
-              amount:
-                type: integer
-              year:
-                type: integer
-              type:
-                type: string
-      tags:
-        - V2 Funding Type
   /v2/leaderships:
     post:
       summary: Create a leaderships
