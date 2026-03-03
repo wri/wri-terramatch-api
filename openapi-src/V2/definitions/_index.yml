@@ -10,8 +10,6 @@ UserRead:
   $ref: './UserRead.yml'
 UserReadAll:
   $ref: './UserReadAll.yml'
-ReportingFrameworkRead:
-  $ref: './ReportingFrameworkRead.yml'
 V2PaginationLinks:
   $ref: './V2PaginationLinks.yml'
 V2PaginationCurrentLinks:

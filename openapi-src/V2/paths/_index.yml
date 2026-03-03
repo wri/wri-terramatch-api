@@ -22,12 +22,6 @@
 /v2/my/actions/{UUID}/complete:
   put:
     $ref: './Users/put-v2-my-action-uuid-complete.yml'
-/v2/reporting-frameworks/access-code/{ACCESS_CODE}:
-  get:
-    $ref: './ReportingFrameworks/get-v2-reporting-frameworks-access-code.yml'
-/v2/reporting-frameworks/{frameworkKey}:
-  get:
-    $ref: './ReportingFrameworks/get-v2-reporting-frameworks-framework-key.yml'
 /v2/admin/{ENTITY}/{UUID}/reminder:
   post:
     $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'

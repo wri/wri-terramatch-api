@@ -68,8 +68,6 @@ use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
-use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
-use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
@@ -191,11 +189,6 @@ Route::prefix('my')->group(function () {
 });
 
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
-
-Route::prefix('reporting-frameworks')->group(function () {
-    Route::get('/{frameworkKey}', ViewReportingFrameworkController::class);
-    Route::get('/access-code/{accessCode}', ViewReportingFrameworkViaAccessCodeController::class);
-});
 
 Route::prefix('applications')->group(function () {
     Route::get('/{application}/export', ExportApplicationController::class);

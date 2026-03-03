@@ -1211,30 +1211,6 @@ definitions:
         created_at:
           type: string
           format: date-time
-  ReportingFrameworkRead:
-    title: ReportingFrameworkRead
-    type: object
-    properties:
-      uuid:
-        type: string
-      name:
-        type: string
-      slug:
-        type: string
-      access_code:
-        type: string
-      project_form_uuid:
-        type: string
-      project_report_form_uuid:
-        type: string
-      site_form_uuid:
-        type: string
-      site_report_form_uuid:
-        type: string
-      nursery_form_uuid:
-        type: string
-      nursery_report_form_uuid:
-        type: string
   V2PaginationLinks:
     title: V2PaginationLinks
     properties:
@@ -18435,82 +18411,6 @@ paths:
               updated_at:
                 type: string
       operationId: put-v2-my-action-uuid-complete
-  '/v2/reporting-frameworks/access-code/{ACCESS_CODE}':
-    get:
-      summary: View a specific reporting framework using an access code
-      operationId: get-v2-reporting-frameworks-access-code
-      tags:
-        - Funding Programmes
-      parameters:
-        - type: string
-          name: ACCESS_CODE
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: ReportingFrameworkRead
-            type: object
-            properties:
-              uuid:
-                type: string
-              name:
-                type: string
-              slug:
-                type: string
-              access_code:
-                type: string
-              project_form_uuid:
-                type: string
-              project_report_form_uuid:
-                type: string
-              site_form_uuid:
-                type: string
-              site_report_form_uuid:
-                type: string
-              nursery_form_uuid:
-                type: string
-              nursery_report_form_uuid:
-                type: string
-  '/v2/reporting-frameworks/{frameworkKey}':
-    get:
-      summary: View a specific reporting framework using an access code
-      operationId: get-v2-reporting-frameworks-framework-key
-      tags:
-        - Funding Programmes
-      parameters:
-        - type: string
-          name: frameworkKey
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: ReportingFrameworkRead
-            type: object
-            properties:
-              uuid:
-                type: string
-              name:
-                type: string
-              slug:
-                type: string
-              access_code:
-                type: string
-              project_form_uuid:
-                type: string
-              project_report_form_uuid:
-                type: string
-              site_form_uuid:
-                type: string
-              site_report_form_uuid:
-                type: string
-              nursery_form_uuid:
-                type: string
-              nursery_report_form_uuid:
-                type: string
   '/v2/admin/{ENTITY}/{UUID}/reminder':
     post:
       summary: Send reminder to an entity report
