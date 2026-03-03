@@ -109,10 +109,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('debug/error', function () {
-    throw new Exception('Test exception', 500);
-});
-
 Route::prefix('project-metrics')->group(function () {
     Route::post('', [BaselineMonitoringProjectController::class, 'create']);
     Route::get('', [BaselineMonitoringProjectController::class, 'index']);
@@ -147,11 +143,13 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::prefix('organisations')->group(function () {
+        // All but export removed in YY TODO remove comment before PR
         Route::get('multi', AdminOrganisationMultiController::class);
         Route::put('approve', AdminApproveOrganisationController::class);
         Route::put('reject', AdminRejectOrganisationController::class);
         Route::get('export', AdminExportOrganisationsController::class);
     });
+    // removed in YY TODO remove comment before PR
     Route::resource('organisations', AdminOrganisationController::class)->except('create');
 
     Route::prefix('projects')->group(function () {
@@ -207,6 +205,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
 /** NON ADMIN ROUTES */
 Route::prefix('organisations')->group(function () {
+    // next four removed in YY TODO remove comment before PR
     Route::get('listing', OrganisationListingController::class);
     Route::post('join-existing', JoinExistingOrganisationController::class);
     Route::put('approve-user', OrganisationApproveUserController::class);
@@ -214,9 +213,11 @@ Route::prefix('organisations')->group(function () {
     Route::get('user-requests/{organisation}', OrganisationListRequestedUsersController::class);
     Route::get('approved-users/{organisation}', OrganisationApprovedUsersController::class);
 
+    // removed in YY TODO remove comment before PR
     Route::post('/{organisation}/invite', CreateOrganisationInviteController::class);
     // Route::post('/invite/accept', ProjectInviteAcceptController::class);
 });
+// removed in YY TODO remove comment before PR
 Route::resource('organisations', OrganisationController::class);
 
 Route::prefix('my')->group(function () {
