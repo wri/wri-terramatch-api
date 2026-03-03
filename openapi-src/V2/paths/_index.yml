@@ -773,9 +773,6 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
-/v2/dashboard/polygon-data/{uuid}:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-polygon-data-uuid.yml'
 /v2/project-pipeline:
   get:
     $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
@@ -788,9 +785,6 @@
     $ref: './ProjectPipeline/put-v2-project-pipeline-id.yml'
   delete:
     $ref: './ProjectPipeline/delete-v2-project-pipeline-id.yml'
-/v2/dashboard/view-project/{uuid}:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-view-project-uuid.yml'
 /v2/indicators/{entity}/{uuid}/{slug}/export:
   get:
     $ref: './MonitoredData/get-v2-indicators-entity-slug-export.yml'

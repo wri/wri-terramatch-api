@@ -122,16 +122,6 @@ SitePolygonsBboxResponse:
   $ref: './SitePolygonsBboxResponse.yml'
 PolygonBboxResponse:
   $ref: './SitePolygonsBboxResponse.yml'
-DashboardPolygonData:
-  $ref: './DashboardPolygonData.yml'
-DashboardProjectProfileResponse:
-  $ref: './DashboardProjectProfileResponse.yml'
-DashboardProjectProfileData:
-  $ref: './DashboardProjectProfileData.yml'
-DashboardTopPlantedTree:
-  $ref: './DashboardTopPlantedTree.yml'
-DashboardTopTreeSpecies:
-  $ref: './DashboardTopTreeSpecies.yml'
 ProjectPipeline:
   $ref: './ProjectPipeline.yml'
 ProjectPipelinePost:
@@ -142,8 +132,6 @@ EntityPolygonResponse:
   $ref: './EntityPolygonResponse.yml'
 AuditStatusUpdateRequest:
   $ref: './AuditStatusUpdateRequest.yml'
-DashboardProjectViewResponse:
-  $ref: './DashboardProjectViewResponse.yml'
 SitePolygonsLoadedDataResponse:
   $ref: './SitePolygonsLoadedDataResponse.yml'
 SitePolygonLoaded:

@@ -3,8 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
-use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
-use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
@@ -174,11 +172,6 @@ Route::prefix('nurseries')->group(function () {
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
 
 Route::post('/export-image', ExportImageController::class);
-
-Route::prefix('dashboard')->withoutMiddleware('auth:service-api-key,api')->group(function () {
-    Route::get('/polygon-data/{uuid}', [CountryAndPolygonDataController::class, 'getPolygonData']);
-    Route::get('/view-project/{uuid}', [ViewProjectController::class, 'getIfUserIsAllowedToProject']);
-});
 
 Route::prefix('indicators')->group(function () {
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {

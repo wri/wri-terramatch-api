@@ -7508,116 +7508,6 @@ definitions:
         type: array
         items:
           type: number
-  DashboardPolygonData:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          type: object
-          properties:
-            title:
-              type: string
-              description: Title of the data field
-            value:
-              type: string
-              description: Value of the data field
-            key:
-              type: string
-              description: Key of the data field
-  DashboardProjectProfileResponse:
-    type: object
-    properties:
-      data:
-        type: object
-        properties:
-          name:
-            type: string
-          descriptionObjetive:
-            type: string
-          country:
-            type: string
-          organisation:
-            type: string
-          survivalRate:
-            type: integer
-          countrySlug:
-            type: string
-          restorationStrategy:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: string
-          targetLandUse:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: string
-          landTenure:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: string
-  DashboardProjectProfileData:
-    type: object
-    properties:
-      name:
-        type: string
-      descriptionObjetive:
-        type: string
-      country:
-        type: string
-      organisation:
-        type: string
-      survivalRate:
-        type: integer
-      countrySlug:
-        type: string
-      restorationStrategy:
-        type: object
-        properties:
-          data:
-            type: array
-            items:
-              type: string
-      targetLandUse:
-        type: object
-        properties:
-          data:
-            type: array
-            items:
-              type: string
-      landTenure:
-        type: object
-        properties:
-          data:
-            type: array
-            items:
-              type: string
-  DashboardTopPlantedTree:
-    type: object
-    properties:
-      organization:
-        type: string
-      project:
-        type: string
-      uuid:
-        type: string
-      trees_planted:
-        type: integer
-  DashboardTopTreeSpecies:
-    type: object
-    properties:
-      name:
-        type: string
-      amount:
-        type: integer
   ProjectPipeline:
     type: object
     properties:
@@ -7838,14 +7728,6 @@ definitions:
         type: boolean
       request_removed:
         type: boolean
-  DashboardProjectViewResponse:
-    type: object
-    properties:
-      data:
-        object: object
-        properties:
-          allowed:
-            type: boolean
   SitePolygonsLoadedDataResponse:
     title: SitePolygonsLoadedDataResponse
     type: array
@@ -18606,39 +18488,6 @@ paths:
           description: OK
           schema:
             type: file
-  '/v2/dashboard/polygon-data/{uuid}':
-    get:
-      summary: Get Get allowed to project
-      tags:
-        - Get allowed to project
-      parameters:
-        - in: path
-          name: uuid
-          type: string
-          description: UUID of the polygon
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    title:
-                      type: string
-                      description: Title of the data field
-                    value:
-                      type: string
-                      description: Value of the data field
-                    key:
-                      type: string
-                      description: Key of the data field
-        '404':
-          description: Polygon not found
   /v2/project-pipeline:
     get:
       operationId: get-v2-fproject-pipeline
@@ -18866,30 +18715,6 @@ paths:
       responses:
         '204':
           description: No Content
-  '/v2/dashboard/view-project/{uuid}':
-    get:
-      summary: Get allowed to project
-      tags:
-        - Get allowed to project
-      parameters:
-        - in: path
-          name: uuid
-          type: string
-          description: UUID of the project
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              data:
-                object: object
-                properties:
-                  allowed:
-                    type: boolean
-        '404':
-          description: Polygon not found
   '/v2/indicators/{entity}/{uuid}/{slug}/export':
     get:
       operationId: get-v2-indicators-entity-slug-export
