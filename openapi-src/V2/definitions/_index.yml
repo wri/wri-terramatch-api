@@ -1,11 +1,7 @@
-TreeSpeciesAggregated:
-  $ref: './TreeSpeciesAggregated.yml'
 TreeSpeciesRead:
   $ref: './TreeSpeciesRead.yml'
 TreeSpeciesReadAll:
   $ref: './TreeSpeciesReadAll.yml'
-AssociatedUserRead:
-  $ref: './AssociatedUserRead.yml'
 UserRead:
   $ref: './UserRead.yml'
 UserReadAll:
@@ -116,8 +112,6 @@ EntityReportReminder:
   $ref: './EntityReportReminder.yml'
 V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
-V2ProjectInviteCreate:
-  $ref: './V2ProjectInviteCreate.yml'
 Demographic:
   $ref: './Demographic.yml'
 GeoJSON:

@@ -9,7 +9,6 @@ use App\Http\Controllers\V2\Dashboard\CountryAndPolygonDataController;
 use App\Http\Controllers\V2\Dashboard\ViewProjectController;
 use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
-use App\Http\Controllers\V2\Entities\GetAggregateReportsController;
 use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
@@ -57,11 +56,7 @@ use App\Http\Controllers\V2\ProjectPipeline\GetProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\StoreProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
-use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
-use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
-use App\Http\Controllers\V2\Projects\ProjectManagersController;
-use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
@@ -147,9 +142,6 @@ Route::prefix('applications')->group(function () {
     Route::get('/{application}/export', ExportApplicationController::class);
 });
 
-Route::get('/{entityType}/{uuid}/aggregate-reports', GetAggregateReportsController::class)
-->whereIn('entityType', ['project', 'site']);
-
 Route::prefix('ownership-stake')->group(function () {
     Route::post('/', StoreOwnershipStakeController::class);
     Route::patch('/{ownershipStake}', UpdateOwnershipStakeController::class);
@@ -179,18 +171,12 @@ Route::prefix('srp-reports')->group(function () {
 });
 
 Route::prefix('projects')->group(function () {
-    Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
     Route::get('/{project}/image/locations', ProjectImageLocationsController::class);
 
-    Route::post('/{project}/invite', CreateProjectInviteController::class);
     Route::post('/invite/accept', ProjectInviteAcceptController::class);
-
-    Route::resource('/{project}/managers', ProjectManagersController::class)->only(['index', 'store', 'destroy']);
 
     Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);
     Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
-
-    Route::delete('/{project}/{email}/remove-partner', DeleteProjectMonitoringPartnersController::class);
 });
 
 Route::prefix('project-reports')->group(function () {

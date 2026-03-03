@@ -38,41 +38,6 @@ tags:
   - name: V2 Users
   - name: V2 Workdays
 definitions:
-  TreeSpeciesAggregated:
-    type: object
-    properties:
-      tree-planted:
-        type: array
-        items:
-          type: object
-          properties:
-            dueDate:
-              type: string
-              format: date-time
-              nullable: true
-            aggregateAmount:
-              type: integer
-      seeding-records:
-        type: array
-        items:
-          type: object
-          properties:
-            dueDate:
-              type: string
-              format: date-time
-            aggregateAmount:
-              type: integer
-      trees-regenerating:
-        type: array
-        items:
-          type: object
-          properties:
-            dueDate:
-              type: string
-              format: date-time
-              nullable: true
-            aggregateAmount:
-              type: integer
   TreeSpeciesRead:
     type: object
     properties:
@@ -101,24 +66,6 @@ definitions:
           type: string
         collection:
           type: string
-  AssociatedUserRead:
-    type: object
-    properties:
-      uuid:
-        type: string
-      role:
-        type: string
-      job_role:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      email_address:
-        type: string
-      status:
-        type: string
-        description: allowed values Pending|Accepted
   UserRead:
     type: object
     properties:
@@ -7337,12 +7284,6 @@ definitions:
       created_at:
         type: string
         format: datetime
-  V2ProjectInviteCreate:
-    title: V2ProjectInviteCreate
-    type: object
-    properties:
-      email_address:
-        type: string
   Demographic:
     title: Demographic
     type: object
@@ -9199,60 +9140,6 @@ definitions:
         type: string
         format: datetime
 paths:
-  '/v2/{entity}/{UUID}/aggregate-reports':
-    get:
-      operationId: get-v2-aggregate-report-entity-uuid
-      summary: View all tree species for a given entity
-      tags:
-        - V2 Tree Species
-      parameters:
-        - type: string
-          name: entity
-          in: path
-          required: true
-          description: allowed values project/site/nursery/project-reports/site-reports/nursery-reports
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              tree-planted:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    dueDate:
-                      type: string
-                      format: date-time
-                      nullable: true
-                    aggregateAmount:
-                      type: integer
-              seeding-records:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    dueDate:
-                      type: string
-                      format: date-time
-                    aggregateAmount:
-                      type: integer
-              trees-regenerating:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    dueDate:
-                      type: string
-                      format: date-time
-                      nullable: true
-                    aggregateAmount:
-                      type: integer
   /users:
     post:
       summary: Create a user
@@ -9849,58 +9736,6 @@ paths:
                 type: string
                 format: date-time
       operationId: post-users
-  '/v2/projects/{UUID}/partners':
-    get:
-      summary: Get a project's monitoring partners
-      tags:
-        - V2 Projects
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              type: object
-              properties:
-                uuid:
-                  type: string
-                role:
-                  type: string
-                job_role:
-                  type: string
-                first_name:
-                  type: string
-                last_name:
-                  type: string
-                email_address:
-                  type: string
-                status:
-                  type: string
-                  description: allowed values Pending|Accepted
-      operationId: get-v2-projects-uuid-partners
-  '/v2/projects/{UUID}/{EMAIL}/remove-partner':
-    delete:
-      operationId: delete-v2-projects-uuid-partners
-      summary: Delete a monitoring partner from a project
-      tags:
-        - V2 Projects
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - type: string
-          name: EMAIL
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   '/v2/admin/{ENTITY}/{UUID}/reminder':
     post:
       summary: Send reminder to an entity report
@@ -18939,50 +18774,6 @@ paths:
                 type: number
         '500':
           description: Internal server error
-  '/v2/projects/{UUID}/invite':
-    post:
-      summary: Invite a user to a project
-      operationId: post-v2-projects-uuid-invite
-      tags:
-        - V2 Project Invite
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - in: body
-          name: body
-          schema:
-            title: V2ProjectInviteCreate
-            type: object
-            properties:
-              email_address:
-                type: string
-      responses:
-        '201':
-          description: OK
-          schema:
-            title: V2ProjectInviteRead
-            type: object
-            properties:
-              id:
-                type: integer
-              uuid:
-                type: string
-              project_id:
-                type: integer
-              email_address:
-                type: string
-              accepted_at:
-                type: string
-                format: datetime
-              created_at:
-                type: string
-                format: datetime
   /v2/projects/invite/accept:
     post:
       summary: Accept a user invitation to a project
@@ -19022,116 +18813,6 @@ paths:
               created_at:
                 type: string
                 format: datetime
-  '/v2/projects/{UUID}/managers':
-    post:
-      summary: Add a new project manager
-      operationId: post-v2-projects-managers-store
-      tags:
-        - V2 Projects
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          type: string
-          name: UUID
-          required: true
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              email_address:
-                type: string
-            required:
-              - email_address
-      responses:
-        '201':
-          description: OK
-          schema:
-            type: object
-            properties:
-              uuid:
-                type: string
-              role:
-                type: string
-              job_role:
-                type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              email_address:
-                type: string
-              status:
-                type: string
-                description: allowed values Pending|Accepted
-        '404':
-          description: User not found
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-        '422':
-          description: Error
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-    get:
-      summary: Index of project managers
-      operationId: get-v2-projects-managers
-      tags:
-        - V2 Projects
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          type: string
-          name: UUID
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              type: object
-              properties:
-                uuid:
-                  type: string
-                role:
-                  type: string
-                job_role:
-                  type: string
-                first_name:
-                  type: string
-                last_name:
-                  type: string
-                email_address:
-                  type: string
-                status:
-                  type: string
-                  description: allowed values Pending|Accepted
-  '/v2/projects/{UUID}/managers/{USER_UUID}':
-    delete:
-      operationId: delete-v2-projects-uuid-managers
-      summary: Delete a project manager from a project
-      tags:
-        - V2 Projects
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-        - type: string
-          name: USER_UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
   /v2/export-image:
     post:
       operationId: exportImage
