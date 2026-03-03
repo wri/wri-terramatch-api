@@ -794,22 +794,6 @@
         description: OK
         schema:
           type: file
-'/v2/admin/site-monitorings':
-  post:
-    $ref: './Sites/Monitoring/post-v2-admin-site-monitorings.yml'
-'/v2/admin/site-monitorings/{UUID}':
-  put:
-    $ref: './Sites/Monitoring/put-v2-admin-site-monitorings-uuid.yml'
-  delete:
-    $ref: './Sites/Monitoring/delete-v2-admin-site-monitorings-uuid.yml'
-'/v2/admin/project-monitorings':
-  post:
-    $ref: './Projects/Monitoring/post-v2-admin-project-monitorings.yml'
-'/v2/admin/project-monitorings/{UUID}':
-  put:
-    $ref: './Projects/Monitoring/put-v2-admin-project-monitorings-uuid.yml'
-  delete:
-    $ref: './Projects/Monitoring/delete-v2-admin-project-monitorings-uuid.yml'
 /auth/logout:
   get:
     $ref: './Auth/get-user-logout.yml'
@@ -855,15 +839,6 @@
 /v2/sites/{UUID}/polygons/count:
   get:
     $ref: './Sites/get-v2-admin-sites-uuid-polygons-count.yml'
-/v2/site-monitorings/{UUID}:
-  get:
-    $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
-/v2/sites/{UUID}/monitorings:
-  get:
-    $ref: './Sites/get-v2-sites-uuid-monitorings.yml'
-/v2/projects/{UUID}/monitorings:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-monitorings.yml'
 /v2/projects/{UUID}/invite:
   post:
     $ref: './Projects/post-v2-projects-uuid-invite.yml'

@@ -59,18 +59,9 @@ use App\Http\Controllers\V2\ProjectPipeline\UpdateProjectPipelineController;
 use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
 use App\Http\Controllers\V2\Projects\CreateProjectInviteController;
 use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
-use App\Http\Controllers\V2\Projects\Monitoring\AdminCreateProjectMonitoringController;
-use App\Http\Controllers\V2\Projects\Monitoring\AdminSoftDeleteProjectMonitoringController;
-use App\Http\Controllers\V2\Projects\Monitoring\AdminUpdateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
-use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
-use App\Http\Controllers\V2\Sites\Monitoring\AdminCreateSiteMonitoringController;
-use App\Http\Controllers\V2\Sites\Monitoring\AdminSoftDeleteSiteMonitoringController;
-use App\Http\Controllers\V2\Sites\Monitoring\AdminUpdateSiteMonitoringController;
-use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
-use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
@@ -108,18 +99,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
     // removed in YY TODO remove comment before PR
     Route::resource('organisations', AdminOrganisationController::class)->except('create');
-
-    Route::prefix('project-monitorings')->group(function () {
-        Route::post('/', AdminCreateProjectMonitoringController::class);
-        Route::put('/{projectMonitoring}', AdminUpdateProjectMonitoringController::class);
-        Route::delete('/{projectMonitoring}', AdminSoftDeleteProjectMonitoringController::class);
-    });
-
-    Route::prefix('site-monitorings')->group(function () {
-        Route::post('/', AdminCreateSiteMonitoringController::class);
-        Route::put('/{siteMonitoring}', AdminUpdateSiteMonitoringController::class);
-        Route::delete('/{siteMonitoring}', AdminSoftDeleteSiteMonitoringController::class);
-    });
 
     Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
     Route::get('/{entity}/presigned-url/{framework}', GeneratePreSignedURLDownloadReportController::class);
@@ -212,7 +191,6 @@ Route::prefix('srp-reports')->group(function () {
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/partners', ViewProjectMonitoringPartnersController::class);
-    Route::get('/{project}/monitorings', ViewAProjectsMonitoringsController::class);
     Route::get('/{project}/image/locations', ProjectImageLocationsController::class);
 
     Route::post('/{project}/invite', CreateProjectInviteController::class);
@@ -231,13 +209,8 @@ Route::prefix('project-reports')->group(function () {
 });
 
 Route::prefix('sites/{site}')->group(function () {
-    Route::get('/monitorings', ViewASitesMonitoringsController::class);
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
-});
-
-Route::prefix('site-monitorings')->group(function () {
-    Route::get('/{siteMonitoring}', ViewSiteMonitoringController::class);
 });
 
 Route::prefix('site-reports')->group(function () {

@@ -66,18 +66,6 @@ V2FundingTypeUpdate:
   $ref: './V2FundingTypeUpdate.yml'
 V2SiteRead:
   $ref: './V2SiteRead.yml'
-V2SiteMonitoringCreate:
-  $ref: './V2SiteMonitoringCreate.yml'
-V2SiteMonitoringUpdate:
-  $ref: './V2SiteMonitoringUpdate.yml'
-V2SiteMonitoringRead:
-  $ref: './V2SiteMonitoringRead.yml'
-V2ProjectMonitoringCreate:
-  $ref: './V2ProjectMonitoringCreate.yml'
-V2ProjectMonitoringUpdate:
-  $ref: './V2ProjectMonitoringUpdate.yml'
-V2ProjectMonitoringRead:
-  $ref: './V2ProjectMonitoringRead.yml'
 V2StrataRead:
   $ref: './V2StrataRead.yml'
 V2StrataPaginated:
