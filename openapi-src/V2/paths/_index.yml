@@ -539,9 +539,6 @@
     responses:
       '200':
         description: OK
-/v2/{MODEL}/{UUID}/image/locations:
-  get:
-    $ref: './Files/get-v2-model-uuid-image-locations.yml'
 /v2/funding-type:
   post:
     summary: Create a funding type entry

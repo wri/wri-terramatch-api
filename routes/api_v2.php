@@ -19,12 +19,6 @@ use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperControll
 use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
 use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
 use App\Http\Controllers\V2\Files\FilePropertiesController;
-use App\Http\Controllers\V2\Files\Location\NurseryImageLocationsController;
-use App\Http\Controllers\V2\Files\Location\NurseryReportImageLocationsController;
-use App\Http\Controllers\V2\Files\Location\ProjectImageLocationsController;
-use App\Http\Controllers\V2\Files\Location\ProjectReportImageLocationsController;
-use App\Http\Controllers\V2\Files\Location\SiteImageLocationsController;
-use App\Http\Controllers\V2\Files\Location\SiteReportImageLocationsController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
@@ -171,34 +165,18 @@ Route::prefix('srp-reports')->group(function () {
 });
 
 Route::prefix('projects')->group(function () {
-    Route::get('/{project}/image/locations', ProjectImageLocationsController::class);
-
     Route::post('/invite/accept', ProjectInviteAcceptController::class);
 
     Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);
     Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
 });
 
-Route::prefix('project-reports')->group(function () {
-    Route::get('/{projectReport}/image/locations', ProjectReportImageLocationsController::class);
-});
-
 Route::prefix('sites/{site}')->group(function () {
-    Route::get('/image/locations', SiteImageLocationsController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
 });
 
-Route::prefix('site-reports')->group(function () {
-    Route::get('/{siteReport}/image/locations', SiteReportImageLocationsController::class);
-});
-
 Route::prefix('nurseries')->group(function () {
-    Route::get('/{nursery}/image/locations', NurseryImageLocationsController::class);
     Route::get('/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
-});
-
-Route::prefix('nursery-reports')->group(function () {
-    Route::get('/{nurseryReport}/image/locations', NurseryReportImageLocationsController::class);
 });
 
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);

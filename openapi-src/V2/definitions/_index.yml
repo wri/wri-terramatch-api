@@ -38,8 +38,6 @@ V2FileRead:
   $ref: './V2FileRead.yml'
 V2FileGallery:
   $ref: './V2FileGallery.yml'
-V2FileGalleryLite:
-  $ref: './V2FileGalleryLite.yml'
 V2TreeSpeciesRead:
   $ref: './V2TreeSpeciesRead.yml'
 V2LeadershipsCreate:
