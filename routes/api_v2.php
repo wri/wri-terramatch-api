@@ -20,7 +20,6 @@ use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
-use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
 use App\Http\Controllers\V2\Organisations\AdminApproveOrganisationController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
 use App\Http\Controllers\V2\Organisations\AdminOrganisationController;
@@ -172,12 +171,6 @@ Route::prefix('nurseries')->group(function () {
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
 
 Route::post('/export-image', ExportImageController::class);
-
-Route::prefix('indicators')->group(function () {
-    ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
-        Route::get('/{entity}/{slug}/export', IndicatorEntitySlugExportController::class);
-    });
-});
 
 Route::prefix('project-pipeline')->group(function () {
     Route::get('/', GetProjectPipelineController::class);
