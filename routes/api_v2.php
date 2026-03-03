@@ -18,7 +18,6 @@ use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperControl
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
 use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
-use App\Http\Controllers\V2\Files\FilePropertiesController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
@@ -178,8 +177,6 @@ Route::prefix('nurseries')->group(function () {
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
 
 Route::post('/export-image', ExportImageController::class);
-
-Route::resource('files', FilePropertiesController::class);
 
 ModelInterfaceBindingMiddleware::with(AuditableModel::class, function () {
     Route::put('/{auditable}/status', UpdateAuditableStatusController::class);
