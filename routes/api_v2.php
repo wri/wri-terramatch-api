@@ -68,10 +68,6 @@ use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
-use App\Http\Controllers\V2\ReportingFrameworks\AdminCreateReportingFrameworkController;
-use App\Http\Controllers\V2\ReportingFrameworks\AdminDeleteReportingFrameworkController;
-use App\Http\Controllers\V2\ReportingFrameworks\AdminIndexReportingFrameworkController;
-use App\Http\Controllers\V2\ReportingFrameworks\AdminUpdateReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkController;
 use App\Http\Controllers\V2\ReportingFrameworks\ViewReportingFrameworkViaAccessCodeController;
 use App\Http\Controllers\V2\Sites\AdminSitesMultiController;
@@ -108,13 +104,6 @@ use Illuminate\Support\Facades\Route;
 
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
-    Route::prefix('reporting-frameworks')->group(function () {
-        Route::get('', AdminIndexReportingFrameworkController::class);
-        Route::post('', AdminCreateReportingFrameworkController::class);
-        Route::delete('/{uuid}', AdminDeleteReportingFrameworkController::class);
-        Route::put('{framework}', AdminUpdateReportingFrameworkController::class);
-    });
-
     Route::prefix('organisations')->group(function () {
         // All but export removed in YY TODO remove comment before PR
         Route::get('multi', AdminOrganisationMultiController::class);

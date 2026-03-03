@@ -12,10 +12,6 @@ UserReadAll:
   $ref: './UserReadAll.yml'
 ReportingFrameworkRead:
   $ref: './ReportingFrameworkRead.yml'
-ReportingFrameworkUpdate:
-  $ref: './ReportingFrameworkUpdate.yml'
-ReportingFrameworkCreate:
-  $ref: './ReportingFrameworkCreate.yml'
 V2PaginationLinks:
   $ref: './V2PaginationLinks.yml'
 V2PaginationCurrentLinks:

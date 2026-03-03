@@ -22,16 +22,6 @@
 /v2/my/actions/{UUID}/complete:
   put:
     $ref: './Users/put-v2-my-action-uuid-complete.yml'
-/v2/admin/reporting-frameworks:
-  get:
-    $ref: './ReportingFrameworks/get-v2-admin-reporting-frameworks.yml'
-  post:
-    $ref: './ReportingFrameworks/post-v2-admin-reporting-frameworks.yml'
-/v2/admin/reporting-frameworks/{UUID}:
-  put:
-    $ref: './ReportingFrameworks/put-v2-admin-reporting-frameworks-uuid.yml'
-  delete:
-    $ref: './ReportingFrameworks/delete-v2-admin-reporting-frameworks-uuid.yml'
 /v2/reporting-frameworks/access-code/{ACCESS_CODE}:
   get:
     $ref: './ReportingFrameworks/get-v2-reporting-frameworks-access-code.yml'
