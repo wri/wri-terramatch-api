@@ -13,7 +13,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
-
+use App\Models\V2\FinancialReport;
 class AdminUpdateReportingFrameworkController extends Controller
 {
     public function __invoke(Framework $framework, UpdateReportingFrameworkRequest $frameworkRequest): ReportingFrameworkResource
@@ -46,6 +46,10 @@ class AdminUpdateReportingFrameworkController extends Controller
             'framework_key' => $framework->slug,
             'model' => NurseryReport::class,
         ]);
+        Form::isUuid($frameworkRequest->financial_report_form_uuid)->update([
+            'framework_key' => $framework->slug,
+            'model' => FinancialReport::class,
+        ]);
 
         $this->detachOldForms($framework);
 
@@ -54,7 +58,7 @@ class AdminUpdateReportingFrameworkController extends Controller
 
     private function detachOldForms(Framework $framework)
     {
-        $fields = ['project_form_uuid', 'project_report_form_uuid', 'site_form_uuid', 'site_report_form_uuid', 'nursery_form_uuid', 'nursery_report_form_uuid'];
+        $fields = ['project_form_uuid', 'project_report_form_uuid', 'site_form_uuid', 'site_report_form_uuid', 'nursery_form_uuid', 'nursery_report_form_uuid', 'financial_report_form_uuid'];
 
         $uuids = [];
         foreach ($fields as $field) {

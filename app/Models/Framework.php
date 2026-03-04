@@ -27,6 +27,7 @@ class Framework extends Model
         'site_report_form_uuid',
         'nursery_form_uuid',
         'nursery_report_form_uuid',
+        'financial_report_form_uuid',
     ];
 
     public function getRouteKeyName()
@@ -72,6 +73,11 @@ class Framework extends Model
     public function nurseryReportForm(): HasOne
     {
         return $this->hasOne(Form::class, 'uuid', 'nursery_report_form_uuid');
+    }
+
+    public function financialReportForm(): HasOne
+    {
+        return $this->hasOne(Form::class, 'uuid', 'financial_report_form_uuid');
     }
 
     public function getTotalProjectsCountAttribute()

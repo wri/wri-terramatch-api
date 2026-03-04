@@ -13,6 +13,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
+use App\Models\V2\FinancialReport;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
@@ -35,6 +36,7 @@ class AdminCreateReportingFrameworkController extends Controller
             'site_report_form_uuid' => $frameworkRequest->site_report_form_uuid ? $frameworkRequest->site_report_form_uuid : null,
             'nursery_form_uuid' => $frameworkRequest->nursery_form_uuid ? $frameworkRequest->nursery_form_uuid : null,
             'nursery_report_form_uuid' => $frameworkRequest->nursery_report_form_uuid ? $frameworkRequest->nursery_report_form_uuid : null,
+            'financial_report_form_uuid' => $frameworkRequest->financial_report_form_uuid ? $frameworkRequest->financial_report_form_uuid : null,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -79,6 +81,10 @@ class AdminCreateReportingFrameworkController extends Controller
             'framework_key' => $framework->slug,
             'model' => NurseryReport::class,
         ]);
+        Form::isUuid($frameworkRequest->financial_report_form_uuid)->update([
+            'framework_key' => $framework->slug,
+            'model' => FinancialReport::class,
+        ]);
 
         $this->detachOldForms($framework);
 
@@ -90,7 +96,7 @@ class AdminCreateReportingFrameworkController extends Controller
 
     private function detachOldForms(Framework $framework)
     {
-        $fields = ['project_form_uuid', 'project_report_form_uuid', 'site_form_uuid', 'site_report_form_uuid', 'nursery_form_uuid', 'nursery_report_form_uuid'];
+        $fields = ['project_form_uuid', 'project_report_form_uuid', 'site_form_uuid', 'site_report_form_uuid', 'nursery_form_uuid', 'nursery_report_form_uuid', 'financial_report_form_uuid'];
 
         $uuids = [];
         foreach ($fields as $field) {

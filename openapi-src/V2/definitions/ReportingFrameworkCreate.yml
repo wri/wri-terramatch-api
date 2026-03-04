@@ -17,3 +17,5 @@ properties:
     type: string
   nursery_report_form_uuid:
     type: string
+  financial_report_form_uuid:
+    type: string
