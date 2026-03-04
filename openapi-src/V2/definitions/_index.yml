@@ -68,8 +68,6 @@ V2InvasiveRead:
   $ref: './V2InvasiveRead.yml'
 V2InvasivePaginated:
   $ref: './V2InvasivePaginated.yml'
-SiteFullRead:
-  $ref: './SiteFullRead.yml'
 AuditRead:
   $ref: './AuditRead.yml'
 AuditReadAll:
@@ -82,20 +80,12 @@ NurseryRead:
   $ref: './NurseryRead.yml'
 Empty:
   type: object
-AuthLogIn:
-  $ref: './AuthLogIn.yml'
-TokenRead:
-  $ref: './TokenRead.yml'
 AuthChange:
   $ref: './AuthChange.yml'
 AuthReset:
   $ref: './AuthReset.yml'
-AuthVerify:
-  $ref: './AuthVerify.yml'
 ProjectReportRead:
   $ref: './ProjectReportRead.yml'
-UserCreate:
-  $ref: './UserCreate.yml'
 AdminUserCreate:
   $ref: './AdminUserCreate.yml'
 UpdateRequestLiteRead:
@@ -138,10 +128,6 @@ ClippedPolygonsResponse:
   $ref: './ClippedPolygonsResponse.yml'
 DeletedPolygonsResponse:
   $ref: './DeletedPolygonsResponse.yml'
-MeResponse:
-  $ref: './MeResponse.yml'
-MyOrganisationLite:
-  $ref: './MyOrganisationLite.yml'
 UpdateMediaRequest:
   $ref: './UpdateMediaRequest.yml'
 FileResource:

@@ -29,7 +29,6 @@ class Handler extends ExceptionHandler
 {
     protected $dontReport = [
         AuthorizationException::class,
-        FailedLoginException::class,
         NotFoundHttpException::class,
         ModelNotFoundException::class,
         MethodNotAllowedHttpException::class,
@@ -178,8 +177,6 @@ class Handler extends ExceptionHandler
             case AuthenticationException::class:
             case AuthorizationException::class:
                 return JsonResponseHelper::error([], 403);
-            case FailedLoginException::class:
-                return JsonResponseHelper::error([], 401);
             case NotFoundHttpException::class:
             case ModelNotFoundException::class:
                 return new JsonResponse($exception->getMessage(), 404);

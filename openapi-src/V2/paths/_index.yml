@@ -1,6 +1,3 @@
-/users:
-  post:
-    $ref: './Users/post-users.yml'
 /v2/admin/{ENTITY}/{UUID}/reminder:
   post:
     $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'
@@ -641,17 +638,6 @@
           $ref: '../definitions/_index.yml#/V2OwnershipStakeRead'
     tags:
       - V2 Ownership Stake
-/v2/admin/project-pitches/export:
-  get:
-    summary: Export project pitches as an admin
-    tags:
-      - Project Pitches
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-    operationId: get-v2-project-pitches-export
 '/v2/admin/forms/submissions/{UUID}/export':
   get:
     summary: Export form submissions
@@ -707,18 +693,6 @@
         description: OK
         schema:
           type: file
-/auth/logout:
-  get:
-    $ref: './Auth/get-user-logout.yml'
-/auth/me:
-  get:
-    $ref: './Auth/get-logged-user-details.yml'
-/auth/login:
-  post:
-    $ref: './Auth/post-auth-login.yml'
-/auth/change:
-  patch:
-    $ref: './Auth/patch-auth-change.yml'
 /v2/auth/complete/signup:
   put:
     $ref: './Auth/put-auth-complete-signup.yml'
@@ -734,33 +708,15 @@
 /auth/store:
   post:
     $ref: './Auth/post-auth-store.yml'
-/v2/auth/verify:
-  patch:
-    $ref: './Auth/patch-v2-auth-verify.yml'
-/auth/verify:
-  patch:
-    $ref: './Auth/patch-auth-verify.yml'
 /v2/users/resend:
   post:
     $ref: './Auth/post-v2-users-resend.yml'
-/v2/sites/{UUID}:
-  get:
-    $ref: './Sites/get-v2-sites-uuid.yml'
-/v2/sites/{UUID}/polygons:
-  get:
-    $ref: './Sites/get-v2-admin-sites-uuid-polygons.yml'
-/v2/sites/{UUID}/polygons/count:
-  get:
-    $ref: './Sites/get-v2-admin-sites-uuid-polygons-count.yml'
 /v2/projects/invite/accept:
   post:
     $ref: './Projects/post-v2-projects-invite-accept.yml'
 /v2/export-image:
   post:
     $ref: './Exports/post-v2-export-image.yml'
-/v2/admin/{ENTITY}/export/{FRAMEWORK}:
-  get:
-    $ref: './Exports/get-v2-admin-entity-export-framework.yml'
 /v2/admin/{ENTITY}/export/{FRAMEWORK}/pm:
   get:
     $ref: './Exports/get-v2-admin-entity-export-framework-pm.yml'

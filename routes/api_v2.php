@@ -5,7 +5,6 @@ use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
-use App\Http\Controllers\V2\Exports\ExportAllMonitoredEntitiesController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllSiteDataAsProjectDeveloperController;
@@ -36,7 +35,6 @@ use App\Http\Controllers\V2\Organisations\OrganisationRejectUserController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
-use App\Http\Controllers\V2\ProjectPitches\ExportProjectPitchController;
 use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
 use App\Http\Controllers\V2\User\AdminResetPasswordController;
@@ -72,7 +70,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     // removed in YY TODO remove comment before PR
     Route::resource('organisations', AdminOrganisationController::class)->except('create');
 
-    Route::get('/{entity}/export/{framework}', ExportAllMonitoredEntitiesController::class);
     Route::get('/{entity}/presigned-url/{framework}', GeneratePreSignedURLDownloadReportController::class);
     Route::get('/{entity}/export/{framework}/pm', ProjectAdminExportController::class);
 
@@ -92,10 +89,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('forms')->group(function () {
         Route::get('submissions/{form}/export', ExportFormSubmissionController::class);
         Route::get('applications/{fundingProgramme}/export', AdminExportApplicationController::class);
-    });
-
-    Route::prefix('project-pitches')->group(function () {
-        Route::get('/export', ExportProjectPitchController::class);
     });
 });
 
