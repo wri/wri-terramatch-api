@@ -42,7 +42,6 @@ class Handler extends ExceptionHandler
         DuplicateUploadException::class,
         UploadNotFoundException::class,
         ExternalAPIException::class,
-        CorruptedUploadException::class,
         InvalidSearchConditionsException::class,
         InvalidFrameworkInviteCodeException::class,
         InvalidProgrammeFileUploadException::class,
@@ -234,10 +233,6 @@ class Handler extends ExceptionHandler
                 $errors = ErrorHelper::create('*', 'external API', 'EXTERNAL_API', 'has returned a server error');
 
                 return JsonResponseHelper::error($errors, 500);
-            case CorruptedUploadException::class:
-                $errors = ErrorHelper::create('*', 'upload', 'CUSTOM', 'is corrupted');
-
-                return JsonResponseHelper::error($errors, 422);
             case OldTargetException::class:
                 $errors = ErrorHelper::create('*', 'target', 'CUSTOM', 'is not the latest target');
 

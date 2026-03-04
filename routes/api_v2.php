@@ -61,13 +61,11 @@ use Illuminate\Support\Facades\Route;
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::prefix('organisations')->group(function () {
-        // All but export removed in YY TODO remove comment before PR
         Route::get('multi', AdminOrganisationMultiController::class);
         Route::put('approve', AdminApproveOrganisationController::class);
         Route::put('reject', AdminRejectOrganisationController::class);
         Route::get('export', AdminExportOrganisationsController::class);
     });
-    // removed in YY TODO remove comment before PR
     Route::resource('organisations', AdminOrganisationController::class)->except('create');
 
     Route::get('/{entity}/presigned-url/{framework}', GeneratePreSignedURLDownloadReportController::class);
@@ -94,7 +92,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
 /** NON ADMIN ROUTES */
 Route::prefix('organisations')->group(function () {
-    // next four removed in YY TODO remove comment before PR
     Route::get('listing', OrganisationListingController::class);
     Route::post('join-existing', JoinExistingOrganisationController::class);
     Route::put('approve-user', OrganisationApproveUserController::class);
@@ -102,17 +99,11 @@ Route::prefix('organisations')->group(function () {
     Route::get('user-requests/{organisation}', OrganisationListRequestedUsersController::class);
     Route::get('approved-users/{organisation}', OrganisationApprovedUsersController::class);
 
-    // removed in YY TODO remove comment before PR
     Route::post('/{organisation}/invite', CreateOrganisationInviteController::class);
 });
-// removed in YY TODO remove comment before PR
 Route::resource('organisations', OrganisationController::class);
 
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
-
-Route::prefix('applications')->group(function () {
-    Route::get('/{application}/export', ExportApplicationController::class);
-});
 
 Route::prefix('ownership-stake')->group(function () {
     Route::post('/', StoreOwnershipStakeController::class);
@@ -126,21 +117,7 @@ Route::prefix('leaderships')->group(function () {
     Route::patch('/{leaderships}', UpdateLeadershipsController::class);
 });
 
-Route::prefix('financial-indicators')->group(function () {
-    Route::patch('/', UpsertFinancialIndicatorsController::class);
-});
-
-Route::prefix('financial-reports')->group(function () {
-    Route::get('/export', ExportFinancialReportController::class);
-});
-
-Route::prefix('disturbance-reports')->group(function () {
-    Route::get('/export', ExportDisturbanceReportController::class);
-});
-
-Route::prefix('srp-reports')->group(function () {
-    Route::get('/export', ExportSrpReportController::class);
-});
+Route::patch('financial-indicators', UpsertFinancialIndicatorsController::class);
 
 Route::prefix('projects')->group(function () {
     Route::post('/invite/accept', ProjectInviteAcceptController::class);
@@ -149,14 +126,12 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
 });
 
-Route::prefix('sites/{site}')->group(function () {
-    Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
-});
-
-Route::prefix('nurseries')->group(function () {
-    Route::get('/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
-});
-
+Route::get('applications/{application}/export', ExportApplicationController::class);
+Route::get('financial-reports/export', ExportFinancialReportController::class);
+Route::get('disturbance-reports/export', ExportDisturbanceReportController::class);
+Route::get('srp-reports/export', ExportSrpReportController::class);
+Route::get('sites/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
+Route::get('nurseries/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
 
 Route::post('/export-image', ExportImageController::class);

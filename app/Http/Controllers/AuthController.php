@@ -6,7 +6,6 @@ use App\Exceptions\SamePasswordException;
 use App\Helpers\JsonResponseHelper;
 use App\Http\Requests\ConfirmCreateUserRequest;
 use App\Http\Requests\ResendByEmailRequest;
-use App\Http\Requests\ResendRequest;
 use App\Http\Requests\ResetRequest;
 use App\Http\Requests\SendLoginDetailsRequest;
 use App\Http\Requests\SetPasswordRequest;
@@ -23,28 +22,10 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function refreshAction(Request $request): JsonResponse
-    {
-        $this->authorize('refresh', 'App\\Models\\Auth');
-        $token = Auth::refresh();
-
-        return JsonResponseHelper::success((object) ['token' => $token], 200);
-    }
-
-    public function resendAction(ResendRequest $request): JsonResponse
-    {
-        $this->authorize('resend', 'App\\Models\\Auth');
-        $me = Auth::user();
-        UserVerificationJob::dispatch($me, $request->get('callback_url') ? $request->get('callback_url') : null);
-
-        return JsonResponseHelper::success((object) [], 200);
-    }
-
     public function resendByEmail(ResendByEmailRequest $request): JsonResponse
     {
         $user = UserModel::where('email_address', $request->get('email_address'))->first();
@@ -140,24 +121,6 @@ class AuthController extends Controller
         $passwordReset->delete();
 
         return JsonResponseHelper::success((object) [], 200);
-    }
-
-    public function deleteMeAction(Request $request): JsonResponse
-    {
-        if (Auth::guest()) {
-            return JsonResponseHelper::error([], 401);
-        }
-
-        $me = Auth::user();
-
-        $this->authorize('deleteSelf', $me);
-
-        $me->wipeData();
-        $me->save();
-        $me->delete();
-        Auth::logout();
-
-        return JsonResponseHelper::success((object) ['message' => 'user successfully deleted.'], 200);
     }
 
     public function completeUserSignup(ConfirmCreateUserRequest $request): JsonResponse
