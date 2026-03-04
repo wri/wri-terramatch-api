@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V2\ReportingFrameworks\UpdateReportingFrameworkRequest;
 use App\Http\Resources\V2\ReportingFrameworks\ReportingFrameworkResource;
 use App\Models\Framework;
+use App\Models\V2\FinancialReport;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Nurseries\NurseryReport;
@@ -13,7 +14,7 @@ use App\Models\V2\Projects\Project;
 use App\Models\V2\Projects\ProjectReport;
 use App\Models\V2\Sites\Site;
 use App\Models\V2\Sites\SiteReport;
-use App\Models\V2\FinancialReport;
+
 class AdminUpdateReportingFrameworkController extends Controller
 {
     public function __invoke(Framework $framework, UpdateReportingFrameworkRequest $frameworkRequest): ReportingFrameworkResource
