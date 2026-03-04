@@ -1,7 +1,3 @@
-TreeSpeciesRead:
-  $ref: './TreeSpeciesRead.yml'
-TreeSpeciesReadAll:
-  $ref: './TreeSpeciesReadAll.yml'
 UserRead:
   $ref: './UserRead.yml'
 UserReadAll:
@@ -12,8 +8,6 @@ V2PaginationCurrentLinks:
   $ref: './V2PaginationCurrentLinks.yml'
 V2PaginationMeta:
   $ref: './V2PaginationMeta.yml'
-V2SearchFilterSort:
-  $ref: './V2SearchFilterSort.yml'
 V2AdminOrganisationRead:
   $ref: './V2AdminOrganisationRead.yml'
 V2MonitoringOrganisationRead:
@@ -54,100 +48,26 @@ V2OwnershipStakeUpdate:
   $ref: './V2OwnershipStakeUpdate.yml'
 V2FundingTypeRead:
   $ref: './V2FundingTypeRead.yml'
-V2SiteRead:
-  $ref: './V2SiteRead.yml'
-V2StrataRead:
-  $ref: './V2StrataRead.yml'
-V2StrataPaginated:
-  $ref: './V2StrataPaginated.yml'
-V2DisturbanceRead:
-  $ref: './V2DisturbanceRead.yml'
-V2DisturbancePaginated:
-  $ref: './V2DisturbancePaginated.yml'
-V2InvasiveRead:
-  $ref: './V2InvasiveRead.yml'
-V2InvasivePaginated:
-  $ref: './V2InvasivePaginated.yml'
-AuditRead:
-  $ref: './AuditRead.yml'
-AuditReadAll:
-  $ref: './AuditReadAll.yml'
-AuditsPaginated:
-  $ref: './AuditsPaginated.yml'
-NurseryPaginated:
-  $ref: './NurseryPaginated.yml'
-NurseryRead:
-  $ref: './NurseryRead.yml'
 Empty:
   type: object
 AuthChange:
   $ref: './AuthChange.yml'
 AuthReset:
   $ref: './AuthReset.yml'
-ProjectReportRead:
-  $ref: './ProjectReportRead.yml'
 AdminUserCreate:
   $ref: './AdminUserCreate.yml'
-UpdateRequestLiteRead:
-  $ref: './UpdateRequestLiteRead.yml'
-StatusUpdate:
-  $ref: './StatusUpdate.yml'
 EntityReportReminder:
   $ref: './EntityReportReminder.yml'
 V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
-Demographic:
-  $ref: './Demographic.yml'
-GeoJSON:
-  $ref: './GeoJSON.yml'
-GeometryPost:
-  $ref: './GeometryPost.yml'
-AuditStatusCreateRequest:
-  $ref: './AuditStatusCreateRequest.yml'
-AuditStatusResponse:
-  $ref: './AuditStatusResponse.yml'
 SitePolygon:
   $ref: './SitePolygon.yml'
-SitePolygonsBboxResponse:
-  $ref: './SitePolygonsBboxResponse.yml'
-PolygonBboxResponse:
-  $ref: './SitePolygonsBboxResponse.yml'
-EntityTypeResponse:
-  $ref: './EntityTypeResponse.yml'
-EntityPolygonResponse:
-  $ref: './EntityPolygonResponse.yml'
-AuditStatusUpdateRequest:
-  $ref: './AuditStatusUpdateRequest.yml'
-SitePolygonsLoadedDataResponse:
-  $ref: './SitePolygonsLoadedDataResponse.yml'
-SitePolygonLoaded:
-  $ref: './SitePolygonLoaded.yml'
-ClippedPolygonResponse:
-  $ref: './ClippedPolygonResponse.yml'
-ClippedPolygonsResponse:
-  $ref: './ClippedPolygonsResponse.yml'
-DeletedPolygonsResponse:
-  $ref: './DeletedPolygonsResponse.yml'
-UpdateMediaRequest:
-  $ref: './UpdateMediaRequest.yml'
-FileResource:
-  $ref: './FileResource.yml'
 UserCreateComplete:
   $ref: './UserCreateComplete.yml'
-IndicatorPost:
-  $ref: './IndicatorPost.yml'
-Indicators:
-  $ref: './Indicators.yml'
-IndicatorPolygonsStatus:
-  $ref: './IndicatorPolygonsStatus.yml'
 V2FinancialIndicatorsRead:
   $ref: './V2FinancialIndicatorsRead.yml'
 V2FinancialIndicatorsUpdate:
   $ref: './V2FinancialIndicatorsUpdate.yml'
-V2FinancialReportRead:
-  $ref: './V2FinancialReportRead.yml'
-V2FinancialLiteReportRead:
-  $ref: './V2FinancialLiteReportRead.yml'
 V2OrganisationInviteCreate:
   $ref: './V2OrganisationInviteCreate.yml'
 V2OrganisationInviteRead:
