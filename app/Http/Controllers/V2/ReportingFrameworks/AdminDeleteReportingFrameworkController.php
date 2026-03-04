@@ -49,6 +49,10 @@ class AdminDeleteReportingFrameworkController extends Controller
             'framework_key' => null,
             'model' => null,
         ]);
+        Form::isUuid($frameworkToDelete->financial_report_form_uuid)->update([
+            'framework_key' => null,
+            'model' => null,
+        ]);
 
         Log::info("Removed $frameworkToDelete->name reporting framework $uuid.");
 
