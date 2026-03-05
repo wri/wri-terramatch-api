@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Jobs\UpdatePricePerTreeJob;
-use App\Models\Pitch as PitchModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
@@ -63,11 +61,6 @@ class DatabaseSeeder extends Seeder
             }
         }
         DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
-        // jobs
-        $pitches = PitchModel::get();
-        foreach ($pitches as $pitch) {
-            UpdatePricePerTreeJob::dispatchSync($pitch);
-        }
     }
 
     public static function getTables(): array
