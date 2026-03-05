@@ -34,7 +34,6 @@ class Handler extends ExceptionHandler
         ExternalAPIException::class,
         SamePasswordException::class,
         HttpException::class,
-        UserIsAlreadyPartOfProgrammeException::class,
     ];
 
     public function report(Throwable $exception)
@@ -163,10 +162,6 @@ class Handler extends ExceptionHandler
                 return JsonResponseHelper::error($errors, 422);
             case HttpException::class:
                 return JsonResponseHelper::error([], $exception->getStatusCode());
-            case UserIsAlreadyPartOfProgrammeException::class:
-                $errors = ErrorHelper::create('*', 'email_address', 'UNIQUE_PARTNER', 'is already a part of this programme');
-
-                return JsonResponseHelper::error($errors, 422);
             case InvalidStatusException::class:
                 return JsonResponseHelper::error($exception->getMessage(), 422);
             case MimeTypeNotAllowed::class:

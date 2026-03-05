@@ -12,16 +12,8 @@ V2AdminOrganisationRead:
   $ref: './V2AdminOrganisationRead.yml'
 V2MonitoringOrganisationRead:
   $ref: './V2MonitoringOrganisationRead.yml'
-V2AdminOrganisationUpdate:
-  $ref: './V2AdminOrganisationUpdate.yml'
 V2GenericList:
   $ref: './V2GenericList.yml'
-V2OrganisationApproveRejectUser:
-  $ref: './V2OrganisationApproveRejectUser.yml'
-V2OrganisationUpdate:
-  $ref: './V2OrganisationUpdate.yml'
-V2OrganisationRead:
-  $ref: './V2OrganisationRead.yml'
 ShapefileRead:
   $ref: './ShapefileRead.yml'
 V2AdminUserRead:
@@ -68,7 +60,3 @@ V2FinancialIndicatorsRead:
   $ref: './V2FinancialIndicatorsRead.yml'
 V2FinancialIndicatorsUpdate:
   $ref: './V2FinancialIndicatorsUpdate.yml'
-V2OrganisationInviteCreate:
-  $ref: './V2OrganisationInviteCreate.yml'
-V2OrganisationInviteRead:
-  $ref: './V2OrganisationInviteRead.yml'

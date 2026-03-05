@@ -1,5 +1,0 @@
-title: V2OrganisationInviteCreate
-type: object
-properties:
-  email_address:
-      type: string
