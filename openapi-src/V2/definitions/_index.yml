@@ -1,43 +1,19 @@
-TreeSpeciesAggregated:
-  $ref: './TreeSpeciesAggregated.yml'
-TreeSpeciesRead:
-  $ref: './TreeSpeciesRead.yml'
-TreeSpeciesReadAll:
-  $ref: './TreeSpeciesReadAll.yml'
-AssociatedUserRead:
-  $ref: './AssociatedUserRead.yml'
 UserRead:
   $ref: './UserRead.yml'
 UserReadAll:
   $ref: './UserReadAll.yml'
-ReportingFrameworkRead:
-  $ref: './ReportingFrameworkRead.yml'
-ReportingFrameworkUpdate:
-  $ref: './ReportingFrameworkUpdate.yml'
-ReportingFrameworkCreate:
-  $ref: './ReportingFrameworkCreate.yml'
 V2PaginationLinks:
   $ref: './V2PaginationLinks.yml'
 V2PaginationCurrentLinks:
   $ref: './V2PaginationCurrentLinks.yml'
 V2PaginationMeta:
   $ref: './V2PaginationMeta.yml'
-V2SearchFilterSort:
-  $ref: './V2SearchFilterSort.yml'
 V2AdminOrganisationRead:
   $ref: './V2AdminOrganisationRead.yml'
 V2MonitoringOrganisationRead:
   $ref: './V2MonitoringOrganisationRead.yml'
-V2AdminOrganisationUpdate:
-  $ref: './V2AdminOrganisationUpdate.yml'
 V2GenericList:
   $ref: './V2GenericList.yml'
-V2OrganisationApproveRejectUser:
-  $ref: './V2OrganisationApproveRejectUser.yml'
-V2OrganisationUpdate:
-  $ref: './V2OrganisationUpdate.yml'
-V2OrganisationRead:
-  $ref: './V2OrganisationRead.yml'
 ShapefileRead:
   $ref: './ShapefileRead.yml'
 V2AdminUserRead:
@@ -48,8 +24,6 @@ V2FileRead:
   $ref: './V2FileRead.yml'
 V2FileGallery:
   $ref: './V2FileGallery.yml'
-V2FileGalleryLite:
-  $ref: './V2FileGalleryLite.yml'
 V2TreeSpeciesRead:
   $ref: './V2TreeSpeciesRead.yml'
 V2LeadershipsCreate:
@@ -64,185 +38,25 @@ V2OwnershipStakeRead:
   $ref: './V2OwnershipStakeRead.yml'
 V2OwnershipStakeUpdate:
   $ref: './V2OwnershipStakeUpdate.yml'
-V2FundingTypeCreate:
-  $ref: './V2FundingTypeCreate.yml'
 V2FundingTypeRead:
   $ref: './V2FundingTypeRead.yml'
-V2FundingTypeUpdate:
-  $ref: './V2FundingTypeUpdate.yml'
-V2SiteRead:
-  $ref: './V2SiteRead.yml'
-V2SiteMonitoringCreate:
-  $ref: './V2SiteMonitoringCreate.yml'
-V2SiteMonitoringUpdate:
-  $ref: './V2SiteMonitoringUpdate.yml'
-V2SiteMonitoringRead:
-  $ref: './V2SiteMonitoringRead.yml'
-V2ProjectMonitoringCreate:
-  $ref: './V2ProjectMonitoringCreate.yml'
-V2ProjectMonitoringUpdate:
-  $ref: './V2ProjectMonitoringUpdate.yml'
-V2ProjectMonitoringRead:
-  $ref: './V2ProjectMonitoringRead.yml'
-V2StrataRead:
-  $ref: './V2StrataRead.yml'
-V2StrataPaginated:
-  $ref: './V2StrataPaginated.yml'
-V2DisturbanceRead:
-  $ref: './V2DisturbanceRead.yml'
-V2DisturbancePaginated:
-  $ref: './V2DisturbancePaginated.yml'
-V2InvasiveRead:
-  $ref: './V2InvasiveRead.yml'
-V2InvasivePaginated:
-  $ref: './V2InvasivePaginated.yml'
-ProjectLiteRead:
-  $ref: './ProjectLiteRead.yml'
-SiteFullRead:
-  $ref: './SiteFullRead.yml'
-AuditRead:
-  $ref: './AuditRead.yml'
-AuditReadAll:
-  $ref: './AuditReadAll.yml'
-AuditsPaginated:
-  $ref: './AuditsPaginated.yml'
-NurseryPaginated:
-  $ref: './NurseryPaginated.yml'
-NurseryRead:
-  $ref: './NurseryRead.yml'
 Empty:
   type: object
-AuthLogIn:
-  $ref: './AuthLogIn.yml'
-TokenRead:
-  $ref: './TokenRead.yml'
 AuthChange:
   $ref: './AuthChange.yml'
 AuthReset:
   $ref: './AuthReset.yml'
-AuthVerify:
-  $ref: './AuthVerify.yml'
-NurseryLiteRead:
-  $ref: './NurseryLiteRead.yml'
-SiteLiteRead:
-  $ref: './SiteLiteRead.yml'
-NurseryReportRead:
-  $ref: './NurseryReportRead.yml'
-SiteReportRead:
-  $ref: './SiteReportRead.yml'
-ProjectReportRead:
-  $ref: './ProjectReportRead.yml'
-UserCreate:
-  $ref: './UserCreate.yml'
 AdminUserCreate:
   $ref: './AdminUserCreate.yml'
-UpdateRequestLiteRead:
-  $ref: './UpdateRequestLiteRead.yml'
-ActionRead:
-  $ref: './ActionRead.yml'
-StatusUpdate:
-  $ref: './StatusUpdate.yml'
 EntityReportReminder:
   $ref: './EntityReportReminder.yml'
 V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
-V2ProjectInviteCreate:
-  $ref: './V2ProjectInviteCreate.yml'
-Demographic:
-  $ref: './Demographic.yml'
-GeoJSON:
-  $ref: './GeoJSON.yml'
-GeometryPost:
-  $ref: './GeometryPost.yml'
-AuditStatusCreateRequest:
-  $ref: './AuditStatusCreateRequest.yml'
-AuditStatusResponse:
-  $ref: './AuditStatusResponse.yml'
-V2TerrafundCriteriaData:
-  $ref: './V2TerrafundCriteriaData.yml'
-V2TerrafundCriteriaDataMultiple:
-  $ref: './V2TerrafundCriteriaDataMultiple.yml'
-V2TerrafundCriteriaSite:
-  $ref: './V2TerrafundCriteriaSite.yml'
 SitePolygon:
   $ref: './SitePolygon.yml'
-GeometryString:
-  $ref: './GeometryString.yml'
-SitePolygonsBboxResponse:
-  $ref: './SitePolygonsBboxResponse.yml'
-SitePolygonResponse:
-  $ref: './SitePolygonResponse.yml'
-SitePolygonCreateResponse:
-  $ref: './SitePolygonCreateResponse.yml'
-GeoJSONResponse:
-  $ref: './GeoJSONResponse.yml'
-FeatureCollection:
-  $ref: './FeatureCollection.yml'
-PolygonBboxResponse:
-  $ref: './SitePolygonsBboxResponse.yml'
-DashboardPolygonResponse:
-  $ref: './DashboardPolygonResponse.yml'
-DashboardPolygonData:
-  $ref: './DashboardPolygonData.yml'
-DashboardProjectProfileResponse:
-  $ref: './DashboardProjectProfileResponse.yml'
-DashboardProjectProfileData:
-  $ref: './DashboardProjectProfileData.yml'
-DashboardTopPlantedTree:
-  $ref: './DashboardTopPlantedTree.yml'
-DashboardTopTreeSpecies:
-  $ref: './DashboardTopTreeSpecies.yml'
-ProjectPipeline:
-  $ref: './ProjectPipeline.yml'
-ProjectPipelinePost:
-  $ref: './ProjectPipelinePost.yml'
-GeojsonData:
-  $ref: './GeojsonData.yml'
-EntityTypeResponse:
-  $ref: './EntityTypeResponse.yml'
-EntityPolygonResponse:
-  $ref: './EntityPolygonResponse.yml'
-AuditStatusUpdateRequest:
-  $ref: './AuditStatusUpdateRequest.yml'
-DashboardProjectViewResponse:
-  $ref: './DashboardProjectViewResponse.yml'
-ProjectPolygonResponse:
-  $ref: './ProjectPolygonResponse.yml'
-SitePolygonsLoadedDataResponse:
-  $ref: './SitePolygonsLoadedDataResponse.yml'
-SitePolygonLoaded:
-  $ref: './SitePolygonLoaded.yml'
-ClippedPolygonResponse:
-  $ref: './ClippedPolygonResponse.yml'
-ClippedPolygonsResponse:
-  $ref: './ClippedPolygonsResponse.yml'
-DeletedPolygonsResponse:
-  $ref: './DeletedPolygonsResponse.yml'
-MeResponse:
-  $ref: './MeResponse.yml'
-MyOrganisationLite:
-  $ref: './MyOrganisationLite.yml'
-UpdateMediaRequest:
-  $ref: './UpdateMediaRequest.yml'
-FileResource:
-  $ref: './FileResource.yml'
 UserCreateComplete:
   $ref: './UserCreateComplete.yml'
-IndicatorPost:
-  $ref: './IndicatorPost.yml'
-Indicators:
-  $ref: './Indicators.yml'
-IndicatorPolygonsStatus:
-  $ref: './IndicatorPolygonsStatus.yml'
 V2FinancialIndicatorsRead:
   $ref: './V2FinancialIndicatorsRead.yml'
 V2FinancialIndicatorsUpdate:
   $ref: './V2FinancialIndicatorsUpdate.yml'
-V2FinancialReportRead:
-  $ref: './V2FinancialReportRead.yml'
-V2FinancialLiteReportRead:
-  $ref: './V2FinancialLiteReportRead.yml'
-V2OrganisationInviteCreate:
-  $ref: './V2OrganisationInviteCreate.yml'
-V2OrganisationInviteRead:
-  $ref: './V2OrganisationInviteRead.yml'
