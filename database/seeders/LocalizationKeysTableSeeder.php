@@ -321,9 +321,8 @@ class LocalizationKeysTableSeeder extends Seeder
         //v2-project-monitoring-notification
         $this->createLocalizationKey('v2-project-monitoring-notification.subject', 'You have been added as a monitoring partner.');
         $this->createLocalizationKey('v2-project-monitoring-notification.title', 'You have been added as a monitoring partner.');
-        $this->createLocalizationKey('v2-project-monitoring-notification.body', 'You have been added to {name} as a monitoring partner on TerraMatch. Login into your account
-            today to see the project progress and relevant reports.<br><br>
-            Login <a href="{callbackUrl}" style="color: #6E6E6E;">Here.</a><br><br>');
+        $this->createLocalizationKey('v2-project-monitoring-notification.body', 'You have been added to {name} as a monitoring partner on TerraMatch. Login into your account today to see the project progress and relevant reports.<br><br>');
+        $this->createLocalizationKey('v2-project-monitoring-notification.cta', 'Login');
 
         // version-approved
         $this->createLocalizationKey('version-approved.subject', 'Your Changes Have Been Approved');

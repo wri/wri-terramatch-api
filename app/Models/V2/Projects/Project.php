@@ -151,6 +151,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'direct_seeding_survival_rate',
         'cohort',
         'short_name',
+        'level_0_project',
         'level_1_project',
         'level_2_project',
         'land_tenure_approach',
@@ -162,6 +163,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'elp_project',
         'consortium',
         'landowner_agreement',
+        'nursery_seedlings_goal',
     ];
 
     public $fileConfiguration = [
@@ -215,6 +217,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'detailed_intervention_types' => 'array',
         'states' => 'array',
         'cohort' => 'array',
+        'level_0_project' => 'array',
         'level_1_project' => 'array',
         'level_2_project' => 'array',
         'elp_project' => 'boolean',

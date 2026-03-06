@@ -292,7 +292,7 @@ class AuthController extends Controller
         $organisationInvites = OrganisationInvite::where('email_address', $user->email_address)
             ->whereNull('accepted_at')
             ->get();
-        if ($organisationInvites) {
+        if ($organisationInvites->count() > 0) {
             foreach ($organisationInvites as $invite) {
                 $invite->email_address = $data['email_address'];
                 if ($invite->accepted_at === null) {
@@ -304,7 +304,7 @@ class AuthController extends Controller
             $projectInvites = ProjectInvite::where('email_address', $user->email_address)->get();
             foreach ($projectInvites as $invite) {
                 $invite->email_address = $data['email_address'];
-                $user->projects()->sync([$invite->project_id => ['is_monitoring' => true]]);
+                $user->projects()->sync([$invite->project_id => ['is_monitoring' => true, 'status' => 'active']]);
                 if ($invite->accepted_at === null) {
                     $invite->accepted_at = now();
                     $invite->saveOrFail();

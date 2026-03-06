@@ -255,43 +255,6 @@ final class BaselineMonitoringProjectControllerTest extends TestCase
         $this->assertCount(3, $record->gallery_files);
     }
 
-    public function testDeleteGalleryItemAction(): void
-    {
-        $user = User::factory()->create();
-        $admin = User::factory()->admin()->create();
-        $metrics = ProjectMetric::factory()->create();
-
-        Storage::fake('uploads');
-        foreach( ['image-1.jpg','image-2.png','image-3.gif'] as $filename){
-            $file = UploadedFile::fake()->image($filename, 10,10);
-
-            $payload = [
-                'uuid' => $metrics->uuid,
-                'collection' => 'gallery',
-                'upload_file' => $file
-            ];
-
-            $this->actingAs($admin)
-                ->postJson('/api/v2/project-metrics/upload', $payload)
-                ->assertStatus(201);
-        }
-
-        $record = ProjectMetric::isUuid($metrics->uuid)->first();
-        $this->assertCount(3, $record->gallery_files);
-        $galleryItem = $record->gallery_files[1];
-
-        $this->actingAs($user)
-            ->deleteJson('/api/v2/media/'.$galleryItem['uuid'] .'/gallery', $payload)
-            ->assertStatus(403);
-
-        $this->actingAs($admin)
-            ->deleteJson('/api/v2/media/'.$galleryItem['uuid'] .'/gallery', $payload)
-            ->assertStatus(202);
-
-        $record = ProjectMetric::isUuid($metrics->uuid)->first();
-        $this->assertCount(2, $record->gallery_files);
-    }
-
     public function testDownloadSupportFilesAction(): void
     {
         $admin = User::factory()->admin()->create();

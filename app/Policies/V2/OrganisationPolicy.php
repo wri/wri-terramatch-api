@@ -48,11 +48,6 @@ class OrganisationPolicy extends Policy
         return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user);
     }
 
-    public function submit(?User $user, ?Organisation $model = null): bool
-    {
-        return ($this->isFullUser($user) && in_array($model->id, $user->all_my_organisations->pluck('id')->toArray()));
-    }
-
     public function approveReject(?User $user, ?Organisation $model = null): bool
     {
         return $this->isVerifiedAdmin($user) || $this->isTerrafundAdmin($user);
