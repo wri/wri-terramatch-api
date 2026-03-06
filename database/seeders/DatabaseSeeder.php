@@ -21,35 +21,6 @@ class DatabaseSeeder extends Seeder
         if (! in_array(config('app.env'), ['local', 'testing', 'pipelines'])) {
             throw new Exception();
         }
-        // s3
-        $s3Client = App::make('CustomS3Client');
-        $objects = $s3Client->listObjects([
-            'Bucket' => config('app.s3.bucket'),
-        ]);
-        $objects = $objects->toArray();
-        if (array_key_exists('Contents', $objects)) {
-            if (count($objects['Contents']) > 0) {
-                foreach ($objects['Contents'] as $object) {
-                    $s3Client->deleteObject([
-                        'Bucket' => config('app.s3.bucket'),
-                        'Key' => $object['Key'],
-                    ]);
-                }
-            }
-        }
-        // sns
-        $snsClient = App::make('CustomSnsClient');
-        $endpoints = array_merge(
-            $snsClient->listEndpointsByPlatformApplication([
-                'PlatformApplicationArn' => config('app.sns.android_arn'),
-            ])->get('Endpoints'),
-            $snsClient->listEndpointsByPlatformApplication([
-                'PlatformApplicationArn' => config('app.sns.ios_arn'),
-            ])->get('Endpoints')
-        );
-        foreach ($endpoints as $endpoint) {
-            $snsClient->deleteEndpoint(['EndpointArn' => $endpoint['EndpointArn']]);
-        }
         // database
         DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
         foreach (DatabaseSeeder::getTables() as $table) {
