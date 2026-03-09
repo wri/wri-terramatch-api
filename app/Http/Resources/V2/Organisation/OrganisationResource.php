@@ -162,6 +162,8 @@ class OrganisationResource extends JsonResource
             'bioeconomy_traditional_knowledge' => $this->bioeconomy_traditional_knowledge,
             'bioeconomy_product_processing' => $this->bioeconomy_product_processing,
             'bioeconomy_buyers' => $this->bioeconomy_buyers,
+            'bioeconomy_product_list' => $this->bioeconomy_product_list,
+            'bioeconomy_description' => $this->bioeconomy_description,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at,
             'tags' => $this->buildTagList(),

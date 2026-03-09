@@ -244,6 +244,8 @@ class Organisation extends Model implements MediaModel
         'bioeconomy_traditional_knowledge' => 'string',
         'bioeconomy_product_processing' => 'string',
         'bioeconomy_buyers' => 'string',
+        'bioeconomy_product_list' => 'array',
+        'bioeconomy_description' => 'string',
     ];
 
     // Required by the HasDemographics trait
