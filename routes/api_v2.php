@@ -35,6 +35,7 @@ use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\FundingType\DeleteFundingTypeController;
 use App\Http\Controllers\V2\FundingType\StoreFundingTypeController;
 use App\Http\Controllers\V2\FundingType\UpdateFundingTypeController;
+use App\Http\Controllers\V2\Geometry\GeometryController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
@@ -272,6 +273,13 @@ Route::prefix('sites/{site}')->group(function () {
     Route::get('/monitorings', ViewASitesMonitoringsController::class);
     Route::get('/image/locations', SiteImageLocationsController::class);
     Route::get('/export', ExportAllSiteDataAsProjectDeveloperController::class);
+});
+
+Route::prefix('geometry')->group(function () {
+    Route::post('', [GeometryController::class, 'storeGeometry']);
+    Route::put('{polygon}', [GeometryController::class, 'updateGeometry']);
+    Route::post('/validate', [GeometryController::class, 'validateGeometries']);
+    Route::delete('', [GeometryController::class, 'deleteGeometries']);
 });
 
 Route::prefix('site-monitorings')->group(function () {
