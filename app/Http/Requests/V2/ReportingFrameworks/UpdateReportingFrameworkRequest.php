@@ -22,6 +22,7 @@ class UpdateReportingFrameworkRequest extends FormRequest
             'site_report_form_uuid' => ['sometimes', 'string', 'nullable'],
             'nursery_form_uuid' => ['sometimes', 'string', 'nullable'],
             'nursery_report_form_uuid' => ['sometimes', 'string', 'nullable'],
+            'financial_report_form_uuid' => ['sometimes', 'string', 'nullable'],
         ];
     }
 }

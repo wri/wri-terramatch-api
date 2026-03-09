@@ -25,6 +25,7 @@ class FrameworkFactory extends Factory
             'site_report_form_uuid' => null,
             'nursery_form_uuid' => null,
             'nursery_report_form_uuid' => null,
+            'financial_report_form_uuid' => null,
         ];
     }
 }
