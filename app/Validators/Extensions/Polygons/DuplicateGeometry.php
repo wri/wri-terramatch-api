@@ -214,7 +214,7 @@ class DuplicateGeometry extends Extension
             FROM (
                 ' . implode(' UNION ALL ', $unionParts) . "
             ) ng
-            INNER JOIN polygon_geometry pg ON pg.uuid IN ({$existingPlaceholders})
+            INNER JOIN polygon_geometry pg IGNORE INDEX (polygon_geometry_geom_spatial_idx) ON pg.uuid IN ({$existingPlaceholders})
             WHERE ST_Intersects(ST_Envelope(ng.geom), ST_Envelope(pg.geom))
             AND ST_Equals(ng.geom, pg.geom)
         ";
@@ -250,7 +250,7 @@ class DuplicateGeometry extends Extension
 
                 // Return one matching uuid if exists
                 $match = DB::selectOne(
-                    "SELECT pg.uuid as existing_uuid FROM polygon_geometry pg
+                    "SELECT pg.uuid as existing_uuid FROM polygon_geometry pg IGNORE INDEX (polygon_geometry_geom_spatial_idx)
                         WHERE pg.uuid IN ({$existingPlaceholders})
                         AND ST_Intersects(ST_Envelope(pg.geom), ST_Envelope(ST_GeomFromGeoJSON(?)))
                         AND ST_Equals(pg.geom, ST_GeomFromGeoJSON(?))
