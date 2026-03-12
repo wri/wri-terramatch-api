@@ -606,9 +606,6 @@
 /v2/projects/{UUID}/invite:
   post:
     $ref: './Projects/post-v2-projects-uuid-invite.yml'
-/v2/projects/invite/accept:
-  post:
-    $ref: './Projects/post-v2-projects-invite-accept.yml'
 /v2/projects/{UUID}/managers:
   post:
     $ref: './Projects/post-v2-projects-managers-store.yml'
