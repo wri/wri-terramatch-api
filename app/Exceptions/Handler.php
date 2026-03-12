@@ -39,7 +39,6 @@ class Handler extends ExceptionHandler
         DuplicateInterestException::class,
         InvalidUploadTypeException::class,
         MismatchingDraftTypeException::class,
-        InviteAlreadyAcceptedException::class,
         DuplicateUploadException::class,
         UploadNotFoundException::class,
         ExternalAPIException::class,
@@ -219,10 +218,6 @@ class Handler extends ExceptionHandler
                 return JsonResponseHelper::error($errors, 422);
             case InvalidUploadTypeException::class:
                 $errors = ErrorHelper::create('*', 'upload', 'CUSTOM', 'type is invalid');
-
-                return JsonResponseHelper::error($errors, 422);
-            case InviteAlreadyAcceptedException::class:
-                $errors = ErrorHelper::create('*', 'monitoring invite', 'ALREADY_ACCEPTED', 'has already been accepted');
 
                 return JsonResponseHelper::error($errors, 422);
             case DuplicateUploadException::class:
