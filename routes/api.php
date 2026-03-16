@@ -119,7 +119,6 @@ Route::withoutMiddleware('auth:service-api-key,api')->group(function () {
         Route::get('/auth/mail', [AuthController::class, 'getEmailByResetTokenAction']);
         Route::post('/auth/store', [AuthController::class, 'setNewPasswordAction']);
         Route::patch('/v2/auth/verify', [AuthController::class, 'verifyUnauthorizedAction']);
-        Route::put('/v2/auth/complete/signup', [AuthController::class, 'completeUserSignup']);
     });
 
     Route::get('/auth/logout', [AuthController::class, 'logoutAction']);

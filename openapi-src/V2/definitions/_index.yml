@@ -226,8 +226,6 @@ UpdateMediaRequest:
   $ref: './UpdateMediaRequest.yml'
 FileResource:
   $ref: './FileResource.yml'
-UserCreateComplete:
-  $ref: './UserCreateComplete.yml'
 IndicatorPost:
   $ref: './IndicatorPost.yml'
 Indicators:
