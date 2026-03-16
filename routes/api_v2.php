@@ -42,8 +42,6 @@ use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
 use App\Http\Controllers\V2\MonitoredData\IndicatorEntitySlugExportController;
 use App\Http\Controllers\V2\Nurseries\AdminNurseriesMultiController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
-use App\Http\Controllers\V2\Organisations\OrganisationApprovedUsersController;
-use App\Http\Controllers\V2\Organisations\OrganisationListRequestedUsersController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
@@ -58,7 +56,6 @@ use App\Http\Controllers\V2\Projects\DeleteProjectMonitoringPartnersController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminCreateProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminSoftDeleteProjectMonitoringController;
 use App\Http\Controllers\V2\Projects\Monitoring\AdminUpdateProjectMonitoringController;
-use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\Projects\ProjectManagersController;
 use App\Http\Controllers\V2\Projects\ViewAProjectsMonitoringsController;
 use App\Http\Controllers\V2\Projects\ViewProjectMonitoringPartnersController;
@@ -80,7 +77,6 @@ use App\Http\Controllers\V2\User\AdminResetPasswordController;
 use App\Http\Controllers\V2\User\AdminUserController;
 use App\Http\Controllers\V2\User\AdminUserCreationController;
 use App\Http\Controllers\V2\User\AdminUserMultiController;
-use App\Http\Controllers\V2\User\AdminUsersOrganizationController;
 use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
@@ -177,7 +173,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::get('multi', AdminUserMultiController::class);
         Route::put('reset-password/{user}', AdminResetPasswordController::class);
         Route::patch('verify/{user}', AdminVerifyUserController::class);
-        Route::get('users-organisation-list/{organisation}', AdminUsersOrganizationController::class);
         Route::post('/create', [AdminUserCreationController::class, 'store']);
     });
     Route::resource('users', AdminUserController::class);
@@ -193,11 +188,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 });
 
 /** NON ADMIN ROUTES */
-Route::prefix('organisations')->group(function () {
-    Route::get('user-requests/{organisation}', OrganisationListRequestedUsersController::class);
-    Route::get('approved-users/{organisation}', OrganisationApprovedUsersController::class);
-    // Route::post('/invite/accept', ProjectInviteAcceptController::class);
-});
 
 Route::prefix('my')->group(function () {
     Route::patch('/banners', UpdateMyBannersController::class);
@@ -255,7 +245,6 @@ Route::prefix('projects')->group(function () {
     Route::get('/{project}/image/locations', ProjectImageLocationsController::class);
 
     Route::post('/{project}/invite', CreateProjectInviteController::class);
-    Route::post('/invite/accept', ProjectInviteAcceptController::class);
 
     Route::resource('/{project}/managers', ProjectManagersController::class)->only(['index', 'store', 'destroy']);
 
