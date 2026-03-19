@@ -1235,6 +1235,8 @@ definitions:
         type: string
       nursery_report_form_uuid:
         type: string
+      financial_report_form_uuid:
+        type: string
   ReportingFrameworkUpdate:
     title: ReportingFrameworkUpdate
     type: object
@@ -1255,6 +1257,8 @@ definitions:
         type: string
       nursery_report_form_uuid:
         type: string
+      financial_report_form_uuid:
+        type: string
   ReportingFrameworkCreate:
     title: ReportingFrameworkCreate
     type: object
@@ -1274,6 +1278,8 @@ definitions:
       nursery_form_uuid:
         type: string
       nursery_report_form_uuid:
+        type: string
+      financial_report_form_uuid:
         type: string
   V2PaginationLinks:
     title: V2PaginationLinks
@@ -18513,6 +18519,8 @@ paths:
                       type: string
                     nursery_report_form_uuid:
                       type: string
+                    financial_report_form_uuid:
+                      type: string
     post:
       summary: Create a specific reporting frameworks
       operationId: post-v2-admin-reporting-frameworks
@@ -18541,6 +18549,8 @@ paths:
                 type: string
               nursery_report_form_uuid:
                 type: string
+              financial_report_form_uuid:
+                type: string
       responses:
         '201':
           description: OK
@@ -18567,6 +18577,8 @@ paths:
               nursery_form_uuid:
                 type: string
               nursery_report_form_uuid:
+                type: string
+              financial_report_form_uuid:
                 type: string
   '/v2/admin/reporting-frameworks/{UUID}':
     put:
@@ -18601,6 +18613,8 @@ paths:
                 type: string
               nursery_report_form_uuid:
                 type: string
+              financial_report_form_uuid:
+                type: string
       responses:
         '201':
           description: OK
@@ -18627,6 +18641,8 @@ paths:
               nursery_form_uuid:
                 type: string
               nursery_report_form_uuid:
+                type: string
+              financial_report_form_uuid:
                 type: string
     delete:
       summary: Delete a specific reporting frameworks
@@ -18664,6 +18680,8 @@ paths:
               nursery_form_uuid:
                 type: string
               nursery_report_form_uuid:
+                type: string
+              financial_report_form_uuid:
                 type: string
   '/v2/reporting-frameworks/access-code/{ACCESS_CODE}':
     get:
@@ -18703,6 +18721,8 @@ paths:
                 type: string
               nursery_report_form_uuid:
                 type: string
+              financial_report_form_uuid:
+                type: string
   '/v2/reporting-frameworks/{frameworkKey}':
     get:
       summary: View a specific reporting framework using an access code
@@ -18740,6 +18760,8 @@ paths:
               nursery_form_uuid:
                 type: string
               nursery_report_form_uuid:
+                type: string
+              financial_report_form_uuid:
                 type: string
   '/v2/admin/{ENTITY}/{UUID}/reminder':
     post:
@@ -22378,45 +22400,6 @@ paths:
             properties:
               email_address:
                 type: string
-      responses:
-        '201':
-          description: OK
-          schema:
-            title: V2ProjectInviteRead
-            type: object
-            properties:
-              id:
-                type: integer
-              uuid:
-                type: string
-              project_id:
-                type: integer
-              email_address:
-                type: string
-              accepted_at:
-                type: string
-                format: datetime
-              created_at:
-                type: string
-                format: datetime
-  /v2/projects/invite/accept:
-    post:
-      summary: Accept a user invitation to a project
-      operationId: get-v2-projects-invite-accept
-      tags:
-        - V2 Project Invite
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              token:
-                type: string
-            required:
-              - token
       responses:
         '201':
           description: OK
