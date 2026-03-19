@@ -597,6 +597,7 @@ return [
                 'pro-pit-fcol-rest-photos' => ['property' => 'restoration_photos', 'label' => 'Past Restoration Photos', 'input_type' => 'file', 'multichoice' => true],
                 'pro-pit-fcol-detail-proj-bdgt' => ['property' => 'detailed_project_budget', 'label' => 'Detailed project budget', 'input_type' => 'file', 'multichoice' => false],
                 'pro-pit-proof-of-land-tenure-mou' => ['property' => 'proof_of_land_tenure_mou', 'label' => 'Proof of land tenure MOU', 'input_type' => 'file', 'multichoice' => true],
+                'pro-pit-consortium-partnership-agreements' => ['property' => 'consortium_partnership_agreements', 'label' => 'Consortium agreements', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'pro-pit-tree-species' => [
@@ -768,6 +769,7 @@ return [
                 // new collections
                 'pro-col-detailed-project-budget' => ['property' => 'detailed_project_budget', 'label' => 'Detailed project budget', 'input_type' => 'file', 'multichoice' => false],
                 'pro-col-proof-of-land-tenure-mou' => ['property' => 'proof_of_land_tenure_mou', 'label' => 'Documentation on project area’s land tenure', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-consortium-partnership-agreements' => ['property' => 'consortium_partnership_agreements', 'label' => 'Consortium agreements', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'pro-pit-rel-tree-species' => [
