@@ -23,6 +23,7 @@ class ReportingFrameworkResource extends JsonResource
             'site_report_form_uuid' => $this->site_report_form_uuid,
             'nursery_form_uuid' => $this->nursery_form_uuid,
             'nursery_report_form_uuid' => $this->nursery_report_form_uuid,
+            'financial_report_form_uuid' => $this->financial_report_form_uuid,
             'total_projects_count' => $this->total_projects_count,
         ];
     }
