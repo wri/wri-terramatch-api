@@ -86,6 +86,10 @@ class ProjectPitch extends Model implements MediaModel
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'consortium_partnership_agreements' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
     ];
 
     // Required by the HasDemographics trait
