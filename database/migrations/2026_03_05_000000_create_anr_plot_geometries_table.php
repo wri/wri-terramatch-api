@@ -17,16 +17,16 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create('anr_plot_geometry', function (Blueprint $table) {
+        Schema::create('anr_plot_geometries', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('site_polygon_uuid', 36);
+            $table->unsignedBigInteger('site_polygon_id');
             $table->json('geojson');
             $table->unsignedInteger('plot_count')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
-            $table->index(['site_polygon_uuid', 'deleted_at'], 'idx_anr_plot_geometry_sp_uuid');
+            $table->index(['site_polygon_id', 'deleted_at'], 'idx_anr_plot_geometries_site_polygon_id');
         });
     }
 
@@ -35,6 +35,6 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('anr_plot_geometry');
+        Schema::dropIfExists('anr_plot_geometries');
     }
 };
