@@ -39,6 +39,7 @@ class V2SiteResource extends JsonResource
             'project_country' => $this->terrafundProgramme ? $this->terrafundProgramme->project_country : null,
             'continent' => $this->programme ? $this->programme->continent : null,
             'description' => $this->description,
+            'land_tenure_approach' => $this->land_tenure_approach,
             'planting_pattern' => $this->planting_pattern,
             'stratification_for_heterogeneity' => $this->stratification_for_heterogeneity,
             'history' => $this->history,

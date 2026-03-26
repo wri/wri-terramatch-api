@@ -21,6 +21,7 @@ class SiteResource extends JsonResource
             'control_site' => $this->control_site,
             'boundary_geojson' => $this->boundary_geojson,
             'history' => $this->history,
+            'land_tenure_approach' => $this->land_tenure_approach,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'land_tenures' => $this->land_tenures,

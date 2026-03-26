@@ -1247,7 +1247,7 @@ return [
                 'site-description' => ['property' => 'description', 'label' => 'Description', 'input_type' => 'long-text'],
                 'site-history' => ['property' => 'history', 'label' => 'History', 'input_type' => 'long-text'],
                 'site-land-tenures' => ['property' => 'land_tenures', 'label' => 'Land tenures', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'land-tenures'],
-                'site-land-tenure-approach' => ['property' => 'land_tenure_approach', 'label' => 'Land tenure approach', 'input_type' => 'long-text'],
+                'pro-land-tenure-approach' => ['property' => 'land_tenure_approach', 'label' => 'Land tenure approach', 'input_type' => 'long-text'],
                 'site-landscape-community-contribution' => ['property' => 'landscape_community_contribution', 'label' => 'Landscape community contribution', 'input_type' => 'long-text'],
                 'site-planting-pattern' => ['property' => 'planting_pattern', 'label' => 'Planting pattern', 'input_type' => 'long-text'],
                 'site-soil-condition' => ['property' => 'soil_condition', 'label' => 'Soil condition', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'soil-condition'],

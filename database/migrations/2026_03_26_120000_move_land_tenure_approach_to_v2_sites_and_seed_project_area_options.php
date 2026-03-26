@@ -17,32 +17,33 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        DB::transaction(function (): void {
-            if (! Schema::hasColumn('v2_sites', 'land_tenure_approach')) {
-                Schema::table('v2_sites', function (Blueprint $table): void {
-                    $table->text('land_tenure_approach')->nullable();
-                });
-            }
+        // MySQL auto-commits DDL (ALTER TABLE), so avoid wrapping Schema operations in a transaction.
+        if (! Schema::hasColumn('v2_sites', 'land_tenure_approach')) {
+            Schema::table('v2_sites', function (Blueprint $table): void {
+                $table->text('land_tenure_approach')->nullable();
+            });
+        }
 
-            if (Schema::hasColumn('v2_projects', 'land_tenure_approach')) {
-                Schema::table('v2_projects', function (Blueprint $table): void {
-                    $table->dropColumn('land_tenure_approach');
-                });
-            }
+        if (Schema::hasColumn('v2_projects', 'land_tenure_approach')) {
+            Schema::table('v2_projects', function (Blueprint $table): void {
+                $table->dropColumn('land_tenure_approach');
+            });
+        }
 
-            $options = [
-                'indigenous-land' => 'Indigenous Land',
-                'extractive-reserve-resex' => 'Extractive Reserve (RESEX)',
-                'sustainable-development-reserve-rds' => 'Sustainable Development Reserve (RDS)',
-                'national-forest-flona' => 'National Forest (FLONA)',
-                'environmental-protection-area-apa' => 'Environmental Protection Area (APA)',
-                'rural-settlements-pae-paex-or-pds' => 'Rural Settlements (PAE, PAEX, or PDS)',
-                'quilombola-land' => 'Quilombola Land',
-                'public-land' => 'Public Land',
-                'private-land' => 'Private Land',
-                'other-land' => 'Other Land',
-            ];
+        $options = [
+            'indigenous-land' => 'Indigenous Land',
+            'extractive-reserve-resex' => 'Extractive Reserve (RESEX)',
+            'sustainable-development-reserve-rds' => 'Sustainable Development Reserve (RDS)',
+            'national-forest-flona' => 'National Forest (FLONA)',
+            'environmental-protection-area-apa' => 'Environmental Protection Area (APA)',
+            'rural-settlements-pae-paex-or-pds' => 'Rural Settlements (PAE, PAEX, or PDS)',
+            'quilombola-land' => 'Quilombola Land',
+            'public-land' => 'Public Land',
+            'private-land' => 'Private Land',
+            'other-land' => 'Other Land',
+        ];
 
+        DB::transaction(function () use ($options): void {
             $optionList = FormOptionList::where('key', 'land-tenures')->first();
             if ($optionList) {
                 foreach ($options as $slug => $label) {
@@ -63,8 +64,10 @@ return new class () extends Migration {
                 }
             }
 
-            $questionIds = FormQuestion::where('linked_field_key', 'pro-land-tenure-proj-area')->pluck('id');
-            foreach ($questionIds as $questionId) {
+            // TM-2862: project land tenure area options are configured on form_question_id = 4221
+            $question = FormQuestion::where('id', 4221)->first();
+            if ($question) {
+                $questionId = (int) $question->id;
                 $nextOrder = (int) FormQuestionOption::where('form_question_id', $questionId)->max('order');
 
                 foreach ($options as $slug => $label) {
@@ -103,32 +106,33 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        DB::transaction(function (): void {
-            if (! Schema::hasColumn('v2_projects', 'land_tenure_approach')) {
-                Schema::table('v2_projects', function (Blueprint $table): void {
-                    $table->text('land_tenure_approach')->nullable();
-                });
-            }
+        // MySQL auto-commits DDL (ALTER TABLE), so avoid wrapping Schema operations in a transaction.
+        if (! Schema::hasColumn('v2_projects', 'land_tenure_approach')) {
+            Schema::table('v2_projects', function (Blueprint $table): void {
+                $table->text('land_tenure_approach')->nullable();
+            });
+        }
 
-            if (Schema::hasColumn('v2_sites', 'land_tenure_approach')) {
-                Schema::table('v2_sites', function (Blueprint $table): void {
-                    $table->dropColumn('land_tenure_approach');
-                });
-            }
+        if (Schema::hasColumn('v2_sites', 'land_tenure_approach')) {
+            Schema::table('v2_sites', function (Blueprint $table): void {
+                $table->dropColumn('land_tenure_approach');
+            });
+        }
 
-            $slugs = [
-                'indigenous-land',
-                'extractive-reserve-resex',
-                'sustainable-development-reserve-rds',
-                'national-forest-flona',
-                'environmental-protection-area-apa',
-                'rural-settlements-pae-paex-or-pds',
-                'quilombola-land',
-                'public-land',
-                'private-land',
-                'other-land',
-            ];
+        $slugs = [
+            'indigenous-land',
+            'extractive-reserve-resex',
+            'sustainable-development-reserve-rds',
+            'national-forest-flona',
+            'environmental-protection-area-apa',
+            'rural-settlements-pae-paex-or-pds',
+            'quilombola-land',
+            'public-land',
+            'private-land',
+            'other-land',
+        ];
 
+        DB::transaction(function () use ($slugs): void {
             $optionList = FormOptionList::where('key', 'land-tenures')->first();
             if ($optionList) {
                 FormOptionListOption::where('form_option_list_id', $optionList->id)
@@ -136,10 +140,12 @@ return new class () extends Migration {
                     ->delete();
             }
 
-            $questionIds = FormQuestion::where('linked_field_key', 'pro-land-tenure-proj-area')->pluck('id');
-            FormQuestionOption::whereIn('form_question_id', $questionIds)
-                ->whereIn('slug', $slugs)
-                ->delete();
+            $question = FormQuestion::where('id', 4221)->first();
+            if ($question) {
+                FormQuestionOption::where('form_question_id', (int) $question->id)
+                    ->whereIn('slug', $slugs)
+                    ->delete();
+            }
         });
     }
 
