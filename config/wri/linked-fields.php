@@ -779,6 +779,13 @@ return [
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
                 ],
+                'pro-rel-non-tree-species' => [
+                    'property' => 'nonTreeSpecies',
+                    'label' => 'Non-Tree Species',
+                    'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
+                    'input_type' => 'treeSpecies',
+                    'collection' => 'non-tree',
+                ],
                 'pro-all-jobs' => [
                     'property' => 'jobsAll',
                     'label' => 'All Jobs',
@@ -1383,6 +1390,13 @@ return [
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
+                ],
+                'site-rep-rel-anr-tree-species' => [
+                    'property' => 'anrTreeSpecies',
+                    'label' => 'Regenerating Species',
+                    'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
+                    'input_type' => 'treeSpecies',
+                    'collection' => 'anr',
                 ],
                 'site-rep-rel-non-tree-species' => [
                     'property' => 'nonTreeSpecies',
