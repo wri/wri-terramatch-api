@@ -52,7 +52,6 @@ class EntityStatusChange extends I18nMail
         $this->setParams($params)
             ->setCta('entity-status-change.cta');
         $this->link = $this->entity->getViewLinkPath();
-        $this->transactional = true;
     }
 
     private function getEntityTypeName(): string

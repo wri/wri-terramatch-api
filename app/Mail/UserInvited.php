@@ -28,6 +28,5 @@ class UserInvited extends I18nMail
         $this->link = $callbackUrl ?
             $callbackUrl . 'invite?emailAddress=' . urlencode($emailAddress) . '&type=' . urlencode(strtolower($type)) :
             '/invite?emailAddress=' . urlencode($emailAddress) . '&type=' . urlencode(strtolower($type));
-        $this->transactional = true;
     }
 }

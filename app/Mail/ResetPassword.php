@@ -14,6 +14,5 @@ class ResetPassword extends I18nMail
         $this->link = $callbackUrl ?
             $callbackUrl . urlencode($token) :
             '/passwordReset?token=' . urlencode($token);
-        $this->transactional = true;
     }
 }

@@ -26,7 +26,6 @@ class TaskDigestMail extends I18nMail
             ->setCta('task-digest.cta')
             ->setBodyKey('task-digest.body')
             ->setBodyParams($params);
-        $this->transactional = true;
         $projectUUID = $task->project()->first()->uuid;
         $this->link = $isManager ? '/admin#/task/'.$task->uuid.'/show' : '/project/'.$projectUUID.'/reporting-task/'.$task->uuid;
     }

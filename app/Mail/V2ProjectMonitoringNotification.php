@@ -13,7 +13,6 @@ class V2ProjectMonitoringNotification extends I18nMail
             ->setBodyKey('v2-project-monitoring-notification.body')
             ->setParams(['{name}' => $name, '{callbackUrl}' => $callbackUrl]);
 
-        $this->transactional = false;
         $this->monitoring = true;
 
     }

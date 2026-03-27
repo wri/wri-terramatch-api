@@ -27,5 +27,3 @@ Route::get('/documentation/{version}/{ui}', [DocumentationVersionedController::c
 
 Route::get('/documentation/{version}/raw', [DocumentationVersionedController::class, 'readAsYamlAction'])
     ->where('version', 'v2');
-
-Route::get('/users/{encrypted_id}/unsubscribe', [UsersController::class, 'unsubscribeAction']);
