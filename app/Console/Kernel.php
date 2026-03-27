@@ -30,8 +30,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('generate-control-site-due-submissions')->weeklyOn(5, '00:00')->onOneServer();
         $schedule->command('generate-application-export')->twiceDaily(13, 20)->onOneServer();
         $schedule->command('generate-admin-all-entity-records-export')->twiceDaily(13, 20)->onOneServer();
-        $schedule->command('send-daily-digest-notifications')->weeklyOn(1, '17:00')->timezone('Europe/Sofia')->onOneServer();
-        $schedule->command('send-weekly-polygon-update-notifications')->weeklyOn(1, '00:00')->timezone('Europe/Sofia')->onOneServer();
+        // Task digest and weekly polygon reminder emails are scheduled in the v3 API (Node), not Laravel.
 
         // Close Fundo Flora funding programmes on August 8th at midnight EST
         $schedule->command('close-fundo-flora-funding-programmes')
