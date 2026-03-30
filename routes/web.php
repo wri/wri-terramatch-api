@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\DefaultController;
 use App\Http\Controllers\DocumentationVersionedController;
-use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
 /*

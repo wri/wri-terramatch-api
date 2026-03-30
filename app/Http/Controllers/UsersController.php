@@ -7,8 +7,6 @@ use App\Http\Resources\V2\User\UserResource;
 use App\Jobs\UserVerificationJob;
 use App\Models\V2\User;
 use App\Validators\UserValidator;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
