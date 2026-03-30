@@ -73,11 +73,6 @@ use App\Http\Controllers\V2\Sites\Monitoring\ViewSiteMonitoringController;
 use App\Http\Controllers\V2\Sites\ViewASitesMonitoringsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
 use App\Http\Controllers\V2\Terrafund\TerrafundCreateGeometryController;
-use App\Http\Controllers\V2\User\AdminResetPasswordController;
-use App\Http\Controllers\V2\User\AdminUserController;
-use App\Http\Controllers\V2\User\AdminUserCreationController;
-use App\Http\Controllers\V2\User\AdminUserMultiController;
-use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Controllers\V2\User\CompleteActionController;
 use App\Http\Controllers\V2\User\UpdateMyBannersController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
@@ -168,14 +163,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
     });
-
-    Route::prefix('users')->group(function () {
-        Route::get('multi', AdminUserMultiController::class);
-        Route::put('reset-password/{user}', AdminResetPasswordController::class);
-        Route::patch('verify/{user}', AdminVerifyUserController::class);
-        Route::post('/create', [AdminUserCreationController::class, 'store']);
-    });
-    Route::resource('users', AdminUserController::class);
 
     Route::prefix('forms')->group(function () {
         Route::get('submissions/{form}/export', ExportFormSubmissionController::class);
